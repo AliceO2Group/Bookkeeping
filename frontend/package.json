@@ -1,0 +1,8 @@
+{
+  "name": "jiskefet-frontend",
+  "author": "Stichting Hogeschool van Amsterdam",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@aliceo2/web-ui": "1.10.3"
+  }
+}
