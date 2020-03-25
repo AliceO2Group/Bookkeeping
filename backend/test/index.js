@@ -16,21 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { HttpServer } = require('@aliceo2/web-ui');
+const path = require('path');
+const chai = require('chai');
+const request = require('supertest');
+const chaiResponseValidator = require('chai-openapi-response-validator');
 
-const http = new HttpServer({
-    port: 4000
-});
+const { expect } = chai;
 
-http.address = () => http.getServer.address();
-http.listen = () => { };
-http.close = () => http.getServer.close();
+chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
-http.get('/', (_request, response, _next) => {
-    response.status(200).json({
-        name: 'Jiskefet Backend',
-        version: '0.0.0',
+describe('GET /api/', () => {
+    let app;
+
+    before(() => {
+        app = require('./../lib/server');
     });
-}, { public: true });
 
-module.exports = http;
+    after(() => {
+        app.close();
+    });
+
+    it('should satisfy OpenAPI spec', (done) => {
+        request(app)
+            .get('/api/')
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+
+                expect(res).to.satisfyApiSpec;
+                done();
+            });
+    });
+});
