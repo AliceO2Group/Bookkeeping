@@ -16,18 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { h } from '/js/src/index.js';
-
+import { h, switchCase } from "/js/src/index.js";
+import GeneralOverview from "./views/Overview/General/page.js";
 /**
  * Main view layout
  * @param {object} model - representing current application state
  * @return {vnode} application view to be drawn according to model
  */
-export default (_model) => [
-    h('.flex-column.absolute-fill', [
-        header(),
-        content(),
-    ]),
+export default model => [
+  h(".flex-column.absolute-fill", [header(model), content(model)])
 ];
 
 /**
@@ -36,13 +33,20 @@ export default (_model) => [
  * @return {vnode}
  */
 const header = () =>
-    h('.p2.shadow-level2.level2', {
-        style: 'display: flex; justify-content: center',
-    }, 'Welcome to your home page');
+  h(
+    ".p2.shadow-level2.level2",
+    {
+      style: "display: flex; justify-content: center"
+    },
+    "Welcome to your home page"
+  );
 
 /**
  * Page content
  * @param {object} model
  * @return {vnode}
  */
-const content = () => h('', 'Add your content here');
+const content = model =>
+  switchCase(model.router.params.page, {
+    home: GeneralOverview
+  })(model);
