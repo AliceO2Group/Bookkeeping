@@ -1,0 +1,26 @@
+name: OpenAPI
+
+on:
+  push:
+    paths:
+      - 'spec/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out head branch
+      uses: actions/checkout@v2
+      with:
+        path: head
+    - name: Check out master branch
+      uses: actions/checkout@v2
+      with:
+        ref: master
+        path: base
+    - name: Run OpenAPI Diff (from HEAD revision)
+      uses: mvegter/openapi-diff-action@v0.2.0
+      with:
+        head-spec: head/spec/openapi.yaml
+        base-spec: base/spec/openapi.yaml
