@@ -3,6 +3,8 @@
   "author": "Stichting Hogeschool van Amsterdam",
   "license": "AGPL-3.0",
   "scripts": {
+    "coverage": "nyc npm test && npm run coverage:report",
+    "coverage:report": "nyc report --reporter=html --reporter=json",
     "start:dev": "nodemon lib/server.js",
     "start:prod": "node lib/server.js",
     "test": "mocha"
@@ -15,6 +17,7 @@
     "chai-openapi-response-validator": "0.7.1",
     "mocha": "7.1.1",
     "nodemon": "2.0.2",
+    "nyc": "15.0.0",
     "supertest": "4.0.2"
   }
 }

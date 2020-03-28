@@ -1,0 +1,9 @@
+flags:
+  backend:
+    carryforward: true
+    paths:
+      - backend
+  frontend:
+    carryforward: true
+    paths:
+      - frontend
