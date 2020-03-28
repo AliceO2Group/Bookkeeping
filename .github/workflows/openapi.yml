@@ -1,6 +1,9 @@
 name: OpenAPI
 
 on:
+  pull_request:
+    paths:
+      - 'spec/**'
   push:
     paths:
       - 'spec/**'
