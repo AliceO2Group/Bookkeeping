@@ -1,6 +1,9 @@
 name: Frontend
 
 on:
+  pull_request:
+    paths:
+      - 'frontend/**'
   push:
     paths:
       - 'frontend/**'
