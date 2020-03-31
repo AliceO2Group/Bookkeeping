@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { h, switchCase } from "/js/src/index.js";
+import { h, switchCase } from '/js/src/index.js';
 import NavBar from './components/NavBar/index.js';
-import GeneralOverview from "./views/Overview/General/page.js";
+import GeneralOverview from './views/Overview/General/page.js';
 
 /**
  * Main view layout
@@ -27,16 +27,16 @@ import GeneralOverview from "./views/Overview/General/page.js";
  */
 export default model => {
   const pages = {
-    home: GeneralOverview
+    home: GeneralOverview,
   }
 
   return [
-    h(".flex-column.absolute-fill", [
+    h('.flex-column.absolute-fill', [
       NavBar(model, pages),
-      content(model, pages)
-    ])
+      content(model, pages),
+    ]),
   ];
-} 
+}
 
 /**
  * Page content

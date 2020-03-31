@@ -20,10 +20,10 @@ import {
   Observable,
   QueryRouter,
   Loader,
-  sessionService
-} from "/js/src/index.js";
+  sessionService,
+} from '/js/src/index.js';
 
-import Overview from "./views/Overview/Overview.js";
+import Overview from './views/Overview/Overview.js';
 /**
  * Root of model tree
  * Handle global events: keyboard, websocket and router location change
@@ -57,10 +57,10 @@ export default class Model extends Observable {
    */
   handleLocationChange() {
     switch (this.router.params.page) {
-      case "home":
+      case 'home':
         break;
       default:
-        this.router.go("?page=home");
+        this.router.go('?page=home');
         break;
     }
   }

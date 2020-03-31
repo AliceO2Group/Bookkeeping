@@ -82,4 +82,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Misc items
+start-dev.sh
 # End of https://www.gitignore.io/api/linux,macos,windows,visualstudiocode
