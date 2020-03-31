@@ -10,11 +10,57 @@
         "eslint:recommended"
     ],
     "rules": {
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ],
+        "dot-location": [
+            "error",
+            "property"
+        ],
+        "function-call-argument-newline": [
+            "error",
+            "never"
+        ],
+        "function-paren-newline": [
+            "error",
+            "never"
+        ],
+        "init-declarations": "off",
+        "lines-around-comment": "off",
+        "max-len": [
+            "error",
+            {
+                "code": 120
+            }
+        ],
+        "no-magic-numbers": "off",
         "no-unused-vars": [
             "error",
             {
                 "argsIgnorePattern": "^_"
             }
-        ]
+        ],
+        "no-trailing-spaces": "error",
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
+        "padded-blocks": [
+            "error",
+            "never"
+        ],
+        "quote-props": [
+            "error",
+            "as-needed"
+        ],
+        "quotes": [
+            "error",
+            "single",
+            {
+                "avoidEscape": true
+            }
+        ],
+        "sort-vars": "off"
     }
 }
