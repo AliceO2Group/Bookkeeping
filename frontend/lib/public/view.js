@@ -43,4 +43,4 @@ export default model => {
  * @param {object} model
  * @return {vnode}
  */
-const content = (model, pages) => switchCase(model.router.params.page, pages)(model);
+const content = (model, pages) => h('.p4', switchCase(model.router.params.page, pages)(model))
