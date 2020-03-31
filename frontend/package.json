@@ -7,7 +7,7 @@
     "start:prod": "node lib/server.js"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.10.3"
+    "@aliceo2/web-ui": "1.10.4"
   },
   "devDependencies": {
     "nodemon": "2.0.2"
