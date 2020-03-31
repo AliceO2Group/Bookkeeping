@@ -10,7 +10,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.10.3"
+    "@aliceo2/web-ui": "1.10.4"
   },
   "devDependencies": {
     "chai": "4.2.0",
