@@ -31,3 +31,23 @@ jobs:
       working-directory: ./frontend
       env:
         CI: true
+  linter:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Installing dependencies
+      run: npm ci
+      working-directory: ./frontend
+    - name: Running linter
+      run: npm run lint
+      working-directory: ./frontend
