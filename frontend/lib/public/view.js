@@ -17,36 +17,30 @@
  */
 
 import { h, switchCase } from "/js/src/index.js";
+import NavBar from './components/NavBar/index.js';
 import GeneralOverview from "./views/Overview/General/page.js";
+
 /**
  * Main view layout
  * @param {object} model - representing current application state
  * @return {vnode} application view to be drawn according to model
  */
-export default model => [
-  h(".flex-column.absolute-fill", [header(model), content(model)])
-];
+export default model => {
+  const pages = {
+    home: GeneralOverview
+  }
 
-/**
- * Top header of the page
- * @param {object} model
- * @return {vnode}
- */
-const header = () =>
-  h(
-    ".p2.shadow-level2.level2",
-    {
-      style: "display: flex; justify-content: center"
-    },
-    "Welcome to your home page"
-  );
+  return [
+    h(".flex-column.absolute-fill", [
+      NavBar(model, pages),
+      content(model, pages)
+    ])
+  ];
+} 
 
 /**
  * Page content
  * @param {object} model
  * @return {vnode}
  */
-const content = model =>
-  switchCase(model.router.params.page, {
-    home: GeneralOverview
-  })(model);
+const content = (model, pages) => switchCase(model.router.params.page, pages)(model);
