@@ -4,7 +4,7 @@ export default model => [dataTable(model)];
 
 const dataTable = model => {
   const headers = model.overview.getHeaders();
-  const data = model.overview.getData();
+  const data = model.overview.getTableData();
   return h("table.table.shadow-level2", [
     h("tr", [
       headers.map(header => {

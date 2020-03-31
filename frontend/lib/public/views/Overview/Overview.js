@@ -16,10 +16,10 @@ export default class Overview extends Observable {
         authorID: "Batman",
         title: "Run1",
         creationTime: this.date,
-        Tags: ["Tag1", "Tag2"]
+        tags: ["Tag1", "Tag2"]
       }
     ];
-    this.headers = ["ID", "Author ID", "Title", "Creation Time", "Tags"];
+    this.headers = ["ID", "Author ID", "Title", "Creation Time"];
   }
   /**
    * @returns Array []
@@ -28,7 +28,17 @@ export default class Overview extends Observable {
     return this.headers;
   };
 
-  getData = () => {
-    return this.data;
+  getTableData = () => {
+    const subentries = this.data.map(entry => {
+      const filter = Object.keys(entry).map(subkey => {
+        if (subkey !== "tags") {
+          return entry[subkey];
+        }
+      });
+
+      return filter;
+    });
+
+    return subentries;
   };
 }
