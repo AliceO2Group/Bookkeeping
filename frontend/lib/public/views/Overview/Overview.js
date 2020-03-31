@@ -41,4 +41,13 @@ export default class Overview extends Observable {
 
     return subentries;
   };
+
+  getTagCounts = () => {
+    return this.data.reduce((accumulator, currentValue) => {
+      currentValue.tags.forEach(tag => {
+        accumulator[tag] = (accumulator[tag] || 0) + 1 
+      })
+      return accumulator
+    }, {})
+  }
 }
