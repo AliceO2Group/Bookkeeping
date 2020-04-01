@@ -2,13 +2,7 @@ name: Backend
 
 on:
   pull_request:
-    paths:
-      - 'backend/**'
-      - 'spec/**'
   push:
-    paths:
-      - 'backend/**'
-      - 'spec/**'
 
 jobs:
   test:
