@@ -1,4 +1,5 @@
 const { Api } = require('../controllers');
+const userRoute = require('./users')
 const routes = [
   {
     method: 'get',
@@ -6,6 +7,7 @@ const routes = [
     controller: Api,
     args: { public: true },
   },
+  userRoute,
 ];
 
 /**

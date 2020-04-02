@@ -24,10 +24,6 @@ const http = new HttpServer({
     autoListen: false,
 });
 
-http.address = () => http.getServer.address();
-http.listen = () => { };
-http.close = () => http.getServer.close();
-
 buildEndpoints(http);
 
 module.exports = http;
