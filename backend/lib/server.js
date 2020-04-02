@@ -17,17 +17,17 @@
  */
 
 const { HttpServer } = require('@aliceo2/web-ui');
+const buildEndpoints = require('./routes');
 
 const http = new HttpServer({
     port: 4000,
     autoListen: false,
 });
 
-http.get('/', (request, response, next) => {
-    response.status(200).json({
-        name: 'Jiskefet Backend',
-        version: '0.0.0',
-    });
-}, { public: true });
+http.address = () => http.getServer.address();
+http.listen = () => { };
+http.close = () => http.getServer.close();
+
+buildEndpoints(http);
 
 module.exports = http;
