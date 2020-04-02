@@ -16,50 +16,50 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable */
-
 const assert = require('assert')
 const puppeteer = require('puppeteer')
 const path = require('path');
 const { HttpServer } = require('@aliceo2/web-ui');
 
 const PORT = 3001
+let page;
+let http;
 
 describe('Frontend', () => {
-    before(() => {
-      http = new HttpServer({ port: PORT });
-      http.addStaticPath(path.resolve(__dirname, '../lib/public'));
+  before(() => {
+    const http = new HttpServer({ port: PORT });
+    http.addStaticPath(path.resolve(__dirname, '../lib/public'));
+  })
+
+  before(async () => {
+    const browser = await puppeteer.launch()
+    page = await browser.newPage()
+  })
+
+  it('loads the page successfully', async () => {
+    const response = await page.goto(`http://localhost:${PORT}`)
+    assert.equal(response.status(), 200)
+    const title = await page.title()
+    assert.equal(title, 'AliceO2 Logbook 2020')
+  })
+
+  describe('Overview', () => {
+    it('can filter logs dynamically', async () => {
+      const checkbox = await page.$('.form-check input')
+      const label = await page.$('.form-check label div')
+
+      const id = await page.evaluate(element => element.id, checkbox)
+      const amount = await page.evaluate(element => element.innerText, label)
+      assert.equal(id, 'filtersCheckbox1')
+
+      await page.click(`#${id}`)
+      await page.waitFor(500)
+      const newTableRows = await page.$$('table tr')
+      assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
     })
+  })
 
-    before(async () => {
-      browser = await puppeteer.launch()
-      page = await browser.newPage()
-    })
-
-    it('loads the page successfully', async () => {
-      const response = await page.goto(`http://localhost:${PORT}`)
-      assert.equal(response.status(), 200)
-      const title = await page.title()
-      assert.equal(title, 'AliceO2 Logbook 2020')
-    })
-
-    describe('Overview', () => {
-      it('can filter logs dynamically', async () => {
-        const checkbox = await page.$('.form-check input')
-        const label = await page.$('.form-check label div')
-
-        const id = await page.evaluate(element => element.id, checkbox)
-        const amount = await page.evaluate(element => element.innerText, label)
-        assert.equal(id, 'filtersCheckbox1')
-
-        await page.click(`#${id}`)
-        await page.waitFor(500)
-        const newTableRows = await page.$$('table tr')
-        assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
-      })
-    })
-
-    after(() => {
-      http.getServer.close()
-    })
+  after(() => {
+    http.getServer.close()
+  })
 })

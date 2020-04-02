@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { h } from '/js/src/index.js';
-
 const FILTERS_LIMITS = 5;
+
 /**
  * Checkbox filter
  * @param {Object} model

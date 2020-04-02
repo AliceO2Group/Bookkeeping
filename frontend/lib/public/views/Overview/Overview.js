@@ -120,6 +120,7 @@ export default class Overview extends Observable {
       })
       .filter(entry => entry !== null);
   }
+
   /**
    * Check for an existing tag
    * @param {object} entry

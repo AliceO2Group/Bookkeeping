@@ -42,8 +42,8 @@ const overviewScreen = model => {
       data.map((entry, index) => {
         return h('tr', [
           rowData(index + 1),
-          Object.keys(entry).map(subitem => {
-            return rowData(entry[subitem]);
+          Object.keys(entry).map(subItem => {
+            return rowData(entry[subItem]);
           }),
         ]);
       }),
