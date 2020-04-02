@@ -24,6 +24,7 @@ import {
 } from '/js/src/index.js';
 
 import Overview from './views/Overview/Overview.js';
+
 /**
  * Root of model tree
  * Handle global events: keyboard, websocket and router location change

@@ -18,22 +18,24 @@
 
 const assert = require('assert')
 const puppeteer = require('puppeteer')
-const path = require('path');
-const { HttpServer } = require('@aliceo2/web-ui');
 
-const PORT = 3001
-let page;
-let http;
+const PORT = 3000
 
 describe('Frontend', () => {
+  let page;
+  let http;
+
   before(() => {
-    const http = new HttpServer({ port: PORT });
-    http.addStaticPath(path.resolve(__dirname, '../lib/public'));
+    http = require('./../lib/server');
   })
 
   before(async () => {
     const browser = await puppeteer.launch()
     page = await browser.newPage()
+  })
+
+  after(() => {
+    http.close()
   })
 
   it('loads the page successfully', async () => {
@@ -57,9 +59,5 @@ describe('Frontend', () => {
       const newTableRows = await page.$$('table tr')
       assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
     })
-  })
-
-  after(() => {
-    http.getServer.close()
   })
 })

@@ -23,4 +23,11 @@ const http = new HttpServer({
     port: 3000,
 });
 
+http.address = () => http.getServer.address();
+http.listen = () => { };
+http.close = () => http.getServer.close();
+
 http.addStaticPath(path.resolve(__dirname, 'public'));
+
+module.exports = http;
+
