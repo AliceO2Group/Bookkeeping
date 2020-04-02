@@ -1,5 +1,5 @@
 const User = require('./user');
-
+const Tag = require('./tag');
 /**
  *
  * @param {Object} req
@@ -14,5 +14,6 @@ const Api = (req, res) => {
 
 module.exports = {
   Api,
+  Tag,
   User,
 };
