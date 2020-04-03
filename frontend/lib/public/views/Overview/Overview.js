@@ -79,26 +79,26 @@ export default class Overview extends Observable {
     }
 
     /**
-   * Add filter to the selection
-   * @param {string} tag
-   */
+     * Add filter to the selection
+     * @param {string} tag
+     */
     addFilter(tag) {
         this.filterCriteria = [...this.filterCriteria, tag];
         this.getFilteredData();
     }
 
     /**
-   * Remove filter from the selection
-   * @param {string} condition
-   */
+     * Remove filter from the selection
+     * @param {string} condition
+     */
     removeFilter(condition) {
         this.filterCriteria = this.filterCriteria.filter(tag => tag !== condition);
         this.getFilteredData();
     }
 
     /**
-   * Filter the data
-   */
+     * Filter the data
+     */
     getFilteredData() {
         this.filterCriteria.length !== 0
             ? this.filterByTags()
@@ -142,9 +142,9 @@ export default class Overview extends Observable {
     }
 
     /**
-   * Counts the tags with their total appearances
-   * @return {object}
-   */
+     * Counts the tags with their total appearances
+     * @return {object}
+     */
     getTagCounts() {
         return this.data.reduce((accumulator, currentValue) => {
             currentValue.tags.forEach(tag => {

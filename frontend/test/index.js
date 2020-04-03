@@ -40,8 +40,10 @@ describe('Frontend', () => {
 
     it('loads the page successfully', async () => {
         const response = await page.goto(`http://localhost:${PORT}`)
+        // We expect the page to return the correct status code, making sure the server is running properly
         assert.equal(response.status(), 200)
         const title = await page.title()
+        // We expect the page to return the correct title, making sure there isn't another server running on this port
         assert.equal(title, 'AliceO2 Logbook 2020')
     })
 
@@ -52,11 +54,13 @@ describe('Frontend', () => {
 
             const id = await page.evaluate(element => element.id, checkbox)
             const amount = await page.evaluate(element => element.innerText, label)
+            // We expect to have captured the first checkbox in the list
             assert.equal(id, 'filtersCheckbox1')
 
             await page.click(`#${id}`)
-            await page.waitFor(500)
+            await page.waitFor(1000)
             const newTableRows = await page.$$('table tr')
+            // We expect the amount of logs in this filter to match the advertised amount in the filters component
             assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
         })
     })
