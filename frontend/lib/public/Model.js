@@ -31,8 +31,8 @@ import Overview from './views/Overview/Overview.js';
  */
 export default class Model extends Observable {
     /**
-   * Load all sub-models and bind event handlers
-   */
+     * Load all sub-models and bind event handlers
+     */
     constructor() {
         super();
 
@@ -54,8 +54,8 @@ export default class Model extends Observable {
     }
 
     /**
-   * Delegates sub-model actions depending on new location of the page
-   */
+     * Delegates sub-model actions depending on new location of the page
+     */
     handleLocationChange() {
         switch (this.router.params.page) {
             case 'home':

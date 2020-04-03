@@ -3,12 +3,12 @@
   "author": "Stichting Hogeschool van Amsterdam",
   "license": "AGPL-3.0",
   "scripts": {
+    "coverage": "nyc npm test && npm run coverage:report",
+    "coverage:report": "nyc report --reporter=html --reporter=json",
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "start:dev": "nodemon lib/server.js",
     "start:prod": "node lib/server.js",
-    "coverage": "nyc npm test && npm run coverage:report",
-    "coverage:report": "nyc report --reporter=html --reporter=json",
     "test": "mocha"
   },
   "dependencies": {

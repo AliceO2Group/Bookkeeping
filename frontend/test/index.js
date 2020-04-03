@@ -26,7 +26,6 @@ describe('Frontend', () => {
     let http;
     let browser;
 
-
     before(() => {
         http = require('./../lib/server');
     })

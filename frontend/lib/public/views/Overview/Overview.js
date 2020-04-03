@@ -53,7 +53,6 @@ export default class Overview extends Observable {
         this.headers = ['ID', 'Author ID', 'Title', 'Creation Time'];
     }
 
-
     /**
      * @returns {Array} headers
      */

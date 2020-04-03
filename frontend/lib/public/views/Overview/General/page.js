@@ -31,7 +31,7 @@ const overviewScreen = model => {
     const data = model.overview.getTableData();
     const tags = model.overview.getTagCounts();
 
-    return h('.w-75.flex-row', [
+    return h('.w-100.flex-row', [
         filters(model, tags),
         h('table.table.shadow-level1.mh3', [
             h('tr', [
