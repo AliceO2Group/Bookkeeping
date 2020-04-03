@@ -6,13 +6,11 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: production
-    ports:
-      - "4000:4000"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       target: production
-    ports:
-      - "3000:3000"
+    depends_on: 
+      - backend
