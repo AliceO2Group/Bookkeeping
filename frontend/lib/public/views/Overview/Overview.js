@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable } from '/js/src/index.js';
 
 /**
  * Model representing handlers for homePage.js
@@ -29,12 +29,30 @@ export default class Overview extends Observable {
         this.model = model;
         this.date = new Date().toDateString();
         this.filterCriteria = [];
-        this.data = RemoteData.notAsked();
-        this.filtered = [];
+        this.data = [
+            {
+                authorID: 'Batman',
+                title: 'Run1',
+                creationTime: this.date,
+                tags: ['Tag1', 'Tag2'],
+            },
+            {
+                authorID: 'Joker',
+                title: 'Run2',
+                creationTime: this.date,
+                tags: ['Tag2'],
+            },
+            {
+                authorID: 'Anonymous',
+                title: 'Run5',
+                creationTime: this.date,
+                tags: ['Tag3'],
+            },
+        ];
+        this.filtered = [...this.data];
         this.headers = ['ID', 'Author ID', 'Title', 'Creation Time'];
-
-        this.getTableData();
     }
+
 
     /**
      * @returns {Array} headers
@@ -46,17 +64,7 @@ export default class Overview extends Observable {
     /**
      * @returns {Array} subentries
      */
-    async getTableData() {
-        this.data = RemoteData.loading();
-
-        const { result, ok } = await this.model.loader.get('/api/logs/all');
-        if (!ok) {
-            this.data = RemoteData.failure(result);
-        } else {
-            this.data = RemoteData.success(result);
-            this.filtered = [...result];
-        }
-
+    getTableData() {
         const subentries = this.filtered.map(entry => {
             const filter = Object.keys(entry).map(subkey => {
                 if (subkey !== 'tags') {
@@ -66,6 +74,7 @@ export default class Overview extends Observable {
 
             return filter;
         });
+
         return subentries;
     }
 
@@ -95,7 +104,7 @@ export default class Overview extends Observable {
             ? this.filterByTags()
             : (this.filtered = [...this.data]);
 
-        // this.notify();
+        this.notify();
     }
 
     /**
@@ -137,13 +146,11 @@ export default class Overview extends Observable {
      * @return {object}
      */
     getTagCounts() {
-        if (Array.isArray(this.data)) {
-            return this.data.reduce((accumulator, currentValue) => {
-                currentValue.tags.forEach(tag => {
-                    accumulator[tag] = (accumulator[tag] || 0) + 1;
-                });
-                return accumulator;
-            }, {});
-        }
+        return this.data.reduce((accumulator, currentValue) => {
+            currentValue.tags.forEach(tag => {
+                accumulator[tag] = (accumulator[tag] || 0) + 1;
+            });
+            return accumulator;
+        }, {});
     }
 }

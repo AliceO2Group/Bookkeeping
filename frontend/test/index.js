@@ -18,24 +18,35 @@
 
 const assert = require('assert')
 const puppeteer = require('puppeteer')
-
+const pti = require('puppeteer-to-istanbul')
 const PORT = 3000
 
 describe('Frontend', () => {
     let page;
     let http;
+    let browser;
 
     before(() => {
         http = require('./../lib/server');
     })
 
     before(async () => {
-        const browser = await puppeteer.launch()
+        browser = await puppeteer.launch()
         page = await browser.newPage()
+        await Promise.all([
+            page.coverage.startJSCoverage(),
+            page.coverage.startCSSCoverage(),
+        ]);
     })
 
-    after(() => {
+    after(async () => {
         http.close()
+        const [jsCoverage, cssCoverage] = await Promise.all([
+            page.coverage.stopJSCoverage(),
+            page.coverage.stopCSSCoverage(),
+        ]);
+        pti.write([...jsCoverage, ...cssCoverage])
+        return await browser.close()
     })
 
     it('loads the page successfully', async () => {
