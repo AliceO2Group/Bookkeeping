@@ -20,6 +20,10 @@
             "error",
             "property"
         ],
+        "eol-last": [
+            "error",
+            "always"
+        ],
         "function-call-argument-newline": [
             "error",
             "never"
@@ -28,8 +32,25 @@
             "error",
             "never"
         ],
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
         "init-declarations": "off",
-        "lines-around-comment": "off",
+        "lines-around-comment": [
+            "error",
+            {
+                "allowClassStart": true,
+                "beforeBlockComment": true
+            }
+        ],
+        "lines-between-class-members": [
+            "error",
+            "always"
+        ],
         "max-len": [
             "error",
             {
@@ -37,6 +58,7 @@
             }
         ],
         "no-magic-numbers": "off",
+        "no-multiple-empty-lines": "error",
         "no-unused-vars": [
             "error",
             {
