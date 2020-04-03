@@ -17,7 +17,7 @@
  */
 import { h } from '/js/src/index.js';
 import filters from '../../../components/Filters/index.js';
-import { rowData, rowHeader } from '../../../components/Table/index.js';
+import { table } from '../../../components/Table/index.js';
 
 export default model => [overviewScreen(model)];
 
@@ -33,20 +33,8 @@ const overviewScreen = model => {
 
     return h('.w-100.flex-row', [
         filters(model, tags),
-        h('table.table.shadow-level1.mh3', [
-            h('tr', [
-                headers.map(header => {
-                    return rowHeader(header);
-                }),
-            ]),
-            data.map((entry, index) => {
-                return h('tr', [
-                    rowData(index + 1),
-                    Object.keys(entry).map(subItem => {
-                        return rowData(entry[subItem]);
-                    }),
-                ]);
-            }),
+        h('.w-75', [
+            table(data, headers),
         ]),
     ]);
 };
