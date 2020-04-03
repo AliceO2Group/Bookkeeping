@@ -1,6 +1,7 @@
 const { Api } = require('../controllers');
 const userRoute = require('./users');
 const tagsRoute = require('./tags');
+const deepmerge = require('../utils/deepmerge');
 
 const routes = [
     {
@@ -19,17 +20,7 @@ const routes = [
  * @param {Object} child
  */
 const inheritArgs = (parent, child) => {
-    if (!child.args) {
-        child.args = {};
-    }
-    else {
-        return parent.args || {};
-    }
-    if (parent.args) {
-        Object.keys(parent.args).forEach(arg => {
-            !(arg in child.args) && (child.args[arg] = parent.args[arg] || {});
-        })
-    }
+    child.args = deepmerge(parent.args||{}, child.args||{});
 }
 
 /**
