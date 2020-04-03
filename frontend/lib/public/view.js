@@ -26,16 +26,16 @@ import GeneralOverview from './views/Overview/General/page.js';
  * @return {vnode} application view to be drawn according to model
  */
 export default model => {
-  const pages = {
-    home: GeneralOverview,
-  }
+    const pages = {
+        home: GeneralOverview,
+    }
 
-  return [
-    h('.flex-column.absolute-fill', [
-      NavBar(model, pages),
-      content(model, pages),
-    ]),
-  ];
+    return [
+        h('.flex-column.absolute-fill', [
+            NavBar(model, pages),
+            content(model, pages),
+        ]),
+    ];
 }
 
 /**

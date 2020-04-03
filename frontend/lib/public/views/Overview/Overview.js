@@ -52,6 +52,8 @@ export default class Overview extends Observable {
         this.filtered = [...this.data];
         this.headers = ['ID', 'Author ID', 'Title', 'Creation Time'];
     }
+
+
     /**
      * @returns {Array} headers
      */

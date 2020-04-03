@@ -17,10 +17,10 @@
  */
 
 import {
-  Observable,
-  QueryRouter,
-  Loader,
-  sessionService,
+    Observable,
+    QueryRouter,
+    Loader,
+    sessionService,
 } from '/js/src/index.js';
 
 import Overview from './views/Overview/Overview.js';
@@ -30,39 +30,39 @@ import Overview from './views/Overview/Overview.js';
  * Handle global events: keyboard, websocket and router location change
  */
 export default class Model extends Observable {
-  /**
+    /**
    * Load all sub-models and bind event handlers
    */
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.session = sessionService.get();
-    this.session.personid = parseInt(this.session.personid, 10);
+        this.session = sessionService.get();
+        this.session.personid = parseInt(this.session.personid, 10);
 
-    // Bind Models
-    this.loader = new Loader(this);
-    this.loader.bubbleTo(this);
+        // Bind Models
+        this.loader = new Loader(this);
+        this.loader.bubbleTo(this);
 
-    this.overview = new Overview(this);
-    this.overview.bubbleTo(this);
-    // Setup router
-    this.router = new QueryRouter();
-    this.router.observe(this.handleLocationChange.bind(this));
-    this.router.bubbleTo(this);
+        this.overview = new Overview(this);
+        this.overview.bubbleTo(this);
+        // Setup router
+        this.router = new QueryRouter();
+        this.router.observe(this.handleLocationChange.bind(this));
+        this.router.bubbleTo(this);
 
-    this.handleLocationChange(); // Init first page
-  }
+        this.handleLocationChange(); // Init first page
+    }
 
-  /**
+    /**
    * Delegates sub-model actions depending on new location of the page
    */
-  handleLocationChange() {
-    switch (this.router.params.page) {
-      case 'home':
-        break;
-      default:
-        this.router.go('?page=home');
-        break;
+    handleLocationChange() {
+        switch (this.router.params.page) {
+            case 'home':
+                break;
+            default:
+                this.router.go('?page=home');
+                break;
+        }
     }
-  }
 }

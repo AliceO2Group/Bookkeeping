@@ -22,42 +22,42 @@ const puppeteer = require('puppeteer')
 const PORT = 3000
 
 describe('Frontend', () => {
-  let page;
-  let http;
+    let page;
+    let http;
 
-  before(() => {
-    http = require('./../lib/server');
-  })
-
-  before(async () => {
-    const browser = await puppeteer.launch()
-    page = await browser.newPage()
-  })
-
-  after(() => {
-    http.close()
-  })
-
-  it('loads the page successfully', async () => {
-    const response = await page.goto(`http://localhost:${PORT}`)
-    assert.equal(response.status(), 200)
-    const title = await page.title()
-    assert.equal(title, 'AliceO2 Logbook 2020')
-  })
-
-  describe('Overview', () => {
-    it('can filter logs dynamically', async () => {
-      const checkbox = await page.$('.form-check input')
-      const label = await page.$('.form-check label div')
-
-      const id = await page.evaluate(element => element.id, checkbox)
-      const amount = await page.evaluate(element => element.innerText, label)
-      assert.equal(id, 'filtersCheckbox1')
-
-      await page.click(`#${id}`)
-      await page.waitFor(500)
-      const newTableRows = await page.$$('table tr')
-      assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
+    before(() => {
+        http = require('./../lib/server');
     })
-  })
+
+    before(async () => {
+        const browser = await puppeteer.launch()
+        page = await browser.newPage()
+    })
+
+    after(() => {
+        http.close()
+    })
+
+    it('loads the page successfully', async () => {
+        const response = await page.goto(`http://localhost:${PORT}`)
+        assert.equal(response.status(), 200)
+        const title = await page.title()
+        assert.equal(title, 'AliceO2 Logbook 2020')
+    })
+
+    describe('Overview', () => {
+        it('can filter logs dynamically', async () => {
+            const checkbox = await page.$('.form-check input')
+            const label = await page.$('.form-check label div')
+
+            const id = await page.evaluate(element => element.id, checkbox)
+            const amount = await page.evaluate(element => element.innerText, label)
+            assert.equal(id, 'filtersCheckbox1')
+
+            await page.click(`#${id}`)
+            await page.waitFor(500)
+            const newTableRows = await page.$$('table tr')
+            assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
+        })
+    })
 })
