@@ -1,22 +1,25 @@
 version: "3.7"
 
+# All options specified below override the options with the development variables
 services:
+  nginx:
+    build:
+      target: development
+
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
       target: development
     volumes:
+      # Mount the local working directory in the container for Nodemon
       - "./backend:/usr/src/app"
     ports:
       - "4000:4000"
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
       target: development
     volumes:
+      # Mount the local working directory in the container for Nodemon
       - "./frontend:/usr/src/app"
     ports:
       - "3000:3000"

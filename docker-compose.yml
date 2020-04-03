@@ -1,18 +1,34 @@
 version: "3.7"
 
 services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+      target: production
+    volumes:
+      # Mounts the 'scripts' folder inside the host on '/opt'
+      - './scripts:/opt'
+    ports:
+      # Expose the HTTP port to the host
+      - 80:80
+      # Expose the HTTPS port to the host
+      - 443:443
+    depends_on:
+      - backend
+      - frontend
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
       target: production
-    ports:
-      - "4000:4000"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       target: production
-    ports:
-      - "3000:3000"
+    depends_on: 
+      - backend
