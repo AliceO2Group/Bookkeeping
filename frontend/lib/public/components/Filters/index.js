@@ -26,7 +26,7 @@ const FILTERS_LIMITS = 5;
  * @return {vnode}
  */
 const checkboxFilter = (model, tags) => {
-    const checkboxes = Object.entries(tags).map(([tag, count], index) =>
+    const checkboxes = Array.isArray(tags) ? Object.entries(tags).map(([tag, count], index) =>
         h('.form-check', [
             h('input.form-check-input', {
                 onclick: e => {
@@ -41,7 +41,7 @@ const checkboxFilter = (model, tags) => {
             h('label.flex-row.items-center.form-check-label', {
                 for: `filtersCheckbox${index + 1}`,
             }, tag, h('.f7.mh1.gray-darker', `(${count})`)),
-        ]));
+        ])) : [];
 
     return checkboxes.length > FILTERS_LIMITS
         ? h('.form-group', [
