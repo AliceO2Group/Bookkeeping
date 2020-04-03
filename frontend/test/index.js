@@ -46,7 +46,7 @@ describe('Frontend', () => {
             page.coverage.stopCSSCoverage(),
         ]);
         pti.write([...jsCoverage, ...cssCoverage])
-        return await browser.close()
+        await browser.close()
     })
 
     it('loads the page successfully', async () => {
@@ -69,7 +69,7 @@ describe('Frontend', () => {
             assert.equal(id, 'filtersCheckbox1')
 
             await page.click(`#${id}`)
-            await page.waitFor(1000)
+            await page.waitFor(1750)
             const newTableRows = await page.$$('table tr')
             // We expect the amount of logs in this filter to match the advertised amount in the filters component
             assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
