@@ -26,6 +26,7 @@ describe('Frontend', () => {
     let http;
     let browser;
 
+
     before(() => {
         http = require('./../lib/server');
     })
@@ -45,6 +46,11 @@ describe('Frontend', () => {
             page.coverage.stopJSCoverage(),
             page.coverage.stopCSSCoverage(),
         ]);
+
+        [...jsCoverage, ...cssCoverage].forEach((element) => {
+            element.url = element.url.replace('?', '');
+        });
+
         pti.write([...jsCoverage, ...cssCoverage])
         await browser.close()
     })
@@ -56,7 +62,7 @@ describe('Frontend', () => {
         const title = await page.title()
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         assert.equal(title, 'AliceO2 Logbook 2020')
-    })
+    }).timeout(5000)
 
     describe('Overview', () => {
         it('can filter logs dynamically', async () => {
@@ -69,10 +75,10 @@ describe('Frontend', () => {
             assert.equal(id, 'filtersCheckbox1')
 
             await page.click(`#${id}`)
-            await page.waitFor(1750)
+            await page.waitFor(1000)
             const newTableRows = await page.$$('table tr')
             // We expect the amount of logs in this filter to match the advertised amount in the filters component
             assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
         })
-    })
+    }).timeout(5000)
 })
