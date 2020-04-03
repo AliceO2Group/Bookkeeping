@@ -4,7 +4,7 @@
  * @param {Object} res
  */
 const index = (req, res) => {
-  res.send('USER INDEX not defined');
+    res.send('USER INDEX not defined');
 };
 
 /**
@@ -13,7 +13,7 @@ const index = (req, res) => {
  * @param {Object} res
  */
 const getLogs = (req, res) => {
-  res.send('USER GETLOGS not defined');
+    res.send('USER GET_LOGS not defined');
 };
 
 /**
@@ -22,7 +22,7 @@ const getLogs = (req, res) => {
  * @param {Object} res
  */
 const getTokens = (req, res) => {
-  res.send('USER TOKENS not defined');
+    res.send('USER GET_TOKENS not defined');
 };
 
 /**
@@ -31,7 +31,7 @@ const getTokens = (req, res) => {
  * @param {Object} res
  */
 const read = (req, res) => {
-  res.send('USER GET not defined');
+    res.send('USER READ not defined');
 };
 
 /**
@@ -40,13 +40,13 @@ const read = (req, res) => {
  * @param {Object} res
  */
 const postTokens = (req, res) => {
-  res.send('USER POSTTOKENS not defined');
+    res.send('USER POST_TOKENS not defined');
 };
 
 module.exports = {
-  index,
-  read,
-  getLogs,
-  getTokens,
-  postTokens,
+    index,
+    read,
+    getLogs,
+    getTokens,
+    postTokens,
 };

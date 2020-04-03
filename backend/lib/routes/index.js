@@ -3,14 +3,14 @@ const userRoute = require('./users');
 const tagsRoute = require('./tags');
 
 const routes = [
-  {
-    method: 'get',
-    path: '/',
-    controller: Api,
-    args: { public: true },
-  },
-  userRoute,
-  tagsRoute,
+    {
+        method: 'get',
+        path: '/',
+        controller: Api,
+        args: { public: true },
+    },
+    userRoute,
+    tagsRoute,
 ];
 
 /**
@@ -19,17 +19,17 @@ const routes = [
  * @param {Object} child
  */
 const inheritArgs = (parent, child) => {
-  if (!child.args) {
-    child.args = {};
-  }
-  else {
-    return parent.args || {};
-  }
-  if (parent.args) {
-    Object.keys(parent.args).forEach(arg => {
-      !(arg in child.args) && (child.args[arg] = parent.args[arg] || {});
-    })
-  }
+    if (!child.args) {
+        child.args = {};
+    }
+    else {
+        return parent.args || {};
+    }
+    if (parent.args) {
+        Object.keys(parent.args).forEach(arg => {
+            !(arg in child.args) && (child.args[arg] = parent.args[arg] || {});
+        })
+    }
 }
 
 /**
@@ -39,23 +39,22 @@ const inheritArgs = (parent, child) => {
  * @param {String} [path=''] the base path of the route
  */
 const bindRoute = (http, route, parentPath = '') => {
-  const localPath = parentPath.concat(route.path);
+    const localPath = parentPath.concat(route.path);
 
-  if (route.method && route.controller) {
-    http[route.method](localPath, route.controller, route.args);
-  }
+    if (route.method && route.controller) {
+        http[route.method](localPath, route.controller, route.args);
+    }
 
-  if (route.children) {
-    route.children.forEach(child => {
-      inheritArgs(route, child);
-      bindRoute(http, child, localPath);
-    });
-  }
+    if (route.children) {
+        route.children.forEach(child => {
+            inheritArgs(route, child);
+            bindRoute(http, child, localPath);
+        });
+    }
 }
 
 module.exports = (http) => {
-  routes.forEach(route => {
-    console.log(route.path);
-    bindRoute(http, route);
-  });
+    routes.forEach(route => {
+        bindRoute(http, route);
+    });
 }

@@ -4,7 +4,7 @@
  * @param {Object} res
  */
 const create = (req, res) => {
-  res.send('TAG CREATE not defined');
+    res.send('TAG CREATE not defined');
 }
 
 /**
@@ -13,7 +13,7 @@ const create = (req, res) => {
  * @param {Object} res
  */
 const deleteTag = (req, res) => {
-  res.send('TAG DELETE not defined');
+    res.send('TAG DELETE not defined');
 }
 
 /**
@@ -21,8 +21,8 @@ const deleteTag = (req, res) => {
  * @param {Object} req
  * @param {Object} res
  */
-const getLog = (req, res) => {
-  res.send('TAG READ not defined');
+const getLogs = (req, res) => {
+    res.send('TAG GET_LOGS not defined');
 };
 
 /**
@@ -30,8 +30,8 @@ const getLog = (req, res) => {
  * @param {Object} req
  * @param {Object} res
  */
-const getRun = (req, res) => {
-  res.send('TAG GETRUNS not defined');
+const getRuns = (req, res) => {
+    res.send('TAG GET_RUNS not defined');
 }
 
 /**
@@ -40,7 +40,7 @@ const getRun = (req, res) => {
  * @param {Object} res
  */
 const index = (req, res) => {
-  res.send('TAG INDEX not defined');
+    res.send('TAG INDEX not defined');
 };
 
 /**
@@ -49,7 +49,7 @@ const index = (req, res) => {
  * @param {Object} res
  */
 const patchLog = (req, res) => {
-  res.send('TAG READ not defined');
+    res.send('TAG PATCH_LOG not defined');
 };
 
 /**
@@ -58,7 +58,7 @@ const patchLog = (req, res) => {
  * @param {Object} res
  */
 const patchRun = (req, res) => {
-  res.send('TAG READ not defined');
+    res.send('TAG PATCH_RUN not defined');
 };
 
 /**
@@ -67,16 +67,16 @@ const patchRun = (req, res) => {
  * @param {Object} res
  */
 const read = (req, res) => {
-  res.send('TAG READ not defined');
+    res.send('TAG READ not defined');
 }
 
 module.exports = {
-  create,
-  deleteTag,
-  getLog,
-  getRun,
-  index,
-  patchLog,
-  patchRun,
-  read,
+    create,
+    deleteTag,
+    getLogs,
+    getRuns,
+    index,
+    patchLog,
+    patchRun,
+    read,
 }
