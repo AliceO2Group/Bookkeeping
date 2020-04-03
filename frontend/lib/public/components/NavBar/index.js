@@ -15,32 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import { h, switchCase } from '/js/src/index.js';
-import NavBar from './components/NavBar/index.js';
-import GeneralOverview from './views/Overview/General/page.js';
+import { h } from '/js/src/index.js';
+import { iconPerson } from '/js/src/icons.js';
 
 /**
- * Main view layout
- * @param {object} model - representing current application state
- * @return {vnode} application view to be drawn according to model
- */
-export default model => {
-    const pages = {
-        home: GeneralOverview,
-    }
-
-    return [
-        h('.flex-column.absolute-fill', [
-            NavBar(model, pages),
-            content(model, pages),
-        ]),
-    ];
-}
-
-/**
- * Page content
+ * Top header of the page
  * @param {object} model
+ * @param {pages}
  * @return {vnode}
  */
-const content = (model, pages) => h('.p4', switchCase(model.router.params.page, pages)(model))
+const navBar = (model, pages) =>
+    h('.flex-row.justify-between.items-center.ph4.pv2.shadow-level2.level2.bg-gray-light', [
+        h('.flex-column.items-center', [
+            h('img', {
+                style: 'width: 40px',
+                src: './assets/alice.png',
+            }),
+            h('.f6', 'Logbook'),
+        ]),
+        h('btn-group', Object.keys(pages).map(tab => {
+            return h(`button.btn.btn-tab ${model.router.params.page === tab ? 'selected' : ''}`, {
+                onclick: () => model.router.go(`?page=${tab}`),
+            }, tab[0].toUpperCase() + tab.slice(1))
+        })),
+        h('button.btn.h3', iconPerson()),
+    ]);
+
+export default navBar;

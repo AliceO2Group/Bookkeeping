@@ -15,32 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import { h, switchCase } from '/js/src/index.js';
-import NavBar from './components/NavBar/index.js';
-import GeneralOverview from './views/Overview/General/page.js';
+import { h } from '/js/src/index.js';
 
 /**
- * Main view layout
- * @param {object} model - representing current application state
- * @return {vnode} application view to be drawn according to model
- */
-export default model => {
-    const pages = {
-        home: GeneralOverview,
-    }
-
-    return [
-        h('.flex-column.absolute-fill', [
-            NavBar(model, pages),
-            content(model, pages),
-        ]),
-    ];
-}
-
-/**
- * Page content
- * @param {object} model
+ * Table row header
+ * @param {string} header
  * @return {vnode}
  */
-const content = (model, pages) => h('.p4', switchCase(model.router.params.page, pages)(model))
+const rowHeader = header => [h('th', header)];
+
+/**
+ * Table data row
+ * @param {object} data
+ * @return {vnode}
+ */
+const rowData = data => [h('td', data)];
+
+export { rowHeader, rowData };

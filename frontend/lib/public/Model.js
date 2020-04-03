@@ -16,7 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Observable, QueryRouter, Loader, sessionService } from '/js/src/index.js';
+import {
+    Observable,
+    QueryRouter,
+    Loader,
+    sessionService,
+} from '/js/src/index.js';
+
+import Overview from './views/Overview/Overview.js';
 
 /**
  * Root of model tree
@@ -32,9 +39,12 @@ export default class Model extends Observable {
         this.session = sessionService.get();
         this.session.personid = parseInt(this.session.personid, 10);
 
+        // Bind Models
         this.loader = new Loader(this);
         this.loader.bubbleTo(this);
 
+        this.overview = new Overview(this);
+        this.overview.bubbleTo(this);
         // Setup router
         this.router = new QueryRouter();
         this.router.observe(this.handleLocationChange.bind(this));
