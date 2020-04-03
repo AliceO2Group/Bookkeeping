@@ -19,16 +19,40 @@ import { h } from '/js/src/index.js';
 
 /**
  * Table row header
- * @param {string} header
+ * @param {String} header
  * @return {vnode}
  */
 const rowHeader = header => [h('th', header)];
 
 /**
  * Table data row
- * @param {object} data
+ * @param {Object} data
  * @return {vnode}
  */
 const rowData = data => [h('td', data)];
 
-export { rowHeader, rowData };
+/**
+ * Renders the table
+ * @param {Array} data
+ * @param {Array} headers
+ * @returns {vnode}
+ */
+const table = (data, headers) => {
+    return h('table.table.shadow-level1.mh3', [
+        h('tr', [
+            headers.map(header => {
+                return rowHeader(header);
+            }),
+        ]),
+        data.map((entry, index) => {
+            return h('tr', [
+                rowData(index + 1),
+                Object.keys(entry).map(subItem => {
+                    return rowData(entry[subItem]);
+                }),
+            ]);
+        }),
+    ])
+}
+
+export { table };
