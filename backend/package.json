@@ -12,7 +12,8 @@
     "test": "mocha --exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.11.0"
+    "@aliceo2/web-ui": "1.11.0",
+    "deepmerge": "4.2.2"
   },
   "devDependencies": {
     "chai": "4.2.0",
