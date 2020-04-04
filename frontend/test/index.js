@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const assert = require('assert')
-const puppeteer = require('puppeteer')
-const pti = require('puppeteer-to-istanbul')
-const PORT = 3000
+const assert = require('assert');
+const puppeteer = require('puppeteer');
+const pti = require('puppeteer-to-istanbul');
+const PORT = 3000;
 
 describe('Frontend', function () {
     // Configure this suite to have a default timeout of 10s
@@ -31,19 +31,19 @@ describe('Frontend', function () {
 
     before(() => {
         http = require('./../lib/server');
-    })
+    });
 
     before(async () => {
-        browser = await puppeteer.launch()
-        page = await browser.newPage()
+        browser = await puppeteer.launch();
+        page = await browser.newPage();
         await Promise.all([
             page.coverage.startJSCoverage(),
             page.coverage.startCSSCoverage(),
         ]);
-    })
+    });
 
     after(async () => {
-        http.close()
+        http.close();
         const [jsCoverage, cssCoverage] = await Promise.all([
             page.coverage.stopJSCoverage(),
             page.coverage.stopCSSCoverage(),
@@ -53,34 +53,34 @@ describe('Frontend', function () {
             element.url = element.url.replace('?', '');
         });
 
-        pti.write([...jsCoverage, ...cssCoverage])
-        await browser.close()
-    })
+        pti.write([...jsCoverage, ...cssCoverage]);
+        await browser.close();
+    });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`http://localhost:${PORT}`)
+        const response = await page.goto(`http://localhost:${PORT}`);
         // We expect the page to return the correct status code, making sure the server is running properly
-        assert.equal(response.status(), 200)
-        const title = await page.title()
+        assert.equal(response.status(), 200);
+        const title = await page.title();
         // We expect the page to return the correct title, making sure there isn't another server running on this port
-        assert.equal(title, 'AliceO2 Logbook 2020')
-    })
+        assert.equal(title, 'AliceO2 Logbook 2020');
+    });
 
     describe('Overview', () => {
         it('can filter logs dynamically', async () => {
-            const checkbox = await page.$('.form-check input')
-            const label = await page.$('.form-check label div')
+            const checkbox = await page.$('.form-check input');
+            const label = await page.$('.form-check label div');
 
-            const id = await page.evaluate(element => element.id, checkbox)
-            const amount = await page.evaluate(element => element.innerText, label)
+            const id = await page.evaluate((element) => element.id, checkbox);
+            const amount = await page.evaluate((element) => element.innerText, label);
             // We expect to have captured the first checkbox in the list
-            assert.equal(id, 'filtersCheckbox1')
+            assert.equal(id, 'filtersCheckbox1');
 
-            await page.click(`#${id}`)
-            await page.waitFor(1000)
-            const newTableRows = await page.$$('table tr')
+            await page.click(`#${id}`);
+            await page.waitFor(1000);
+            const newTableRows = await page.$$('table tr');
             // We expect the amount of logs in this filter to match the advertised amount in the filters component
-            assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
-        })
-    })
-})
+            assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)));
+        });
+    });
+});

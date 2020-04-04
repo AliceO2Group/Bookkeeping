@@ -64,8 +64,8 @@ export default class Overview extends Observable {
      * @returns {Array} subentries
      */
     getTableData() {
-        const subentries = this.filtered.map(entry => {
-            const filter = Object.keys(entry).map(subkey => {
+        const subentries = this.filtered.map((entry) => {
+            const filter = Object.keys(entry).map((subkey) => {
                 if (subkey !== 'tags') {
                     return entry[subkey];
                 }
@@ -91,7 +91,7 @@ export default class Overview extends Observable {
      * @param {string} condition
      */
     removeFilter(condition) {
-        this.filterCriteria = this.filterCriteria.filter(tag => tag !== condition);
+        this.filterCriteria = this.filterCriteria.filter((tag) => tag !== condition);
         this.getFilteredData();
     }
 
@@ -111,7 +111,7 @@ export default class Overview extends Observable {
      */
     filterByTags() {
         this.filtered = this.data
-            .map(entry => {
+            .map((entry) => {
                 let match = this.checkExistingTag(entry);
 
                 if (match) {
@@ -120,7 +120,7 @@ export default class Overview extends Observable {
 
                 return null;
             })
-            .filter(entry => entry !== null);
+            .filter((entry) => entry !== null);
     }
 
     /**
@@ -129,7 +129,7 @@ export default class Overview extends Observable {
      * @return {bool}
      */
     checkExistingTag(entry) {
-        const check = this.filterCriteria.map(tag => {
+        const check = this.filterCriteria.map((tag) => {
             const match = entry.tags.includes(tag);
             if (match) {
                 return 'Match';
@@ -146,7 +146,7 @@ export default class Overview extends Observable {
      */
     getTagCounts() {
         return this.data.reduce((accumulator, currentValue) => {
-            currentValue.tags.forEach(tag => {
+            currentValue.tags.forEach((tag) => {
                 accumulator[tag] = (accumulator[tag] || 0) + 1;
             });
             return accumulator;
