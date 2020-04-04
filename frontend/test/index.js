@@ -21,7 +21,10 @@ const puppeteer = require('puppeteer')
 const pti = require('puppeteer-to-istanbul')
 const PORT = 3000
 
-describe('Frontend', () => {
+describe('Frontend', function () {
+    // Configure this suite to have a default timeout of 10s
+    this.timeout(10000);
+
     let page;
     let http;
     let browser;
@@ -61,7 +64,7 @@ describe('Frontend', () => {
         const title = await page.title()
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         assert.equal(title, 'AliceO2 Logbook 2020')
-    }).timeout(5000)
+    })
 
     describe('Overview', () => {
         it('can filter logs dynamically', async () => {
@@ -79,5 +82,5 @@ describe('Frontend', () => {
             // We expect the amount of logs in this filter to match the advertised amount in the filters component
             assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)))
         })
-    }).timeout(5000)
+    })
 })

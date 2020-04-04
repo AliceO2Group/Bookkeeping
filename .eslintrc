@@ -74,6 +74,12 @@
             "error",
             "never"
         ],
+        "prefer-arrow-callback": [
+            "error",
+            {
+                "allowUnboundThis": true
+            }
+        ],
         "quote-props": [
             "error",
             "as-needed"
