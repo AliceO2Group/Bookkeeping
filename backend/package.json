@@ -9,7 +9,7 @@
     "lint:fix": "npm run lint -- --fix",
     "start:dev": "nodemon lib/server.js",
     "start:prod": "node lib/server.js",
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.10.4"
