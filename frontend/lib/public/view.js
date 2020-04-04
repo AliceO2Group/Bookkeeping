@@ -25,10 +25,10 @@ import GeneralOverview from './views/Overview/General/page.js';
  * @param {object} model - representing current application state
  * @return {vnode} application view to be drawn according to model
  */
-export default model => {
+export default (model) => {
     const pages = {
         home: GeneralOverview,
-    }
+    };
 
     return [
         h('.flex-column.absolute-fill', [
@@ -36,11 +36,11 @@ export default model => {
             content(model, pages),
         ]),
     ];
-}
+};
 
 /**
  * Page content
  * @param {object} model
  * @return {vnode}
  */
-const content = (model, pages) => h('.p4', switchCase(model.router.params.page, pages)(model))
+const content = (model, pages) => h('.p4', switchCase(model.router.params.page, pages)(model));

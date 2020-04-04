@@ -12,6 +12,20 @@
         "eslint:recommended"
     ],
     "rules": {
+        "array-bracket-newline": [
+            "error",
+            {
+                "multiline": true
+            }
+        ],
+        "arrow-body-style": [
+            "error",
+            "as-needed"
+        ],
+        "arrow-parens": [
+            "error",
+            "always"
+        ],
         "comma-dangle": [
             "error",
             "always-multiline"
@@ -40,6 +54,7 @@
             }
         ],
         "init-declarations": "off",
+        "linebreak-style": "off",
         "lines-around-comment": [
             "error",
             {
@@ -69,6 +84,10 @@
         "object-curly-spacing": [
             "error",
             "always"
+        ],
+        "one-var": [
+            "error",
+            "never"
         ],
         "padded-blocks": [
             "error",
@@ -103,6 +122,25 @@
                 }
             }
         ],
-        "sort-vars": "off"
+        "semi": "error",
+        "semi-style": [
+            "error",
+            "last"
+        ],
+        "space-before-function-paren": [
+            "error",
+            {
+                "anonymous": "always",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
+        "sort-vars": "off",
+        "valid-jsdoc": [
+            "error",
+            {
+                "matchDescription": ".+"
+            }
+        ]
     }
 }

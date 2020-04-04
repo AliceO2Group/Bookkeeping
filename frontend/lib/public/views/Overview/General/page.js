@@ -19,22 +19,20 @@ import { h } from '/js/src/index.js';
 import filters from '../../../components/Filters/index.js';
 import { table } from '../../../components/Table/index.js';
 
-export default model => [overviewScreen(model)];
+export default (model) => [overviewScreen(model)];
 
 /**
  * Table row header
  * @param {object} model
  * @return {vnode}
  */
-const overviewScreen = model => {
+const overviewScreen = (model) => {
     const headers = model.overview.getHeaders();
     const data = model.overview.getTableData();
     const tags = model.overview.getTagCounts();
 
     return h('.w-100.flex-row', [
         filters(model, tags),
-        h('.w-75', [
-            table(data, headers),
-        ]),
+        h('.w-75', [table(data, headers)]),
     ]);
 };

@@ -33,11 +33,9 @@ const navBar = (model, pages) =>
             }),
             h('.f6', 'Logbook'),
         ]),
-        h('btn-group', Object.keys(pages).map(tab => {
-            return h(`button.btn.btn-tab ${model.router.params.page === tab ? 'selected' : ''}`, {
-                onclick: () => model.router.go(`?page=${tab}`),
-            }, tab[0].toUpperCase() + tab.slice(1))
-        })),
+        h('btn-group', Object.keys(pages).map((tab) => h(`button.btn.btn-tab ${model.router.params.page === tab ? 'selected' : ''}`, {
+            onclick: () => model.router.go(`?page=${tab}`),
+        }, tab[0].toUpperCase() + tab.slice(1)))),
         h('button.btn.h3', iconPerson()),
     ]);
 

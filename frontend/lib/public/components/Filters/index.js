@@ -29,7 +29,7 @@ const checkboxFilter = (model, tags) => {
     const checkboxes = Object.entries(tags).map(([tag, count], index) =>
         h('.form-check', [
             h('input.form-check-input', {
-                onclick: e => {
+                onclick: (e) => {
                     const isChecked = e.target.checked;
                     !isChecked
                         ? model.overview.removeFilter(tag)
