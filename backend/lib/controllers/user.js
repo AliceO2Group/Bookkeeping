@@ -1,46 +1,51 @@
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get all users
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const index = (req, res) => {
-    res.send('USER INDEX not defined');
+const index = (_request, response) => {
+    response.send('USER INDEX not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get all logs of User
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const getLogs = (req, res) => {
-    res.send('USER GET_LOGS not defined');
+const getLogs = (_request, response) => {
+    response.send('USER GET_LOGS not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get Tokens of user
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const getTokens = (req, res) => {
-    res.send('USER GET_TOKENS not defined');
+const getTokens = (_request, response) => {
+    response.send('USER GET_TOKENS not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get user
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const read = (req, res) => {
-    res.send('USER READ not defined');
+const read = (_request, response) => {
+    response.send('USER READ not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Post token for user
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const postTokens = (req, res) => {
-    res.send('USER POST_TOKENS not defined');
+const postTokens = (_request, response) => {
+    response.send('USER POST_TOKENS not defined');
 };
 
 module.exports = {

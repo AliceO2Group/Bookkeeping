@@ -1,74 +1,82 @@
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Create tag
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const create = (req, res) => {
-    res.send('TAG CREATE not defined');
-}
-
-/**
- *
- * @param {Object} req
- * @param {Object} res
- */
-const deleteTag = (req, res) => {
-    res.send('TAG DELETE not defined');
-}
-
-/**
- *
- * @param {Object} req
- * @param {Object} res
- */
-const getLogs = (req, res) => {
-    res.send('TAG GET_LOGS not defined');
+const create = (_request, response) => {
+    response.send('TAG CREATE not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Delete tag
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const getRuns = (req, res) => {
-    res.send('TAG GET_RUNS not defined');
-}
-
-/**
- *
- * @param {Object} req
- * @param {Object} res
- */
-const index = (req, res) => {
-    res.send('TAG INDEX not defined');
+const deleteTag = (_request, response) => {
+    response.send('TAG DELETE not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get all logs with tag
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const patchLog = (req, res) => {
-    res.send('TAG PATCH_LOG not defined');
+const getLogs = (_request, response) => {
+    response.send('TAG GET_LOGS not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get all Runs with tag
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const patchRun = (req, res) => {
-    res.send('TAG PATCH_RUN not defined');
+const getRuns = (_request, response) => {
+    response.send('TAG GET_RUNS not defined');
 };
 
 /**
- *
- * @param {Object} req
- * @param {Object} res
+ * Get all tags
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
  */
-const read = (req, res) => {
-    res.send('TAG READ not defined');
-}
+const index = (_request, response) => {
+    response.send('TAG INDEX not defined');
+};
+
+/**
+ * Patch tag on log
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
+ */
+const patchLog = (_request, response) => {
+    response.send('TAG PATCH_LOG not defined');
+};
+
+/**
+ * Patch tag on run
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
+ */
+const patchRun = (_request, response) => {
+    response.send('TAG PATCH_RUN not defined');
+};
+
+/**
+ * Get tag
+ * @param {Object} _request response object
+ * @param {Object} response response object
+ * @returns {undefined}
+ */
+const read = (_request, response) => {
+    response.send('TAG READ not defined');
+};
 
 module.exports = {
     create,
@@ -79,4 +87,4 @@ module.exports = {
     patchLog,
     patchRun,
     read,
-}
+};

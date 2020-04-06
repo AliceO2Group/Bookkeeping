@@ -15,19 +15,21 @@ const routes = [
 ];
 
 /**
- *
- * @param {Object} parent
- * @param {Object} child
+ * Makes the child object inherit the args of the parent object, but keeps the overwrites
+ * @param {Object} parent parent who's args will be inherited
+ * @param {Object} child child who will inherit the args
+ * @returns {undefined}
  */
 const inheritArgs = (parent, child) => {
     child.args = deepmerge(parent.args||{}, child.args||{});
-}
+};
 
 /**
  * Route binder, used to bind routes to the httpServer
  * @param {Object} http httpServer that the routes should be bound on
  * @param {Object} route the route that should be bound
- * @param {String} [path=''] the base path of the route
+ * @param {String} [parentPath=''] the base path of the route
+ * @returns {undefined}
  */
 const bindRoute = (http, route, parentPath = '') => {
     const localPath = parentPath.concat(route.path);
@@ -37,15 +39,15 @@ const bindRoute = (http, route, parentPath = '') => {
     }
 
     if (route.children) {
-        route.children.forEach(child => {
+        route.children.forEach((child) => {
             inheritArgs(route, child);
             bindRoute(http, child, localPath);
         });
     }
-}
+};
 
 module.exports = (http) => {
-    routes.forEach(route => {
+    routes.forEach((route) => {
         bindRoute(http, route);
     });
-}
+};
