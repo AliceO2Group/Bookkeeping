@@ -7,23 +7,25 @@ module.exports = {
     children: [
         {
             method: 'get',
-            path: '/:id',
+            path: ':id',
             controller: User.read,
-        },
-        {
-            method: 'get',
-            path: '/:id/tokens',
-            controller: User.getTokens,
-        },
-        {
-            method: 'post',
-            path: '/:id/tokens',
-            controller: User.postTokens,
-        },
-        {
-            method: 'get',
-            path: '/:id/logs',
-            controller: User.getLogs,
+            children: [
+                {
+                    method: 'get',
+                    path: 'tokens',
+                    controller: User.getTokens,
+                },
+                {
+                    method: 'post',
+                    path: 'tokens',
+                    controller: User.postTokens,
+                },
+                {
+                    method: 'get',
+                    path: 'logs',
+                    controller: User.getLogs,
+                },
+            ],
         },
     ],
 };
