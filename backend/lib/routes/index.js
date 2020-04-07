@@ -1,15 +1,10 @@
-const { ApiController } = require('../controllers');
+const apiRoute = require('./home');
 const userRoute = require('./users');
 const tagsRoute = require('./tags');
 const { appendPath, deepmerge } = require('../utils/');
 
 const routes = [
-    {
-        method: 'get',
-        path: '/',
-        controller: ApiController,
-        args: { public: true },
-    },
+    apiRoute,
     userRoute,
     tagsRoute,
 ];
