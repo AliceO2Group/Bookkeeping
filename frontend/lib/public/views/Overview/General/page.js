@@ -23,8 +23,8 @@ export default (model) => [overviewScreen(model)];
 
 /**
  * Table row header
- * @param {object} model
- * @return {vnode}
+ * @param {object} model Pass the model to access the defined functions
+ * @return {vnode} Return the view of the table with the filtering options
  */
 const overviewScreen = (model) => {
     const headers = model.overview.getHeaders();

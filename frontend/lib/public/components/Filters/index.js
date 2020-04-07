@@ -21,9 +21,9 @@ const FILTERS_LIMITS = 5;
 
 /**
  * Checkbox filter
- * @param {Object} model
- * @param {Array} tags
- * @return {vnode}
+ * @param {Object} model Pass the model to access the defined functions
+ * @param {Array} tags Pass the tags to load in the view
+ * @return {vnode} Return the form to be shown
  */
 const checkboxFilter = (model, tags) => {
     const checkboxes = Object.entries(tags).map(([tag, count], index) =>
@@ -56,9 +56,9 @@ const checkboxFilter = (model, tags) => {
 
 /**
  * Render the filters
- * @param {Object} model
- * @param {Array} tags
- * @return {vnode}
+ * @param {Object} model Pass the model to access the defined functions
+ * @param {Array} tags Pass the tags to load in the view
+ * @return {vnode} Return final view of the filtering form
  */
 const filters = (model, tags) =>
     h('.w-25.shadow-level1.p2', [

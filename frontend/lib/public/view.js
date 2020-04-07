@@ -40,7 +40,8 @@ export default (model) => {
 
 /**
  * Page content
- * @param {object} model
- * @return {vnode}
+ * @param {Object} model Pass the model object to the child
+ * @param {Object} pages Pass the pages to the switchcase
+ * @returns {vnode} Returns a vnode to render the pages
  */
 const content = (model, pages) => h('.p4', switchCase(model.router.params.page, pages)(model));
