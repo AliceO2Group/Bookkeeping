@@ -1,4 +1,4 @@
-const { Tag } = require('../controllers');
+const { TagController } = require('../controllers');
 module.exports = {
     path: '/tag',
     args: { public: true },
@@ -6,42 +6,42 @@ module.exports = {
         {
             method: 'get',
             path: '',
-            controller: Tag.index,
+            controller: TagController.index,
         },
         {
             method: 'post',
             path: '',
-            controller: Tag.create,
+            controller: TagController.create,
         },
         {
             method: 'get',
             path: ':id',
-            controller: Tag.read,
+            controller: TagController.read,
             children:[
                 {
                     method: 'get',
                     path: '/runs',
-                    controller: Tag.getRuns,
+                    controller: TagController.getRuns,
                 },
                 {
                     method: 'get',
                     path: '/logs',
-                    controller: Tag.getLogs,
+                    controller: TagController.getLogs,
                 },
                 {
                     method: 'get',
                     path: '/runs',
-                    controller: Tag.patchRun,
+                    controller: TagController.patchRun,
                 },
                 {
                     method: 'get',
                     path: '/log',
-                    controller: Tag.patchLog,
+                    controller: TagController.patchLog,
                 },
                 {
                     method: 'delete',
                     path: '',
-                    controller: Tag.deleteTag,
+                    controller: TagController.deleteTag,
                 },
             ],
         },

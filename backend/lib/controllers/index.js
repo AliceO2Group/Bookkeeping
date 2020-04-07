@@ -1,13 +1,14 @@
-const User = require('./user');
-const Tag = require('./tag');
+const UserController = require('./user');
+const TagController = require('./tag');
 
 /**
  * Basic api information controller
  * @param {Object} _request response object
  * @param {Object} response response object
+ * @param {CallableFunction} _next next callback
  * @returns {undefined}
  */
-const Api = (_request, response) => {
+const ApiController = (_request, response, _next) => {
     response.status(200).json({
         name: 'Jiskefet Backend',
         version: '0.0.0',
@@ -15,7 +16,7 @@ const Api = (_request, response) => {
 };
 
 module.exports = {
-    Api,
-    Tag,
-    User,
+    ApiController,
+    TagController,
+    UserController,
 };

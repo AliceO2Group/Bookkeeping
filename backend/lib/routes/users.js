@@ -1,29 +1,29 @@
-const { User } = require('../controllers');
+const { UserController } = require('../controllers');
 module.exports = {
     method: 'get',
     path: '/users',
-    controller: User.index,
+    controller: UserController.index,
     args: { public: true },
     children: [
         {
             method: 'get',
             path: ':id',
-            controller: User.read,
+            controller: UserController.read,
             children: [
                 {
                     method: 'get',
                     path: 'tokens',
-                    controller: User.getTokens,
+                    controller: UserController.getTokens,
                 },
                 {
                     method: 'post',
                     path: 'tokens',
-                    controller: User.postTokens,
+                    controller: UserController.postTokens,
                 },
                 {
                     method: 'get',
                     path: 'logs',
-                    controller: User.getLogs,
+                    controller: UserController.getLogs,
                 },
             ],
         },
