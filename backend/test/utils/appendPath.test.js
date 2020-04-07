@@ -1,4 +1,4 @@
-const appendPath = require('../../lib/utils/appendPath');
+const { appendPath } = require('../../lib/utils');
 const chai = require('chai');
 const { expect } = chai;
 

@@ -1,4 +1,4 @@
-const deepmerge = require('../../lib/utils/deepmerge');
+const { deepmerge } = require('../../lib/utils');
 const chai = require('chai');
 const { expect } = chai;
 
@@ -25,7 +25,7 @@ module.exports = () => {
                 a: 1,
                 b: 2,
                 c: 4,
-                moreLetters:{
+                moreLetters: {
                     x: 42,
                     y: 'Not a Number',
                     z: 123,
