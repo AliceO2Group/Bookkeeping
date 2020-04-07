@@ -20,6 +20,7 @@ const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
+const utils = require('./utils');
 
 const { expect } = chai;
 
@@ -49,3 +50,5 @@ describe('GET /api/', () => {
             });
     });
 });
+
+describe('utils', utils);
