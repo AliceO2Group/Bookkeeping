@@ -20,9 +20,9 @@ import { iconPerson } from '/js/src/icons.js';
 
 /**
  * Top header of the page
- * @param {object} model
- * @param {pages}
- * @return {vnode}
+ * @param {Object} model Pass the model to access the defined functions
+ * @param {Array} pages THe pages in defined in the view.js file
+ * @return {vnode} Returns the navbar
  */
 const navBar = (model, pages) =>
     h('.flex-row.justify-between.items-center.ph4.pv2.shadow-level2.level2.bg-gray-light', [
@@ -33,9 +33,10 @@ const navBar = (model, pages) =>
             }),
             h('.f6', 'Logbook'),
         ]),
-        h('btn-group', Object.keys(pages).map((tab) => h(`button.btn.btn-tab ${model.router.params.page === tab ? 'selected' : ''}`, {
-            onclick: () => model.router.go(`?page=${tab}`),
-        }, tab[0].toUpperCase() + tab.slice(1)))),
+        h('btn-group', Object.keys(pages).map((tab) =>
+            h(`button.btn.btn-tab ${model.router.params.page === tab ? 'selected' : ''}`, {
+                onclick: () => model.router.go(`?page=${tab}`),
+            }, tab[0].toUpperCase() + tab.slice(1)))),
         h('button.btn.h3', iconPerson()),
     ]);
 

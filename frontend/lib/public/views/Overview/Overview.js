@@ -22,7 +22,9 @@ import { Observable } from '/js/src/index.js';
  */
 export default class Overview extends Observable {
     /**
-     * @param {Object} model
+     * The constructor of the Overview model object
+     * @param {Object} model Pass the model to access the defined functions
+     * @returns {Object} Constructs the Overview model
      */
     constructor(model) {
         super();
@@ -54,14 +56,16 @@ export default class Overview extends Observable {
     }
 
     /**
-     * @returns {Array} headers
+     * Get the headers from the Overview class
+     * @returns {Array} Returns the headers
      */
     getHeaders() {
         return this.headers;
     }
 
     /**
-     * @returns {Array} subentries
+     * Get the table data
+     * @returns {Array} The data without the tags to be rendered in a table
      */
     getTableData() {
         const subentries = this.filtered.map((entry) => {
@@ -79,7 +83,8 @@ export default class Overview extends Observable {
 
     /**
      * Add filter to the selection
-     * @param {string} tag
+     * @param {string} tag The tag to be added to the filter criteria
+     * @returns {Array} Sets the data according to the filters applied
      */
     addFilter(tag) {
         this.filterCriteria = [...this.filterCriteria, tag];
@@ -88,7 +93,8 @@ export default class Overview extends Observable {
 
     /**
      * Remove filter from the selection
-     * @param {string} condition
+     * @param {string} condition The ocondition to filter the array on
+     * @returns {Array} Sets the array with the new filter criteria
      */
     removeFilter(condition) {
         this.filterCriteria = this.filterCriteria.filter((tag) => tag !== condition);
@@ -97,6 +103,7 @@ export default class Overview extends Observable {
 
     /**
      * Filter the data
+     * @returns {Array} Sets the data according to the amount of applied filters
      */
     getFilteredData() {
         this.filterCriteria.length !== 0
@@ -108,6 +115,7 @@ export default class Overview extends Observable {
 
     /**
      * Filter data by tags if applicable
+     * @returns {Array} Sets the filtered data on the criterium applied by the user
      */
     filterByTags() {
         this.filtered = this.data
@@ -125,8 +133,8 @@ export default class Overview extends Observable {
 
     /**
      * Check for an existing tag
-     * @param {object} entry
-     * @return {bool}
+     * @param {Object} entry The entry in the total array of the data
+     * @return {Boolean} Returns the status of the existence of a tag in the data entry
      */
     checkExistingTag(entry) {
         const check = this.filterCriteria.map((tag) => {
@@ -142,7 +150,7 @@ export default class Overview extends Observable {
 
     /**
      * Counts the tags with their total appearances
-     * @return {object}
+     * @return {Object} Returns the count of each tag
      */
     getTagCounts() {
         return this.data.reduce((accumulator, currentValue) => {

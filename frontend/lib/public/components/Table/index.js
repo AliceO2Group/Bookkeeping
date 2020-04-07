@@ -19,23 +19,23 @@ import { h } from '/js/src/index.js';
 
 /**
  * Table row header
- * @param {String} header
- * @return {vnode}
+ * @param {String} header The text of the header elements
+ * @return {vnode} Return a single row header element
  */
 const rowHeader = (header) => [h('th', header)];
 
 /**
  * Table data row
- * @param {Object} data
- * @return {vnode}
+ * @param {Object} data The data to be rendered in the child element of the row
+ * @return {vnode} Return a row of data in the table
  */
 const rowData = (data) => [h('td', data)];
 
 /**
  * Renders the table
- * @param {Array} data
- * @param {Array} headers
- * @returns {vnode}
+ * @param {Array} data The data array containing the objects with the data per row
+ * @param {Array} headers The array of of the headers to be rendered in the table
+ * @returns {vnode} Return the total view of the table to rendered
  */
 const table = (data, headers) => h('table.table.shadow-level1.mh3', [
     h('tr', [headers.map((header) => rowHeader(header))]),

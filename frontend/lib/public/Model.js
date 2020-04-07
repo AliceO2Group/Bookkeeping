@@ -55,6 +55,7 @@ export default class Model extends Observable {
 
     /**
      * Delegates sub-model actions depending on new location of the page
+     * @returns {vnode} The page to be loaded
      */
     handleLocationChange() {
         switch (this.router.params.page) {
