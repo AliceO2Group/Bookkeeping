@@ -1,7 +1,7 @@
 const { Api } = require('../controllers');
 const userRoute = require('./users');
 const tagsRoute = require('./tags');
-const { deepmerge } = require('../utils/');
+const { appendPath, deepmerge } = require('../utils/');
 
 const routes = [
     {
@@ -32,7 +32,7 @@ const inheritArgs = (parent, child) => {
  * @returns {undefined}
  */
 const bindRoute = (http, route, parentPath = '') => {
-    const localPath = parentPath.concat(route.path);
+    const localPath = appendPath(parentPath, route.path, route.pathOption);
 
     if (route.method && route.controller) {
         http[route.method](localPath, route.controller, route.args);
