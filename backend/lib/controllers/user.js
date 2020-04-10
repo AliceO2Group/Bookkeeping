@@ -18,7 +18,7 @@
 
 /**
  * Get all users
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -35,7 +35,7 @@ const index = (_request, response) => {
 
 /**
  * Get all logs of User
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -52,7 +52,7 @@ const getLogs = (_request, response) => {
 
 /**
  * Get Tokens of user
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -69,7 +69,7 @@ const getTokens = (_request, response) => {
 
 /**
  * Get user
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -86,7 +86,7 @@ const read = (_request, response) => {
 
 /**
  * Post token for user
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */

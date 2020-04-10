@@ -21,7 +21,7 @@ const TagController = require('./tag');
 
 /**
  * Basic api information controller
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @param {CallableFunction} _next next callback
  * @returns {undefined}

@@ -18,7 +18,7 @@
 
 /**
  * Create tag
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -35,7 +35,7 @@ const create = (_request, response) => {
 
 /**
  * Delete tag
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -52,7 +52,7 @@ const deleteTag = (_request, response) => {
 
 /**
  * Get all logs with tag
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -69,7 +69,7 @@ const getLogs = (_request, response) => {
 
 /**
  * Get all Runs with tag
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -86,7 +86,7 @@ const getRuns = (_request, response) => {
 
 /**
  * Get all tags
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -103,7 +103,7 @@ const index = (_request, response) => {
 
 /**
  * Patch tag on log
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -120,7 +120,7 @@ const patchLog = (_request, response) => {
 
 /**
  * Patch tag on run
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
@@ -137,7 +137,7 @@ const patchRun = (_request, response) => {
 
 /**
  * Get tag
- * @param {Object} _request request  object
+ * @param {Object} _request request object
  * @param {Object} response response object
  * @returns {undefined}
  */
