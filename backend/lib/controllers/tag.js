@@ -18,82 +18,138 @@
 
 /**
  * Create tag
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const create = (_request, response) => {
-    response.send('TAG CREATE not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Delete tag
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const deleteTag = (_request, response) => {
-    response.send('TAG DELETE not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Get all logs with tag
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const getLogs = (_request, response) => {
-    response.send('TAG GET_LOGS not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Get all Runs with tag
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const getRuns = (_request, response) => {
-    response.send('TAG GET_RUNS not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Get all tags
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const index = (_request, response) => {
-    response.send('TAG INDEX not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Patch tag on log
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const patchLog = (_request, response) => {
-    response.send('TAG PATCH_LOG not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Patch tag on run
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const patchRun = (_request, response) => {
-    response.send('TAG PATCH_RUN not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 /**
  * Get tag
- * @param {Object} _request response object
+ * @param {Object} _request request  object
  * @param {Object} response response object
  * @returns {undefined}
  */
 const read = (_request, response) => {
-    response.send('TAG READ not defined');
+    response.status(501).json({
+        error: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
 };
 
 module.exports = {
