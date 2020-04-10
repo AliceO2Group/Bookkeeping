@@ -19,7 +19,7 @@
     "mocha": "7.1.1",
     "nodemon": "2.0.3",
     "nyc": "15.0.1",
-    "puppeteer-to-istanbul": "1.2.2",
-    "puppeteer": "2.1.1"
+    "puppeteer": "2.1.1",
+    "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul"
   }
 }
