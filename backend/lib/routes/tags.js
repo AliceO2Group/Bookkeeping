@@ -18,7 +18,7 @@
 
 const { TagController } = require('../controllers');
 module.exports = {
-    path: '/tag',
+    path: '/tags',
     args: { public: true },
     children: [
         {
