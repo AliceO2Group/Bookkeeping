@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const ApiController = require('./home');
-const UserController = require('./user');
-const TagController = require('./tag');
+const HomeController = require('./home.controller');
+const UserController = require('./users.controller');
+const TagController = require('./tags.controller');
 
 module.exports = {
-    ApiController,
+    HomeController,
     TagController,
     UserController,
 };

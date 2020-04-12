@@ -17,6 +17,7 @@
  */
 
 const { TagController } = require('../controllers');
+
 module.exports = {
     path: '/tags',
     args: { public: true },
@@ -63,6 +64,5 @@ module.exports = {
                 },
             ],
         },
-
     ],
 };

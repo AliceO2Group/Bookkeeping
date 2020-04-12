@@ -17,7 +17,7 @@
  */
 
 const { HttpServer } = require('@aliceo2/web-ui');
-const buildEndpoints = require('./routes');
+const buildEndpoints = require('./routers');
 
 const http = new HttpServer({
     port: 4000,

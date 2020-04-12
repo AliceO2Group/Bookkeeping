@@ -1,4 +1,3 @@
-
 /**
  * This file is part of the ALICE Electronic Logbook v2, also known as Jiskefet.
  * Copyright (C) 2020  Stichting Hogeschool van Amsterdam
@@ -17,18 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * Basic api information controller
- * @param {Object} _request request object
- * @param {Object} response response object
- * @param {CallableFunction} _next next callback
- * @returns {undefined}
- */
-const ApiController = (_request, response, _next) => {
-    response.status(200).json({
-        name: 'Jiskefet Backend',
-        version: '0.0.0',
-    });
-};
+const { HomeController } = require('../controllers');
 
-module.exports = { ApiController };
+module.exports = {
+    method: 'get',
+    path: '/',
+    controller: HomeController.getServerInfo,
+    args: { public: true },
+};

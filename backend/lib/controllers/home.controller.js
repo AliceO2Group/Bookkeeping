@@ -16,34 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { UserController } = require('../controllers');
+/**
+ * Basic api information controller.
+ *
+ * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
+ *                         string, parameters, body, HTTP headers, and so on.
+ * @param {Object} response The *response* object represents the HTTP response that an Express app sends when it gets an
+ *                          HTTP request.
+ * @param {Function} next The *next* object represents the next middleware function which is used to pass control to the
+ *                        next middleware function.
+ * @returns {undefined}
+ */
+const getServerInfo = (request, response, next) => {
+    response.status(200).json({
+        name: 'Jiskefet Backend',
+        version: '0.0.0',
+    });
+};
+
 module.exports = {
-    method: 'get',
-    path: '/users',
-    controller: UserController.index,
-    args: { public: true },
-    children: [
-        {
-            method: 'get',
-            path: ':id',
-            controller: UserController.read,
-            children: [
-                {
-                    method: 'get',
-                    path: 'tokens',
-                    controller: UserController.getTokens,
-                },
-                {
-                    method: 'post',
-                    path: 'tokens',
-                    controller: UserController.postTokens,
-                },
-                {
-                    method: 'get',
-                    path: 'logs',
-                    controller: UserController.getLogs,
-                },
-            ],
-        },
-    ],
+    getServerInfo,
 };

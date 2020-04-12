@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const apiRoute = require('./home');
-const userRoute = require('./users');
-const tagsRoute = require('./tags');
-const { appendPath, deepmerge } = require('../utils/');
+const apiRoute = require('./home.router');
+const userRoute = require('./users.router');
+const tagsRoute = require('./tags.router');
+const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
     apiRoute,
@@ -28,7 +28,8 @@ const routes = [
 ];
 
 /**
- * Makes the child object inherit the args of the parent object, but keeps the overwrites
+ * Makes the child object inherit the args of the parent object, but keeps the overwrites.
+ *
  * @param {Object} parent parent who's args will be inherited
  * @param {Object} child child who will inherit the args
  * @returns {undefined}
@@ -38,7 +39,8 @@ const inheritArgs = (parent, child) => {
 };
 
 /**
- * Route binder, used to bind routes to the httpServer
+ * Route binder, used to bind routes to the httpServer.
+ *
  * @param {Object} http httpServer that the routes should be bound on
  * @param {Object} route the route that should be bound
  * @param {String} [parentPath=''] the base path of the route
