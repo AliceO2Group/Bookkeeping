@@ -17,14 +17,16 @@
  */
 
 const apiRoute = require('./home.router');
-const userRoute = require('./users.router');
+const subsystemsRoute = require('./subsystems.router');
 const tagsRoute = require('./tags.router');
+const usersRoute = require('./users.router');
 const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
     apiRoute,
-    userRoute,
+    subsystemsRoute,
     tagsRoute,
+    usersRoute,
 ];
 
 /**
