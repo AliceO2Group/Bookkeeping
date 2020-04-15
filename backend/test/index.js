@@ -21,6 +21,7 @@ const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
 const utils = require('./utils');
+const openapi = require('./openapi.test');
 
 const { expect } = chai;
 
@@ -52,3 +53,4 @@ describe('GET /api/', () => {
 });
 
 describe('utils', utils);
+describe('OpenAPI Specification', openapi);

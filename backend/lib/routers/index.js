@@ -66,3 +66,32 @@ module.exports = (http) => {
         bindRoute(http, route);
     });
 };
+
+module.exports.getRoutesAsList = () => {
+    const resolvedRoutes = [];
+
+
+    /* eslint-disable */
+    function resolve(route, parentPath = '') {
+        const localPath = appendPath(parentPath, route.path, route.pathOption);
+
+        if (route.method && route.controller) {
+            resolvedRoutes.push({
+                method: route.method,
+                path: localPath,
+            });
+        }
+
+        if (route.children) {
+            route.children.forEach((child) => {
+                inheritArgs(route, child);
+                resolve(child, localPath);
+            });
+        }
+    }
+    /* eslint-enable */
+
+    routes.forEach((route) => resolve(route));
+
+    return resolvedRoutes;
+};
