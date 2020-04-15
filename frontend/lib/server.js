@@ -30,4 +30,3 @@ http.close = () => http.getServer.close();
 http.addStaticPath(path.resolve(__dirname, 'public'));
 
 module.exports = http;
-

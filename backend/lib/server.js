@@ -26,7 +26,7 @@ http.address = () => http.getServer.address();
 http.listen = () => { };
 http.close = () => http.getServer.close();
 
-http.get('/', (_request, response, _next) => {
+http.get('/', (request, response, next) => {
     response.status(200).json({
         name: 'Jiskefet Backend',
         version: '0.0.0',

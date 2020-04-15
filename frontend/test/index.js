@@ -19,6 +19,7 @@
 const assert = require('assert');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
+
 const PORT = 3000;
 
 describe('Frontend', function () {
