@@ -18,6 +18,7 @@
 
 const { deepmerge } = require('../../lib/utils');
 const chai = require('chai');
+
 const { expect } = chai;
 
 module.exports = () => {
