@@ -15,20 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-const { deepmerge } = require('.');
 
 /**
  * function to add one path to another.
  * @param {string} basePath The base path that will be used to append on.
  * @param {string} appendix The path that will be added on the base path.
- * @param {Object} [options={base: 'trim', appendix: 'trim'}] Options to be applied on the appending. Options are: 'trim' or 'exact'
+ * @param {Object} [options={base: 'trim', appendix: 'trim'}] Options to be applied on the appending.
+ *                                                            Options are: 'trim' or 'exact'
  * @returns {string} the full appended path
  */
 const appendPath = (basePath, appendix, options = { base: 'trim', appendix: 'trim' }) => {
     let preparedBasePath = (typeof (basePath) === 'string') ? basePath : '';
     let preparedAppendix = (typeof (appendix) === 'string') ? appendix : '';
 
-    options = deepmerge({ base: 'trim', appendix: 'trim' }, options);
+    options.base = options.base || 'trim';
+    options.appendix = options.appendix ||'trim';
 
     if (options.base == 'exact' && options.appendix == 'exact') {
         return preparedBasePath.concat(preparedAppendix);
