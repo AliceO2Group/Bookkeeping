@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const apiRoute = require('./home.router');
+const homeRoute = require('./home.router');
 const subsystemsRoute = require('./subsystems.router');
 const tagsRoute = require('./tags.router');
 const usersRoute = require('./users.router');
 const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
-    apiRoute,
+    homeRoute,
     subsystemsRoute,
     tagsRoute,
     usersRoute,
@@ -50,7 +50,6 @@ const inheritArgs = (parent, child) => {
  */
 const bindRoute = (http, route, parentPath = '') => {
     const localPath = appendPath(parentPath, route.path, route.pathOption);
-
     if (route.method && route.controller) {
         http[route.method](localPath, route.controller, route.args);
     }
@@ -71,7 +70,6 @@ module.exports = (http) => {
 
 module.exports.getRoutesAsList = () => {
     const resolvedRoutes = [];
-
 
     /* eslint-disable */
     function resolve(route, parentPath = '') {
