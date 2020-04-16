@@ -18,31 +18,39 @@
 
 const { appendPath } = require('../../lib/utils');
 const chai = require('chai');
+
 const { expect } = chai;
 
 module.exports = () => {
-    describe('appendPath appends', () => {
-        it('should normally append when appendix starts with "\\"', () => {
-            const base = '/api';
-            const appendix = '/endpoint';
-            expect(appendPath(base, appendix)).to.equal('/api/endpoint');
+    describe('appendPath', () => {
+        it('should handle no slashes', () => {
+            const base = 'base';
+            const appendix = 'appendix';
+            expect(appendPath(base, appendix)).to.equal('/base/appendix');
         });
 
-        it('should correct missing backslashes', () => {
-            const base = '/api';
-            const appendixNoBackslash = 'endpoint';
-            expect(appendPath(base, appendixNoBackslash)).to.equal('/api/endpoint');
+        it('should handle a slash only at the base', () => {
+            const base = 'base/';
+            const appendix = 'appendix';
+            expect(appendPath(base, appendix)).to.equal('/base/appendix');
         });
-    });
 
-    describe('appendPath corrects', () => {
-        it('should not correct missing backslashes if options has appendRule "no-slash"', () => {
-            const base = '/api/end';
-            const appendix = 'point';
-            const appendOptions = {
-                appendRule: 'no-slash',
-            };
-            expect(appendPath(base, appendix, appendOptions)).to.equal('/api/endpoint');
+        it('should handle a slash only at the appendix', () => {
+            const base = 'base';
+            const appendix = '/appendix';
+            expect(appendPath(base, appendix)).to.equal('/base/appendix');
+        });
+
+        it('should handle slashes at both the base and appendix', () => {
+            const base = 'base/';
+            const appendix = '/appendix';
+            expect(appendPath(base, appendix)).to.equal('/base/appendix');
+        });
+
+        it('should remove unneeded slashes', () => {
+            const base = '//base///';
+            const appendix = '////appendix///';
+            expect(appendPath(base, appendix)).to.equal('/base/appendix');
         });
     });
 };

@@ -24,27 +24,14 @@
  *                                                            Options are: 'trim' or 'exact'
  * @returns {string} the full appended path
  */
-const appendPath = (basePath, appendix, options = { base: 'trim', appendix: 'trim' }) => {
+const appendPath = (basePath, appendix) => {
     let preparedBasePath = (typeof (basePath) === 'string') ? basePath : '';
     let preparedAppendix = (typeof (appendix) === 'string') ? appendix : '';
 
-    options.base = options.base || 'trim';
-    options.appendix = options.appendix ||'trim';
+    preparedBasePath = preparedBasePath.match(/([^/| ].*[^/| ])/g) || '';
+    preparedAppendix = preparedAppendix.match(/([^/| ].*[^/| ])/g) || '';
 
-    if (options.base == 'exact' && options.appendix == 'exact') {
-        return preparedBasePath.concat(preparedAppendix);
-    } else {
-        if (options.base == 'exact');
-        else {
-            preparedBasePath = preparedBasePath.match(/([^/].*[^/])/g);
-        }
-        if (options.appendix == 'exact');
-        else {
-            preparedAppendix = preparedAppendix.match(/([^/].*[^/])/g);
-        }
-
-        return [preparedBasePath, preparedAppendix].join('/');
-    }
+    return '/'.concat([preparedBasePath, preparedAppendix].join(preparedBasePath && preparedAppendix ? '/' : ''));
 };
 
 module.exports = appendPath;
