@@ -17,13 +17,13 @@
  */
 
 const HomeController = require('./home.controller');
-const UserController = require('./users.controller');
-const TagController = require('./tags.controller');
-const SubsystemController = require('./subsystem.controller');
+const UsersController = require('./users.controller');
+const TagsController = require('./tags.controller');
+const SubsystemsController = require('./subsystems.controller');
 
 module.exports = {
     HomeController,
-    TagController,
-    UserController,
-    SubsystemController,
+    TagsController,
+    UsersController,
+    SubsystemsController,
 };

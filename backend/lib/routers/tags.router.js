@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { TagController } = require('../controllers');
+const { TagsController } = require('../controllers');
 
 module.exports = {
     path: '/tags',
@@ -25,42 +25,42 @@ module.exports = {
         {
             method: 'get',
             path: '',
-            controller: TagController.index,
+            controller: TagsController.index,
         },
         {
             method: 'post',
             path: '',
-            controller: TagController.create,
+            controller: TagsController.create,
         },
         {
             method: 'get',
             path: ':id',
-            controller: TagController.read,
+            controller: TagsController.read,
             children:[
                 {
                     method: 'get',
                     path: '/runs',
-                    controller: TagController.getRuns,
+                    controller: TagsController.getRuns,
                 },
                 {
                     method: 'get',
                     path: '/logs',
-                    controller: TagController.getLogs,
+                    controller: TagsController.getLogs,
                 },
                 {
                     method: 'get',
                     path: '/runs',
-                    controller: TagController.patchRun,
+                    controller: TagsController.patchRun,
                 },
                 {
                     method: 'get',
                     path: '/log',
-                    controller: TagController.patchLog,
+                    controller: TagsController.patchLog,
                 },
                 {
                     method: 'delete',
                     path: '',
-                    controller: TagController.deleteTag,
+                    controller: TagsController.deleteTag,
                 },
             ],
         },

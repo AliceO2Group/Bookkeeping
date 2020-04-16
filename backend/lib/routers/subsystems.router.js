@@ -16,18 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { SubsystemController } = require('../controllers');
+const { SubsystemsController } = require('../controllers');
 
 module.exports = {
     method: 'get',
     path: 'subsystems',
-    controller: SubsystemController.index,
+    controller: SubsystemsController.index,
     args: { public: true },
     children: [
         {
             method: 'get',
             path: '/:id',
-            controller: SubsystemController.read,
+            controller: SubsystemsController.read,
         },
     ],
 };

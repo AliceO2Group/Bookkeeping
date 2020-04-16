@@ -16,33 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { UserController } = require('../controllers');
+const { UsersController } = require('../controllers');
 
 module.exports = {
     method: 'get',
     path: '/users',
-    controller: UserController.index,
+    controller: UsersController.index,
     args: { public: true },
     children: [
         {
             method: 'get',
             path: ':id',
-            controller: UserController.read,
+            controller: UsersController.read,
             children: [
                 {
                     method: 'get',
                     path: 'tokens',
-                    controller: UserController.getTokens,
+                    controller: UsersController.getTokens,
                 },
                 {
                     method: 'post',
                     path: 'tokens',
-                    controller: UserController.postTokens,
+                    controller: UsersController.postTokens,
                 },
                 {
                     method: 'get',
                     path: 'logs',
-                    controller: UserController.getLogs,
+                    controller: UsersController.getLogs,
                 },
             ],
         },
