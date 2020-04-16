@@ -16,16 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const HomeController = require('./home.controller');
-const UsersController = require('./users.controller');
-const TagsController = require('./tags.controller');
-const SettingsController = require('./settings.controller');
-const SubsystemsController = require('./subsystems.controller');
+const { SettingsController } = require('../controllers');
 
 module.exports = {
-    HomeController,
-    SettingsController,
-    SubsystemsController,
-    TagsController,
-    UsersController,
+    method: 'get',
+    path: '/settings',
+    controller: SettingsController.index,
+    args: { public: true },
 };
