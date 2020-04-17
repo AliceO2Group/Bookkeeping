@@ -6,7 +6,7 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-      target: production
+      target: development
     volumes:
       # Mounts the 'scripts' folder inside the host on '/opt'
       - './scripts:/opt'
