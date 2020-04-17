@@ -42,4 +42,4 @@ COPY . .
 FROM build as production
 
 # Run start script as specified in package.json
-CMD [ "node", "run", "start:prod" ]
+CMD [ "npm", "run", "start:prod" ]
