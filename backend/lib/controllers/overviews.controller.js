@@ -16,20 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const HomeController = require('./home.controller');
-const OverviewsController = require('./overviews.controller');
-const UsersController = require('./users.controller');
-const TagsController = require('./tags.controller');
-const SettingsController = require('./settings.controller');
-const SubsystemsController = require('./subsystems.controller');
-const RunsController = require('./runs.controller');
+/**
+ * Get all overviews.
+ *
+ * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
+ *                         string, parameters, body, HTTP headers, and so on.
+ * @param {Object} response The *response* object represents the HTTP response that an Express app sends when it gets an
+ *                          HTTP request.
+ * @param {Function} next The *next* object represents the next middleware function which is used to pass control to the
+ *                        next middleware function.
+ * @returns {undefined}
+ */
+const index = (request, response, next) => {
+    response.status(501).json({
+        errors: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
+};
 
 module.exports = {
-    HomeController,
-    OverviewsController,
-    RunsController,
-    SettingsController,
-    SubsystemsController,
-    TagsController,
-    UsersController,
+    index,
 };
