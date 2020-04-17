@@ -30,11 +30,9 @@ describe('Frontend', function () {
     let http;
     let browser;
 
-    before(() => {
-        http = require('./../lib/server');
-    });
-
     before(async () => {
+        http = require('./../lib/server');
+        await http.listen();
         browser = await puppeteer.launch();
         page = await browser.newPage();
         await Promise.all([
@@ -44,7 +42,7 @@ describe('Frontend', function () {
     });
 
     after(async () => {
-        http.close();
+        await http.close();
         const [jsCoverage, cssCoverage] = await Promise.all([
             page.coverage.stopJSCoverage(),
             page.coverage.stopCSSCoverage(),
