@@ -17,15 +17,17 @@
  */
 
 const HomeController = require('./home.controller');
+const LogsController = require('./logs.controller');
 const OverviewsController = require('./overviews.controller');
-const UsersController = require('./users.controller');
-const TagsController = require('./tags.controller');
+const RunsController = require('./runs.controller');
 const SettingsController = require('./settings.controller');
 const SubsystemsController = require('./subsystems.controller');
-const RunsController = require('./runs.controller');
+const TagsController = require('./tags.controller');
+const UsersController = require('./users.controller');
 
 module.exports = {
     HomeController,
+    LogsController,
     OverviewsController,
     RunsController,
     SettingsController,

@@ -17,7 +17,7 @@
  */
 
 /**
- * Create run.
+ * Create a new log
  *
  * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
  *                         string, parameters, body, HTTP headers, and so on.
@@ -39,7 +39,51 @@ const create = (request, response, next) => {
 };
 
 /**
- * Get all runs.
+ * create attachment on log
+ *
+ * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
+ *                         string, parameters, body, HTTP headers, and so on.
+ * @param {Object} response The *response* object represents the HTTP response that an Express app sends when it gets an
+ *                          HTTP request.
+ * @param {Function} next The *next* object represents the next middleware function which is used to pass control to the
+ *                        next middleware function.
+ * @returns {undefined}
+ */
+const createAttachment = (request, response, next) => {
+    response.status(501).json({
+        errors: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
+};
+
+/**
+ * get attachment from log
+ *
+ * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
+ *                         string, parameters, body, HTTP headers, and so on.
+ * @param {Object} response The *response* object represents the HTTP response that an Express app sends when it gets an
+ *                          HTTP request.
+ * @param {Function} next The *next* object represents the next middleware function which is used to pass control to the
+ *                        next middleware function.
+ * @returns {undefined}
+ */
+const getAttachment = (request, response, next) => {
+    response.status(501).json({
+        errors: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
+};
+
+/**
+ * Get all logs.
  *
  * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
  *                         string, parameters, body, HTTP headers, and so on.
@@ -61,28 +105,6 @@ const index = (request, response, next) => {
 };
 
 /**
- * Patch run.
- *
- * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
- *                         string, parameters, body, HTTP headers, and so on.
- * @param {Object} response The *response* object represents the HTTP response that an Express app sends when it gets an
- *                          HTTP request.
- * @param {Function} next The *next* object represents the next middleware function which is used to pass control to the
- *                        next middleware function.
- * @returns {undefined}
- */
-const patch = (request, response, next) => {
-    response.status(501).json({
-        errors: [
-            {
-                status: '501',
-                title:  'Not implemented',
-            },
-        ],
-    });
-};
-
-/**
  * Patch run on log.
  *
  * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
@@ -93,7 +115,7 @@ const patch = (request, response, next) => {
  *                        next middleware function.
  * @returns {undefined}
  */
-const patchLog = (request, response, next) => {
+const patchRun = (request, response, next) => {
     response.status(501).json({
         errors: [
             {
@@ -105,7 +127,7 @@ const patchLog = (request, response, next) => {
 };
 
 /**
- * Get run.
+ * Get log.
  *
  * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
  *                         string, parameters, body, HTTP headers, and so on.
@@ -126,10 +148,34 @@ const read = (request, response, next) => {
     });
 };
 
+/**
+ * Patch attachment on log.
+ *
+ * @param {Object} request The *request* object represents the HTTP request and has properties for the request query
+ *                         string, parameters, body, HTTP headers, and so on.
+ * @param {Object} response The *response* object represents the HTTP response that an Express app sends when it gets an
+ *                          HTTP request.
+ * @param {Function} next The *next* object represents the next middleware function which is used to pass control to the
+ *                        next middleware function.
+ * @returns {undefined}
+ */
+const patchAttachment = (request, response, next) => {
+    response.status(501).json({
+        errors: [
+            {
+                status: '501',
+                title:  'Not implemented',
+            },
+        ],
+    });
+};
+
 module.exports = {
-    index,
     create,
-    patch,
-    patchLog,
+    createAttachment,
+    getAttachment,
+    index,
     read,
+    patchAttachment,
+    patchRun,
 };

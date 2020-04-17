@@ -17,6 +17,7 @@
  */
 
 const homeRoute = require('./home.router');
+const logRoute = require('./logs.router');
 const overviewRoute = require('./overviews.router');
 const runsRoute = require('./runs.router');
 const settingsRoute = require('./settings.router');
@@ -27,6 +28,7 @@ const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
     homeRoute,
+    logRoute,
     overviewRoute,
     runsRoute,
     settingsRoute,
