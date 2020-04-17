@@ -16,18 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const HomeController = require('./home.controller');
-const UsersController = require('./users.controller');
-const TagsController = require('./tags.controller');
-const SettingsController = require('./settings.controller');
-const SubsystemsController = require('./subsystems.controller');
-const RunsController = require('./runs.controller');
+const { RunsController } = require('../controllers');
 
 module.exports = {
-    HomeController,
-    RunsController,
-    SettingsController,
-    SubsystemsController,
-    TagsController,
-    UsersController,
+    method: 'get',
+    path: '/runs',
+    controller: RunsController.index,
+    args: { public: true },
+    children: [
+        {
+            method: 'post',
+            controller: RunsController.create,
+        },
+        {
+            method: 'get',
+            path: '/:id',
+            controller: RunsController.read,
+            children: [
+                {
+                    method: 'patch',
+                    controller: RunsController.patch,
+                },
+                {
+                    method: 'patch',
+                    path: 'logs',
+                    controller: RunsController.patchLog,
+                },
+            ],
+        },
+    ],
 };
