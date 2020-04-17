@@ -16,36 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const path = require('path');
-const chai = require('chai');
-const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
+const app = require('./server');
 
-const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
-
-describe('GET /api/', () => {
-    let app;
-
-    before(async () => {
-        app = require('./../lib/server');
-        await app.listen();
-    });
-
-    after(async () => {
-        await app.close();
-    });
-
-    it('should satisfy OpenAPI spec', (done) => {
-        request(app)
-            .get('/api/')
-            .expect(200)
-            .end((err, res) => {
-                if (err) return done(err);
-
-                expect(res).to.satisfyApiSpec;
-                done();
-            });
-    });
-});
+app.listen();

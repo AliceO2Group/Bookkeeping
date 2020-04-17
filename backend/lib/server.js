@@ -20,11 +20,8 @@ const { HttpServer } = require('@aliceo2/web-ui');
 
 const http = new HttpServer({
     port: 4000,
+    autoListen: false,
 });
-
-http.address = () => http.getServer.address();
-http.listen = () => { };
-http.close = () => http.getServer.close();
 
 http.get('/', (request, response, next) => {
     response.status(200).json({
