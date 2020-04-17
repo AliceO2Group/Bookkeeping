@@ -16,14 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const path = require('path');
-const { HttpServer } = require('@aliceo2/web-ui');
+const app = require('./server');
 
-const http = new HttpServer({
-    port: 3000,
-    autoListen: false,
-});
-
-http.addStaticPath(path.resolve(__dirname, 'public'));
-
-module.exports = http;
+app.listen();

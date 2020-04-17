@@ -28,12 +28,13 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 describe('GET /api/', () => {
     let app;
 
-    before(() => {
+    before(async () => {
         app = require('./../lib/server');
+        await app.listen();
     });
 
-    after(() => {
-        app.close();
+    after(async () => {
+        await app.close();
     });
 
     it('should satisfy OpenAPI spec', (done) => {
