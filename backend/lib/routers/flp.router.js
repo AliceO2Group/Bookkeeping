@@ -15,25 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-const FlpController = require('./flp.controller');
-const HomeController = require('./home.controller');
-const LogsController = require('./logs.controller');
-const OverviewsController = require('./overviews.controller');
-const RunsController = require('./runs.controller');
-const SettingsController = require('./settings.controller');
-const SubsystemsController = require('./subsystems.controller');
-const TagsController = require('./tags.controller');
-const UsersController = require('./users.controller');
+const { FlpController } = require('../controllers');
 
 module.exports = {
-    FlpController,
-    HomeController,
-    LogsController,
-    OverviewsController,
-    RunsController,
-    SettingsController,
-    SubsystemsController,
-    TagsController,
-    UsersController,
+    method: 'post',
+    path: 'flp',
+    controller: FlpController.create,
+    args: { public: true },
+    children: [
+        {
+            method: 'get',
+            path: ':name/runs/:id',
+            controller: FlpController.read,
+            children: [
+                {
+                    method: 'patch',
+                    controller: FlpController.update,
+                },
+            ],
+        },
+    ],
 };
