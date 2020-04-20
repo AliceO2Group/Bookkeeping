@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+const attachmentRoute = require('./attachments.router');
 const createpdfRoute = require('./createpdf.router');
 const flpRoute = require('./flp.router');
 const homeRoute = require('./home.router');
@@ -29,6 +29,7 @@ const usersRoute = require('./users.router');
 const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
+    attachmentRoute,
     createpdfRoute,
     flpRoute,
     homeRoute,

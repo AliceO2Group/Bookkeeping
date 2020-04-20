@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const AttachmentsController = require('./attachments.controller');
 const CreatepdfController = require('./createpdf.controller');
 const FlpController = require('./flp.controller');
 const HomeController = require('./home.controller');
@@ -28,6 +29,7 @@ const TagsController = require('./tags.controller');
 const UsersController = require('./users.controller');
 
 module.exports = {
+    AttachmentsController,
     CreatepdfController,
     FlpController,
     HomeController,
