@@ -15,41 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-const { UsersController } = require('../controllers');
+const { AuthController } = require('../controllers');
 
 module.exports = {
-    method: 'get',
-    path: '/users',
-    controller: UsersController.index,
-    args: { public: true },
     children: [
         {
             method: 'get',
-            path: 'profile',
-            controller: UsersController.profile,
-        },
-        {
-            method: 'get',
-            path: ':id',
-            controller: UsersController.read,
-            children: [
-                {
-                    method: 'get',
-                    path: 'tokens',
-                    controller: UsersController.getTokens,
-                },
-                {
-                    method: 'post',
-                    path: 'tokens',
-                    controller: UsersController.postTokens,
-                },
-                {
-                    method: 'get',
-                    path: 'logs',
-                    controller: UsersController.getLogs,
-                },
-            ],
+            path: 'auth',
+            controller: AuthController.authenticate,
+            args: { pubilc: true },
         },
     ],
 };

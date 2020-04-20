@@ -17,6 +17,7 @@
  */
 
 const AttachmentsController = require('./attachments.controller');
+const AuthController = require('./auth.controller');
 const CreatepdfController = require('./createpdf.controller');
 const FlpController = require('./flp.controller');
 const HomeController = require('./home.controller');
@@ -30,6 +31,7 @@ const UsersController = require('./users.controller');
 
 module.exports = {
     AttachmentsController,
+    AuthController,
     CreatepdfController,
     FlpController,
     HomeController,

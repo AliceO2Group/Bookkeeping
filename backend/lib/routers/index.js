@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 const attachmentRoute = require('./attachments.router');
+const authRoute = require('./auth.router');
 const createpdfRoute = require('./createpdf.router');
 const flpRoute = require('./flp.router');
 const homeRoute = require('./home.router');
@@ -30,6 +31,7 @@ const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
     attachmentRoute,
+    authRoute,
     createpdfRoute,
     flpRoute,
     homeRoute,
