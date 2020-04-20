@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const createpdfRoute = require('./createpdf.router');
 const flpRoute = require('./flp.router');
 const homeRoute = require('./home.router');
 const logRoute = require('./logs.router');
@@ -28,6 +29,7 @@ const usersRoute = require('./users.router');
 const { appendPath, deepmerge } = require('../utils');
 
 const routes = [
+    createpdfRoute,
     flpRoute,
     homeRoute,
     logRoute,

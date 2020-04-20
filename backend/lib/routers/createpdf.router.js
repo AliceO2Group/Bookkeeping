@@ -16,26 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const CreatepdfController = require('./createpdf.controller');
-const FlpController = require('./flp.controller');
-const HomeController = require('./home.controller');
-const LogsController = require('./logs.controller');
-const OverviewsController = require('./overviews.controller');
-const RunsController = require('./runs.controller');
-const SettingsController = require('./settings.controller');
-const SubsystemsController = require('./subsystems.controller');
-const TagsController = require('./tags.controller');
-const UsersController = require('./users.controller');
+const { CreatepdfController } = require('../controllers');
 
 module.exports = {
-    CreatepdfController,
-    FlpController,
-    HomeController,
-    LogsController,
-    OverviewsController,
-    RunsController,
-    SettingsController,
-    SubsystemsController,
-    TagsController,
-    UsersController,
+    path: '/createpdf',
+    args: { public: true },
+    children: [
+        {
+            method: 'get',
+            path: 'getlog',
+            controller: CreatepdfController.getLog,
+        },
+        {
+            method: 'get',
+            path: 'getrunconf',
+            controller: CreatepdfController.getRunConf,
+        },
+    ],
 };
