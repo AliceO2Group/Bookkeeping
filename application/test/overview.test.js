@@ -20,8 +20,6 @@ const assert = require('assert');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 
-const PORT = 3000;
-
 describe('Frontend', function () {
     // Configure this suite to have a default timeout of 10s
     this.timeout(10000);
@@ -29,6 +27,7 @@ describe('Frontend', function () {
     let page;
     let http;
     let browser;
+    let PORT;
 
     before(async () => {
         http = require('./../lib/server');
@@ -39,6 +38,8 @@ describe('Frontend', function () {
             page.coverage.startJSCoverage(),
             page.coverage.startCSSCoverage(),
         ]);
+
+        PORT = http.address().port;
     });
 
     after(async () => {
