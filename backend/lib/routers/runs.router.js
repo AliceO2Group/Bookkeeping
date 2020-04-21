@@ -16,14 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { HttpServer } = require('@aliceo2/web-ui');
-const buildEndpoints = require('./routers');
+const { RunsController } = require('../controllers');
 
-const http = new HttpServer({
-    port: 4000,
-    autoListen: false,
-});
-
-buildEndpoints(http);
-
-module.exports = http;
+module.exports = {
+    method: 'get',
+    path: '/runs',
+    controller: RunsController.index,
+    args: { public: true },
+    children: [
+        {
+            method: 'post',
+            controller: RunsController.create,
+        },
+        {
+            method: 'get',
+            path: '/:id',
+            controller: RunsController.read,
+            children: [
+                {
+                    method: 'patch',
+                    controller: RunsController.patch,
+                },
+                {
+                    method: 'patch',
+                    path: 'logs',
+                    controller: RunsController.patchLog,
+                },
+            ],
+        },
+    ],
+};

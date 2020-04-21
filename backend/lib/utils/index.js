@@ -16,14 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { HttpServer } = require('@aliceo2/web-ui');
-const buildEndpoints = require('./routers');
+const appendPath = require('./appendPath');
+const deepmerge = require('./deepmerge');
 
-const http = new HttpServer({
-    port: 4000,
-    autoListen: false,
-});
-
-buildEndpoints(http);
-
-module.exports = http;
+module.exports = {
+    appendPath,
+    deepmerge,
+};

@@ -15,15 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+const { AuthController } = require('../controllers');
 
-const { HttpServer } = require('@aliceo2/web-ui');
-const buildEndpoints = require('./routers');
-
-const http = new HttpServer({
-    port: 4000,
-    autoListen: false,
-});
-
-buildEndpoints(http);
-
-module.exports = http;
+module.exports = {
+    children: [
+        {
+            method: 'get',
+            path: 'auth',
+            controller: AuthController.authenticate,
+            args: { pubilc: true },
+        },
+    ],
+};

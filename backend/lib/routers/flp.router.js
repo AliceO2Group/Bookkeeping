@@ -15,15 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+const { FlpController } = require('../controllers');
 
-const { HttpServer } = require('@aliceo2/web-ui');
-const buildEndpoints = require('./routers');
-
-const http = new HttpServer({
-    port: 4000,
-    autoListen: false,
-});
-
-buildEndpoints(http);
-
-module.exports = http;
+module.exports = {
+    method: 'post',
+    path: 'flp',
+    controller: FlpController.create,
+    args: { public: true },
+    children: [
+        {
+            method: 'get',
+            path: ':name/runs/:id',
+            controller: FlpController.read,
+            children: [
+                {
+                    method: 'patch',
+                    controller: FlpController.update,
+                },
+            ],
+        },
+    ],
+};
