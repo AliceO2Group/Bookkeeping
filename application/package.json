@@ -1,5 +1,5 @@
 {
-  "name": "jiskefet-frontend",
+  "name": "jiskefet",
   "author": "Stichting Hogeschool van Amsterdam",
   "license": "AGPL-3.0",
   "scripts": {
@@ -12,14 +12,19 @@
     "test": "mocha --exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.11.0"
+    "@aliceo2/web-ui": "1.11.0",
+    "deepmerge": "4.2.2"
   },
   "devDependencies": {
+    "chai": "4.2.0",
+    "chai-openapi-response-validator": "0.8.0",
     "eslint": "6.8.0",
+    "js-yaml": "3.13.1",
     "mocha": "7.1.1",
     "nodemon": "2.0.3",
     "nyc": "15.0.1",
     "puppeteer": "2.1.1",
-    "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul"
+    "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul",
+    "supertest": "4.0.2"
   }
 }

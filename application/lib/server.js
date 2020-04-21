@@ -18,12 +18,14 @@
 
 const path = require('path');
 const { HttpServer } = require('@aliceo2/web-ui');
+const buildEndpoints = require('./routers');
 
 const http = new HttpServer({
-    port: 3000,
+    port: 4000,
     autoListen: false,
 });
 
 http.addStaticPath(path.resolve(__dirname, 'public'));
+buildEndpoints(http);
 
 module.exports = http;
