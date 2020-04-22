@@ -28,19 +28,18 @@ const { expect } = chai;
 chai.use(chaiResponseValidator(path.resolve(__dirname, '..', 'spec', 'openapi.yaml')));
 
 describe('GET /api/', () => {
-    let app;
+    const { server } = require('../lib/application');
 
     before(async () => {
-        app = require('./../lib/server');
-        await app.listen();
+        await server.listen();
     });
 
     after(async () => {
-        await app.close();
+        await server.close();
     });
 
     it('should satisfy OpenAPI spec', (done) => {
-        request(app)
+        request(server)
             .get('/api/')
             .expect(200)
             .end((err, res) => {

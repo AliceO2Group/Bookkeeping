@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { appendPath } = require('../../lib/utils');
+const { appendPath } = require('../../lib/framework/http/utils');
 const chai = require('chai');
 
 const { expect } = chai;

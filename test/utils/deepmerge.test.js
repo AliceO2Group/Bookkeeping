@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { deepmerge } = require('../../lib/utils');
+const { deepmerge } = require('../../lib/framework/http/utils');
 const chai = require('chai');
 
 const { expect } = chai;
