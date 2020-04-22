@@ -37,7 +37,7 @@ module.exports = () => {
 
     const routes = getRoutesAsList();
 
-    const spec = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml'), 'utf8'));
+    const spec = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', 'spec', 'openapi.yaml'), 'utf8'));
     const baseURL = spec.servers[0].url;
 
     const expectedRoutes = [];

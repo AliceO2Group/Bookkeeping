@@ -1,4 +1,4 @@
-name: Application
+name: Jiskefet
 
 on:
   pull_request:
@@ -23,10 +23,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Installing dependencies
         run: npm ci
-        working-directory: ./application
       - name: Executing test suite
         run: npm test
-        working-directory: ./application
         env:
           CI: true
 
@@ -46,10 +44,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Installing dependencies
         run: npm ci
-        working-directory: ./application
       - name: Executing test suite with coverage
         run: npm run coverage
-        working-directory: ./application
         env:
           CI: true
       - name: Upload coverage to Codecov
@@ -71,7 +67,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Installing dependencies
         run: npm ci
-        working-directory: ./application
       - name: Running linter
         run: npm run lint
-        working-directory: ./application

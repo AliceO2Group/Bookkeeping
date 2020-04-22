@@ -25,7 +25,7 @@ const openapi = require('./openapi.test');
 
 const { expect } = chai;
 
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
+chai.use(chaiResponseValidator(path.resolve(__dirname, '..', 'spec', 'openapi.yaml')));
 
 describe('GET /api/', () => {
     let app;

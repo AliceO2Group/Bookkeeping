@@ -3,6 +3,6 @@ version: "3.7"
 services:
   application:
     build:
-      context: ./application
+      context: .
       dockerfile: Dockerfile
       target: production
