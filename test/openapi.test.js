@@ -20,7 +20,7 @@ const path = require('path');
 const { expect } = require('chai');
 const yaml = require('js-yaml');
 const fs = require('fs');
-const { getRoutesAsList } = require('../lib/routers');
+const { getRoutesAsList } = require('../lib/framework/http/routers');
 
 module.exports = () => {
     it.allowFail = (title, callback) => {
@@ -37,7 +37,7 @@ module.exports = () => {
 
     const routes = getRoutesAsList();
 
-    const spec = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml'), 'utf8'));
+    const spec = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', 'spec', 'openapi.yaml'), 'utf8'));
     const baseURL = spec.servers[0].url;
 
     const expectedRoutes = [];

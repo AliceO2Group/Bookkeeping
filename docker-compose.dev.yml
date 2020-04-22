@@ -7,6 +7,6 @@ services:
       target: development
     volumes:
       # Mount the local working directory in the container for Nodemon
-      - "./application:/usr/src/app"
+      - ".:/usr/src/app"
     ports:
       - "4000:4000"

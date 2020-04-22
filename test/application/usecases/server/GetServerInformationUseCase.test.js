@@ -16,41 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const path = require('path');
+const { server: { GetServerInformationUseCase } } = require('../../../../lib/application/usecases');
 const chai = require('chai');
-const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
-const utils = require('./utils');
-const openapi = require('./openapi.test');
 
 const { expect } = chai;
 
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
+module.exports = () => {
+    it('should return an object that has the `version` property', async () => {
+        // Arrange
+        const usecase = new GetServerInformationUseCase();
 
-describe('GET /api/', () => {
-    let app;
+        // Act
+        const result = await usecase.execute();
 
-    before(async () => {
-        app = require('./../lib/server');
-        await app.listen();
+        // Assert
+        expect(result).to.have.ownProperty('version');
     });
 
-    after(async () => {
-        await app.close();
+    it('should return an object that has the `name` property', async () => {
+        // Arrange
+        const usecase = new GetServerInformationUseCase();
+
+        // Act
+        const result = await usecase.execute();
+
+        // Assert
+        expect(result).to.have.ownProperty('name');
     });
-
-    it('should satisfy OpenAPI spec', (done) => {
-        request(app)
-            .get('/api/')
-            .expect(200)
-            .end((err, res) => {
-                if (err) return done(err);
-
-                expect(res).to.satisfyApiSpec;
-                done();
-            });
-    });
-});
-
-describe('utils', utils);
-describe('OpenAPI Specification', openapi);
+};

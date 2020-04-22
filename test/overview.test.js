@@ -19,19 +19,18 @@
 const assert = require('assert');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
+const { server } = require('../lib/application');
 
 describe('Frontend', function () {
     // Configure this suite to have a default timeout of 10s
     this.timeout(10000);
 
     let page;
-    let http;
     let browser;
     let PORT;
 
     before(async () => {
-        http = require('./../lib/server');
-        await http.listen();
+        await server.listen();
         browser = await puppeteer.launch();
         page = await browser.newPage();
         await Promise.all([
@@ -39,11 +38,11 @@ describe('Frontend', function () {
             page.coverage.startCSSCoverage(),
         ]);
 
-        PORT = http.address().port;
+        PORT = server.address().port;
     });
 
     after(async () => {
-        await http.close();
+        await server.close();
         const [jsCoverage, cssCoverage] = await Promise.all([
             page.coverage.stopJSCoverage(),
             page.coverage.stopCSSCoverage(),

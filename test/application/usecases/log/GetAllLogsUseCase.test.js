@@ -16,42 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { deepmerge } = require('../../lib/utils');
+const { persistence: { repositories: { LogRepository } } } = require('../../../../lib/application');
+const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    describe('deepmerge', () => {
-        it('should merge two objects recursively', () => {
-            const source = {
-                a: 1,
-                b: 2,
-                moreLetters: {
-                    x: 42,
-                    y: null,
-                },
-            };
-            const overwrite = {
-                c: 4,
-                moreLetters: {
-                    y: 'Not a Number',
-                    z: 123,
-                },
-            };
+    it('should return an array', async () => {
+        const result = await new GetAllLogsUseCase()
+            .setLogRepository(LogRepository)
+            .execute();
 
-            const expectedResult = {
-                a: 1,
-                b: 2,
-                c: 4,
-                moreLetters: {
-                    x: 42,
-                    y: 'Not a Number',
-                    z: 123,
-                },
-            };
-
-            expect(deepmerge(source, overwrite)).to.deep.include(expectedResult);
-        });
+        expect(result).to.be.an('array');
     });
 };
