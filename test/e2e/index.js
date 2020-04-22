@@ -16,16 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const ApplicationSuite = require('./application');
-const FrameworkSuite = require('./framework');
-const PublicSuite = require('./public');
-const OpenApiSuite = require('./openapi.test');
-const EndToEndSuite = require('./e2e');
+const path = require('path');
+const chai = require('chai');
+const request = require('supertest');
+const chaiResponseValidator = require('chai-openapi-response-validator');
 
-describe('Jiskefet', () => {
-    describe('Application', ApplicationSuite);
-    describe('Framework', FrameworkSuite);
-    describe('OpenAPI Specification', OpenApiSuite);
-    describe('Public', PublicSuite);
-    describe('E2E', EndToEndSuite);
+const { expect } = chai;
+
+chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
+
+describe('GET /api/', () => {
+    const { server } = require('../../lib/application');
+
+    before(async () => {
+        await server.listen();
+    });
+
+    after(async () => {
+        await server.close();
+    });
+
+    it('should satisfy OpenAPI spec', (done) => {
+        request(server)
+            .get('/api/')
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+
+                expect(res).to.satisfyApiSpec;
+                done();
+            });
+    });
 });

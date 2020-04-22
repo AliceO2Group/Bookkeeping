@@ -19,9 +19,9 @@
 const assert = require('assert');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
-const { server } = require('../lib/application');
+const { server } = require('../../lib/application');
 
-describe('Frontend', function () {
+module.exports = function () {
     // Configure this suite to have a default timeout of 10s
     this.timeout(10000);
 
@@ -65,21 +65,19 @@ describe('Frontend', function () {
         assert.equal(title, 'AliceO2 Logbook 2020');
     });
 
-    describe('Overview', () => {
-        it('can filter logs dynamically', async () => {
-            const checkbox = await page.$('.form-check input');
-            const label = await page.$('.form-check label div');
+    it('can filter logs dynamically', async () => {
+        const checkbox = await page.$('.form-check input');
+        const label = await page.$('.form-check label div');
 
-            const id = await page.evaluate((element) => element.id, checkbox);
-            const amount = await page.evaluate((element) => element.innerText, label);
-            // We expect to have captured the first checkbox in the list
-            assert.equal(id, 'filtersCheckbox1');
+        const id = await page.evaluate((element) => element.id, checkbox);
+        const amount = await page.evaluate((element) => element.innerText, label);
+        // We expect to have captured the first checkbox in the list
+        assert.equal(id, 'filtersCheckbox1');
 
-            await page.click(`#${id}`);
-            await page.waitFor(1000);
-            const newTableRows = await page.$$('table tr');
-            // We expect the amount of logs in this filter to match the advertised amount in the filters component
-            assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)));
-        });
+        await page.click(`#${id}`);
+        await page.waitFor(1000);
+        const newTableRows = await page.$$('table tr');
+        // We expect the amount of logs in this filter to match the advertised amount in the filters component
+        assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)));
     });
-});
+};
