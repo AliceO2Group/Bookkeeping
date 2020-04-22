@@ -16,16 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const ApplicationSuite = require('./application');
-const FrameworkSuite = require('./framework');
-const PublicSuite = require('./public');
-const OpenApiSuite = require('./openapi.test');
-const EndToEndSuite = require('./e2e');
+const UtilsSuite = require('./utils');
 
-describe('Jiskefet', () => {
-    describe('Application', ApplicationSuite);
-    describe('Framework', FrameworkSuite);
-    describe('OpenAPI Specification', OpenApiSuite);
-    describe('Public', PublicSuite);
-    describe('E2E', EndToEndSuite);
-});
+module.exports = () => {
+    describe('Utils', UtilsSuite);
+};
