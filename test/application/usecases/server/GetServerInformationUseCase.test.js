@@ -16,11 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { Repository } = require('..');
+const { server: { GetServerInformationUseCase } } = require('../../../../lib/application/usecases');
+const chai = require('chai');
 
-/**
- * LogRepository
- */
-class LogRepository extends Repository {}
+const { expect } = chai;
 
-module.exports = LogRepository;
+module.exports = () => {
+    it('should return an object that has the `version` property', async () => {
+        // Arrange
+        const usecase = new GetServerInformationUseCase();
+
+        // Act
+        const result = await usecase.execute();
+
+        // Assert
+        expect(result).to.have.ownProperty('version');
+    });
+
+    it('should return an object that has the `name` property', async () => {
+        // Arrange
+        const usecase = new GetServerInformationUseCase();
+
+        // Act
+        const result = await usecase.execute();
+
+        // Assert
+        expect(result).to.have.ownProperty('name');
+    });
+};

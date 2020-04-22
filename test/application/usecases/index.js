@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { Repository } = require('..');
+const LogSuite = require('./log');
+const ServerSuite = require('./server');
 
-/**
- * LogRepository
- */
-class LogRepository extends Repository {}
-
-module.exports = LogRepository;
+module.exports = () => {
+    describe('Log', LogSuite);
+    describe('Server', ServerSuite);
+};

@@ -16,11 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { Repository } = require('..');
+const GetAllLogsUseCase = require('./GetAllLogsUseCase.test');
 
-/**
- * LogRepository
- */
-class LogRepository extends Repository {}
-
-module.exports = LogRepository;
+module.exports = () => {
+    describe('GetAllLogsUseCase', GetAllLogsUseCase);
+};

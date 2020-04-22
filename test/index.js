@@ -20,6 +20,9 @@ const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
+
+// Test suites
+const ApplicationSuite = require('./application');
 const utils = require('./utils');
 const openapi = require('./openapi.test');
 
@@ -53,3 +56,4 @@ describe('GET /api/', () => {
 
 describe('utils', utils);
 describe('OpenAPI Specification', openapi);
+describe('Application', ApplicationSuite);

@@ -16,11 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { Repository } = require('..');
+const { persistence: { repositories: { LogRepository } } } = require('../../../../lib/application');
+const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
+const chai = require('chai');
 
-/**
- * LogRepository
- */
-class LogRepository extends Repository {}
+const { expect } = chai;
 
-module.exports = LogRepository;
+module.exports = () => {
+    it('should return an array', async () => {
+        const result = await new GetAllLogsUseCase()
+            .setLogRepository(LogRepository)
+            .execute();
+
+        expect(result).to.be.an('array');
+    });
+};
