@@ -5,7 +5,6 @@
     ],
     "exclude": [
         "lib/main.js",
-        "lib/application/interfaces/**/*.js",
         "test/**/*.js"
     ]
 }

@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const InterfacesSuite = require('./interfaces');
 const UseCasesSuite = require('./usecases');
 
 module.exports = () => {
+    describe('Interfaces', InterfacesSuite);
     describe('Use Cases', UseCasesSuite);
 };
