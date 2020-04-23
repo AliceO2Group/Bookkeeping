@@ -57,6 +57,7 @@
             }
         ],
         "init-declarations": "off",
+        "key-spacing": "error",
         "linebreak-style": "off",
         "lines-around-comment": [
             "error",
