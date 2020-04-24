@@ -8,5 +8,16 @@ services:
       target: production
     volumes:
       - "./scripts:/opt"
+    links:
+      - database
     ports:
       - "80:4000"
+
+  database:
+    image: mariadb:10.5.2
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: bookkeeping
+      MYSQL_USER: cern
+      MYSQL_PASSWORD: cern
