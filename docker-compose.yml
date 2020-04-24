@@ -6,3 +6,5 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+    ports:
+      - "80:4000"
