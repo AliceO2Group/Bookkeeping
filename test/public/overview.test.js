@@ -56,7 +56,7 @@ module.exports = function () {
 
     it('loads the page successfully', async () => {
         const response = await page.goto(url);
-        await page.waitFor(100);
+        await page.waitFor(500);
 
         // We expect the page to return the correct status code, making sure the server is running properly
         assert.equal(response.status(), 200);

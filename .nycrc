@@ -5,6 +5,7 @@
     ],
     "exclude": [
         "lib/main.js",
+        "framework/persistence/migrations/**",
         "test/**/*.js"
     ]
 }

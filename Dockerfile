@@ -5,6 +5,9 @@ FROM node:12.16.1-alpine as base
 # Create app directory
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache \
+    bash=5.0.11-r1
+
 # Expose the port to the Docker instance (not the host!)
 EXPOSE 4000
 

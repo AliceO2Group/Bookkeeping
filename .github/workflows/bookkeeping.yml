@@ -18,6 +18,16 @@ jobs:
             -f docker-compose.yml \
             -f docker-compose.test.yml \
             build --no-cache
+      - name: Start database
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            up --detach database
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            run application sh -c "/opt/wait-for-it.sh -t 0 database:3306"
       - name: Execute test suite
         run: |
           docker-compose \
