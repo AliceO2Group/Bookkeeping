@@ -17,7 +17,7 @@ const PublicSuite = require('./public');
 const OpenApiSuite = require('./openapi.test');
 const EndToEndSuite = require('./e2e');
 
-describe('Jiskefet', () => {
+describe('Bookkeeping', () => {
     describe('Application', ApplicationSuite);
     describe('Framework', FrameworkSuite);
     describe('OpenAPI Specification', OpenApiSuite);

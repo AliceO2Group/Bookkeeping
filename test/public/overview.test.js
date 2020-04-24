@@ -61,7 +61,7 @@ module.exports = function () {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        assert.equal(title, 'AliceO2 Logbook 2020');
+        assert.equal(title, 'AliceO2 Bookkeeping 2020');
     });
 
     it('can filter logs dynamically', async () => {
