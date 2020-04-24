@@ -1,4 +1,4 @@
-name: Jiskefet
+name: Bookkeeping
 
 on:
   pull_request:
