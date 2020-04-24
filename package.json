@@ -1,7 +1,7 @@
 {
   "name": "jiskefet",
-  "author": "Stichting Hogeschool van Amsterdam",
-  "license": "AGPL-3.0",
+  "author": "CERN",
+  "license": "GPL-3.0",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
