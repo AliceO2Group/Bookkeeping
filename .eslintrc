@@ -5,7 +5,7 @@
         "node": true
     },
     "parserOptions": {
-        "ecmaVersion": 8,
+        "ecmaVersion": 2018,
         "sourceType": "module"
     },
     "extends": [
@@ -58,6 +58,7 @@
         ],
         "init-declarations": "off",
         "key-spacing": "error",
+        "keyword-spacing": "error",
         "linebreak-style": "off",
         "lines-around-comment": [
             "error",

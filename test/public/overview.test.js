@@ -22,12 +22,12 @@ const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 
 module.exports = function () {
-    // Configure this suite to have a default timeout of 10s
-    this.timeout(10000);
+    // Configure this suite to have a default timeout of 5s
+    this.timeout(5000);
 
     let page;
     let browser;
-    let PORT;
+    let url;
 
     before(async () => {
         await server.listen();
@@ -38,11 +38,11 @@ module.exports = function () {
             page.coverage.startCSSCoverage(),
         ]);
 
-        PORT = server.address().port;
+        const port = server.address().port;
+        url = `http://localhost:${port}`;
     });
 
     after(async () => {
-        await server.close();
         const [jsCoverage, cssCoverage] = await Promise.all([
             page.coverage.stopJSCoverage(),
             page.coverage.stopCSSCoverage(),
@@ -54,14 +54,18 @@ module.exports = function () {
 
         pti.write([...jsCoverage, ...cssCoverage]);
         await browser.close();
+        await server.close();
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`http://localhost:${PORT}`);
+        const response = await page.goto(url);
+        await page.waitFor(100);
+
         // We expect the page to return the correct status code, making sure the server is running properly
         assert.equal(response.status(), 200);
-        const title = await page.title();
+
         // We expect the page to return the correct title, making sure there isn't another server running on this port
+        const title = await page.title();
         assert.equal(title, 'AliceO2 Logbook 2020');
     });
 
@@ -75,9 +79,31 @@ module.exports = function () {
         assert.equal(id, 'filtersCheckbox1');
 
         await page.click(`#${id}`);
-        await page.waitFor(1000);
-        const newTableRows = await page.$$('table tr');
+        await page.waitFor(100);
+
         // We expect the amount of logs in this filter to match the advertised amount in the filters component
-        assert.equal(true, newTableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)));
+        const tableRows = await page.$$('table tr');
+        assert.equal(true, tableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)));
+
+        // Deselect the filter and wait for the changes to process
+        await page.click(`#${id}`);
+        await page.waitFor(100);
+        assert.equal(true, tableRows.length - 1 === parseInt(amount.substring(1, amount.length - 1)));
+    });
+
+    it('can navigate to a log detail page', async () => {
+        const firstRow = '#row1';
+        const firstRowText = await page.$(firstRow + ' td');
+        const id = await page.evaluate((element) => element.innerText, firstRowText);
+
+        // We expect the entry page to have the same id as the id from the log overview
+        await page.click(firstRow);
+        await page.waitFor(100);
+        const redirectedUrl = await page.url();
+        assert.equal(redirectedUrl, `${url}/?page=entry&id=${id}`);
+
+        // We expect there to be at least one post in this log entry
+        const postExists = !!(await page.$('#post1'));
+        assert.equal(true, postExists);
     });
 };
