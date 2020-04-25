@@ -26,7 +26,7 @@ module.exports = function () {
 
     before(async () => {
         await server.listen();
-        browser = await puppeteer.launch();
+        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         page = await browser.newPage();
         await Promise.all([
             page.coverage.startJSCoverage(),
