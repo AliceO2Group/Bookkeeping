@@ -21,6 +21,13 @@
                 "multiline": true
             }
         ],
+        "array-bracket-spacing": [
+            "error",
+            "never",
+            {
+                "singleValue": false
+            }
+        ],
         "arrow-body-style": [
             "error",
             "as-needed"
@@ -29,10 +36,30 @@
             "error",
             "always"
         ],
+        "brace-style": [
+            "error",
+            "1tbs",
+            {
+                "allowSingleLine": false
+            }
+        ],
+        "capitalized-comments": [
+            "error",
+            "always"
+        ],
         "comma-dangle": [
             "error",
             "always-multiline"
         ],
+        "comma-spacing": [
+            "error",
+            {
+                "before": false,
+                "after": true
+            }
+        ],
+        "computed-property-spacing": "error",
+        "curly": "error",
         "dot-location": [
             "error",
             "property"
@@ -77,6 +104,11 @@
                 "code": 120
             }
         ],
+        "multiline-comment-style": [
+            "error",
+            "starred-block"
+        ],
+        "no-console": "error",
         "no-magic-numbers": "off",
         "no-multiple-empty-lines": [
             "error",
@@ -96,6 +128,12 @@
         "object-curly-spacing": [
             "error",
             "always"
+        ],
+        "object-property-newline": [
+            "error",
+            {
+                "allowAllPropertiesOnSameLine": true
+            }
         ],
         "one-var": [
             "error",
@@ -129,6 +167,7 @@
                 "allowUnboundThis": true
             }
         ],
+        "prefer-object-spread": "error",
         "quote-props": [
             "error",
             "as-needed"
@@ -165,6 +204,12 @@
                 "asyncArrow": "always"
             }
         ],
+        "space-in-parens": [
+            "error",
+            "never"
+        ],
+        "sort-keys": "off",
+        "sort-imports": "off",
         "sort-vars": "off",
         "valid-jsdoc": [
             "error",

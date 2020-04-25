@@ -9,7 +9,7 @@
  * In applying this license CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
-*/
+ */
 
 const fs = require('fs');
 const path = require('path');
@@ -20,7 +20,9 @@ const { expect } = chai;
 module.exports = () => {
     const useCasesPath = path.resolve(__dirname, '..', '..', '..', 'lib', 'application', 'interfaces');
     getAllFiles(useCasesPath).forEach((file) => {
-        if (!file.endsWith('.js') || file.endsWith('index.js')) return;
+        if (!file.endsWith('.js') || file.endsWith('index.js')) {
+            return;
+        }
 
         const relativePath = path.relative(useCasesPath, file);
         const testName = relativePath.toString().substr(0, relativePath.toString().length - 3);
@@ -28,7 +30,9 @@ module.exports = () => {
             const clazz = require(file);
 
             getAllFuncs(clazz.prototype).forEach((method) => {
-                if (method === 'constructor') return;
+                if (method === 'constructor') {
+                    return;
+                }
 
                 describe(method, () => {
                     const instance = new clazz();
