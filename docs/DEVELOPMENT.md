@@ -12,3 +12,10 @@ Format:
 - ```Arsenic.``` (team name)
 - ```sp1.``` (sprint 1)
 - ```v0.0.1``` (version major, minor, patch)
+
+## Changelog generation
+The `CHANGELOG.md` is generated using the [Standard CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/standard-changelog) package, an opinionated approach to CHANGELOG generation using angular commit conventions.
+
+```sh
+$ npx standard-changelog
+```
