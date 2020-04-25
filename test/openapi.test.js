@@ -9,7 +9,7 @@
  * In applying this license CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
-*/
+ */
 
 const path = require('path');
 const { expect } = require('chai');
@@ -23,8 +23,7 @@ module.exports = () => {
             try {
                 await Promise.resolve();
                 return callback.apply(this, arguments);
-            }
-            catch (e) {
+            } catch (e) {
                 this.skip();
             }
         });

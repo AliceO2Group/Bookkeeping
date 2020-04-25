@@ -9,7 +9,7 @@
  * In applying this license CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
-*/
+ */
 
 const path = require('path');
 const chai = require('chai');
@@ -36,7 +36,9 @@ describe('GET /api/', () => {
             .get('/api/')
             .expect(200)
             .end((err, res) => {
-                if (err) return done(err);
+                if (err) {
+                    return done(err);
+                }
 
                 expect(res).to.satisfyApiSpec;
                 done();

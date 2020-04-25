@@ -9,7 +9,7 @@
  * In applying this license CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
-*/
+ */
 
 const { persistence: { repositories: { LogRepository } } } = require('../../../../lib/application');
 const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
