@@ -11,37 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
-const chai = require('chai');
-const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
+const HomeSuite = require('./home.test');
+const ShutdownSuite = require('./shutdown.test');
 
-const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
-
-describe('GET /api/', () => {
-    const { server } = require('../../lib/application');
-
-    before(async () => {
-        await server.listen();
-    });
-
-    after(async () => {
-        await server.close();
-    });
-
-    it('should satisfy OpenAPI spec', (done) => {
-        request(server)
-            .get('/api/')
-            .expect(200)
-            .end((err, res) => {
-                if (err) {
-                    return done(err);
-                }
-
-                expect(res).to.satisfyApiSpec;
-                done();
-            });
-    });
-});
+module.exports = () => {
+    describe('Home', HomeSuite);
+    describe('Shutdown', ShutdownSuite);
+};
