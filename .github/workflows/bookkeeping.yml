@@ -1,0 +1,46 @@
+name: Bookkeeping
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  coverage:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build all containers
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            build --no-cache
+      - name: Execute test suite
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            run application sh -c "npm run coverage"
+      - name: Stop all containers
+        run: docker stop $(docker ps -a -q)
+      - name: Remove all containers
+        run: docker rm $(docker ps -a -q)
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+
+  linter:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.16.1
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.16.1'
+      - name: Installing dependencies
+        run: npm ci
+      - name: Running linter
+        run: npm run lint

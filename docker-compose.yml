@@ -6,5 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+    volumes:
+      - "./scripts:/opt"
     ports:
       - "80:4000"

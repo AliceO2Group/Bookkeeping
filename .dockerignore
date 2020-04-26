@@ -1,8 +1,6 @@
-# Node related
-coverage/
-node_modules/
-test/
+# Default
+*
 
-# Docker related
-.dockerignore
-Dockerfile
+# Project
+!lib/
+!package*.json
