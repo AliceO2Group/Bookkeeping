@@ -1,0 +1,41 @@
+name: Docker
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  linter:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint Dockerfile
+        uses: brpaz/hadolint-action@master
+        with:
+          dockerfile: "Dockerfile"
+
+  validate:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Validate docker-compose.yml
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            config --quiet
+      - name: Validate docker-compose.dev.yml
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.dev.yml \
+            config --quiet
+      - name: Validate docker-compose.test.yml
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            config --quiet
