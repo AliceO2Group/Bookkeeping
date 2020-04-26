@@ -1,0 +1,11 @@
+version: "3.7"
+
+# All options specified below override the options with the test variables
+services:
+  application:
+    build:
+      target: test
+    volumes:
+      # Mount the local working directory in the container for Mocha
+      - ".:/usr/src/app"
+      - "/usr/src/app/node_modules"

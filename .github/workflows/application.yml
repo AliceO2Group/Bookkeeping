@@ -7,47 +7,27 @@ on:
       - master
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [windows-2019, ubuntu-18.04]
-        node-version: ['12.16.1']
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Installing dependencies
-        run: npm ci
-      - name: Executing test suite
-        run: npm test
-        env:
-          CI: true
-
   coverage:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-18.04]
-        node-version: ['12.16.1']
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Installing dependencies
-        run: npm ci
-      - name: Executing test suite with coverage
-        run: npm run coverage
-        env:
-          CI: true
+      - name: Build all containers
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            build --no-cache
+      - name: Execute test suite
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            run application sh -c "npm run coverage"
+      - name: Stop all containers
+        run: docker stop $(docker ps -a -q)
+      - name: Remove all containers
+        run: docker rm $(docker ps -a -q)
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
 

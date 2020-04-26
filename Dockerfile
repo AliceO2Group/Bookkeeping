@@ -49,6 +49,14 @@ CMD [ "npm", "run", "start:dev" ]
 
 
 #
+# ---- Test ----
+FROM developmentDependencies as test
+
+# Run start script as specified in package.json
+CMD [ "npm", "run", "coverage" ]
+
+
+#
 # ---- Production Dependencies ----
 FROM package as productionDependencies
 
