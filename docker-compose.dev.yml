@@ -8,5 +8,6 @@ services:
     volumes:
       # Mount the local working directory in the container for Nodemon
       - ".:/usr/src/app"
+      - "/usr/src/app/node_modules"
     ports:
       - "4000:4000"
