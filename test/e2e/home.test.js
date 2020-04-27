@@ -22,14 +22,16 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 
 module.exports = () => {
     describe('GET /api/', () => {
-        const { server } = require('../../lib/application');
+        const application = require('../../lib/application');
+
+        const { server } = application;
 
         before(async () => {
-            await server.listen();
+            await application.run();
         });
 
         after(async () => {
-            await server.close();
+            await application.stop(true);
         });
 
         it('should satisfy OpenAPI spec', (done) => {
