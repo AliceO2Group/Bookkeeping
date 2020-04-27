@@ -15,7 +15,7 @@ const path = require('path');
 const { expect } = require('chai');
 const yaml = require('js-yaml');
 const fs = require('fs');
-const { getRoutesAsList } = require('../lib/http/routers');
+const { getRoutesAsList } = require('../lib/server/routers');
 
 module.exports = () => {
     it.allowFail = (title, callback) => {
