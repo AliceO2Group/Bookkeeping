@@ -48,7 +48,7 @@ RUN npm --silent ci
 FROM developmentDependencies as development
 
 # Run start script as specified in package.json
-CMD [ "npm", "run", "start:dev" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
 
 
 #
@@ -56,7 +56,7 @@ CMD [ "npm", "run", "start:dev" ]
 FROM developmentDependencies as test
 
 # Run start script as specified in package.json
-CMD [ "npm", "run", "coverage" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
 
 
 #
@@ -75,4 +75,4 @@ COPY . .
 FROM productionDependencies as production
 
 # Run start script as specified in package.json
-CMD [ "node", "lib/main.js" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "node", "lib/main.js" ]
