@@ -5,6 +5,8 @@
     ],
     "exclude": [
         "lib/main.js",
+        "lib/database/migrations/*.js",
+        "lib/database/seeders/*.js",
         "test/**/*.js"
     ]
 }
