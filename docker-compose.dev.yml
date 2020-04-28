@@ -11,3 +11,9 @@ services:
       - "/usr/src/app/node_modules"
     ports:
       - "4000:4000"
+
+  database:
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root

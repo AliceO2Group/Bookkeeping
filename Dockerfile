@@ -8,6 +8,9 @@ WORKDIR /usr/src/app
 # Expose the port to the Docker instance (not the host!)
 EXPOSE 4000
 
+RUN apk add --no-cache \
+    bash=5.0.11-r1
+
 
 #
 # ---- Package ----
