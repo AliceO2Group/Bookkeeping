@@ -9,3 +9,5 @@ services:
       # Mount the local working directory in the container for Mocha
       - ".:/usr/src/app"
       - "/usr/src/app/node_modules"
+    environment:
+      - NODE_ENV=test

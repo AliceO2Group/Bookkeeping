@@ -12,6 +12,8 @@ services:
       - database
     ports:
       - "80:4000"
+    environment:
+      - NODE_ENV=production
 
   database:
     image: mariadb:10.5.2
