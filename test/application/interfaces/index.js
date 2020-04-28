@@ -61,7 +61,7 @@ module.exports = () => {
     });
 };
 
-/* eslint-disable */
+// eslint-disable-next-line require-jsdoc
 function getAllFuncs(toCheck) {
     var props = [];
     var obj = toCheck;
@@ -69,13 +69,17 @@ function getAllFuncs(toCheck) {
         if (obj.constructor.name !== 'Object') {
             props = props.concat(Object.getOwnPropertyNames(obj));
         }
+    // eslint-disable-next-line no-cond-assign
     } while (obj = Object.getPrototypeOf(obj));
 
     return props.sort().filter((e, i, arr) => {
-        if (e != arr[i + 1] && typeof toCheck[e] == 'function') return true;
+        if (e != arr[i + 1] && typeof toCheck[e] == 'function') {
+            return true;
+        }
     });
 }
 
+// eslint-disable-next-line require-jsdoc
 function getAllFiles(basePath, found = []) {
     fs.readdirSync(basePath).forEach((file) => {
         if (fs.lstatSync(path.resolve(basePath, file)).isDirectory()) {
@@ -87,4 +91,3 @@ function getAllFiles(basePath, found = []) {
 
     return found;
 }
-/* eslint-enable */

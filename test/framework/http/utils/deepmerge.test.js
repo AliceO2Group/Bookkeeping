@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { deepmerge } = require('../../../../lib/framework/http/utils');
+const { deepmerge } = require('../../../../lib/server/utils');
 const chai = require('chai');
 
 const { expect } = chai;

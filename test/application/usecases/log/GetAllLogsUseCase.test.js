@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { persistence: { repositories: { LogRepository } } } = require('../../../../lib/application');
+const { repositories: { LogRepository } } = require('../../../../lib/database');
 const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
 const chai = require('chai');
 
