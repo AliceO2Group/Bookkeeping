@@ -18,6 +18,16 @@ const OpenApiSuite = require('./openapi.test');
 const EndToEndSuite = require('./e2e');
 
 describe('Bookkeeping', () => {
+    const application = require('../lib/application');
+
+    before(async () => {
+        await application.run();
+    });
+
+    after(async () => {
+        await application.stop(true);
+    });
+
     describe('Application', ApplicationSuite);
     describe('Framework', FrameworkSuite);
     describe('OpenAPI Specification', OpenApiSuite);

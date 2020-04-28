@@ -14,7 +14,7 @@
 const assert = require('assert');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
-const application = require('../../lib/application');
+const { server } = require('../../lib/application');
 
 module.exports = function () {
     // Configure this suite to have a default timeout of 5s
@@ -24,10 +24,7 @@ module.exports = function () {
     let browser;
     let url;
 
-    const { server } = application;
-
     before(async () => {
-        await application.run();
         browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         page = await browser.newPage();
         await Promise.all([
@@ -51,7 +48,6 @@ module.exports = function () {
 
         pti.write([...jsCoverage, ...cssCoverage]);
         await browser.close();
-        await application.stop(true);
     });
 
     it('loads the page successfully', async () => {
