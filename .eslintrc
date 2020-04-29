@@ -90,6 +90,7 @@
         "lines-around-comment": [
             "error",
             {
+                "allowBlockStart": true,
                 "allowClassStart": true,
                 "beforeBlockComment": true
             }
