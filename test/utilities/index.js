@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const appendPath = require('./appendPath');
+const deepmerge = require('./deepmerge.test');
 
-module.exports = {
-    appendPath,
+module.exports = () => {
+    describe('deepmerge', deepmerge);
 };

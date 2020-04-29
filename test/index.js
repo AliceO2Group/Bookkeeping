@@ -16,6 +16,7 @@ const FrameworkSuite = require('./framework');
 const PublicSuite = require('./public');
 const OpenApiSuite = require('./openapi.test');
 const EndToEndSuite = require('./e2e');
+const UtilitiesSuite = require('./utilities');
 
 describe('Bookkeeping', () => {
     const application = require('../lib/application');
@@ -32,5 +33,6 @@ describe('Bookkeeping', () => {
     describe('Framework', FrameworkSuite);
     describe('OpenAPI Specification', OpenApiSuite);
     describe('Public', PublicSuite);
+    describe('Utilities', UtilitiesSuite);
     describe('E2E', EndToEndSuite);
 });
