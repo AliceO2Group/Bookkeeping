@@ -11,18 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const Application = require('./Application');
-const Database = require('./Database');
-const Logger = require('./Logger');
-const Repository = require('./Repository');
-const Server = require('./Server');
-const UseCase = require('./UseCase');
+const deepmerge = require('./deepmerge.test');
 
-module.exports = {
-    IApplication: Application,
-    IDatabase: Database,
-    ILogger: Logger,
-    IRepository: Repository,
-    IServer: Server,
-    IUseCase: UseCase,
+module.exports = () => {
+    describe('deepmerge', deepmerge);
 };
