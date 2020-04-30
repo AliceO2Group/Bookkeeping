@@ -29,7 +29,7 @@ module.exports = () => {
         describe(testName, () => {
             const clazz = require(file);
 
-            getAllFuncs(clazz.prototype).forEach((method) => {
+            getAllFuncs(clazz).forEach((method) => {
                 if (method === 'constructor') {
                     return;
                 }
@@ -38,7 +38,7 @@ module.exports = () => {
                     const instance = new clazz();
                     const expected = 'The method or operation is not implemented.';
 
-                    const callable = instance[method];
+                    const callable = instance[method] || clazz[method];
                     if (callable.constructor.name === 'AsyncFunction') {
                         it('should return a rejected Promise', () => callable()
                             .then(() => expect.fail())
@@ -64,7 +64,8 @@ module.exports = () => {
 // eslint-disable-next-line require-jsdoc
 function getAllFuncs(toCheck) {
     var props = [];
-    var obj = toCheck;
+
+    var obj = toCheck.prototype;
     do {
         if (obj.constructor.name !== 'Object') {
             props = props.concat(Object.getOwnPropertyNames(obj));
@@ -72,8 +73,16 @@ function getAllFuncs(toCheck) {
     // eslint-disable-next-line no-cond-assign
     } while (obj = Object.getPrototypeOf(obj));
 
+    obj = toCheck;
+    do {
+        if (obj.constructor.name !== 'Object' && !!obj.name) {
+            props = props.concat(Object.getOwnPropertyNames(obj));
+        }
+    // eslint-disable-next-line no-cond-assign
+    } while (obj = Object.getPrototypeOf(obj));
+
     return props.sort().filter((e, i, arr) => {
-        if (e != arr[i + 1] && typeof toCheck[e] == 'function') {
+        if (e != arr[i + 1] && (typeof toCheck[e] === 'function' || typeof toCheck.prototype[e] === 'function')) {
             return true;
         }
     });
