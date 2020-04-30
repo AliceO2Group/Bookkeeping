@@ -13,17 +13,26 @@
 
 const { repositories: { LogRepository } } = require('../../../../lib/database');
 const { log: { CreateLogUseCase } } = require('../../../../lib/application/usecases');
+const { dtos: { CreateLogDto } } = require('../../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
+    let createLogDto;
+
+    beforeEach(() => {
+        createLogDto = new CreateLogDto({
+            title: 'Yet another log',
+        });
+    });
+
     it('should insert a new Log', async () => {
         const nLogsBefore = await LogRepository.count();
 
         await new CreateLogUseCase()
             .setLogRepository(LogRepository)
-            .execute({ title: 'Yet another log' });
+            .execute(createLogDto);
 
         const nLogsAfter = await LogRepository.count();
         expect(nLogsAfter).to.be.greaterThan(nLogsBefore);
@@ -32,9 +41,10 @@ module.exports = () => {
     it('should insert a new Log with the same title as provided', async () => {
         const expectedTitle = `Log #${Math.round(Math.random() * 1000)}`;
 
+        createLogDto.title = expectedTitle;
         const result = await new CreateLogUseCase()
             .setLogRepository(LogRepository)
-            .execute({ title: expectedTitle });
+            .execute(createLogDto);
 
         expect(result.title).to.equal(expectedTitle);
     });
