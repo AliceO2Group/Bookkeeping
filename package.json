@@ -7,6 +7,7 @@
     "coverage:report": "nyc report --reporter=html --reporter=json",
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
+    "sequelize": "sequelize-cli",
     "start:dev": "nodemon lib/main.js",
     "start:prod": "node lib/main.js",
     "test": "mocha --exit"
