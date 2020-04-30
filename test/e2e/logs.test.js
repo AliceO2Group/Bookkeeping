@@ -37,7 +37,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError =  res.body.errors.find((err) => err.source.pointer === '/data/attributes/title');
+                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/title');
                     expect(titleError.detail).to.equal('Title must contain at least three characters.');
 
                     done();

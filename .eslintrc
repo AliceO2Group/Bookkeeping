@@ -111,6 +111,7 @@
         ],
         "no-console": "error",
         "no-magic-numbers": "off",
+        "no-multi-spaces": "error",
         "no-multiple-empty-lines": [
             "error",
             {
@@ -125,6 +126,7 @@
                 "argsIgnorePattern": "^(_|((request|response|next)$))"
             }
         ],
+        "no-var": "error",
         "no-trailing-spaces": "error",
         "object-curly-spacing": [
             "error",

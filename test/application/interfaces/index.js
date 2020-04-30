@@ -63,9 +63,9 @@ module.exports = () => {
 
 // eslint-disable-next-line require-jsdoc
 function getAllFuncs(toCheck) {
-    var props = [];
+    let props = [];
 
-    var obj = toCheck.prototype;
+    let obj = toCheck.prototype;
     do {
         if (obj.constructor.name !== 'Object') {
             props = props.concat(Object.getOwnPropertyNames(obj));
