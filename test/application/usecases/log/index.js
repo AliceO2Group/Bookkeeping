@@ -11,8 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
+const CreateLogUseCase = require('./CreateLogUseCase.test');
 const GetAllLogsUseCase = require('./GetAllLogsUseCase.test');
 
 module.exports = () => {
+    describe('CreateLogUseCase', CreateLogUseCase);
     describe('GetAllLogsUseCase', GetAllLogsUseCase);
 };
