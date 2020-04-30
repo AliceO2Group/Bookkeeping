@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const InterfacesSuite = require('./interfaces');
+const InterfacesSuite = require('./interfaces.test');
 const UseCasesSuite = require('./usecases');
 
 module.exports = () => {
