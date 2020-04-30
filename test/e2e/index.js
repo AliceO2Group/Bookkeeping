@@ -12,9 +12,11 @@
  */
 
 const HomeSuite = require('./home.test');
+const LogsSuite = require('./logs.test');
 const ShutdownSuite = require('./shutdown.test');
 
 module.exports = () => {
     describe('Home', HomeSuite);
+    describe('Logs', LogsSuite);
     describe('Shutdown', ShutdownSuite);
 };

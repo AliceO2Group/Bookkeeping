@@ -24,9 +24,23 @@ paths:
                     type: string
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+  /logs:
+    post:
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
 components:
   schemas:
+    DataResponse:
+      type: object
+      properties:
+        data:
+          type: array
+      required:
+        - data
     ErrorResponse:
       type: object
       properties:
@@ -49,6 +63,18 @@ components:
         - status
         - title
   responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Created:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
