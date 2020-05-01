@@ -24,6 +24,22 @@ paths:
                     type: string
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+  /status:
+    get:
+      responses:
+        '200':
+          description: Deploy information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  age:
+                    type: number
+                  start:
+                    type: number
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
   /logs:
     post:
       responses:
