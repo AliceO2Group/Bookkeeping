@@ -1,5 +1,37 @@
 # Development
 
+## Sequlize (CLI)
+
+### Usage
+```sh
+$ npm run sequelize -- [command]
+```
+
+### Show help
+```sh
+$ npm run sequelize -- --help
+```
+
+### Generates a new migration file
+```sh
+$ npm run sequelize -- migration:generate --name <MIGRATION NAME>
+```
+
+### Run pending migrations
+```sh
+$ npm run sequelize -- db:migrate
+```
+
+### Generates a new seed file
+```sh
+$ npm run sequelize -- seed:generate --name <MIGRATION NAME>
+```
+
+### Run every seeder
+```sh
+$ npm run sequelize -- db:seed:all
+```
+
 ## Commit naming convention
 We use the [`Conventional Commits`](https://www.conventionalcommits.org/en/v1.0.0/) format, which is a specification for adding human and machine readable meaning to commit messages.
 
