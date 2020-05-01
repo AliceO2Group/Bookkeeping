@@ -32,7 +32,6 @@ module.exports = () => {
     const routes = getRoutesAsList();
 
     const spec = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', 'spec', 'openapi.yaml'), 'utf8'));
-    const baseURL = spec.servers[0].url;
 
     const expectedRoutes = [];
     Object.keys(spec.paths).forEach((specPath) => {
@@ -47,16 +46,13 @@ module.exports = () => {
         describe(`${method.toUpperCase()} ${path.toLowerCase()}`, () => {
             foundRoutes.push(`${method.toUpperCase()} ${path.toLowerCase()}`);
 
-            it.allowFail('should be defined in the OpenAPI spec', (done) => {
-                const specRoute = spec.paths[path.substr(baseURL.length)];
+            it.allowFail('should be defined in the OpenAPI spec', () => {
+                const specRoute = spec.paths[path];
 
                 expect(specRoute).to.not.be.undefined;
                 expect(specRoute).to.not.be.null;
 
                 expect(specRoute).to.haveOwnProperty(method.toLowerCase());
-
-                this.skip();
-                done();
             });
         });
     });
