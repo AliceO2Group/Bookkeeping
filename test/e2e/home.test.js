@@ -38,4 +38,22 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/status', () => {
+        const { server } = require('../../lib/application');
+
+        it('should satisfy OpenAPI spec', (done) => {
+            request(server)
+                .get('/api/status')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(res).to.satisfyApiSpec;
+                    done();
+                });
+        });
+    });
 };

@@ -16,12 +16,18 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  version:
-                    type: string
+                $ref: '#/components/schemas/ApiInformation'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /status:
+    get:
+      responses:
+        '200':
+          description: Deploy information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
   /logs:
@@ -34,6 +40,16 @@ paths:
 
 components:
   schemas:
+    ApiInformation:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      required:
+        - name
+        - version
     DataResponse:
       type: object
       properties:
@@ -41,6 +57,16 @@ components:
           type: array
       required:
         - data
+    DeployInformation:
+      type: object
+      properties:
+        age:
+          type: number
+        start:
+          type: number
+      required:
+        - age
+        - start
     ErrorResponse:
       type: object
       properties:

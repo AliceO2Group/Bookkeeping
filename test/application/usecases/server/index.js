@@ -11,8 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
+const GetDeployInformationUseCase = require('./GetDeployInformationUseCase.test');
 const GetServerInformationUseCase = require('./GetServerInformationUseCase.test');
 
 module.exports = () => {
+    describe('GetDeployInformationUseCase', GetDeployInformationUseCase);
     describe('GetServerInformationUseCase', GetServerInformationUseCase);
 };
