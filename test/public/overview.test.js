@@ -65,25 +65,37 @@ module.exports = function () {
     });
 
     it('can filter logs dynamically', async () => {
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const tableRows = await page.$$('table tr');
+        const numberOfRows = tableRows.length - 1;
+        expect(numberOfRows).to.be.greaterThan(1);
+
+        // Expect to have captured the first checkbox in the list
         const checkbox = await page.$('.form-check input');
         const label = await page.$('.form-check label div');
-
-        // We expect to have captured the first checkbox in the list
         const id = await page.evaluate((element) => element.id, checkbox);
         const amount = await page.evaluate((element) => element.innerText, label);
         expect(id).to.equal('filtersCheckbox1');
 
+        // Expect the number of rows in this filter to be less than the total number of rows
+        const advertisedRows = parseInt(amount.substring(1, amount.length - 1));
+        expect(advertisedRows).to.be.lessThan(numberOfRows);
+
+        // Select the filter and wait for the changes to be processed
         await page.click(`#${id}`);
         await page.waitFor(100);
 
-        // We expect the amount of logs in this filter to match the advertised amount in the filters component
-        const tableRows = await page.$$('table tr');
-        expect(parseInt(amount.substring(1, amount.length - 1))).to.equal(tableRows.length - 1);
+        // Expect the (new) total number of rows to equal the advertised number of rows
+        const filteredRows =await page.$$('table tr');
+        expect(filteredRows.length - 1).to.equal(advertisedRows);
 
         // Deselect the filter and wait for the changes to process
         await page.click(`#${id}`);
         await page.waitFor(100);
-        expect(parseInt(amount.substring(1, amount.length - 1))).to.equal(tableRows.length - 1);
+
+        // Expect the total number of rows to equal the original total
+        const unfilteredRows =await page.$$('table tr');
+        expect(unfilteredRows.length - 1).to.equal(numberOfRows);
     });
 
     it('can navigate to a log detail page', async () => {
