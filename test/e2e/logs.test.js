@@ -38,7 +38,30 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/title');
-                    expect(titleError.detail).to.equal('Title must contain at least three characters.');
+                    expect(titleError.detail).to.equal('"title" is required');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the title is too short', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'A',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/title');
+                    expect(titleError.detail).to.equal('"title" length must be at least 3 characters long');
 
                     done();
                 });
