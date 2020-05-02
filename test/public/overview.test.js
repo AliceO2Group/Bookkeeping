@@ -34,7 +34,7 @@ module.exports = function () {
             page.coverage.startCSSCoverage(),
         ]);
 
-        const port = server.address().port;
+        const { port } = server.address();
         url = `http://localhost:${port}`;
     });
 
@@ -86,7 +86,7 @@ module.exports = function () {
         await page.waitFor(100);
 
         // Expect the (new) total number of rows to equal the advertised number of rows
-        const filteredRows =await page.$$('table tr');
+        const filteredRows = await page.$$('table tr');
         expect(filteredRows.length - 1).to.equal(advertisedRows);
 
         // Deselect the filter and wait for the changes to process
@@ -94,13 +94,13 @@ module.exports = function () {
         await page.waitFor(100);
 
         // Expect the total number of rows to equal the original total
-        const unfilteredRows =await page.$$('table tr');
+        const unfilteredRows = await page.$$('table tr');
         expect(unfilteredRows.length - 1).to.equal(numberOfRows);
     });
 
     it('can navigate to a log detail page', async () => {
         const firstRow = '#row1';
-        const firstRowText = await page.$(firstRow + ' td');
+        const firstRowText = await page.$(`${firstRow} td`);
         const id = await page.evaluate((element) => element.innerText, firstRowText);
 
         // We expect the entry page to have the same id as the id from the log overview
