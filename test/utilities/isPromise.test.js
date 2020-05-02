@@ -11,10 +11,21 @@
  * or submit itself to any jurisdiction.
  */
 
-const deepmerge = require('./deepmerge.test');
-const isPromise = require('./isPromise.test');
+const { isPromise } = require('../../lib/utilities');
+const chai = require('chai');
+
+const { expect } = chai;
 
 module.exports = () => {
-    describe('deepmerge', deepmerge);
-    describe('isPromise', isPromise);
+    it('should return true', () => {
+        expect(isPromise(Promise.resolve())).to.be.true;
+        expect(isPromise(Promise.reject())).to.be.true;
+    });
+
+    it('should return false', () => {
+        expect(isPromise()).to.be.false;
+        expect(isPromise(null)).to.be.false;
+        expect(isPromise(undefined)).to.be.false;
+        expect(isPromise('Promise')).to.be.false;
+    });
 };
