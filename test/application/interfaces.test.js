@@ -14,6 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const chai = require('chai');
+const { isPromise } = require('../../lib/utilities');
 
 const { expect } = chai;
 
@@ -39,7 +40,7 @@ module.exports = () => {
                     const expected = 'The method or operation is not implemented.';
 
                     const callable = instance[method] || clazz[method];
-                    if (callable.constructor.name === 'AsyncFunction') {
+                    if (isPromise(callable)) {
                         it('should return a rejected Promise', () => callable()
                             .then(() => expect.fail())
                             .catch((err) => expect(err).to.equal(expected)));
