@@ -44,11 +44,7 @@ module.exports = function () {
             page.coverage.stopCSSCoverage(),
         ]);
 
-        [...jsCoverage, ...cssCoverage].forEach((element) => {
-            element.url = element.url.replace('?', '');
-        });
-
-        pti.write([...jsCoverage, ...cssCoverage]);
+        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
         await browser.close();
     });
 
