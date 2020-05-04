@@ -11,7 +11,6 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { LogRepository } } = require('../../../../lib/database');
 const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
 const chai = require('chai');
 
@@ -20,7 +19,6 @@ const { expect } = chai;
 module.exports = () => {
     it('should return an array', async () => {
         const result = await new GetAllLogsUseCase()
-            .setLogRepository(LogRepository)
             .execute();
 
         expect(result).to.be.an('array');

@@ -88,13 +88,13 @@ const getAllStaticFunctions = (toCheck) => {
 
     let obj = toCheck;
     do {
-        if (obj.constructor.name !== 'Object' && !!obj.name) {
+        if (obj.constructor.name !== 'Object' && Boolean(obj.name)) {
             props = props.concat(Object.getOwnPropertyNames(obj));
         }
     // eslint-disable-next-line no-cond-assign
     } while (obj = Object.getPrototypeOf(obj));
 
-    return props.sort().filter((e, i, arr) => (e != arr[i + 1] && typeof toCheck[e] === 'function'));
+    return props.sort().filter((e, i, arr) => e != arr[i + 1] && typeof toCheck[e] === 'function');
 };
 
 /**
@@ -114,7 +114,21 @@ const getAllInstanceFunctions = (toCheck) => {
     // eslint-disable-next-line no-cond-assign
     } while (obj = Object.getPrototypeOf(obj));
 
-    return props.sort().filter((e, i, arr) => (e != arr[i + 1] && typeof toCheck.prototype[e] === 'function'));
+    return props.sort().filter((e, i, arr) => {
+        if (e === arr[i + 1]) {
+            // Exclude duplicate functions
+            return false;
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(toCheck.prototype, e);
+        if (descriptor && (descriptor['get'] || descriptor['set'])) {
+            // Exclude getters and/or setters
+            return false;
+        }
+
+        // Include functions
+        return typeof toCheck.prototype[e] === 'function';
+    });
 };
 
 /**

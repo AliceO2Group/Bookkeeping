@@ -44,11 +44,7 @@ module.exports = function () {
             page.coverage.stopCSSCoverage(),
         ]);
 
-        [...jsCoverage, ...cssCoverage].forEach((element) => {
-            element.url = element.url.replace('?', '');
-        });
-
-        pti.write([...jsCoverage, ...cssCoverage]);
+        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
         await browser.close();
     });
 
@@ -110,7 +106,7 @@ module.exports = function () {
         expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${id}`);
 
         // We expect there to be at least one post in this log entry
-        const postExists = !!(await page.$('#post1'));
+        const postExists = Boolean(await page.$('#post1'));
         expect(postExists).to.be.true;
     });
 };
