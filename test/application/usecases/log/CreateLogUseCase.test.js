@@ -31,7 +31,6 @@ module.exports = () => {
         const nLogsBefore = await LogRepository.count();
 
         await new CreateLogUseCase()
-            .setLogRepository(LogRepository)
             .execute(createLogDto);
 
         const nLogsAfter = await LogRepository.count();
@@ -43,7 +42,6 @@ module.exports = () => {
 
         createLogDto.title = expectedTitle;
         const result = await new CreateLogUseCase()
-            .setLogRepository(LogRepository)
             .execute(createLogDto);
 
         expect(result.title).to.equal(expectedTitle);
