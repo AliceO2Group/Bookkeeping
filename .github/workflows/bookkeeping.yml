@@ -9,6 +9,7 @@ on:
 jobs:
   coverage:
     runs-on: ubuntu-18.04
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v2
@@ -43,6 +44,7 @@ jobs:
 
   linter:
     runs-on: ubuntu-18.04
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v2
