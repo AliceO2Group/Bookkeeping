@@ -88,13 +88,13 @@ const getAllStaticFunctions = (toCheck) => {
 
     let obj = toCheck;
     do {
-        if (obj.constructor.name !== 'Object' && !!obj.name) {
+        if (obj.constructor.name !== 'Object' && Boolean(obj.name)) {
             props = props.concat(Object.getOwnPropertyNames(obj));
         }
     // eslint-disable-next-line no-cond-assign
     } while (obj = Object.getPrototypeOf(obj));
 
-    return props.sort().filter((e, i, arr) => (e != arr[i + 1] && typeof toCheck[e] === 'function'));
+    return props.sort().filter((e, i, arr) => e != arr[i + 1] && typeof toCheck[e] === 'function');
 };
 
 /**

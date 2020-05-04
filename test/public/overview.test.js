@@ -106,7 +106,7 @@ module.exports = function () {
         expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${id}`);
 
         // We expect there to be at least one post in this log entry
-        const postExists = !!(await page.$('#post1'));
+        const postExists = Boolean(await page.$('#post1'));
         expect(postExists).to.be.true;
     });
 };

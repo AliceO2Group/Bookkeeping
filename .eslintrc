@@ -28,6 +28,10 @@
                 "singleValue": false
             }
         ],
+        "array-element-newline": [
+            "error",
+            "consistent"
+        ],
         "arrow-body-style": [
             "error",
             "as-needed"
@@ -110,6 +114,8 @@
             "starred-block"
         ],
         "no-console": "error",
+        "no-extra-parens": "error",
+        "no-implicit-coercion": "error",
         "no-magic-numbers": "off",
         "no-multi-spaces": "error",
         "no-multiple-empty-lines": [
@@ -120,6 +126,7 @@
                 "maxEOF": 0
             }
         ],
+        "no-return-assign": "error",
         "no-unused-vars": [
             "error",
             {
