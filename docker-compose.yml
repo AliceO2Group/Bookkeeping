@@ -20,6 +20,9 @@ services:
     image: mariadb:10.5.2
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower-case-table-names=2']
     restart: always
+    volumes: 
+      # Mounts the data directory as /var/lib/mysql inside the container, where the data files are written
+      - "./database/data:/var/lib/mysql"
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
       MYSQL_DATABASE: bookkeeping
