@@ -18,10 +18,13 @@ services:
 
   database:
     image: mariadb:10.5.2
-    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower-case-table-names=2']
     restart: always
+    volumes: 
+      # Mounts the data directory as /var/lib/mysql inside the container, where the data files are written
+      - "./database/data:/var/lib/mysql"
+      # Mounts the configuration directory as /etc/mysql/conf.d inside the container, where custom configurations reside
+      - "./database/configuration:/etc/mysql/conf.d"
+      # Mounts the populate directory as /docker-entrypoint-initdb.d" inside the container, where population dumps reside
+      - "./database/populate:/docker-entrypoint-initdb.d"
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-      MYSQL_DATABASE: bookkeeping
-      MYSQL_USER: cern
-      MYSQL_PASSWORD: cern
