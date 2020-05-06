@@ -29,7 +29,7 @@
     "mocha": "7.1.2",
     "nodemon": "2.0.3",
     "nyc": "15.0.1",
-    "puppeteer": "3.0.2",
+    "puppeteer": "3.0.3",
     "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul",
     "sequelize-cli": "5.5.1",
     "supertest": "4.0.2"
