@@ -11,8 +11,17 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogsSuite = require('./logs.test');
+const { log: { GetLogUseCase } } = require('../../../../lib/application/usecases');
+const chai = require('chai');
+
+const { expect } = chai;
 
 module.exports = () => {
-    describe('Logs', LogsSuite);
+    it('should return an array with exactly one object', async () => {
+        const result = await new GetLogUseCase()
+            .execute(1);
+
+        expect(result).to.be.an('array').that.has.lengthOf(1);
+        expect(result[0]).to.be.an('object');
+    });
 };

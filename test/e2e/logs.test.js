@@ -21,9 +21,9 @@ const { expect } = chai;
 chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
-    describe('POST /api/logs', () => {
-        const { server } = require('../../lib/application');
+    const { server } = require('../../lib/application');
 
+    describe('POST /api/logs', () => {
         it('should return 400 if no title is provided', (done) => {
             request(server)
                 .post('/api/logs')
@@ -85,6 +85,65 @@ module.exports = () => {
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].title).to.equal('Yet another run');
+
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/logs/:id', () => {
+        it('should return 400 if the log id is not a number', (done) => {
+            request(server)
+                .get('/api/logs/abc')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Given log id (abc) is not a valid number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the log could not be found', (done) => {
+            request(server)
+                .get('/api/logs/0')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Log with this id (0) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data[0].entryID).to.equal(1);
 
                     done();
                 });

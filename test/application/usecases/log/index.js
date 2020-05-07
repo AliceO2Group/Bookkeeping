@@ -13,8 +13,10 @@
 
 const CreateLogUseCase = require('./CreateLogUseCase.test');
 const GetAllLogsUseCase = require('./GetAllLogsUseCase.test');
+const GetLogUseCase = require('./GetLogUseCase.test');
 
 module.exports = () => {
     describe('CreateLogUseCase', CreateLogUseCase);
     describe('GetAllLogsUseCase', GetAllLogsUseCase);
+    describe('GetLogUseCase', GetLogUseCase);
 };
