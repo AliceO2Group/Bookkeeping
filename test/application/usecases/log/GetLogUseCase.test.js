@@ -12,14 +12,21 @@
  */
 
 const { log: { GetLogUseCase } } = require('../../../../lib/application/usecases');
+const { dtos: { GetLogDto } } = require('../../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
+    let getLogDto;
+
+    beforeEach(() => {
+        getLogDto = new GetLogDto({ id: 1 });
+    });
+
     it('should return an object that has the `entryID` property', async () => {
         const result = await new GetLogUseCase()
-            .execute(1);
+            .execute(getLogDto);
 
         expect(result).to.have.ownProperty('entryID');
         expect(result.entryID).to.equal(1);

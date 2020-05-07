@@ -105,7 +105,48 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal('Given log id (abc) is not a valid number');
+                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
+                    expect(titleError.detail).to.equal('"id" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the log id is not positive', (done) => {
+            request(server)
+                .get('/api/logs/-1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
+                    expect(titleError.detail).to.equal('"id" must be a positive number');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the log id is not a whole number', (done) => {
+            request(server)
+                .get('/api/logs/0.5')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
+                    expect(titleError.detail).to.equal('"id" must be an integer');
 
                     done();
                 });
@@ -113,7 +154,7 @@ module.exports = () => {
 
         it('should return 404 if the log could not be found', (done) => {
             request(server)
-                .get('/api/logs/0')
+                .get('/api/logs/999999999')
                 .expect(404)
                 .end((err, res) => {
                     if (err) {
@@ -124,7 +165,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal('Log with this id (0) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
 
                     done();
                 });
