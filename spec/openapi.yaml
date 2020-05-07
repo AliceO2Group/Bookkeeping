@@ -47,7 +47,7 @@ paths:
           type: number
       responses:
         '200':
-          $ref: '#/components/responses/Created'
+          $ref: '#/components/responses/OK'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -69,7 +69,9 @@ components:
       type: object
       properties:
         data:
-          type: array
+          oneOf:
+            - type: array
+            - type: object
       required:
         - data
     DeployInformation:
@@ -110,6 +112,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    OK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataResponse'
     Created:
       description: Created
       content:

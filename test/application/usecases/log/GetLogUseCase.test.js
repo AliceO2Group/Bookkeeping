@@ -17,11 +17,11 @@ const chai = require('chai');
 const { expect } = chai;
 
 module.exports = () => {
-    it('should return an array with exactly one object', async () => {
+    it('should return an object that has the `entryID` property', async () => {
         const result = await new GetLogUseCase()
             .execute(1);
 
-        expect(result).to.be.an('array').that.has.lengthOf(1);
-        expect(result[0]).to.be.an('object');
+        expect(result).to.have.ownProperty('entryID');
+        expect(result.entryID).to.equal(1);
     });
 };
