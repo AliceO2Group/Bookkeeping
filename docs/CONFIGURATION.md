@@ -8,3 +8,4 @@
 | DATABASE_USERNAME | The username which is used to authenticate against the database. | cern |
 | DATABASE_PASSWORD | The password which is used to authenticate against the database. | cern |
 | DATABASE_NAME | The name of the database | bookkeeping |
+| DATABASE_TIMEZONE | The timezone of the database | Etc/GMT+0 |
