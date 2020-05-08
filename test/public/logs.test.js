@@ -30,7 +30,7 @@ module.exports = function () {
         browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         page = await browser.newPage();
         await Promise.all([
-            page.coverage.startJSCoverage(),
+            page.coverage.startJSCoverage({ resetOnNavigation: false }),
             page.coverage.startCSSCoverage(),
         ]);
 
