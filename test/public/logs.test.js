@@ -30,7 +30,7 @@ module.exports = function () {
         browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         page = await browser.newPage();
         await Promise.all([
-            page.coverage.startJSCoverage(),
+            page.coverage.startJSCoverage({ resetOnNavigation: false }),
             page.coverage.startCSSCoverage(),
         ]);
 
@@ -108,5 +108,17 @@ module.exports = function () {
         // We expect there to be at least one post in this log entry
         const postExists = Boolean(await page.$('#post1'));
         expect(postExists).to.be.true;
+    });
+
+    it('notifies if am specified log id is invalid', async () => {
+        // Navigate to a log detail view with an id that cannot exist
+        await page.goto(`${url}/?page=entry&id=abc`);
+        await page.waitFor(100);
+
+        // We expect there to be an error message
+        const error = await page.$('.danger');
+        expect(Boolean(error)).to.be.true;
+        const message = await page.evaluate((element) => element.innerText, error);
+        expect(message).to.equal('This log could not be found.');
     });
 };

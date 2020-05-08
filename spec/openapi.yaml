@@ -37,6 +37,21 @@ paths:
           $ref: '#/components/responses/Created'
         '400':
           $ref: '#/components/responses/BadRequest'
+  /logs/:id:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/OK'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/BadRequest'
 
 components:
   schemas:
@@ -54,7 +69,9 @@ components:
       type: object
       properties:
         data:
-          type: array
+          oneOf:
+            - type: array
+            - type: object
       required:
         - data
     DeployInformation:
@@ -95,6 +112,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    OK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataResponse'
     Created:
       description: Created
       content:
