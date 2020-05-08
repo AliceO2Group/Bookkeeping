@@ -13,7 +13,7 @@
     "test": "mocha --exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.11.0",
+    "@aliceo2/web-ui": "1.11.1",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "mariadb": "2.3.1",
