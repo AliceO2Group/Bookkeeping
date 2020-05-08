@@ -32,9 +32,6 @@ $ npm run sequelize -- seed:generate --name <MIGRATION NAME>
 $ npm run sequelize -- db:seed:all
 ```
 
-## Commit naming convention
-We use the [`Conventional Commits`](https://www.conventionalcommits.org/en/v1.0.0/) format, which is a specification for adding human and machine readable meaning to commit messages.
-
 ## Versioning
 
 example: ```R.Arsenic.sp1.v0.0.1```
