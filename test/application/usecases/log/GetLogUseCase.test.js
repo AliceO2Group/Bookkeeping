@@ -21,7 +21,11 @@ module.exports = () => {
     let getLogDto;
 
     beforeEach(() => {
-        getLogDto = new GetLogDto({ id: 1 });
+        getLogDto = new GetLogDto({
+            params: {
+                id: 1,
+            },
+        });
     });
 
     it('should return an object that has the `entryID` property', async () => {

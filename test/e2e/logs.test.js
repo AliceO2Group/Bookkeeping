@@ -107,8 +107,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
-                    expect(titleError.detail).to.equal('"id" must be a number');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
+                    expect(titleError.detail).to.equal('"params.id" must be a number');
 
                     done();
                 });
@@ -127,8 +128,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
-                    expect(titleError.detail).to.equal('"id" must be a positive number');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
+                    expect(titleError.detail).to.equal('"params.id" must be a positive number');
 
                     done();
                 });
@@ -147,8 +149,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
-                    expect(titleError.detail).to.equal('"id" must be an integer');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
+                    expect(titleError.detail).to.equal('"params.id" must be an integer');
 
                     done();
                 });
