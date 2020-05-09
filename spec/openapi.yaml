@@ -10,6 +10,8 @@ servers:
 paths:
   /:
     get:
+      operationId: getServerInformation
+      summary: Get server information
       responses:
         '200':
           description: API information
@@ -21,19 +23,25 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
   /logs:
     post:
+      operationId: createLog
+      summary: Adds a new log
       responses:
         '201':
           $ref: '#/components/responses/Created'
         '400':
           $ref: '#/components/responses/BadRequest'
-  /logs/:id:
+  /logs/{id}:
     get:
+      operationId: getLogById
+      summary: Gets a log by Id
       parameters:
         - name: id
           in: path
+          description: The id of the log to retrieve
           required: true
           schema:
-            type: number
+            type: integer
+            format: int64
       responses:
         '200':
           $ref: '#/components/responses/OK'
@@ -43,6 +51,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /status:
     get:
+      operationId: getDeployInformation
+      summary: Get deploy information
       responses:
         '200':
           description: Deploy information

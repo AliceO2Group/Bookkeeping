@@ -36,7 +36,10 @@ module.exports = () => {
     const expectedRoutes = [];
     Object.keys(spec.paths).forEach((specPath) => {
         Object.keys(spec.paths[specPath]).forEach((specPathMethod) => {
-            expectedRoutes.push(`${specPathMethod.toUpperCase()} ${specPath.toLowerCase()}`);
+            const expectedMethod = specPathMethod.toUpperCase();
+            const expectedPath = specPath.split('/').map((sub) => sub.replace(/{([^}]+)}/, ':$1')).join('/');
+
+            expectedRoutes.push(`${expectedMethod} ${expectedPath}`);
         });
     });
 
@@ -47,7 +50,8 @@ module.exports = () => {
             foundRoutes.push(`${method.toUpperCase()} ${path.toLowerCase()}`);
 
             it.allowFail('should be defined in the OpenAPI spec', () => {
-                const specRoute = spec.paths[path];
+                const specPath = path.split('/').map((sub) => sub.replace(/:(.*)/, '{$1}')).join('/');
+                const specRoute = spec.paths[specPath];
 
                 expect(specRoute).to.not.be.undefined;
                 expect(specRoute).to.not.be.null;
