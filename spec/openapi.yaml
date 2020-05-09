@@ -25,9 +25,18 @@ paths:
     get:
       operationId: listLogs
       summary: List all logs
+      parameters:
+        - name: filter[origin]
+          description: Filter logs by their origin
+          in: query
+          schema:
+            type: string
+            enum: [human, process]
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
       tags:
         - log
     post:
@@ -134,6 +143,11 @@ components:
           $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - data
+    ArrayOfTags:
+      description: A list of Tag objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Tag'
     DeployInformation:
       description: Deploy information
       type: object
@@ -179,11 +193,24 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        entryID:
+          description: Id of the log.
+          type: integer
+          format: int64
         title:
           description: Title of the log.
           type: string
+        origin:
+          description: Type of creator.
+          type: string
+          enum: [human, process]
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
       required:
+        - entryID
         - title
+        - origin
+        - tags
     LogResponse:
       description: Response containing a single log.
       type: object
@@ -192,3 +219,6 @@ components:
           $ref: '#/components/schemas/Log'
       required:
         - data
+    Tag:
+      description: A label attached to something for the purpose of identification.
+      type: string

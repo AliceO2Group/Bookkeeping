@@ -23,6 +23,91 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 module.exports = () => {
     const { server } = require('../../lib/application');
 
+    describe('GET /api/logs', () => {
+        it('should return an array', (done) => {
+            request(server)
+                .get('/api/logs')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+
+        it('should support filtering by origin (process)', (done) => {
+            request(server)
+                .get('/api/logs?filter[origin]=process')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    for (const log of res.body.data) {
+                        expect(log.origin).to.equal('process');
+                    }
+
+                    done();
+                });
+        });
+
+        it('should support filtering by origin (human)', (done) => {
+            request(server)
+                .get('/api/logs?filter[origin]=human')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    for (const log of res.body.data) {
+                        expect(log.origin).to.equal('human');
+                    }
+
+                    done();
+                });
+        });
+
+        it('should return 400 for an unknown origin filter', (done) => {
+            request(server)
+                .get('/api/logs?filter[origin]=_')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const [titleError] = res.body.errors;
+                    expect(titleError.detail).to.equal('"query.filter.origin" must be one of [human, process]');
+
+                    done();
+                });
+        });
+    });
+
     describe('POST /api/logs', () => {
         it('should return 400 if no title is provided', (done) => {
             request(server)
