@@ -36,7 +36,10 @@ module.exports = () => {
     const expectedRoutes = [];
     Object.keys(spec.paths).forEach((specPath) => {
         Object.keys(spec.paths[specPath]).forEach((specPathMethod) => {
-            expectedRoutes.push(`${specPathMethod.toUpperCase()} ${specPath.toLowerCase()}`);
+            const expectedMethod = specPathMethod.toUpperCase();
+            const expectedPath = specPath.split('/').map((sub) => sub.replace(/{([^}]+)}/, ':$1')).join('/');
+
+            expectedRoutes.push(`${expectedMethod} ${expectedPath}`);
         });
     });
 
@@ -47,7 +50,8 @@ module.exports = () => {
             foundRoutes.push(`${method.toUpperCase()} ${path.toLowerCase()}`);
 
             it.allowFail('should be defined in the OpenAPI spec', () => {
-                const specRoute = spec.paths[path];
+                const specPath = path.split('/').map((sub) => sub.replace(/:(.*)/, '{$1}')).join('/');
+                const specRoute = spec.paths[specPath];
 
                 expect(specRoute).to.not.be.undefined;
                 expect(specRoute).to.not.be.null;
@@ -63,5 +67,49 @@ module.exports = () => {
 
     it.allowFail('should have defined all tested routes in the spec', () => {
         expect(expectedRoutes).to.include.members(foundRoutes);
+    });
+
+    describe('paths', () => {
+        let prevPath;
+        it('should have all keys alphabetically sorted', () => {
+            for (const path of Object.keys(spec.paths)) {
+                expect(prevPath > path, `Expected ${path} to be before ${prevPath}`).to.be.false;
+                prevPath = path;
+            }
+        });
+
+        for (const path of Object.keys(spec.paths)) {
+            describe(path, () => {
+                it('should have all keys alphabetically sorted', () => {
+                    let prevMethod;
+                    for (const method of Object.keys(spec.paths[path])) {
+                        expect(prevMethod > method, `Expected ${method} to be before ${prevMethod}`).to.be.false;
+                        prevMethod = method;
+                    }
+                });
+            });
+        }
+    });
+
+    describe('components', () => {
+        let prevComponent;
+        it('should have all keys alphabetically sorted', () => {
+            for (const component of Object.keys(spec.components)) {
+                expect(prevComponent > component, `Expected ${component} to be before ${prevComponent}`).to.be.false;
+                prevComponent = component;
+            }
+        });
+
+        for (const component of Object.keys(spec.components)) {
+            describe(component, () => {
+                let prevItem;
+                it('should have all keys alphabetically sorted', () => {
+                    for (const item of Object.keys(spec.components[component])) {
+                        expect(prevItem > item, `Expected ${item} to be before ${prevItem}`).to.be.false;
+                        prevItem = item;
+                    }
+                });
+            });
+        }
     });
 };

@@ -10,6 +10,8 @@ servers:
 paths:
   /:
     get:
+      operationId: getServerInformation
+      summary: Get server information
       responses:
         '200':
           description: API information
@@ -19,8 +21,38 @@ paths:
                 $ref: '#/components/schemas/ApiInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+  /logs:
+    post:
+      operationId: createLog
+      summary: Adds a new log
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /logs/{id}:
+    get:
+      operationId: getLogById
+      summary: Gets a log by Id
+      parameters:
+        - name: id
+          in: path
+          description: The id of the log to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OK'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/BadRequest'
   /status:
     get:
+      operationId: getDeployInformation
+      summary: Get deploy information
       responses:
         '200':
           description: Deploy information
@@ -30,30 +62,33 @@ paths:
                 $ref: '#/components/schemas/DeployInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
-  /logs:
-    post:
-      responses:
-        '201':
-          $ref: '#/components/responses/Created'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /logs/:id:
-    get:
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: number
-      responses:
-        '200':
-          $ref: '#/components/responses/OK'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/BadRequest'
 
 components:
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Created:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataResponse'
+    OK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataResponse'
+    ServiceUnavailable:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
     ApiInformation:
       type: object
@@ -71,6 +106,8 @@ components:
         data:
           oneOf:
             - type: array
+              items:
+                type: object
             - type: object
       required:
         - data
@@ -84,15 +121,6 @@ components:
       required:
         - age
         - start
-    ErrorResponse:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-      required:
-        - errors
     Error:
       type: object
       properties:
@@ -105,28 +133,12 @@ components:
       required:
         - status
         - title
-  responses:
-    BadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    OK:
-      description: OK
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DataResponse'
-    Created:
-      description: Created
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DataResponse'
-    ServiceUnavailable:
-      description: Service Unavailable
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+      required:
+        - errors
