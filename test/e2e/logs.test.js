@@ -109,7 +109,7 @@ module.exports = () => {
 
         it('should support pagination, offset 0 and limit 1', (done) => {
             request(server)
-                .get('/api/logs?page[offset]=0&page[limit]=1')
+                .get('/api/logs?page[offset]=0&page[limit]=1&sort=id')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -129,7 +129,7 @@ module.exports = () => {
 
         it('should support pagination, offset 1 and limit 1', (done) => {
             request(server)
-                .get('/api/logs?page[offset]=1&page[limit]=1')
+                .get('/api/logs?page[offset]=1&page[limit]=1&sort=id')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -163,6 +163,46 @@ module.exports = () => {
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
                     expect(titleError.detail).to.equal('"query.page.limit" must be larger than or equal to 1');
+
+                    done();
+                });
+        });
+
+        it('should support sorting, id DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort=-id')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect(data[0].entryId).to.be.greaterThan(data[1].entryId);
+
+                    done();
+                });
+        });
+
+        it('should support sorting, id ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort=id')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect(data[1].entryId).to.be.greaterThan(data[0].entryId);
 
                     done();
                 });

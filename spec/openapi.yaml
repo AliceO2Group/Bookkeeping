@@ -29,6 +29,7 @@ paths:
         - $ref: '#/components/parameters/filterOrigin'
         - $ref: '#/components/parameters/pageOffset'
         - $ref: '#/components/parameters/pageLimit'
+        - $ref: '#/components/parameters/sortLogs'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
@@ -109,6 +110,19 @@ components:
         type: integer
         minimum: 0
         default: 0
+    sortLogs:
+      in: query
+      name: sort
+      description: The sort order of the returned items.
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+        default:
+          - -id
+      style: form
+      explode: false
   responses:
     ArrayOfLogs:
       description: Expected response to a valid request.
