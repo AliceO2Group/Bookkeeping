@@ -23,7 +23,9 @@ module.exports = () => {
 
     beforeEach(() => {
         createLogDto = new CreateLogDto({
-            title: 'Yet another log',
+            body: {
+                title: 'Yet another log',
+            },
         });
     });
 
@@ -40,7 +42,7 @@ module.exports = () => {
     it('should insert a new Log with the same title as provided', async () => {
         const expectedTitle = `Log #${Math.round(Math.random() * 1000)}`;
 
-        createLogDto.title = expectedTitle;
+        createLogDto.body.title = expectedTitle;
         const result = await new CreateLogUseCase()
             .execute(createLogDto);
 

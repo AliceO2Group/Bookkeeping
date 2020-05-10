@@ -37,8 +37,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/title');
-                    expect(titleError.detail).to.equal('"title" is required');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
+                    expect(titleError.detail).to.equal('"body.title" is required');
 
                     done();
                 });
@@ -60,8 +61,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/title');
-                    expect(titleError.detail).to.equal('"title" length must be at least 3 characters long');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
+                    expect(titleError.detail).to.equal('"body.title" length must be at least 3 characters long');
 
                     done();
                 });
@@ -105,8 +107,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
-                    expect(titleError.detail).to.equal('"id" must be a number');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
+                    expect(titleError.detail).to.equal('"params.id" must be a number');
 
                     done();
                 });
@@ -125,8 +128,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
-                    expect(titleError.detail).to.equal('"id" must be a positive number');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
+                    expect(titleError.detail).to.equal('"params.id" must be a positive number');
 
                     done();
                 });
@@ -145,8 +149,9 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const titleError = res.body.errors.find((err) => err.source.pointer === '/data/attributes/id');
-                    expect(titleError.detail).to.equal('"id" must be an integer');
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
+                    expect(titleError.detail).to.equal('"params.id" must be an integer');
 
                     done();
                 });
