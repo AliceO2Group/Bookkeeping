@@ -193,7 +193,7 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        entryID:
+        entryId:
           description: Id of the log.
           type: integer
           format: int64
@@ -207,7 +207,7 @@ components:
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
       required:
-        - entryID
+        - entryId
         - title
         - origin
         - tags

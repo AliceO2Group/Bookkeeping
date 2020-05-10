@@ -273,7 +273,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.entryID).to.equal(1);
+                    expect(res.body.data.entryId).to.equal(1);
 
                     done();
                 });
