@@ -48,7 +48,7 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/NotFound'
   /status:
     get:
       operationId: getDeployInformation
@@ -83,6 +83,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/DataResponse'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
