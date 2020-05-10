@@ -21,8 +21,8 @@ const { expect } = chai;
 module.exports = () => {
     let createLogDto;
 
-    beforeEach(() => {
-        createLogDto = new CreateLogDto({
+    beforeEach(async () => {
+        createLogDto = await CreateLogDto.validateAsync({
             body: {
                 title: 'Yet another log',
             },

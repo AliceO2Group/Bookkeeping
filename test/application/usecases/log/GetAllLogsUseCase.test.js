@@ -20,8 +20,8 @@ const { expect } = chai;
 module.exports = () => {
     let getAllLogsDto;
 
-    beforeEach(() => {
-        getAllLogsDto = new GetAllLogsDto({});
+    beforeEach(async () => {
+        getAllLogsDto = await GetAllLogsDto.validateAsync({});
     });
 
     it('should return an array', async () => {

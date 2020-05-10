@@ -20,8 +20,8 @@ const { expect } = chai;
 module.exports = () => {
     let getLogDto;
 
-    beforeEach(() => {
-        getLogDto = new GetLogDto({
+    beforeEach(async () => {
+        getLogDto = await GetLogDto.validateAsync({
             params: {
                 id: 1,
             },
