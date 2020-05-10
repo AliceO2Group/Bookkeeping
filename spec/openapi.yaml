@@ -31,17 +31,17 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
   /logs/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: The id of the log to retrieve
+        required: true
+        schema:
+          type: integer
+          format: int64
     get:
       operationId: getLogById
       summary: Gets a log by Id
-      parameters:
-        - name: id
-          in: path
-          description: The id of the log to retrieve
-          required: true
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           $ref: '#/components/responses/OK'

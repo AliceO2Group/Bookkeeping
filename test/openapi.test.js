@@ -36,6 +36,10 @@ module.exports = () => {
     const expectedRoutes = [];
     Object.keys(spec.paths).forEach((specPath) => {
         Object.keys(spec.paths[specPath]).forEach((specPathMethod) => {
+            if (specPathMethod === 'parameters') {
+                return;
+            }
+
             const expectedMethod = specPathMethod.toUpperCase();
             const expectedPath = specPath.split('/').map((sub) => sub.replace(/{([^}]+)}/, ':$1')).join('/');
 
@@ -83,6 +87,11 @@ module.exports = () => {
                 it('should have all keys alphabetically sorted', () => {
                     let prevMethod;
                     for (const method of Object.keys(spec.paths[path])) {
+                        if (method === 'parameters') {
+                            expect(Boolean(prevMethod), 'Global route parameters should be declared first').to.be.false;
+                            continue;
+                        }
+
                         expect(prevMethod > method, `Expected ${method} to be before ${prevMethod}`).to.be.false;
                         prevMethod = method;
                     }
