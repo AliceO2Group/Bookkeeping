@@ -85,8 +85,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].title).to.equal('Yet another run');
+                    expect(res.body.data.title).to.equal('Yet another run');
 
                     done();
                 });
