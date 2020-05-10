@@ -70,7 +70,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/Errors'
     Created:
       description: Created
       content:
@@ -88,13 +88,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/Errors'
     ServiceUnavailable:
       description: Service Unavailable
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/Errors'
   schemas:
     ApiInformation:
       description: API information
@@ -150,7 +150,7 @@ components:
       required:
         - status
         - title
-    ErrorResponse:
+    Errors:
       description: A list of Error objects.
       type: object
       properties:
@@ -159,5 +159,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Error'
+          minItems: 1
       required:
         - errors
