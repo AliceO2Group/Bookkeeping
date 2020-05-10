@@ -22,33 +22,45 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
   /logs:
+    get:
+      operationId: listLogs
+      summary: List all logs
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+      tags:
+        - log
     post:
       operationId: createLog
       summary: Adds a new log
       responses:
         '201':
-          $ref: '#/components/responses/Created'
+          $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
+      tags:
+        - log
   /logs/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: The id of the log to retrieve
+        required: true
+        schema:
+          type: integer
+          format: int64
     get:
       operationId: getLogById
       summary: Gets a log by Id
-      parameters:
-        - name: id
-          in: path
-          description: The id of the log to retrieve
-          required: true
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
-          $ref: '#/components/responses/OK'
+          $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
   /status:
     get:
       operationId: getDeployInformation
@@ -65,80 +77,118 @@ paths:
 
 components:
   responses:
+    ArrayOfLogs:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLogsResponse'
     BadRequest:
       description: Bad Request
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Created:
-      description: Created
+            $ref: '#/components/schemas/Errors'
+    Log:
+      description: Expected response to a valid request.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DataResponse'
-    OK:
-      description: OK
+            $ref: '#/components/schemas/LogResponse'
+    NotFound:
+      description: Not Found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DataResponse'
+            $ref: '#/components/schemas/Errors'
     ServiceUnavailable:
       description: Service Unavailable
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/Errors'
   schemas:
     ApiInformation:
+      description: API information
       type: object
       properties:
         name:
+          description: Name of the API
           type: string
         version:
+          description: Version of the API
           type: string
       required:
         - name
         - version
-    DataResponse:
+    ArrayOfLogs:
+      description: A list of Log objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Log'
+    ArrayOfLogsResponse:
+      description: Response containing multiple logs.
       type: object
       properties:
         data:
-          oneOf:
-            - type: array
-              items:
-                type: object
-            - type: object
+          $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - data
     DeployInformation:
+      description: Deploy information
       type: object
       properties:
         age:
+          description: The number of seconds that the server is online.
           type: number
         start:
+          description: The unix timestamp of the moment that the the server went online.
           type: number
       required:
         - age
         - start
     Error:
+      description: An Error object. 
       type: object
       properties:
         status:
+          description: The HTTP status code applicable to this problem.
           type: string
         title:
+          description: A short, human-readable summary of the problem.
           type: string
         detail:
+          description: A human-readable explanation specific to this occurrence of the problem.
           type: string
       required:
         - status
         - title
-    ErrorResponse:
+    Errors:
+      description: A list of Error objects.
       type: object
       properties:
         errors:
+          description: A list of Error objects.
           type: array
           items:
             $ref: '#/components/schemas/Error'
+          minItems: 1
       required:
         - errors
+    Log:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        title:
+          description: Title of the log.
+          type: string
+      required:
+        - title
+    LogResponse:
+      description: Response containing a single log.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Log'
+      required:
+        - data
