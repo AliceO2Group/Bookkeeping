@@ -49,8 +49,8 @@
     "schemas": {
       "invalid_type_format_pair": "error",
       "snake_case_only": "error",
-      "no_schema_description": "warning",
-      "no_property_description": "warning",
+      "no_schema_description": "error",
+      "no_property_description": "error",
       "description_mentions_json": "error",
       "array_of_arrays": "error",
       "inconsistent_property_type": "error",
