@@ -28,6 +28,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
+      tags:
+        - log
     post:
       operationId: createLog
       summary: Adds a new log
@@ -36,6 +38,8 @@ paths:
           $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
+      tags:
+        - log
   /logs/{id}:
     parameters:
       - name: id
@@ -55,6 +59,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+      tags:
+        - log
   /status:
     get:
       operationId: getDeployInformation
