@@ -22,6 +22,12 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
   /logs:
+    get:
+      operationId: listLogs
+      summary: List all logs
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
     post:
       operationId: createLog
       summary: Adds a new log
@@ -65,6 +71,12 @@ paths:
 
 components:
   responses:
+    ArrayOfLogs:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLogsResponse'
     BadRequest:
       description: Bad Request
       content:
@@ -103,6 +115,19 @@ components:
       required:
         - name
         - version
+    ArrayOfLogs:
+      description: A list of Log objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Log'
+    ArrayOfLogsResponse:
+      description: Response containing multiple logs.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfLogs'
+      required:
+        - data
     DeployInformation:
       description: Deploy information
       type: object
