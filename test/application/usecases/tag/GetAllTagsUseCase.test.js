@@ -11,10 +11,16 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogRepository = require('./LogRepository');
-const TagRepository = require('./TagRepository');
+const { tag: { GetAllTagsUseCase } } = require('../../../../lib/usecases');
+const chai = require('chai');
 
-module.exports = {
-    LogRepository,
-    TagRepository,
+const { expect } = chai;
+
+module.exports = () => {
+    it('should return an array', async () => {
+        const result = await new GetAllTagsUseCase()
+            .execute();
+
+        expect(result).to.be.an('array');
+    });
 };

@@ -13,8 +13,10 @@
 
 const LogSuite = require('./log');
 const ServerSuite = require('./server');
+const TagSuite = require('./tag');
 
 module.exports = () => {
     describe('Log', LogSuite);
     describe('Server', ServerSuite);
+    describe('Tag', TagSuite);
 };
