@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const HttpSuite = require('./http');
+const UtilitiesSuite = require('./utilities');
 
 module.exports = () => {
-    describe('HTTP', HttpSuite);
+    describe('Utilities', UtilitiesSuite);
 };
