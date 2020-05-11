@@ -103,6 +103,22 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
+  /tags:
+    get:
+      operationId: listTags
+      summary: List all tags
+      parameters:
+        - $ref: '#/components/parameters/PageOffset'
+        - $ref: '#/components/parameters/PageLimit'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
 
 components:
   parameters:
@@ -309,4 +325,22 @@ components:
         - data
     Tag:
       description: A label attached to something for the purpose of identification.
-      type: string
+      type: object
+      properties:
+        id:
+          description: Id of the tag.
+          type: integer
+          format: int64
+        text:
+          description: The label value of the tag.
+          type: string
+        createdAt:
+          description: Date when the tag was created.
+          type: string
+        updateAt:
+          description: Date when the tag was last updated.
+          type: string
+      required:
+        - id
+        - text
+      additionalProperties: false

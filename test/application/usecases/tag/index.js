@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogRepository = require('./LogRepository');
-const TagRepository = require('./TagRepository');
+const GetAllTagsUseCase = require('./GetAllTagsUseCase.test');
 
-module.exports = {
-    LogRepository,
-    TagRepository,
+module.exports = () => {
+    describe('GetAllTagsUseCase', GetAllTagsUseCase);
 };
