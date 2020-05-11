@@ -278,7 +278,7 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/logs/:id', () => {
+    describe('GET /api/logs/:logId', () => {
         it('should return 400 if the log id is not a number', (done) => {
             request(server)
                 .get('/api/logs/abc')
@@ -293,8 +293,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
-                    expect(titleError.detail).to.equal('"params.id" must be a number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
 
                     done();
                 });
@@ -314,8 +314,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
-                    expect(titleError.detail).to.equal('"params.id" must be a positive number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a positive number');
 
                     done();
                 });
@@ -335,8 +335,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
-                    expect(titleError.detail).to.equal('"params.id" must be an integer');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be an integer');
 
                     done();
                 });

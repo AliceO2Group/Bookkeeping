@@ -53,15 +53,9 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  /logs/{id}:
+  /logs/{logId}:
     parameters:
-      - name: id
-        in: path
-        description: The id of the log to retrieve
-        required: true
-        schema:
-          type: integer
-          format: int64
+      - $ref: '#/components/parameters/LogId'
     get:
       operationId: getLogById
       summary: Gets a log by Id
@@ -101,6 +95,14 @@ components:
       schema:
         type: string
         enum: [human, process]
+    LogId:
+      name: logId
+      description: The id of the log to retrieve
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
     pageLimit:
       in: query
       name: page[limit]
