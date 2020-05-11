@@ -23,6 +23,14 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 module.exports = () => {
     const { server } = require('../../lib/application');
 
+    beforeEach(() => {
+        server.acceptIncomingConnections(true);
+    });
+
+    afterEach(() => {
+        server.acceptIncomingConnections(true);
+    });
+
     it('should return the server information when the server is not in shutdown', (done) => {
         request(server)
             .get('/api/')
