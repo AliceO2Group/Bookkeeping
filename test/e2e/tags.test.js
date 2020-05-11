@@ -207,4 +207,67 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/tags/:tagId/logs', () => {
+        it('should return 400 if the tag id is not a number', (done) => {
+            request(server)
+                .get('/api/tags/abc/logs')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
+                    expect(titleError.detail).to.equal('"params.tagId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the tag could not be found', (done) => {
+            request(server)
+                .get('/api/tags/999999999/logs')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Tag with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/tags/1/logs')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].title).to.equal('Third entry');
+
+                    done();
+                });
+        });
+    });
 };

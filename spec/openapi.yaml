@@ -136,6 +136,23 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
+  /tags/{tagId}/logs:
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      operationId: getLogsByTagId
+      summary: Gets all logs with this tag id
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
 
 components:
   parameters:
