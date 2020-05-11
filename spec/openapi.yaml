@@ -21,6 +21,8 @@ paths:
                 $ref: '#/components/schemas/ApiInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /logs:
     get:
       operationId: listLogs
@@ -35,6 +37,8 @@ paths:
           $ref: '#/components/responses/ArrayOfLogs'
         '400':
           $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
     post:
@@ -45,6 +49,8 @@ paths:
           $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
   /logs/{id}:
@@ -66,6 +72,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
   /status:
@@ -81,6 +89,8 @@ paths:
                 $ref: '#/components/schemas/DeployInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
 components:
   parameters:
@@ -150,6 +160,12 @@ components:
             $ref: '#/components/schemas/Errors'
     ServiceUnavailable:
       description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    UnexpectedError:
+      description: Unexpected Error
       content:
         application/json:
           schema:
