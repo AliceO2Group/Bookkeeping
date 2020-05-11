@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
+const { log: { GetAllLogsUseCase } } = require('../../../../lib/usecases');
 const chai = require('chai');
 
 const { expect } = chai;
