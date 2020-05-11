@@ -18,8 +18,8 @@
     "parameters": {
       "no_parameter_description": "error",
       "param_name_case_convention": [
-        "error",
-        "lower_snake_case"
+        "warning",
+        "lower_camel_case"
       ],
       "invalid_type_format_pair": "error",
       "content_type_parameter": "error",
@@ -33,7 +33,7 @@
       "snake_case_only": "off",
       "paths_case_convention": [
         "error",
-        "lower_snake_case"
+        "lower_camel_case"
       ]
     },
     "responses": {
@@ -56,12 +56,12 @@
       "inconsistent_property_type": "error",
       "property_case_convention": [
         "error",
-        "lower_snake_case"
+        "lower_camel_case"
       ],
       "property_case_collision": "error",
       "enum_case_convention": [
         "error",
-        "lower_snake_case"
+        "lower_camel_case"
       ]
     },
     "walker": {

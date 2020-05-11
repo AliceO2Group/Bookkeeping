@@ -25,9 +25,16 @@ paths:
     get:
       operationId: listLogs
       summary: List all logs
+      parameters:
+        - $ref: '#/components/parameters/filterOrigin'
+        - $ref: '#/components/parameters/pageOffset'
+        - $ref: '#/components/parameters/pageLimit'
+        - $ref: '#/components/parameters/sortLogs'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
       tags:
         - log
     post:
@@ -76,6 +83,46 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
 
 components:
+  parameters:
+    filterOrigin:
+      in: query
+      name: filter[origin]
+      description: Filter logs by their origin
+      schema:
+        type: string
+        enum: [human, process]
+    pageLimit:
+      in: query
+      name: page[limit]
+      description: The numbers of items to return.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 100
+    pageOffset:
+      in: query
+      name: page[offset]
+      description: The number of items to skip before starting to collect the result set.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    sortLogs:
+      in: query
+      name: sort
+      description: The sort order of the returned items.
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+        default:
+          - -id
+      style: form
+      explode: false
   responses:
     ArrayOfLogs:
       description: Expected response to a valid request.
@@ -134,6 +181,11 @@ components:
           $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - data
+    ArrayOfTags:
+      description: A list of Tag objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Tag'
     DeployInformation:
       description: Deploy information
       type: object
@@ -179,11 +231,24 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        entryId:
+          description: Id of the log.
+          type: integer
+          format: int64
         title:
           description: Title of the log.
           type: string
+        origin:
+          description: Type of creator.
+          type: string
+          enum: [human, process]
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
       required:
+        - entryId
         - title
+        - origin
+        - tags
     LogResponse:
       description: Response containing a single log.
       type: object
@@ -192,3 +257,6 @@ components:
           $ref: '#/components/schemas/Log'
       required:
         - data
+    Tag:
+      description: A label attached to something for the purpose of identification.
+      type: string

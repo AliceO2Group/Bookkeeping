@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { appendPath } = require('../../../../lib/server/utils');
+const { appendPath } = require('../../../lib/server/utilities');
 const chai = require('chai');
 
 const { expect } = chai;
