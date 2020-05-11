@@ -105,6 +105,98 @@ module.exports = () => {
         });
     });
 
+    describe('POST /api/tags', () => {
+        it('should return 400 if no text is provided', (done) => {
+            request(server)
+                .post('/api/tags')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail).to.equal('"body.text" is required');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the title is too short', (done) => {
+            request(server)
+                .post('/api/tags')
+                .send({
+                    text: 'A',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail).to.equal('"body.text" length must be at least 3 characters long');
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body was sent', (done) => {
+            const expectedText = `UNIX:${new Date().getTime()}`;
+            request(server)
+                .post('/api/tags')
+                .send({
+                    text: expectedText,
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.text).to.equal(expectedText);
+
+                    done();
+                });
+        });
+
+        it('should return 409 if we are creating the same tag again', (done) => {
+            request(server)
+                .post('/api/tags')
+                .send({
+                    text: 'FOOD',
+                })
+                .expect(409)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].detail).to.equal('The provided entity already exist');
+
+                    done();
+                });
+        });
+    });
+
     describe('GET /api/tags/:tagId', () => {
         it('should return 400 if the tag id is not a number', (done) => {
             request(server)

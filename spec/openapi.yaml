@@ -119,6 +119,20 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
+    post:
+      operationId: createTag
+      summary: Adds a new tag
+      responses:
+        '201':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
@@ -226,6 +240,12 @@ components:
             $ref: '#/components/schemas/ArrayOfTagsResponse'
     BadRequest:
       description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Conflict:
+      description: Conflict
       content:
         application/json:
           schema:
