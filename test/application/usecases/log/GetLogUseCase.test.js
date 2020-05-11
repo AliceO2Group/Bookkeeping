@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetLogUseCase } } = require('../../../../lib/application/usecases');
+const { log: { GetLogUseCase } } = require('../../../../lib/usecases');
 const { dtos: { GetLogDto } } = require('../../../../lib/domain');
 const chai = require('chai');
 
