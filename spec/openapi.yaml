@@ -21,20 +21,24 @@ paths:
                 $ref: '#/components/schemas/ApiInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /logs:
     get:
       operationId: listLogs
       summary: List all logs
       parameters:
-        - $ref: '#/components/parameters/filterOrigin'
-        - $ref: '#/components/parameters/pageOffset'
-        - $ref: '#/components/parameters/pageLimit'
-        - $ref: '#/components/parameters/sortLogs'
+        - $ref: '#/components/parameters/FilterOrigin'
+        - $ref: '#/components/parameters/PageOffset'
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/SortLogs'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
         '400':
           $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
     post:
@@ -45,17 +49,13 @@ paths:
           $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  /logs/{id}:
+  /logs/{logId}:
     parameters:
-      - name: id
-        in: path
-        description: The id of the log to retrieve
-        required: true
-        schema:
-          type: integer
-          format: int64
+      - $ref: '#/components/parameters/LogId'
     get:
       operationId: getLogById
       summary: Gets a log by Id
@@ -66,8 +66,28 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
+  /logs/{logId}/tags:
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: listTagsByLogId
+      summary: Lists all tags associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+        - tag
   /status:
     get:
       operationId: getDeployInformation
@@ -81,17 +101,27 @@ paths:
                 $ref: '#/components/schemas/DeployInformation'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
 components:
   parameters:
-    filterOrigin:
+    FilterOrigin:
       in: query
       name: filter[origin]
       description: Filter logs by their origin
       schema:
         type: string
         enum: [human, process]
-    pageLimit:
+    LogId:
+      name: logId
+      description: The id of the log to retrieve
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    PageLimit:
       in: query
       name: page[limit]
       description: The numbers of items to return.
@@ -101,7 +131,7 @@ components:
         minimum: 1
         maximum: 100
         default: 100
-    pageOffset:
+    PageOffset:
       in: query
       name: page[offset]
       description: The number of items to skip before starting to collect the result set.
@@ -110,7 +140,7 @@ components:
         type: integer
         minimum: 0
         default: 0
-    sortLogs:
+    SortLogs:
       in: query
       name: sort
       description: The sort order of the returned items.
@@ -130,6 +160,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfTags:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfTagsResponse'
     BadRequest:
       description: Bad Request
       content:
@@ -150,6 +186,12 @@ components:
             $ref: '#/components/schemas/Errors'
     ServiceUnavailable:
       description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    UnexpectedError:
+      description: Unexpected Error
       content:
         application/json:
           schema:
@@ -186,6 +228,14 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Tag'
+    ArrayOfTagsResponse:
+      description: Response containing multiple tags.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfTags'
+      required:
+        - data
     DeployInformation:
       description: Deploy information
       type: object

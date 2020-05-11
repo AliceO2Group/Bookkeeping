@@ -278,7 +278,7 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/logs/:id', () => {
+    describe('GET /api/logs/:logId', () => {
         it('should return 400 if the log id is not a number', (done) => {
             request(server)
                 .get('/api/logs/abc')
@@ -293,8 +293,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
-                    expect(titleError.detail).to.equal('"params.id" must be a number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
 
                     done();
                 });
@@ -314,8 +314,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
-                    expect(titleError.detail).to.equal('"params.id" must be a positive number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a positive number');
 
                     done();
                 });
@@ -335,8 +335,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/id');
-                    expect(titleError.detail).to.equal('"params.id" must be an integer');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be an integer');
 
                     done();
                 });
@@ -375,6 +375,67 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.entryId).to.equal(1);
+
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/logs/:logId/tags', () => {
+        it('should return 400 if the log id is not a number', (done) => {
+            request(server)
+                .get('/api/logs/abc/tags')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the log could not be found', (done) => {
+            request(server)
+                .get('/api/logs/999999999/tags')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/1/tags')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
 
                     done();
                 });

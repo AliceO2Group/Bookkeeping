@@ -50,8 +50,8 @@ module.exports = () => {
     const foundRoutes = [];
     routes.forEach((route) => {
         const { method, path } = route;
-        describe(`${method.toUpperCase()} ${path.toLowerCase()}`, () => {
-            foundRoutes.push(`${method.toUpperCase()} ${path.toLowerCase()}`);
+        describe(`${method.toUpperCase()} ${path}`, () => {
+            foundRoutes.push(`${method.toUpperCase()} ${path}`);
 
             it.allowFail('should be defined in the OpenAPI spec', () => {
                 const specPath = path.split('/').map((sub) => sub.replace(/:(.*)/, '{$1}')).join('/');

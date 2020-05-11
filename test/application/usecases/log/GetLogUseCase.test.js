@@ -23,7 +23,7 @@ module.exports = () => {
     beforeEach(async () => {
         getLogDto = await GetLogDto.validateAsync({
             params: {
-                id: 1,
+                logId: 1,
             },
         });
     });
