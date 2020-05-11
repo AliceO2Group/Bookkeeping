@@ -119,6 +119,23 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
+  /tags/{tagId}:
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      operationId: getTagById
+      summary: Gets a tag by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
 
 components:
   parameters:
@@ -169,6 +186,14 @@ components:
           - -id
       style: form
       explode: false
+    TagId:
+      name: tagId
+      description: The id of the tag to retrieve
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
   responses:
     ArrayOfLogs:
       description: Expected response to a valid request.
@@ -206,6 +231,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Tag:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TagResponse'
     UnexpectedError:
       description: Unexpected Error
       content:
@@ -344,3 +375,11 @@ components:
         - id
         - text
       additionalProperties: false
+    TagResponse:
+      description: Response containing a single tag.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Tag'
+      required:
+        - data
