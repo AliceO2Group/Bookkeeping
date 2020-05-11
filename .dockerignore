@@ -3,4 +3,5 @@
 
 # Project
 !lib/
+!spec/
 !package*.json
