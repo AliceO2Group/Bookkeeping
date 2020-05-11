@@ -70,6 +70,24 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
+  /logs/{logId}/tags:
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: listTagsByLogId
+      summary: Lists all tags associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+        - tag
   /status:
     get:
       operationId: getDeployInformation
@@ -142,6 +160,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfTags:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfTagsResponse'
     BadRequest:
       description: Bad Request
       content:
@@ -204,6 +228,14 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Tag'
+    ArrayOfTagsResponse:
+      description: Response containing multiple tags.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfTags'
+      required:
+        - data
     DeployInformation:
       description: Deploy information
       type: object
