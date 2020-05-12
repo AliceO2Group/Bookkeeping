@@ -44,6 +44,8 @@ paths:
     post:
       operationId: createLog
       summary: Adds a new log
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLog'
       responses:
         '201':
           $ref: '#/components/responses/Log'
@@ -225,6 +227,21 @@ components:
       schema:
         type: integer
         format: int64
+  requestBodies:
+    CreateLog:
+      required: true
+      content:
+        application/json:
+          schema:
+            description: Describes an intervention or an event that happened.
+            type: object
+            properties:
+              title:
+                description: Title of the log.
+                type: string
+            required:
+              - title
+            additionalProperties: false
   responses:
     ArrayOfLogs:
       description: Expected response to a valid request.
