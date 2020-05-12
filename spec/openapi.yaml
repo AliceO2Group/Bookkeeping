@@ -367,7 +367,7 @@ components:
         - age
         - start
     Error:
-      description: An Error object. 
+      description: An Error object.
       type: object
       properties:
         status:
