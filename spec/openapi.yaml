@@ -124,6 +124,8 @@ paths:
     post:
       operationId: createTag
       summary: Adds a new tag
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTag'
       responses:
         '201':
           $ref: '#/components/responses/Tag'
@@ -241,6 +243,20 @@ components:
                 type: string
             required:
               - title
+            additionalProperties: false
+    CreateTag:
+      required: true
+      content:
+        application/json:
+          schema:
+            description: A label attached to something for the purpose of identification.
+            type: object
+            properties:
+              text:
+                description: The label value of the tag.
+                type: string
+            required:
+              - text
             additionalProperties: false
   responses:
     ArrayOfLogs:
