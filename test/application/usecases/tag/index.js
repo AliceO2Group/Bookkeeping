@@ -11,8 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const CreateTagUseCase = require('./CreateTagUseCase.test');
 const GetAllTagsUseCase = require('./GetAllTagsUseCase.test');
+const GetTagUseCase = require('./GetTagUseCase.test');
 
 module.exports = () => {
+    describe('CreateTagUseCase', CreateTagUseCase);
     describe('GetAllTagsUseCase', GetAllTagsUseCase);
+    describe('GetTagUseCase', GetTagUseCase);
 };
