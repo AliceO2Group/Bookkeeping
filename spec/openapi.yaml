@@ -92,7 +92,6 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-        - tag
   /status:
     get:
       operationId: getDeployInformation

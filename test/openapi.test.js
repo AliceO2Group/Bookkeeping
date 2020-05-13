@@ -113,6 +113,12 @@ module.exports = () => {
                 });
             }
 
+            if (path[3] === 'paths' && path[0] === 'tags') {
+                it('should have a single tag', () => {
+                    expect(keys).to.have.lengthOf(1);
+                });
+            }
+
             if (path[0] === 'description') {
                 it('should start with a capital letter', () => {
                     expect(parent).to.match(/^[A-Z].*$/);
