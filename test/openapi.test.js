@@ -73,52 +73,84 @@ module.exports = () => {
         expect(expectedRoutes).to.include.members(foundRoutes);
     });
 
-    describe('paths', () => {
-        let prevPath;
-        it('should have all keys alphabetically sorted', () => {
-            for (const path of Object.keys(spec.paths)) {
-                expect(prevPath > path, `Expected ${path} to be before ${prevPath}`).to.be.false;
-                prevPath = path;
-            }
-        });
-
-        for (const path of Object.keys(spec.paths)) {
-            describe(path, () => {
-                it('should have all keys alphabetically sorted', () => {
-                    let prevMethod;
-                    for (const method of Object.keys(spec.paths[path])) {
-                        if (method === 'parameters') {
-                            expect(Boolean(prevMethod), 'Global route parameters should be declared first').to.be.false;
-                            continue;
-                        }
-
-                        expect(prevMethod > method, `Expected ${method} to be before ${prevMethod}`).to.be.false;
-                        prevMethod = method;
-                    }
+    describe('Validator', () => {
+        // eslint-disable-next-line require-jsdoc
+        function traverse(parent, path = []) {
+            const keys = typeof parent === 'object' ? Object.keys(parent) : [];
+            for (let i = 0; i < keys.length; i++) {
+                const element = keys[i];
+                describe(element, () => {
+                    traverse(parent[element], [element, ...path]);
                 });
-            });
-        }
-    });
-
-    describe('components', () => {
-        let prevComponent;
-        it('should have all keys alphabetically sorted', () => {
-            for (const component of Object.keys(spec.components)) {
-                expect(prevComponent > component, `Expected ${component} to be before ${prevComponent}`).to.be.false;
-                prevComponent = component;
             }
-        });
 
-        for (const component of Object.keys(spec.components)) {
-            describe(component, () => {
+            if (path[0] === 'paths' || path[1] === 'components') {
                 let prevItem;
-                it('should have all keys alphabetically sorted', () => {
-                    for (const item of Object.keys(spec.components[component])) {
+                it('should have sorted all keys alphabetically', () => {
+                    for (const item of Object.keys(parent)) {
                         expect(prevItem > item, `Expected ${item} to be before ${prevItem}`).to.be.false;
                         prevItem = item;
                     }
                 });
-            });
+            }
+
+            if (keys.includes('type') && parent['type'] === 'object') {
+                it.allowFail('should have set the additionalProperties to false', () => {
+                    expect(keys).to.include('additionalProperties');
+                    expect(parent['additionalProperties']).to.be.false;
+                });
+            }
+
+            if (path[2] === 'paths' && path[0] !== 'parameters') {
+                it('should have an operationId', () => {
+                    expect(keys).to.include('operationId');
+                    expect(keys[0]).to.equal('operationId');
+                });
+
+                it('should have an summary', () => {
+                    expect(keys).to.include('summary');
+                    expect(keys[1]).to.equal('summary');
+                });
+            }
+
+            if (path[3] === 'paths' && path[0] === 'tags') {
+                it('should have a single tag', () => {
+                    expect(keys).to.have.lengthOf(1);
+                });
+            }
+
+            if (path[0] === 'description') {
+                it('should start with a capital letter', () => {
+                    expect(parent).to.match(/^[A-Z].*$/);
+                });
+
+                it.allowFail('should end with a period', () => {
+                    expect(parent).to.match(/^.*\.$/);
+                });
+            }
+
+            if (path[3] === 'paths' && path[0] === 'responses') {
+                it('should have a default response', () => {
+                    expect(keys).to.include('default');
+                    expect(keys[keys.length - 1]).to.equal('default');
+                });
+            }
+
+            if (path[2] === 'paths' && path[0] === 'post') {
+                it('should have a request body', () => {
+                    expect(keys).to.include('requestBody');
+                    expect(keys[2]).to.equal('requestBody');
+                });
+            }
+
+            if (path[0] === 'schema') {
+                it.allowFail('should have a $ref', () => {
+                    expect(keys).to.have.lengthOf(1);
+                    expect(keys[0]).to.equal('$ref');
+                });
+            }
         }
+
+        traverse(spec);
     });
 };

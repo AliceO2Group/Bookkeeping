@@ -3,6 +3,9 @@ openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
   version: 0.0.0
+  license:
+    name: GNU General Public License v3.0
+    url: http://alice-o2.web.cern.ch/license
 
 servers:
   - url: '/api'
@@ -89,7 +92,6 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-        - tag
   /status:
     get:
       operationId: getDeployInformation
@@ -179,16 +181,14 @@ components:
       name: filter[origin]
       description: Filter logs by their origin
       schema:
-        type: string
-        enum: [human, process]
+        $ref: '#/components/schemas/LogOrigin'
     LogId:
       name: logId
       description: The id of the log to retrieve
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
+        $ref: '#/components/schemas/EntityId'
     PageLimit:
       in: query
       name: page[limit]
@@ -227,8 +227,7 @@ components:
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
+        $ref: '#/components/schemas/EntityId'
   requestBodies:
     CreateLog:
       required: true
@@ -370,6 +369,10 @@ components:
       required:
         - age
         - start
+    EntityId:
+      description: The unique identifier of this entity.
+      type: integer
+      format: int64
     Error:
       description: An Error object.
       type: object
@@ -403,16 +406,12 @@ components:
       type: object
       properties:
         entryId:
-          description: Id of the log.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/EntityId'
         title:
           description: Title of the log.
           type: string
         origin:
-          description: Type of creator.
-          type: string
-          enum: [human, process]
+          $ref: '#/components/schemas/LogOrigin'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
       required:
@@ -420,6 +419,10 @@ components:
         - title
         - origin
         - tags
+    LogOrigin:
+      description: Type of creator.
+      type: string
+      enum: [human, process]
     LogResponse:
       description: Response containing a single log.
       type: object
@@ -433,9 +436,7 @@ components:
       type: object
       properties:
         id:
-          description: Id of the tag.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/EntityId'
         text:
           description: The label value of the tag.
           type: string
