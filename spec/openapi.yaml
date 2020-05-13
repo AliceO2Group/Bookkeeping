@@ -32,7 +32,7 @@ paths:
       summary: List all logs
       parameters:
         - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/FilterOrigin'
+        - $ref: '#/components/parameters/FilterLogs'
         - $ref: '#/components/parameters/SortLogs'
       responses:
         '200':
@@ -174,12 +174,12 @@ paths:
 
 components:
   parameters:
-    FilterOrigin:
+    FilterLogs:
+      name: filter
+      description: Specifies the filter requirements.
       in: query
-      name: filter[origin]
-      description: Filter logs by their origin
       schema:
-        $ref: '#/components/schemas/LogOrigin'
+        $ref: '#/components/schemas/FilterLogsOptions'
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -386,6 +386,13 @@ components:
           minItems: 1
       required:
         - errors
+    FilterLogsOptions:
+      description: Specifies the log related filter requirements for a request.
+      type: object
+      properties:
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+      additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
