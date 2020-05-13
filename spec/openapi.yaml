@@ -196,16 +196,10 @@ components:
     SortLogs:
       in: query
       name: sort
-      description: The sort order of the returned items.
+      description: Specifies the sorting requirements.
       required: false
       schema:
-        type: array
-        items:
-          type: string
-        default:
-          - -id
-      style: form
-      explode: false
+        $ref: '#/components/schemas/SortLogsOptions'
     TagId:
       name: tagId
       description: The id of the tag to retrieve
@@ -443,6 +437,21 @@ components:
         offset:
           $ref: '#/components/schemas/PaginationOffset'
       additionalProperties: false
+    SortLogsOptions:
+      description: Specifies the sorting requirements of a request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+        text:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    SortOrder:
+      description: Specifies the sorting direction of a sorting option.
+      type: string
+      enum:
+        - asc
+        - desc
     Tag:
       description: A label attached to something for the purpose of identification.
       type: object
