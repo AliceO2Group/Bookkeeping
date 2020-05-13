@@ -289,6 +289,7 @@ components:
       required:
         - name
         - version
+      additionalProperties: false
     ArrayOfLogs:
       description: A list of Log objects.
       type: array
@@ -302,6 +303,7 @@ components:
           $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - data
+      additionalProperties: false
     ArrayOfTags:
       description: A list of Tag objects.
       type: array
@@ -315,6 +317,7 @@ components:
           $ref: '#/components/schemas/ArrayOfTags'
       required:
         - data
+      additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
@@ -348,6 +351,7 @@ components:
       required:
         - age
         - start
+      additionalProperties: false
     EntityId:
       description: The unique identifier of this entity.
       type: integer
@@ -365,9 +369,20 @@ components:
         detail:
           description: A human-readable explanation specific to this occurrence of the problem.
           type: string
+        source:
+          $ref: '#/components/schemas/ErrorSource'
       required:
         - status
         - title
+      additionalProperties: false
+    ErrorSource:
+      description: An object containing references to the source of the error.
+      type: object
+      properties:
+        pointer:
+          description: A pointer to the associated entity in the request document.
+          type: string
+      additionalProperties: false
     Errors:
       description: A list of Error objects.
       type: object
@@ -380,6 +395,7 @@ components:
           minItems: 1
       required:
         - errors
+      additionalProperties: false
     FilterLogsOptions:
       description: Specifies the log related filter requirements for a request.
       type: object
@@ -417,6 +433,7 @@ components:
           $ref: '#/components/schemas/Log'
       required:
         - data
+      additionalProperties: false
     PaginationLimit:
       description: The numbers of items to return.
       type: integer
@@ -479,3 +496,4 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
