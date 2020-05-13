@@ -3,6 +3,9 @@ openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
   version: 0.0.0
+  license:
+    name: GNU General Public License v3.0
+    url: http://alice-o2.web.cern.ch/license
 
 servers:
   - url: '/api'
