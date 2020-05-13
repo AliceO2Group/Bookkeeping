@@ -109,7 +109,7 @@ module.exports = () => {
 
         it('should support pagination, offset 0 and limit 1', (done) => {
             request(server)
-                .get('/api/logs?page[offset]=0&page[limit]=1&sort=id')
+                .get('/api/logs?page[offset]=0&page[limit]=1&sort[id]=asc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -129,7 +129,7 @@ module.exports = () => {
 
         it('should support pagination, offset 1 and limit 1', (done) => {
             request(server)
-                .get('/api/logs?page[offset]=1&page[limit]=1&sort=id')
+                .get('/api/logs?page[offset]=1&page[limit]=1&sort[id]=asc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -170,7 +170,7 @@ module.exports = () => {
 
         it('should support sorting, id DESC', (done) => {
             request(server)
-                .get('/api/logs?sort=-id')
+                .get('/api/logs?sort[id]=desc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -190,7 +190,7 @@ module.exports = () => {
 
         it('should support sorting, id ASC', (done) => {
             request(server)
-                .get('/api/logs?sort=id')
+                .get('/api/logs?sort[id]=asc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
