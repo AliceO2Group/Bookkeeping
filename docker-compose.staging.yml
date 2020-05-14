@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  application:
+    ports:
+      - "80:4000"
+
+  database:
+    ports:
+      - "3306:3306"

@@ -10,8 +10,6 @@ services:
       - "./scripts:/opt"
     links:
       - database
-    ports:
-      - "80:4000"
     environment:
       - NODE_ENV=production
       - DATABASE_HOST=database
