@@ -25,6 +25,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   database:
     image: mariadb:10.5.3
