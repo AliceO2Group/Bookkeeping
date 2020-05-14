@@ -1,20 +1,23 @@
 version: "3.7"
 
-# All options specified below override the options with the development variables
 services:
   application:
     build:
       target: development
-    volumes:
-      # Mount the local working directory in the container for Nodemon
-      - ".:/usr/src/app"
-      - "/usr/src/app/node_modules"
-      - "./scripts:/opt"
-    ports:
-      - "4000:4000"
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
+    ports:
+      - target: 4000
+        published: 4000
+    volumes:
+      - type: bind
+        read_only: false
+        source: .
+        target: /usr/src/app
+      - type: volume
+        target: /usr/src/app/node_modules
 
   database:
     ports:
-      - "3306:3306"
+      - target: 3306
+        published: 3306

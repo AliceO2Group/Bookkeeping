@@ -1,13 +1,21 @@
 version: "3.7"
 
-# All options specified below override the options with the test variables
 services:
   application:
     build:
       target: test
-    volumes:
-      # Mount the local working directory in the container for Mocha
-      - ".:/usr/src/app"
-      - "/usr/src/app/node_modules"
     environment:
-      - NODE_ENV=test
+      NODE_ENV: test
+    restart: "no"
+    volumes:
+      - type: bind
+        read_only: false
+        source: .
+        target: /usr/src/app
+      - type: volume
+        target: /usr/src/app/node_modules
+
+  database:
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: "no"

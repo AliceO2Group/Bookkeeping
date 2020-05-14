@@ -3,8 +3,10 @@ version: "3.7"
 services:
   application:
     ports:
-      - "80:4000"
+      - target: 4000
+        published: 80
 
   database:
     ports:
-      - "3306:3306"
+      - target: 3306
+        published: 3306
