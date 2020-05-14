@@ -17,7 +17,7 @@ services:
       - DATABASE_HOST=database
 
   database:
-    image: mariadb:10.5.2
+    image: mariadb:10.5.3
     restart: always
     volumes: 
       # Mounts the data directory as /var/lib/mysql inside the container, where the data files are written
