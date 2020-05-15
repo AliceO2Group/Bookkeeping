@@ -1,0 +1,9 @@
+.cell-xs { width: 2rem; }
+.cell-s { width: 4rem; }
+.cell-m { width: 8rem; }
+.cell-l { width: 16rem; }
+.cell-xl { width: 32rem; }
+
+/* last column fills space */
+.cell-xs:last-child, .cell-s:last-child, .cell-m:last-child, .cell-l:last-child, .cell-xl:last-child { width: initial; }
+.cell-xs:last-child .resizeWidth, .cell-s:last-child .resizeWidth, .cell-m:last-child .resizeWidth, .cell-l:last-child .resizeWidth, .cell-xl:last-child .resizeWidth { visibility: hidden; }
