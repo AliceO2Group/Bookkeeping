@@ -18,6 +18,21 @@ const { server } = require('../../lib/application');
 
 const { expect } = chai;
 
+/**
+ * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
+ * @param {Object} table An HTML element representing the entire log table
+ * @param {Object} page An object representing the browser page being used by Puppeteer
+ * @return {String} The ID of the first matching row with data
+ */
+async function findRowById(table, page) {
+    for (const child of table) {
+        const id = await page.evaluate((element) => element.id, child);
+        if (id.startsWith('row')) {
+            return id;
+        }
+    }
+}
+
 module.exports = function () {
     // Configure this suite to have a default timeout of 5s
     this.timeout(5000);
@@ -95,15 +110,16 @@ module.exports = function () {
     });
 
     it('can navigate to a log detail page', async () => {
-        const firstRow = '#row1';
-        const firstRowText = await page.$(`${firstRow} td`);
-        const id = await page.evaluate((element) => element.innerText, firstRowText);
+        // We look for the first non-header row
+        const table = await page.$$('tr');
+        const id = await findRowById(table, page);
+        const parsedId = parseInt(id.slice('row'.length, id.length));
 
         // We expect the entry page to have the same id as the id from the log overview
-        await page.click(firstRow);
+        await page.click(`#${id}`);
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${id}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedId}`);
 
         // We expect there to be at least one post in this log entry
         const postExists = Boolean(await page.$('#post1'));
