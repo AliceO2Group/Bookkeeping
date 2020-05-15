@@ -11,16 +11,34 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetAllLogsUseCase } } = require('../../../../lib/application/usecases');
+const { log: { GetAllLogsUseCase } } = require('../../../../lib/usecases');
+const { dtos: { GetAllLogsDto } } = require('../../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
+    let getAllLogsDto;
+
+    beforeEach(async () => {
+        getAllLogsDto = await GetAllLogsDto.validateAsync({});
+    });
+
     it('should return an array', async () => {
         const result = await new GetAllLogsUseCase()
             .execute();
 
         expect(result).to.be.an('array');
+    });
+
+    it('should return an array, only containing human originated logs', async () => {
+        getAllLogsDto.query = { filter: { origin: 'human' } };
+        const result = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
+
+        expect(result).to.be.an('array');
+        for (const log of result) {
+            expect(log.origin).to.equal('human');
+        }
     });
 };

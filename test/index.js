@@ -12,11 +12,11 @@
  */
 
 const ApplicationSuite = require('./application');
-const FrameworkSuite = require('./framework');
-const PublicSuite = require('./public');
-const OpenApiSuite = require('./openapi.test');
 const EndToEndSuite = require('./e2e');
+const PublicSuite = require('./public');
+const ServerSuite = require('./server');
 const UtilitiesSuite = require('./utilities');
+const OpenApiSuite = require('./openapi.test');
 
 describe('Bookkeeping', () => {
     const application = require('../lib/application');
@@ -29,10 +29,15 @@ describe('Bookkeeping', () => {
         await application.stop(true);
     });
 
-    describe('Application', ApplicationSuite);
-    describe('Framework', FrameworkSuite);
-    describe('OpenAPI Specification', OpenApiSuite);
-    describe('Public', PublicSuite);
-    describe('Utilities', UtilitiesSuite);
-    describe('E2E', EndToEndSuite);
+    describe('Unit Suite', () => {
+        describe('Application', ApplicationSuite);
+        describe('Server', ServerSuite);
+        describe('Utilities', UtilitiesSuite);
+        describe('OpenAPI Specification', OpenApiSuite);
+    });
+
+    describe('Integration Suite', () => {
+        describe('UI', PublicSuite);
+        describe('API', EndToEndSuite);
+    });
 });

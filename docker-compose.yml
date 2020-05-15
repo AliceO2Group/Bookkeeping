@@ -15,6 +15,11 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_HOST=database
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - OIDC_SECRET=${OIDC_SECRET}
+      - OIDC_ID=${OIDC_ID}
+      - OIDC_REDIRECT=${OIDC_REDIRECT}
 
   database:
     image: mariadb:10.5.2

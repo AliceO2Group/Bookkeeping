@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const OverviewSuite = require('./overview.test');
+const LogsSuite = require('./logs.test');
 
 module.exports = () => {
-    describe('Overview', OverviewSuite);
+    describe('Logs', LogsSuite);
 };
