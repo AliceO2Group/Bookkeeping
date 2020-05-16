@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetAllLogsUseCase } } = require('../../../../lib/usecases');
-const { dtos: { GetAllLogsDto } } = require('../../../../lib/domain');
+const { log: { GetAllLogsUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetAllLogsDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
