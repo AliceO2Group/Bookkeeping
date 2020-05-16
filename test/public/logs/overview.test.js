@@ -14,7 +14,7 @@
 const chai = require('chai');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../lib/application');
+const { server } = require('../../../lib/application');
 
 const { expect } = chai;
 
@@ -40,6 +40,10 @@ module.exports = function () {
     let page;
     let browser;
     let url;
+
+    let table;
+    let firstRowId;
+    let parsedFirstRowId;
 
     before(async () => {
         browser = await puppeteer.launch({ args: ['--no-sandbox'] });
@@ -84,16 +88,16 @@ module.exports = function () {
         // Expect to have captured the first checkbox in the list
         const checkbox = await page.$('.form-check input');
         const label = await page.$('.form-check label div');
-        const id = await page.evaluate((element) => element.id, checkbox);
+        const checkboxId = await page.evaluate((element) => element.id, checkbox);
         const amount = await page.evaluate((element) => element.innerText, label);
-        expect(id).to.equal('filtersCheckbox1');
+        expect(checkboxId).to.equal('filtersCheckbox1');
 
         // Expect the number of rows in this filter to be less than the total number of rows
         const advertisedRows = parseInt(amount.substring(1, amount.length - 1));
         expect(advertisedRows).to.be.lessThan(numberOfRows);
 
         // Select the filter and wait for the changes to be processed
-        await page.click(`#${id}`);
+        await page.click(`#${checkboxId}`);
         await page.waitFor(100);
 
         // Expect the (new) total number of rows to equal the advertised number of rows
@@ -101,7 +105,7 @@ module.exports = function () {
         expect(filteredRows.length - 1).to.equal(advertisedRows);
 
         // Deselect the filter and wait for the changes to process
-        await page.click(`#${id}`);
+        await page.click(`#${checkboxId}`);
         await page.waitFor(100);
 
         // Expect the total number of rows to equal the original total
@@ -109,32 +113,47 @@ module.exports = function () {
         expect(unfilteredRows.length - 1).to.equal(numberOfRows);
     });
 
-    it('can navigate to a log detail page', async () => {
-        // We look for the first non-header row
-        const table = await page.$$('tr');
-        const id = await findRowById(table, page);
-        const parsedId = parseInt(id.slice('row'.length, id.length));
+    it('shows correct datatypes in respective columns', async () => {
+        table = await page.$$('tr');
+        firstRowId = await findRowById(table, page);
 
-        // We expect the entry page to have the same id as the id from the log overview
-        await page.click(`#${id}`);
-        await page.waitFor(100);
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedId}`);
+        // Expectations of header texts being of a certain datatype
+        const headerDatatypes = {
+            id: (number) => !isNaN(number),
+            date: (date) => !isNaN(Date.parse(date)),
+            time: (date) => !isNaN(Date.parse(date)),
+        };
 
-        // We expect there to be at least one post in this log entry
-        const postExists = Boolean(await page.$('#post1'));
-        expect(postExists).to.be.true;
+        // We find the headers matching the datatype keys
+        const headers = await page.$$('th');
+        const headerIndices = {};
+        for (const [index, header] of headers.entries()) {
+            const headerContent = await page.evaluate((element) => element.innerText, header);
+            const matchingDatatype = Object.keys(headerDatatypes)
+                .find((key) => headerContent.toLowerCase().includes(key));
+            if (matchingDatatype !== undefined) {
+                headerIndices[index] = matchingDatatype;
+            }
+        }
+
+        // We expect every value of a header matching a datatype key to actually be of that datatype
+        const firstRowCells = await page.$$(`#${firstRowId} td`);
+        for (const [index, cell] of firstRowCells.entries()) {
+            if (Object.keys(headerIndices).includes(index)) {
+                const cellContent = await page.evaluate((element) => element.innerText, cell);
+                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
+                expect(expectedDatatype).to.be.true;
+            }
+        }
     });
 
-    it('notifies if am specified log id is invalid', async () => {
-        // Navigate to a log detail view with an id that cannot exist
-        await page.goto(`${url}/?page=entry&id=abc`);
-        await page.waitFor(100);
+    it('can navigate to a log detail page', async () => {
+        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length));
 
-        // We expect there to be an error message
-        const error = await page.$('.danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('This log could not be found.');
+        // We expect the entry page to have the same id as the id from the log overview
+        await page.click(`#${firstRowId}`);
+        await page.waitFor(100);
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
     });
 };
