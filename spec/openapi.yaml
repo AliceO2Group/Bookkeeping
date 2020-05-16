@@ -194,6 +194,7 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
+      style: deepObject
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -207,6 +208,7 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/PaginationOptions'
+      style: deepObject
     SortLogs:
       in: query
       name: sort
@@ -214,6 +216,7 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/SortLogsOptions'
+      style: deepObject
     TagId:
       name: tagId
       description: The id of the tag to retrieve
