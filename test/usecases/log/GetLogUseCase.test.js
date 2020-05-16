@@ -11,16 +11,28 @@
  * or submit itself to any jurisdiction.
  */
 
-const { tag: { GetAllTagsUseCase } } = require('../../../../lib/usecases');
+const { log: { GetLogUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetLogDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    it('should return an array', async () => {
-        const result = await new GetAllTagsUseCase()
-            .execute();
+    let getLogDto;
 
-        expect(result).to.be.an('array');
+    beforeEach(async () => {
+        getLogDto = await GetLogDto.validateAsync({
+            params: {
+                logId: 1,
+            },
+        });
+    });
+
+    it('should return an object that has the `entryId` property', async () => {
+        const result = await new GetLogUseCase()
+            .execute(getLogDto);
+
+        expect(result).to.have.ownProperty('entryId');
+        expect(result.entryId).to.equal(1);
     });
 };

@@ -11,9 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { LogRepository } } = require('../../../../lib/database');
-const { log: { CreateLogUseCase } } = require('../../../../lib/usecases');
-const { dtos: { CreateLogDto } } = require('../../../../lib/domain');
+const { repositories: { LogRepository } } = require('../../../lib/database');
+const { log: { CreateLogUseCase } } = require('../../../lib/usecases');
+const { dtos: { CreateLogDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
