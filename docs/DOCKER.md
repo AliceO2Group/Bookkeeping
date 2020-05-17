@@ -45,3 +45,8 @@ The `docker-compose.test.yml` is designed to include everything that is necessar
 ```sh
 $ docker-compose -f docker-compose.yml -f docker-compose.test.yml
 ```
+
+### Execute the test suite
+```sh
+$ {BASE_COMMAND} up --build --abort-on-container-exit
+```
