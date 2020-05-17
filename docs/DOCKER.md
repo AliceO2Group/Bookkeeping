@@ -12,6 +12,19 @@ $ docker-compose -f docker-compose.yml
 $ {BASE_COMMAND} up --build
 ```
 
+## Staging
+The `docker-compose.staging.yml` is designed to be used in a staging environment.
+
+### Base command
+```sh
+$ docker-compose -f docker-compose.yml -f docker-compose.staging.yml
+```
+
+### Starting the staging environment
+```sh
+$ {BASE_COMMAND} up --build
+```
+
 ## Development
 The `docker-compose.dev.yml` is designed to be used during development.
 
