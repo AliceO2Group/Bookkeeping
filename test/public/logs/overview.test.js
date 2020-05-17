@@ -93,7 +93,7 @@ module.exports = function () {
         expect(checkboxId).to.equal('filtersCheckbox1');
 
         // Expect the number of rows in this filter to be less than the total number of rows
-        const advertisedRows = parseInt(amount.substring(1, amount.length - 1));
+        const advertisedRows = parseInt(amount.substring(1, amount.length - 1), 10);
         expect(advertisedRows).to.be.lessThan(numberOfRows);
 
         // Select the filter and wait for the changes to be processed
@@ -148,7 +148,7 @@ module.exports = function () {
     });
 
     it('can navigate to a log detail page', async () => {
-        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length));
+        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
         await page.click(`#${firstRowId}`);
