@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  application:
+    ports:
+      - target: 4000
+        published: 80
+
+  database:
+    ports:
+      - target: 3306
+        published: 3306
