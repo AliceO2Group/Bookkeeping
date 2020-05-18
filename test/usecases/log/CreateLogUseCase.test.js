@@ -25,6 +25,7 @@ module.exports = () => {
         createLogDto = await CreateLogDto.validateAsync({
             body: {
                 title: 'Yet another log',
+                text: 'This is the text field of yet another log.',
             },
         });
     });
@@ -47,5 +48,15 @@ module.exports = () => {
             .execute(createLogDto);
 
         expect(result.title).to.equal(expectedTitle);
+    });
+
+    it('should insert a new Log with the text title as provided', async () => {
+        const expectedText = `Random content: ${Math.round(Math.random() * 1000)}`;
+
+        createLogDto.body.text = expectedText;
+        const result = await new CreateLogUseCase()
+            .execute(createLogDto);
+
+        expect(result.text).to.equal(expectedText);
     });
 };

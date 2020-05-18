@@ -255,11 +255,61 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if no text is provided', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const textError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(textError.detail).to.equal('"body.text" is required');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the text is too short', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'A',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const textError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(textError.detail).to.equal('"body.text" length must be at least 3 characters long');
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/logs')
                 .send({
                     title: 'Yet another run',
+                    text: 'Text of yet another run',
                 })
                 .expect(201)
                 .end((err, res) => {
