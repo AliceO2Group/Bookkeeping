@@ -12,7 +12,7 @@
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
-    "test": "mocha --exit"
+    "test": "mocha --exit --timeout 5000"
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.11.1",

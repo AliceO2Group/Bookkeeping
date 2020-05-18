@@ -18,10 +18,7 @@ const { server } = require('../../../lib/application');
 
 const { expect } = chai;
 
-module.exports = function () {
-    // Configure this suite to have a default timeout of 5s
-    this.timeout(5000);
-
+module.exports = () => {
     let page;
     let browser;
     let url;
