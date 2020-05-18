@@ -340,10 +340,12 @@ components:
       type: object
       properties:
         title:
-          description: Title of the log.
-          type: string
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
       required:
         - title
+        - text
       additionalProperties: false
     CreateTag:
       description: A label attached to something for the purpose of identification.
@@ -427,8 +429,9 @@ components:
         entryId:
           $ref: '#/components/schemas/EntityId'
         title:
-          description: Title of the log.
-          type: string
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
         origin:
           $ref: '#/components/schemas/LogOrigin'
         tags:
@@ -436,6 +439,7 @@ components:
       required:
         - entryId
         - title
+        - text
         - origin
         - tags
     LogOrigin:
@@ -451,6 +455,14 @@ components:
       required:
         - data
       additionalProperties: false
+    LogText:
+      description: Title of the log.
+      type: string
+      minLength: 3
+    LogTitle:
+      description: Body of the log.
+      type: string
+      minLength: 3
     PaginationLimit:
       description: The numbers of items to return.
       type: integer
