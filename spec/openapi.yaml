@@ -316,10 +316,21 @@ components:
       description: Response containing multiple logs.
       type: object
       properties:
+        meta:
+          $ref: '#/components/schemas/ArrayOfLogsResponseMeta'
         data:
           $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - data
+      additionalProperties: false
+    ArrayOfLogsResponseMeta:
+      description: The metadata related to an array of logs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
       additionalProperties: false
     ArrayOfTags:
       description: A list of Tag objects.
@@ -469,6 +480,17 @@ components:
       minimum: 1
       maximum: 100
       default: 100
+    PaginationMeta:
+      description: The metadata related to pagination.
+      type: object
+      properties:
+        total:
+          description: The number of pages which contain data.
+          type: integer
+          minimum: 1
+      required:
+        - total
+      additionalProperties: false
     PaginationOffset:
       description: The number of items to skip before starting to collect the result set.
       type: integer
