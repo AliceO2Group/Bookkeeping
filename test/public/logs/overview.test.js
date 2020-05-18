@@ -113,6 +113,32 @@ module.exports = function () {
         expect(unfilteredRows.length - 1).to.equal(numberOfRows);
     });
 
+    it('can show and hide extra filters if available', async () => {
+        const FILTERS_LIMIT = 5;
+        const buttonId = '#toggleMoreFilters';
+
+        // Expect the page to have a button allowing for showing more filters
+        const toggleFiltersButton = await page.$(buttonId);
+        let buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
+        expect(buttonText.trim()).to.equal('More filters');
+
+        // Expect the button to show at least one extra filter when clicked
+        await page.click(buttonId);
+        await page.waitFor(100);
+        let extraFilter = await page.$(`#filtersCheckbox${FILTERS_LIMIT + 1}`);
+        expect(Boolean(extraFilter)).to.be.true;
+
+        // Expect the text to change to reflect the newly shown filters
+        buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
+        expect(buttonText.trim()).to.equal('Less filters');
+
+        // Expect the button to remove the extra filter when clicked again
+        await page.click(buttonId);
+        await page.waitFor(100);
+        extraFilter = await page.$(`#filtersCheckbox${FILTERS_LIMIT + 1}`);
+        expect(Boolean(extraFilter)).to.be.false;
+    });
+
     it('shows correct datatypes in respective columns', async () => {
         table = await page.$$('tr');
         firstRowId = await findRowById(table, page);
