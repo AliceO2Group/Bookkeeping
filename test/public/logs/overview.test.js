@@ -24,7 +24,7 @@ const { expect } = chai;
  * @param {Object} page An object representing the browser page being used by Puppeteer
  * @return {String} The ID of the first matching row with data
  */
-async function findRowById(table, page) {
+async function getFirstRow(table, page) {
     for (const child of table) {
         const id = await page.evaluate((element) => element.id, child);
         if (id.startsWith('row')) {
@@ -138,7 +138,7 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         table = await page.$$('tr');
-        firstRowId = await findRowById(table, page);
+        firstRowId = await getFirstRow(table, page);
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
@@ -178,5 +178,52 @@ module.exports = () => {
         await page.waitFor(100);
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
+    });
+
+    it('can create a log from the overview page', async () => {
+        const title = 'Test One';
+        const text = 'Sample Text';
+
+        // Go back to the home page
+        await page.click('#home');
+        await page.waitFor(100);
+
+        // Click on the button to start creating a new log
+        await page.click('#create');
+        await page.waitFor(100);
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        await page.type('#text', text);
+
+        // Create the new log
+        await page.click('#send');
+        await page.waitFor(100);
+
+        // Verify that the text from the first matches with the text posted and correct working of the redirect
+        const firstPost = await page.$('#post1 #post-content');
+        const doesContentMatch = JSON.stringify(await page.evaluate((element) => element.innerText, firstPost))
+            .includes(text);
+
+        // Verify that the first post is equal to the title provided as input when creating the log
+        expect(doesContentMatch).to.equal(true);
+
+        // Return the page to home
+        await page.click('#home');
+        await page.waitFor(100);
+
+        // Ensure you are at the overview page again
+        const doesTableExist = await page.$$('tr') ? true : false;
+        expect(doesTableExist).to.equal(true);
+
+        // Get the latest post and verify the title of the log we posted
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRow = await page.$(`#${firstRowId}`);
+        const isTitleInRow = JSON.stringify(await page.evaluate((element) => element.innerText, firstRow))
+            .includes(title);
+
+        // Verify the correct title is shown in the table
+        expect(isTitleInRow).to.equal(true);
     });
 };
