@@ -121,7 +121,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].entryId).to.equal(1);
+                    expect(res.body.data[0].id).to.equal(1);
 
                     done();
                 });
@@ -141,7 +141,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].entryId).to.equal(2);
+                    expect(res.body.data[0].id).to.equal(2);
 
                     done();
                 });
@@ -182,7 +182,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
-                    expect(data[0].entryId).to.be.greaterThan(data[1].entryId);
+                    expect(data[0].id).to.be.greaterThan(data[1].id);
 
                     done();
                 });
@@ -202,7 +202,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
-                    expect(data[1].entryId).to.be.greaterThan(data[0].entryId);
+                    expect(data[1].id).to.be.greaterThan(data[0].id);
 
                     done();
                 });
@@ -424,7 +424,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.entryId).to.equal(1);
+                    expect(res.body.data.id).to.equal(1);
 
                     done();
                 });

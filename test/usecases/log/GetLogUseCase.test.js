@@ -28,11 +28,11 @@ module.exports = () => {
         });
     });
 
-    it('should return an object that has the `entryId` property', async () => {
+    it('should return an object that has the `id` property', async () => {
         const result = await new GetLogUseCase()
             .execute(getLogDto);
 
-        expect(result).to.have.ownProperty('entryId');
-        expect(result.entryId).to.equal(1);
+        expect(result).to.have.ownProperty('id');
+        expect(result.id).to.equal(1);
     });
 };

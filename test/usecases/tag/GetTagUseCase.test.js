@@ -28,7 +28,7 @@ module.exports = () => {
         });
     });
 
-    it('should return an object that has the `entryId` property', async () => {
+    it('should return an object that has the `id` property', async () => {
         const result = await new GetTagUseCase()
             .execute(getLogDto);
 
