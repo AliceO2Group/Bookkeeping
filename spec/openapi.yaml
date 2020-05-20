@@ -453,12 +453,18 @@ components:
           $ref: '#/components/schemas/LogOrigin'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
       required:
         - id
         - title
         - text
         - origin
         - tags
+        - rootLogId
+        - parentLogId
     LogOrigin:
       description: Type of creator.
       type: string
