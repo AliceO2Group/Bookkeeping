@@ -292,6 +292,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: token
   schemas:
     ApiInformation:
       description: API information
@@ -548,3 +553,6 @@ components:
       required:
         - data
       additionalProperties: false
+
+security:
+  - ApiKeyAuth: []
