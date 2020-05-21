@@ -43,6 +43,46 @@ module.exports = () => {
                 });
         });
 
+        it('should support filtering by parent log', (done) => {
+            request(server)
+                .get('/api/logs?filter[parentLog]=2')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data).to.have.lengthOf(1);
+
+                    done();
+                });
+        });
+
+        it('should return 400 for an invalid parent log', (done) => {
+            request(server)
+                .get('/api/logs?filter[parentLog]=-1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('"query.filter.parentLog" must be a positive number');
+
+                    done();
+                });
+        });
+
         it('should support filtering by origin (process)', (done) => {
             request(server)
                 .get('/api/logs?filter[origin]=process')

@@ -438,6 +438,8 @@ components:
       properties:
         origin:
           $ref: '#/components/schemas/LogOrigin'
+        parentLog:
+          $ref: '#/components/schemas/EntityId'
       additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
@@ -499,7 +501,7 @@ components:
         total:
           description: The number of pages which contain data.
           type: integer
-          minimum: 1
+          minimum: 0
       required:
         - total
       additionalProperties: false
