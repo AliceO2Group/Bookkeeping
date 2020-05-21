@@ -490,6 +490,7 @@ components:
       description: Title of the log.
       type: string
       minLength: 3
+      maxLength: 140
     PaginationLimit:
       description: The numbers of items to return.
       type: integer
