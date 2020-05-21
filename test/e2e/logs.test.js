@@ -335,6 +335,38 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if the title is too long', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: `
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                    `,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
+                    expect(titleError.detail)
+                        .to.equal('"body.title" length must be less than or equal to 140 characters long');
+
+                    done();
+                });
+        });
+
         it('should return 400 if no text is provided', (done) => {
             request(server)
                 .post('/api/logs')
