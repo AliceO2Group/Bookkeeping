@@ -483,11 +483,11 @@ components:
         - data
       additionalProperties: false
     LogText:
-      description: Title of the log.
+      description: Body of the log.
       type: string
       minLength: 3
     LogTitle:
-      description: Body of the log.
+      description: Title of the log.
       type: string
       minLength: 3
     PaginationLimit:
