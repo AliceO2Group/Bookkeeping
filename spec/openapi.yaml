@@ -440,6 +440,8 @@ components:
           $ref: '#/components/schemas/LogOrigin'
         parentLog:
           $ref: '#/components/schemas/EntityId'
+        rootLog:
+          $ref: '#/components/schemas/EntityId'
       additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
