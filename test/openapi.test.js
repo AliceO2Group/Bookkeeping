@@ -95,7 +95,7 @@ module.exports = () => {
             }
 
             if (keys.includes('type') && parent['type'] === 'object') {
-                it.allowFail('should have set the additionalProperties to false', () => {
+                it('should have set the additionalProperties to false', () => {
                     expect(keys).to.include('additionalProperties');
                     expect(parent['additionalProperties']).to.be.false;
                 });
