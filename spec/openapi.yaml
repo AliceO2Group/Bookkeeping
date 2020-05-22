@@ -500,6 +500,7 @@ components:
         - tags
         - rootLogId
         - parentLogId
+      additionalProperties: false
     LogOrigin:
       description: Type of creator.
       type: string

@@ -201,7 +201,7 @@ module.exports = () => {
         await page.waitFor(100);
 
         // Verify that the text from the first matches with the text posted and correct working of the redirect
-        const firstPost = await page.$('#post1 #post-content');
+        const firstPost = await page.$('#post-content');
         const doesContentMatch = JSON.stringify(await page.evaluate((element) => element.innerText, firstPost))
             .includes(text);
 
