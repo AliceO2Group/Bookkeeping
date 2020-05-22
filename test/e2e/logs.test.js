@@ -603,4 +603,85 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/logs/:logId/tree', () => {
+        it('should return 400 if the log id is not a number', (done) => {
+            request(server)
+                .get('/api/logs/abc/tree')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the log could not be found', (done) => {
+            request(server)
+                .get('/api/logs/999999999/tree')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        let tree;
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/1/tree')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    tree = res.body.data;
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/2/tree')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.deep.equal(tree);
+
+                    done();
+                });
+        });
+    });
 };
