@@ -1,4 +1,4 @@
-# Generated on Sat, 23 May 2020 09:40:40 GMT
+# Generated on Sat, 23 May 2020 09:44:55 GMT
 
 openapi: 3.0.0
 info:
@@ -98,7 +98,7 @@ paths:
       summary: Get the Log tree for a given Log
       responses:
         '200':
-          $ref: '#/components/responses/Log'
+          $ref: '#/components/responses/LogTree'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -283,6 +283,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/LogResponse'
+    LogTree:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogTreeResponse'
     NotFound:
       description: Not Found
       content:
@@ -327,6 +333,11 @@ components:
         - name
         - version
       additionalProperties: false
+    ArrayOfLogTrees:
+      description: A list of Log tree objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LogTree'
     ArrayOfLogs:
       description: A list of Log objects.
       type: array
@@ -487,8 +498,6 @@ components:
           $ref: '#/components/schemas/EntityId'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
-        children:
-          $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - id
         - authorId
@@ -534,6 +543,57 @@ components:
       type: string
       minLength: 3
       maxLength: 140
+    LogTree:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        authorId:
+          description: Name of the author.
+          type: string
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
+        creationTime:
+          description: Unix timestamp of the creation date time.
+          type: integer
+          format: int64
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        subtype:
+          $ref: '#/components/schemas/LogSubtype'
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        children:
+          $ref: '#/components/schemas/ArrayOfLogTrees'
+      required:
+        - id
+        - authorId
+        - title
+        - text
+        - creationTime
+        - origin
+        - subtype
+        - tags
+        - rootLogId
+        - parentLogId
+        - children
+      additionalProperties: false
+    LogTreeResponse:
+      description: Response containing a single log tree.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LogTree'
+      required:
+        - data
+      additionalProperties: false
     PaginationLimit:
       description: The numbers of items to return.
       type: integer
