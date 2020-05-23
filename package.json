@@ -8,7 +8,6 @@
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "openapi": "lint-openapi",
-    "openapi:validate": "npm run openapi spec/openapi.yaml",
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
