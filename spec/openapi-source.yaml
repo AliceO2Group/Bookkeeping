@@ -96,7 +96,7 @@ paths:
       summary: Get the Log tree for a given Log
       responses:
         '200':
-          $ref: '#/components/responses/Log'
+          $ref: '#/components/responses/LogTree'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -281,6 +281,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/LogResponse'
+    LogTree:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogTreeResponse'
     NotFound:
       description: Not Found
       content:
@@ -325,6 +331,11 @@ components:
         - name
         - version
       additionalProperties: false
+    ArrayOfLogTrees:
+      description: A list of Log tree objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LogTree'
     ArrayOfLogs:
       description: A list of Log objects.
       type: array
@@ -485,8 +496,6 @@ components:
           $ref: '#/components/schemas/EntityId'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
-        children:
-          $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - id
         - authorId
@@ -532,6 +541,25 @@ components:
       type: string
       minLength: 3
       maxLength: 140
+    LogTree:
+      allOf:
+        - $ref: '#/components/schemas/Log'
+        - type: object
+          properties:
+            children:
+              $ref: '#/components/schemas/ArrayOfLogTrees'
+          required:
+            - children
+          additionalProperties: false
+    LogTreeResponse:
+      description: Response containing a single log tree.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LogTree'
+      required:
+        - data
+      additionalProperties: false
     PaginationLimit:
       description: The numbers of items to return.
       type: integer
