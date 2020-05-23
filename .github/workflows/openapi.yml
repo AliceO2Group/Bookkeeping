@@ -7,6 +7,21 @@ on:
       - master
 
 jobs:
+  convert:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.16.3
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.16.3'
+      - name: Running validator
+        run: |
+          npm ci
+          cd ./spec && ./convert.sh
+
   validate:
     runs-on: ubuntu-18.04
     timeout-minutes: 5
@@ -18,8 +33,11 @@ jobs:
         with:
           node-version: '12.16.3'
       - name: Running validator
-        run: npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
+        run: |
+          npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
+          npx @openapitools/openapi-generator-cli validate -i spec/openapi-source.yaml
       - name: Running validator
         run: |
           npm ci
-          npm run openapi:validate
+          npm run openapi -- spec/openapi.yaml
+          npm run openapi -- spec/openapi-source.yaml
