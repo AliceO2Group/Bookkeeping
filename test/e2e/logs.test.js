@@ -262,8 +262,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(2);
-                    expect(res.body.meta.page.pageCount).to.equal(6);
-                    expect(res.body.meta.page.totalCount).to.equal(12);
+                    expect(res.body.meta.page.pageCount).to.equal(5);
+                    expect(res.body.meta.page.totalCount).to.equal(9);
 
                     done();
                 });
