@@ -248,6 +248,27 @@ module.exports = () => {
                 });
         });
 
+        it('should return the correct number of pages', (done) => {
+            request(server)
+                .get('/api/logs?page[offset]=0&page[limit]=2')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.have.lengthOf(2);
+                    expect(res.body.meta.page.pageCount).to.equal(6);
+                    expect(res.body.meta.page.totalCount).to.equal(12);
+
+                    done();
+                });
+        });
+
         it('should support sorting, id DESC', (done) => {
             request(server)
                 .get('/api/logs?sort[id]=desc')

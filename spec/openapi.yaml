@@ -537,12 +537,17 @@ components:
       description: The metadata related to pagination.
       type: object
       properties:
-        total:
-          description: The number of pages which contain data.
+        pageCount:
+          description: The total number of pages which contain data.
+          type: integer
+          minimum: 0
+        totalCount:
+          description: The total number of elements in the collection
           type: integer
           minimum: 0
       required:
-        - total
+        - pageCount
+        - totalCount
       additionalProperties: false
     PaginationOffset:
       description: The number of items to skip before starting to collect the result set.
