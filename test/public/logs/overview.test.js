@@ -170,14 +170,75 @@ module.exports = () => {
         }
     });
 
-    it('can navigate to a log detail page', async () => {
-        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+    it('can set how many logs are available per page', async () => {
+        // Expect the amount selector to currently be set to 10 pages
+        const amountSelectorId = '#amountSelector';
+        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
 
-        // We expect the entry page to have the same id as the id from the log overview
-        await page.click(`#${firstRowId}`);
+        // Expect the dropdown options to be visible when it is selected
+        await page.click(amountSelectorId);
         await page.waitFor(100);
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
+        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        // Expect the amount of visible logs to reduce when the first option (5) is selected
+        await page.click(`${amountSelectorId} .dropdown-menu .menu-item`);
+        await page.waitFor(100);
+        const tableRows = await page.$$('table tr');
+        expect(tableRows.length - 1).to.equal(5);
+    });
+
+    it('can switch between pages of logs', async () => {
+        // Expect the page selector to be available with two pages
+        const pageSelectorId = '#amountSelector';
+        const pageSelector = await page.$(pageSelectorId);
+        expect(Boolean(pageSelector)).to.be.true;
+        const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
+        expect(pageSelectorButtons.length).to.equal(2);
+
+        // Expect the table rows to change upon page navigation
+        const oldFirstRowId = await getFirstRow(table, page);
+        await page.click('#page2');
+        await page.waitFor(100);
+        const newFirstRowId = await getFirstRow(table, page);
+        expect(oldFirstRowId).to.not.equal(newFirstRowId);
+
+        // Expect us to be able to do the same with the page arrows
+        await page.click('#pageMoveLeft');
+        await page.waitFor(100);
+        const oldfirstPageButton = await page.$('#page1');
+        const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldfirstPageButton);
+        expect(oldFirstPageButtonClass).to.include('selected');
+
+        // The same, but for the other (right) arrow
+        await page.click('#pageMoveRight');
+        await page.waitFor(100);
+        const newFirstPageButton = await page.$('#page1');
+        const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
+        expect(newFirstPageButtonClass).to.not.include('selected');
+    });
+
+    it('dynamically switches between visible pages in the page selector', async () => {
+        // Override the amount of logs visible per page manually
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.setLogsPerPage(1);
+        });
+        await page.waitFor(100);
+
+        // Expect the page five button to now be visible, but no more than that
+        const pageFiveButton = await page.$('#page5');
+        expect(Boolean(pageFiveButton)).to.be.true;
+        const pageSixButton = await page.$('#page6');
+        expect(Boolean(pageSixButton)).to.be.false;
+
+        // Expect the page one button to have fallen away when clicking on page five button
+        await page.click('#page5');
+        await page.waitFor(100);
+        const pageOneButton = await page.$('#page1');
+        expect(Boolean(pageOneButton)).to.be.false;
     });
 
     it('can create a log from the overview page', async () => {
@@ -225,5 +286,15 @@ module.exports = () => {
 
         // Verify the correct title is shown in the table
         expect(isTitleInRow).to.equal(true);
+    });
+
+    it('can navigate to a log detail page', async () => {
+        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+
+        // We expect the entry page to have the same id as the id from the log overview
+        await page.click(`#${firstRowId}`);
+        await page.waitFor(100);
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
     });
 };
