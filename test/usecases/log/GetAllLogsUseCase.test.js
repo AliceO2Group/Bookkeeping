@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const { repositories: { LogRepository } } = require('../../../lib/database');
 const { log: { GetAllLogsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllLogsDto } } = require('../../../lib/domain');
 const chai = require('chai');
@@ -40,5 +41,14 @@ module.exports = () => {
         for (const log of logs) {
             expect(log.origin).to.equal('human');
         }
+    });
+
+    it('should return a count that is the same as the count method of the repository', async () => {
+        const expectedCount = await LogRepository.count();
+
+        const { count } = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
+
+        expect(count).to.equal(expectedCount);
     });
 };
