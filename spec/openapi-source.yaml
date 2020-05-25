@@ -19,10 +19,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiInformation'
-        '503':
-          $ref: '#/components/responses/ServiceUnavailable'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
   /logs:
     get:
       operationId: listLogs
@@ -36,8 +32,6 @@ paths:
           $ref: '#/components/responses/ArrayOfLogs'
         '400':
           $ref: '#/components/responses/BadRequest'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
     post:
@@ -50,8 +44,6 @@ paths:
           $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
   '/logs/{logId}':
@@ -67,8 +59,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
   '/logs/{logId}/tags':
@@ -84,8 +74,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
   '/logs/{logId}/tree':
@@ -101,8 +89,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
   /status:
@@ -116,10 +102,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeployInformation'
-        '503':
-          $ref: '#/components/responses/ServiceUnavailable'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
   /tags:
     get:
       operationId: listTags
@@ -131,8 +113,6 @@ paths:
           $ref: '#/components/responses/ArrayOfTags'
         '400':
           $ref: '#/components/responses/BadRequest'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
     post:
@@ -147,8 +127,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
   '/tags/{tagId}':
@@ -164,8 +142,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
     delete:
@@ -178,8 +154,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
   '/tags/{tagId}/logs':
@@ -195,8 +169,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
 components:
