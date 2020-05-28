@@ -66,7 +66,7 @@
     },
     "walker": {
       "no_empty_descriptions": "error",
-      "has_circular_references": "error",
+      "has_circular_references": "off",
       "$ref_siblings": "error",
       "duplicate_sibling_description": "error",
       "incorrect_ref_pattern": "error"

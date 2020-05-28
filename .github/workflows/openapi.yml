@@ -7,39 +7,37 @@ on:
       - master
 
 jobs:
+  convert:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.16.3
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.16.3'
+      - name: Running validator
+        run: |
+          npm ci
+          cd ./spec && ./convert.sh
+
   validate:
     runs-on: ubuntu-18.04
     timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.16.1
+      - name: Use Node.js 12.16.3
         uses: actions/setup-node@v1
         with:
-          node-version: '12.16.1'
+          node-version: '12.16.3'
       - name: Running validator
-        run: npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
+        run: |
+          npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
+          npx @openapitools/openapi-generator-cli validate -i spec/openapi-source.yaml
       - name: Running validator
         run: |
           npm ci
-          npm run openapi:validate
-
-  breaking:
-    runs-on: ubuntu-18.04
-    timeout-minutes: 5
-
-    steps:
-      - name: Check out head branch
-        uses: actions/checkout@v2
-        with:
-          path: head
-      - name: Check out master branch
-        uses: actions/checkout@v2
-        with:
-          ref: master
-          path: base
-      - name: Run OpenAPI Diff (from HEAD revision)
-        uses: mvegter/openapi-diff-action@v0.2.0
-        with:
-          head-spec: head/spec/openapi.yaml
-          base-spec: base/spec/openapi.yaml
+          npm run openapi -- spec/openapi.yaml
+          npm run openapi -- spec/openapi-source.yaml

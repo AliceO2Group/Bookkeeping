@@ -1,0 +1,615 @@
+openapi: 3.0.0
+info:
+  title: ALICE Bookkeeping
+  version: 0.0.0
+  license:
+    name: GNU General Public License v3.0
+    url: 'http://alice-o2.web.cern.ch/license'
+servers:
+  - url: /api
+paths:
+  /:
+    get:
+      operationId: getServerInformation
+      summary: Get server information
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiInformation'
+  /logs:
+    get:
+      operationId: listLogs
+      summary: List all logs
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+        - $ref: '#/components/parameters/FilterLogs'
+        - $ref: '#/components/parameters/SortLogs'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      tags:
+        - log
+    post:
+      operationId: createLog
+      summary: Adds a new log
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLog'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      tags:
+        - log
+  '/logs/{logId}':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: getLogById
+      summary: Gets a log by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
+  '/logs/{logId}/tags':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: listTagsByLogId
+      summary: Lists all tags associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
+  '/logs/{logId}/tree':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: getLogTree
+      summary: Get the Log tree for a given Log
+      responses:
+        '200':
+          $ref: '#/components/responses/LogTree'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
+  /status:
+    get:
+      operationId: getDeployInformation
+      summary: Get deploy information
+      responses:
+        '200':
+          description: Deploy information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployInformation'
+  /tags:
+    get:
+      operationId: listTags
+      summary: List all tags
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      tags:
+        - tag
+    post:
+      operationId: createTag
+      summary: Adds a new tag
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTag'
+      responses:
+        '201':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      tags:
+        - tag
+  '/tags/{tagId}':
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      operationId: getTagById
+      summary: Gets a tag by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - tag
+    delete:
+      operationId: deleteTagById
+      summary: Deletes a tag by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - tag
+  '/tags/{tagId}/logs':
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      operationId: getLogsByTagId
+      summary: Gets all logs with this tag id
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - tag
+components:
+  parameters:
+    FilterLogs:
+      name: filter
+      description: Specifies the filter requirements.
+      in: query
+      schema:
+        $ref: '#/components/schemas/FilterLogsOptions'
+      style: deepObject
+    LogId:
+      name: logId
+      description: The id of the log to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    Pagination:
+      name: page
+      description: Specifies the pagination requirements.
+      in: query
+      schema:
+        $ref: '#/components/schemas/PaginationOptions'
+      style: deepObject
+    SortLogs:
+      in: query
+      name: sort
+      description: Specifies the sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/SortLogsOptions'
+      style: deepObject
+    TagId:
+      name: tagId
+      description: The id of the tag to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+  requestBodies:
+    CreateLog:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateLog'
+    CreateTag:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTag'
+  responses:
+    ArrayOfLogs:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfTags:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfTagsResponse'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Log:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogResponse'
+    LogTree:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogTreeResponse'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    ServiceUnavailable:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Tag:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TagResponse'
+    UnexpectedError:
+      description: Unexpected Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: token
+  schemas:
+    ApiInformation:
+      description: API information
+      type: object
+      properties:
+        name:
+          description: Name of the API
+          type: string
+        version:
+          description: Version of the API
+          type: string
+      required:
+        - name
+        - version
+      additionalProperties: false
+    ArrayOfLogTrees:
+      description: A list of Log tree objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LogTree'
+    ArrayOfLogs:
+      description: A list of Log objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Log'
+    ArrayOfLogsResponse:
+      description: Response containing multiple logs.
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/ArrayOfLogsResponseMeta'
+        data:
+          $ref: '#/components/schemas/ArrayOfLogs'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfLogsResponseMeta:
+      description: The metadata related to an array of logs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfTags:
+      description: A list of Tag objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Tag'
+    ArrayOfTagsResponse:
+      description: Response containing multiple tags.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfTags'
+      required:
+        - data
+      additionalProperties: false
+    CreateLog:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
+      required:
+        - title
+        - text
+      additionalProperties: false
+    CreateTag:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        text:
+          description: The label value of the tag.
+          type: string
+      required:
+        - text
+      additionalProperties: false
+    DeployInformation:
+      description: Deploy information
+      type: object
+      properties:
+        age:
+          description: The number of seconds that the server is online.
+          type: number
+        start:
+          description: The unix timestamp of the moment that the the server went online.
+          type: number
+      required:
+        - age
+        - start
+      additionalProperties: false
+    EntityId:
+      description: The unique identifier of this entity.
+      type: integer
+      format: int64
+      minimum: 1
+    Error:
+      description: An Error object.
+      type: object
+      properties:
+        status:
+          description: The HTTP status code applicable to this problem.
+          type: string
+        title:
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+        detail:
+          description: >-
+            A human-readable explanation specific to this occurrence of the
+            problem.
+          type: string
+        source:
+          $ref: '#/components/schemas/ErrorSource'
+      required:
+        - status
+        - title
+      additionalProperties: false
+    ErrorSource:
+      description: An object containing references to the source of the error.
+      type: object
+      properties:
+        pointer:
+          description: A pointer to the associated entity in the request document.
+          type: string
+      additionalProperties: false
+    Errors:
+      description: A list of Error objects.
+      type: object
+      properties:
+        errors:
+          description: A list of Error objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+          minItems: 1
+      required:
+        - errors
+      additionalProperties: false
+    FilterLogsOptions:
+      description: Specifies the log related filter requirements for a request.
+      type: object
+      properties:
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        parentLog:
+          $ref: '#/components/schemas/EntityId'
+        rootLog:
+          $ref: '#/components/schemas/EntityId'
+      additionalProperties: false
+    Log:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        authorId:
+          description: Name of the author.
+          type: string
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
+        creationTime:
+          description: Unix timestamp of the creation date time.
+          type: integer
+          format: int64
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        subtype:
+          $ref: '#/components/schemas/LogSubtype'
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+      required:
+        - id
+        - authorId
+        - title
+        - text
+        - creationTime
+        - origin
+        - subtype
+        - tags
+        - rootLogId
+        - parentLogId
+      additionalProperties: false
+    LogOrigin:
+      description: Type of creator.
+      type: string
+      enum:
+        - human
+        - process
+    LogResponse:
+      description: Response containing a single log.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Log'
+      required:
+        - data
+      additionalProperties: false
+    LogSubtype:
+      description: The subtype of a Log.
+      type: string
+      enum:
+        - run
+        - subsystem
+        - announcement
+        - intervention
+        - comment
+    LogText:
+      description: Body of the log.
+      type: string
+      minLength: 3
+    LogTitle:
+      description: Title of the log.
+      type: string
+      minLength: 3
+      maxLength: 140
+    LogTree:
+      allOf:
+        - $ref: '#/components/schemas/Log'
+        - type: object
+          properties:
+            children:
+              $ref: '#/components/schemas/ArrayOfLogTrees'
+          required:
+            - children
+          additionalProperties: false
+    LogTreeResponse:
+      description: Response containing a single log tree.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LogTree'
+      required:
+        - data
+      additionalProperties: false
+    PaginationLimit:
+      description: The numbers of items to return.
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 100
+    PaginationMeta:
+      description: The metadata related to pagination.
+      type: object
+      properties:
+        pageCount:
+          description: The total number of pages which contain data.
+          type: integer
+          minimum: 0
+        totalCount:
+          description: The total number of elements in the collection
+          type: integer
+          minimum: 0
+      required:
+        - pageCount
+        - totalCount
+      additionalProperties: false
+    PaginationOffset:
+      description: The number of items to skip before starting to collect the result set.
+      type: integer
+      minimum: 0
+      default: 0
+    PaginationOptions:
+      description: Specifies the pagination requirements of a request.
+      type: object
+      properties:
+        limit:
+          $ref: '#/components/schemas/PaginationLimit'
+        offset:
+          $ref: '#/components/schemas/PaginationOffset'
+      additionalProperties: false
+    SortLogsOptions:
+      description: Specifies the sorting requirements of a request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+        text:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    SortOrder:
+      description: Specifies the sorting direction of a sorting option.
+      type: string
+      enum:
+        - asc
+        - desc
+    Tag:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        text:
+          description: The label value of the tag.
+          type: string
+        createdAt:
+          description: Date when the tag was created.
+          type: string
+        updateAt:
+          description: Date when the tag was last updated.
+          type: string
+      required:
+        - id
+        - text
+      additionalProperties: false
+    TagResponse:
+      description: Response containing a single tag.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Tag'
+      required:
+        - data
+      additionalProperties: false
+security:
+  - ApiKeyAuth: []

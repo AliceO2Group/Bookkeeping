@@ -193,6 +193,7 @@
                 "avoidEscape": true
             }
         ],
+        "radix": "error",
         "require-jsdoc": [
             "error",
             {

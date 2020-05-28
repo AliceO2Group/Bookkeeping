@@ -43,6 +43,86 @@ module.exports = () => {
                 });
         });
 
+        it('should support filtering by parent log', (done) => {
+            request(server)
+                .get('/api/logs?filter[parentLog]=2')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data).to.have.lengthOf(1);
+
+                    done();
+                });
+        });
+
+        it('should return 400 for an invalid parent log', (done) => {
+            request(server)
+                .get('/api/logs?filter[parentLog]=-1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('"query.filter.parentLog" must be a positive number');
+
+                    done();
+                });
+        });
+
+        it('should support filtering by root log', (done) => {
+            request(server)
+                .get('/api/logs?filter[rootLog]=1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data).to.have.lengthOf(3);
+
+                    done();
+                });
+        });
+
+        it('should return 400 for an invalid root log', (done) => {
+            request(server)
+                .get('/api/logs?filter[rootLog]=-1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('"query.filter.rootLog" must be a positive number');
+
+                    done();
+                });
+        });
+
         it('should support filtering by origin (process)', (done) => {
             request(server)
                 .get('/api/logs?filter[origin]=process')
@@ -121,7 +201,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].entryId).to.equal(1);
+                    expect(res.body.data[0].id).to.equal(1);
 
                     done();
                 });
@@ -141,7 +221,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].entryId).to.equal(2);
+                    expect(res.body.data[0].id).to.equal(2);
 
                     done();
                 });
@@ -168,6 +248,27 @@ module.exports = () => {
                 });
         });
 
+        it('should return the correct number of pages', (done) => {
+            request(server)
+                .get('/api/logs?page[offset]=0&page[limit]=2')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.have.lengthOf(2);
+                    expect(res.body.meta.page.pageCount).to.equal(5);
+                    expect(res.body.meta.page.totalCount).to.equal(9);
+
+                    done();
+                });
+        });
+
         it('should support sorting, id DESC', (done) => {
             request(server)
                 .get('/api/logs?sort[id]=desc')
@@ -182,7 +283,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
-                    expect(data[0].entryId).to.be.greaterThan(data[1].entryId);
+                    expect(data[0].id).to.be.greaterThan(data[1].id);
 
                     done();
                 });
@@ -202,7 +303,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
-                    expect(data[1].entryId).to.be.greaterThan(data[0].entryId);
+                    expect(data[1].id).to.be.greaterThan(data[0].id);
 
                     done();
                 });
@@ -255,11 +356,93 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if the title is too long', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: `
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                    `,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
+                    expect(titleError.detail)
+                        .to.equal('"body.title" length must be less than or equal to 140 characters long');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if no text is provided', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const textError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(textError.detail).to.equal('"body.text" is required');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the text is too short', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'A',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const textError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(textError.detail).to.equal('"body.text" length must be at least 3 characters long');
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/logs')
                 .send({
                     title: 'Yet another run',
+                    text: 'Text of yet another run',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -374,7 +557,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.entryId).to.equal(1);
+                    expect(res.body.data.id).to.equal(1);
 
                     done();
                 });
@@ -436,6 +619,87 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/logs/:logId/tree', () => {
+        it('should return 400 if the log id is not a number', (done) => {
+            request(server)
+                .get('/api/logs/abc/tree')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the log could not be found', (done) => {
+            request(server)
+                .get('/api/logs/999999999/tree')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        let tree;
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/1/tree')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    tree = res.body.data;
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/2/tree')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.deep.equal(tree);
 
                     done();
                 });

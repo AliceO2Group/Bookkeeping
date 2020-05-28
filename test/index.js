@@ -11,10 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const ApplicationSuite = require('./application');
 const EndToEndSuite = require('./e2e');
 const PublicSuite = require('./public');
 const ServerSuite = require('./server');
+const UseCasesSuite = require('./usecases');
 const UtilitiesSuite = require('./utilities');
 const OpenApiSuite = require('./openapi.test');
 
@@ -30,8 +30,8 @@ describe('Bookkeeping', () => {
     });
 
     describe('Unit Suite', () => {
-        describe('Application', ApplicationSuite);
         describe('Server', ServerSuite);
+        describe('Use Cases', UseCasesSuite);
         describe('Utilities', UtilitiesSuite);
         describe('OpenAPI Specification', OpenApiSuite);
     });

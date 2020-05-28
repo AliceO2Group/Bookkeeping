@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { tag: { GetTagUseCase } } = require('../../../../lib/usecases');
-const { dtos: { GetTagDto } } = require('../../../../lib/domain');
+const { log: { GetLogUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetLogDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
@@ -21,15 +21,15 @@ module.exports = () => {
     let getLogDto;
 
     beforeEach(async () => {
-        getLogDto = await GetTagDto.validateAsync({
+        getLogDto = await GetLogDto.validateAsync({
             params: {
-                tagId: 1,
+                logId: 1,
             },
         });
     });
 
-    it('should return an object that has the `entryId` property', async () => {
-        const result = await new GetTagUseCase()
+    it('should return an object that has the `id` property', async () => {
+        const result = await new GetLogUseCase()
             .execute(getLogDto);
 
         expect(result).to.have.ownProperty('id');

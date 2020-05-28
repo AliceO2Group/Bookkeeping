@@ -6,8 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    volumes:
-      - "./scripts:/opt"
+    environment:
+      NODE_ENV: production
+      DATABASE_HOST: database
     links:
       - database
     ports:
@@ -20,16 +21,28 @@ services:
       - OIDC_SECRET=${OIDC_SECRET}
       - OIDC_ID=${OIDC_ID}
       - OIDC_REDIRECT=${OIDC_REDIRECT}
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
 
   database:
-    image: mariadb:10.5.2
-    restart: always
-    volumes: 
-      # Mounts the data directory as /var/lib/mysql inside the container, where the data files are written
-      - "./database/data:/var/lib/mysql"
-      # Mounts the configuration directory as /etc/mysql/conf.d inside the container, where custom configurations reside
-      - "./database/configuration:/etc/mysql/conf.d"
-      # Mounts the populate directory as /docker-entrypoint-initdb.d" inside the container, where population dumps reside
-      - "./database/populate:/docker-entrypoint-initdb.d"
+    image: mariadb:10.5.3
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        read_only: false
+        source: ./database/data
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d

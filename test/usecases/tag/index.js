@@ -11,16 +11,14 @@
  * or submit itself to any jurisdiction.
  */
 
-const { tag: { GetAllTagsUseCase } } = require('../../../../lib/usecases');
-const chai = require('chai');
-
-const { expect } = chai;
+const CreateTagUseCase = require('./CreateTagUseCase.test');
+const DeleteTagUseCase = require('./DeleteTagUseCase.test');
+const GetAllTagsUseCase = require('./GetAllTagsUseCase.test');
+const GetTagUseCase = require('./GetTagUseCase.test');
 
 module.exports = () => {
-    it('should return an array', async () => {
-        const result = await new GetAllTagsUseCase()
-            .execute();
-
-        expect(result).to.be.an('array');
-    });
+    describe('CreateTagUseCase', CreateTagUseCase);
+    describe('DeleteTagUseCase', DeleteTagUseCase);
+    describe('GetAllTagsUseCase', GetAllTagsUseCase);
+    describe('GetTagUseCase', GetTagUseCase);
 };

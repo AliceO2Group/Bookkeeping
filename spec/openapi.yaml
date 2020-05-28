@@ -1,15 +1,14 @@
-openapi: 3.0.0
+# Generated on Mon, 25 May 2020 09:15:58 GMT
 
+openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
   version: 0.0.0
   license:
     name: GNU General Public License v3.0
-    url: http://alice-o2.web.cern.ch/license
-
+    url: 'http://alice-o2.web.cern.ch/license'
 servers:
-  - url: '/api'
-
+  - url: /api
 paths:
   /:
     get:
@@ -39,6 +38,8 @@ paths:
           $ref: '#/components/responses/ArrayOfLogs'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -53,11 +54,13 @@ paths:
           $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  /logs/{logId}:
+  '/logs/{logId}':
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -70,11 +73,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  /logs/{logId}/tags:
+  '/logs/{logId}/tags':
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -87,6 +92,27 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  '/logs/{logId}/tree':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: getLogTree
+      summary: Get the Log tree for a given Log
+      responses:
+        '200':
+          $ref: '#/components/responses/LogTree'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -117,6 +143,8 @@ paths:
           $ref: '#/components/responses/ArrayOfTags'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -133,11 +161,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-  /tags/{tagId}:
+  '/tags/{tagId}':
     parameters:
       - $ref: '#/components/parameters/TagId'
     get:
@@ -150,11 +180,29 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-  /tags/{tagId}/logs:
+    delete:
+      operationId: deleteTagById
+      summary: Deletes a tag by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
+  '/tags/{tagId}/logs':
     parameters:
       - $ref: '#/components/parameters/TagId'
     get:
@@ -167,11 +215,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-
 components:
   parameters:
     FilterLogs:
@@ -180,6 +229,7 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
+      style: deepObject
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -193,6 +243,7 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/PaginationOptions'
+      style: deepObject
     SortLogs:
       in: query
       name: sort
@@ -200,6 +251,7 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/SortLogsOptions'
+      style: deepObject
     TagId:
       name: tagId
       description: The id of the tag to retrieve
@@ -251,6 +303,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/LogResponse'
+    LogTree:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogTreeResponse'
     NotFound:
       description: Not Found
       content:
@@ -275,6 +333,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: token
   schemas:
     ApiInformation:
       description: API information
@@ -290,6 +353,11 @@ components:
         - name
         - version
       additionalProperties: false
+    ArrayOfLogTrees:
+      description: A list of Log tree objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LogTree'
     ArrayOfLogs:
       description: A list of Log objects.
       type: array
@@ -299,10 +367,21 @@ components:
       description: Response containing multiple logs.
       type: object
       properties:
+        meta:
+          $ref: '#/components/schemas/ArrayOfLogsResponseMeta'
         data:
           $ref: '#/components/schemas/ArrayOfLogs'
       required:
         - data
+      additionalProperties: false
+    ArrayOfLogsResponseMeta:
+      description: The metadata related to an array of logs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
       additionalProperties: false
     ArrayOfTags:
       description: A list of Tag objects.
@@ -323,10 +402,12 @@ components:
       type: object
       properties:
         title:
-          description: Title of the log.
-          type: string
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
       required:
         - title
+        - text
       additionalProperties: false
     CreateTag:
       description: A label attached to something for the purpose of identification.
@@ -356,6 +437,7 @@ components:
       description: The unique identifier of this entity.
       type: integer
       format: int64
+      minimum: 1
     Error:
       description: An Error object.
       type: object
@@ -364,10 +446,12 @@ components:
           description: The HTTP status code applicable to this problem.
           type: string
         title:
-          description: A short, human-readable summary of the problem.
+          description: 'A short, human-readable summary of the problem.'
           type: string
         detail:
-          description: A human-readable explanation specific to this occurrence of the problem.
+          description: >-
+            A human-readable explanation specific to this occurrence of the
+            problem.
           type: string
         source:
           $ref: '#/components/schemas/ErrorSource'
@@ -402,29 +486,56 @@ components:
       properties:
         origin:
           $ref: '#/components/schemas/LogOrigin'
+        parentLog:
+          $ref: '#/components/schemas/EntityId'
+        rootLog:
+          $ref: '#/components/schemas/EntityId'
       additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        entryId:
+        id:
           $ref: '#/components/schemas/EntityId'
-        title:
-          description: Title of the log.
+        authorId:
+          description: Name of the author.
           type: string
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
+        creationTime:
+          description: Unix timestamp of the creation date time.
+          type: integer
+          format: int64
         origin:
           $ref: '#/components/schemas/LogOrigin'
+        subtype:
+          $ref: '#/components/schemas/LogSubtype'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
       required:
-        - entryId
+        - id
+        - authorId
         - title
+        - text
+        - creationTime
         - origin
+        - subtype
         - tags
+        - rootLogId
+        - parentLogId
+      additionalProperties: false
     LogOrigin:
       description: Type of creator.
       type: string
-      enum: [human, process]
+      enum:
+        - human
+        - process
     LogResponse:
       description: Response containing a single log.
       type: object
@@ -434,12 +545,97 @@ components:
       required:
         - data
       additionalProperties: false
+    LogSubtype:
+      description: The subtype of a Log.
+      type: string
+      enum:
+        - run
+        - subsystem
+        - announcement
+        - intervention
+        - comment
+    LogText:
+      description: Body of the log.
+      type: string
+      minLength: 3
+    LogTitle:
+      description: Title of the log.
+      type: string
+      minLength: 3
+      maxLength: 140
+    LogTree:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        authorId:
+          description: Name of the author.
+          type: string
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        text:
+          $ref: '#/components/schemas/LogText'
+        creationTime:
+          description: Unix timestamp of the creation date time.
+          type: integer
+          format: int64
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        subtype:
+          $ref: '#/components/schemas/LogSubtype'
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        children:
+          $ref: '#/components/schemas/ArrayOfLogTrees'
+      required:
+        - id
+        - authorId
+        - title
+        - text
+        - creationTime
+        - origin
+        - subtype
+        - tags
+        - rootLogId
+        - parentLogId
+        - children
+      additionalProperties: false
+    LogTreeResponse:
+      description: Response containing a single log tree.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LogTree'
+      required:
+        - data
+      additionalProperties: false
     PaginationLimit:
       description: The numbers of items to return.
       type: integer
       minimum: 1
       maximum: 100
       default: 100
+    PaginationMeta:
+      description: The metadata related to pagination.
+      type: object
+      properties:
+        pageCount:
+          description: The total number of pages which contain data.
+          type: integer
+          minimum: 0
+        totalCount:
+          description: The total number of elements in the collection
+          type: integer
+          minimum: 0
+      required:
+        - pageCount
+        - totalCount
+      additionalProperties: false
     PaginationOffset:
       description: The number of items to skip before starting to collect the result set.
       type: integer
@@ -497,3 +693,5 @@ components:
       required:
         - data
       additionalProperties: false
+security:
+  - ApiKeyAuth: []

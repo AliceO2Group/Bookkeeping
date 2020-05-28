@@ -11,8 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetAllLogsUseCase } } = require('../../../../lib/usecases');
-const { dtos: { GetAllLogsDto } } = require('../../../../lib/domain');
+const { repositories: { LogRepository } } = require('../../../lib/database');
+const { log: { GetAllLogsUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetAllLogsDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
@@ -25,20 +26,29 @@ module.exports = () => {
     });
 
     it('should return an array', async () => {
-        const result = await new GetAllLogsUseCase()
+        const { logs } = await new GetAllLogsUseCase()
             .execute();
 
-        expect(result).to.be.an('array');
+        expect(logs).to.be.an('array');
     });
 
     it('should return an array, only containing human originated logs', async () => {
         getAllLogsDto.query = { filter: { origin: 'human' } };
-        const result = await new GetAllLogsUseCase()
+        const { logs } = await new GetAllLogsUseCase()
             .execute(getAllLogsDto);
 
-        expect(result).to.be.an('array');
-        for (const log of result) {
+        expect(logs).to.be.an('array');
+        for (const log of logs) {
             expect(log.origin).to.equal('human');
         }
+    });
+
+    it('should return a count that is the same as the count method of the repository', async () => {
+        const expectedCount = await LogRepository.count();
+
+        const { count } = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
+
+        expect(count).to.equal(expectedCount);
     });
 };

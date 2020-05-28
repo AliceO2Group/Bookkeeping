@@ -11,31 +11,31 @@
  * or submit itself to any jurisdiction.
  */
 
-const { server: { GetDeployInformationUseCase } } = require('../../../../lib/usecases');
+const { server: { GetServerInformationUseCase } } = require('../../../lib/usecases');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    it('should return an object that has the `age` property', async () => {
+    it('should return an object that has the `version` property', async () => {
         // Arrange
-        const usecase = new GetDeployInformationUseCase();
+        const usecase = new GetServerInformationUseCase();
 
         // Act
         const result = await usecase.execute();
 
         // Assert
-        expect(result).to.have.ownProperty('age');
+        expect(result).to.have.ownProperty('version');
     });
 
-    it('should return an object that has the `start` property', async () => {
+    it('should return an object that has the `name` property', async () => {
         // Arrange
-        const usecase = new GetDeployInformationUseCase();
+        const usecase = new GetServerInformationUseCase();
 
         // Act
         const result = await usecase.execute();
 
         // Assert
-        expect(result).to.have.ownProperty('start');
+        expect(result).to.have.ownProperty('name');
     });
 };

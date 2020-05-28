@@ -8,33 +8,31 @@
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "openapi": "lint-openapi",
-    "openapi:validate": "npm run openapi spec/openapi.yaml",
     "sequelize": "sequelize-cli",
-    "start:dev": "nodemon lib/main.js",
+    "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
-    "test": "mocha --exit"
+    "test": "mocha --exit --timeout 5000"
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.11.1",
     "@hapi/joi": "17.1.1",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
-    "mariadb": "2.3.1",
-    "sequelize": "5.21.9",
+    "js-yaml": "3.14.0",
+    "mariadb": "2.4.0",
+    "sequelize": "5.21.11",
     "swagger-ui-express": "4.1.4",
-    "umzug": "2.3.0",
-    "yamljs": "0.3.0"
+    "umzug": "2.3.0"
   },
   "devDependencies": {
     "chai": "4.2.0",
     "chai-openapi-response-validator": "0.9.2",
-    "eslint": "7.0.0",
+    "eslint": "7.1.0",
     "ibm-openapi-validator": "0.27.1",
-    "js-yaml": "3.13.1",
-    "mocha": "7.1.2",
+    "mocha": "7.2.0",
     "nodemon": "2.0.4",
     "nyc": "15.0.1",
-    "puppeteer": "3.0.4",
+    "puppeteer": "3.1.0",
     "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul",
     "sequelize-cli": "5.5.1",
     "supertest": "4.0.2"
