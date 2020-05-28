@@ -16,6 +16,14 @@ services:
         target: /usr/src/app
       - type: volume
         target: /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_HOST=database
+      - JWT_SECRET=${JWT_SECRET_DEV}
+      - JWT_ISSUER=${JWT_ISSUER_DEV}
+      - OIDC_SECRET=${OIDC_SECRET_DEV}
+      - OIDC_ID=${OIDC_ID_DEV}
+      - OIDC_REDIRECT=${OIDC_REDIRECT_DEV}
 
   database:
     ports:
