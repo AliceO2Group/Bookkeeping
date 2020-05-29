@@ -42,9 +42,8 @@ Format:
 - ```sp1.``` (sprint 1)
 - ```v0.0.1``` (version major, minor, patch)
 
-## Changelog generation
-The `CHANGELOG.md` is generated using the [Standard CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/standard-changelog) package, an opinionated approach to CHANGELOG generation using angular commit conventions.
-
+## Creating a new release
+Executing the following command will update the package(-lock).json, update the CHANGELOG.md and create a Git tag.
 ```sh
-$ npx standard-changelog
+$ npx standard-version --release-as X.Y.Z
 ```
