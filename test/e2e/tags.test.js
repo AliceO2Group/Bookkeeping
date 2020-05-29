@@ -477,6 +477,10 @@ module.exports = () => {
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].title).to.equal('Third entry');
 
+                    res.body.data.forEach((log) => {
+                        expect(log.tags.filter((tag) => tag.id === 1)).to.have.lengthOf(1);
+                    });
+
                     done();
                 });
         });
