@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.16.3
+      - name: Use Node.js 12.17.0
         uses: actions/setup-node@v1
         with:
-          node-version: '12.16.3'
+          node-version: '12.17.0'
       - name: Running validator
         run: |
           npm ci
@@ -28,10 +28,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.16.3
+      - name: Use Node.js 12.17.0
         uses: actions/setup-node@v1
         with:
-          node-version: '12.16.3'
+          node-version: '12.17.0'
       - name: Running validator
         run: |
           npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
