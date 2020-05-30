@@ -1,4 +1,5 @@
 # Configuration
+The following configuration items can be set using environment variables, note that Docker users can make use of the `.env` file to store the configuration.
 
 ## Database
 | Variable name | Description | Default value |
