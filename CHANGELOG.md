@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.4.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.2.0...v0.4.0) (2020-05-29)
+## [0.4.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.3.0...v0.4.0) (2020-05-29)
 
 
 ### Features
@@ -106,7 +106,7 @@ All notable changes to this project will be documented in this file. See [standa
 * user_id cant be 0 ([830f1b3](https://github.com/AliceO2Group/Bookkeeping/commit/830f1b3b8aa2f21ae0c7aa23b521c40111430321))
 * wrong arg use ([6963305](https://github.com/AliceO2Group/Bookkeeping/commit/6963305837cc7553323c87ce68754c18e9b994ac))
 
-# [](https://github.com/AliceO2Group/Bookkeeping/compare/v0.2.0...v) (2020-05-08)
+# [0.3.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.2.0...v0.3.0) (2020-05-08)
 
 
 ### Bug Fixes
@@ -150,7 +150,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-# [R.Arsenic.sp2.v0.1.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.1.0...v) (2020-04-24)
+# [0.2.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.1.0...v0.2.0) (2020-04-24)
 
 
 ### Bug Fixes
@@ -213,5 +213,20 @@ All notable changes to this project will be documented in this file. See [standa
 * Got filtering working, reflects on the actual table now ([5b56dcc](https://github.com/AliceO2Group/Bookkeeping/commit/5b56dcc511a468666688a046138fdc92fa0afcff))
 * Upgraded appendPath utility ([40f366b](https://github.com/AliceO2Group/Bookkeeping/commit/40f366b1964536c87de6efdbdc3f081d0e45c9b8))
 
+# [0.1.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.0.0...v0.1.0) (2020-03-03)
+
+
+### Features
+
+* added Nginx integration ([fb27bef](https://github.com/AliceO2Group/Bookkeeping/commit/fb27befe2b55800c3666aab501a0834d7bf0ed96))
+* added Nginx integration ([0d7868a](https://github.com/AliceO2Group/Bookkeeping/commit/0d7868a05ff4dc794b8f3d9a0387b7814a095d10))
+* Code coverage reporting to Codecov ([42ebcee](https://github.com/AliceO2Group/Bookkeeping/commit/42ebcee817ee1581d2b2f60a7c5a990b6b8732a6))
+* Codecov integration for backend ([032ea1c](https://github.com/AliceO2Group/Bookkeeping/commit/032ea1c29ff5f6253ba0a9103118d485d3384e3b))
+* Continuous Integration using GitHub actions ([9939709](https://github.com/AliceO2Group/Bookkeeping/commit/993970923bf2be95469043057e02f84f1cc953b4))
+* ESLint integration ([9ce0624](https://github.com/AliceO2Group/Bookkeeping/commit/9ce06241103f9b5891ca56ff2e771002cb245cd6))
+* ESLint integration ([c86b116](https://github.com/AliceO2Group/Bookkeeping/commit/c86b1166f558839c920c267ea86b58f72b2b89df))
+* GitHub actions integrations for backend ([db06cb3](https://github.com/AliceO2Group/Bookkeeping/commit/db06cb396081227e4a9e493ace7f10f92beb5c0f))
+* GitHub actions integrations for frontend ([d5dd04f](https://github.com/AliceO2Group/Bookkeeping/commit/d5dd04f773f8f0f40091ebb15e6e99894c41684a))
+* GitHub actions integrations for spec ([db62696](https://github.com/AliceO2Group/Bookkeeping/commit/db62696bcd167fda789b92ae6cd01922d2babece))
 
 
