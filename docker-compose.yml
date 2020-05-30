@@ -9,6 +9,10 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_HOST: database
+      JWT_SECRET: "${JWT_SECRET}"
+      JWT_EXPIRATION: "${JWT_EXPIRATION}"
+      JWT_ISSUER: "${JWT_ISSUER}"
+      JWT_MAX_AGE: "${JWT_MAX_AGE}"
     links:
       - database
     restart: unless-stopped
