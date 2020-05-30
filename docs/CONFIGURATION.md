@@ -12,3 +12,11 @@ The following configuration items can be set using environment variables, note t
 | DATABASE_CHARSET | The charset of the relational database. | utf8mb4 |
 | DATABASE_COLLATE | The collate of the relational database. | utf8mb4_unicode_ci |
 | DATABASE_TIMEZONE | The timezone of the database | Etc/GMT+0 |
+
+## JSON Web Token (JWT)
+| Variable name | Description | Default value |
+|---------------|-------------|---------------|
+| JWT_SECRET | Secret passphrase to sign and verify tokens. | |
+| JWT_EXPIRATION | Token expiration time as time literal. | 1d |
+| JWT_ISSUER | Identifies principal that issued the JWT. | o2-ui |
+| JWT_MAX_AGE | Token refresh expiration time as time literal. | 7d |
