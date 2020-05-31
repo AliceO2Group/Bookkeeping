@@ -30,6 +30,10 @@
 .w-95  { width:  95%; }
 .w-100 { width: 100%; }
 
+.table {
+    margin-bottom: 0px;
+}
+
 .table-hover tbody tr:hover {
     color: #212529;
     background-color: rgba(0, 0, 0, 0.075);
