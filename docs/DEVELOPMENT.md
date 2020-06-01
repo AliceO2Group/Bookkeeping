@@ -47,3 +47,9 @@ Executing the following command will update the package(-lock).json, update the 
 ```sh
 $ npx standard-version --release-as X.Y.Z
 ```
+
+## Updating (transitive) dependencies
+```sh
+rm node_modules/ -rf && npm update && git add package-lock.json && git commit -m "chore(deps): bump transitive dependency versions"
+rm node_modules/ -rf && npm update -D && git add package-lock.json && git commit -m "chore(deps-dev): bump transitive dependency versions"
+```
