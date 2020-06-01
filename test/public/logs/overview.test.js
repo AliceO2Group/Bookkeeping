@@ -255,7 +255,8 @@ module.exports = () => {
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
-        await page.type('#text', text);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
 
         // Create the new log
         await page.click('#send');

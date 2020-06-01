@@ -13,7 +13,8 @@
     ],
     "ignorePatterns": [
         "node_modules/",
-        "database/data/"
+        "database/data/",
+        "lib/public/assets/"
     ],
     "rules": {
         "array-bracket-newline": [
