@@ -7,6 +7,8 @@
         "lib/main.js",
         "lib/database/migrations/*.js",
         "lib/database/seeders/*.js",
+        "lib/public/assets/**/*.js",
+        "lib/public/assets/**/*.css",
         "test/**/*.js"
     ]
 }

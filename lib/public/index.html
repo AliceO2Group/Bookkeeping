@@ -15,6 +15,60 @@
     <script src="/js/src/compatibility.js"></script>
 </head>
 
+<!-- ----------------------------------------------------------------------------------- -->
+<!-- CodeMirror -->
+
+<link rel="stylesheet" href="/assets/SmartEditor/codemirror/lib/codemirror.min.css">
+<link rel="stylesheet" href="/assets/SmartEditor/codemirror/addon/fold/foldgutter.min.css">
+
+<script src="/assets/SmartEditor/codemirror/lib/codemirror.min.js"></script>
+
+<script src="/assets/SmartEditor/codemirror/addon/fold/foldcode.min.js"></script>
+<script src="/assets/SmartEditor/codemirror/addon/fold/foldgutter.min.js"></script>
+<script src="/assets/SmartEditor/codemirror/addon/fold/markdown-fold.min.js"></script>
+
+<script src="/assets/SmartEditor/codemirror/addon/mode/overlay.min.js"></script>
+<script src="/assets/SmartEditor/codemirror/mode/meta.min.js"></script>
+<script src="/assets/SmartEditor/codemirror/mode/markdown/markdown.min.js"></script>
+
+<script src="/assets/SmartEditor/codemirror/mode/xml/xml.min.js"></script>
+<!-- for embedded HTML -->
+<script src="/assets/SmartEditor/codemirror/mode/stex/stex.min.js"></script>
+<!-- for Math TeX Formular -->
+<script src="/assets/SmartEditor/codemirror/mode/yaml/yaml.min.js"></script>
+<!-- for Front Matters -->
+
+<script src="/assets/SmartEditor/codemirror/mode/javascript/javascript.min.js"></script>
+<!-- load more for code blocks -->
+
+<!-- ----------------------------------------------------------------------------------- -->
+<!-- HyperMD -->
+
+<link rel="stylesheet" href="/assets/SmartEditor/HyperMD/mode/hypermd.css">
+<link rel="stylesheet" href="/assets/SmartEditor/HyperMD/theme/hypermd-light.css">
+
+<script src="/assets/SmartEditor/HyperMD/index.js"></script>
+
+<!-- ----------------------------------------------------------------------------------- -->
+<!-- (optional) PowerPacks with 3rd-party libs (Load them before creating editor!) -->
+
+<!-- marked and powerpack/hover-with-marked -->
+<script src="/assets/SmartEditor/marked/lib/marked.min.js"></script>
+<script src="/assets/SmartEditor/HyperMD/powerpack/hover-with-marked.js"></script>
+
+<!-- Turndown and powerpack/paste-with-turndown -->
+<script src="/assets/SmartEditor/turndown/turndown.min.js"></script>
+<script src="/assets/SmartEditor/turndown-plugin-gfm/turndown-plugin-gfm.min.js"></script>
+<script src="/assets/SmartEditor/HyperMD/powerpack/paste-with-turndown.js"></script>
+
+<!-- Upload Images to https://sm.ms/  -->
+<script src="/assets/SmartEditor/HyperMD/powerpack/insert-file-with-smms.js"></script>
+
+<!-- Use EmojiOne to render emoji  -->
+<script src="/assets/SmartEditor/emojione/index.js"></script>
+<link rel="stylesheet" href="/assets/SmartEditor/emojione/extras/css/emojione.min.css">
+<script src="/assets/SmartEditor/HyperMD/powerpack/fold-emoji-with-emojione.js"></script>
+
 <body>
 
     <!-- Load the session service, parses variables provided by server in the query -->
@@ -34,7 +88,7 @@
         import Model from './Model.js';
 
         // Start application
-        const model = new Model();
+        const model = new Model(HyperMD);
         const debug = true; // shows when redraw is done
         mount(document.body, view, model, debug);
 
