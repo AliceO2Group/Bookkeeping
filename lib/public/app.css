@@ -60,3 +60,29 @@
 .alert-danger .alert-link {
     color: #491217;
 }
+
+.panel-tab {
+    border: #212529;
+}
+
+.panel-content {
+    width: 100%;
+}
+
+
+.panel-tabs {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.panel-tab {
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    margin-bottom: -1px;
+}
+
+.panel-tab.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
