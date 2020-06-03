@@ -9,6 +9,7 @@ services:
     ports:
       - target: 4000
         published: 4000
+    restart: "no"
     volumes:
       - type: bind
         read_only: false
