@@ -25,6 +25,48 @@ const { expect } = chai;
 
 module.exports = () => {
     describe('WhereQueryBuilder', () => {
+        describe('not', () => {
+            it('should return a single entity which does not have the provided id', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('id').not().is('1');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result.id).to.equal(2);
+            });
+
+            it('should return entities not with the id in the provided range', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('id').not().between(1, 3);
+
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(2);
+                expect(result[0].id).to.equal(4);
+                expect(result[1].id).to.equal(5);
+            });
+
+            it('should return a single entity with the provided id', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('id').not().oneOf('1', 2);
+                queryBuilder.orderBy('id', 'asc');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result.id).to.equal(3);
+            });
+
+            it('should return a single entity with the provided id', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('id').not().allOf('1', 2);
+                queryBuilder.orderBy('id', 'asc');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result.id).to.equal(3);
+            });
+        });
+
         describe('between', () => {
             it('should return entities with the id in the provided range', async () => {
                 const queryBuilder = new QueryBuilder();
