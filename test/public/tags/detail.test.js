@@ -67,7 +67,7 @@ module.exports = () => {
         await page.goto(`${url}/?page=tag&id=1`);
         await page.waitFor(100);
 
-        const postExists = await page.$('h1');
+        const postExists = await page.$('h2');
         expect(Boolean(postExists)).to.be.true;
 
         const title = await page.evaluate((element) => element.innerText, postExists);
