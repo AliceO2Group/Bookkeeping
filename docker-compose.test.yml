@@ -11,10 +11,28 @@ services:
     volumes:
       - type: bind
         read_only: false
-        source: .
-        target: /usr/src/app
-      - type: volume
-        target: /usr/src/app/node_modules
+        source: ./coverage
+        target: /usr/src/app/coverage
+      - type: bind
+        read_only: true
+        source: ./lib
+        target: /usr/src/app/lib
+      - type: bind
+        read_only: true
+        source: ./spec
+        target: /usr/src/app/spec
+      - type: bind
+        read_only: true
+        source: ./test
+        target: /usr/src/app/test
+      - type: bind
+        read_only: true
+        source: ./test
+        target: /usr/src/app/test
+      - type: bind
+        read_only: true
+        source: ./.nycrc
+        target: /usr/src/app/.nycrc
 
   database:
     environment:
