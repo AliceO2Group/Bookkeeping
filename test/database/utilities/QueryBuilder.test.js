@@ -25,6 +25,20 @@ const { expect } = chai;
 
 module.exports = () => {
     describe('WhereQueryBuilder', () => {
+        describe('between', () => {
+            it('should return entities with the id in the provided range', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('id').between(1, '3');
+
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(3);
+                expect(result[0].id).to.equal(1);
+                expect(result[1].id).to.equal(2);
+                expect(result[2].id).to.equal(3);
+            });
+        });
+
         describe('is', () => {
             it('should return a single entity with the provided id', async () => {
                 const queryBuilder = new QueryBuilder();
