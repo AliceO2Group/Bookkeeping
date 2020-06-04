@@ -32,7 +32,7 @@ RUN apk add --no-cache \
     freetype-dev=2.10.1-r0 \
     git=2.24.3-r0 \
     harfbuzz=2.6.4-r0 \
-    ca-certificates=20191127-r1 \
+    ca-certificates=20191127-r2 \
     ttf-freefont=20120503-r1
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
