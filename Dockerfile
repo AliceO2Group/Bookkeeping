@@ -8,6 +8,9 @@ WORKDIR /usr/src/app
 # Expose the port to the Docker instance (not the host!)
 EXPOSE 4000
 
+RUN apk add --no-cache \
+    bash=5.0.11-r1
+
 
 #
 # ---- Development Dependencies ----
@@ -23,7 +26,6 @@ RUN apk add --no-cache \
     at-spi2-core=2.34.0-r0 \
     atk=2.34.1-r0 \
     avahi-libs=0.7-r4 \
-    bash=5.0.11-r1 \
     busybox=1.31.1-r9 \
     ca-certificates=20191127-r2 \
     ca-certificates-cacert=20191127-r2 \
