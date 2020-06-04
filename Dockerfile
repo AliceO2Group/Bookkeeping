@@ -8,17 +8,10 @@ WORKDIR /usr/src/app
 # Expose the port to the Docker instance (not the host!)
 EXPOSE 4000
 
-#
-# ---- Package ----
-FROM base as package
-
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
-
 
 #
 # ---- Development Dependencies ----
-FROM package as developmentDependencies
+FROM base as developmentDependencies
 
 # Installs Git and packages required for Puppeteer
 RUN apk add --no-cache \
@@ -157,6 +150,9 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
+
 # Installs modules from package-lock.json, this ensures reproducible build
 RUN npm --silent ci
 
@@ -179,7 +175,10 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "co
 
 #
 # ---- Production Dependencies ----
-FROM package as productionDependencies
+FROM base as productionDependencies
+
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
 
 # Installs modules from package-lock.json, this ensures reproducible build
 RUN npm --silent ci --production
