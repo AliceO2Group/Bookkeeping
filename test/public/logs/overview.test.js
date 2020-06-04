@@ -288,6 +288,31 @@ module.exports = () => {
         expect(isTitleInRow).to.equal(true);
     });
 
+    it('notifies if table loading returned an error', async () => {
+        /*
+         * As an example, override the amount of logs visible per page manually
+         * We know the limit is 100 as specified by the Dto
+         */
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.setLogsPerPage(200);
+        });
+        await page.waitFor(100);
+
+        // We expect there to be a fitting error message
+        const error = await page.$('.alert-danger');
+        expect(Boolean(error)).to.be.true;
+        const message = await page.evaluate((element) => element.innerText, error);
+        expect(message).to.equal('Invalid Attribute: "query.page.limit" must be less than or equal to 100');
+
+        // Revert changes for next test
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.setLogsPerPage(10);
+        });
+        await page.waitFor(100);
+    });
+
     it('can navigate to a log detail page', async () => {
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 

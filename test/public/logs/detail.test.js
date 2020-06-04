@@ -60,7 +60,7 @@ module.exports = () => {
         await page.waitFor(100);
 
         // We expect there to be an error message
-        const error = await page.$('.danger');
+        const error = await page.$('.alert-danger');
         expect(Boolean(error)).to.be.true;
         const message = await page.evaluate((element) => element.innerText, error);
         expect(message).to.equal('This log could not be found.');
