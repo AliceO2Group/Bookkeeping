@@ -75,24 +75,24 @@ module.exports = () => {
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#PanelLogs');
+        await page.click('#logs-tab');
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=1&panel=PanelLogs`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to the main panel', async () => {
-        await page.click('#PanelMain');
+        await page.click('#main-tab');
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=1&panel=PanelMain`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=1&panel=main`)).to.be.true;
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#PanelLogs');
+        await page.click('#logs-tab');
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=1&panel=PanelLogs`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to a log detail page', async () => {
