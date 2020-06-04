@@ -15,7 +15,7 @@
     "test": "mocha --exit --timeout 5000"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.11.1",
+    "@aliceo2/web-ui": "1.11.2",
     "@hapi/joi": "17.1.1",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
