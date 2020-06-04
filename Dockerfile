@@ -26,13 +26,13 @@ FROM package as developmentDependencies
 
 # Installs Git and packages required for Puppeteer
 RUN apk add --no-cache \
-    ca-certificates \
     chromium=81.0.4044.113-r0 \
     nss=3.48-r0 \
     freetype=2.10.1-r0 \
     freetype-dev=2.10.1-r0 \
     git=2.24.3-r0 \
     harfbuzz=2.6.4-r0 \
+    ca-certificates=20200601 \
     ttf-freefont=20120503-r1
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
