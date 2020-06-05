@@ -1,6 +1,7 @@
 {
     "all": true,
     "include": [
+        "lib/**/*.css",
         "lib/**/*.js"
     ],
     "exclude": [
