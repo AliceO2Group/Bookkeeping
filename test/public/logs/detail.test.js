@@ -56,13 +56,13 @@ module.exports = () => {
 
     it('notifies if a specified log id is invalid', async () => {
         // Navigate to a log detail view with an id that cannot exist
-        await page.goto(`${url}/?page=entry&id=abc`);
+        await page.goto(`${url}/?page=entry&id=99999999`);
         await page.waitFor(100);
 
         // We expect there to be an error message
-        const error = await page.$('.danger');
+        const error = await page.$('.alert-danger');
         expect(Boolean(error)).to.be.true;
         const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('This log could not be found.');
+        expect(message).to.equal('Log with this id (99999999) could not be found:');
     });
 };
