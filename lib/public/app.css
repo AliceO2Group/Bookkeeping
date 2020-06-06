@@ -1,3 +1,7 @@
+html, body {
+    scroll-behavior: smooth;
+}
+
 .cell-xs { width: 2rem; }
 .cell-s { width: 4rem; }
 .cell-m { width: 8rem; }
