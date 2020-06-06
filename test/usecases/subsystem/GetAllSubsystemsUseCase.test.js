@@ -11,12 +11,16 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogAdapter = require('./LogAdapter');
-const SubsystemAdapter = require('./SubsystemAdapter');
-const TagAdapter = require('./TagAdapter');
+const { subsystem: { GetAllSubsystemsUseCase } } = require('../../../lib/usecases');
+const chai = require('chai');
 
-module.exports = {
-    LogAdapter,
-    SubsystemAdapter,
-    TagAdapter,
+const { expect } = chai;
+
+module.exports = () => {
+    it('should return an array', async () => {
+        const result = await new GetAllSubsystemsUseCase()
+            .execute();
+
+        expect(result).to.be.an('array');
+    });
 };

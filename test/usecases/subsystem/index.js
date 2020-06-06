@@ -11,12 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogAdapter = require('./LogAdapter');
-const SubsystemAdapter = require('./SubsystemAdapter');
-const TagAdapter = require('./TagAdapter');
+const GetAllSubsystemsUseCase = require('./GetAllSubsystemsUseCase.test');
 
-module.exports = {
-    LogAdapter,
-    SubsystemAdapter,
-    TagAdapter,
+module.exports = () => {
+    describe('GetAllSubsystemsUseCase', GetAllSubsystemsUseCase);
 };
