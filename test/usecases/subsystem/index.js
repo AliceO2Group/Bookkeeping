@@ -11,10 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const CreateSubsystemUseCase = require('./CreateSubsystemUseCase.test');
 const GetAllSubsystemsUseCase = require('./GetAllSubsystemsUseCase.test');
 const GetSubsystemUseCase = require('./GetSubsystemUseCase.test');
 
 module.exports = () => {
+    describe('CreateSubsystemUseCase', CreateSubsystemUseCase);
     describe('GetAllSubsystemsUseCase', GetAllSubsystemsUseCase);
     describe('GetSubsystemUseCase', GetSubsystemUseCase);
 };

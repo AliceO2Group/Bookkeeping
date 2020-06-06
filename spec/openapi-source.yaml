@@ -115,6 +115,20 @@ paths:
           $ref: '#/components/responses/BadRequest'
       tags:
         - subsystem
+    post:
+      operationId: createSubsystem
+      summary: Adds a new subsystem
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSubsystem'
+      responses:
+        '201':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      tags:
+        - subsystem
   '/subsystems/{subsystemId}':
     parameters:
       - $ref: '#/components/parameters/SubsystemId'
@@ -251,6 +265,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateLog'
+    CreateSubsystem:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateSubsystem'
     CreateTag:
       required: true
       content:
@@ -438,6 +458,16 @@ components:
           $ref: '#/components/schemas/EntityId'
       required:
         - title
+        - text
+      additionalProperties: false
+    CreateSubsystem:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        text:
+          description: The label value of the subsystem.
+          type: string
+      required:
         - text
       additionalProperties: false
     CreateTag:
