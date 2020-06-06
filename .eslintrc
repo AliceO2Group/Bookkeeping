@@ -64,6 +64,7 @@
                 "after": true
             }
         ],
+        "comma-style": ["error", "last"],
         "computed-property-spacing": "error",
         "curly": "error",
         "dot-location": [
