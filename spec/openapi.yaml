@@ -1,4 +1,4 @@
-# Generated on Sat, 06 Jun 2020 15:06:58 GMT
+# Generated on Sat, 06 Jun 2020 15:08:25 GMT
 
 openapi: 3.0.0
 info:
@@ -155,6 +155,20 @@ paths:
     get:
       operationId: getSubsystem
       summary: Get a subsystem by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - subsystem
+    delete:
+      operationId: deleteSubsystem
+      summary: Deletes a subsystem by Id
       responses:
         '200':
           $ref: '#/components/responses/Subsystem'

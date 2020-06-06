@@ -15,6 +15,16 @@ const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
+const {
+    dtos: {
+        CreateSubsystemDto,
+    },
+} = require('../../lib/domain');
+const {
+    subsystem: {
+        CreateSubsystemUseCase,
+    },
+} = require('../../lib/usecases');
 
 const { expect } = chai;
 
@@ -297,6 +307,123 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(1);
+
+                    done();
+                });
+        });
+    });
+
+    describe('DELETE /api/subsystems/:subsystemId', () => {
+        let createdSubsystem;
+
+        beforeEach(async () => {
+            const createSubsystemDto = await CreateSubsystemDto.validateAsync({
+                body: {
+                    text: `SUBSYSTEM#${new Date().getTime()}`,
+                },
+            });
+
+            createdSubsystem = await new CreateSubsystemUseCase()
+                .execute(createSubsystemDto);
+        });
+
+        it('should return 400 if the subsystem id is not a number', (done) => {
+            request(server)
+                .delete('/api/subsystems/abc')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(error.detail).to.equal('"params.subsystemId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the subsystem id is not positive', (done) => {
+            request(server)
+                .delete('/api/subsystems/-1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(error.detail).to.equal('"params.subsystemId" must be a positive number');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the subsystem id is not a whole number', (done) => {
+            request(server)
+                .delete('/api/subsystems/0.5')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(error.detail).to.equal('"params.subsystemId" must be an integer');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the subsystem could not be found', (done) => {
+            request(server)
+                .delete('/api/subsystems/999999999')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Subsystem with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .delete(`/api/subsystems/${createdSubsystem.id}`)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.id).to.equal(createdSubsystem.id);
+                    expect(res.body.data.text).to.equal(createdSubsystem.text);
 
                     done();
                 });

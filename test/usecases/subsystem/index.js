@@ -12,11 +12,13 @@
  */
 
 const CreateSubsystemUseCase = require('./CreateSubsystemUseCase.test');
+const DeleteSubsystemUseCase = require('./DeleteSubsystemUseCase.test');
 const GetAllSubsystemsUseCase = require('./GetAllSubsystemsUseCase.test');
 const GetSubsystemUseCase = require('./GetSubsystemUseCase.test');
 
 module.exports = () => {
     describe('CreateSubsystemUseCase', CreateSubsystemUseCase);
+    describe('DeleteSubsystemUseCase', DeleteSubsystemUseCase);
     describe('GetAllSubsystemsUseCase', GetAllSubsystemsUseCase);
     describe('GetSubsystemUseCase', GetSubsystemUseCase);
 };
