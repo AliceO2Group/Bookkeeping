@@ -144,6 +144,18 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - subsystem
+    delete:
+      operationId: deleteSubsystem
+      summary: Deletes a subsystem by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - subsystem
   /tags:
     get:
       operationId: listTags
