@@ -65,4 +65,30 @@ module.exports = () => {
         const message = await page.evaluate((element) => element.innerText, error);
         expect(message).to.equal('Log with this id (99999999) could not be found:');
     });
+
+    it('should have a button to reply on a entry', async () => {
+        const rootLogId = 1;
+        const parentLogId = 2;
+        await page.goto(`${url}/?page=entry&id=${rootLogId}`);
+        await page.waitFor(250);
+
+        // We expect there to be at least one post in this log entry
+        await page.click(`#reply-to-${parentLogId}`);
+        await page.waitFor(250);
+
+        const redirectedUrl = await page.url();
+        const expectedUrl = `${url}/?page=create-log-entry&rootLogId=${rootLogId}&parentLogId=${parentLogId}`;
+        expect(redirectedUrl).to.equal(expectedUrl);
+
+        const title = 'Test the reply button';
+        const text = 'Test the reply button';
+
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+
+        // Create the new log
+        await page.click('#send');
+        await page.waitFor(100);
+    });
 };

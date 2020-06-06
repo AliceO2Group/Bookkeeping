@@ -503,6 +503,8 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
+                    rootLogId: 1,
+                    parentLogId: 2,
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -515,6 +517,33 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.title).to.equal('Yet another run');
+                    expect(res.body.data.rootLogId).to.equal(1);
+                    expect(res.body.data.parentLogId).to.equal(2);
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.title).to.equal('Yet another run');
+                    expect(res.body.data.rootLogId).to.equal(res.body.data.id);
+                    expect(res.body.data.parentLogId).to.equal(res.body.data.id);
 
                     done();
                 });
