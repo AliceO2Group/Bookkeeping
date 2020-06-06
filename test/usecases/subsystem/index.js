@@ -12,7 +12,9 @@
  */
 
 const GetAllSubsystemsUseCase = require('./GetAllSubsystemsUseCase.test');
+const GetSubsystemUseCase = require('./GetSubsystemUseCase.test');
 
 module.exports = () => {
     describe('GetAllSubsystemsUseCase', GetAllSubsystemsUseCase);
+    describe('GetSubsystemUseCase', GetSubsystemUseCase);
 };

@@ -104,4 +104,110 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/subsystems/:subsystemId', () => {
+        it('should return 400 if the subsystem id is not a number', (done) => {
+            request(server)
+                .get('/api/subsystems/abc')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError =
+                        errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(titleError.detail).to.equal('"params.subsystemId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the subsystem id is not positive', (done) => {
+            request(server)
+                .get('/api/subsystems/-1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError =
+                        errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(titleError.detail).to.equal('"params.subsystemId" must be a positive number');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the subsystem id is not a whole number', (done) => {
+            request(server)
+                .get('/api/subsystems/0.5')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError =
+                        errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(titleError.detail).to.equal('"params.subsystemId" must be an integer');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the subsystem could not be found', (done) => {
+            request(server)
+                .get('/api/subsystems/999999999')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Subsystem with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/subsystems/1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.id).to.equal(1);
+
+                    done();
+                });
+        });
+    });
 };
