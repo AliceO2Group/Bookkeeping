@@ -57,23 +57,11 @@ const convert = (obj) => {
                 changed = true;
             }
 
-            if (!Object.keys(obj).includes('503')) {
-                obj['503'] = { $ref: '#/components/responses/ServiceUnavailable' };
-                changed = true;
-            }
-
             spec[parent[3]][parent[2]][parent[1]][parent[0]] = obj;
         }
 
         if (parent[1] === 'responses' && parent[4] === 'paths') {
             switch (parent[0]) {
-                case '503':
-                    if (Object.keys(obj).length !== 1 || obj['$ref'] !== '#/components/responses/ServiceUnavailable') {
-                        obj = { $ref: '#/components/responses/ServiceUnavailable' };
-                        changed = true;
-                    }
-
-                    break;
                 case 'default':
                     if (Object.keys(obj).length !== 1 || obj['$ref'] !== '#/components/responses/UnexpectedError') {
                         obj = { $ref: '#/components/responses/UnexpectedError' };
