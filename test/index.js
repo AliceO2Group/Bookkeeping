@@ -13,6 +13,7 @@
 
 const DatabaseSuite = require('./database');
 const EndToEndSuite = require('./e2e');
+const PresentationSuite = require('./presentation');
 const PublicSuite = require('./public');
 const ServerSuite = require('./server');
 const UseCasesSuite = require('./usecases');
@@ -32,6 +33,7 @@ describe('Bookkeeping', () => {
 
     describe('Unit Suite', () => {
         describe('Database', DatabaseSuite);
+        describe('Presentation', PresentationSuite);
         describe('Server', ServerSuite);
         describe('Use Cases', UseCasesSuite);
         describe('Utilities', UtilitiesSuite);
