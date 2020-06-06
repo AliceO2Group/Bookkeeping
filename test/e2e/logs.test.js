@@ -43,6 +43,66 @@ module.exports = () => {
                 });
         });
 
+        it('should support filtering by tag', (done) => {
+            request(server)
+                .get('/api/logs?filter[tag][values]=1&filter[tag][operation]=and')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length > 0).to.be.true;
+                    for (const log of res.body.data) {
+                        let found = false;
+                        for (const tag of log.tags) {
+                            if (found) {
+                                continue;
+                            }
+                            found = tag.id === 1;
+                        }
+                        expect(found).to.be.true;
+                    }
+
+                    done();
+                });
+        });
+
+        it('should support filtering by tag', (done) => {
+            request(server)
+                .get('/api/logs?filter[tag][values]=1,2&filter[tag][operation]=or')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length > 0).to.be.true;
+                    for (const log of res.body.data) {
+                        let found = false;
+                        for (const tag of log.tags) {
+                            if (found) {
+                                continue;
+                            }
+                            found = tag.id === 1 || tag.id === 2;
+                        }
+                        expect(found).to.be.true;
+                    }
+
+                    done();
+                });
+        });
+
         it('should support filtering by parent log', (done) => {
             request(server)
                 .get('/api/logs?filter[parentLog]=2')
