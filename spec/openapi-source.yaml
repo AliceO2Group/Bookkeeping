@@ -115,6 +115,21 @@ paths:
           $ref: '#/components/responses/BadRequest'
       tags:
         - subsystem
+  '/subsystems/{subsystemId}':
+    parameters:
+      - $ref: '#/components/parameters/SubsystemId'
+    get:
+      operationId: getSubsystem
+      summary: Get a subsystem by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - subsystem
   /tags:
     get:
       operationId: listTags
@@ -215,6 +230,13 @@ components:
       schema:
         $ref: '#/components/schemas/SortLogsOptions'
       style: deepObject
+    SubsystemId:
+      name: subsystemId
+      description: The id of the subsystem to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     TagId:
       name: tagId
       description: The id of the tag to retrieve
@@ -290,6 +312,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Subsystem:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubsystemResponse'
     Tag:
       description: Expected response to a valid request.
       content:
@@ -672,6 +700,15 @@ components:
       required:
         - id
         - text
+      additionalProperties: false
+    SubsystemResponse:
+      description: Response containing a single subsystem.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Subsystem'
+      required:
+        - data
       additionalProperties: false
     Tag:
       description: A label attached to something for the purpose of identification.
