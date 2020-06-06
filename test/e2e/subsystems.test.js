@@ -141,7 +141,7 @@ module.exports = () => {
             request(server)
                 .post('/api/subsystems')
                 .send({
-                    text: 'A',
+                    name: 'A',
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -162,11 +162,11 @@ module.exports = () => {
         });
 
         it('should return 201 if a proper body was sent', (done) => {
-            const expectedText = `UNIX:${new Date().getTime()}`;
+            const expectedName = `UNIX:${new Date().getTime()}`;
             request(server)
                 .post('/api/subsystems')
                 .send({
-                    text: expectedText,
+                    name: expectedName,
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -178,7 +178,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.text).to.equal(expectedText);
+                    expect(res.body.data.name).to.equal(expectedName);
 
                     done();
                 });
@@ -188,7 +188,7 @@ module.exports = () => {
             request(server)
                 .post('/api/subsystems')
                 .send({
-                    text: 'FOOD',
+                    name: 'Subsystem Plant #1',
                 })
                 .expect(409)
                 .end((err, res) => {
@@ -424,6 +424,23 @@ module.exports = () => {
 
                     expect(res.body.data.id).to.equal(createdSubsystem.id);
                     expect(res.body.data.text).to.equal(createdSubsystem.text);
+
+                    done();
+                });
+        });
+
+        it('should return 404 if attempted to delete again', (done) => {
+            request(server)
+                .delete(`/api/subsystems/${createdSubsystem.id}`)
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
