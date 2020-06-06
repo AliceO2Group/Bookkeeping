@@ -1,4 +1,4 @@
-# Generated on Mon, 25 May 2020 09:15:58 GMT
+# Generated on Sat, 06 Jun 2020 09:10:09 GMT
 
 openapi: 3.0.0
 info:
@@ -397,6 +397,11 @@ components:
       required:
         - data
       additionalProperties: false
+    CommaSeparatedEntityIds:
+      description: CSV style string of EntityIds.
+      type: string
+      pattern: '^([1-9]+\d*,)*[1-9]+\d*$'
+      example: '1,2,3'
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
@@ -490,6 +495,24 @@ components:
           $ref: '#/components/schemas/EntityId'
         rootLog:
           $ref: '#/components/schemas/EntityId'
+        tag:
+          $ref: '#/components/schemas/FilterLogsTagOptions'
+      additionalProperties: false
+    FilterLogsTagOptions:
+      description: Specifies the tag related filter requirements for a request.
+      type: object
+      properties:
+        values:
+          $ref: '#/components/schemas/CommaSeparatedEntityIds'
+        operation:
+          description: The operation indicating the relation between the data.
+          type: string
+          enum:
+            - and
+            - or
+      required:
+        - values
+        - operation
       additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
