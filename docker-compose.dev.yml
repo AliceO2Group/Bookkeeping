@@ -12,11 +12,13 @@ services:
     restart: "no"
     volumes:
       - type: bind
-        read_only: false
-        source: .
-        target: /usr/src/app
-      - type: volume
-        target: /usr/src/app/node_modules
+        read_only: true
+        source: ./lib
+        target: /usr/src/app/lib
+      - type: bind
+        read_only: true
+        source: ./spec
+        target: /usr/src/app/spec
 
   database:
     ports:
