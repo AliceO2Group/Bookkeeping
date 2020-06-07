@@ -116,7 +116,7 @@ module.exports = () => {
     });
 
     describe('POST /api/subsystems', () => {
-        it('should return 400 if no text is provided', (done) => {
+        it('should return 400 if no name is provided', (done) => {
             request(server)
                 .post('/api/subsystems')
                 .expect(400)
@@ -130,32 +130,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
-                    expect(titleError.detail).to.equal('"body.text" is required');
-
-                    done();
-                });
-        });
-
-        it('should return 400 if the title is too short', (done) => {
-            request(server)
-                .post('/api/subsystems')
-                .send({
-                    name: 'A',
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
-                    expect(titleError.detail).to.equal('"body.text" length must be at least 3 characters long');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/name');
+                    expect(titleError.detail).to.equal('"body.name" is required');
 
                     done();
                 });
@@ -244,9 +220,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError =
-                        errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
-                    expect(titleError.detail).to.equal('"params.subsystemId" must be a positive number');
+                    const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(error.detail).to.equal('"params.subsystemId" must be a positive number');
 
                     done();
                 });
@@ -266,9 +241,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    const titleError =
-                        errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
-                    expect(titleError.detail).to.equal('"params.subsystemId" must be an integer');
+                    const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
+                    expect(error.detail).to.equal('"params.subsystemId" must be an integer');
 
                     done();
                 });
@@ -319,7 +293,7 @@ module.exports = () => {
         beforeEach(async () => {
             const createSubsystemDto = await CreateSubsystemDto.validateAsync({
                 body: {
-                    text: `SUBSYSTEM#${new Date().getTime()}`,
+                    name: `SUBSYSTEM#${new Date().getTime()}`,
                 },
             });
 
@@ -423,24 +397,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(createdSubsystem.id);
-                    expect(res.body.data.text).to.equal(createdSubsystem.text);
-
-                    done();
-                });
-        });
-
-        it('should return 404 if attempted to delete again', (done) => {
-            request(server)
-                .delete(`/api/subsystems/${createdSubsystem.id}`)
-                .expect(404)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.data.name).to.equal(createdSubsystem.name);
 
                     done();
                 });

@@ -15,6 +15,7 @@ const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
+const { repositories: { LogRepository } } = require('../../lib/database');
 
 const { expect } = chai;
 
@@ -117,7 +118,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data).to.have.lengthOf(2);
 
                     done();
                 });
@@ -157,7 +158,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(3);
+                    expect(res.body.data).to.have.lengthOf(4);
 
                     done();
                 });
@@ -312,7 +313,7 @@ module.exports = () => {
             request(server)
                 .get('/api/logs?page[offset]=0&page[limit]=2')
                 .expect(200)
-                .end((err, res) => {
+                .end(async (err, res) => {
                     if (err) {
                         done(err);
                         return;
@@ -321,9 +322,11 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
+                    const totalNumber = await LogRepository.count();
+
                     expect(res.body.data).to.have.lengthOf(2);
-                    expect(res.body.meta.page.pageCount).to.equal(5);
-                    expect(res.body.meta.page.totalCount).to.equal(9);
+                    expect(res.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
+                    expect(res.body.meta.page.totalCount).to.equal(totalNumber);
 
                     done();
                 });

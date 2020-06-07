@@ -22,10 +22,10 @@ const { expect } = chai;
  * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
  * @param {Object} table An HTML element representing the entire log table
  * @param {Object} page An object representing the browser page being used by Puppeteer
- * @return {String} The ID of the first matching row with data
+ * @return {Promise<String>} The ID of the first matching row with data
  */
 async function getFirstRow(table, page) {
-    for (const child of table) {
+    for await (const child of table) {
         const id = await page.evaluate((element) => element.id, child);
         if (id.startsWith('row')) {
             return id;
@@ -178,14 +178,16 @@ module.exports = () => {
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await page.click(amountSelectorId);
+        await amountSelectorButton.evaluate((button) => button.click());
         await page.waitFor(100);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible logs to reduce when the first option (5) is selected
-        await page.click(`${amountSelectorId} .dropdown-menu .menu-item`);
+        const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
+        await menuItem.evaluate((button) => button.click());
         await page.waitFor(100);
+
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
     });
@@ -200,20 +202,23 @@ module.exports = () => {
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
-        await page.click('#page2');
+        const secondPage = await page.$('#page2');
+        await secondPage.evaluate((button) => button.click());
         await page.waitFor(100);
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
 
         // Expect us to be able to do the same with the page arrows
-        await page.click('#pageMoveLeft');
+        const prevPage = await page.$('#pageMoveLeft');
+        await prevPage.evaluate((button) => button.click());
         await page.waitFor(100);
-        const oldfirstPageButton = await page.$('#page1');
-        const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldfirstPageButton);
+        const oldFirstPageButton = await page.$('#page1');
+        const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
 
         // The same, but for the other (right) arrow
-        await page.click('#pageMoveRight');
+        const nextPage = await page.$('#pageMoveRight');
+        await nextPage.evaluate((button) => button.click());
         await page.waitFor(100);
         const newFirstPageButton = await page.$('#page1');
         const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
@@ -259,7 +264,8 @@ module.exports = () => {
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
 
         // Create the new log
-        await page.click('#send');
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
         await page.waitFor(100);
 
         // Verify that the text from the first matches with the text posted and correct working of the redirect
@@ -271,7 +277,8 @@ module.exports = () => {
         expect(doesContentMatch).to.equal(true);
 
         // Return the page to home
-        await page.click('#home');
+        const buttonHame = await page.$('#home');
+        await buttonHame.evaluate((button) => button.click());
         await page.waitFor(100);
 
         // Ensure you are at the overview page again
@@ -315,11 +322,17 @@ module.exports = () => {
     });
 
     it('can navigate to a log detail page', async () => {
+        // Go back to the home page
+        await page.click('#home');
+        await page.waitFor(100);
+
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
-        await page.click(`#${firstRowId}`);
+        const row = await page.$(`tr#${firstRowId}`);
+        await row.evaluate((row) => row.click());
         await page.waitFor(100);
+
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
     });
