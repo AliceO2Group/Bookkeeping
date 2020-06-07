@@ -500,13 +500,36 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if an unknown parent log was provided', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
+                    parentLogId: 999,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Parent log with this id (999) could not be found');
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/logs')
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                    rootLogId: 1,
                     parentLogId: 2,
                 })
                 .expect(201)

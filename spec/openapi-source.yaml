@@ -464,8 +464,6 @@ components:
           $ref: '#/components/schemas/LogTitle'
         text:
           $ref: '#/components/schemas/LogText'
-        rootLogId:
-          $ref: '#/components/schemas/EntityId'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
       required:

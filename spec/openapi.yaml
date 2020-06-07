@@ -1,4 +1,4 @@
-# Generated on Sun, 07 Jun 2020 10:01:07 GMT
+# Generated on Sun, 07 Jun 2020 11:43:44 GMT
 
 openapi: 3.0.0
 info:
@@ -498,8 +498,6 @@ components:
           $ref: '#/components/schemas/LogTitle'
         text:
           $ref: '#/components/schemas/LogText'
-        rootLogId:
-          $ref: '#/components/schemas/EntityId'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
       required:

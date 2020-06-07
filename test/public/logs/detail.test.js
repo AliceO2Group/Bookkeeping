@@ -67,9 +67,8 @@ module.exports = () => {
     });
 
     it('should have a button to reply on a entry', async () => {
-        const rootLogId = 1;
         const parentLogId = 2;
-        await page.goto(`${url}/?page=entry&id=${rootLogId}`);
+        await page.goto(`${url}/?page=entry&id=${parentLogId}`);
         await page.waitFor(250);
 
         // We expect there to be at least one post in this log entry
@@ -77,8 +76,7 @@ module.exports = () => {
         await page.waitFor(250);
 
         const redirectedUrl = await page.url();
-        const expectedUrl = `${url}/?page=create-log-entry&rootLogId=${rootLogId}&parentLogId=${parentLogId}`;
-        expect(redirectedUrl).to.equal(expectedUrl);
+        expect(redirectedUrl).to.equal(`${url}/?page=create-log-entry&parentLogId=${parentLogId}`);
 
         const title = 'Test the reply button';
         const text = 'Test the reply button';
