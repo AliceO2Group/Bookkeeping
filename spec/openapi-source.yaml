@@ -417,15 +417,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Subsystem'
-    ArrayOfSubsystemsResponseMeta:
-      description: The metadata related to an array of logs response.
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/PaginationMeta'
-      required:
-        - page
-      additionalProperties: false
     ArrayOfSubsystemsResponse:
       description: Response containing multiple subsystems.
       type: object
@@ -436,6 +427,15 @@ components:
           $ref: '#/components/schemas/ArrayOfSubsystems'
       required:
         - data
+      additionalProperties: false
+    ArrayOfSubsystemsResponseMeta:
+      description: The metadata related to an array of subsystems response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
       additionalProperties: false
     ArrayOfTags:
       description: A list of Tag objects.
@@ -730,7 +730,7 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/EntityId'
-        text:
+        name:
           description: The label value of the subsystem.
           type: string
         createdAt:
@@ -741,7 +741,7 @@ components:
           type: string
       required:
         - id
-        - text
+        - name
       additionalProperties: false
     SubsystemResponse:
       description: Response containing a single subsystem.

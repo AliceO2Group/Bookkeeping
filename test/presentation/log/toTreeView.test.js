@@ -126,116 +126,114 @@ module.exports = () => {
             },
         ];
 
-        expect(toTreeView(root, children)).to.deep.equal([
-            {
-                id: 1,
-                authorId: 'John Doe',
-                title: 'First entry',
-                creationTime: 1591219115000,
-                tags: [
-                    {
-                        id: 3,
-                        text: 'MAINTENANCE',
-                    },
-                ],
-                text: 'Power interruption due to unplugged wire.',
-                origin: 'human',
-                subtype: 'run',
-                rootLogId: 1,
-                parentLogId: 1,
-                children: [
-                    {
-                        id: 2,
-                        authorId: 'John Doe',
-                        title: 'Second entry',
-                        creationTime: 1591219115000,
-                        tags: [
-                            {
-                                id: 2,
-                                text: 'RUN',
-                            },
-                            {
-                                id: 5,
-                                text: 'TEST',
-                            },
-                        ],
-                        text: 'Detected particle ABC123',
-                        origin: 'process',
-                        subtype: 'subsystem',
-                        rootLogId: 1,
-                        parentLogId: 1,
-                        children: [
-                            {
-                                id: 4,
-                                authorId: 'John Doe',
-                                title: 'Fourth entry',
-                                creationTime: 1591219115000,
-                                tags: [],
-                                text: 'The cake is a lie!',
-                                origin: 'human',
-                                subtype: 'comment',
-                                rootLogId: 1,
-                                parentLogId: 2,
-                                children: [],
-                            },
-                        ],
-                    },
-                    {
-                        id: 3,
-                        authorId: 'John Doe',
-                        title: 'Third entry',
-                        creationTime: 1591219115000,
-                        tags: [
-                            {
-                                id: 1,
-                                text: 'FOOD',
-                            },
-                            {
-                                id: 4,
-                                text: 'GLOBAL',
-                            },
-                            {
-                                id: 6,
-                                text: 'OTHER',
-                            },
-                        ],
-                        text: 'Cake at the particle accelerator!',
-                        origin: 'human',
-                        subtype: 'announcement',
-                        rootLogId: 1,
-                        parentLogId: 1,
-                        children: [
-                            {
-                                id: 14,
-                                authorId: 'John Doe',
-                                title: 'test on third',
-                                creationTime: 1591446994000,
-                                tags: [],
-                                text: 'text',
-                                origin: 'process',
-                                subtype: 'run',
-                                rootLogId: 1,
-                                parentLogId: 3,
-                                children: [
-                                    {
-                                        id: 15,
-                                        authorId: 'John Doe',
-                                        title: 'depth',
-                                        creationTime: 1591450185000,
-                                        tags: [],
-                                        text: '4444',
-                                        origin: 'process',
-                                        subtype: 'run',
-                                        rootLogId: 1,
-                                        parentLogId: 14,
-                                        children: [],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ]);
+        expect(toTreeView(root, children)).to.deep.equal({
+            id: 1,
+            authorId: 'John Doe',
+            title: 'First entry',
+            creationTime: 1591219115000,
+            tags: [
+                {
+                    id: 3,
+                    text: 'MAINTENANCE',
+                },
+            ],
+            text: 'Power interruption due to unplugged wire.',
+            origin: 'human',
+            subtype: 'run',
+            rootLogId: 1,
+            parentLogId: 1,
+            children: [
+                {
+                    id: 2,
+                    authorId: 'John Doe',
+                    title: 'Second entry',
+                    creationTime: 1591219115000,
+                    tags: [
+                        {
+                            id: 2,
+                            text: 'RUN',
+                        },
+                        {
+                            id: 5,
+                            text: 'TEST',
+                        },
+                    ],
+                    text: 'Detected particle ABC123',
+                    origin: 'process',
+                    subtype: 'subsystem',
+                    rootLogId: 1,
+                    parentLogId: 1,
+                    children: [
+                        {
+                            id: 4,
+                            authorId: 'John Doe',
+                            title: 'Fourth entry',
+                            creationTime: 1591219115000,
+                            tags: [],
+                            text: 'The cake is a lie!',
+                            origin: 'human',
+                            subtype: 'comment',
+                            rootLogId: 1,
+                            parentLogId: 2,
+                            children: [],
+                        },
+                    ],
+                },
+                {
+                    id: 3,
+                    authorId: 'John Doe',
+                    title: 'Third entry',
+                    creationTime: 1591219115000,
+                    tags: [
+                        {
+                            id: 1,
+                            text: 'FOOD',
+                        },
+                        {
+                            id: 4,
+                            text: 'GLOBAL',
+                        },
+                        {
+                            id: 6,
+                            text: 'OTHER',
+                        },
+                    ],
+                    text: 'Cake at the particle accelerator!',
+                    origin: 'human',
+                    subtype: 'announcement',
+                    rootLogId: 1,
+                    parentLogId: 1,
+                    children: [
+                        {
+                            id: 14,
+                            authorId: 'John Doe',
+                            title: 'test on third',
+                            creationTime: 1591446994000,
+                            tags: [],
+                            text: 'text',
+                            origin: 'process',
+                            subtype: 'run',
+                            rootLogId: 1,
+                            parentLogId: 3,
+                            children: [
+                                {
+                                    id: 15,
+                                    authorId: 'John Doe',
+                                    title: 'depth',
+                                    creationTime: 1591450185000,
+                                    tags: [],
+                                    text: '4444',
+                                    origin: 'process',
+                                    subtype: 'run',
+                                    rootLogId: 1,
+                                    parentLogId: 14,
+                                    children: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        });
     });
 };

@@ -88,7 +88,7 @@ module.exports = () => {
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
 
         // Create the new log
-        await page.click('#send');
-        await page.waitFor(100);
+        const button = await page.$('button#send');
+        await button.evaluate((button) => button.click());
     });
 };

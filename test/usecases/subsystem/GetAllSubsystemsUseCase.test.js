@@ -11,16 +11,33 @@
  * or submit itself to any jurisdiction.
  */
 
+const { repositories: { SubsystemRepository } } = require('../../../lib/database');
+const { dtos: { GetAllSubsystemsDto } } = require('../../../lib/domain');
 const { subsystem: { GetAllSubsystemsUseCase } } = require('../../../lib/usecases');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
+    let getAllSubsystemsDto;
+
+    beforeEach(async () => {
+        getAllSubsystemsDto = await GetAllSubsystemsDto.validateAsync({});
+    });
+
     it('should return an array', async () => {
-        const result = await new GetAllSubsystemsUseCase()
+        const { subsystems } = await new GetAllSubsystemsUseCase()
             .execute();
 
-        expect(result).to.be.an('array');
+        expect(subsystems).to.be.an('array');
+    });
+
+    it('should return a count that is the same as the count method of the repository', async () => {
+        const expectedCount = await SubsystemRepository.count();
+
+        const { count } = await new GetAllSubsystemsUseCase()
+            .execute(getAllSubsystemsDto);
+
+        expect(count).to.equal(expectedCount);
     });
 };
