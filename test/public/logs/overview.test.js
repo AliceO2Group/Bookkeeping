@@ -266,11 +266,11 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(100);
+        await page.waitFor(150);
 
         // Verify that the text from the first matches with the text posted and correct working of the redirect
-        const firstPost = await page.$('#post-content');
-        const doesContentMatch = JSON.stringify(await page.evaluate((element) => element.innerText, firstPost))
+        // eslint-disable-next-line no-undef
+        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors[0].getValue()))
             .includes(text);
 
         // Verify that the first post is equal to the title provided as input when creating the log
