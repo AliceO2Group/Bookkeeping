@@ -8,13 +8,6 @@ services:
       NODE_ENV: test
       JWT_SECRET: BOOKKEEPING-TEST-SUITE
     restart: "no"
-    volumes:
-      - type: bind
-        read_only: false
-        source: .
-        target: /usr/src/app
-      - type: volume
-        target: /usr/src/app/node_modules
 
   database:
     environment:

@@ -3,4 +3,8 @@
 
 # Project
 !lib/
+!test/
+!spec/
+!.nycrc
+!.sequelizerc
 !package*.json

@@ -158,6 +158,9 @@ COPY package*.json ./
 # Installs modules from package-lock.json, this ensures reproducible build
 RUN npm --silent ci
 
+# Copy all files, except those ignored by .dockerignore, to the container
+COPY . .
+
 
 #
 # ---- Development ----
@@ -186,7 +189,7 @@ COPY package*.json ./
 RUN npm --silent ci --production
 
 # Copy all files, except those ignored by .dockerignore, to the container
-COPY . .
+COPY ./lib ./lib
 
 
 #
