@@ -31,7 +31,7 @@
     "mocha": "8.0.1",
     "nodemon": "2.0.4",
     "puppeteer": "3.3.0",
-    "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul",
+    "puppeteer-to-istanbul": "1.4.0",
     "supertest": "4.0.2"
   },
   "c8": {
