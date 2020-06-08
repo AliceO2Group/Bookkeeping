@@ -4,32 +4,32 @@
 
 ### Usage
 ```sh
-$ npm run sequelize -- [command]
+$ npx sequelize-cli [command]
 ```
 
 ### Show help
 ```sh
-$ npm run sequelize -- --help
+$ npx sequelize-cli --help
 ```
 
 ### Generates a new migration file
 ```sh
-$ npm run sequelize -- migration:generate --name <MIGRATION NAME>
+$ npx sequelize-cli migration:generate --name <MIGRATION NAME>
 ```
 
 ### Run pending migrations
 ```sh
-$ npm run sequelize -- db:migrate
+$ npx sequelize-cli db:migrate
 ```
 
 ### Generates a new seed file
 ```sh
-$ npm run sequelize -- seed:generate --name <MIGRATION NAME>
+$ npx sequelize-cli seed:generate --name <MIGRATION NAME>
 ```
 
 ### Run every seeder
 ```sh
-$ npm run sequelize -- db:seed:all
+$ npx sequelize-cli db:seed:all
 ```
 
 ## Versioning
