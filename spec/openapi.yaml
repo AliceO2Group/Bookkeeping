@@ -1,6 +1,6 @@
-# Generated on Sun, 07 Jun 2020 11:43:44 GMT
+# Generated on Mon, 08 Jun 2020 12:00:24 GMT
 
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: ALICE Bookkeeping
   version: 0.0.0
