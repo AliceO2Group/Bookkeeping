@@ -35,7 +35,6 @@
     "puppeteer": "3.3.0",
     "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul",
     "sequelize-cli": "5.5.1",
-    "supertest": "4.0.2",
-    "swagger-ui-express": "4.1.4"
+    "supertest": "4.0.2"
   }
 }
