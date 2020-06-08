@@ -38,6 +38,5 @@ jobs:
           npx @openapitools/openapi-generator-cli validate -i spec/openapi-source.yaml
       - name: Running validator
         run: |
-          npm ci
-          npm run openapi -- spec/openapi.yaml
-          npm run openapi -- spec/openapi-source.yaml
+          npx ibm-openapi-validator spec/openapi.yaml
+          npx ibm-openapi-validator spec/openapi-source.yaml
