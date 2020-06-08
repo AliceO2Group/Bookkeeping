@@ -88,5 +88,9 @@ module.exports = () => {
         // Create the new log
         const button = await page.$('button#send');
         await button.evaluate((button) => button.click());
+        await page.waitFor(1000);
+
+        const postSendUrl = await page.url();
+        expect(postSendUrl).to.equal(`${url}/?page=entry&id=10`);
     });
 };
