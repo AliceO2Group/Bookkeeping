@@ -266,7 +266,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(150);
+        await page.waitFor(200);
 
         // Verify that the text from the first matches with the text posted and correct working of the redirect
         // eslint-disable-next-line no-undef
@@ -331,7 +331,7 @@ module.exports = () => {
         // We expect the entry page to have the same id as the id from the log overview
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitFor(100);
+        await page.waitFor(200);
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
