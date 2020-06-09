@@ -64,7 +64,10 @@
                 "after": true
             }
         ],
-        "comma-style": ["error", "last"],
+        "comma-style": [
+            "error",
+            "last"
+        ],
         "computed-property-spacing": "error",
         "curly": "error",
         "dot-location": [
@@ -212,6 +215,14 @@
         "semi-style": [
             "error",
             "last"
+        ],
+        "space-before-blocks": [
+            "error",
+            {
+                "functions": "always",
+                "keywords": "always",
+                "classes": "always"
+            }
         ],
         "space-before-function-paren": [
             "error",
