@@ -47,7 +47,7 @@ RUN apk add --no-cache \
     git=2.24.3-r0 \
     glib=2.62.6-r0 \
     gmp=6.1.2-r1 \
-    gnutls=3.6.10-r1 \
+    gnutls=3.6.14-r0 \
     graphite2=1.3.13-r1 \
     gtk+3.0=3.24.13-r0 \
     gtk-update-icon-cache=2.24.32-r1 \
@@ -115,7 +115,7 @@ RUN apk add --no-cache \
     ncurses-libs=6.1_p20200118-r4 \
     ncurses-terminfo-base=6.1_p20200118-r4 \
     nettle=3.5.1-r0 \
-    nghttp2-libs=1.40.0-r0 \
+    nghttp2-libs=1.40.0-r1 \
     nspr=4.24-r0 \
     nss=3.48-r0 \
     opus=1.3.1-r0 \
