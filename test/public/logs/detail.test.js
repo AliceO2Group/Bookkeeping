@@ -73,7 +73,7 @@ module.exports = () => {
 
         // We expect there to be at least one post in this log entry
         await page.click(`#reply-to-${parentLogId}`);
-        await page.waitFor(250);
+        await page.waitFor(1000);
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=create-log-entry&parentLogId=${parentLogId}`);
@@ -84,6 +84,7 @@ module.exports = () => {
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.waitFor(250);
 
         // Create the new log
         const button = await page.$('button#send');
