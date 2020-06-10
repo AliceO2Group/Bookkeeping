@@ -87,7 +87,7 @@ module.exports = () => {
         const label = await page.$('.form-check label div');
         const checkboxId = await page.evaluate((element) => element.id, checkbox);
         const amount = await page.evaluate((element) => element.innerText, label);
-        expect(checkboxId).to.equal('filtersCheckbox1');
+        expect(checkboxId).to.equal('tagCheckbox1');
 
         // Expect the number of rows in this filter to be less than the total number of rows
         const advertisedRows = parseInt(amount.substring(1, amount.length - 1), 10);
@@ -122,7 +122,7 @@ module.exports = () => {
         // Expect the button to show at least one extra filter when clicked
         await page.click(buttonId);
         await page.waitFor(100);
-        let extraFilter = await page.$(`#filtersCheckbox${FILTERS_LIMIT + 1}`);
+        let extraFilter = await page.$(`#tagCheckbox${FILTERS_LIMIT + 1}`);
         expect(Boolean(extraFilter)).to.be.true;
 
         // Expect the text to change to reflect the newly shown filters
@@ -132,7 +132,7 @@ module.exports = () => {
         // Expect the button to remove the extra filter when clicked again
         await page.click(buttonId);
         await page.waitFor(100);
-        extraFilter = await page.$(`#filtersCheckbox${FILTERS_LIMIT + 1}`);
+        extraFilter = await page.$(`#tagCheckbox${FILTERS_LIMIT + 1}`);
         expect(Boolean(extraFilter)).to.be.false;
     });
 
