@@ -28,7 +28,7 @@
     "chai-openapi-response-validator": "0.9.4",
     "eslint": "7.2.0",
     "js-yaml": "3.14.0",
-    "mocha": "7.2.0",
+    "mocha": "8.0.1",
     "nodemon": "2.0.4",
     "puppeteer": "3.3.0",
     "puppeteer-to-istanbul": "github:SoftwareForScience/puppeteer-to-istanbul",
