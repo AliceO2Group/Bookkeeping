@@ -23,7 +23,7 @@
     "umzug": "2.3.0"
   },
   "devDependencies": {
-    "c8": "7.1.2",
+    "c8": "7.2.0",
     "chai": "4.2.0",
     "chai-openapi-response-validator": "0.9.4",
     "eslint": "7.2.0",
