@@ -41,7 +41,7 @@ module.exports = () => {
             page.coverage.stopCSSCoverage(),
         ]);
 
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)), {
+        await pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)), {
             includeHostname: false,
             storagePath: './.nyc_output/lib/public',
         });
