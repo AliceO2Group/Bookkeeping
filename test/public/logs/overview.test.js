@@ -79,38 +79,63 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping 2020');
     });
 
-    it('can filter logs dynamically', async () => {
+    it('can filter logs dynamically with special operators', async () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
         const tableRows = await page.$$('table tr');
-        const numberOfRows = tableRows.length - 1;
-        expect(numberOfRows).to.be.greaterThan(1);
+        const originalNumberOfRows = tableRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
 
-        // Expect to have captured the first checkbox in the list
-        const checkbox = await page.$('.form-check input');
-        const label = await page.$('.form-check label div');
-        const checkboxId = await page.evaluate((element) => element.id, checkbox);
-        const amount = await page.evaluate((element) => element.innerText, label);
-        expect(checkboxId).to.equal('filtersCheckbox1');
-
-        // Expect the number of rows in this filter to be less than the total number of rows
-        const advertisedRows = parseInt(amount.substring(1, amount.length - 1), 10);
-        expect(advertisedRows).to.be.lessThan(numberOfRows);
-
-        // Select the filter and wait for the changes to be processed
-        await page.click(`#${checkboxId}`);
+        // Select the first available filter and wait for the changes to be processed
+        const firstCheckboxId = 'tagCheckbox1';
+        await page.click(`#${firstCheckboxId}`);
         await page.waitFor(100);
 
-        // Expect the (new) total number of rows to equal the advertised number of rows
-        const filteredRows = await page.$$('table tr');
-        expect(filteredRows.length - 1).to.equal(advertisedRows);
+        // Expect the (new) total number of rows to be less than the advertised number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Deselect the filter and wait for the changes to process
-        await page.click(`#${checkboxId}`);
+        await page.click(`#${firstCheckboxId}`);
         await page.waitFor(100);
 
         // Expect the total number of rows to equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        expect(unfilteredRows.length - 1).to.equal(numberOfRows);
+        const firstUnfilteredRows = await page.$$('table tr');
+        expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
+
+        // Select the first two available filters at once
+        const secondCheckboxId = 'tagCheckbox2';
+        await page.click(`#${firstCheckboxId}`);
+        await page.waitFor(100);
+        await page.click(`#${secondCheckboxId}`);
+        await page.waitFor(100);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(0);
+
+        // Set the filter operation to "OR"
+        await page.click('#filterOperationRadioButtonOR');
+        await page.waitFor(100);
+
+        // Expect there now to be more rows than both the previous table and the table with only one filter
+        const thirdFilteredRows = await page.$$('table tr');
+        const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
+        expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
+        expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
+
+        // Reset the filters by deselecting both currently active checkboxes
+        await page.click(`#${firstCheckboxId}`);
+        await page.waitFor(100);
+        await page.click(`#${secondCheckboxId}`);
+        await page.waitFor(100);
+        await page.click('#filterOperationRadioButtonAND');
+        await page.waitFor(100);
+
+        // Expect the total number of rows to once more equal the original total
+        const secondUnfilteredRows = await page.$$('table tr');
+        expect(secondUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
     });
 
     it('can show and hide extra filters if available', async () => {
@@ -125,7 +150,7 @@ module.exports = () => {
         // Expect the button to show at least one extra filter when clicked
         await page.click(buttonId);
         await page.waitFor(100);
-        let extraFilter = await page.$(`#filtersCheckbox${FILTERS_LIMIT + 1}`);
+        let extraFilter = await page.$(`#tagCheckbox${FILTERS_LIMIT + 1}`);
         expect(Boolean(extraFilter)).to.be.true;
 
         // Expect the text to change to reflect the newly shown filters
@@ -135,7 +160,7 @@ module.exports = () => {
         // Expect the button to remove the extra filter when clicked again
         await page.click(buttonId);
         await page.waitFor(100);
-        extraFilter = await page.$(`#filtersCheckbox${FILTERS_LIMIT + 1}`);
+        extraFilter = await page.$(`#tagCheckbox${FILTERS_LIMIT + 1}`);
         expect(Boolean(extraFilter)).to.be.false;
     });
 
@@ -208,6 +233,7 @@ module.exports = () => {
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
         await page.waitFor(100);
+        table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
 

@@ -65,6 +65,10 @@ html, body {
     color: #491217;
 }
 
+.form-group-header {
+    margin-bottom: 0.25rem;
+}
+
 .nav {
     display: -ms-flexbox;
     display: flex;
