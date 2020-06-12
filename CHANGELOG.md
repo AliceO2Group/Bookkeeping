@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.4.0...v0.5.0) (2020-06-12)
+
+
+### Features
+
+* **ui:** added tag filtering with AND/OR operators to the filters component ([cf96571](https://github.com/AliceO2Group/Bookkeeping/commit/cf96571327ad2145c1d9f8f93f15c20c070c2c58))
+* added between option for WhereQueryBuilder ([d37ad45](https://github.com/AliceO2Group/Bookkeeping/commit/d37ad45db4df420e05b7fdb3eb38f9038c7b434e))
+* added DELETE /api/subsystems/subsystemId endpoint ([0dd0c35](https://github.com/AliceO2Group/Bookkeeping/commit/0dd0c35f32e757b9f84668b953911911612e0c0e))
+* added GET /api/subsystems/subsystemId endpoint ([8e7544c](https://github.com/AliceO2Group/Bookkeeping/commit/8e7544c810d762d25152ed176c101ede9705954e))
+* added GET /api/subystems endpoint ([986e7a3](https://github.com/AliceO2Group/Bookkeeping/commit/986e7a34db88f5c039ed1efbb52abd441955587f))
+* added JWT configuration ([96cf435](https://github.com/AliceO2Group/Bookkeeping/commit/96cf4350b647a33049b22cb47038fd6220c5e8db))
+* added markdown preview in the detail view ([fe5d9d5](https://github.com/AliceO2Group/Bookkeeping/commit/fe5d9d51ce1a987f2d8ebbcf25f9a59a4f937008))
+* added not option for WhereQueryBuilder ([c11c37a](https://github.com/AliceO2Group/Bookkeeping/commit/c11c37a23b6f4339e9cb54c2654055454230eb83))
+* added oneOf and allOf options for WhereQueryBuilder ([a9fbb7f](https://github.com/AliceO2Group/Bookkeeping/commit/a9fbb7f4d95ed119c79c65a1cc24d30d018f5f9d))
+* added POST /api/subsystems endpoint ([ec08049](https://github.com/AliceO2Group/Bookkeeping/commit/ec080492284f80c9a2bf3770be96a082ef4fb1dc))
+* allow AND/OR filtering by tag id on the logs endpoint ([3733ae2](https://github.com/AliceO2Group/Bookkeeping/commit/3733ae2e76cff6b73e46726968c677f885c0a340))
+* allow deepmerging multiple objects ([3495484](https://github.com/AliceO2Group/Bookkeeping/commit/3495484122b739b4ada075ea0aeb7e022ab79d97))
+* allow users to reply on other logs ([035c0bb](https://github.com/AliceO2Group/Bookkeeping/commit/035c0bb904e524a6f3d3dd943dbde1ea660b86de))
+* **markdown:** Added the HyperMD lib locally and added a Markdown box instead of a generic textarea to the create screen ([faca6e1](https://github.com/AliceO2Group/Bookkeeping/commit/faca6e152ff6905ce6bc45bbc65a5c995a80f611))
+* **ui:** added Alice O2 favicon ([a17b09b](https://github.com/AliceO2Group/Bookkeeping/commit/a17b09b7843b23b049df1743ed92902433493034))
+* **ui:** added table-hover class ([da23191](https://github.com/AliceO2Group/Bookkeeping/commit/da23191dc8017712a4da8487d72e8bf6acfa412f))
+* **ui:** added Tag detail view screen ([e508f28](https://github.com/AliceO2Group/Bookkeeping/commit/e508f28194b42879db9732f5e02c1dd3fb265744))
+* **ui:** added Tag overview screen ([85c3057](https://github.com/AliceO2Group/Bookkeeping/commit/85c30570d1ea311a63fce2ab3d0c488a3038ed31))
+* **ui:** include comma separated tags on the Log table view ([aee65d7](https://github.com/AliceO2Group/Bookkeeping/commit/aee65d77cea8e8bc7eb20a336749185774a0042f))
+* **ui:** redirect to overview if no tag id is provided ([53d6a6f](https://github.com/AliceO2Group/Bookkeeping/commit/53d6a6ff0e513ff6a5e891b88546bd9fc7848dae))
+* **ui:** scroll to the selected Log entry on detail view ([7e1cb32](https://github.com/AliceO2Group/Bookkeeping/commit/7e1cb32c5e8291ebf0e2ab2ad603221ba4189549))
+
+
+### Bug Fixes
+
+* **docker:** added bash to all targets ([7db5ad8](https://github.com/AliceO2Group/Bookkeeping/commit/7db5ad862c0d27ff23fe873685ee523c3cb6e2c4))
+* **docker:** bump ca-certificates from 20191127-r1 to 20191127-r2 ([727cea4](https://github.com/AliceO2Group/Bookkeeping/commit/727cea43dedd827413882f104f770ea2e635b07c))
+* **docker:** updated unsatisfiable constraints ([003c2f6](https://github.com/AliceO2Group/Bookkeeping/commit/003c2f67eb18e7b96080475507f666a9c3dc3294))
+* **ui:** autoscrolling not completely going down on long Log threads ([035b455](https://github.com/AliceO2Group/Bookkeeping/commit/035b45553c01577295558fc60a7941be452e2ad7))
+* **ui:** trigger scrollTo on both create and update ([59c6ebc](https://github.com/AliceO2Group/Bookkeeping/commit/59c6ebc2826482502f5fbb9da2901bed7ecbac29))
+* **ui:** use ternary instead of boolean expression as an expression wil result in a false text ([e9ab282](https://github.com/AliceO2Group/Bookkeeping/commit/e9ab2824a681768c89740013fc35fcd0fe09fd43))
+* **ui:** width of Markdown box when creating an entry should be 100% ([2271219](https://github.com/AliceO2Group/Bookkeeping/commit/2271219de3e212f7f6ffe5e2851c8f79024df5f4))
+* do not call process.exit in test modus as this affects mocha ([9ad965b](https://github.com/AliceO2Group/Bookkeeping/commit/9ad965b60109267b3052a729031d024b7c30646c))
+* resolved issues ([eb4c1a4](https://github.com/AliceO2Group/Bookkeeping/commit/eb4c1a4aea0ac624ae8b143e8736abe7c149ef7a))
+* toTreeView should traverse all children ([677377b](https://github.com/AliceO2Group/Bookkeeping/commit/677377b6c72293ed5cfae3dd6a7198b4b0b0c399))
+* use 201 for Created instead of 301, naming of variables ([b2477d9](https://github.com/AliceO2Group/Bookkeeping/commit/b2477d96efe810ab42685b0eb743062df4543822))
+
 ## [0.4.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.3.0...v0.4.0) (2020-05-29)
 
 
