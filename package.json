@@ -19,7 +19,7 @@
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "mariadb": "2.4.0",
-    "sequelize": "5.21.12",
+    "sequelize": "5.21.13",
     "umzug": "2.3.0"
   },
   "devDependencies": {
