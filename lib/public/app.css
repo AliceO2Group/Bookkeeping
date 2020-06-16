@@ -8,6 +8,40 @@ html, body {
 .cell-l { width: 16rem; }
 .cell-xl { width: 32rem; }
 
+.cell-limited-lines-xs { 
+    max-width: 2rem;
+    max-lines: 2;
+}
+.cell-limited-lines-s { 
+    max-width: 4rem;
+    max-lines: 2;
+}
+.cell-limited-lines-m { 
+    max-width: 8rem;
+    max-lines: 2;
+}
+.cell-limited-lines-l { 
+    max-width: 16rem;
+    max-lines: 2;
+}
+.cell-limited-lines-xl {
+    max-width: 28rem; 
+    white-space: nowrap;
+    text-overflow: ellipsis; 
+    overflow: hidden;
+}
+.cell-limited-lines-xxl { 
+    max-width: 32rem;
+    max-lines: 2;
+}
+
+.show-overflow {
+    max-width: initial;
+    max-height: fit-content;
+    white-space: normal;
+    overflow: visible;
+}
+
 /* last column fills space */
 .cell-xs:last-child, .cell-s:last-child, .cell-m:last-child, .cell-l:last-child, .cell-xl:last-child { width: initial; }
 .cell-xs:last-child .resizeWidth, .cell-s:last-child .resizeWidth, .cell-m:last-child .resizeWidth, .cell-l:last-child .resizeWidth, .cell-xl:last-child .resizeWidth { visibility: hidden; }

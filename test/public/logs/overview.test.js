@@ -49,6 +49,11 @@ module.exports = () => {
             page.coverage.startJSCoverage({ resetOnNavigation: false }),
             page.coverage.startCSSCoverage(),
         ]);
+        page.setViewport({
+            width: 700,
+            height: 720,
+            deviceScaleFactor: 1,
+        });
 
         const { port } = server.address();
         url = `http://localhost:${port}`;
@@ -273,7 +278,8 @@ module.exports = () => {
     });
 
     it('can create a log from the overview page', async () => {
-        const title = 'Test One';
+        const title = 'A very long title that should be collapsed in the overview screen!' +
+            'Adding some more text to it, does it have an ellipsis yet? I do not know!';
         const text = 'Sample Text';
 
         // Go back to the home page
@@ -292,7 +298,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(200);
+        await page.waitFor(250);
 
         // Verify that the text from the first matches with the text posted and correct working of the redirect
         // eslint-disable-next-line no-undef
@@ -305,7 +311,7 @@ module.exports = () => {
         // Return the page to home
         const buttonHame = await page.$('#home');
         await buttonHame.evaluate((button) => button.click());
-        await page.waitFor(100);
+        await page.waitFor(150);
 
         // Ensure you are at the overview page again
         const doesTableExist = await page.$$('tr') ? true : false;
@@ -314,12 +320,18 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRow = await page.$(`#${firstRowId}`);
-        const isTitleInRow = JSON.stringify(await page.evaluate((element) => element.innerText, firstRow))
+
+        const firstRow = await page.$(`#${firstRowId}-title-text`);
+
+        const isTitleInRow = JSON.stringify(await firstRow.evaluate((element) => element.innerText))
             .includes(title);
 
-        // Verify the correct title is shown in the table
         expect(isTitleInRow).to.equal(true);
+
+        // Collapse and de-collapse the opened title and verify the rendered text accordingly
+        const collapseButton = await page.$(`#${firstRowId}-title-plus`);
+        await collapseButton.evaluate((button) => button.click());
+        page.waitFor(100);
     });
 
     it('notifies if table loading returned an error', async () => {

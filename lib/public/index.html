@@ -92,7 +92,7 @@
         import Model from './Model.js';
 
         // Start application
-        const model = new Model(HyperMD, CompleteEmoji);
+        const model = new Model(HyperMD, window, document, CompleteEmoji);
         const debug = true; // shows when redraw is done
         mount(document.body, view, model, debug);
 
