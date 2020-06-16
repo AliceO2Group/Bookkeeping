@@ -139,3 +139,9 @@ html, body {
     display: block;
 }
 
+.row-limit {
+    max-height: 4rem;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  
