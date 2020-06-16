@@ -172,6 +172,7 @@ html, body {
 .tab-content > .active {
     display: block;
 }
+<<<<<<< HEAD
 
 .dropup,
 .dropright,
@@ -220,3 +221,5 @@ html, body {
 .dropleft .dropdown-toggle-split::before {
     margin-right: 0;
 }
+=======
+>>>>>>> feat: Added collapse feature in generic table component
