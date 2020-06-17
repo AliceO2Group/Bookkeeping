@@ -504,6 +504,22 @@ components:
         - age
         - start
       additionalProperties: false
+    Entity:
+      description: Base entity.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+      required:
+        - id
     EntityId:
       description: The unique identifier of this entity.
       type: integer
@@ -581,44 +597,43 @@ components:
         - operation
       additionalProperties: false
     Log:
-      description: Describes an intervention or an event that happened.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
-        authorId:
-          description: Name of the author.
-          type: string
-        title:
-          $ref: '#/components/schemas/LogTitle'
-        text:
-          $ref: '#/components/schemas/LogText'
-        creationTime:
-          description: Unix timestamp of the creation date time.
-          type: integer
-          format: int64
-        origin:
-          $ref: '#/components/schemas/LogOrigin'
-        subtype:
-          $ref: '#/components/schemas/LogSubtype'
-        tags:
-          $ref: '#/components/schemas/ArrayOfTags'
-        rootLogId:
-          $ref: '#/components/schemas/EntityId'
-        parentLogId:
-          $ref: '#/components/schemas/EntityId'
-      required:
-        - id
-        - authorId
-        - title
-        - text
-        - creationTime
-        - origin
-        - subtype
-        - tags
-        - rootLogId
-        - parentLogId
-      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - description: Describes an intervention or an event that happened.
+          type: object
+          properties:
+            authorId:
+              description: Name of the author.
+              type: string
+            title:
+              $ref: '#/components/schemas/LogTitle'
+            text:
+              $ref: '#/components/schemas/LogText'
+            creationTime:
+              description: Unix timestamp of the creation date time.
+              type: integer
+              format: int64
+            origin:
+              $ref: '#/components/schemas/LogOrigin'
+            subtype:
+              $ref: '#/components/schemas/LogSubtype'
+            tags:
+              $ref: '#/components/schemas/ArrayOfTags'
+            rootLogId:
+              $ref: '#/components/schemas/EntityId'
+            parentLogId:
+              $ref: '#/components/schemas/EntityId'
+          required:
+            - authorId
+            - title
+            - text
+            - creationTime
+            - origin
+            - subtype
+            - tags
+            - rootLogId
+            - parentLogId
+          additionalProperties: false
     LogOrigin:
       description: Type of creator.
       type: string
@@ -723,24 +738,19 @@ components:
         - asc
         - desc
     Subsystem:
-      description: A label attached to something for the purpose of identification.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
-        name:
-          description: The label value of the subsystem.
-          type: string
-        createdAt:
-          description: Date when the subsystem was created.
-          type: string
-        updateAt:
-          description: Date when the subsystem was last updated.
-          type: string
-      required:
-        - id
-        - name
-      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - description: A label attached to something for the purpose of identification.
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/EntityId'
+            name:
+              description: The label value of the subsystem.
+              type: string
+          required:
+            - name
+          additionalProperties: false
     SubsystemResponse:
       description: Response containing a single subsystem.
       type: object
@@ -751,24 +761,17 @@ components:
         - data
       additionalProperties: false
     Tag:
-      description: A label attached to something for the purpose of identification.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
-        text:
-          description: The label value of the tag.
-          type: string
-        createdAt:
-          description: Date when the tag was created.
-          type: string
-        updateAt:
-          description: Date when the tag was last updated.
-          type: string
-      required:
-        - id
-        - text
-      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - description: A label attached to something for the purpose of identification.
+          type: object
+          properties:
+            text:
+              description: The label value of the tag.
+              type: string
+          required:
+            - text
+          additionalProperties: false
     TagResponse:
       description: Response containing a single tag.
       type: object

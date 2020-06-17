@@ -94,7 +94,7 @@ module.exports = () => {
                 });
             }
 
-            if (keys.includes('type') && parent['type'] === 'object') {
+            if (keys.includes('type') && parent['type'] === 'object' && path[0] !== 'Entity') {
                 it('should have set the additionalProperties to false', () => {
                     expect(keys).to.include('additionalProperties');
                     expect(parent['additionalProperties']).to.be.false;
