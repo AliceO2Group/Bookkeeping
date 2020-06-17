@@ -1,4 +1,4 @@
-# Generated on Sun, 07 Jun 2020 11:43:44 GMT
+# Generated on Wed, 17 Jun 2020 08:39:35 GMT
 
 openapi: 3.0.0
 info:
@@ -538,6 +538,22 @@ components:
         - age
         - start
       additionalProperties: false
+    Entity:
+      description: Base entity.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+      required:
+        - id
     EntityId:
       description: The unique identifier of this entity.
       type: integer
@@ -620,6 +636,14 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/EntityId'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
         authorId:
           description: Name of the author.
           type: string
@@ -692,6 +716,14 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/EntityId'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
         authorId:
           description: Name of the author.
           type: string
@@ -794,14 +826,16 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/EntityId'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
         name:
           description: The label value of the subsystem.
-          type: string
-        createdAt:
-          description: Date when the subsystem was created.
-          type: string
-        updateAt:
-          description: Date when the subsystem was last updated.
           type: string
       required:
         - id
@@ -822,14 +856,16 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/EntityId'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
         text:
           description: The label value of the tag.
-          type: string
-        createdAt:
-          description: Date when the tag was created.
-          type: string
-        updateAt:
-          description: Date when the tag was last updated.
           type: string
       required:
         - id
