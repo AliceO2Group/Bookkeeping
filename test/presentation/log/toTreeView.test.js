@@ -27,7 +27,7 @@ module.exports = () => {
             id: 1,
             authorId: 'John Doe',
             title: 'First entry',
-            creationTime: 1591219115000,
+            createdAt: 1591219115000,
             tags: [
                 {
                     id: 3,
@@ -46,7 +46,7 @@ module.exports = () => {
                 id: 2,
                 authorId: 'John Doe',
                 title: 'Second entry',
-                creationTime: 1591219115000,
+                createdAt: 1591219115000,
                 tags: [
                     {
                         id: 2,
@@ -67,7 +67,7 @@ module.exports = () => {
                 id: 3,
                 authorId: 'John Doe',
                 title: 'Third entry',
-                creationTime: 1591219115000,
+                createdAt: 1591219115000,
                 tags: [
                     {
                         id: 1,
@@ -92,7 +92,7 @@ module.exports = () => {
                 id: 4,
                 authorId: 'John Doe',
                 title: 'Fourth entry',
-                creationTime: 1591219115000,
+                createdAt: 1591219115000,
                 tags: [],
                 text: 'The cake is a lie!',
                 origin: 'human',
@@ -104,7 +104,7 @@ module.exports = () => {
                 id: 14,
                 authorId: 'John Doe',
                 title: 'test on third',
-                creationTime: 1591446994000,
+                createdAt: 1591446994000,
                 tags: [],
                 text: 'text',
                 origin: 'process',
@@ -116,7 +116,7 @@ module.exports = () => {
                 id: 15,
                 authorId: 'John Doe',
                 title: 'depth',
-                creationTime: 1591450185000,
+                createdAt: 1591450185000,
                 tags: [],
                 text: '4444',
                 origin: 'process',
@@ -130,7 +130,7 @@ module.exports = () => {
             id: 1,
             authorId: 'John Doe',
             title: 'First entry',
-            creationTime: 1591219115000,
+            createdAt: 1591219115000,
             tags: [
                 {
                     id: 3,
@@ -147,7 +147,7 @@ module.exports = () => {
                     id: 2,
                     authorId: 'John Doe',
                     title: 'Second entry',
-                    creationTime: 1591219115000,
+                    createdAt: 1591219115000,
                     tags: [
                         {
                             id: 2,
@@ -168,7 +168,7 @@ module.exports = () => {
                             id: 4,
                             authorId: 'John Doe',
                             title: 'Fourth entry',
-                            creationTime: 1591219115000,
+                            createdAt: 1591219115000,
                             tags: [],
                             text: 'The cake is a lie!',
                             origin: 'human',
@@ -183,7 +183,7 @@ module.exports = () => {
                     id: 3,
                     authorId: 'John Doe',
                     title: 'Third entry',
-                    creationTime: 1591219115000,
+                    createdAt: 1591219115000,
                     tags: [
                         {
                             id: 1,
@@ -208,7 +208,7 @@ module.exports = () => {
                             id: 14,
                             authorId: 'John Doe',
                             title: 'test on third',
-                            creationTime: 1591446994000,
+                            createdAt: 1591446994000,
                             tags: [],
                             text: 'text',
                             origin: 'process',
@@ -220,7 +220,7 @@ module.exports = () => {
                                     id: 15,
                                     authorId: 'John Doe',
                                     title: 'depth',
-                                    creationTime: 1591450185000,
+                                    createdAt: 1591450185000,
                                     tags: [],
                                     text: '4444',
                                     origin: 'process',

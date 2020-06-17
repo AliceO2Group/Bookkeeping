@@ -1,4 +1,4 @@
-# Generated on Wed, 17 Jun 2020 08:39:35 GMT
+# Generated on Wed, 17 Jun 2020 08:42:35 GMT
 
 openapi: 3.0.0
 info:
@@ -651,10 +651,6 @@ components:
           $ref: '#/components/schemas/LogTitle'
         text:
           $ref: '#/components/schemas/LogText'
-        creationTime:
-          description: Unix timestamp of the creation date time.
-          type: integer
-          format: int64
         origin:
           $ref: '#/components/schemas/LogOrigin'
         subtype:
@@ -670,7 +666,6 @@ components:
         - authorId
         - title
         - text
-        - creationTime
         - origin
         - subtype
         - tags
@@ -731,10 +726,6 @@ components:
           $ref: '#/components/schemas/LogTitle'
         text:
           $ref: '#/components/schemas/LogText'
-        creationTime:
-          description: Unix timestamp of the creation date time.
-          type: integer
-          format: int64
         origin:
           $ref: '#/components/schemas/LogOrigin'
         subtype:
@@ -752,7 +743,6 @@ components:
         - authorId
         - title
         - text
-        - creationTime
         - origin
         - subtype
         - tags
