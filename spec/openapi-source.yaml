@@ -609,10 +609,6 @@ components:
               $ref: '#/components/schemas/LogTitle'
             text:
               $ref: '#/components/schemas/LogText'
-            creationTime:
-              description: Unix timestamp of the creation date time.
-              type: integer
-              format: int64
             origin:
               $ref: '#/components/schemas/LogOrigin'
             subtype:
@@ -627,7 +623,6 @@ components:
             - authorId
             - title
             - text
-            - creationTime
             - origin
             - subtype
             - tags
