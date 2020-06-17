@@ -22,6 +22,24 @@ const swaggerGeneratedDocumentPath = path.resolve(__dirname, 'openapi.yaml');
 const swaggerDocument = yaml.safeLoad(fs.readFileSync(swaggerDocumentPath));
 
 // eslint-disable-next-line require-jsdoc
+const arraysEqual = (a, b) => {
+    // Are the lengths the same?
+    let i = a.length;
+    if (i !== b.length) {
+        return false;
+    }
+
+    // Are all the values the same?
+    while (i --) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+// eslint-disable-next-line require-jsdoc
 const convert = (obj) => {
     const spec = merge({}, obj);
     let changed = false;
@@ -71,6 +89,30 @@ const convert = (obj) => {
             }
 
             spec[parent[4]][parent[3]][parent[2]][parent[1]][parent[0]] = obj;
+        }
+
+        if (parent[0] === 'required' && parent[2] === 'schemas' && parent[3] === 'components') {
+            const unsorted = spec[parent[3]][parent[2]][parent[1]][parent[0]];
+            const sorted = spec[parent[3]][parent[2]][parent[1]][parent[0]].sort();
+            if (!arraysEqual(unsorted, sorted)) {
+                spec[parent[3]][parent[2]][parent[1]][parent[0]] = sorted;
+                changed = true;
+            }
+        }
+
+        if (parent[0] === 'properties' && parent[2] === 'schemas' && parent[3] === 'components') {
+            const unsorted = Object.keys(spec[parent[3]][parent[2]][parent[1]][parent[0]]);
+            const sorted = Object.keys(spec[parent[3]][parent[2]][parent[1]][parent[0]]).sort();
+
+            if (!arraysEqual(unsorted, sorted)) {
+                const obj = {};
+                for (const key of sorted) {
+                    obj[key] = spec[parent[3]][parent[2]][parent[1]][parent[0]][key];
+                }
+
+                spec[parent[3]][parent[2]][parent[1]][parent[0]] = obj;
+                changed = true;
+            }
         }
     };
 

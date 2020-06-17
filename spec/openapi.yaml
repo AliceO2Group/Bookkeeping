@@ -1,4 +1,4 @@
-# Generated on Wed, 17 Jun 2020 08:42:35 GMT
+# Generated on Wed, 17 Jun 2020 09:11:01 GMT
 
 openapi: 3.0.0
 info:
@@ -430,10 +430,10 @@ components:
       description: Response containing multiple logs.
       type: object
       properties:
-        meta:
-          $ref: '#/components/schemas/ArrayOfLogsResponseMeta'
         data:
           $ref: '#/components/schemas/ArrayOfLogs'
+        meta:
+          $ref: '#/components/schemas/ArrayOfLogsResponseMeta'
       required:
         - data
       additionalProperties: false
@@ -455,10 +455,10 @@ components:
       description: Response containing multiple subsystems.
       type: object
       properties:
-        meta:
-          $ref: '#/components/schemas/ArrayOfSubsystemsResponseMeta'
         data:
           $ref: '#/components/schemas/ArrayOfSubsystems'
+        meta:
+          $ref: '#/components/schemas/ArrayOfSubsystemsResponseMeta'
       required:
         - data
       additionalProperties: false
@@ -494,15 +494,15 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        title:
-          $ref: '#/components/schemas/LogTitle'
-        text:
-          $ref: '#/components/schemas/LogText'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        text:
+          $ref: '#/components/schemas/LogText'
+        title:
+          $ref: '#/components/schemas/LogTitle'
       required:
-        - title
         - text
+        - title
       additionalProperties: false
     CreateSubsystem:
       description: A label attached to something for the purpose of identification.
@@ -542,12 +542,12 @@ components:
       description: Base entity.
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
+        id:
+          $ref: '#/components/schemas/EntityId'
         updateAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -563,12 +563,6 @@ components:
       description: An Error object.
       type: object
       properties:
-        status:
-          description: The HTTP status code applicable to this problem.
-          type: string
-        title:
-          description: 'A short, human-readable summary of the problem.'
-          type: string
         detail:
           description: >-
             A human-readable explanation specific to this occurrence of the
@@ -576,6 +570,12 @@ components:
           type: string
         source:
           $ref: '#/components/schemas/ErrorSource'
+        status:
+          description: The HTTP status code applicable to this problem.
+          type: string
+        title:
+          description: 'A short, human-readable summary of the problem.'
+          type: string
       required:
         - status
         - title
@@ -618,59 +618,59 @@ components:
       description: Specifies the tag related filter requirements for a request.
       type: object
       properties:
-        values:
-          $ref: '#/components/schemas/CommaSeparatedEntityIds'
         operation:
           description: The operation indicating the relation between the data.
           type: string
           enum:
             - and
             - or
+        values:
+          $ref: '#/components/schemas/CommaSeparatedEntityIds'
       required:
-        - values
         - operation
+        - values
       additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
+        authorId:
+          description: Name of the author.
+          type: string
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
-        updateAt:
-          description: Unix timestamp when this entity was last updated.
-          type: integer
-          format: int64
-        authorId:
-          description: Name of the author.
-          type: string
-        title:
-          $ref: '#/components/schemas/LogTitle'
-        text:
-          $ref: '#/components/schemas/LogText'
+        id:
+          $ref: '#/components/schemas/EntityId'
         origin:
           $ref: '#/components/schemas/LogOrigin'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
         subtype:
           $ref: '#/components/schemas/LogSubtype'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
-        rootLogId:
-          $ref: '#/components/schemas/EntityId'
-        parentLogId:
-          $ref: '#/components/schemas/EntityId'
+        text:
+          $ref: '#/components/schemas/LogText'
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
       required:
-        - id
         - authorId
-        - title
-        - text
+        - id
         - origin
+        - parentLogId
+        - rootLogId
         - subtype
         - tags
-        - rootLogId
-        - parentLogId
+        - text
+        - title
       additionalProperties: false
     LogOrigin:
       description: Type of creator.
@@ -709,46 +709,46 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
+        authorId:
+          description: Name of the author.
+          type: string
+        children:
+          $ref: '#/components/schemas/ArrayOfLogTrees'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
-        updateAt:
-          description: Unix timestamp when this entity was last updated.
-          type: integer
-          format: int64
-        authorId:
-          description: Name of the author.
-          type: string
-        title:
-          $ref: '#/components/schemas/LogTitle'
-        text:
-          $ref: '#/components/schemas/LogText'
+        id:
+          $ref: '#/components/schemas/EntityId'
         origin:
           $ref: '#/components/schemas/LogOrigin'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
         subtype:
           $ref: '#/components/schemas/LogSubtype'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
-        rootLogId:
-          $ref: '#/components/schemas/EntityId'
-        parentLogId:
-          $ref: '#/components/schemas/EntityId'
-        children:
-          $ref: '#/components/schemas/ArrayOfLogTrees'
+        text:
+          $ref: '#/components/schemas/LogText'
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
       required:
-        - id
         - authorId
-        - title
-        - text
+        - children
+        - id
         - origin
+        - parentLogId
+        - rootLogId
         - subtype
         - tags
-        - rootLogId
-        - parentLogId
-        - children
+        - text
+        - title
       additionalProperties: false
     LogTreeResponse:
       description: Response containing a single log tree.
@@ -814,19 +814,19 @@ components:
       description: A label attached to something for the purpose of identification.
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
+        id:
+          $ref: '#/components/schemas/EntityId'
+        name:
+          description: The label value of the subsystem.
+          type: string
         updateAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
-        name:
-          description: The label value of the subsystem.
-          type: string
       required:
         - id
         - name
@@ -844,19 +844,19 @@ components:
       description: A label attached to something for the purpose of identification.
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
+        id:
+          $ref: '#/components/schemas/EntityId'
+        text:
+          description: The label value of the tag.
+          type: string
         updateAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
-        text:
-          description: The label value of the tag.
-          type: string
       required:
         - id
         - text
