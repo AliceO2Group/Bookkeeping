@@ -11,12 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogsSuite = require('./logs');
-const SubsystemsSuite = require('./subsystems');
-const TagsSuite = require('./tags');
+const OverviewSuite = require('./overview.test');
+const DetailSuite = require('./detail.test');
 
 module.exports = () => {
-    describe('Logs', LogsSuite);
-    describe('Subsystems', SubsystemsSuite);
-    describe('Tags', TagsSuite);
+    describe('Overview Page', OverviewSuite);
+    describe('Detail Page', DetailSuite);
 };
