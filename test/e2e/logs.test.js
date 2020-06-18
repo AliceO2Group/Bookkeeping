@@ -46,6 +46,50 @@ module.exports = () => {
 
         it('should support filtering by tag', (done) => {
             request(server)
+                .get('/api/logs?filter[tag][values]=1&filter[tag][operation]=and')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.equal(2);
+
+                    expect(res.body.data[0].id).to.equal(4);
+                    expect(res.body.data[0].tags).to.deep.equal([
+                        {
+                            id: 1,
+                            text: 'FOOD',
+                        },
+                    ]);
+
+                    expect(res.body.data[1].id).to.equal(3);
+                    expect(res.body.data[1].tags).to.deep.equal([
+                        {
+                            id: 1,
+                            text: 'FOOD',
+                        },
+                        {
+                            id: 4,
+                            text: 'GLOBAL',
+                        },
+                        {
+                            id: 6,
+                            text: 'OTHER',
+                        },
+                    ]);
+
+                    done();
+                });
+        });
+
+        it('should support filtering by tag', (done) => {
+            request(server)
                 .get('/api/logs?filter[tag][values]=2,5&filter[tag][operation]=and')
                 .expect(200)
                 .end((err, res) => {
@@ -58,17 +102,19 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data.length > 0).to.be.true;
-                    for (const log of res.body.data) {
-                        let found = false;
-                        for (const tag of log.tags) {
-                            if (found) {
-                                continue;
-                            }
-                            found = tag.id === 2 || tag.id === 5;
-                        }
-                        expect(found).to.be.true;
-                    }
+                    expect(res.body.data.length).to.equal(1);
+
+                    expect(res.body.data[0].id).to.equal(2);
+                    expect(res.body.data[0].tags).to.deep.equal([
+                        {
+                            id: 2,
+                            text: 'RUN',
+                        },
+                        {
+                            id: 5,
+                            text: 'TEST',
+                        },
+                    ]);
 
                     done();
                 });
@@ -76,7 +122,7 @@ module.exports = () => {
 
         it('should support filtering by tag', (done) => {
             request(server)
-                .get('/api/logs?filter[tag][values]=1,2,3,4,5,6&filter[tag][operation]=and')
+                .get('/api/logs?filter[tag][values]=5,6&filter[tag][operation]=or')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -88,36 +134,35 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data.length > 0).to.be.false;
-                    done();
-                });
-        });
+                    expect(res.body.data.length).to.equal(2);
 
-        it('should support filtering by tag', (done) => {
-            request(server)
-                .get('/api/logs?filter[tag][values]=1,2&filter[tag][operation]=or')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+                    expect(res.body.data[0].id).to.equal(3);
+                    expect(res.body.data[0].tags).to.deep.equal([
+                        {
+                            id: 1,
+                            text: 'FOOD',
+                        },
+                        {
+                            id: 4,
+                            text: 'GLOBAL',
+                        },
+                        {
+                            id: 6,
+                            text: 'OTHER',
+                        },
+                    ]);
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.data).to.be.an('array');
-                    expect(res.body.data.length > 0).to.be.true;
-                    for (const log of res.body.data) {
-                        let found = false;
-                        for (const tag of log.tags) {
-                            if (found) {
-                                continue;
-                            }
-                            found = tag.id === 1 || tag.id === 2;
-                        }
-                        expect(found).to.be.true;
-                    }
+                    expect(res.body.data[1].id).to.equal(2);
+                    expect(res.body.data[1].tags).to.deep.equal([
+                        {
+                            id: 2,
+                            text: 'RUN',
+                        },
+                        {
+                            id: 5,
+                            text: 'TEST',
+                        },
+                    ]);
 
                     done();
                 });

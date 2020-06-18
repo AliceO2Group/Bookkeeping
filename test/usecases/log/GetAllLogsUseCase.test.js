@@ -44,14 +44,14 @@ module.exports = () => {
     });
 
     it('should return logs with a full tag collection regardless of filter', async () => {
-        const unfilteredResult = await new GetAllLogsUseCase()
-            .execute();
-        const { firstUnfilteredLog } = unfilteredResult.logs;
-
         getAllLogsDto.query = { tag: { values: [1], operation: 'or' } };
         const filteredResult = await new GetAllLogsUseCase()
             .execute(getAllLogsDto);
-        const firstFilteredLog = filteredResult.logs.find((log) => log.id === firstUnfilteredLog.id);
+        const { firstFilteredLog } = filteredResult.logs;
+
+        const unfilteredResult = await new GetAllLogsUseCase()
+            .execute();
+        const firstUnfilteredLog = unfilteredResult.logs.find((log) => log.id === firstFilteredLog.id);
 
         expect(firstUnfilteredLog.tags).to.equal(firstFilteredLog.tags);
     });
