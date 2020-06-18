@@ -43,6 +43,19 @@ module.exports = () => {
         }
     });
 
+    it('should return logs with a full tag collection regardless of filter', async () => {
+        const unfilteredResult = await new GetAllLogsUseCase()
+            .execute();
+        const { firstUnfilteredLog } = unfilteredResult.logs;
+
+        getAllLogsDto.query = { tag: { values: [1], operation: 'or' } };
+        const filteredResult = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
+        const firstFilteredLog = filteredResult.logs.find((log) => log.id === firstUnfilteredLog.id);
+
+        expect(firstUnfilteredLog.tags).to.equal(firstFilteredLog.tags);
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 
