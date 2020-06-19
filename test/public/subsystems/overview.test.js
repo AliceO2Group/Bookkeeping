@@ -20,7 +20,7 @@ const { expect } = chai;
 
 /**
  * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire tag table
+ * @param {Object} table An HTML element representing the entire subsystem table
  * @param {Object} page An object representing the browser page being used by Puppeteer
  * @return {String} The ID of the first matching row with data
  */
