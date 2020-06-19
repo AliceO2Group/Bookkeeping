@@ -476,8 +476,16 @@ module.exports = () => {
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data).to.have.lengthOf(2);
 
-                    expect(res.body.data[0].id).to.equal(3);
+                    expect(res.body.data[0].id).to.equal(4);
                     expect(res.body.data[0].tags).to.deep.equal([
+                        {
+                            id: 1,
+                            text: 'FOOD',
+                        },
+                    ]);
+
+                    expect(res.body.data[1].id).to.equal(3);
+                    expect(res.body.data[1].tags).to.deep.equal([
                         {
                             id: 1,
                             text: 'FOOD',
@@ -489,14 +497,6 @@ module.exports = () => {
                         {
                             id: 6,
                             text: 'OTHER',
-                        },
-                    ]);
-
-                    expect(res.body.data[1].id).to.equal(4);
-                    expect(res.body.data[1].tags).to.deep.equal([
-                        {
-                            id: 1,
-                            text: 'FOOD',
                         },
                     ]);
                     done();

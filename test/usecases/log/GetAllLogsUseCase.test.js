@@ -49,7 +49,7 @@ module.exports = () => {
         const filteredResult = await new GetAllLogsUseCase()
             .execute(getAllLogsDto);
         expect(filteredResult.logs.length).to.be.greaterThan(0);
-        const { firstFilteredLog } = filteredResult.logs;
+        const [firstFilteredLog] = filteredResult.logs;
 
         const unfilteredResult = await new GetAllLogsUseCase()
             .execute();
