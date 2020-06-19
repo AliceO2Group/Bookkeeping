@@ -39,6 +39,8 @@ jobs:
             run application npm run coverage
       - name: Copy coverage from container
         run: docker cp $(docker ps -aqlf "name=bookkeeping_application"):/usr/src/app/coverage/coverage-final.json .
+      - name: Transform coverage
+        run: sed -i 's/\/\.nyc_output//g' coverage-final.json
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
 
