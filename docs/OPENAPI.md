@@ -1,5 +1,8 @@
 # OpenAPI
 
+## Client generation
+Reference [OpenAPITools/openapi-generator](https://github.com/OpenAPITools/openapi-generator) on how to generate a C++ (or any other language) client based on an OpenAPI specification. Note that the generated client is of course a best effort and can be incomplete or wrong.
+
 ## allOf and additionalProperties
 When you use `additionalProperties: false` on an `allOf` schema, it will only consider the schema where the `additionalProperties` property has been set, not the resulting merged schema.
 
