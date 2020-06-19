@@ -67,7 +67,7 @@ module.exports = () => {
     });
 
     it('subsystem detail loads correctly', async () => {
-        await page.goto(`${url}/?page=subsystems&id=1`);
+        await page.goto(`${url}/?page=subsystem&id=1`);
         await page.waitFor(100);
 
         const postExists = await page.$('h2');
