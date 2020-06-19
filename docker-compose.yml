@@ -13,6 +13,10 @@ services:
       JWT_EXPIRATION: "${JWT_EXPIRATION}"
       JWT_ISSUER: "${JWT_ISSUER}"
       JWT_MAX_AGE: "${JWT_MAX_AGE}"
+      OPENID_ID: "${OPENID_ID}"
+      OPENID_SECRET: "${OPENID_SECRET}"
+      OPENID_REDIRECT: "${OPENID_REDIRECT}"
+      OPENID_WELL_KNOWN: "${OPENID_WELL_KNOWN}"
     links:
       - database
     restart: unless-stopped
