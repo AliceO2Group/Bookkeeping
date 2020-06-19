@@ -106,7 +106,7 @@ module.exports = () => {
         await page.click(`#${firstRowId}`);
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=entry&id=3`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=entry&id=4`)).to.be.true;
     });
 
     it('notifies if a specified tag id is invalid', async () => {
