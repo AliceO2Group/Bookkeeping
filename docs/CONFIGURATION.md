@@ -20,3 +20,11 @@ The following configuration items can be set using environment variables, note t
 | JWT_EXPIRATION | Token expiration time as time literal. | 1d |
 | JWT_ISSUER | Identifies principal that issued the JWT. | o2-ui |
 | JWT_MAX_AGE | Token refresh expiration time as time literal. | 7d |
+
+## OpenID
+| Variable name | Description | Default value |
+|---------------|-------------|---------------|
+| OPENID_ID | Application ID | |
+| OPENID_SECRET | Application secret | |
+| OPENID_REDIRECT | Authentication callback | |
+| OPENID_WELL_KNOWN | So-called "well-known" endpoint defining OpenID configuration. | https://auth.cern.ch/auth/realms/cern/.well-known/openid-configuration |
