@@ -602,9 +602,8 @@ components:
         - description: Describes an intervention or an event that happened.
           type: object
           properties:
-            authorId:
-              description: Name of the author.
-              type: string
+            author:
+              $ref: '#/components/schemas/User'
             title:
               $ref: '#/components/schemas/LogTitle'
             text:
@@ -620,7 +619,7 @@ components:
             parentLogId:
               $ref: '#/components/schemas/EntityId'
           required:
-            - authorId
+            - author
             - title
             - text
             - origin
@@ -776,5 +775,23 @@ components:
       required:
         - data
       additionalProperties: false
+    User:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - description: Describes an intervention or an event that happened.
+          type: object
+          properties:
+            externalId:
+              description: The unique CERN identifier of this user.
+              type: integer
+              format: int64
+              minimum: 1
+            name:
+              type: string
+              description: Name of the user.
+          required:
+            - externalId
+            - name
+          additionalProperties: false
 security:
   - ApiKeyAuth: []

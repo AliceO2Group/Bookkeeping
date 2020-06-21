@@ -1,4 +1,4 @@
-# Generated on Wed, 17 Jun 2020 09:11:01 GMT
+# Generated on Sun, 21 Jun 2020 14:31:12 GMT
 
 openapi: 3.0.0
 info:
@@ -634,9 +634,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        authorId:
-          description: Name of the author.
-          type: string
+        author:
+          $ref: '#/components/schemas/User'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
@@ -662,7 +661,7 @@ components:
           type: integer
           format: int64
       required:
-        - authorId
+        - author
         - id
         - origin
         - parentLogId
@@ -709,9 +708,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        authorId:
-          description: Name of the author.
-          type: string
+        author:
+          $ref: '#/components/schemas/User'
         children:
           $ref: '#/components/schemas/ArrayOfLogTrees'
         createdAt:
@@ -739,7 +737,7 @@ components:
           type: integer
           format: int64
       required:
-        - authorId
+        - author
         - children
         - id
         - origin
@@ -869,6 +867,33 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    User:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        externalId:
+          description: The unique CERN identifier of this user.
+          type: integer
+          format: int64
+          minimum: 1
+        id:
+          $ref: '#/components/schemas/EntityId'
+        name:
+          type: string
+          description: Name of the user.
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+      required:
+        - externalId
+        - id
+        - name
       additionalProperties: false
 security:
   - ApiKeyAuth: []
