@@ -6,4 +6,5 @@
 !test/
 !spec/
 !.sequelizerc
+!.nycrc
 !package*.json

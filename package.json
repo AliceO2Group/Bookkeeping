@@ -4,8 +4,8 @@
   "author": "CERN",
   "license": "GPL-3.0",
   "scripts": {
-    "coverage": "c8 --all npm test && npm run coverage:report",
-    "coverage:report": "c8 report --reporter=html --reporter=json",
+    "coverage": "nyc npm test && npm run coverage:report",
+    "coverage:report": "nyc report --reporter=html --reporter=json",
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
@@ -23,28 +23,15 @@
     "umzug": "2.3.0"
   },
   "devDependencies": {
-    "c8": "7.2.0",
     "chai": "4.2.0",
     "chai-openapi-response-validator": "0.9.4",
     "eslint": "7.2.0",
     "js-yaml": "3.14.0",
     "mocha": "8.0.1",
     "nodemon": "2.0.4",
+    "nyc": "15.1.0",
     "puppeteer": "4.0.0",
-    "puppeteer-to-istanbul": "1.4.0",
+    "puppeteer-to-istanbul": "git+https://github.com/SoftwareForScience/puppeteer-to-istanbul.git",
     "supertest": "4.0.2"
-  },
-  "c8": {
-    "include": [
-      "lib/**/*.js"
-    ],
-    "exclude": [
-      "lib/main.js",
-      "lib/database/migrations/*.js",
-      "lib/database/seeders/*.js",
-      "lib/public/assets/**/*.js",
-      "lib/public/assets/**/*.css",
-      "test/**/*.js"
-    ]
   }
 }
