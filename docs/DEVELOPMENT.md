@@ -1,5 +1,21 @@
 # Development
 
+## Getting started
+### Configuration
+The following `.env` configuration is the bare minimum required for development. At the moment of writing there are two OpenID configurations, one dedicated to the staging server and one for all developers to use for local development.
+```ini
+; Database
+MYSQL_ROOT_PASSWORD=<TODO>
+
+; JWT
+JWT_SECRET=<TODO>
+
+; OpenID
+OPENID_ID=<TODO>
+OPENID_SECRET=<TODO>
+OPENID_REDIRECT=http://localhost:4000/callback
+```
+
 ## Sequlize (CLI)
 
 ### Usage
