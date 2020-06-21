@@ -28,6 +28,11 @@ module.exports = () => {
                 text: 'This is the text field of yet another log.',
             },
         });
+        createLogDto.session = {
+            personid: 1,
+            id: 1,
+            name: 'John Doe',
+        };
     });
 
     it('should insert a new Log', async () => {
