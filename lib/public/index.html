@@ -52,6 +52,9 @@
 <!-- ----------------------------------------------------------------------------------- -->
 <!-- (optional) PowerPacks with 3rd-party libs (Load them before creating editor!) -->
 
+<script src="/assets/SmartEditor/show-hint/show-hint.min.js"></script>
+<link rel="stylesheet" href="/assets/SmartEditor/show-hint/show-hint.min.css">
+
 <!-- marked and powerpack/hover-with-marked -->
 <script src="/assets/SmartEditor/marked/lib/marked.min.js"></script>
 <script src="/assets/SmartEditor/HyperMD/powerpack/hover-with-marked.js"></script>
@@ -66,6 +69,7 @@
 
 <!-- Use EmojiOne to render emoji  -->
 <script src="/assets/SmartEditor/emojione/index.js"></script>
+<script src="/assets/SmartEditor/emojione/extras/js/complete-emoji.min.js"></script>
 <link rel="stylesheet" href="/assets/SmartEditor/emojione/extras/css/emojione.min.css">
 <script src="/assets/SmartEditor/HyperMD/powerpack/fold-emoji-with-emojione.js"></script>
 
@@ -88,7 +92,7 @@
         import Model from './Model.js';
 
         // Start application
-        const model = new Model(HyperMD);
+        const model = new Model(HyperMD, CompleteEmoji);
         const debug = true; // shows when redraw is done
         mount(document.body, view, model, debug);
 
