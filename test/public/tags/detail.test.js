@@ -127,6 +127,6 @@ module.exports = () => {
         const error = await page.$('.alert');
         expect(Boolean(error)).to.be.true;
         const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Tag with this id (999) could not be found:');
+        expect(message).to.equal('Tag with this id (999) could not be found');
     });
 };

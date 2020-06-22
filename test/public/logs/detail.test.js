@@ -63,7 +63,7 @@ module.exports = () => {
         const error = await page.$('.alert-danger');
         expect(Boolean(error)).to.be.true;
         const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Log with this id (99999999) could not be found:');
+        expect(message).to.equal('Log with this id (99999999) could not be found');
     });
 
     it('should have a button to reply on a entry', async () => {
