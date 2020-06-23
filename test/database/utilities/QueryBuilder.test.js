@@ -117,5 +117,45 @@ module.exports = () => {
                 expect(result[1].id).to.equal(2);
             });
         });
+
+        describe('startsWith', () => {
+            it('should return a single entity of which the title starts with ...', async () => {
+                const queryBuilder = new QueryBuilder()
+                    .where('text').startsWith('Power interruption')
+                    .orderBy('id', 'asc');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result.text).to.equal('Power interruption due to unplugged wire.');
+            });
+
+            it('should return a single entity of which the title not starts with ...', async () => {
+                const queryBuilder = new QueryBuilder()
+                    .where('text').not().startsWith('Power interruption')
+                    .orderBy('id', 'asc');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result.text).to.equal('Detected particle ABC123');
+            });
+        });
+
+        describe('endsWith', () => {
+            it('should return a single entity of which the title ends with ...', async () => {
+                const queryBuilder = new QueryBuilder()
+                    .where('text').endsWith('accelerator!')
+                    .orderBy('id', 'asc');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result.text).to.equal('Cake at the particle accelerator!');
+            });
+
+            it('should return a single entity of which the title not ends with ...', async () => {
+                const queryBuilder = new QueryBuilder()
+                    .where('text').not().endsWith('accelerator!')
+                    .orderBy('id', 'asc');
+
+                const result = await LogRepository.findOne(queryBuilder);
+                expect(result.text).to.equal('Power interruption due to unplugged wire.');
+            });
+        });
     });
 };
