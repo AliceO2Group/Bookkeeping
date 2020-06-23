@@ -944,5 +944,50 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should post multiple attachments', (done) => {
+            request(server)
+                .post('/api/logs/1/attachments')
+                .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
+                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider.jpg'))
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+                    expect(res.body.data.length).to.equal(2);
+                    expect(res.body.data.map((fileObj) => fileObj.originalName)).to.have.deep.members([
+                        '1200px-CERN_logo.png',
+                        'hadron_collider.jpg',
+                    ]);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/logs/:logId/attachments/:attachmentId', () => {
+        it('should return an attachment', (done) => {
+            request(server)
+                .get('/api/logs/1/attachments/1')
+                .expect(200)
+                .end((err) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+                    done();
+                });
+        });
     });
 };
