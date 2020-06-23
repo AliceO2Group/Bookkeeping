@@ -885,44 +885,6 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/logs/:logId/attachments', () => {
-        it('should return an array', (done) => {
-            request(server)
-                .get('/api/logs/1/attachments')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.be.an('array');
-                    done();
-                });
-        });
-
-        it('should return 400 if log does not exist', (done) => {
-            request(server)
-                .get('/api/logs/999999999')
-                .expect(404)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
-
-                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
-
-                    done();
-                });
-        });
-    });
-
     describe('POST /api/logs/:logId/attachments', () => {
         it('should post to attachments', (done) => {
             request(server)
@@ -969,6 +931,117 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should break if there is no attachments field', (done) => {
+            request(server)
+                .post('/api/logs/1/attachments')
+                .expect(400)
+                .end((err, _res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/logs/:logId/attachments', () => {
+        it('should return an array', (done) => {
+            request(server)
+                .get('/api/logs/1/attachments')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    done();
+                });
+        });
+
+        it('should return an array of attachments of specific mime-type', (done) => {
+            request(server)
+                .get('/api/logs/1/attachments?mimetype=image/png')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.equal(2);
+                    expect(res.body.data).to.satisfy((files) =>
+                        files.every((file) => file.mimeType === 'image/png'));
+                    done();
+                });
+        });
+
+        it('should return an array of attachments of specific mime-type group', (done) => {
+            request(server)
+                .get('/api/logs/1/attachments?mimetype=image')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.equal(3);
+                    expect(res.body.data).to.satisfy((files) =>
+                        files.every((file) => file.mimeType.match(/^image\//)));
+                    done();
+                });
+        });
+
+        it('should return 404 if log does not exist', (done) => {
+            request(server)
+                .get('/api/logs/999/attachments')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+
+                    expect(res.body.errors[0].title).to.equal('Log with this id (999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if there is an disallowed query parameter', (done) => {
+            request(server)
+                .get('/api/logs/1/attachments/1?mayI=no')
+                .expect(400)
+                .end((err, _res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+
+                    done();
+                });
+        });
     });
 
     describe('GET /api/logs/:logId/attachments/:attachmentId', () => {
@@ -986,6 +1059,52 @@ module.exports = () => {
                      * Response must satisfy the OpenAPI specification
                      * expect(res).to.satisfyApiSpec;
                      */
+                    done();
+                });
+        });
+
+        it('should return 404 if log can not be found', (done) => {
+            request(server)
+                .get('/api/logs/999/attachments/1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+
+                    const { errors } = res.body;
+                    expect(errors[0].title).to
+                        .equal('Log with this id (999) does not have Attachment with this id (1)');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if log does not have attachment with given id', (done) => {
+            request(server)
+                .get('/api/logs/1/attachments/999')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    /*
+                     * Response must satisfy the OpenAPI specification
+                     * expect(res).to.satisfyApiSpec;
+                     */
+
+                    const { errors } = res.body;
+                    expect(errors[0].title).to
+                        .equal('Attachment with this id (999) could not be found');
+
                     done();
                 });
         });
