@@ -329,7 +329,11 @@ module.exports = () => {
         expect(isTitleInRow).to.equal(true);
 
         // Collapse and de-collapse the opened title and verify the rendered text accordingly
-        const collapseButton = await page.$(`#${firstRowId}-title-plus`);
+        const expandButton = await page.$(`#${firstRowId}-title-plus`);
+        await expandButton.evaluate((button) => button.click());
+        page.waitFor(100);
+
+        const collapseButton = await page.$(`#${firstRowId}-title-minus`);
         await collapseButton.evaluate((button) => button.click());
         page.waitFor(100);
     });
