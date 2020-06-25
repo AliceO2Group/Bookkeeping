@@ -2,11 +2,27 @@ html, body {
     scroll-behavior: smooth;
 }
 
-.cell-xs { width: 2rem; }
-.cell-s { width: 4rem; }
-.cell-m { width: 8rem; }
-.cell-l { width: 16rem; }
-.cell-xl { width: 32rem; }
+.cell-xs { max-width: 2rem; }
+.cell-s { max-width: 4rem; }
+.cell-m { max-width: 8rem; }
+.cell-l { max-width: 16rem; }
+.cell-xl { max-width: 32rem; }
+
+.overflow {
+    height: 1.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
+
+.show-overflow {
+    height: initial;
+    word-break: normal;
+}
+
+.collapse-button {
+    margin-left: 0.5rem;
+}
 
 /* last column fills space */
 .cell-xs:last-child, .cell-s:last-child, .cell-m:last-child, .cell-l:last-child, .cell-xl:last-child { width: initial; }
