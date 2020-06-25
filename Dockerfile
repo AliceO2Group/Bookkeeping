@@ -19,7 +19,6 @@ FROM base as developmentDependencies
 # Installs Git and packages required for Puppeteer
 RUN apk add --no-cache \
     chromium=83.0.4103.61-r0 \
-    nss=3.52.1-r0 \
     freetype=2.10.2-r0 \
     freetype-dev=2.10.2-r0 \
     git=2.26.2-r0 \
