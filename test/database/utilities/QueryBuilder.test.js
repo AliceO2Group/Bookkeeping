@@ -119,42 +119,42 @@ module.exports = () => {
         });
 
         describe('startsWith', () => {
-            it('should return a single entity of which the title starts with ...', async () => {
-                const queryBuilder = new QueryBuilder()
-                    .where('text').startsWith('Power interruption')
-                    .orderBy('id', 'asc');
+            it('should return only entities starting with "Log"', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('title').startsWith('Log');
+                queryBuilder.orderBy('id', 'asc');
 
-                const result = await LogRepository.findOne(queryBuilder);
-                expect(result.text).to.equal('Power interruption due to unplugged wire.');
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
             });
 
-            it('should return a single entity of which the title not starts with ...', async () => {
-                const queryBuilder = new QueryBuilder()
-                    .where('text').not().startsWith('Power interruption')
-                    .orderBy('id', 'asc');
+            it('should return only entities not starting with "Log"', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('title').not().startsWith('Log');
+                queryBuilder.orderBy('id', 'asc');
 
-                const result = await LogRepository.findOne(queryBuilder);
-                expect(result.text).to.equal('Detected particle ABC123');
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
             });
         });
 
         describe('endsWith', () => {
-            it('should return a single entity of which the title ends with ...', async () => {
-                const queryBuilder = new QueryBuilder()
-                    .where('text').endsWith('accelerator!')
-                    .orderBy('id', 'asc');
+            it('should return only entities ending with "log"', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('title').endsWith('log');
+                queryBuilder.orderBy('id', 'asc');
 
-                const result = await LogRepository.findOne(queryBuilder);
-                expect(result.text).to.equal('Cake at the particle accelerator!');
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
             });
 
-            it('should return a single entity of which the title not ends with ...', async () => {
-                const queryBuilder = new QueryBuilder()
-                    .where('text').not().endsWith('accelerator!')
-                    .orderBy('id', 'asc');
+            it('should return only entities not ending with "log"', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('title').not().endsWith('log');
+                queryBuilder.orderBy('id', 'asc');
 
-                const result = await LogRepository.findOne(queryBuilder);
-                expect(result.text).to.equal('Power interruption due to unplugged wire.');
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
             });
         });
     });

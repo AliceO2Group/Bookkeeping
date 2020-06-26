@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const AttachmentsSuite = require('./attachments.test');
 const HomeSuite = require('./home.test');
 const LogsSuite = require('./logs.test');
 const SubsystemsSuite = require('./subsystems.test');
@@ -21,4 +22,5 @@ module.exports = () => {
     describe('Logs', LogsSuite);
     describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);
+    describe('Attachments', AttachmentsSuite);
 };
