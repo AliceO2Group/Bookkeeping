@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.5.0...v0.6.0) (2020-06-26)
+
+
+### Features
+
+* added and updated controllers, routers, middleware and utils in server for attachments ([096c27c](https://github.com/AliceO2Group/Bookkeeping/commit/096c27c6c932fba5785c26a3472e9762aa8bfe52))
+* Added attachment Adapter and repository ([782cb00](https://github.com/AliceO2Group/Bookkeeping/commit/782cb00356d9208aea53d7450b5121d2442f5a61))
+* Added attachment dtos ([002155d](https://github.com/AliceO2Group/Bookkeeping/commit/002155d57dabd29103f780ba0800686418b7d914))
+* added Attachment model ([cf0d3c4](https://github.com/AliceO2Group/Bookkeeping/commit/cf0d3c44b184ffac35694541e7d1716ccf926fcc))
+* Added Attachment related DTOs and entities ([ca394a9](https://github.com/AliceO2Group/Bookkeeping/commit/ca394a94d98552e45b9231fe68af4288381ef39f))
+* Added attachment related use cases ([bae2677](https://github.com/AliceO2Group/Bookkeeping/commit/bae267757f4fe0e8ae28155504af1b3979849f64))
+* added attachments to openapi ([f1caee7](https://github.com/AliceO2Group/Bookkeeping/commit/f1caee79e39d4ec66599036e6ed48a2d30679b20))
+* added collapse feature in generic table component ([0993678](https://github.com/AliceO2Group/Bookkeeping/commit/0993678a29ce4eae517ffb20fde699dac96eedea))
+* added file and files to dtovalidator ([b2da043](https://github.com/AliceO2Group/Bookkeeping/commit/b2da04306edac271f146068cf5e0993ae83c19c0))
+* Added file uploading ([8fc1b8f](https://github.com/AliceO2Group/Bookkeeping/commit/8fc1b8f31c700fbd7a81266109879dc13fbbd0bd))
+* added index on Attachment mime type ([10c539c](https://github.com/AliceO2Group/Bookkeeping/commit/10c539c5ec70644da03df94310f0dbd49a78b713))
+* Added middleware ([60833c4](https://github.com/AliceO2Group/Bookkeeping/commit/60833c482b9e7119c89243c1de2217eb6a5a8839))
+* added middleware possibility to route builder ([099ae3c](https://github.com/AliceO2Group/Bookkeeping/commit/099ae3c6f4fe942bfe76c838da20619c289537f7))
+* added OpenID integration ([267e8fe](https://github.com/AliceO2Group/Bookkeeping/commit/267e8fe8df49b9643c6f591aeefe08616c70d97d))
+* added startsWith and endsWith filter in QueryBuilder ([47b3abc](https://github.com/AliceO2Group/Bookkeeping/commit/47b3abc9471526a50ffd2bdf1be1a85a251b6840))
+* Added tests ([bf5e660](https://github.com/AliceO2Group/Bookkeeping/commit/bf5e66082c94755fb9f5bd7e353a148c3069ae9b))
+* Added tests and test assets ([a29555b](https://github.com/AliceO2Group/Bookkeeping/commit/a29555b59825c4cdd57a0cb46ae151cd6a50a433))
+* Updated and added use cases needed for attachments ([1a9fd72](https://github.com/AliceO2Group/Bookkeeping/commit/1a9fd727cb1252e1e879facee5eb4fbc0d531f13))
+* Updated attachment database adapter and repo ([ff03b92](https://github.com/AliceO2Group/Bookkeeping/commit/ff03b9213dcfe26bb376e5cf1169cd3feecd1203))
+* updated attachment related routers and controllers ([3bbcf99](https://github.com/AliceO2Group/Bookkeeping/commit/3bbcf99e12f56849eda82b66a2dcdfcea2542f79))
+* **ui:** added Emoji hint and autocomplete ([498f8de](https://github.com/AliceO2Group/Bookkeeping/commit/498f8de363cb6cf8354a927551d7ca0e2fc2b277))
+* **ui:** added links to Jira and GitHub in profile dropdown ([be4fca8](https://github.com/AliceO2Group/Bookkeeping/commit/be4fca84528bbff87909e76b09bf7b52c705903d))
+* use OpenID data to link user to created logs ([00afc71](https://github.com/AliceO2Group/Bookkeeping/commit/00afc71bb0d742c6fc67caa78613158c50554cc0))
+
+
+### Bug Fixes
+
+* cleanup ([55980aa](https://github.com/AliceO2Group/Bookkeeping/commit/55980aab944b982b8291cd4bfad00abf23cba552))
+* cleanup of attachmentAdapter ([90a1502](https://github.com/AliceO2Group/Bookkeeping/commit/90a15022848bf9e8d9be80df4a1792e34c830508))
+* CreateTagDto can have a token in the query ([9785e7d](https://github.com/AliceO2Group/Bookkeeping/commit/9785e7d3e4aad86daba13ba0412077390efa44e4))
+* Fixed some problems ([3888955](https://github.com/AliceO2Group/Bookkeeping/commit/3888955bbb62a8151e0f4ef191538bdb046d887e))
+* Removed useless filename from DTO ([9bf91bb](https://github.com/AliceO2Group/Bookkeeping/commit/9bf91bb1e699d0fa048592fdddc8166b5769311b))
+* **docker:** updated unsatisfiable constraints ([ee3b6ee](https://github.com/AliceO2Group/Bookkeeping/commit/ee3b6ee06e480c44f1ed8d824a2e4657adefe51a))
+* **ui:** RemoteData failure can be a Framework error which are not JSON:API conform ([0ecec06](https://github.com/AliceO2Group/Bookkeeping/commit/0ecec06cd71ca60519a18259535adb86fd6522c0))
+* **ui:** set column width during loading of Log overview to prevent resizing ([5d9f7bf](https://github.com/AliceO2Group/Bookkeeping/commit/5d9f7bf684abbb81f3596a3412a8091c9e48ff07))
+* tag list of a log incomplete when filtering based tags ([3ad21f3](https://github.com/AliceO2Group/Bookkeeping/commit/3ad21f39deae93d2a3be79841c112158c86e280f))
+
 ## [0.5.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.4.0...v0.5.0) (2020-06-12)
 
 
