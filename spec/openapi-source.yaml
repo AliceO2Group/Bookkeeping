@@ -19,6 +19,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiInformation'
+  /attachments:
+    post:
+      operationId: createAttachment
+      summary: Create a new attachment on a log
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAttachments'
+      responses:
+        '201':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - attachment
+  '/attachments/{attachmentId}':
+    parameters:
+      - $ref: '#/components/parameters/AttachmentId'
+    get:
+      operationId: getAttachment
+      summary: Get one specific attachment
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - attachment
   /logs:
     get:
       operationId: listLogs
@@ -55,6 +85,51 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
+  '/logs/{logId}/attachments':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: listLogAttachments
+      summary: Get all attachments associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
+    post:
+      operationId: createLogAttachment
+      summary: Create a new attachment on a log
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAttachments'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - log
+  '/logs/{logId}/attachments/{attachmentId}':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+      - $ref: '#/components/parameters/AttachmentId'
+    get:
+      operationId: getLogAttachment
+      summary: Get one specific attachment associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/Attachment'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -227,6 +302,13 @@ paths:
         - tag
 components:
   parameters:
+    AttachmentId:
+      name: attachmentId
+      description: The id of the attached to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -271,6 +353,12 @@ components:
       schema:
         $ref: '#/components/schemas/EntityId'
   requestBodies:
+    CreateAttachments:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateAttachments'
     CreateLog:
       required: true
       content:
@@ -290,6 +378,12 @@ components:
           schema:
             $ref: '#/components/schemas/CreateTag'
   responses:
+    ArrayOfAttachments:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
     ArrayOfLogs:
       description: Expected response to a valid request.
       content:
@@ -308,6 +402,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfTagsResponse'
+    Attachment:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AttachmentResponse'
     BadRequest:
       description: Bad Request
       content:
@@ -382,6 +482,20 @@ components:
         - name
         - version
       additionalProperties: false
+    ArrayOfAttachments:
+      description: A list of attachment objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
+    ArrayOfAttachmentsResponse:
+      description: Response containing multiple attachments.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+      required:
+        - data
+      additionalProperties: false
     ArrayOfLogTrees:
       description: A list of Log tree objects.
       type: array
@@ -451,11 +565,46 @@ components:
       required:
         - data
       additionalProperties: false
+    Attachment:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - description: Describes metadata of an attachment.
+          type: object
+          properties:
+            encoding:
+              $ref: '#/components/schemas/FileEncoding'
+            mimetype:
+              $ref: '#/components/schemas/FileMimeType'
+            filename:
+              $ref: '#/components/schemas/FileName'
+            originalName:
+              $ref: '#/components/schemas/FileOriginalName'
+            path:
+              $ref: '#/components/schemas/FilePath'
+            size:
+              $ref: '#/components/schemas/FileSize'
+          additionalProperties: false
+    AttachmentResponse:
+      description: Response containing a single attachment.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Attachment'
+      required:
+        - data
+      additionalProperties: false
     CommaSeparatedEntityIds:
       description: CSV style string of EntityIds.
       type: string
       pattern: '^([1-9]+\d*,)*[1-9]+\d*$'
       example: '1,2,3'
+    CreateAttachments:
+      description: Describes an attachment
+      type: object
+      properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+      additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
@@ -567,6 +716,25 @@ components:
       required:
         - errors
       additionalProperties: false
+    FileEncoding:
+      description: Encoding used on the file.
+      type: string
+    FileMimeType:
+      description: Mime-type of a file.
+      type: string
+    FileName:
+      description: Name of a file.
+      type: string
+    FileOriginalName:
+      description: Original name of a file.
+      type: string
+    FilePath:
+      description: Path of where the file is stored.
+      type: string
+    FileSize:
+      description: Size of a file.
+      type: integer
+      minimum: 0
     FilterLogsOptions:
       description: Specifies the log related filter requirements for a request.
       type: object
