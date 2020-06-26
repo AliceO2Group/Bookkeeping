@@ -1,5 +1,8 @@
 # Docker
 
+## Windows Subsystem for Linux
+Note that there are some issue with version 2 of Windows Subsystem for Linux, so be aware. Especially the development environment has some issue due to file changes not always triggering an event inside the container.
+
 ## Production
 
 ### Base command
