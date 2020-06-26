@@ -3,6 +3,9 @@
 ## Client generation
 Reference [OpenAPITools/openapi-generator](https://github.com/OpenAPITools/openapi-generator) on how to generate a C++ (or any other language) client based on an OpenAPI specification. Note that the generated client is of course a best effort and can be incomplete or wrong.
 
+## Visualization of specification
+You can use the [Swagger Editor](https://editor.swagger.io/) to visualize the OpenAPI specification. Load the `spec/openapi.yaml` and not the `spec/openapi-source.yaml`.
+
 ## allOf and additionalProperties
 When you use `additionalProperties: false` on an `allOf` schema, it will only consider the schema where the `additionalProperties` property has been set, not the resulting merged schema.
 
