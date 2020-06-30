@@ -780,6 +780,8 @@ components:
               $ref: '#/components/schemas/LogOrigin'
             subtype:
               $ref: '#/components/schemas/LogSubtype'
+            subsystems:
+              $ref: '#/components/schemas/ArrayOfSubsystems'
             tags:
               $ref: '#/components/schemas/ArrayOfTags'
             rootLogId:

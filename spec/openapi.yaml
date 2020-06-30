@@ -1,4 +1,4 @@
-# Generated on Fri, 26 Jun 2020 12:02:07 GMT
+# Generated on Tue, 30 Jun 2020 12:15:50 GMT
 
 openapi: 3.0.0
 info:
@@ -836,6 +836,8 @@ components:
           $ref: '#/components/schemas/EntityId'
         rootLogId:
           $ref: '#/components/schemas/EntityId'
+        subsystems:
+          $ref: '#/components/schemas/ArrayOfSubsystems'
         subtype:
           $ref: '#/components/schemas/LogSubtype'
         tags:
@@ -912,6 +914,8 @@ components:
           $ref: '#/components/schemas/EntityId'
         rootLogId:
           $ref: '#/components/schemas/EntityId'
+        subsystems:
+          $ref: '#/components/schemas/ArrayOfSubsystems'
         subtype:
           $ref: '#/components/schemas/LogSubtype'
         tags:
