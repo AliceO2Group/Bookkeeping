@@ -18,7 +18,7 @@
     "@hapi/joi": "17.1.1",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
-    "mariadb": "2.4.0",
+    "mariadb": "2.4.1",
     "multer": "1.4.2",
     "sequelize": "6.2.4",
     "umzug": "2.3.0"
