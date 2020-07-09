@@ -148,26 +148,26 @@ module.exports = () => {
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
 
-        // Expect the page to have a button allowing for showing more filters
+        // Expect the page to have a button allowing for showing more tags
         const toggleFiltersButton = await page.$(buttonId);
         let buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('More filters');
+        expect(buttonText.trim()).to.equal('More tags');
 
-        // Expect the button to show at least one extra filter when clicked
+        // Expect the button to show at least one extra tag when clicked
         await page.click(buttonId);
         await page.waitFor(100);
-        let extraFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
-        expect(Boolean(extraFilter)).to.be.true;
+        let extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
+        expect(Boolean(extraTagFilter)).to.be.true;
 
-        // Expect the text to change to reflect the newly shown filters
+        // Expect the text to change to reflect the newly shown tags
         buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('Less filters');
+        expect(buttonText.trim()).to.equal('Less tags');
 
-        // Expect the button to remove the extra filter when clicked again
+        // Expect the button to remove the extra tag when clicked again
         await page.click(buttonId);
         await page.waitFor(100);
-        extraFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
-        expect(Boolean(extraFilter)).to.be.false;
+        extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
+        expect(Boolean(extraTagFilter)).to.be.false;
 
         // Close the filter tags now that we are done with them
         await page.click('#tagsFilterToggle');
