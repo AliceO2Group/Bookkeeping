@@ -180,9 +180,7 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            id: (number) => !isNaN(number),
-            date: (date) => !isNaN(Date.parse(date)),
-            time: (date) => !isNaN(Date.parse(date)),
+            created: (date) => !isNaN(Date.parse(date)),
         };
 
         // We find the headers matching the datatype keys
