@@ -81,11 +81,15 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping 2020');
     });
 
-    it('can filter logs dynamically with special operators', async () => {
+    it('can filter by logs dynamically with special operators', async () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
         const tableRows = await page.$$('table tr');
         const originalNumberOfRows = tableRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Open the filter tags
+        await page.click('#tagsFilterToggle');
+        await page.waitFor(100);
 
         // Select the first available filter and wait for the changes to be processed
         const firstCheckboxId = 'tagCheckbox1';
@@ -118,7 +122,7 @@ module.exports = () => {
         expect(secondFilteredNumberOfRows).to.equal(0);
 
         // Set the filter operation to "OR"
-        await page.click('#filterOperationRadioButtonOR');
+        await page.click('#tagFilterOperationRadioButtonOR');
         await page.waitFor(100);
 
         // Expect there now to be more rows than both the previous table and the table with only one filter
@@ -132,7 +136,7 @@ module.exports = () => {
         await page.waitFor(100);
         await page.click(`#${secondCheckboxId}`);
         await page.waitFor(100);
-        await page.click('#filterOperationRadioButtonAND');
+        await page.click('#tagFilterOperationRadioButtonAND');
         await page.waitFor(100);
 
         // Expect the total number of rows to once more equal the original total
@@ -140,30 +144,34 @@ module.exports = () => {
         expect(secondUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
     });
 
-    it('can show and hide extra filters if available', async () => {
-        const FILTERS_LIMIT = 5;
-        const buttonId = '#toggleMoreFilters';
+    it('can show and hide extra tags if available', async () => {
+        const TAGS_LIMIT = 5;
+        const buttonId = '#toggleMoreTags';
 
-        // Expect the page to have a button allowing for showing more filters
+        // Expect the page to have a button allowing for showing more tags
         const toggleFiltersButton = await page.$(buttonId);
         let buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('More filters');
+        expect(buttonText.trim()).to.equal('More tags');
 
-        // Expect the button to show at least one extra filter when clicked
+        // Expect the button to show at least one extra tag when clicked
         await page.click(buttonId);
         await page.waitFor(100);
-        let extraFilter = await page.$(`#tagCheckbox${FILTERS_LIMIT + 1}`);
-        expect(Boolean(extraFilter)).to.be.true;
+        let extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
+        expect(Boolean(extraTagFilter)).to.be.true;
 
-        // Expect the text to change to reflect the newly shown filters
+        // Expect the text to change to reflect the newly shown tags
         buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('Less filters');
+        expect(buttonText.trim()).to.equal('Less tags');
 
-        // Expect the button to remove the extra filter when clicked again
+        // Expect the button to remove the extra tag when clicked again
         await page.click(buttonId);
         await page.waitFor(100);
-        extraFilter = await page.$(`#tagCheckbox${FILTERS_LIMIT + 1}`);
-        expect(Boolean(extraFilter)).to.be.false;
+        extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
+        expect(Boolean(extraTagFilter)).to.be.false;
+
+        // Close the filter tags now that we are done with them
+        await page.click('#tagsFilterToggle');
+        await page.waitFor(100);
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -172,9 +180,7 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            id: (number) => !isNaN(number),
-            date: (date) => !isNaN(Date.parse(date)),
-            time: (date) => !isNaN(Date.parse(date)),
+            created: (date) => !isNaN(Date.parse(date)),
         };
 
         // We find the headers matching the datatype keys
