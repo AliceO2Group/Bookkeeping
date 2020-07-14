@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { RunRepository } } = require('../../../lib/database');
-const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
+const { repositories: { LogRepository } } = require('../../../lib/database');
+const { log: { GetAllRunsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
@@ -38,8 +38,8 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        for (const run of runs) {
-            expect(run.origin).to.equal('human');
+        for (const log of runs) {
+            expect(log.origin).to.equal('human');
         }
     });
 
@@ -49,17 +49,17 @@ module.exports = () => {
         const filteredResult = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
         expect(filteredResult.runs.length).to.be.greaterThan(0);
-        const [firstFilteredRun] = filteredResult.runs;
+        const [firstFilteredLog] = filteredResult.runs;
 
         const unfilteredResult = await new GetAllRunsUseCase()
             .execute();
-        const firstUnfilteredRun = unfilteredResult.runs.find((run) => run.id === firstFilteredRun.id);
+        const firstUnfilteredLog = unfilteredResult.runs.find((log) => log.id === firstFilteredLog.id);
 
-        expect(firstUnfilteredRun.tags).to.deep.equal(firstFilteredRun.tags);
+        expect(firstUnfilteredLog.tags).to.deep.equal(firstFilteredLog.tags);
     });
 
     it('should return a count that is the same as the count method of the repository', async () => {
-        const expectedCount = await RunRepository.count();
+        const expectedCount = await LogRepository.count();
 
         const { count } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
