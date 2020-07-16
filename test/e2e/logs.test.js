@@ -44,6 +44,92 @@ module.exports = () => {
                 });
         });
 
+        it('should support filtering by creation time', (done) => {
+            request(server)
+                .get('/api/logs?filter[created][from]=946684800000')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.greaterThan(1);
+
+                    done();
+                });
+        });
+
+        it('should support filtering by creation time', (done) => {
+            request(server)
+                .get('/api/logs?filter[created][from]=946771200000&filter[created][to]=1577833200000')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.equal(1);
+
+                    done();
+                });
+        });
+
+        it('should return 400 if filtering in the future', (done) => {
+            request(server)
+                .get('/api/logs?filter[created][to]=4102531200000')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    let today = new Date();
+                    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+                    [today] = today.toISOString().split('T');
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to
+                        .equal(`"query.filter.created.to" must be less than or equal to "${today}T23:59:59.999Z"`);
+
+                    done();
+                });
+        });
+
+        it('should return 400 if minimum is larger than maximum', (done) => {
+            request(server)
+                .get('/api/logs?filter[created][from]=946771200000&filter[created][to]=946684800000')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to
+                        .equal('"query.filter.created.to" must be larger than or equal to "ref:from"');
+
+                    done();
+                });
+        });
+
         it('should support filtering by tag', (done) => {
             request(server)
                 .get('/api/logs?filter[tag][values]=1&filter[tag][operation]=and')

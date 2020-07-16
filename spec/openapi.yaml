@@ -1,4 +1,4 @@
-# Generated on Tue, 30 Jun 2020 12:15:50 GMT
+# Generated on Thu, 16 Jul 2020 18:29:30 GMT
 
 openapi: 3.0.0
 info:
@@ -789,10 +789,27 @@ components:
       description: Size of a file.
       type: integer
       minimum: 0
+    FilterLogsCreatedOptions:
+      description: Specifies the creation time related filter requirements for a request.
+      type: object
+      properties:
+        from:
+          description: The earliest allowed unix timestamp for the fetched data.
+          type: integer
+          format: int64
+          example: 1577833200000
+        to:
+          description: The latest allowed unix timestamp for the fetched data.
+          type: integer
+          format: int64
+          example: 1578437999999
+      additionalProperties: false
     FilterLogsOptions:
       description: Specifies the log related filter requirements for a request.
       type: object
       properties:
+        created:
+          $ref: '#/components/schemas/FilterLogsCreatedOptions'
         origin:
           $ref: '#/components/schemas/LogOrigin'
         parentLog:
