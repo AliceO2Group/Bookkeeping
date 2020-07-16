@@ -754,6 +754,10 @@ components:
       description: Specifies the log related filter requirements for a request.
       type: object
       properties:
+        title:
+          description: Specifies the title related filter requirement for a request.
+          type: string
+          example: abc
         created:
           $ref: '#/components/schemas/FilterLogsCreatedOptions'
         tag:

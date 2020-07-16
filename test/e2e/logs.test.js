@@ -44,6 +44,46 @@ module.exports = () => {
                 });
         });
 
+        it('should support filtering by title', (done) => {
+            request(server)
+                .get('/api/logs?filter[title]=first')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.equal(1);
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the title filter is left empty', (done) => {
+            request(server)
+                .get('/api/logs?filter[title]= ')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('"query.filter.title" is not allowed to be empty');
+
+                    done();
+                });
+        });
+
         it('should support filtering by creation time', (done) => {
             request(server)
                 .get('/api/logs?filter[created][from]=946684800000')

@@ -82,21 +82,63 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping 2020');
     });
 
-    it('can filter by creation date', async () => {
+    it('can filter by log title', async () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
-        const tableRows = await page.$$('table tr');
-        originalNumberOfRows = tableRows.length - 1;
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
+        // Open the title filter
+        await page.click('#titleFilterToggle');
+        await page.waitFor(100);
+
+        // Insert some text into the filter
+        await page.type('#titleFilterText', 'entry');
+        await page.waitFor(500);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Insert some other text into the filter
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            document.getElementById('titleFilterText').value = '';
+        });
+        await page.type('#titleFilterText', 'bogusbogusbogus');
+        await page.waitFor(500);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(0);
+
+        // Clear the filter
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            document.getElementById('titleFilterText').value = '';
+        });
+        await page.waitFor(500);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Close the created at filters now that we are done with them
+        await page.click('#createdAtFilterToggle');
+        await page.waitFor(100);
+    });
+
+    it('can filter by creation date', async () => {
         // Open the created at filters
         await page.click('#createdAtFilterToggle');
         await page.waitFor(100);
 
         // Insert a minimum date into the filter
-        await page.click('#createdFilterFrom');
-        await page.waitFor(100);
         await page.type('#createdFilterFrom', '01012020');
-        await page.waitFor(1000);
+        await page.waitFor(100);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -104,10 +146,8 @@ module.exports = () => {
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert a maximum date into the filter
-        await page.click('#createdFilterTo');
-        await page.waitFor(100);
         await page.type('#createdFilterTo', '01022020');
-        await page.waitFor(1000);
+        await page.waitFor(100);
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
@@ -115,8 +155,6 @@ module.exports = () => {
         expect(secondFilteredNumberOfRows).to.equal(0);
 
         // Insert a maximum date into the filter that is invalid
-        await page.click('#createdFilterTo');
-        await page.waitFor(100);
         await page.type('#createdFilterTo', '01012000');
         await page.waitFor(100);
 
@@ -126,30 +164,12 @@ module.exports = () => {
         expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
 
         // Clear both filters
-        await page.click('#createdFilterFrom');
-        await page.waitFor(100);
-        await page.keyboard.press('Backspace');
-        await page.waitFor(100);
-        await page.keyboard.press('Tab');
-        await page.waitFor(100);
-        await page.keyboard.press('Backspace');
-        await page.waitFor(100);
-        await page.keyboard.press('Tab');
-        await page.waitFor(100);
-        await page.keyboard.press('Backspace');
-        await page.waitFor(100);
-
-        await page.click('#createdFilterTo');
-        await page.waitFor(100);
-        await page.keyboard.press('Backspace');
-        await page.waitFor(100);
-        await page.keyboard.press('Tab');
-        await page.waitFor(100);
-        await page.keyboard.press('Backspace');
-        await page.waitFor(100);
-        await page.keyboard.press('Tab');
-        await page.waitFor(100);
-        await page.keyboard.press('Backspace');
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            document.getElementById('createdFilterFrom').value = '';
+            // eslint-disable-next-line no-undef
+            document.getElementById('createdFilterTo').value = '';
+        });
         await page.waitFor(100);
 
         // Expect the total number of rows to once more equal the original total
@@ -157,8 +177,8 @@ module.exports = () => {
         const unfilteredNumberOfRows = unfilteredRows.length - 1;
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
-        // Close the created at filters now that we are done with them
-        await page.click('#createdAtFilterToggle');
+        // Close the title filter now that we are done with it
+        await page.click('#titleFilterToggle');
         await page.waitFor(100);
     });
 
