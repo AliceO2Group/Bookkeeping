@@ -114,12 +114,12 @@ module.exports = () => {
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
         expect(secondFilteredNumberOfRows).to.equal(0);
 
-        // Clear the filter
+        // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            document.getElementById('titleFilterText').value = '';
+            model.logs.resetFilters();
         });
-        await page.waitFor(500);
+        await page.waitFor(100);
 
         // Expect the total number of rows to once more equal the original total
         const unfilteredRows = await page.$$('table tr');
@@ -127,7 +127,7 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
         // Close the created at filters now that we are done with them
-        await page.click('#createdAtFilterToggle');
+        await page.click('#titleFilterToggle');
         await page.waitFor(100);
     });
 
@@ -137,6 +137,8 @@ module.exports = () => {
         await page.waitFor(100);
 
         // Insert a minimum date into the filter
+        await page.focus('#createdFilterFrom');
+        await page.waitFor(100);
         await page.type('#createdFilterFrom', '01012020');
         await page.waitFor(100);
 
@@ -146,6 +148,8 @@ module.exports = () => {
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert a maximum date into the filter
+        await page.focus('#createdFilterTo');
+        await page.waitFor(100);
         await page.type('#createdFilterTo', '01022020');
         await page.waitFor(100);
 
@@ -155,6 +159,8 @@ module.exports = () => {
         expect(secondFilteredNumberOfRows).to.equal(0);
 
         // Insert a maximum date into the filter that is invalid
+        await page.focus('#createdFilterTo');
+        await page.waitFor(100);
         await page.type('#createdFilterTo', '01012000');
         await page.waitFor(100);
 
@@ -163,22 +169,15 @@ module.exports = () => {
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
         expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
 
-        // Clear both filters
+        // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            document.getElementById('createdFilterFrom').value = '';
-            // eslint-disable-next-line no-undef
-            document.getElementById('createdFilterTo').value = '';
+            model.logs.resetFilters();
         });
         await page.waitFor(100);
 
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
-
         // Close the title filter now that we are done with it
-        await page.click('#titleFilterToggle');
+        await page.click('#createdAtFilterToggle');
         await page.waitFor(100);
     });
 
@@ -227,17 +226,11 @@ module.exports = () => {
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
 
-        // Reset the filters by deselecting both currently active checkboxes
-        await page.click(`#${firstCheckboxId}`);
-        await page.waitFor(100);
-        await page.click(`#${secondCheckboxId}`);
-        await page.waitFor(100);
-        await page.click('#tagFilterOperationRadioButtonAND');
-        await page.waitFor(100);
-
-        // Expect the total number of rows to once more equal the original total
-        const secondUnfilteredRows = await page.$$('table tr');
-        expect(secondUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.resetFilters();
+        });
     });
 
     it('can show and hide extra tags if available', async () => {
