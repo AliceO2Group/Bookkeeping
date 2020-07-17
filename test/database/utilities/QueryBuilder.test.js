@@ -105,7 +105,7 @@ module.exports = () => {
         });
 
         describe('oneOf', () => {
-            it('should return a single entity with the provided id', async () => {
+            it('should return entities with the provided id', async () => {
                 const queryBuilder = new QueryBuilder();
                 queryBuilder.where('id').oneOf('1', 2);
                 queryBuilder.orderBy('id', 'asc');
@@ -119,42 +119,80 @@ module.exports = () => {
         });
 
         describe('startsWith', () => {
-            it('should return only entities starting with "Log"', async () => {
+            it('should return only entities starting with "First"', async () => {
                 const queryBuilder = new QueryBuilder();
-                queryBuilder.where('title').startsWith('Log');
+                queryBuilder.where('title').startsWith('First');
                 queryBuilder.orderBy('id', 'asc');
 
                 const result = await LogRepository.findAll(queryBuilder);
                 expect(result).to.not.be.null;
+                result.forEach(({ title }) => {
+                    expect(title.startsWith('First')).to.be.true;
+                });
             });
 
-            it('should return only entities not starting with "Log"', async () => {
+            it('should return only entities not starting with "First"', async () => {
                 const queryBuilder = new QueryBuilder();
-                queryBuilder.where('title').not().startsWith('Log');
+                queryBuilder.where('title').not().startsWith('First');
                 queryBuilder.orderBy('id', 'asc');
 
                 const result = await LogRepository.findAll(queryBuilder);
                 expect(result).to.not.be.null;
+                result.forEach(({ title }) => {
+                    expect(title.startsWith('First')).to.be.false;
+                });
             });
         });
 
         describe('endsWith', () => {
-            it('should return only entities ending with "log"', async () => {
+            it('should return only entities ending with "entry"', async () => {
                 const queryBuilder = new QueryBuilder();
-                queryBuilder.where('title').endsWith('log');
+                queryBuilder.where('title').endsWith('entry');
                 queryBuilder.orderBy('id', 'asc');
 
                 const result = await LogRepository.findAll(queryBuilder);
                 expect(result).to.not.be.null;
+                result.forEach(({ title }) => {
+                    expect(title.endsWith('entry')).to.be.true;
+                });
             });
 
-            it('should return only entities not ending with "log"', async () => {
+            it('should return only entities not ending with "entry"', async () => {
                 const queryBuilder = new QueryBuilder();
-                queryBuilder.where('title').not().endsWith('log');
+                queryBuilder.where('title').not().endsWith('entry');
                 queryBuilder.orderBy('id', 'asc');
 
                 const result = await LogRepository.findAll(queryBuilder);
                 expect(result).to.not.be.null;
+                result.forEach(({ title }) => {
+                    expect(title.endsWith('entry')).to.be.false;
+                });
+            });
+        });
+
+        describe('substring', () => {
+            it('should return only entities containing "entr"', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('title').substring('entr');
+                queryBuilder.orderBy('id', 'asc');
+
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                result.forEach(({ title }) => {
+                    expect(title.includes('entr')).to.be.true;
+                });
+            });
+
+            it('should return only entities not containing "og"', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('title').not().substring('entr');
+                queryBuilder.orderBy('id', 'asc');
+
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                result.forEach(({ title }) => {
+                    expect(title.includes('entr')).to.be.false;
+                });
             });
         });
     });

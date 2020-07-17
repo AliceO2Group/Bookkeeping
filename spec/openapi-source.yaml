@@ -735,18 +735,41 @@ components:
       description: Size of a file.
       type: integer
       minimum: 0
+    FilterLogsCreatedOptions:
+      description: Specifies the creation time related filter requirements for a request.
+      type: object
+      properties:
+        from:
+          description: The earliest allowed unix timestamp for the fetched data.
+          type: integer
+          format: int64
+          example: 1577833200000
+        to:
+          description: The latest allowed unix timestamp for the fetched data.
+          type: integer
+          format: int64
+          example: 1578437999999
+      additionalProperties: false
     FilterLogsOptions:
       description: Specifies the log related filter requirements for a request.
       type: object
       properties:
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        author:
+          description: Name of the author.
+          type: string
+          example: John Doe
+        created:
+          $ref: '#/components/schemas/FilterLogsCreatedOptions'
+        tag:
+          $ref: '#/components/schemas/FilterLogsTagOptions'
         origin:
           $ref: '#/components/schemas/LogOrigin'
         parentLog:
           $ref: '#/components/schemas/EntityId'
         rootLog:
           $ref: '#/components/schemas/EntityId'
-        tag:
-          $ref: '#/components/schemas/FilterLogsTagOptions'
       additionalProperties: false
     FilterLogsTagOptions:
       description: Specifies the tag related filter requirements for a request.

@@ -38,6 +38,7 @@ module.exports = () => {
     let browser;
     let url;
 
+    let originalNumberOfRows;
     let table;
     let firstRowId;
     let parsedFirstRowId;
@@ -81,13 +82,148 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping 2020');
     });
 
-    it('can filter by logs dynamically with special operators', async () => {
+    it('can filter by log title', async () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
-        const tableRows = await page.$$('table tr');
-        const originalNumberOfRows = tableRows.length - 1;
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
-        // Open the filter tags
+        // Open the title filter
+        await page.click('#titleFilterToggle');
+        await page.waitFor(100);
+
+        // Insert some text into the filter
+        await page.type('#titleFilterText', 'entry');
+        await page.waitFor(500);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Insert some other text into the filter
+        await page.type('#titleFilterText', ' bogusbogusbogus');
+        await page.waitFor(500);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(0);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.resetFilters();
+        });
+        await page.waitFor(100);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Close the created at filters now that we are done with them
+        await page.click('#titleFilterToggle');
+        await page.waitFor(100);
+    });
+
+    it('can filter by log author', async () => {
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Open the author filter
+        await page.click('#authorFilterToggle');
+        await page.waitFor(100);
+
+        // Insert some text into the filter
+        await page.type('#authorFilterText', 'John');
+        await page.waitFor(500);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Insert some other text into the filter
+        await page.type('#authorFilterText', ' DoesNotExist');
+        await page.waitFor(500);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(0);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.resetFilters();
+        });
+        await page.waitFor(100);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Close the created at filters now that we are done with them
+        await page.click('#authorFilterToggle');
+        await page.waitFor(100);
+    });
+
+    it('can filter by creation date', async () => {
+        // Open the created at filters
+        await page.click('#createdAtFilterToggle');
+        await page.waitFor(100);
+
+        // Insert a minimum date into the filter
+        await page.focus('#createdFilterFrom');
+        await page.waitFor(100);
+        await page.type('#createdFilterFrom', '01012020');
+        await page.waitFor(100);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Insert a maximum date into the filter
+        await page.focus('#createdFilterTo');
+        await page.waitFor(100);
+        await page.type('#createdFilterTo', '01022020');
+        await page.waitFor(100);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(0);
+
+        // Insert a maximum date into the filter that is invalid
+        await page.focus('#createdFilterTo');
+        await page.waitFor(100);
+        await page.type('#createdFilterTo', '01012000');
+        await page.waitFor(100);
+
+        // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
+        const thirdFilteredRows = await page.$$('table tr');
+        const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
+        expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.resetFilters();
+        });
+        await page.waitFor(100);
+
+        // Close the title filter now that we are done with it
+        await page.click('#createdAtFilterToggle');
+        await page.waitFor(100);
+    });
+
+    it('can filter by logs dynamically with special operators', async () => {
+        // Open the tag filters
         await page.click('#tagsFilterToggle');
         await page.waitFor(100);
 
@@ -96,7 +232,7 @@ module.exports = () => {
         await page.click(`#${firstCheckboxId}`);
         await page.waitFor(100);
 
-        // Expect the (new) total number of rows to be less than the advertised number of rows
+        // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
@@ -131,17 +267,11 @@ module.exports = () => {
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
 
-        // Reset the filters by deselecting both currently active checkboxes
-        await page.click(`#${firstCheckboxId}`);
-        await page.waitFor(100);
-        await page.click(`#${secondCheckboxId}`);
-        await page.waitFor(100);
-        await page.click('#tagFilterOperationRadioButtonAND');
-        await page.waitFor(100);
-
-        // Expect the total number of rows to once more equal the original total
-        const secondUnfilteredRows = await page.$$('table tr');
-        expect(secondUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.resetFilters();
+        });
     });
 
     it('can show and hide extra tags if available', async () => {
@@ -169,7 +299,7 @@ module.exports = () => {
         extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.false;
 
-        // Close the filter tags now that we are done with them
+        // Close the tag filters now that we are done with them
         await page.click('#tagsFilterToggle');
         await page.waitFor(100);
     });
