@@ -755,9 +755,11 @@ components:
       type: object
       properties:
         title:
-          description: Specifies the title related filter requirement for a request.
+          $ref: '#/components/schemas/LogTitle'
+        author:
+          description: Name of the author.
           type: string
-          example: abc
+          example: John Doe
         created:
           $ref: '#/components/schemas/FilterLogsCreatedOptions'
         tag:

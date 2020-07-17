@@ -1,4 +1,4 @@
-# Generated on Thu, 16 Jul 2020 20:40:35 GMT
+# Generated on Fri, 17 Jul 2020 09:52:45 GMT
 
 openapi: 3.0.0
 info:
@@ -808,6 +808,10 @@ components:
       description: Specifies the log related filter requirements for a request.
       type: object
       properties:
+        author:
+          description: Name of the author.
+          type: string
+          example: John Doe
         created:
           $ref: '#/components/schemas/FilterLogsCreatedOptions'
         origin:
@@ -819,9 +823,7 @@ components:
         tag:
           $ref: '#/components/schemas/FilterLogsTagOptions'
         title:
-          description: Specifies the title related filter requirement for a request.
-          type: string
-          example: abc
+          $ref: '#/components/schemas/LogTitle'
       additionalProperties: false
     FilterLogsTagOptions:
       description: Specifies the tag related filter requirements for a request.
