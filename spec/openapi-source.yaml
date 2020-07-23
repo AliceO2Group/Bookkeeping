@@ -181,36 +181,36 @@ paths:
           $ref: '#/components/responses/BadRequest'
       tags:
         - run
-    '/runs/{runId}':
-      parameters:
-        - $ref: '#/components/parameters/RunId'
-      get:
-        operationId: getRunById
-        summary: Gets a run by Id
-        responses:
-          '200':
-            $ref: '#/components/responses/Run'
-          '400':
-            $ref: '#/components/responses/BadRequest'
-          '404':
-            $ref: '#/components/responses/NotFound'
-        tags:
-          - run
-    '/runs/{runId}/tags':
-      parameters:
-        - $ref: '#/components/parameters/RunId'
-      get:
-        operationId: listTagsByRunId
-        summary: Lists all tags associated with a run
-        responses:
-          '200':
-            $ref: '#/components/responses/ArrayOfTags'
-          '400':
-            $ref: '#/components/responses/BadRequest'
-          '404':
-            $ref: '#/components/responses/NotFound'
-        tags:
-          - run
+  '/runs/{runId}':
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      operationId: getRunById
+      summary: Gets a run by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - run
+  '/runs/{runId}/tags':
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      operationId: listTagsByRunId
+      summary: Lists all tags associated with a run
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - run
   /status:
     get:
       operationId: getDeployInformation
