@@ -86,28 +86,27 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            'Run Number': (number) => typeof number == 'number',
-            'Time O2 Start': (date) => !isNaN(Date.parse(date)),
-            'Time O2 End': (date) => !isNaN(Date.parse(date)),
-            'Time Trigger Start': (date) => !isNaN(Date.parse(date)),
-            'Time Trigger End': (date) => !isNaN(Date.parse(date)),
-            'Activity Id': (number) => typeof number == 'number',
-            'Run Type': (string) => typeof string == 'string',
-            'Run Quality': (string) => typeof string == 'string',
-            '# of Detector': (number) => typeof number == 'number',
-            '# of Flps': (number) => typeof number == 'number',
-            '# of Epns': (number) => typeof number == 'number',
-            '# of Subtimeframes': (number) => typeof number == 'number',
-            'ReadOut in bytes': (number) => typeof number == 'number',
+            runNumber: (number) => typeof number == 'number',
+            timeO2Start: (date) => !isNaN(Date.parse(date)),
+            timeO2End: (date) => !isNaN(Date.parse(date)),
+            timeTrgStart: (date) => !isNaN(Date.parse(date)),
+            timeTrgEnd: (date) => !isNaN(Date.parse(date)),
+            activityId: (number) => typeof number == 'number',
+            runType: (string) => typeof string == 'string',
+            runQuality: (string) => typeof string == 'string',
+            nDetectors: (number) => typeof number == 'number',
+            nFlps: (number) => typeof number == 'number',
+            nEpns: (number) => typeof number == 'number',
+            nSubtimeframes: (number) => typeof number == 'number',
+            bytesReadOut: (number) => typeof number == 'number',
         };
 
         // We find the headers matching the datatype keys
         const headers = await page.$$('th');
         const headerIndices = {};
         for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.innerText, header);
-            const matchingDatatype = Object.keys(headerDatatypes)
-                .find((key) => headerContent === key);
+            const headerContent = await page.evaluate((element) => element.id, header);
+            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
             if (matchingDatatype !== undefined) {
                 headerIndices[index] = matchingDatatype;
             }

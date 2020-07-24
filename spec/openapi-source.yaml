@@ -880,6 +880,8 @@ components:
               $ref: '#/components/schemas/ArrayOfSubsystems'
             tags:
               $ref: '#/components/schemas/ArrayOfTags'
+            replies:
+              $ref: '#/components/schemas/LogReplies'
             rootLogId:
               $ref: '#/components/schemas/EntityId'
             parentLogId:
@@ -900,6 +902,11 @@ components:
       enum:
         - human
         - process
+    LogReplies:
+      description: The amount of children of a root log.
+      type: integer
+      format: int64
+      minimum: 0
     LogResponse:
       description: Response containing a single log.
       type: object
