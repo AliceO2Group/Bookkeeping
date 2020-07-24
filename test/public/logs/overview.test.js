@@ -222,7 +222,7 @@ module.exports = () => {
         await page.waitFor(100);
     });
 
-    it('can filter by logs dynamically with special operators', async () => {
+    it('can filter by tags', async () => {
         // Open the tag filters
         await page.click('#tagsFilterToggle');
         await page.waitFor(100);
@@ -277,6 +277,10 @@ module.exports = () => {
     it('can show and hide extra tags if available', async () => {
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
+
+        // Open the tag filters again
+        await page.click('#tagsFilterToggle');
+        await page.waitFor(100);
 
         // Expect the page to have a button allowing for showing more tags
         const toggleFiltersButton = await page.$(buttonId);
@@ -411,6 +415,12 @@ module.exports = () => {
         await page.waitFor(100);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
+
+        // Revert changes for next test
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.setLogsPerPage(10);
+        });
     });
 
     it('can create a log from the overview page', async () => {
@@ -447,7 +457,7 @@ module.exports = () => {
         // Return the page to home
         const buttonHame = await page.$('#home');
         await buttonHame.evaluate((button) => button.click());
-        await page.waitFor(150);
+        await page.waitFor(250);
 
         // Ensure you are at the overview page again
         const doesTableExist = await page.$$('tr') ? true : false;
@@ -509,9 +519,45 @@ module.exports = () => {
         // We expect the entry page to have the same id as the id from the log overview
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitFor(200);
+        await page.waitFor(500);
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
+    });
+
+    it('does not reset pagination filters when navigating away', async () => {
+        // Go back to the home page
+        await page.click('#home');
+        await page.waitFor(100);
+
+        // Override the amount of logs visible per page manually
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.setLogsPerPage(1);
+        });
+        await page.waitFor(100);
+
+        // Go to the second page of "logs"
+        const secondPageButton = await page.$('#page2');
+        await secondPageButton.evaluate((button) => button.click());
+        await page.waitFor(100);
+
+        // Navigate to a log detail page
+        table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const row = await page.$(`tr#${firstRowId}`);
+        await row.evaluate((row) => row.click());
+        await page.waitFor(500);
+
+        // Go back to the home page again
+        await page.goBack();
+        await page.waitFor(100);
+
+        // Expect the pagination to still be on page two
+        const firstPageButton = await page.$('#page1');
+        const firstPageButtonClass = await page.evaluate((element) => element.className, firstPageButton);
+        const secondPageButtonClass = await page.evaluate((element) => element.className, secondPageButton);
+        expect(firstPageButtonClass).to.not.include('selected');
+        expect(secondPageButtonClass).to.include('selected');
     });
 };
