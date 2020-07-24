@@ -1,4 +1,4 @@
-# Generated on Thu, 23 Jul 2020 11:37:33 GMT
+# Generated on Fri, 24 Jul 2020 10:11:41 GMT
 
 openapi: 3.0.0
 info:
@@ -1223,7 +1223,7 @@ components:
       type: integer
       format: int64
     RunBytesTimeframe_builder:
-      description: Not description created yet.
+      description: No description created yet.
       type: integer
       format: int64
     RunDetectors:

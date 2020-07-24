@@ -1109,7 +1109,7 @@ components:
       type: integer
       format: int64
     RunBytesTimeframe_builder:
-      description: Not description created yet.
+      description: No description created yet.
       type: integer
       format: int64
     RunDetectors:
