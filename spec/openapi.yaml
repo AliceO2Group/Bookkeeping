@@ -1,4 +1,4 @@
-# Generated on Fri, 24 Jul 2020 10:11:41 GMT
+# Generated on Tue, 28 Jul 2020 18:18:16 GMT
 
 openapi: 3.0.0
 info:
@@ -1151,40 +1151,40 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        activityId:
+          $ref: '#/components/schemas/RunActivityId'
+        bytesReadOut:
+          $ref: '#/components/schemas/RunBytesReadOut'
+        bytesTimeframe_builder:
+          $ref: '#/components/schemas/RunBytesTimeframe_builder'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
         id:
           $ref: '#/components/schemas/EntityId'
+        nDetectors:
+          $ref: '#/components/schemas/RunDetectors'
+        nEpns:
+          $ref: '#/components/schemas/RunEpns'
+        nFlps:
+          $ref: '#/components/schemas/RunFlps'
+        nSubtimeframes:
+          $ref: '#/components/schemas/RunSubtimeframes'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
-          time02Start:
-            $ref: '#/components/schemas/Run02Start'
-          time02End:
-            $ref: '#/components/schemas/Run02End'
-          timeTrgStart:
-            $ref: '#/components/schemas/RunTrgStart'
-          timeTrgEnd:
-            $ref: '#/components/schemas/RunTrgEnd'
-          activityId:
-            $ref: '#/components/schemas/RunActivityId'
-          runType:
-            $ref: '#/components/schemas/RunType'
-          runQuality:
-            $ref: '#/components/schemas/RunQuality'
-          nDetectors:
-            $ref: '#/components/schemas/RunDetectors'
-          nFlps:
-            $ref: '#/components/schemas/RunFlps'
-          nEpns:
-            $ref: '#/components/schemas/RunEpns'
-          nSubtimeframes:
-            $ref: '#/components/schemas/RunSubtimeframes'
-          bytesReadOut:
-            $ref: '#/components/schemas/RunBytesReadOut'
-          bytesTimeframe_builder:
-            $ref: '#/components/schemas/RunBytesTimeframe_builder'
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+        runType:
+          $ref: '#/components/schemas/RunType'
+        time02End:
+          $ref: '#/components/schemas/Run02End'
+        time02Start:
+          $ref: '#/components/schemas/Run02Start'
+        timeTrgEnd:
+          $ref: '#/components/schemas/RunTrgEnd'
+        timeTrgStart:
+          $ref: '#/components/schemas/RunTrgStart'
         updateAt:
           description: Unix timestamp when this entity was last updated.
           type: integer

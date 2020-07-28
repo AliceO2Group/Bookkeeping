@@ -1050,32 +1050,32 @@ components:
           properties:
             runNumber:
               $ref: '#/components/schemas/RunNumber'
-              time02Start:
-                $ref: '#/components/schemas/Run02Start'
-              time02End:
-                $ref: '#/components/schemas/Run02End'
-              timeTrgStart:
-                $ref: '#/components/schemas/RunTrgStart'
-              timeTrgEnd:
-                $ref: '#/components/schemas/RunTrgEnd'
-              activityId:
-                $ref: '#/components/schemas/RunActivityId'
-              runType:
-                $ref: '#/components/schemas/RunType'
-              runQuality:
-                $ref: '#/components/schemas/RunQuality'
-              nDetectors:
-                $ref: '#/components/schemas/RunDetectors'
-              nFlps:
-                $ref: '#/components/schemas/RunFlps'
-              nEpns:
-                $ref: '#/components/schemas/RunEpns'
-              nSubtimeframes:
-                $ref: '#/components/schemas/RunSubtimeframes'
-              bytesReadOut:
-                $ref: '#/components/schemas/RunBytesReadOut'
-              bytesTimeframe_builder:
-                $ref: '#/components/schemas/RunBytesTimeframe_builder'
+            time02Start:
+              $ref: '#/components/schemas/Run02Start'
+            time02End:
+              $ref: '#/components/schemas/Run02End'
+            timeTrgStart:
+              $ref: '#/components/schemas/RunTrgStart'
+            timeTrgEnd:
+              $ref: '#/components/schemas/RunTrgEnd'
+            activityId:
+              $ref: '#/components/schemas/RunActivityId'
+            runType:
+              $ref: '#/components/schemas/RunType'
+            runQuality:
+              $ref: '#/components/schemas/RunQuality'
+            nDetectors:
+              $ref: '#/components/schemas/RunDetectors'
+            nFlps:
+              $ref: '#/components/schemas/RunFlps'
+            nEpns:
+              $ref: '#/components/schemas/RunEpns'
+            nSubtimeframes:
+              $ref: '#/components/schemas/RunSubtimeframes'
+            bytesReadOut:
+              $ref: '#/components/schemas/RunBytesReadOut'
+            bytesTimeframe_builder:
+              $ref: '#/components/schemas/RunBytesTimeframe_builder'
           required:
             - runNumber
             - time02Start

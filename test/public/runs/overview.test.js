@@ -40,7 +40,6 @@ module.exports = () => {
 
     let table;
     let firstRowId;
-    let parsedFirstRowId;
 
     before(async () => {
         browser = await puppeteer.launch({ args: ['--no-sandbox'] });
