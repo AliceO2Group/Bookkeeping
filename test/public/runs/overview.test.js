@@ -87,7 +87,20 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            created: (date) => !isNaN(Date.parse(date)),
+            'Run Number': (number) => typeof number == 'number',
+            'Time O2 Start': (date) => !isNaN(Date.parse(date)),
+            'Time O2 End': (date) => !isNaN(Date.parse(date)),
+            'Time Trigger Start': (date) => !isNaN(Date.parse(date)),
+            'Time Trigger End': (date) => !isNaN(Date.parse(date)),
+            'Activity Id': (number) => typeof number == 'number',
+            'Run Type': (string) => typeof string == 'string',
+            'Run Quality': (string) => typeof string == 'string',
+            '# of Detector': (number) => typeof number == 'number',
+            '# of Flps': (number) => typeof number == 'number',
+            '# of Epns': (number) => typeof number == 'number',
+            '# of Subtimeframes': (number) => typeof number == 'number',
+            'ReadOut in bytes': (number) => typeof number == 'number',
+            'Timeframe in bytes': (number) => typeof number == 'number',
         };
 
         // We find the headers matching the datatype keys
@@ -96,7 +109,7 @@ module.exports = () => {
         for (const [index, header] of headers.entries()) {
             const headerContent = await page.evaluate((element) => element.innerText, header);
             const matchingDatatype = Object.keys(headerDatatypes)
-                .find((key) => headerContent.toLowerCase().includes(key));
+                .find((key) => headerContent === key);
             if (matchingDatatype !== undefined) {
                 headerIndices[index] = matchingDatatype;
             }

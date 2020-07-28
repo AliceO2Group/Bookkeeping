@@ -11,26 +11,26 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetLogUseCase } } = require('../../../lib/usecases');
-const { dtos: { GetLogDto } } = require('../../../lib/domain');
+const { run: { GetRunUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetRunDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    let getLogDto;
+    let getRunDto;
 
     beforeEach(async () => {
-        getLogDto = await GetLogDto.validateAsync({
+        getRunDto = await GetRunDto.validateAsync({
             params: {
-                logId: 1,
+                runId: 1,
             },
         });
     });
 
     it('should return an object that has the `id` property', async () => {
-        const result = await new GetLogUseCase()
-            .execute(getLogDto);
+        const result = await new GetRunUseCase()
+            .execute(getRunDto);
 
         expect(result).to.have.ownProperty('id');
         expect(result.id).to.equal(1);
