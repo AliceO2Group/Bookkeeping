@@ -1,4 +1,4 @@
-# Generated on Tue, 28 Jul 2020 18:18:16 GMT
+# Generated on Tue, 28 Jul 2020 18:23:39 GMT
 
 openapi: 3.0.0
 info:
@@ -1155,8 +1155,6 @@ components:
           $ref: '#/components/schemas/RunActivityId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
-        bytesTimeframe_builder:
-          $ref: '#/components/schemas/RunBytesTimeframe_builder'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
@@ -1192,7 +1190,6 @@ components:
       required:
         - activityId
         - bytesReadOut
-        - bytesTimeframe_builder
         - id
         - nDetectors
         - nEpns
@@ -1220,10 +1217,6 @@ components:
       format: int64
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
-      type: integer
-      format: int64
-    RunBytesTimeframe_builder:
-      description: No description created yet.
       type: integer
       format: int64
     RunDetectors:

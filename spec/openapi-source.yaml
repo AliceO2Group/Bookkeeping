@@ -1074,8 +1074,6 @@ components:
               $ref: '#/components/schemas/RunSubtimeframes'
             bytesReadOut:
               $ref: '#/components/schemas/RunBytesReadOut'
-            bytesTimeframe_builder:
-              $ref: '#/components/schemas/RunBytesTimeframe_builder'
           required:
             - runNumber
             - time02Start
@@ -1090,7 +1088,6 @@ components:
             - nEpns
             - nSubtimeframes
             - bytesReadOut
-            - bytesTimeframe_builder
           additionalProperties: false
     Run02Start:
       description: Unix timestamp when this entity was created.
@@ -1106,10 +1103,6 @@ components:
       format: int64
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
-      type: integer
-      format: int64
-    RunBytesTimeframe_builder:
-      description: No description created yet.
       type: integer
       format: int64
     RunDetectors:

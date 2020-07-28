@@ -99,7 +99,6 @@ module.exports = () => {
             '# of Epns': (number) => typeof number == 'number',
             '# of Subtimeframes': (number) => typeof number == 'number',
             'ReadOut in bytes': (number) => typeof number == 'number',
-            'Timeframe in bytes': (number) => typeof number == 'number',
         };
 
         // We find the headers matching the datatype keys
