@@ -69,7 +69,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(url);
+        const response = await page.goto(`${url}?page=run-overview`);
         await page.waitFor(100);
 
         // We expect the page to return the correct status code, making sure the server is running properly
