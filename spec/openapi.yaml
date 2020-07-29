@@ -1,4 +1,4 @@
-# Generated on Wed, 29 Jul 2020 13:14:46 GMT
+# Generated on Wed, 29 Jul 2020 16:40:00 GMT
 
 openapi: 3.0.0
 info:
@@ -1198,8 +1198,8 @@ components:
         - runNumber
         - runQuality
         - runType
-        - time02End
-        - time02Start
+        - timeO2End
+        - timeO2Start
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false

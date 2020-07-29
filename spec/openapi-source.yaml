@@ -1076,8 +1076,8 @@ components:
               $ref: '#/components/schemas/RunBytesReadOut'
           required:
             - runNumber
-            - time02Start
-            - time02End
+            - timeO2Start
+            - timeO2End
             - timeTrgStart
             - timeTrgEnd
             - activityId
