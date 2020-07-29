@@ -1050,10 +1050,10 @@ components:
           properties:
             runNumber:
               $ref: '#/components/schemas/RunNumber'
-            time02Start:
-              $ref: '#/components/schemas/Run02Start'
-            time02End:
-              $ref: '#/components/schemas/Run02End'
+            timeO2Start:
+              $ref: '#/components/schemas/RunO2Start'
+            timeO2End:
+              $ref: '#/components/schemas/RunO2End'
             timeTrgStart:
               $ref: '#/components/schemas/RunTrgStart'
             timeTrgEnd:
@@ -1089,14 +1089,6 @@ components:
             - nSubtimeframes
             - bytesReadOut
           additionalProperties: false
-    Run02Start:
-      description: Unix timestamp when this entity was created.
-      type: integer
-      format: int64
-    Run02End:
-      description: Unix timestamp when this entity was created.
-      type: integer
-      format: int64
     RunActivityId:
       description: The unique identifier of this entity.
       type: integer
@@ -1119,6 +1111,14 @@ components:
       format: int64
     RunNumber:
       description: The unique identifier of this entity.
+      type: integer
+      format: int64
+    RunO2End:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+    RunO2Start:
+      description: Unix timestamp when this entity was created.
       type: integer
       format: int64
     RunOrigin:

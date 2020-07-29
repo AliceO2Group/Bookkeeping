@@ -1,4 +1,4 @@
-# Generated on Tue, 28 Jul 2020 18:23:39 GMT
+# Generated on Wed, 29 Jul 2020 13:14:46 GMT
 
 openapi: 3.0.0
 info:
@@ -1175,10 +1175,10 @@ components:
           $ref: '#/components/schemas/RunQuality'
         runType:
           $ref: '#/components/schemas/RunType'
-        time02End:
-          $ref: '#/components/schemas/Run02End'
-        time02Start:
-          $ref: '#/components/schemas/Run02Start'
+        timeO2End:
+          $ref: '#/components/schemas/RunO2End'
+        timeO2Start:
+          $ref: '#/components/schemas/RunO2Start'
         timeTrgEnd:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
@@ -1203,14 +1203,6 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    Run02Start:
-      description: Unix timestamp when this entity was created.
-      type: integer
-      format: int64
-    Run02End:
-      description: Unix timestamp when this entity was created.
-      type: integer
-      format: int64
     RunActivityId:
       description: The unique identifier of this entity.
       type: integer
@@ -1233,6 +1225,14 @@ components:
       format: int64
     RunNumber:
       description: The unique identifier of this entity.
+      type: integer
+      format: int64
+    RunO2End:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+    RunO2Start:
+      description: Unix timestamp when this entity was created.
       type: integer
       format: int64
     RunOrigin:
