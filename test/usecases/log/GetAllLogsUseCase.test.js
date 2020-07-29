@@ -11,58 +11,58 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { RunRepository } } = require('../../../lib/database');
-const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
-const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
+const { repositories: { LogRepository } } = require('../../../lib/database');
+const { log: { GetAllLogsUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetAllLogsDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    let getAllRunsDto;
+    let getAllLogsDto;
 
     beforeEach(async () => {
-        getAllRunsDto = await GetAllRunsDto.validateAsync({});
+        getAllLogsDto = await GetAllLogsDto.validateAsync({});
     });
 
     it('should return an array', async () => {
-        const { runs } = await new GetAllRunsUseCase()
+        const { logs } = await new GetAllLogsUseCase()
             .execute();
 
-        expect(runs).to.be.an('array');
+        expect(logs).to.be.an('array');
     });
 
-    it('should return an array, only containing human originated runs', async () => {
-        getAllRunsDto.query = { filter: { origin: 'human' } };
-        const { runs } = await new GetAllRunsUseCase()
-            .execute(getAllRunsDto);
+    it('should return an array, only containing human originated logs', async () => {
+        getAllLogsDto.query = { filter: { origin: 'human' } };
+        const { logs } = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
 
-        expect(runs).to.be.an('array');
-        for (const run of runs) {
-            expect(run.origin).to.equal('human');
+        expect(logs).to.be.an('array');
+        for (const log of logs) {
+            expect(log.origin).to.equal('human');
         }
     });
 
-    it('should return runs with a full tag collection regardless of filter', async () => {
-        getAllRunsDto.query = { filter: { tag: { values: [1], operation: 'or' } } };
+    it('should return logs with a full tag collection regardless of filter', async () => {
+        getAllLogsDto.query = { filter: { tag: { values: [1], operation: 'or' } } };
 
-        const filteredResult = await new GetAllRunsUseCase()
-            .execute(getAllRunsDto);
-        expect(filteredResult.runs.length).to.be.greaterThan(0);
-        const [firstFilteredRun] = filteredResult.runs;
+        const filteredResult = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
+        expect(filteredResult.logs.length).to.be.greaterThan(0);
+        const [firstFilteredLog] = filteredResult.logs;
 
-        const unfilteredResult = await new GetAllRunsUseCase()
+        const unfilteredResult = await new GetAllLogsUseCase()
             .execute();
-        const firstUnfilteredRun = unfilteredResult.runs.find((run) => run.id === firstFilteredRun.id);
+        const firstUnfilteredLog = unfilteredResult.logs.find((log) => log.id === firstFilteredLog.id);
 
-        expect(firstUnfilteredRun.tags).to.deep.equal(firstFilteredRun.tags);
+        expect(firstUnfilteredLog.tags).to.deep.equal(firstFilteredLog.tags);
     });
 
     it('should return a count that is the same as the count method of the repository', async () => {
-        const expectedCount = await RunRepository.count();
+        const expectedCount = await LogRepository.count();
 
-        const { count } = await new GetAllRunsUseCase()
-            .execute(getAllRunsDto);
+        const { count } = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
 
         expect(count).to.equal(expectedCount);
     });
