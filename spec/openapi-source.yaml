@@ -1146,11 +1146,11 @@ components:
       description: Total number of subtimeframes processed by the O2 system.
       type: integer
       format: int64
-    RunTrgStart:
+    RunTrgEnd:
       description: Unix timestamp when this entity was created.
       type: integer
       format: int64
-    RunTrgEnd:
+    RunTrgStart:
       description: Unix timestamp when this entity was created.
       type: integer
       format: int64
