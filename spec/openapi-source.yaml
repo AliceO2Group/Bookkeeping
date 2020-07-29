@@ -196,21 +196,6 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - run
-  '/runs/{runId}/tags':
-    parameters:
-      - $ref: '#/components/parameters/RunId'
-    get:
-      operationId: listTagsByRunId
-      summary: Lists all tags associated with a run
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfTags'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      tags:
-        - run
   /status:
     get:
       operationId: getDeployInformation

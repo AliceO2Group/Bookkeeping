@@ -1,4 +1,4 @@
-# Generated on Wed, 29 Jul 2020 16:47:09 GMT
+# Generated on Wed, 29 Jul 2020 17:25:20 GMT
 
 openapi: 3.0.0
 info:
@@ -216,23 +216,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Run'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-      tags:
-        - run
-  '/runs/{runId}/tags':
-    parameters:
-      - $ref: '#/components/parameters/RunId'
-    get:
-      operationId: listTagsByRunId
-      summary: Lists all tags associated with a run
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfTags'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
