@@ -172,8 +172,6 @@ paths:
       summary: List all runs
       parameters:
         - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/FilterRuns'
-        - $ref: '#/components/parameters/SortRuns'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfRuns'
@@ -346,13 +344,6 @@ components:
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
       style: deepObject
-    FilterRuns:
-      name: filter
-      description: Specifies the filter requirements.
-      in: query
-      schema:
-        $ref: '#/components/schemas/FilterRunsOptions'
-      style: deepObject
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -381,14 +372,6 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/SortLogsOptions'
-      style: deepObject
-    SortRuns:
-      in: query
-      name: sort
-      description: Specifies the sorting requirements.
-      required: false
-      schema:
-        $ref: '#/components/schemas/SortRunsOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -876,35 +859,6 @@ components:
         - values
         - operation
       additionalProperties: false
-    FilterRunsOptions:
-      description: Specifies the run related filter requirements for a request.
-      type: object
-      properties:
-        origin:
-          $ref: '#/components/schemas/RunOrigin'
-        parentLog:
-          $ref: '#/components/schemas/EntityId'
-        rootLog:
-          $ref: '#/components/schemas/EntityId'
-        tag:
-          $ref: '#/components/schemas/FilterRunsTagOptions'
-      additionalProperties: false
-    FilterRunsTagOptions:
-      description: Specifies the tag related filter requirements for a request.
-      type: object
-      properties:
-        values:
-          $ref: '#/components/schemas/CommaSeparatedEntityIds'
-        operation:
-          description: The operation indicating the relation between the data.
-          type: string
-          enum:
-            - and
-            - or
-      required:
-        - values
-        - operation
-      additionalProperties: false
     Log:
       allOf:
         - $ref: '#/components/schemas/Entity'
@@ -1161,15 +1115,6 @@ components:
       enum:
         - asc
         - desc
-    SortRunsOptions:
-      description: Specifies the sorting requirements of a request.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/SortOrder'
-        text:
-          $ref: '#/components/schemas/SortOrder'
-      additionalProperties: false
     Subsystem:
       allOf:
         - $ref: '#/components/schemas/Entity'

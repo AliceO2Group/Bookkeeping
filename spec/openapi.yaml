@@ -1,4 +1,4 @@
-# Generated on Wed, 29 Jul 2020 17:25:20 GMT
+# Generated on Wed, 29 Jul 2020 18:18:17 GMT
 
 openapi: 3.0.0
 info:
@@ -196,8 +196,6 @@ paths:
       summary: List all runs
       parameters:
         - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/FilterRuns'
-        - $ref: '#/components/parameters/SortRuns'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfRuns'
@@ -394,13 +392,6 @@ components:
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
       style: deepObject
-    FilterRuns:
-      name: filter
-      description: Specifies the filter requirements.
-      in: query
-      schema:
-        $ref: '#/components/schemas/FilterRunsOptions'
-      style: deepObject
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -429,14 +420,6 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/SortLogsOptions'
-      style: deepObject
-    SortRuns:
-      in: query
-      name: sort
-      description: Specifies the sorting requirements.
-      required: false
-      schema:
-        $ref: '#/components/schemas/SortRunsOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -934,35 +917,6 @@ components:
         - operation
         - values
       additionalProperties: false
-    FilterRunsOptions:
-      description: Specifies the run related filter requirements for a request.
-      type: object
-      properties:
-        origin:
-          $ref: '#/components/schemas/RunOrigin'
-        parentLog:
-          $ref: '#/components/schemas/EntityId'
-        rootLog:
-          $ref: '#/components/schemas/EntityId'
-        tag:
-          $ref: '#/components/schemas/FilterRunsTagOptions'
-      additionalProperties: false
-    FilterRunsTagOptions:
-      description: Specifies the tag related filter requirements for a request.
-      type: object
-      properties:
-        operation:
-          description: The operation indicating the relation between the data.
-          type: string
-          enum:
-            - and
-            - or
-        values:
-          $ref: '#/components/schemas/CommaSeparatedEntityIds'
-      required:
-        - operation
-        - values
-      additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1273,15 +1227,6 @@ components:
       enum:
         - asc
         - desc
-    SortRunsOptions:
-      description: Specifies the sorting requirements of a request.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/SortOrder'
-        text:
-          $ref: '#/components/schemas/SortOrder'
-      additionalProperties: false
     Subsystem:
       description: A label attached to something for the purpose of identification.
       type: object
