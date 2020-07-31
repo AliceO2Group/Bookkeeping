@@ -11,20 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const attachment = require('./attachment');
-const log = require('./log');
-const run = require('./run');
-const server = require('./server');
-const subsystem = require('./subsystem');
-const tag = require('./tag');
-const user = require('./user');
+const OverviewSuite = require('./overview.test');
 
-module.exports = {
-    attachment,
-    log,
-    run,
-    server,
-    subsystem,
-    tag,
-    user,
+module.exports = () => {
+    describe('Overview Page', OverviewSuite);
 };

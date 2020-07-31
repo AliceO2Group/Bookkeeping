@@ -1,4 +1,4 @@
-# Generated on Fri, 17 Jul 2020 09:52:45 GMT
+# Generated on Fri, 31 Jul 2020 08:47:05 GMT
 
 openapi: 3.0.0
 info:
@@ -64,7 +64,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Pagination'
         - $ref: '#/components/parameters/FilterLogs'
-        - $ref: '#/components/parameters/SortLogs'
+        - $ref: '#/components/parameters/Sorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
@@ -190,6 +190,39 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
+  /runs:
+    get:
+      operationId: listRuns
+      summary: List all runs
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+        - $ref: '#/components/parameters/Sorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfRuns'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+  '/runs/{runId}':
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      operationId: getRunById
+      summary: Gets a run by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /status:
     get:
       operationId: getDeployInformation
@@ -374,13 +407,20 @@ components:
       schema:
         $ref: '#/components/schemas/PaginationOptions'
       style: deepObject
-    SortLogs:
+    RunId:
+      name: runId
+      description: The id of the run to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    Sorting:
       in: query
       name: sort
       description: Specifies the sorting requirements.
       required: false
       schema:
-        $ref: '#/components/schemas/SortLogsOptions'
+        $ref: '#/components/schemas/SortOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -434,6 +474,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfRuns:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfRunsResponse'
     ArrayOfSubsystems:
       description: Expected response to a valid request.
       content:
@@ -482,6 +528,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Run:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RunResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
@@ -563,6 +615,31 @@ components:
       additionalProperties: false
     ArrayOfLogsResponseMeta:
       description: The metadata related to an array of logs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfRuns:
+      description: A list of Run objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Run'
+    ArrayOfRunsResponse:
+      description: Response containing multiple runs.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfRuns'
+        meta:
+          $ref: '#/components/schemas/ArrayOfRunsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfRunsResponseMeta:
+      description: The metadata related to an array of runs response.
       type: object
       properties:
         page:
@@ -1008,7 +1085,135 @@ components:
         offset:
           $ref: '#/components/schemas/PaginationOffset'
       additionalProperties: false
-    SortLogsOptions:
+    Run:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        activityId:
+          $ref: '#/components/schemas/RunActivityId'
+        bytesReadOut:
+          $ref: '#/components/schemas/RunBytesReadOut'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        id:
+          $ref: '#/components/schemas/EntityId'
+        nDetectors:
+          $ref: '#/components/schemas/RunDetectors'
+        nEpns:
+          $ref: '#/components/schemas/RunEpns'
+        nFlps:
+          $ref: '#/components/schemas/RunFlps'
+        nSubtimeframes:
+          $ref: '#/components/schemas/RunSubtimeframes'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+        runType:
+          $ref: '#/components/schemas/RunType'
+        timeO2End:
+          $ref: '#/components/schemas/RunO2End'
+        timeO2Start:
+          $ref: '#/components/schemas/RunO2Start'
+        timeTrgEnd:
+          $ref: '#/components/schemas/RunTrgEnd'
+        timeTrgStart:
+          $ref: '#/components/schemas/RunTrgStart'
+        updateAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+      required:
+        - activityId
+        - bytesReadOut
+        - id
+        - nDetectors
+        - nEpns
+        - nFlps
+        - nSubtimeframes
+        - runNumber
+        - runQuality
+        - runType
+        - timeO2End
+        - timeO2Start
+        - timeTrgEnd
+        - timeTrgStart
+      additionalProperties: false
+    RunActivityId:
+      description: The unique identifier of this entity.
+      type: integer
+      format: int64
+    RunBytesReadOut:
+      description: Total data volume read out from the detectors by the O2 system in bytes.
+      type: integer
+      format: int64
+    RunDetectors:
+      description: The amount of detectors in a single run.
+      type: integer
+      format: int64
+    RunEpns:
+      description: The amount of Epns nodes in a single run.
+      type: integer
+      format: int64
+    RunFlps:
+      description: The amount of Flps nodes in a single run.
+      type: integer
+      format: int64
+    RunNumber:
+      description: The unique identifier of this entity.
+      type: integer
+      format: int64
+    RunO2End:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+    RunO2Start:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+    RunOrigin:
+      description: Type of creator.
+      type: string
+      enum:
+        - process
+    RunQuality:
+      description: Specifies the type of run.
+      type: string
+      enum:
+        - good
+        - bad
+        - unknown
+    RunResponse:
+      description: Response containing a single run.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Run'
+      required:
+        - data
+      additionalProperties: false
+    RunSubtimeframes:
+      description: Total number of subtimeframes processed by the O2 system.
+      type: integer
+      format: int64
+    RunTrgEnd:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+    RunTrgStart:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+    RunType:
+      description: Specifies the type of run.
+      type: string
+      enum:
+        - physics
+        - cosmics
+        - technical
+    SortOptions:
       description: Specifies the sorting requirements of a request.
       type: object
       properties:
