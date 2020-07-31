@@ -172,6 +172,7 @@ paths:
       summary: List all runs
       parameters:
         - $ref: '#/components/parameters/Pagination'
+        - $ref: '#/components/parameters/Sorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfRuns'
@@ -365,13 +366,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
-    SortLogs:
+    Sorting:
       in: query
       name: sort
       description: Specifies the sorting requirements.
       required: false
       schema:
-        $ref: '#/components/schemas/SortLogsOptions'
+        $ref: '#/components/schemas/SortOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -1100,7 +1101,7 @@ components:
         - physics
         - cosmics
         - technical
-    SortLogsOptions:
+    SortOptions:
       description: Specifies the sorting requirements of a request.
       type: object
       properties:

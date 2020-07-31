@@ -11,7 +11,6 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { RunRepository } } = require('../../../lib/database');
 const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
 const chai = require('chai');
@@ -41,29 +40,5 @@ module.exports = () => {
         for (const run of runs) {
             expect(run.origin).to.equal('human');
         }
-    });
-
-    it('should return runs with a full tag collection regardless of filter', async () => {
-        getAllRunsDto.query = { filter: { tag: { values: [1], operation: 'or' } } };
-
-        const filteredResult = await new GetAllRunsUseCase()
-            .execute(getAllRunsDto);
-        expect(filteredResult.runs.length).to.be.greaterThan(0);
-        const [firstFilteredRun] = filteredResult.runs;
-
-        const unfilteredResult = await new GetAllRunsUseCase()
-            .execute();
-        const firstUnfilteredRun = unfilteredResult.runs.find((run) => run.id === firstFilteredRun.id);
-
-        expect(firstUnfilteredRun.tags).to.deep.equal(firstFilteredRun.tags);
-    });
-
-    it('should return a count that is the same as the count method of the repository', async () => {
-        const expectedCount = await RunRepository.count();
-
-        const { count } = await new GetAllRunsUseCase()
-            .execute(getAllRunsDto);
-
-        expect(count).to.equal(expectedCount);
     });
 };
