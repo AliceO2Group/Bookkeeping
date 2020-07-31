@@ -56,7 +56,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Pagination'
         - $ref: '#/components/parameters/FilterLogs'
-        - $ref: '#/components/parameters/SortLogs'
+        - $ref: '#/components/parameters/Sorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
