@@ -1,4 +1,4 @@
-# Generated on Fri, 31 Jul 2020 08:47:05 GMT
+# Generated on Fri, 31 Jul 2020 17:20:46 GMT
 
 openapi: 3.0.0
 info:
@@ -622,6 +622,11 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunNumbers:
+      description: A list of Run numbers.
+      type: array
+      items:
+        $ref: '#/components/schemas/RunNumber'
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -938,6 +943,8 @@ components:
           $ref: '#/components/schemas/LogReplies'
         rootLogId:
           $ref: '#/components/schemas/EntityId'
+        runs:
+          $ref: '#/components/schemas/ArrayOfRunNumbers'
         subsystems:
           $ref: '#/components/schemas/ArrayOfSubsystems'
         subtype:
@@ -1023,6 +1030,8 @@ components:
           $ref: '#/components/schemas/LogReplies'
         rootLogId:
           $ref: '#/components/schemas/EntityId'
+        runs:
+          $ref: '#/components/schemas/ArrayOfRunNumbers'
         subsystems:
           $ref: '#/components/schemas/ArrayOfSubsystems'
         subtype:

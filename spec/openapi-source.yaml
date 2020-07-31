@@ -574,6 +574,11 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunNumbers:
+      description: A list of Run numbers.
+      type: array
+      items:
+        $ref: '#/components/schemas/RunNumber'
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -876,10 +881,12 @@ components:
               $ref: '#/components/schemas/LogOrigin'
             subtype:
               $ref: '#/components/schemas/LogSubtype'
-            subsystems:
-              $ref: '#/components/schemas/ArrayOfSubsystems'
             tags:
               $ref: '#/components/schemas/ArrayOfTags'
+            runs:
+              $ref: '#/components/schemas/ArrayOfRunNumbers'
+            subsystems:
+              $ref: '#/components/schemas/ArrayOfSubsystems'
             replies:
               $ref: '#/components/schemas/LogReplies'
             rootLogId:
