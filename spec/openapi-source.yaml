@@ -574,11 +574,6 @@ components:
       required:
         - page
       additionalProperties: false
-    ArrayOfRunNumbers:
-      description: A list of Run numbers.
-      type: array
-      items:
-        $ref: '#/components/schemas/RunNumber'
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -884,7 +879,20 @@ components:
             tags:
               $ref: '#/components/schemas/ArrayOfTags'
             runs:
-              $ref: '#/components/schemas/ArrayOfRunNumbers'
+              description: Array of minified Run objects.
+              type: array
+              items:
+                description: Minified Run object.
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/EntityId'
+                  runNumber:
+                    $ref: '#/components/schemas/RunNumber'
+                required:
+                  - id
+                  - runNumber
+                additionalProperties: false
             subsystems:
               $ref: '#/components/schemas/ArrayOfSubsystems'
             replies:

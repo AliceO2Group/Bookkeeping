@@ -85,7 +85,7 @@ module.exports = () => {
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run&id=${runId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=run&id=${runId}&panel=main`);
     });
 
     it('should have a button to reply on a entry', async () => {

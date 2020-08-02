@@ -224,4 +224,16 @@ module.exports = () => {
         });
         await page.waitFor(100);
     });
+
+    it('can navigate to a run detail page', async () => {
+        table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+
+        // We expect the entry page to have the same id as the id from the run overview
+        await page.click(`#${firstRowId}`);
+        await page.waitFor(100);
+        const redirectedUrl = await page.url();
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run&id=${parsedFirstRowId}`)).to.be.true;
+    });
 };
