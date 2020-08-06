@@ -1,4 +1,4 @@
-# Generated on Fri, 31 Jul 2020 08:47:05 GMT
+# Generated on Sun, 02 Aug 2020 10:39:50 GMT
 
 openapi: 3.0.0
 info:
@@ -934,8 +934,25 @@ components:
           $ref: '#/components/schemas/LogOrigin'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        replies:
+          $ref: '#/components/schemas/LogReplies'
         rootLogId:
           $ref: '#/components/schemas/EntityId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            description: Minified Run object.
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              runNumber:
+                $ref: '#/components/schemas/RunNumber'
+            required:
+              - id
+              - runNumber
+            additionalProperties: false
         subsystems:
           $ref: '#/components/schemas/ArrayOfSubsystems'
         subtype:
@@ -967,6 +984,11 @@ components:
       enum:
         - human
         - process
+    LogReplies:
+      description: The amount of children of a root log.
+      type: integer
+      format: int64
+      minimum: 0
     LogResponse:
       description: Response containing a single log.
       type: object
@@ -1012,8 +1034,25 @@ components:
           $ref: '#/components/schemas/LogOrigin'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        replies:
+          $ref: '#/components/schemas/LogReplies'
         rootLogId:
           $ref: '#/components/schemas/EntityId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            description: Minified Run object.
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              runNumber:
+                $ref: '#/components/schemas/RunNumber'
+            required:
+              - id
+              - runNumber
+            additionalProperties: false
         subsystems:
           $ref: '#/components/schemas/ArrayOfSubsystems'
         subtype:

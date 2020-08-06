@@ -876,10 +876,27 @@ components:
               $ref: '#/components/schemas/LogOrigin'
             subtype:
               $ref: '#/components/schemas/LogSubtype'
-            subsystems:
-              $ref: '#/components/schemas/ArrayOfSubsystems'
             tags:
               $ref: '#/components/schemas/ArrayOfTags'
+            runs:
+              description: Array of minified Run objects.
+              type: array
+              items:
+                description: Minified Run object.
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/EntityId'
+                  runNumber:
+                    $ref: '#/components/schemas/RunNumber'
+                required:
+                  - id
+                  - runNumber
+                additionalProperties: false
+            subsystems:
+              $ref: '#/components/schemas/ArrayOfSubsystems'
+            replies:
+              $ref: '#/components/schemas/LogReplies'
             rootLogId:
               $ref: '#/components/schemas/EntityId'
             parentLogId:
@@ -900,6 +917,11 @@ components:
       enum:
         - human
         - process
+    LogReplies:
+      description: The amount of children of a root log.
+      type: integer
+      format: int64
+      minimum: 0
     LogResponse:
       description: Response containing a single log.
       type: object

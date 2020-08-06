@@ -66,6 +66,28 @@ module.exports = () => {
         expect(message).to.equal('Log with this id (99999999) could not be found');
     });
 
+    it('allows navigating to an associated run', async () => {
+        const runId = 1;
+
+        // Navigate to a log detail view
+        await page.goto(`${url}/?page=entry&id=2`);
+        await page.waitFor(100);
+
+        // We expect the correct associated runs to be shown
+        const runField = await page.$('#post1-runs');
+        const runText = await page.evaluate((element) => element.innerText, runField);
+        expect(runText).to.equal(`Runs:\t\n${runId}`);
+
+        // We expect the associated runs to be clickable with a valid link
+        const runLink = await page.$('#post1-runs a');
+        await runLink.click();
+        await page.waitFor(1000);
+
+        // We expect the link to navigate to the correct run detail page
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=run&id=${runId}&panel=main`);
+    });
+
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
         await page.goto(`${url}/?page=entry&id=${parentLogId}`);

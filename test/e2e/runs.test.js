@@ -271,4 +271,73 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/runs/:runId/logs', () => {
+        it('should return 400 if the run id is not a number', (done) => {
+            request(server)
+                .get('/api/runs/abc/logs')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
+                    expect(titleError.detail).to.equal('"params.runId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the run could not be found', (done) => {
+            request(server)
+                .get('/api/runs/999999999/logs')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Run with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/runs/1/logs')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data).to.have.lengthOf(4);
+
+                    expect(res.body.data[0].id).to.equal(1);
+                    expect(res.body.data[0].runs).to.deep.equal([
+                        {
+                            id: 1,
+                            runNumber: 1,
+                        },
+                    ]);
+                    done();
+                });
+        });
+    });
 };

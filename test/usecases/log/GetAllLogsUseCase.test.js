@@ -58,6 +58,22 @@ module.exports = () => {
         expect(firstUnfilteredLog.tags).to.deep.equal(firstFilteredLog.tags);
     });
 
+    it('should return a reply count if applicable', async () => {
+        const rootLogId = 1;
+        getAllLogsDto.query = { filter: { rootLog: rootLogId } };
+
+        const filteredResult = await new GetAllLogsUseCase()
+            .execute(getAllLogsDto);
+        for (const log of filteredResult.logs) {
+            expect(log).to.not.have.property('replies');
+        }
+
+        const unfilteredResult = await new GetAllLogsUseCase()
+            .execute();
+        const rootLog = unfilteredResult.logs.find((log) => log.id === rootLogId);
+        expect(filteredResult.count).to.equal(rootLog.replies);
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 

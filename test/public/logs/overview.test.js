@@ -314,16 +314,19 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            created: (date) => !isNaN(Date.parse(date)),
+            title: (title) => typeof title === 'string',
+            author: (authorName) => typeof authorName === 'string',
+            createdAt: (date) => !isNaN(Date.parse(date)),
+            tags: (tags) => typeof tags === 'string' && tags === tags.toUpperCase(),
+            replies: (replyCount) => typeof replyCount === 'number' || replyCount === '',
         };
 
         // We find the headers matching the datatype keys
         const headers = await page.$$('th');
         const headerIndices = {};
         for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.innerText, header);
-            const matchingDatatype = Object.keys(headerDatatypes)
-                .find((key) => headerContent.toLowerCase().includes(key));
+            const headerContent = await page.evaluate((element) => element.id, header);
+            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
             if (matchingDatatype !== undefined) {
                 headerIndices[index] = matchingDatatype;
             }

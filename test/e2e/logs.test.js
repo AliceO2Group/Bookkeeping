@@ -46,7 +46,7 @@ module.exports = () => {
 
         it('should support filtering by title', (done) => {
             request(server)
-                .get('/api/logs?filter[title]=first')
+                .get('/api/logs?filter[title]=Third')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -59,6 +59,7 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(1);
+                    expect(res.body.data[0].title).to.include('Third');
 
                     done();
                 });
@@ -86,7 +87,7 @@ module.exports = () => {
 
         it('should support filtering by author', (done) => {
             request(server)
-                .get('/api/logs?filter[author]=john')
+                .get('/api/logs?filter[author]=John')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -99,6 +100,7 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
+                    expect(res.body.data[0].author.name).to.include('John');
 
                     done();
                 });
@@ -125,8 +127,9 @@ module.exports = () => {
         });
 
         it('should support filtering by creation time', (done) => {
+            const timeFrom = 946684800000;
             request(server)
-                .get('/api/logs?filter[created][from]=946684800000')
+                .get(`/api/logs?filter[created][from]=${timeFrom}`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -139,14 +142,17 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
+                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
 
                     done();
                 });
         });
 
         it('should support filtering by creation time', (done) => {
+            const timeFrom = 946684800000;
+            const timeTo = 1577833200000;
             request(server)
-                .get('/api/logs?filter[created][from]=946771200000&filter[created][to]=1577833200000')
+                .get(`/api/logs?filter[created][from]=${timeFrom}&filter[created][to]=${timeTo}`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -159,6 +165,8 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(1);
+                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
+                    expect(res.body.data[0].createdAt).to.be.lte(timeTo);
 
                     done();
                 });
