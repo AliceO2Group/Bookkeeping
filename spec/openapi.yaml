@@ -1,4 +1,4 @@
-# Generated on Sun, 02 Aug 2020 10:39:50 GMT
+# Generated on Wed, 12 Aug 2020 16:20:34 GMT
 
 openapi: 3.0.0
 info:
@@ -111,22 +111,6 @@ paths:
     get:
       operationId: listLogAttachments
       summary: Get all attachments associated with a log
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfAttachments'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-      tags:
-        - log
-    post:
-      operationId: createLogAttachment
-      summary: Create a new attachment on a log
-      requestBody:
-        $ref: '#/components/requestBodies/CreateAttachments'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfAttachments'
@@ -740,6 +724,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
         text:

@@ -106,20 +106,6 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - log
-    post:
-      operationId: createLogAttachment
-      summary: Create a new attachment on a log
-      requestBody:
-        $ref: '#/components/requestBodies/CreateAttachments'
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfAttachments'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      tags:
-        - log
   '/logs/{logId}/attachments/{attachmentId}':
     parameters:
       - $ref: '#/components/parameters/LogId'
@@ -686,6 +672,8 @@ components:
           $ref: '#/components/schemas/LogTitle'
         text:
           $ref: '#/components/schemas/LogText'
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
       required:
