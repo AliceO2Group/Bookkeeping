@@ -12,9 +12,11 @@
  */
 
 const OverviewSuite = require('./overview.test');
+const CreateSuite = require('./create.test');
 const DetailSuite = require('./detail.test');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
+    describe('Create Page', CreateSuite);
     describe('Detail Page', DetailSuite);
 };
