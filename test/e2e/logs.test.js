@@ -189,7 +189,8 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    expect(errors[0].detail).to.equal('Creation date must be in format YYYY-MM-DD or YYYY/MM/DD');
+                    expect(errors[0].detail).to
+                        .equal('Creation date must be a real date and in format YYYY-MM-DD or YYYY/MM/DD');
 
                     done();
                 });
