@@ -343,25 +343,6 @@ module.exports = () => {
         }
     });
 
-    it('can collapse and expand logs with long titles', async () => {
-        // Collapse and de-collapse the opened title and verify the rendered height
-        const expandButton = await page.$(`#${firstRowId}-title-plus`);
-        await expandButton.evaluate((button) => button.click());
-        await page.waitFor(100);
-
-        const expandedTitle = await page.$(`#${firstRowId}-title`);
-        const expandedTitleHeight = await page.evaluate((element) => element.clientHeight, expandedTitle);
-
-        const collapseButton = await page.$(`#${firstRowId}-title-minus`);
-        await collapseButton.evaluate((button) => button.click());
-        await page.waitFor(100);
-
-        const collapsedTitle = await page.$(`#${firstRowId}-title`);
-        const collapsedTitleHeight = await page.evaluate((element) => element.clientHeight, collapsedTitle);
-
-        expect(expandedTitleHeight).to.be.greaterThan(collapsedTitleHeight);
-    });
-
     it('can set how many logs are available per page', async () => {
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
