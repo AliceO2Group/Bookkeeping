@@ -106,20 +106,6 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - log
-    post:
-      operationId: createLogAttachment
-      summary: Create a new attachment on a log
-      requestBody:
-        $ref: '#/components/requestBodies/CreateAttachments'
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfAttachments'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      tags:
-        - log
   '/logs/{logId}/attachments/{attachmentId}':
     parameters:
       - $ref: '#/components/parameters/LogId'
@@ -646,9 +632,9 @@ components:
           properties:
             encoding:
               $ref: '#/components/schemas/FileEncoding'
-            mimetype:
+            mimeType:
               $ref: '#/components/schemas/FileMimeType'
-            filename:
+            fileName:
               $ref: '#/components/schemas/FileName'
             originalName:
               $ref: '#/components/schemas/FileOriginalName'
@@ -656,6 +642,8 @@ components:
               $ref: '#/components/schemas/FilePath'
             size:
               $ref: '#/components/schemas/FileSize'
+            logId:
+              $ref: '#/components/schemas/EntityId'
           additionalProperties: false
     AttachmentResponse:
       description: Response containing a single attachment.
@@ -686,6 +674,8 @@ components:
           $ref: '#/components/schemas/LogTitle'
         text:
           $ref: '#/components/schemas/LogText'
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
       required:
@@ -736,7 +726,7 @@ components:
           description: Unix timestamp when this entity was created.
           type: integer
           format: int64
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -866,16 +856,22 @@ components:
         - description: Describes an intervention or an event that happened.
           type: object
           properties:
-            author:
-              $ref: '#/components/schemas/User'
             title:
               $ref: '#/components/schemas/LogTitle'
             text:
               $ref: '#/components/schemas/LogText'
+            author:
+              $ref: '#/components/schemas/User'
             origin:
               $ref: '#/components/schemas/LogOrigin'
             subtype:
               $ref: '#/components/schemas/LogSubtype'
+            rootLogId:
+              $ref: '#/components/schemas/EntityId'
+            parentLogId:
+              $ref: '#/components/schemas/EntityId'
+            replies:
+              $ref: '#/components/schemas/LogReplies'
             tags:
               $ref: '#/components/schemas/ArrayOfTags'
             runs:
@@ -895,19 +891,14 @@ components:
                 additionalProperties: false
             subsystems:
               $ref: '#/components/schemas/ArrayOfSubsystems'
-            replies:
-              $ref: '#/components/schemas/LogReplies'
-            rootLogId:
-              $ref: '#/components/schemas/EntityId'
-            parentLogId:
-              $ref: '#/components/schemas/EntityId'
+            attachments:
+              $ref: '#/components/schemas/ArrayOfAttachments'
           required:
-            - author
             - title
             - text
+            - author
             - origin
             - subtype
-            - tags
             - rootLogId
             - parentLogId
           additionalProperties: false

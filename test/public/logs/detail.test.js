@@ -67,19 +67,20 @@ module.exports = () => {
     });
 
     it('allows navigating to an associated run', async () => {
+        const logId = 1;
         const runId = 1;
 
         // Navigate to a log detail view
-        await page.goto(`${url}/?page=entry&id=2`);
+        await page.goto(`${url}/?page=entry&id=${logId}`);
         await page.waitFor(100);
 
         // We expect the correct associated runs to be shown
-        const runField = await page.$('#post1-runs');
+        const runField = await page.$(`#post${logId}-runs`);
         const runText = await page.evaluate((element) => element.innerText, runField);
         expect(runText).to.equal(`Runs:\t\n${runId}`);
 
         // We expect the associated runs to be clickable with a valid link
-        const runLink = await page.$('#post1-runs a');
+        const runLink = await page.$(`#post${logId}-runs a`);
         await runLink.click();
         await page.waitFor(1000);
 
@@ -113,7 +114,8 @@ module.exports = () => {
         await button.evaluate((button) => button.click());
         await page.waitFor(1000);
 
+        // Expect to be redirected to the new log
         const postSendUrl = await page.url();
-        expect(postSendUrl).to.equal(`${url}/?page=entry&id=10`);
+        expect(postSendUrl.startsWith(`${url}/?page=entry`)).to.be.true;
     });
 };

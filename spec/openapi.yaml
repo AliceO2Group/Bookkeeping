@@ -1,4 +1,4 @@
-# Generated on Sun, 02 Aug 2020 10:39:50 GMT
+# Generated on Sun, 16 Aug 2020 18:25:10 GMT
 
 openapi: 3.0.0
 info:
@@ -111,22 +111,6 @@ paths:
     get:
       operationId: listLogAttachments
       summary: Get all attachments associated with a log
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfAttachments'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-      tags:
-        - log
-    post:
-      operationId: createLogAttachment
-      summary: Create a new attachment on a log
-      requestBody:
-        $ref: '#/components/requestBodies/CreateAttachments'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfAttachments'
@@ -696,11 +680,13 @@ components:
           format: int64
         encoding:
           $ref: '#/components/schemas/FileEncoding'
-        filename:
+        fileName:
           $ref: '#/components/schemas/FileName'
         id:
           $ref: '#/components/schemas/EntityId'
-        mimetype:
+        logId:
+          $ref: '#/components/schemas/EntityId'
+        mimeType:
           $ref: '#/components/schemas/FileMimeType'
         originalName:
           $ref: '#/components/schemas/FileOriginalName'
@@ -708,7 +694,7 @@ components:
           $ref: '#/components/schemas/FilePath'
         size:
           $ref: '#/components/schemas/FileSize'
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -740,6 +726,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
         text:
@@ -794,7 +782,7 @@ components:
           format: int64
         id:
           $ref: '#/components/schemas/EntityId'
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -922,6 +910,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
         author:
           $ref: '#/components/schemas/User'
         createdAt:
@@ -963,7 +953,7 @@ components:
           $ref: '#/components/schemas/LogText'
         title:
           $ref: '#/components/schemas/LogTitle'
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -974,7 +964,6 @@ components:
         - parentLogId
         - rootLogId
         - subtype
-        - tags
         - text
         - title
       additionalProperties: false
@@ -1020,6 +1009,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
         author:
           $ref: '#/components/schemas/User'
         children:
@@ -1063,7 +1054,7 @@ components:
           $ref: '#/components/schemas/LogText'
         title:
           $ref: '#/components/schemas/LogTitle'
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -1075,7 +1066,6 @@ components:
         - parentLogId
         - rootLogId
         - subtype
-        - tags
         - text
         - title
       additionalProperties: false
@@ -1160,7 +1150,7 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -1280,7 +1270,7 @@ components:
         name:
           description: The label value of the subsystem.
           type: string
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -1310,7 +1300,7 @@ components:
         text:
           description: The label value of the tag.
           type: string
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64
@@ -1345,7 +1335,7 @@ components:
         name:
           type: string
           description: Name of the user.
-        updateAt:
+        updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int64

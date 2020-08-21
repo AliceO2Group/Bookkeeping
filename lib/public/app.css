@@ -50,6 +50,24 @@ html, body {
 .w-95  { width:  95%; }
 .w-100 { width: 100%; }
 
+/* specific margins */
+.ml1 { margin-left: var(--space-xs); }
+.ml2 { margin-left: var(--space-s); }
+.ml3 { margin-left: var(--space-m); }
+.ml4 { margin-left: var(--space-l); }
+.mr1 { margin-right: var(--space-xs); }
+.mr2 { margin-right: var(--space-s); }
+.mr3 { margin-right: var(--space-m); }
+.mr4 { margin-right: var(--space-l); }
+.mt1 { margin-top: var(--space-xs); }
+.mt2 { margin-top: var(--space-s); }
+.mt3 { margin-top: var(--space-m); }
+.mt4 { margin-top: var(--space-l); }
+.mb1 { margin-bottom: var(--space-xs); }
+.mb2 { margin-bottom: var(--space-s); }
+.mb3 { margin-bottom: var(--space-m); }
+.mb4 { margin-bottom: var(--space-l); }
+
 .table {
     margin-bottom: 0px;
 }

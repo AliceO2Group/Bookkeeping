@@ -24,6 +24,9 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 module.exports = () => {
     const { server } = require('../../lib/application');
 
+    let logWithAttachmentsId = 0;
+    let attachmentId = 0;
+
     describe('GET /api/logs', () => {
         it('should return an array', (done) => {
             request(server)
@@ -768,6 +771,31 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.title).to.equal('Yet another run');
+                    expect(res.body.data.rootLogId).to.equal(res.body.data.id);
+                    expect(res.body.data.parentLogId).to.equal(res.body.data.id);
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
                     parentLogId: 2,
                 })
                 .expect(201)
@@ -788,13 +816,14 @@ module.exports = () => {
                 });
         });
 
-        it('should return 201 if a proper body was sent', (done) => {
+        // 'send' and 'attach' are incompatible so we use 'field' instead
+        it('should return 201 if a proper body with file attachments was sent', (done) => {
             request(server)
                 .post('/api/logs')
-                .send({
-                    title: 'Yet another run',
-                    text: 'Text of yet another run',
-                })
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
+                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider.jpg'))
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -805,9 +834,11 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.title).to.equal('Yet another run');
-                    expect(res.body.data.rootLogId).to.equal(res.body.data.id);
-                    expect(res.body.data.parentLogId).to.equal(res.body.data.id);
+                    expect(res.body.data.attachments[0].originalName).to.equal('1200px-CERN_logo.png');
+                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider.jpg');
+
+                    logWithAttachmentsId = res.body.data.id;
+                    attachmentId = res.body.data.attachments[0].id;
 
                     done();
                 });
@@ -1059,76 +1090,10 @@ module.exports = () => {
         });
     });
 
-    describe('POST /api/logs/:logId/attachments', () => {
-        it('should post to attachments', (done) => {
-            request(server)
-                .post('/api/logs/1/attachments')
-                .attach('attachments', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
-
-                    expect(res.body.data[res.body.data.length - 1].originalName).to.equal('1200px-CERN_logo.png');
-                    done();
-                });
-        });
-
-        it('should post multiple attachments', (done) => {
-            request(server)
-                .post('/api/logs/1/attachments')
-                .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
-                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider.jpg'))
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
-                    expect(res.body.data.length).to.equal(2);
-                    expect(res.body.data.map((fileObj) => fileObj.originalName)).to.have.deep.members([
-                        '1200px-CERN_logo.png',
-                        'hadron_collider.jpg',
-                    ]);
-                    done();
-                });
-        });
-
-        it('should break if there is no attachments field', (done) => {
-            request(server)
-                .post('/api/logs/1/attachments')
-                .expect(400)
-                .end((err, _res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
-                    done();
-                });
-        });
-    });
-
     describe('GET /api/logs/:logId/attachments', () => {
         it('should return an array', (done) => {
             request(server)
-                .get('/api/logs/1/attachments')
+                .get(`/api/logs/${logWithAttachmentsId}/attachments`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -1143,7 +1108,24 @@ module.exports = () => {
 
         it('should return an array of attachments of specific mime-type', (done) => {
             request(server)
-                .get('/api/logs/1/attachments?mimetype=image/png')
+                .get(`/api/logs/${logWithAttachmentsId}/attachments?mimetype=image/png`)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.equal(1);
+                    expect(res.body.data[0].mimeType).to.equal('image/png');
+                    done();
+                });
+        });
+
+        it('should return an array of attachments of specific mime-type group', (done) => {
+            request(server)
+                .get(`/api/logs/${logWithAttachmentsId}/attachments?mimetype=image`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -1153,24 +1135,6 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(2);
-                    expect(res.body.data).to.satisfy((files) =>
-                        files.every((file) => file.mimeType === 'image/png'));
-                    done();
-                });
-        });
-
-        it('should return an array of attachments of specific mime-type group', (done) => {
-            request(server)
-                .get('/api/logs/1/attachments?mimetype=image')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.be.an('array');
-                    expect(res.body.data.length).to.equal(3);
                     expect(res.body.data).to.satisfy((files) =>
                         files.every((file) => file.mimeType.match(/^image\//)));
                     done();
@@ -1200,7 +1164,7 @@ module.exports = () => {
 
         it('should return 400 if there is an disallowed query parameter', (done) => {
             request(server)
-                .get('/api/logs/1/attachments/1?mayI=no')
+                .get(`/api/logs/${logWithAttachmentsId}/attachments?mayI=no`)
                 .expect(400)
                 .end((err, _res) => {
                     if (err) {
@@ -1221,7 +1185,7 @@ module.exports = () => {
     describe('GET /api/logs/:logId/attachments/:attachmentId', () => {
         it('should return an attachment', (done) => {
             request(server)
-                .get('/api/logs/1/attachments/1')
+                .get(`/api/logs/${logWithAttachmentsId}/attachments/${attachmentId}`)
                 .expect(200)
                 .end((err) => {
                     if (err) {
@@ -1262,7 +1226,7 @@ module.exports = () => {
 
         it('should return 404 if log does not have attachment with given id', (done) => {
             request(server)
-                .get('/api/logs/1/attachments/999')
+                .get(`/api/logs/${logWithAttachmentsId}/attachments/999`)
                 .expect(404)
                 .end((err, res) => {
                     if (err) {

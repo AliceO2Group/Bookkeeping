@@ -343,6 +343,25 @@ module.exports = () => {
         }
     });
 
+    it('can collapse and expand logs with long titles', async () => {
+        // Collapse and de-collapse the opened title and verify the rendered height
+        const expandButton = await page.$(`#${firstRowId}-title-plus`);
+        await expandButton.evaluate((button) => button.click());
+        await page.waitFor(100);
+
+        const expandedTitle = await page.$(`#${firstRowId}-title`);
+        const expandedTitleHeight = await page.evaluate((element) => element.clientHeight, expandedTitle);
+
+        const collapseButton = await page.$(`#${firstRowId}-title-minus`);
+        await collapseButton.evaluate((button) => button.click());
+        await page.waitFor(100);
+
+        const collapsedTitle = await page.$(`#${firstRowId}-title`);
+        const collapsedTitleHeight = await page.evaluate((element) => element.clientHeight, collapsedTitle);
+
+        expect(expandedTitleHeight).to.be.greaterThan(collapsedTitleHeight);
+    });
+
     it('can set how many logs are available per page', async () => {
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
@@ -426,68 +445,21 @@ module.exports = () => {
         });
     });
 
-    it('can create a log from the overview page', async () => {
-        const title = 'A very long title that should be collapsed in the overview screen!' +
-            'Adding some more text to it, does it have an ellipsis yet? I do not know!';
-        const text = 'Sample Text';
+    it('can navigate to the log creation page', async () => {
+        // Click on the button to start creating a new log
+        await page.click('#create');
+        await page.waitFor(500);
 
+        // Expect the page to be the log creation page at this point
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=create-log-entry`);
+    });
+
+    it('notifies if table loading returned an error', async () => {
         // Go back to the home page
         await page.click('#home');
         await page.waitFor(100);
 
-        // Click on the button to start creating a new log
-        await page.click('#create');
-        await page.waitFor(100);
-
-        // Select the boxes and send the values of the title and text to it
-        await page.type('#title', title);
-        // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
-
-        // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
-
-        // Verify that the text from the first matches with the text posted and correct working of the redirect
-        // eslint-disable-next-line no-undef
-        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors[0].getValue()))
-            .includes(text);
-
-        // Verify that the first post is equal to the title provided as input when creating the log
-        expect(doesContentMatch).to.equal(true);
-
-        // Return the page to home
-        const buttonHame = await page.$('#home');
-        await buttonHame.evaluate((button) => button.click());
-        await page.waitFor(250);
-
-        // Ensure you are at the overview page again
-        const doesTableExist = await page.$$('tr') ? true : false;
-        expect(doesTableExist).to.equal(true);
-
-        // Get the latest post and verify the title of the log we posted
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
-        const firstRow = await page.$(`#${firstRowId}-title-text`);
-
-        const isTitleInRow = JSON.stringify(await firstRow.evaluate((element) => element.innerText))
-            .includes(title);
-
-        expect(isTitleInRow).to.equal(true);
-
-        // Collapse and de-collapse the opened title and verify the rendered text accordingly
-        const expandButton = await page.$(`#${firstRowId}-title-plus`);
-        await expandButton.evaluate((button) => button.click());
-        page.waitFor(100);
-
-        const collapseButton = await page.$(`#${firstRowId}-title-minus`);
-        await collapseButton.evaluate((button) => button.click());
-        page.waitFor(100);
-    });
-
-    it('notifies if table loading returned an error', async () => {
         /*
          * As an example, override the amount of logs visible per page manually
          * We know the limit is 100 as specified by the Dto
