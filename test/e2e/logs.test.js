@@ -175,6 +175,27 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if given date is invalid', (done) => {
+            request(server)
+                .get('/api/logs?filter[created][from]=NaN')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to
+                        .equal('Creation date must be a real date and in format YYYY-MM-DD or YYYY/MM/DD');
+
+                    done();
+                });
+        });
+
         it('should return 400 if filtering in the future', (done) => {
             request(server)
                 .get('/api/logs?filter[created][to]=4102531200000')
@@ -194,7 +215,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal(`"query.filter.created.to" must be less than or equal to "${today}T23:59:59.999Z"`);
+                        .equal(`Creation date must be today (${today}T23:59:59.999Z) or earlier`);
 
                     done();
                 });
@@ -215,7 +236,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal('"query.filter.created.to" must be larger than or equal to "ref:from"');
+                        .equal('Creation date "to" cannot be before the "from" date');
 
                     done();
                 });
