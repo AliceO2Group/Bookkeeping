@@ -26,9 +26,9 @@
   "devDependencies": {
     "chai": "4.2.0",
     "chai-openapi-response-validator": "0.9.4",
-    "eslint": "7.6.0",
+    "eslint": "7.7.0",
     "js-yaml": "3.14.0",
-    "mocha": "8.1.0",
+    "mocha": "8.1.1",
     "nodemon": "2.0.4",
     "nyc": "15.1.0",
     "puppeteer": "5.2.1",
