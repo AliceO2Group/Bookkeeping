@@ -48,6 +48,11 @@ module.exports = () => {
             page.coverage.startJSCoverage({ resetOnNavigation: false }),
             page.coverage.startCSSCoverage(),
         ]);
+        page.setViewport({
+            width: 700,
+            height: 720,
+            deviceScaleFactor: 1,
+        });
 
         const { port } = server.address();
         url = `http://localhost:${port}`;
@@ -110,6 +115,32 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
+        await page.waitFor(100);
+    });
+
+    it('can collapse and expand logs with long titles', async () => {
+        /*
+         * Collapse and de-collapse the opened title and verify the rendered height
+         * Ideally, this test would be in the overview suite, unfortunately we cannot relay data between suites
+         * Here, we are certain we have a log with a long title, and therefore the test can succeeed
+         */
+        const expandButton = await page.$(`#${firstRowId}-title-plus`);
+        expect(Boolean(expandButton)).to.be.true;
+        await expandButton.evaluate((button) => button.click());
+        await page.waitFor(100);
+
+        const expandedTitle = await page.$(`#${firstRowId}-title`);
+        const expandedTitleHeight = await page.evaluate((element) => element.clientHeight, expandedTitle);
+
+        const collapseButton = await page.$(`#${firstRowId}-title-minus`);
+        expect(Boolean(collapseButton)).to.be.true;
+        await collapseButton.evaluate((button) => button.click());
+        await page.waitFor(100);
+
+        const collapsedTitle = await page.$(`#${firstRowId}-title`);
+        const collapsedTitleHeight = await page.evaluate((element) => element.clientHeight, collapsedTitle);
+
+        expect(expandedTitleHeight).to.be.greaterThan(collapsedTitleHeight);
     });
 
     it('can create a log with file attachments', async () => {
