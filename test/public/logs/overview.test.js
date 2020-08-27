@@ -113,7 +113,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
         await page.waitFor(100);
 
@@ -158,7 +158,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
         await page.waitFor(100);
 
@@ -213,7 +213,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
         await page.waitFor(100);
 
@@ -270,7 +270,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
     });
 

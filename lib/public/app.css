@@ -103,6 +103,10 @@ html, body {
     margin-bottom: 0.25rem;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .nav {
     display: -ms-flexbox;
     display: flex;
@@ -219,4 +223,8 @@ html, body {
 
 .dropleft .dropdown-toggle-split::before {
     margin-right: 0;
+}
+
+.gray-dark {
+    color: var(--color-gray-dark) !important;
 }
