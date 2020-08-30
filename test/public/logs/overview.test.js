@@ -556,8 +556,9 @@ module.exports = () => {
 
     it('does not reset pagination filters when navigating away', async () => {
         // Go back to the home page
-        await page.click('#home');
-        await page.waitFor(100);
+        const homeButton = await page.$('#home');
+        await homeButton.evaluate((button) => button.click());
+        await page.waitFor(500);
 
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
