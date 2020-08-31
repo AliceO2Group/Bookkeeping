@@ -786,6 +786,30 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if at least one non-existent tag was provided', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
+                    tags: [1, 3, 10, 16],
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Tags with these ids (10, 16) could not be found');
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/logs')
@@ -804,6 +828,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.title).to.equal('Yet another run');
+                    expect(res.body.data.text).to.equal('Text of yet another run');
                     expect(res.body.data.rootLogId).to.equal(res.body.data.id);
                     expect(res.body.data.parentLogId).to.equal(res.body.data.id);
 
@@ -817,6 +842,7 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
+                    tags: [1, 2],
                     parentLogId: 2,
                 })
                 .expect(201)
@@ -830,6 +856,17 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.title).to.equal('Yet another run');
+                    expect(res.body.data.text).to.equal('Text of yet another run');
+                    expect(res.body.data.tags).to.deep.equal([
+                        {
+                            id: 1,
+                            text: 'FOOD',
+                        },
+                        {
+                            id: 2,
+                            text: 'RUN',
+                        },
+                    ]);
                     expect(res.body.data.rootLogId).to.equal(1);
                     expect(res.body.data.parentLogId).to.equal(2);
 
