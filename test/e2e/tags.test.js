@@ -153,6 +153,31 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if the title is too long', (done) => {
+            request(server)
+                .post('/api/tags')
+                .send({
+                    text: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail)
+                        .to.equal('"body.text" length must be less than or equal to 20 characters long');
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             const expectedText = `UNIX:${new Date().getTime()}`;
             request(server)
@@ -192,7 +217,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].detail).to.equal('The provided entity already exist');
+                    expect(res.body.errors[0].detail).to.equal('The provided entity already exists');
 
                     done();
                 });
