@@ -73,6 +73,6 @@ module.exports = () => {
         const { result } = await new CreateLogUseCase()
             .execute(createLogDto);
 
-        expect(result.tags.map(({ id }) => id)).to.equal(expectedTagIds);
+        expect(result.tags.map(({ id }) => id)).to.deep.equal(expectedTagIds);
     });
 };

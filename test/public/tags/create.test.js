@@ -45,19 +45,10 @@ module.exports = () => {
         await browser.close();
     });
 
-    it('correctly loads the tag creation page', async () => {
-        await page.goto(`${url}/?page=create-tag`);
-        await page.waitFor(100);
-
-        // We expect the log creation screen to be shown correctly
-        const header = await page.$('h2');
-        expect(Boolean(header)).to.be.true;
-        const headerText = await page.evaluate((element) => element.innerText, header);
-        expect(headerText).to.equal('Create Tag');
-    });
-
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
+        await page.goto(`${url}/?page=create-tag`);
+        await page.waitFor(250);
 
         // Enter the text value
         await page.type('#text', text);
@@ -68,8 +59,8 @@ module.exports = () => {
         await page.waitFor(250);
 
         // Return the page to the tag overview
-        const buttonHome = await page.$('#tag-overview');
-        await buttonHome.evaluate((button) => button.click());
+        const buttonTagOverview = await page.$('#tag-overview');
+        await buttonTagOverview.evaluate((button) => button.click());
         await page.waitFor(250);
 
         // Ensure you are at the overview page again
