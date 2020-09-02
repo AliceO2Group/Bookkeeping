@@ -98,12 +98,13 @@ module.exports = () => {
     it('can navigate to a log detail page', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
         await page.click(`#${firstRowId}`);
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=entry&id=4`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=entry&id=${parsedFirstRowId}`)).to.be.true;
     });
 
     it('notifies if a specified tag id is invalid', async () => {

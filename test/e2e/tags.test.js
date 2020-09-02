@@ -499,31 +499,10 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(2);
+                    expect(res.body.data
+                        .every((log) => log.tags.length > 0 && log.tags.some((tag) => tag.id === 1)))
+                        .to.be.true;
 
-                    expect(res.body.data[0].id).to.equal(4);
-                    expect(res.body.data[0].tags).to.deep.equal([
-                        {
-                            id: 1,
-                            text: 'FOOD',
-                        },
-                    ]);
-
-                    expect(res.body.data[1].id).to.equal(3);
-                    expect(res.body.data[1].tags).to.deep.equal([
-                        {
-                            id: 1,
-                            text: 'FOOD',
-                        },
-                        {
-                            id: 4,
-                            text: 'GLOBAL',
-                        },
-                        {
-                            id: 6,
-                            text: 'OTHER',
-                        },
-                    ]);
                     done();
                 });
         });
