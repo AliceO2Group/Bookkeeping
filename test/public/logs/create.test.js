@@ -122,7 +122,7 @@ module.exports = () => {
         /*
          * Collapse and de-collapse the opened title and verify the rendered height
          * Ideally, this test would be in the overview suite, unfortunately we cannot relay data between suites
-         * Here, we are certain we have a log with a long title, and therefore the test can succeeed
+         * Here, we are certain we have a log with a long title, and therefore the test can succeed
          */
         const expandButton = await page.$(`#${firstRowId}-title-plus`);
         expect(Boolean(expandButton)).to.be.true;
@@ -143,13 +143,84 @@ module.exports = () => {
         expect(expandedTitleHeight).to.be.greaterThan(collapsedTitleHeight);
     });
 
+    it('can create a log with linked tags', async () => {
+        const title = 'A short title';
+        const text = 'Sample Text';
+        const tags = ['FOOD', 'OTHER'];
+
+        // Return to the creation page
+        await page.click('#home');
+        await page.waitFor(500);
+        await page.click('#create');
+        await page.waitFor(500);
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+
+        // Find the selection options corresponding to the tag texts
+        const optionsToSelect = [];
+        const tagOptions = await page.$$('option');
+        for (const _option of tagOptions) {
+            const option = await _option;
+            const optionText = await page.evaluate((element) => element.innerText, option);
+            if (tags.includes(optionText)) {
+                const optionValue = await page.evaluate((element) => element.value, option);
+                optionsToSelect.push(optionValue);
+            }
+        }
+
+        // Select the collection of tags to be linked to the log
+        await page.select('select#tags', ...optionsToSelect);
+
+        // Expect to have selected two options
+        const tagSelection = await page.$('select#tags');
+        const tagSelectedOptions = await page.evaluate((element) => element.selectedOptions, tagSelection);
+        expect(Object.keys(tagSelectedOptions).length).to.equal(2);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Return the page to home
+        const buttonHome = await page.$('#home');
+        await buttonHome.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Get the latest post and verify that the selected tags correspond to the posted tags
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTags = await page.$(`#${firstRowId}-tags-text`);
+        const tagsText = await page.evaluate((element) => element.innerText, firstRowTags);
+        expect(tagsText).to.equal(tags.join(', '));
+    });
+
+    it('can navigate to tag creation screen', async () => {
+        // Return to the creation page
+        await page.click('#home');
+        await page.waitFor(500);
+        await page.click('#create');
+        await page.waitFor(500);
+
+        // Expect the user to be at the tag creation screen when the URL is clicked on
+        const tagCreationLink = await page.$('#tagCreateLink');
+        await page.evaluate((button) => button.click(), tagCreationLink);
+        await page.waitFor(500);
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=create-tag`);
+    });
+
     it('can create a log with file attachments', async () => {
-        const title = 'A shorter title';
+        const title = 'Shorter';
         const text = 'Sample Text';
         const file1 = '1200px-CERN_logo.png';
         const file2 = 'hadron_collider.jpg';
 
         // Return to the creation page
+        await page.click('#home');
+        await page.waitFor(500);
         await page.click('#create');
         await page.waitFor(500);
 
@@ -180,10 +251,6 @@ module.exports = () => {
         const buttonHome = await page.$('#home');
         await buttonHome.evaluate((button) => button.click());
         await page.waitFor(250);
-
-        // Ensure you are at the overview page again
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=home`);
 
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');

@@ -176,7 +176,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].detail).to.equal('The provided entity already exist');
+                    expect(res.body.errors[0].detail).to.equal('The provided entity already exists');
 
                     done();
                 });

@@ -26,6 +26,7 @@ module.exports = () => {
             body: {
                 title: 'Yet another log',
                 text: 'This is the text field of yet another log.',
+                tags: [],
             },
         });
         createLogDto.session = {
@@ -49,7 +50,7 @@ module.exports = () => {
         const expectedTitle = `Log #${Math.round(Math.random() * 1000)}`;
 
         createLogDto.body.title = expectedTitle;
-        const result = await new CreateLogUseCase()
+        const { result } = await new CreateLogUseCase()
             .execute(createLogDto);
 
         expect(result.title).to.equal(expectedTitle);
@@ -59,9 +60,19 @@ module.exports = () => {
         const expectedText = `Random content: ${Math.round(Math.random() * 1000)}`;
 
         createLogDto.body.text = expectedText;
-        const result = await new CreateLogUseCase()
+        const { result } = await new CreateLogUseCase()
             .execute(createLogDto);
 
         expect(result.text).to.equal(expectedText);
+    });
+
+    it('should insert a new Log with the tags as provided', async () => {
+        const expectedTagIds = [1, 3];
+
+        createLogDto.body.tags = expectedTagIds;
+        const { result } = await new CreateLogUseCase()
+            .execute(createLogDto);
+
+        expect(result.tags.map(({ id }) => id)).to.deep.equal(expectedTagIds);
     });
 };
