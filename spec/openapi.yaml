@@ -1,4 +1,4 @@
-# Generated on Sun, 16 Aug 2020 18:25:10 GMT
+# Generated on Sun, 30 Aug 2020 09:11:14 GMT
 
 openapi: 3.0.0
 info:
@@ -64,7 +64,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Pagination'
         - $ref: '#/components/parameters/FilterLogs'
-        - $ref: '#/components/parameters/Sorting'
+        - $ref: '#/components/parameters/LogSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
@@ -180,7 +180,7 @@ paths:
       summary: List all runs
       parameters:
         - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/Sorting'
+        - $ref: '#/components/parameters/RunSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfRuns'
@@ -384,6 +384,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    LogSorting:
+      in: query
+      name: sort
+      description: Specifies the log sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/LogSortOptions'
+      style: deepObject
     Pagination:
       name: page
       description: Specifies the pagination requirements.
@@ -398,13 +406,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
-    Sorting:
+    RunSorting:
       in: query
       name: sort
-      description: Specifies the sorting requirements.
+      description: Specifies the run sorting requirements.
       required: false
       schema:
-        $ref: '#/components/schemas/SortOptions'
+        $ref: '#/components/schemas/RunSortOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -987,6 +995,21 @@ components:
       required:
         - data
       additionalProperties: false
+    LogSortOptions:
+      description: Specifies the sorting requirements of a log request.
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/SortOrder'
+        createdAt:
+          $ref: '#/components/schemas/SortOrder'
+        id:
+          $ref: '#/components/schemas/SortOrder'
+        tags:
+          $ref: '#/components/schemas/SortOrder'
+        title:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
     LogSubtype:
       description: The subtype of a Log.
       type: string
@@ -1223,6 +1246,13 @@ components:
       required:
         - data
       additionalProperties: false
+    RunSortOptions:
+      description: Specifies the sorting requirements of a run request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
     RunSubtimeframes:
       description: Total number of subtimeframes processed by the O2 system.
       type: integer
@@ -1242,15 +1272,6 @@ components:
         - physics
         - cosmics
         - technical
-    SortOptions:
-      description: Specifies the sorting requirements of a request.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/SortOrder'
-        text:
-          $ref: '#/components/schemas/SortOrder'
-      additionalProperties: false
     SortOrder:
       description: Specifies the sorting direction of a sorting option.
       type: string

@@ -33,6 +33,24 @@ async function getFirstRow(table, page) {
     }
 }
 
+/**
+ * Special method built to gather all currently visible table entities from a specific column into an array
+ * @param {Object} page An object representing the browser page being used by Puppeteer
+ * @param {String} key The key for the column to gather entities of
+ * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
+ */
+async function getAllDataFields(page, key) {
+    const allData = await page.$$('td');
+    return await allData.reduce(async (accumulator, data) => {
+        const id = await page.evaluate((element) => element.id, data);
+        if (id.endsWith(`-${key}`)) {
+            const text = await page.evaluate((element) => element.innerText, data);
+            (await accumulator).push(text);
+        }
+        return accumulator;
+    }, []);
+}
+
 module.exports = () => {
     let page;
     let browser;
@@ -113,7 +131,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
         await page.waitFor(100);
 
@@ -158,7 +176,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
         await page.waitFor(100);
 
@@ -213,7 +231,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
         await page.waitFor(100);
 
@@ -270,7 +288,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetFilters();
+            model.logs.resetLogsParams();
         });
     });
 
@@ -306,6 +324,61 @@ module.exports = () => {
         // Close the tag filters now that we are done with them
         await page.click('#tagsFilterToggle');
         await page.waitFor(100);
+    });
+
+    it('can sort by columns in ascending and descending manners', async () => {
+        // Expect a sorting preview to appear when hovering over a column header
+        await page.hover('th#title');
+        await page.waitFor(100);
+        const sortingPreviewIndicator = await page.$('#title-sort-preview');
+        expect(Boolean(sortingPreviewIndicator)).to.be.true;
+
+        // Sort by log title in an ascending manner
+        const titleHeader = await page.$('th#title');
+        await titleHeader.evaluate((button) => button.click());
+        await page.waitFor(200);
+
+        // Expect the log titles to be in alphabetical order
+        const firstTitles = await getAllDataFields(page, 'title');
+        expect(firstTitles).to.deep.equal(firstTitles.sort());
+        await page.waitFor(100);
+        const sortingIndicator = await page.$('#title-sort');
+        expect(Boolean(sortingIndicator)).to.be.true;
+
+        // Toggle to sort this towards reverse alphabetical order
+        await titleHeader.evaluate((button) => button.click());
+        await page.waitFor(200);
+
+        // Expect the log titles to be in reverse alphabetical order
+        const secondTitles = await getAllDataFields(page, 'title');
+        expect(secondTitles).to.deep.equal(secondTitles.sort((a, b) => b.localeCompare(a)));
+
+        // Toggle to clear this sorting
+        await titleHeader.evaluate((button) => button.click());
+        await page.waitFor(200);
+
+        // Expect the log titles to no longer be sorted in any way
+        const thirdTitles = await getAllDataFields(page, 'title');
+        expect(thirdTitles).to.not.deep.equal(firstTitles);
+        expect(thirdTitles).to.not.deep.equal(secondTitles);
+
+        // Sort by log author in ascending manner
+        const authorHeader = await page.$('th#author');
+        await authorHeader.evaluate((button) => button.click());
+        await page.waitFor(200);
+
+        // Expect the authors to be in alphabetical order
+        const firstAuthors = await getAllDataFields(page, 'author');
+        expect(firstAuthors).to.deep.equal(firstAuthors.sort());
+
+        // Sort by creation date in ascending manner
+        const createdAtHeader = await page.$('th#createdAt');
+        await createdAtHeader.evaluate((button) => button.click());
+        await page.waitFor(200);
+
+        // Expect the log author column to be unsorted
+        const secondAuthors = await getAllDataFields(page, 'author');
+        expect(secondAuthors).to.not.deep.equal(firstAuthors);
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -483,8 +556,9 @@ module.exports = () => {
 
     it('does not reset pagination filters when navigating away', async () => {
         // Go back to the home page
-        await page.click('#home');
-        await page.waitFor(100);
+        const homeButton = await page.$('#home');
+        await homeButton.evaluate((button) => button.click());
+        await page.waitFor(500);
 
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
