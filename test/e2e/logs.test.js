@@ -576,6 +576,199 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should support sorting, title DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort[title]=desc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect([data[0].title, data[1].title])
+                        .to.deep.equal([data[0].title, data[1].title].sort((a, b) => b.localeCompare(a)));
+
+                    done();
+                });
+        });
+
+        it('should support sorting, title ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort[title]=asc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect([data[0].title, data[1].title])
+                        .to.deep.equal([data[0].title, data[1].title].sort());
+
+                    done();
+                });
+        });
+
+        it('should support sorting, author DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort[author]=desc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect([data[0].author.name, data[1].author.name])
+                        .to.deep.equal([data[0].author.name, data[1].author.name].sort((a, b) => b.localeCompare(a)));
+
+                    done();
+                });
+        });
+
+        it('should support sorting, author ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort[author]=asc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect([data[0].author.name, data[1].author.name])
+                        .to.deep.equal([data[0].author.name, data[1].author.name].sort());
+
+                    done();
+                });
+        });
+
+        it('should support sorting, createdAt DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort[createdAt]=desc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect(data[0].createdAt).to.be.greaterThan(data[1].createdAt);
+
+                    done();
+                });
+        });
+
+        it('should support sorting, createdAt ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort[createdAt]=asc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect(data[1].createdAt).to.be.greaterThan(data[0].createdAt);
+
+                    done();
+                });
+        });
+
+        it('should support sorting, tags DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort[tags]=desc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    const dataWithTags = data.filter(({ tags }) => tags.length > 0);
+                    const firstAndLastTags =
+                        [dataWithTags[0].tags[0].text, dataWithTags[dataWithTags.length - 1].tags[0].text];
+                    expect(data[0].tags.length).to.be.greaterThan(0);
+                    expect(firstAndLastTags).to.deep.equal(firstAndLastTags.sort((a, b) => b.localeCompare(a)));
+
+                    done();
+                });
+        });
+
+        it('should support sorting, tags ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort[tags]=asc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    const dataWithTags = data.filter(({ tags }) => tags.length > 0);
+                    const firstAndLastTags =
+                        [dataWithTags[0].tags[0].text, dataWithTags[dataWithTags.length - 1].tags[0].text];
+                    expect(data[data.length - 1].tags.length).to.be.greaterThan(0);
+                    expect(firstAndLastTags).to.deep.equal(firstAndLastTags.sort());
+
+                    done();
+                });
+        });
+
+        it('should not allow sorting on multiple columns at once', (done) => {
+            request(server)
+                .get('/api/logs?sort[title]=asc&sort[createdAt]=desc')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail
+                        .startsWith('"query.sort" contains a conflict between exclusive peers')).to.be.true;
+
+                    done();
+                });
+        });
     });
 
     describe('POST /api/logs', () => {
