@@ -506,12 +506,12 @@ module.exports = () => {
 
         // Expect the page to be the log creation page at this point
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=create-log-entry`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-create`);
     });
 
     it('notifies if table loading returned an error', async () => {
         // Go back to the home page
-        await page.click('#home');
+        await page.click('#log-overview');
         await page.waitFor(100);
 
         /*
@@ -540,7 +540,7 @@ module.exports = () => {
 
     it('can navigate to a log detail page', async () => {
         // Go back to the home page
-        await page.click('#home');
+        await page.click('#log-overview');
         await page.waitFor(100);
 
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
@@ -551,12 +551,12 @@ module.exports = () => {
         await page.waitFor(500);
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=entry&id=${parsedFirstRowId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
     });
 
     it('does not reset pagination filters when navigating away', async () => {
         // Go back to the home page
-        const homeButton = await page.$('#home');
+        const homeButton = await page.$('#log-overview');
         await homeButton.evaluate((button) => button.click());
         await page.waitFor(500);
 

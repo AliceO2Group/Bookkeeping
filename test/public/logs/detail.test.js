@@ -46,7 +46,7 @@ module.exports = () => {
     });
 
     it('log detail loads correctly', async () => {
-        await page.goto(`${url}/?page=entry&id=1`);
+        await page.goto(`${url}/?page=log-detail&id=1`);
         await page.waitFor(100);
 
         // We expect there to be at least one post in this log entry
@@ -56,7 +56,7 @@ module.exports = () => {
 
     it('notifies if a specified log id is invalid', async () => {
         // Navigate to a log detail view with an id that cannot exist
-        await page.goto(`${url}/?page=entry&id=99999999`);
+        await page.goto(`${url}/?page=log-detail&id=99999999`);
         await page.waitFor(100);
 
         // We expect there to be an error message
@@ -71,7 +71,7 @@ module.exports = () => {
         const runId = 1;
 
         // Navigate to a log detail view
-        await page.goto(`${url}/?page=entry&id=${logId}`);
+        await page.goto(`${url}/?page=log-detail&id=${logId}`);
         await page.waitFor(100);
 
         // We expect the correct associated runs to be shown
@@ -86,12 +86,12 @@ module.exports = () => {
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run&id=${runId}&panel=main`);
+        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}&panel=main`);
     });
 
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
-        await page.goto(`${url}/?page=entry&id=${parentLogId}`);
+        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`);
         await page.waitFor(250);
 
         // We expect there to be at least one post in this log entry
@@ -99,7 +99,7 @@ module.exports = () => {
         await page.waitFor(1000);
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=create-log-entry&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
 
         const title = 'Test the reply button';
         const text = 'Test the reply button';
@@ -116,6 +116,6 @@ module.exports = () => {
 
         // Expect to be redirected to the new log
         const postSendUrl = await page.url();
-        expect(postSendUrl.startsWith(`${url}/?page=entry`)).to.be.true;
+        expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
     });
 };

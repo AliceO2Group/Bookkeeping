@@ -47,7 +47,7 @@ module.exports = () => {
 
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
-        await page.goto(`${url}/?page=create-tag`);
+        await page.goto(`${url}/?page=tag-create`);
         await page.waitFor(250);
 
         // Enter the text value
@@ -59,6 +59,9 @@ module.exports = () => {
         await page.waitFor(250);
 
         // Return the page to the tag overview
+        const buttonOverviews = await page.$('#overviews');
+        await buttonOverviews.evaluate((button) => button.click());
+        await page.waitFor(100);
         const buttonTagOverview = await page.$('#tag-overview');
         await buttonTagOverview.evaluate((button) => button.click());
         await page.waitFor(250);
