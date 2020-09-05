@@ -107,7 +107,7 @@ module.exports = () => {
 
         // Ensure you are at the overview page again
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=home`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-overview`);
 
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');

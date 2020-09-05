@@ -62,8 +62,7 @@ module.exports = () => {
         const buttonOverviews = await page.$('#overviews');
         await buttonOverviews.evaluate((button) => button.click());
         await page.waitFor(100);
-        const buttonTagOverview = await page.$('#tag-overview');
-        await buttonTagOverview.evaluate((button) => button.click());
+        await page.click('#tag-overview');
         await page.waitFor(250);
 
         // Ensure you are at the overview page again
@@ -85,8 +84,8 @@ module.exports = () => {
         const text = 'FOOD';
 
         // Return to the tag creation page
-        const buttonHome = await page.$('button#create');
-        await buttonHome.evaluate((button) => button.click());
+        const buttonCreate = await page.$('button#create');
+        await buttonCreate.evaluate((button) => button.click());
         await page.waitFor(250);
 
         // Enter the duplicate text value

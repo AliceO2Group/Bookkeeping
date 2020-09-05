@@ -93,8 +93,7 @@ module.exports = () => {
         const buttonOverviews = await page.$('#overviews');
         await buttonOverviews.evaluate((button) => button.click());
         await page.waitFor(100);
-        const buttonTagOverview = await page.$('#tag-overview');
-        await buttonTagOverview.evaluate((button) => button.click());
+        await page.click('#tag-overview');
         await page.waitFor(250);
 
         // Click on the button to start creating a new tag
