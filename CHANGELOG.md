@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.6.0...v0.13.0) (2020-09-08)
+
+
+### Features
+
+* Add functionality to filter by author name ([b358524](https://github.com/AliceO2Group/Bookkeeping/commit/b3585246de0325a73d495b77e9b882e152f96c62))
+* Add functionality to filter by creation date ([274174d](https://github.com/AliceO2Group/Bookkeeping/commit/274174d3feadf65da75e69dcc64dd3663a021b92))
+* Add functionality to filter by title ([4e0c52e](https://github.com/AliceO2Group/Bookkeeping/commit/4e0c52ec16e8310a73e25095c7ae728a1540f1ff))
+* added displaying logs by subsystem ([fa78705](https://github.com/AliceO2Group/Bookkeeping/commit/fa787051bdd20c6e3fbdd200790a99069f038818))
+* added overview and detail screen for subsystem ([9ede071](https://github.com/AliceO2Group/Bookkeeping/commit/9ede0716df6d955b20804d8fe29e91be001074d4))
+* Added Support Forum link to profile dropdown ([7c1bcd6](https://github.com/AliceO2Group/Bookkeeping/commit/7c1bcd6f0a0d62e611227732062d801152b4a4bd))
+* added test files for subsystem-overview ([5399a6f](https://github.com/AliceO2Group/Bookkeeping/commit/5399a6f528b3bde45a1aff5dfcc032a35c08fb67))
+* Rebuilt filter components to support multiple filter types through dropdowns ([d251f5d](https://github.com/AliceO2Group/Bookkeeping/commit/d251f5d07edd6ef4f9fc619d3790151cd57c224f))
+
+
+### Bug Fixes
+
+* added jsdoc return descriptions ([b9ba9c3](https://github.com/AliceO2Group/Bookkeeping/commit/b9ba9c31a2954d9e31cd9625f82f52b789cdec65))
+* added log-subsystems seed ([38af419](https://github.com/AliceO2Group/Bookkeeping/commit/38af419983bbf6a139c6979cab4f6bd9f3098c43))
+* added LogsBySubsystem to the index file ([8aef110](https://github.com/AliceO2Group/Bookkeeping/commit/8aef1104afd6eb999431e3619da98270f113f030))
+* added subsystems to log API-source ([71de72b](https://github.com/AliceO2Group/Bookkeeping/commit/71de72bf0b2821c1340b32fe3ea30041fdee46f6))
+* added subsystems to the logdetail view ([213adff](https://github.com/AliceO2Group/Bookkeeping/commit/213adffd84157dfe72e97dfd324328f544526227))
+* added various syntax fixes ([2f19404](https://github.com/AliceO2Group/Bookkeeping/commit/2f194048e134b84ce00ad32be548305516a52bb7))
+* fixed import issue on LogRepository ([e54391d](https://github.com/AliceO2Group/Bookkeeping/commit/e54391d0d953c45fe7b8403024128d911e12dfa1))
+* fixed syntax in testsuite subsystems ([dfb937a](https://github.com/AliceO2Group/Bookkeeping/commit/dfb937ad33b34269156e9e9e2e8f3c685abcaeb4))
+* Long attachment names are now wrapped, minor CSS improvements ([#180](https://github.com/AliceO2Group/Bookkeeping/issues/180)) ([4ee7ed4](https://github.com/AliceO2Group/Bookkeeping/commit/4ee7ed45a7d14cc6a117a8bae8dd05dc09f4e1a5))
+* Pagination values no longer reset when navigating away from logs overview ([0c84a09](https://github.com/AliceO2Group/Bookkeeping/commit/0c84a0933aaac3b43672bb611dd948779d9c71d5))
+* Prevented run numbers overflowing beyond the log details table ([#176](https://github.com/AliceO2Group/Bookkeeping/issues/176)) ([a822b84](https://github.com/AliceO2Group/Bookkeeping/commit/a822b84b1d122b10f4846c4d0691d8c8b25cf077))
+* Restored row ids ([6ee1a3b](https://github.com/AliceO2Group/Bookkeeping/commit/6ee1a3b88ebeac32301bb10fc08eed6bb5d8f941))
+* **docker:** unsatisfiable constraints ([cf02a6f](https://github.com/AliceO2Group/Bookkeeping/commit/cf02a6f05948a95ccbd73b90dff64bc8aa9c29e0))
+* **ui:** HyperMD editor not properly removed ([ded9d7c](https://github.com/AliceO2Group/Bookkeeping/commit/ded9d7c628a4ff4ea45907a9979c9f44398e6dfa))
+
 ## [0.6.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.5.0...v0.6.0) (2020-06-26)
 
 
