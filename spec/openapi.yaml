@@ -1,4 +1,4 @@
-# Generated on Sun, 30 Aug 2020 09:11:14 GMT
+# Generated on Mon, 14 Sep 2020 22:40:53 GMT
 
 openapi: 3.0.0
 info:
@@ -1342,24 +1342,19 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        createdAt:
-          description: Unix timestamp when this entity was created.
-          type: integer
-          format: int64
         externalId:
           description: The unique CERN identifier of this user.
           type: integer
           format: int64
-          minimum: 1
+          minimum: 0
         id:
-          $ref: '#/components/schemas/EntityId'
+          description: The unique identifier of this entity.
+          type: integer
+          format: int64
+          minimum: 0
         name:
           type: string
           description: Name of the user.
-        updatedAt:
-          description: Unix timestamp when this entity was last updated.
-          type: integer
-          format: int64
       required:
         - externalId
         - id
