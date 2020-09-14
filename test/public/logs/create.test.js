@@ -69,7 +69,7 @@ module.exports = () => {
     });
 
     it('correctly loads the log creation page', async () => {
-        await page.goto(`${url}/?page=create-log-entry`);
+        await page.goto(`${url}/?page=log-create`);
         await page.waitFor(100);
 
         // We expect the log creation screen to be shown correctly
@@ -101,13 +101,13 @@ module.exports = () => {
         await page.waitFor(250);
 
         // Return the page to home
-        const buttonHome = await page.$('#home');
+        const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
         await page.waitFor(250);
 
         // Ensure you are at the overview page again
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=home`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-overview`);
 
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
@@ -149,7 +149,7 @@ module.exports = () => {
         const tags = ['FOOD', 'OTHER'];
 
         // Return to the creation page
-        await page.click('#home');
+        await page.click('#log-overview');
         await page.waitFor(500);
         await page.click('#create');
         await page.waitFor(500);
@@ -185,7 +185,7 @@ module.exports = () => {
         await page.waitFor(250);
 
         // Return the page to home
-        const buttonHome = await page.$('#home');
+        const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
         await page.waitFor(250);
 
@@ -199,7 +199,7 @@ module.exports = () => {
 
     it('can navigate to tag creation screen', async () => {
         // Return to the creation page
-        await page.click('#home');
+        await page.click('#log-overview');
         await page.waitFor(500);
         await page.click('#create');
         await page.waitFor(500);
@@ -209,7 +209,7 @@ module.exports = () => {
         await page.evaluate((button) => button.click(), tagCreationLink);
         await page.waitFor(500);
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=create-tag`);
+        expect(redirectedUrl).to.equal(`${url}/?page=tag-create`);
     });
 
     it('can create a log with file attachments', async () => {
@@ -219,7 +219,7 @@ module.exports = () => {
         const file2 = 'hadron_collider.jpg';
 
         // Return to the creation page
-        await page.click('#home');
+        await page.click('#log-overview');
         await page.waitFor(500);
         await page.click('#create');
         await page.waitFor(500);
@@ -248,7 +248,7 @@ module.exports = () => {
         await page.waitFor(2500);
 
         // Return the page to home
-        const buttonHome = await page.$('#home');
+        const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
         await page.waitFor(250);
 
@@ -278,7 +278,7 @@ module.exports = () => {
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
-        await page.click('#home');
+        await page.click('#log-overview');
         await page.waitFor(500);
         await page.click('#create');
         await page.waitFor(500);

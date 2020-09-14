@@ -47,7 +47,7 @@ module.exports = () => {
 
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
-        await page.goto(`${url}/?page=create-tag`);
+        await page.goto(`${url}/?page=tag-create`);
         await page.waitFor(250);
 
         // Enter the text value
@@ -59,8 +59,10 @@ module.exports = () => {
         await page.waitFor(250);
 
         // Return the page to the tag overview
-        const buttonTagOverview = await page.$('#tag-overview');
-        await buttonTagOverview.evaluate((button) => button.click());
+        const buttonOverviews = await page.$('#overviews');
+        await buttonOverviews.evaluate((button) => button.click());
+        await page.waitFor(100);
+        await page.click('#tag-overview');
         await page.waitFor(250);
 
         // Ensure you are at the overview page again
@@ -82,8 +84,8 @@ module.exports = () => {
         const text = 'FOOD';
 
         // Return to the tag creation page
-        const buttonHome = await page.$('button#create');
-        await buttonHome.evaluate((button) => button.click());
+        const buttonCreate = await page.$('button#create');
+        await buttonCreate.evaluate((button) => button.click());
         await page.waitFor(250);
 
         // Enter the duplicate text value
@@ -92,7 +94,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitFor(500);
 
         // Because this tag already exists, we expect an error message to appear
         const errorAlert = await page.$('.alert');

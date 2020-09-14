@@ -67,7 +67,7 @@ module.exports = () => {
     });
 
     it('subsystem detail loads correctly', async () => {
-        await page.goto(`${url}/?page=subsystem&id=1`);
+        await page.goto(`${url}/?page=subsystem-detail&id=1`);
         await page.waitFor(100);
 
         const postExists = await page.$('h2');
@@ -81,21 +81,21 @@ module.exports = () => {
         await page.click('#logs-tab');
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem&id=1&panel=logs`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to the main panel', async () => {
         await page.click('#main-tab');
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem&id=1&panel=main`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=1&panel=main`)).to.be.true;
     });
 
     it('can navigate to the log panel', async () => {
         await page.click('#logs-tab');
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem&id=1&panel=logs`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to a log detail page', async () => {
@@ -106,12 +106,12 @@ module.exports = () => {
         await page.click(`#${firstRowId}`);
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=entry&id=3`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=3`)).to.be.true;
     });
 
     it('notifies if a specified subsystem id is invalid', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem&id=abc`);
+        await page.goto(`${url}/?page=subsystem-detail&id=abc`);
         await page.waitFor(100);
 
         // We expect there to be an error message
@@ -123,7 +123,7 @@ module.exports = () => {
 
     it('notifies if a specified subsystem id is not found', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem&id=999`);
+        await page.goto(`${url}/?page=subsystem-detail&id=999`);
         await page.waitFor(100);
 
         // We expect there to be an error message

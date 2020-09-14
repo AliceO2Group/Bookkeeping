@@ -85,13 +85,15 @@ module.exports = () => {
         await page.click(`#${firstRowId}`);
         await page.waitFor(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag&id=${parsedFirstRowId}`)).to.be.true;
+        expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
 
     it('can navigate to the tag creation page', async () => {
         // Return the page to the tag overview
-        const buttonTagOverview = await page.$('#tag-overview');
-        await buttonTagOverview.evaluate((button) => button.click());
+        const buttonOverviews = await page.$('#overviews');
+        await buttonOverviews.evaluate((button) => button.click());
+        await page.waitFor(100);
+        await page.click('#tag-overview');
         await page.waitFor(250);
 
         // Click on the button to start creating a new tag
@@ -100,6 +102,6 @@ module.exports = () => {
 
         // Expect the page to be the tag creation page at this point
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=create-tag`);
+        expect(redirectedUrl).to.equal(`${url}/?page=tag-create`);
     });
 };
