@@ -1196,19 +1196,24 @@ components:
       additionalProperties: false
     User:
       allOf:
-        - $ref: '#/components/schemas/Entity'
         - description: Describes an intervention or an event that happened.
           type: object
           properties:
+            id:
+              description: The unique identifier of this entity.
+              type: integer
+              format: int64
+              minimum: 0
             externalId:
               description: The unique CERN identifier of this user.
               type: integer
               format: int64
-              minimum: 1
+              minimum: 0
             name:
               type: string
               description: Name of the user.
           required:
+            - id
             - externalId
             - name
           additionalProperties: false
