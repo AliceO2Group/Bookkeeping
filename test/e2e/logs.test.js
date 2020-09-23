@@ -946,6 +946,31 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if an invalid run number was provided', (done) => {
+            const runNumber = 123123123123123123123123123123;
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
+                    runNumber,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal(`Run with run number '${runNumber}' could not be found`);
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/logs')
@@ -1033,6 +1058,28 @@ module.exports = () => {
 
                     logWithAttachmentsId = res.body.data.id;
                     attachmentId = res.body.data.attachments[0].id;
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body with run number was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .field('runNumber', 1)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.runNumber).to.equal(1);
 
                     done();
                 });
