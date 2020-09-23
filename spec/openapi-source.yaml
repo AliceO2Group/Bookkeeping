@@ -686,6 +686,8 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        runNumber:
+          $ref: '#/components/schemas/runNumber'
       required:
         - title
         - text
