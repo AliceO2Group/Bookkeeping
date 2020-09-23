@@ -181,6 +181,35 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - run
+  /flps:
+    get:
+      operationId: listFlps
+      summary: List all flps
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+        - $ref: '#/components/parameters/FlpSorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfFlps'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      tags:
+        - flp
+    '/flps/{flpId}':
+      parameters:
+        - $ref: '#/components/parameters/FlpId'
+      get:
+        operationId: getFlpById
+        summary: Gets a flp by Id
+        responses:
+          '200':
+            $ref: '#/components/responses/Flp'
+          '400':
+            $ref: '#/components/responses/BadRequest'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        tags:
+          - flp
   /status:
     get:
       operationId: getDeployInformation
@@ -367,6 +396,21 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/RunSortOptions'
+      style: deepObject
+    FlpId:
+      name: flpId
+      description: The id of the flp to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    FlpSorting:
+      in: query
+      name: sort
+      description: Specifies the flp sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/FlpSortOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -586,6 +630,31 @@ components:
       additionalProperties: false
     ArrayOfRunsResponseMeta:
       description: The metadata related to an array of runs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfFlps:
+      description: A list of Flp objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Flp'
+    ArrayOfFlpsResponse:
+      description: Response containing multiple flps.
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/ArrayOfFlpsResponseMeta'
+        data:
+          $ref: '#/components/schemas/ArrayOfFlps'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfFlpsResponseMeta:
+      description: The metadata related to an array of flps response.
       type: object
       properties:
         page:
@@ -1150,6 +1219,61 @@ components:
       enum:
         - asc
         - desc
+    Flp:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - description: Describes an intervention or an event that happened.
+          type: object
+          properties:
+            name:
+              $ref: '#/components/schemas/FlpName'
+            hostname:
+              $ref: '#/components/schemas/FlpHostname'
+            nTimeframes:
+              $ref: '#/components/schemas/FlpTimeframes'
+            bytesProcessed:
+              $ref: '#/components/schemas/FlpBytesProcessed'
+            bytesEquipmentReadOut:
+              $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+            bytesRecordingReadOut:
+              $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+            bytesFairMQReadOut:
+              $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+          required:
+            - name
+            - hostname
+            - nTimeframes
+            - bytesProcessed
+            - bytesEquipmentReadOut
+            - bytesRecordingReadOut
+            - bytesFairMQReadOut
+          additionalProperties: false
+    FlpName:
+      description: FLP name.
+      type: string
+    FlpHostname:
+      description: FLP hostname.
+      type: string
+    FlpTimeframes:
+      description: Number of subtimeframes processed in this FLP. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesProcessed:
+      description: Total data volume read out in bytes.
+      type: integer
+      format: int64
+    FlpBytesEquipmentReadOut:
+      description: Total data volume out from the readout 'equipment' component in bytes. Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesRecordingReadOut:
+      description: Total data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesFairMQReadOut:
+      description: Total data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
     Subsystem:
       allOf:
         - $ref: '#/components/schemas/Entity'
