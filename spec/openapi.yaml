@@ -1,4 +1,4 @@
-# Generated on Mon, 14 Sep 2020 22:40:53 GMT
+# Generated on Wed, 23 Sep 2020 14:02:50 GMT
 
 openapi: 3.0.0
 info:
@@ -738,6 +738,8 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        runNumber:
+          $ref: '#/components/schemas/runNumber'
         text:
           $ref: '#/components/schemas/LogText'
         title:
