@@ -341,7 +341,7 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
-        
+
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
@@ -390,7 +390,7 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
-        
+
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
