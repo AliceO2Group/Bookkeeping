@@ -598,6 +598,11 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunNumbers:
+      description: A list of run numbers
+      type: array
+      items:
+        $ref: '#/components/schemas/runNumber'
     ArrayOfSubsystems:
       description: A list of Subsystem objects.
       type: array
