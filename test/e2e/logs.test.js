@@ -990,7 +990,8 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal('Run numbers should be comma-seperated, and should only contain numbers');
+                    const expectedErrorMsg = 'Run numbers should be comma-seperated, and should only contain numbers';
+                    expect(res.body.errors[0].title).to.equal(expectedErrorMsg);
 
                     done();
                 });
@@ -1104,7 +1105,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.runs).to.deep.include({id: 1, runNumber: 1});
+                    expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
 
                     done();
                 });
@@ -1126,8 +1127,8 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.runs).to.deep.include({id: 1, runNumber: 1});
-                    expect(res.body.data.runs).to.deep.include({id: 2, runNumber: 2});
+                    expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
+                    expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
 
                     done();
                 });
