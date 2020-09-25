@@ -307,7 +307,7 @@ module.exports = () => {
     });
 
     it('can create a log with a run number', async () => {
-        const title = 'A short title';
+        const title = 'Single run number test';
         const text = 'Sample Text';
         const runNumbersStr = '1';
 
@@ -335,16 +335,27 @@ module.exports = () => {
         await buttonHome.evaluate((button) => button.click());
         await page.waitFor(250);
 
-        // Get the latest post and verify that the selected run corresponds to the posted run
+        // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowRuns = await page.$(`#${firstRowId}-runs`);
-        const runsText = await page.evaluate((element) => element.innerText, firstRowRuns);
-        expect(runsText).to.include(runNumbersStr);
+        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+        
+        // Go to the log detail page
+        const row = await page.$(`tr#${firstRowId}`);
+        await row.evaluate((row) => row.click());
+        await page.waitFor(500);
+
+        // Verify that the runs are linked to the log
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const runsField = await page.$(`#post${parsedFirstRowId}-runs`);
+        const runsText = await page.evaluate((element) => element.innerText, runsField);
+        expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
     });
 
     it('can create a log with multiple run numbers', async () => {
-        const title = 'A short title';
+        const title = 'Multiple run numbers test';
         const text = 'Sample Text';
         const runNumbers = [1, 2];
         const runNumbersStr = runNumbers.join(',');
@@ -373,11 +384,22 @@ module.exports = () => {
         await buttonHome.evaluate((button) => button.click());
         await page.waitFor(250);
 
-        // Get the latest post and verify that the selected run corresponds to the posted run
+        // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowRuns = await page.$(`#${firstRowId}-runs`);
-        const runsText = await page.evaluate((element) => element.innerText, firstRowRuns);
+        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+        
+        // Go to the log detail page
+        const row = await page.$(`tr#${firstRowId}`);
+        await row.evaluate((row) => row.click());
+        await page.waitFor(500);
+
+        // Verify that the runs are linked to the log
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const runsField = await page.$(`#post${parsedFirstRowId}-runs`);
+        const runsText = await page.evaluate((element) => element.innerText, runsField);
         for (const runNumber of runNumbers) {
             expect(runsText).to.include(runNumber);
         }
