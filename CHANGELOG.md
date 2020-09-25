@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.13.0...v0.14.0) (2020-09-18)
+
+
+### Features
+
+* Anonymous logs are now possible ([#194](https://github.com/AliceO2Group/Bookkeeping/issues/194)) ([93d983b](https://github.com/AliceO2Group/Bookkeeping/commit/93d983b25c090b5f96f62904e9f5880025f2ab6f))
+* Associated tags now visible on log detail screen ([#193](https://github.com/AliceO2Group/Bookkeeping/issues/193)) ([0eec605](https://github.com/AliceO2Group/Bookkeeping/commit/0eec605a0a519b13bc12065140b893acbe6338a3))
+
 ## [0.13.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.6.0...v0.13.0) (2020-09-08)
 
 
@@ -344,5 +352,3 @@ All notable changes to this project will be documented in this file. See [standa
 * GitHub actions integrations for backend ([db06cb3](https://github.com/AliceO2Group/Bookkeeping/commit/db06cb396081227e4a9e493ace7f10f92beb5c0f))
 * GitHub actions integrations for frontend ([d5dd04f](https://github.com/AliceO2Group/Bookkeeping/commit/d5dd04f773f8f0f40091ebb15e6e99894c41684a))
 * GitHub actions integrations for spec ([db62696](https://github.com/AliceO2Group/Bookkeeping/commit/db62696bcd167fda789b92ae6cd01922d2babece))
-
-
