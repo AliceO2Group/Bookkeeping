@@ -408,7 +408,8 @@ module.exports = () => {
     it('can create a log with multiple run numbers', async () => {
         const title = 'A short title';
         const text = 'Sample Text';
-        const runNumbersStr = '1, 2';
+        const runNumbers = [1, 2];
+        const runNumbersStr = runNumbers.join(',');
 
         // Return to the creation page
         await page.click('#log-overview');
@@ -437,8 +438,10 @@ module.exports = () => {
         // Get the latest post and verify that the selected run corresponds to the posted run
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowRuns = await page.$(`#${firstRowId}-runs-text`);
+        const firstRowRuns = await page.$(`#${firstRowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, firstRowRuns);
-        expect(runsText).to.equal(runNumbersStr);
+        for (const runNumber of runNumbers) {
+            expect(runsText).to.include(runNumber);
+        }
     });
 };
