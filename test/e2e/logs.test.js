@@ -947,13 +947,13 @@ module.exports = () => {
         });
 
         it('should return 400 if an invalid run number was provided', (done) => {
-            const runNumber = 123123123123123123123123123123;
+            const runNumbers = '123123123123123123123123123123';
             request(server)
                 .post('/api/logs')
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                    runNumber,
+                    runNumbers,
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -965,7 +965,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal(`Run with run number '${runNumber}' could not be found`);
+                    expect(res.body.errors[0].title).to.equal(`Run with run number '${runNumbers}' could not be found`);
 
                     done();
                 });
@@ -1068,7 +1068,7 @@ module.exports = () => {
                 .post('/api/logs')
                 .field('title', 'Yet another run')
                 .field('text', 'Text of yet another run')
-                .field('runNumber', 1)
+                .field('runNumbers', '1')
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -1079,7 +1079,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.data.runNumber).to.equal(1);
+                    expect(res.body.data.runs).to.deep.include({id: 1, runNumber: 1});
 
                     done();
                 });
