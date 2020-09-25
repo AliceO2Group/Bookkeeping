@@ -602,7 +602,7 @@ components:
       description: A list of run numbers
       type: array
       items:
-        $ref: '#/components/schemas/runNumber'
+        $ref: '#/components/schemas/RunNumber'
     ArrayOfSubsystems:
       description: A list of Subsystem objects.
       type: array
