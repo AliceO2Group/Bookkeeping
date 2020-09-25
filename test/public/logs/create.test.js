@@ -305,4 +305,41 @@ module.exports = () => {
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
     });
+
+    it('can create a log with a run number', async () => {
+        const title = 'A short title';
+        const text = 'Sample Text';
+        const runNumbersStr = '1';
+
+        // Return to the creation page
+        await page.click('#log-overview');
+        await page.waitFor(500);
+        await page.click('#create');
+        await page.waitFor(500);
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+
+        // Send the value of the run numbers string to the input
+        await page.type('#run-number', runNumbersStr);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Return the page to home
+        const buttonHome = await page.$('#log-overview');
+        await buttonHome.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Get the latest post and verify that the selected run corresponds to the posted run
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowRuns = await page.$(`#${firstRowId}-runs-text`);
+        const runsText = await page.evaluate((element) => element.innerText, firstRowRuns);
+        expect(runsText).to.equal(runNumbersStr);
+    });
 };
