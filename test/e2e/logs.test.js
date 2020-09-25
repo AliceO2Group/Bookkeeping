@@ -947,7 +947,7 @@ module.exports = () => {
         });
 
         it('should return 400 if an invalid run number was provided', (done) => {
-            const runNumbers = '123123123123123123123123123123';
+            const runNumbers = '1234567890';
             request(server)
                 .post('/api/logs')
                 .send({
