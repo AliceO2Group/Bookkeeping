@@ -1,4 +1,4 @@
-# Generated on Fri, 25 Sep 2020 12:37:19 GMT
+# Generated on Fri, 25 Sep 2020 13:28:18 GMT
 
 openapi: 3.0.0
 info:
@@ -643,7 +643,7 @@ components:
       description: A list of run numbers
       type: array
       items:
-        $ref: '#/components/schemas/runNumber'
+        $ref: '#/components/schemas/RunNumber'
     ArrayOfSubsystems:
       description: A list of Subsystem objects.
       type: array
