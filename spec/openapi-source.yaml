@@ -593,6 +593,11 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunNumbers:
+      description: A list of run numbers
+      type: array
+      items:
+        $ref: '#/components/schemas/runNumber'
     ArrayOfSubsystems:
       description: A list of Subsystem objects.
       type: array
@@ -686,8 +691,8 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
-        runNumber:
-          $ref: '#/components/schemas/runNumber'
+        runNumbers:
+          $ref: '#/components/schemas/ArrayOfRunNumbers'
       required:
         - title
         - text
