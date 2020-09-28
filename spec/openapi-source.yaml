@@ -638,10 +638,11 @@ components:
         - page
       additionalProperties: false
     ArrayOfFlps:
-      description: A list of Flp objects.
-      type: array
-      items:
-        $ref: '#/components/schemas/Flp'
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfFlpsResponse'
     ArrayOfFlpsResponse:
       description: Response containing multiple flps.
       type: object
