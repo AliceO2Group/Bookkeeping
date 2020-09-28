@@ -1249,8 +1249,8 @@ components:
               $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
             bytesRecordingReadOut:
               $ref: '#/components/schemas/FlpBytesRecordingReadOut'
-            bytesFairMQReadOut:
-              $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+            bytesFairMqReadOut:
+              $ref: '#/components/schemas/FlpBytesFairMqReadOut'
           required:
             - name
             - hostname
@@ -1258,7 +1258,7 @@ components:
             - bytesProcessed
             - bytesEquipmentReadOut
             - bytesRecordingReadOut
-            - bytesFairMQReadOut
+            - bytesFairMqReadOut
           additionalProperties: false
     FlpName:
       description: FLP name.
@@ -1282,7 +1282,7 @@ components:
       description: Total data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
-    FlpBytesFairMQReadOut:
+    FlpBytesFairMqReadOut:
       description: Total data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
