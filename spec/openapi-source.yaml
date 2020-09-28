@@ -530,6 +530,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RunResponse'
+    Flp:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FlpResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
