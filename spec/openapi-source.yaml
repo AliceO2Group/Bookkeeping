@@ -1286,6 +1286,15 @@ components:
       description: Total data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
+    FlpResponse:
+      description: Response containing a single flp.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Flp'
+      required:
+        - data
+      additionalProperties: false
     FlpSortOptions:
       description: Specifies the sorting requirements of a flp request.
       type: object
