@@ -470,6 +470,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfRunsResponse'
+    ArrayOfFlps:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfFlpsResponse'
     ArrayOfSubsystems:
       description: Expected response to a valid request.
       content:
@@ -638,11 +644,10 @@ components:
         - page
       additionalProperties: false
     ArrayOfFlps:
-      description: Expected response to a valid request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ArrayOfFlpsResponse'
+      description: A list of Flp objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Flp'
     ArrayOfFlpsResponse:
       description: Response containing multiple flps.
       type: object
