@@ -195,21 +195,21 @@ paths:
           $ref: '#/components/responses/BadRequest'
       tags:
         - flp
-    '/flps/{flpId}':
-      parameters:
-        - $ref: '#/components/parameters/FlpId'
-      get:
-        operationId: getFlpById
-        summary: Gets a flp by Id
-        responses:
-          '200':
-            $ref: '#/components/responses/Flp'
-          '400':
-            $ref: '#/components/responses/BadRequest'
-          '404':
-            $ref: '#/components/responses/NotFound'
-        tags:
-          - flp
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - flp
   /status:
     get:
       operationId: getDeployInformation
