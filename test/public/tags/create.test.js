@@ -94,7 +94,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(500);
+        await page.waitFor(1000);
 
         // Because this tag already exists, we expect an error message to appear
         const errorAlert = await page.$('.alert');
