@@ -7,6 +7,8 @@ html, body {
 .cell-m { max-width: 8rem; }
 .cell-l { max-width: 16rem; }
 .cell-xl { max-width: 32rem; }
+.cell-f { width: 40%; }
+.cell-fm { width: 20%; }
 
 .overflow {
     height: 1.5rem;
