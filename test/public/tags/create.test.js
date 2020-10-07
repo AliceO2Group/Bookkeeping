@@ -46,7 +46,7 @@ module.exports = () => {
     });
 
     it('can create a tag', async () => {
-        const text = 'EXAMPLE';
+        const text = 'FOOD';
         await page.goto(`${url}/?page=tag-create`);
         await page.waitFor(250);
 
@@ -97,8 +97,7 @@ module.exports = () => {
         await page.waitFor(500);
 
         // Because this tag already exists, we expect an error message to appear
-        // TODO: expected false but actual result is true, I believe the error alert functionality for a page does not work
-        // const errorAlert = await page.$('.alert');
-        // expect(Boolean(errorAlert)).to.be.true;
+        const errorAlert = await page.$('.alert');
+        expect(Boolean(errorAlert)).to.be.true;
     });
 };
