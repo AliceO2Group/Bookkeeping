@@ -1275,15 +1275,21 @@ components:
       type: integer
       format: int64
     FlpBytesEquipmentReadOut:
-      description: Total data volume out from the readout 'equipment' component in bytes. Can reach PetaBytes. Updated regularly.
+      description: >-
+        Total data volume out from the readout 'equipment' component in bytes.
+        Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
     FlpBytesRecordingReadOut:
-      description: Total data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
+      description: >-
+        Total data volume out from the readout 'recording' component in bytes.
+        Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
     FlpBytesFairMqReadOut:
-      description: Total data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
+      description: >-
+        Total data volume out from the readout 'fmq' component in bytes. Can
+        reach PetaBytes. Updated regularly.
       type: integer
       format: int64
     FlpResponse:
