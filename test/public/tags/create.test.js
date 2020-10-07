@@ -46,7 +46,7 @@ module.exports = () => {
     });
 
     it('can create a tag', async () => {
-        const text = 'FOOD';
+        const text = 'EXAMPLE';
         await page.goto(`${url}/?page=tag-create`);
         await page.waitFor(250);
 
@@ -81,7 +81,7 @@ module.exports = () => {
     });
 
     it('shows an error message if tag creation failed', async () => {
-        const text = 'FOOD';
+        const text = 'EXAMPLE';
 
         // Return to the tag creation page
         const buttonCreate = await page.$('button#create');
