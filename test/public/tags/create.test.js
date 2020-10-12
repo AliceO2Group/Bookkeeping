@@ -81,7 +81,7 @@ module.exports = () => {
     });
 
     it('shows an error message if tag creation failed', async () => {
-        const text = 'FOOD';
+        const text = 'EXAMPLE';
 
         // Return to the tag creation page
         const buttonCreate = await page.$('button#create');
