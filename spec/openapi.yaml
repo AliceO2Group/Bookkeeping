@@ -1,4 +1,4 @@
-# Generated on Mon, 12 Oct 2020 09:46:17 GMT
+# Generated on Mon, 12 Oct 2020 09:52:57 GMT
 
 openapi: 3.0.0
 info:
@@ -556,6 +556,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Flp:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FlpResponse'
     Log:
       description: Expected response to a valid request.
       content:
@@ -580,12 +586,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RunResponse'
-    Flp:
-      description: Expected response to a valid request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/FlpResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
@@ -999,6 +999,92 @@ components:
         - operation
         - values
       additionalProperties: false
+    Flp:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesFairMqReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        id:
+          $ref: '#/components/schemas/EntityId'
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        name:
+          $ref: '#/components/schemas/FlpName'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+      required:
+        - bytesEquipmentReadOut
+        - bytesFairMqReadOut
+        - bytesProcessed
+        - bytesRecordingReadOut
+        - hostname
+        - id
+        - nTimeframes
+        - name
+      additionalProperties: false
+    FlpName:
+      description: FLP name.
+      type: string
+    FlpHostname:
+      description: FLP hostname.
+      type: string
+    FlpTimeframes:
+      description: Number of subtimeframes processed in this FLP. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesProcessed:
+      description: Total data volume read out in bytes.
+      type: integer
+      format: int64
+    FlpBytesEquipmentReadOut:
+      description: >-
+        Total data volume out from the readout 'equipment' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesRecordingReadOut:
+      description: >-
+        Total data volume out from the readout 'recording' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesFairMqReadOut:
+      description: >-
+        Total data volume out from the readout 'fmq' component in bytes. Can
+        reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpResponse:
+      description: Response containing a single flp.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Flp'
+      required:
+        - data
+      additionalProperties: false
+    FlpSortOptions:
+      description: Specifies the sorting requirements of a flp request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1363,92 +1449,6 @@ components:
       enum:
         - asc
         - desc
-    Flp:
-      description: Describes an intervention or an event that happened.
-      type: object
-      properties:
-        bytesEquipmentReadOut:
-          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
-        bytesProcessed:
-          $ref: '#/components/schemas/FlpBytesProcessed'
-        bytesRecordingReadOut:
-          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
-        createdAt:
-          description: Unix timestamp when this entity was created.
-          type: integer
-          format: int64
-        hostname:
-          $ref: '#/components/schemas/FlpHostname'
-        id:
-          $ref: '#/components/schemas/EntityId'
-        nTimeframes:
-          $ref: '#/components/schemas/FlpTimeframes'
-        name:
-          $ref: '#/components/schemas/FlpName'
-        updatedAt:
-          description: Unix timestamp when this entity was last updated.
-          type: integer
-          format: int64
-      required:
-        - bytesEquipmentReadOut
-        - bytesFairMqReadOut
-        - bytesProcessed
-        - bytesRecordingReadOut
-        - hostname
-        - id
-        - nTimeframes
-        - name
-      additionalProperties: false
-    FlpName:
-      description: FLP name.
-      type: string
-    FlpHostname:
-      description: FLP hostname.
-      type: string
-    FlpTimeframes:
-      description: Number of subtimeframes processed in this FLP. Updated regularly.
-      type: integer
-      format: int64
-    FlpBytesProcessed:
-      description: Total data volume read out in bytes.
-      type: integer
-      format: int64
-    FlpBytesEquipmentReadOut:
-      description: >-
-        Total data volume out from the readout 'equipment' component in bytes.
-        Can reach PetaBytes. Updated regularly.
-      type: integer
-      format: int64
-    FlpBytesRecordingReadOut:
-      description: >-
-        Total data volume out from the readout 'recording' component in bytes.
-        Can reach PetaBytes. Updated regularly.
-      type: integer
-      format: int64
-    FlpBytesFairMqReadOut:
-      description: >-
-        Total data volume out from the readout 'fmq' component in bytes. Can
-        reach PetaBytes. Updated regularly.
-      type: integer
-      format: int64
-    FlpResponse:
-      description: Response containing a single flp.
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/Flp'
-      required:
-        - data
-      additionalProperties: false
-    FlpSortOptions:
-      description: Specifies the sorting requirements of a flp request.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/SortOrder'
-      additionalProperties: false
     Subsystem:
       description: A label attached to something for the purpose of identification.
       type: object
