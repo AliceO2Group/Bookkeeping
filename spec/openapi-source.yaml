@@ -71,23 +71,23 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-    '/flps/{flpId}':
-      parameters:
-        - $ref: '#/components/parameters/FlpId'
-      get:
-        operationId: getFlpById
-        summary: Gets a flp by Id
-        responses:
-          '200':
-            $ref: '#/components/responses/Flp'
-          '400':
-            $ref: '#/components/responses/BadRequest'
-          '404':
-            $ref: '#/components/responses/NotFound'
-          default:
-            $ref: '#/components/responses/UnexpectedError'
-        tags:
-          - flp
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   /logs:
     get:
       operationId: listLogs
