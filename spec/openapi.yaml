@@ -1,4 +1,4 @@
-# Generated on Wed, 07 Oct 2020 14:07:57 GMT
+# Generated on Mon, 12 Oct 2020 08:42:14 GMT
 
 openapi: 3.0.0
 info:
@@ -57,39 +57,6 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
-  /flps:
-    get:
-      operationId: listFlps
-      summary: List all flps
-      parameters:
-        - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/FlpSorting'
-      responses:
-        '200':
-          $ref: '#/components/responses/ArrayOfFlps'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-      tags:
-        - flp
-  '/flps/{flpId}':
-    parameters:
-      - $ref: '#/components/parameters/FlpId'
-    get:
-      operationId: getFlpById
-      summary: Gets a flp by Id
-      responses:
-        '200':
-          $ref: '#/components/responses/Flp'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-      tags:
-        - flp
   /logs:
     get:
       operationId: listLogs
@@ -240,6 +207,39 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+  /flps:
+    get:
+      operationId: listFlps
+      summary: List all flps
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+        - $ref: '#/components/parameters/FlpSorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfFlps'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   /status:
     get:
       operationId: getDeployInformation
@@ -410,21 +410,6 @@ components:
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
       style: deepObject
-    FlpId:
-      name: flpId
-      description: The id of the flp to retrieve
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/EntityId'
-    FlpSorting:
-      in: query
-      name: sort
-      description: Specifies the flp sorting requirements.
-      required: false
-      schema:
-        $ref: '#/components/schemas/FlpSortOptions'
-      style: deepObject
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -461,6 +446,21 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/RunSortOptions'
+      style: deepObject
+    FlpId:
+      name: flpId
+      description: The id of the flp to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    FlpSorting:
+      in: query
+      name: sort
+      description: Specifies the flp sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/FlpSortOptions'
       style: deepObject
     SubsystemId:
       name: subsystemId
@@ -508,12 +508,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
-    ArrayOfFlps:
-      description: Expected response to a valid request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ArrayOfFlpsResponse'
     ArrayOfLogs:
       description: Expected response to a valid request.
       content:
@@ -526,6 +520,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfRunsResponse'
+    ArrayOfFlps:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfFlpsResponse'
     ArrayOfSubsystems:
       description: Expected response to a valid request.
       content:
@@ -644,31 +644,6 @@ components:
       required:
         - data
       additionalProperties: false
-    ArrayOfFlps:
-      description: A list of Flp objects.
-      type: array
-      items:
-        $ref: '#/components/schemas/Flp'
-    ArrayOfFlpsResponse:
-      description: Response containing multiple flps.
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/ArrayOfFlps'
-        meta:
-          $ref: '#/components/schemas/ArrayOfFlpsResponseMeta'
-      required:
-        - data
-      additionalProperties: false
-    ArrayOfFlpsResponseMeta:
-      description: The metadata related to an array of flps response.
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/PaginationMeta'
-      required:
-        - page
-      additionalProperties: false
     ArrayOfLogTrees:
       description: A list of Log tree objects.
       type: array
@@ -717,6 +692,31 @@ components:
       additionalProperties: false
     ArrayOfRunsResponseMeta:
       description: The metadata related to an array of runs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfFlps:
+      description: A list of Flp objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Flp'
+    ArrayOfFlpsResponse:
+      description: Response containing multiple flps.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfFlps'
+        meta:
+          $ref: '#/components/schemas/ArrayOfFlpsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfFlpsResponseMeta:
+      description: The metadata related to an array of flps response.
       type: object
       properties:
         page:
@@ -1448,7 +1448,6 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/SortOrder'
-      additionalProperties: false
     Subsystem:
       description: A label attached to something for the purpose of identification.
       type: object
