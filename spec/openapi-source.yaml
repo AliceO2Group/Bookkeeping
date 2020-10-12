@@ -1035,29 +1035,9 @@ components:
         - nTimeframes
         - name
       additionalProperties: false
-    FlpName:
-      description: FLP name.
-      type: string
-    FlpHostname:
-      description: FLP hostname.
-      type: string
-    FlpTimeframes:
-      description: Number of subtimeframes processed in this FLP. Updated regularly.
-      type: integer
-      format: int64
-    FlpBytesProcessed:
-      description: Total data volume read out in bytes.
-      type: integer
-      format: int64
     FlpBytesEquipmentReadOut:
       description: >-
         Total data volume out from the readout 'equipment' component in bytes.
-        Can reach PetaBytes. Updated regularly.
-      type: integer
-      format: int64
-    FlpBytesRecordingReadOut:
-      description: >-
-        Total data volume out from the readout 'recording' component in bytes.
         Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
@@ -1067,6 +1047,22 @@ components:
         reach PetaBytes. Updated regularly.
       type: integer
       format: int64
+    FlpBytesProcessed:
+      description: Total data volume read out in bytes.
+      type: integer
+      format: int64
+    FlpBytesRecordingReadOut:
+      description: >-
+        Total data volume out from the readout 'recording' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpHostname:
+      description: FLP hostname.
+      type: string
+    FlpName:
+      description: FLP name.
+      type: string
     FlpResponse:
       description: Response containing a single flp.
       type: object
@@ -1083,6 +1079,10 @@ components:
         id:
           $ref: '#/components/schemas/SortOrder'
       additionalProperties: false
+    FlpTimeframes:
+      description: Number of subtimeframes processed in this FLP. Updated regularly.
+      type: integer
+      format: int64
     Log:
       description: Describes an intervention or an event that happened.
       type: object
