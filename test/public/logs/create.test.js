@@ -305,4 +305,103 @@ module.exports = () => {
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
     });
+
+    it('can create a log with a run number', async () => {
+        const title = 'Single run number test';
+        const text = 'Sample Text';
+        const runNumbersStr = '1';
+
+        // Return to the creation page
+        await page.click('#log-overview');
+        await page.waitFor(500);
+        await page.click('#create');
+        await page.waitFor(500);
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+
+        // Send the value of the run numbers string to the input
+        await page.type('#run-number', runNumbersStr);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Return the page to home
+        const buttonHome = await page.$('#log-overview');
+        await buttonHome.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+
+        // Go to the log detail page
+        const row = await page.$(`tr#${firstRowId}`);
+        await row.evaluate((row) => row.click());
+        await page.waitFor(500);
+
+        // Verify that the runs are linked to the log
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const runsField = await page.$(`#post${parsedFirstRowId}-runs`);
+        const runsText = await page.evaluate((element) => element.innerText, runsField);
+        expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
+    });
+
+    it('can create a log with multiple run numbers', async () => {
+        const title = 'Multiple run numbers test';
+        const text = 'Sample Text';
+        const runNumbers = [1, 2];
+        const runNumbersStr = runNumbers.join(',');
+
+        // Return to the creation page
+        await page.click('#log-overview');
+        await page.waitFor(500);
+        await page.click('#create');
+        await page.waitFor(500);
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+
+        // Send the value of the run numbers string to the input
+        await page.type('#run-number', runNumbersStr);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Return the page to home
+        const buttonHome = await page.$('#log-overview');
+        await buttonHome.evaluate((button) => button.click());
+        await page.waitFor(250);
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+
+        // Go to the log detail page
+        const row = await page.$(`tr#${firstRowId}`);
+        await row.evaluate((row) => row.click());
+        await page.waitFor(500);
+
+        // Verify that the runs are linked to the log
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const runsField = await page.$(`#post${parsedFirstRowId}-runs`);
+        const runsText = await page.evaluate((element) => element.innerText, runsField);
+        for (const runNumber of runNumbers) {
+            expect(runsText).to.include(runNumber);
+        }
+    });
 };
