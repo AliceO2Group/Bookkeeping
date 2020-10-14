@@ -11,22 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const attachment = require('./attachment');
-const log = require('./log');
-const run = require('./run');
-const flp = require('./flp');
-const server = require('./server');
-const subsystem = require('./subsystem');
-const tag = require('./tag');
-const user = require('./user');
+const OverviewSuite = require('./overview.test');
+const DetailSuite = require('./detail.test');
 
-module.exports = {
-    attachment,
-    log,
-    run,
-    flp,
-    server,
-    subsystem,
-    tag,
-    user,
+module.exports = () => {
+    describe('Overview Page', OverviewSuite);
+    describe('Detail Page', DetailSuite);
 };

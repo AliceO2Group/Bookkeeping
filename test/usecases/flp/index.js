@@ -11,22 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const attachment = require('./attachment');
-const log = require('./log');
-const run = require('./run');
-const flp = require('./flp');
-const server = require('./server');
-const subsystem = require('./subsystem');
-const tag = require('./tag');
-const user = require('./user');
+const GetAllFlpsUseCase = require('./GetAllFlpsUseCase.test');
+const GetFlpUseCase = require('./GetFlpUseCase.test');
 
-module.exports = {
-    attachment,
-    log,
-    run,
-    flp,
-    server,
-    subsystem,
-    tag,
-    user,
+module.exports = () => {
+    describe('GetAllFlpsUseCase', GetAllFlpsUseCase);
+    describe('GetFlpUseCase', GetFlpUseCase);
 };
