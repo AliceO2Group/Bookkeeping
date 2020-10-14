@@ -568,6 +568,11 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunNumbers:
+      description: A list of run numbers
+      type: array
+      items:
+        $ref: '#/components/schemas/RunNumber'
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -686,6 +691,8 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        runNumbers:
+          $ref: '#/components/schemas/ArrayOfRunNumbers'
       required:
         - title
         - text

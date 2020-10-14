@@ -946,6 +946,57 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if an invalid run number was provided', (done) => {
+            const runNumbers = '1234567890';
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
+                    runNumbers,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal(`Run with run number '${runNumbers}' could not be found`);
+
+                    done();
+                });
+        });
+
+        it('should return 400 if an invalid run number string was provided', (done) => {
+            const runNumbers = 'This should only allow (comma-seperated) numbers';
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: 'Yet another run',
+                    text: 'Text of yet another run',
+                    runNumbers,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const expectedErrorMsg = 'Run numbers should be comma-seperated, and should only contain numbers';
+                    expect(res.body.errors[0].title).to.equal(expectedErrorMsg);
+
+                    done();
+                });
+        });
+
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/logs')
@@ -1033,6 +1084,51 @@ module.exports = () => {
 
                     logWithAttachmentsId = res.body.data.id;
                     attachmentId = res.body.data.attachments[0].id;
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body with run number was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .field('runNumbers', '1')
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body with multiple run numbers was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .field('runNumbers', '1, 2')
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
+                    expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
 
                     done();
                 });
