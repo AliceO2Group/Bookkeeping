@@ -11,20 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogTags = require('./logtags');
-const LogRuns = require('./logruns');
+const OverviewSuite = require('./overview.test');
+const DetailSuite = require('./detail.test');
 
-module.exports = (sequelize) => {
-    const models = {
-        LogTags: LogTags(sequelize),
-        LogRuns: LogRuns(sequelize),
-    };
-
-    Object.entries(models).forEach(([_key, model]) => {
-        if (model.associate) {
-            model.associate(sequelize.models);
-        }
-    });
-
-    return models;
+module.exports = () => {
+    describe('Overview Page', OverviewSuite);
+    describe('Detail Page', DetailSuite);
 };

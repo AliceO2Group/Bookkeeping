@@ -11,20 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const LogTags = require('./logtags');
-const LogRuns = require('./logruns');
+const GetAllFlpsUseCase = require('./GetAllFlpsUseCase.test');
+const GetFlpUseCase = require('./GetFlpUseCase.test');
 
-module.exports = (sequelize) => {
-    const models = {
-        LogTags: LogTags(sequelize),
-        LogRuns: LogRuns(sequelize),
-    };
-
-    Object.entries(models).forEach(([_key, model]) => {
-        if (model.associate) {
-            model.associate(sequelize.models);
-        }
-    });
-
-    return models;
+module.exports = () => {
+    describe('GetAllFlpsUseCase', GetAllFlpsUseCase);
+    describe('GetFlpUseCase', GetFlpUseCase);
 };
