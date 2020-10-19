@@ -1,4 +1,4 @@
-# Generated on Mon, 14 Sep 2020 22:40:53 GMT
+# Generated on Mon, 12 Oct 2020 10:03:01 GMT
 
 openapi: 3.0.0
 info:
@@ -57,6 +57,39 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
+  /flps:
+    get:
+      operationId: listFlps
+      summary: List all flps
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+        - $ref: '#/components/parameters/FlpSorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfFlps'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   /logs:
     get:
       operationId: listLogs
@@ -377,6 +410,21 @@ components:
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
       style: deepObject
+    FlpId:
+      name: flpId
+      description: The id of the flp to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    FlpSorting:
+      in: query
+      name: sort
+      description: Specifies the flp sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/FlpSortOptions'
+      style: deepObject
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -460,6 +508,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfFlps:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfFlpsResponse'
     ArrayOfLogs:
       description: Expected response to a valid request.
       content:
@@ -502,6 +556,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Flp:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FlpResponse'
     Log:
       description: Expected response to a valid request.
       content:
@@ -584,6 +644,31 @@ components:
       required:
         - data
       additionalProperties: false
+    ArrayOfFlps:
+      description: A list of Flp objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Flp'
+    ArrayOfFlpsResponse:
+      description: Response containing multiple flps.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfFlps'
+        meta:
+          $ref: '#/components/schemas/ArrayOfFlpsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfFlpsResponseMeta:
+      description: The metadata related to an array of flps response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
     ArrayOfLogTrees:
       description: A list of Log tree objects.
       type: array
@@ -614,6 +699,11 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunNumbers:
+      description: A list of run numbers
+      type: array
+      items:
+        $ref: '#/components/schemas/RunNumber'
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -738,6 +828,8 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
         parentLogId:
           $ref: '#/components/schemas/EntityId'
+        runNumbers:
+          $ref: '#/components/schemas/ArrayOfRunNumbers'
         text:
           $ref: '#/components/schemas/LogText'
         title:
@@ -914,6 +1006,92 @@ components:
         - operation
         - values
       additionalProperties: false
+    Flp:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesFairMqReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        id:
+          $ref: '#/components/schemas/EntityId'
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        name:
+          $ref: '#/components/schemas/FlpName'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+      required:
+        - bytesEquipmentReadOut
+        - bytesFairMqReadOut
+        - bytesProcessed
+        - bytesRecordingReadOut
+        - hostname
+        - id
+        - nTimeframes
+        - name
+      additionalProperties: false
+    FlpBytesEquipmentReadOut:
+      description: >-
+        Total data volume out from the readout 'equipment' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesFairMqReadOut:
+      description: >-
+        Total data volume out from the readout 'fmq' component in bytes. Can
+        reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesProcessed:
+      description: Total data volume read out in bytes.
+      type: integer
+      format: int64
+    FlpBytesRecordingReadOut:
+      description: >-
+        Total data volume out from the readout 'recording' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpHostname:
+      description: FLP hostname.
+      type: string
+    FlpName:
+      description: FLP name.
+      type: string
+    FlpResponse:
+      description: Response containing a single flp.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Flp'
+      required:
+        - data
+      additionalProperties: false
+    FlpSortOptions:
+      description: Specifies the sorting requirements of a flp request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    FlpTimeframes:
+      description: Number of subtimeframes processed in this FLP. Updated regularly.
+      type: integer
+      format: int64
     Log:
       description: Describes an intervention or an event that happened.
       type: object
