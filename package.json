@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.13.3",
-    "@hapi/joi": "17.1.1",
+    "joi": "17.1.1",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "mariadb": "2.4.2",
