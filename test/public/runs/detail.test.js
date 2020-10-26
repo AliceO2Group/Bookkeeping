@@ -149,7 +149,8 @@ module.exports = () => {
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-overview`)).to.be.true;
     });
 
-    it('should display a simple list separated by ellipsis if a number of attachments is less than 5', async () => {
+    it(`should display a list separated by commas if a number of attachments is less than 
+    ${MAX_ATTACHMENTS_WITHOUT_DROPDOWN}`, async () => {
         const logId = 2;
 
         // Navigate to a log detail view
@@ -161,7 +162,8 @@ module.exports = () => {
         expect(attachmentsTr.length).lessThan(MAX_ATTACHMENTS_WITHOUT_DROPDOWN + 1);
     });
 
-    it('should display a attachment\'s button if a number of attachments is more than 5', async () => {
+    it(`should display a attachments's button if a number of attachments is more than 
+    ${MAX_ATTACHMENTS_WITHOUT_DROPDOWN}`, async () => {
         const logId = 4;
 
         // Navigate to a log detail view
@@ -174,15 +176,23 @@ module.exports = () => {
 
         // Expect attachment's button to be shown
         const attachmentsBtn = await page.$('#attachments-btn.flex-wrap.btn');
-
         expect(attachmentsBtn.length).to.be.ok;
-        attachmentsBtn.click();
+    });
 
+    it(`attachments's dropdown should have more than ${MAX_ATTACHMENTS_WITHOUT_DROPDOWN} attachments`, async () => {
+        const logId = 4;
+
+        // Navigate to a log detail view
+        await page.goto(`${url}/?page=log-detail&id=${logId}`);
+        await page.waitFor(100);
+
+        // Open attachments's dropdown
+        await page.click('#attachments-btn.flex-wrap.btn');
         await page.waitFor(100);
 
         // Expect attachments number is more than 5 in dropdown
         const attachments = await page.$$('div.attachments-dropdown div.dropdown-menu div.menu-item');
-        expect(attachments.length).lessThan(MAX_ATTACHMENTS_WITHOUT_DROPDOWN);
+        expect(attachments.length).greaterThan(MAX_ATTACHMENTS_WITHOUT_DROPDOWN);
     });
 
     it('should display a dropdown on click on attachment\'s button and hide on the second click', async () => {
@@ -195,30 +205,35 @@ module.exports = () => {
         // Open attachment's dropdown on click
         const attachmentsBtn = await page.$('#attachments-btn.flex-wrap.btn');
         attachmentsBtn.click();
-
         await page.waitFor(100);
+
+        // Expect attachments's dropdown to be shown
         let attachmentsDropdown = await page.$('.dropdown-menu');
-        expect(Boolean(attachmentsDropdown)).to.be(true);
+        expect(Boolean(attachmentsDropdown)).to.be.true;
 
         // Close attachment's dropdown on click
         attachmentsBtn.click();
         await page.waitFor(100);
+
+        // Expect attachments's dropdown not to be shown
         attachmentsDropdown = await page.$('.dropdown-menu');
-        expect(Boolean(attachmentsDropdown)).to.be(false);
+        expect(Boolean(attachmentsDropdown)).to.be.false;
     });
 
-    it('should truncate a text with ellipsis if text\' length is more than 50 letters', async () => {
+    it(`should truncate a text with ellipsis if attachment's length is more than ${MAX_MENUITEM_TEXT_LENGTH} 
+    letters`, async () => {
         const logId = 3;
 
         // Navigate to a log detail view
         await page.goto(`${url}/?page=log-detail&id=${logId}`);
         await page.waitFor(100);
 
-        // Expect attachment to be truncated with ellipsis
         const attachmentsTr = await page.$$(`#post${logId}-attachments td div div a.menu-item--truncated`);
         if (attachmentsTr.innerHTML.length > MAX_MENUITEM_TEXT_LENGTH) {
+            // Expect attachment to be truncated with ellipsis
             expect(attachmentsTr.style.textOverflow === 'ellipsis').to.be.true;
         } else {
+            // Expect attachment not to be truncated with ellipsis
             expect(attachmentsTr.style.textOverflow === 'ellipsis').to.be.false;
         }
     });
