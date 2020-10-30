@@ -3,6 +3,7 @@ We would love for you to contribute to *AliceO2 Bookkeeping* and help make it ev
 - [Coding conventions](#coding-conventions)
 - [Endpoint conventions](#endpoint-conventions)
 - [Commit Message Guidelines](#commit-message-guidelines)
+- [Trunk based development guidelines](#trunk-based-development)
 
 ## Coding conventions
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
@@ -48,3 +49,8 @@ fix(release): need to depend on latest rxjs and zone.js
 
 The version in our package.json gets copied to the one we publish, and users need the latest of these.
 ```
+
+## Trunk based development
+
+For this project we generally use [trunk based development](https://cloud.google.com/solutions/devops/devops-tech-trunk-based-development).
+Before you start coding, make sure you are somewhat familiar with this concept.
