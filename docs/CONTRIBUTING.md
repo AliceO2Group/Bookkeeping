@@ -54,3 +54,4 @@ The version in our package.json gets copied to the one we publish, and users nee
 
 For this project we generally use [trunk based development](https://cloud.google.com/solutions/devops/devops-tech-trunk-based-development).
 Before you start coding, make sure you are somewhat familiar with this concept.
+You can read more about that [here](https://cloud.google.com/solutions/devops/devops-tech-trunk-based-development) and [here](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) 
