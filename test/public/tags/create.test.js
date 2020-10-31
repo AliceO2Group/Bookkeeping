@@ -50,32 +50,25 @@ module.exports = () => {
         await page.goto(`${url}/?page=tag-create`, { waitUntil: 'networkidle0' });
 
         // Enter the text value
+        await page.waitForSelector('#text');
         await page.type('#text', text);
 
-        // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        // Create the new tag
+        await page.click('button#send');
+
+        // Verify the title of the page
+        await page.waitForSelector('.mv2');
+        const tagTitle = await page.$eval('.mv2', (element) => element.innerText);
+        expect(tagTitle).to.equal(`Tag: ${text}`);
 
         // Return the page to the tag overview
-        const buttonOverviews = await page.$('#overviews');
-        await buttonOverviews.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
-        await page.click('#tag-overview');
-        await page.waitForTimeout(250);
-
-        // Ensure you are at the overview page again
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=tag-overview`);
+        await page.goto(`${url}/?page=tag-overview`, { waitUntil: 'networkidle0' });
 
         // Get the last post and verify the title of the log we posted
-        const table = await page.$$('tr');
-        await page.waitForTimeout(100);
-
+        const table = await page.$$('.table > tbody > tr');
         const lastRow = await table[table.length - 1];
         const lastRowId = await page.evaluate((element) => element.id, lastRow);
-        const lastRowText = await page.$(`#${lastRowId}-text`);
-        const lastRowInnerText = await page.evaluate((element) => element.innerText, lastRowText);
+        const lastRowInnerText = await page.$eval(`#${lastRowId}-text`, (element) => element.innerText);
         expect(lastRowInnerText).to.equal(text);
     });
 
