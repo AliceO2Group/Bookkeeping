@@ -67,8 +67,7 @@ module.exports = () => {
     });
 
     it('subsystem detail loads correctly', async () => {
-        await page.goto(`${url}/?page=subsystem-detail&id=1`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=subsystem-detail&id=1`, { waitUntil: 'networkidle0' });
 
         const postExists = await page.$('h2');
         expect(Boolean(postExists)).to.be.true;
@@ -111,8 +110,7 @@ module.exports = () => {
 
     it('notifies if a specified subsystem id is invalid', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem-detail&id=abc`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=subsystem-detail&id=abc`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
         const error = await page.$('.alert');
@@ -123,8 +121,7 @@ module.exports = () => {
 
     it('notifies if a specified subsystem id is not found', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem-detail&id=999`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=subsystem-detail&id=999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
         const error = await page.$('.alert');

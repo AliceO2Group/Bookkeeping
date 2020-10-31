@@ -69,8 +69,7 @@ module.exports = () => {
     });
 
     it('correctly loads the log creation page', async () => {
-        await page.goto(`${url}/?page=log-create`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=log-create`, { waitUntil: 'networkidle0' });
 
         // We expect the log creation screen to be shown correctly
         const header = await page.$('h2');

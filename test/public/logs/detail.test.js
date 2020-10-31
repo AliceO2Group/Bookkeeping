@@ -46,8 +46,7 @@ module.exports = () => {
     });
 
     it('log detail loads correctly', async () => {
-        await page.goto(`${url}/?page=log-detail&id=1`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=log-detail&id=1`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
         const postExists = await page.$('#post1');
@@ -56,8 +55,7 @@ module.exports = () => {
 
     it('notifies if a specified log id is invalid', async () => {
         // Navigate to a log detail view with an id that cannot exist
-        await page.goto(`${url}/?page=log-detail&id=99999999`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=log-detail&id=99999999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
         const error = await page.$('.alert-danger');
@@ -71,8 +69,7 @@ module.exports = () => {
         const runId = 1;
 
         // Navigate to a log detail view
-        await page.goto(`${url}/?page=log-detail&id=${logId}`);
-        await page.waitForTimeout(100);
+        await page.goto(`${url}/?page=log-detail&id=${logId}`, { waitUntil: 'networkidle0' });
 
         // We expect the correct associated runs to be shown
         const runField = await page.$(`#post${logId}-runs`);
@@ -91,8 +88,7 @@ module.exports = () => {
 
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
-        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`);
-        await page.waitForTimeout(250);
+        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
         await page.click(`#reply-to-${parentLogId}`);

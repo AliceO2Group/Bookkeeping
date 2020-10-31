@@ -47,8 +47,7 @@ module.exports = () => {
 
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
-        await page.goto(`${url}/?page=tag-create`);
-        await page.waitForTimeout(250);
+        await page.goto(`${url}/?page=tag-create`, { waitUntil: 'networkidle0' });
 
         // Enter the text value
         await page.type('#text', text);
