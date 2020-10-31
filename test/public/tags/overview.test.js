@@ -66,7 +66,7 @@ module.exports = () => {
 
     it('loads the page successfully', async () => {
         const response = await page.goto(`${url}?page=tag-overview`);
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -83,7 +83,7 @@ module.exports = () => {
 
         // We expect the entry page to have the same id as the id from the tag overview
         await page.click(`#${firstRowId}`);
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
@@ -92,13 +92,13 @@ module.exports = () => {
         // Return the page to the tag overview
         const buttonOverviews = await page.$('#overviews');
         await buttonOverviews.evaluate((button) => button.click());
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         await page.click('#tag-overview');
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Click on the button to start creating a new tag
         await page.click('#create');
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Expect the page to be the tag creation page at this point
         const redirectedUrl = await page.url();

@@ -48,7 +48,7 @@ module.exports = () => {
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
         await page.goto(`${url}/?page=tag-create`);
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Enter the text value
         await page.type('#text', text);
@@ -56,14 +56,14 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Return the page to the tag overview
         const buttonOverviews = await page.$('#overviews');
         await buttonOverviews.evaluate((button) => button.click());
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         await page.click('#tag-overview');
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Ensure you are at the overview page again
         const redirectedUrl = await page.url();
@@ -71,7 +71,7 @@ module.exports = () => {
 
         // Get the last post and verify the title of the log we posted
         const table = await page.$$('tr');
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
 
         const lastRow = await table[table.length - 1];
         const lastRowId = await page.evaluate((element) => element.id, lastRow);
@@ -86,7 +86,7 @@ module.exports = () => {
         // Return to the tag creation page
         const buttonCreate = await page.$('button#create');
         await buttonCreate.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Enter the duplicate text value
         await page.type('#text', text);
@@ -94,7 +94,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // Because this tag already exists, we expect an error message to appear
         const errorAlert = await page.$('.alert');

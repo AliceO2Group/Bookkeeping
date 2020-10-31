@@ -69,7 +69,7 @@ module.exports = () => {
 
     it('loads the page successfully', async () => {
         const response = await page.goto(`${url}?page=subsystem-overview`);
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -86,7 +86,7 @@ module.exports = () => {
 
         // We expect the entry page to have the same id as the id from the subsystem overview
         await page.click(`#${firstRowId}`);
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
