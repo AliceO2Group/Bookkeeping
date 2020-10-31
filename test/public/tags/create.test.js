@@ -82,21 +82,19 @@ module.exports = () => {
     it('shows an error message if tag creation failed', async () => {
         const text = 'EXAMPLE';
 
-        // Return to the tag creation page
-        const buttonCreate = await page.$('button#create');
-        await buttonCreate.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        // Go to the tag creation page
+        await page.click('button#create');
 
         // Enter the duplicate text value
+        await page.waitForSelector('#text');
         await page.type('#text', text);
 
-        // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(500);
+        // Create the new tag
+        await page.click('button#send');
 
         // Because this tag already exists, we expect an error message to appear
-        const errorAlert = await page.$('.alert');
-        expect(Boolean(errorAlert)).to.be.true;
+        await page.waitForSelector('.alert');
+        const errorMessage = await page.$eval('.alert', (element) => element.innerText);
+        expect(errorMessage).to.equal('Conflict: The provided entity already exists');
     });
 };
