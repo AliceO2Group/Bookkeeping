@@ -71,6 +71,20 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+    post:
+      operationId: createFlp
+      summary: Adds a new flp
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFlp'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   '/flps/{flpId}':
     parameters:
       - $ref: '#/components/parameters/FlpId'
@@ -481,6 +495,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFlp'
     CreateLog:
       required: true
       content:
@@ -817,6 +837,20 @@ components:
       properties:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
+      additionalProperties: false
+    CreateFlp:
+      description: Describes an flp
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/FlpName'
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+      required:
+        - name
+        - hostname
       additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.

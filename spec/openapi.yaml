@@ -1,4 +1,4 @@
-# Generated on Mon, 12 Oct 2020 10:03:01 GMT
+# Generated on Wed, 04 Nov 2020 20:08:41 GMT
 
 openapi: 3.0.0
 info:
@@ -67,6 +67,20 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfFlps'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+    post:
+      operationId: createFlp
+      summary: Adds a new flp
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFlp'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
         default:
@@ -483,6 +497,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFlp'
     CreateLog:
       required: true
       content:
@@ -819,6 +839,20 @@ components:
       properties:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
+      additionalProperties: false
+    CreateFlp:
+      description: Describes an flp
+      type: object
+      properties:
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        name:
+          $ref: '#/components/schemas/FlpName'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+      required:
+        - hostname
+        - name
       additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.
