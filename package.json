@@ -33,6 +33,6 @@
     "nyc": "15.1.0",
     "puppeteer": "5.3.1",
     "puppeteer-to-istanbul": "git+https://github.com/SoftwareForScience/puppeteer-to-istanbul.git",
-    "supertest": "5.0.0"
+    "supertest": "6.0.0"
   }
 }
