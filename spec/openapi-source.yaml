@@ -85,6 +85,22 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+      patch:
+        operationId: updateFlp
+        summary: Update an existing flp
+        requestBody:
+          $ref: '#/components/requestBodies/UpdateFlp'
+        responses:
+          '200':
+            $ref: '#/components/responses/Flp'
+          '400':
+            $ref: '#/components/responses/BadRequest'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          default:
+            $ref: '#/components/responses/UnexpectedError'
+        tags:
+          - flp
   '/flps/{flpId}':
     parameters:
       - $ref: '#/components/parameters/FlpId'
@@ -519,6 +535,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTag'
+    UpdateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFlp'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -1548,6 +1570,20 @@ components:
       required:
         - data
       additionalProperties: false
+    UpdateFlp:
+      description: Describes an update to an flp
+      type: object
+      properties:
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
     User:
       description: Describes an intervention or an event that happened.
       type: object
