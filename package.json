@@ -29,7 +29,7 @@
     "eslint": "7.12.1",
     "js-yaml": "3.14.0",
     "mocha": "8.2.1",
-    "nodemon": "2.0.4",
+    "nodemon": "2.0.6",
     "nyc": "15.1.0",
     "puppeteer": "5.4.1",
     "puppeteer-to-istanbul": "git+https://github.com/SoftwareForScience/puppeteer-to-istanbul.git",
