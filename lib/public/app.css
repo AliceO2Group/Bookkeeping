@@ -227,3 +227,7 @@ html, body {
 .gray-dark {
     color: var(--color-gray-dark) !important;
 }
+
+.border-danger {
+    border: 1px solid var(--color-danger) !important;
+}
