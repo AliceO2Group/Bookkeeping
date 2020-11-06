@@ -179,7 +179,7 @@ html, body {
     display: block;
 }
 
-.navbar-dropdown {
+.navbar-dropdown, .attachments-dropdown {
     position: relative;
 }
 
@@ -226,4 +226,27 @@ html, body {
 
 .gray-dark {
     color: var(--color-gray-dark) !important;
+}
+
+.attachments-dropdown .dropdown-menu {
+    top: 100%;
+    right: auto;
+    left: 0;
+    min-height: auto;
+    max-height: 30vh;
+    margin-top: 0.25rem;
+    margin-left: 0.125rem;
+    overflow-y: auto;
+}
+
+.attachments-dropdown .dropdown-menu .menu-item:hover {
+    background-color: var(--color-white);
+}
+
+.menu-item--truncated {
+    display: inline-block;
+    width: 12rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
