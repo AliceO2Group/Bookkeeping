@@ -47,57 +47,47 @@ module.exports = () => {
 
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
-        await page.goto(`${url}/?page=tag-create`);
-        await page.waitFor(250);
+        await page.goto(`${url}/?page=tag-create`, { waitUntil: 'networkidle0' });
 
         // Enter the text value
+        await page.waitForSelector('#text');
         await page.type('#text', text);
 
-        // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        // Create the new tag
+        await page.click('button#send');
+
+        // Verify the title of the page
+        await page.waitForSelector('.mv2');
+        const tagTitle = await page.$eval('.mv2', (element) => element.innerText);
+        expect(tagTitle).to.equal(`Tag: ${text}`);
 
         // Return the page to the tag overview
-        const buttonOverviews = await page.$('#overviews');
-        await buttonOverviews.evaluate((button) => button.click());
-        await page.waitFor(100);
-        await page.click('#tag-overview');
-        await page.waitFor(250);
-
-        // Ensure you are at the overview page again
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=tag-overview`);
+        await page.goto(`${url}/?page=tag-overview`, { waitUntil: 'networkidle0' });
 
         // Get the last post and verify the title of the log we posted
-        const table = await page.$$('tr');
-        await page.waitFor(100);
-
+        const table = await page.$$('.table > tbody > tr');
         const lastRow = await table[table.length - 1];
         const lastRowId = await page.evaluate((element) => element.id, lastRow);
-        const lastRowText = await page.$(`#${lastRowId}-text`);
-        const lastRowInnerText = await page.evaluate((element) => element.innerText, lastRowText);
+        const lastRowInnerText = await page.$eval(`#${lastRowId}-text`, (element) => element.innerText);
         expect(lastRowInnerText).to.equal(text);
     });
 
     it('shows an error message if tag creation failed', async () => {
         const text = 'EXAMPLE';
 
-        // Return to the tag creation page
-        const buttonCreate = await page.$('button#create');
-        await buttonCreate.evaluate((button) => button.click());
-        await page.waitFor(250);
+        // Go to the tag creation page
+        await page.click('button#create');
 
         // Enter the duplicate text value
+        await page.waitForSelector('#text');
         await page.type('#text', text);
 
-        // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(500);
+        // Create the new tag
+        await page.click('button#send');
 
         // Because this tag already exists, we expect an error message to appear
-        const errorAlert = await page.$('.alert');
-        expect(Boolean(errorAlert)).to.be.true;
+        await page.waitForSelector('.alert');
+        const errorMessage = await page.$eval('.alert', (element) => element.innerText);
+        expect(errorMessage).to.equal('Conflict: The provided entity already exists');
     });
 };
