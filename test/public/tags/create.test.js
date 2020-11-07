@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -37,7 +37,7 @@ module.exports = () => {
         await page.type('#text', text);
 
         // Create the new tag
-        await page.click('button#send');
+        await pressElement(page, 'button#send');
 
         // Verify the title of the page
         await expectInnerText(page, '.mv2', `Tag: ${text}`);
@@ -57,14 +57,14 @@ module.exports = () => {
         const text = 'EXAMPLE';
 
         // Go to the tag creation page
-        await page.click('button#create');
+        await pressElement(page, 'button#create');
 
         // Enter the duplicate text value
         await page.waitForSelector('#text');
         await page.type('#text', text);
 
         // Create the new tag
-        await page.click('button#send');
+        await pressElement(page, 'button#send');
 
         // Because this tag already exists, we expect an error message to appear
         await expectInnerText(page, '.alert', 'Conflict: The provided entity already exists');

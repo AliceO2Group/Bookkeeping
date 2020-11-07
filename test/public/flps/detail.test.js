@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -52,21 +52,21 @@ module.exports = () => {
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#logs-tab');
+        await pressElement(page, '#logs-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to the main panel', async () => {
-        await page.click('#main-tab');
+        await pressElement(page, '#main-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=main`)).to.be.true;
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#logs-tab');
+        await pressElement(page, '#logs-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
@@ -77,7 +77,7 @@ module.exports = () => {
         firstRowId = await getFirstRow(table, page);
 
         // We expect the entry page to have the same id as the id from the flp overview
-        await page.click(`#${firstRowId}`);
+        await pressElement(page, `#${firstRowId}`);
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
@@ -104,7 +104,7 @@ module.exports = () => {
         await expectInnerText(page, '.btn-primary', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await page.click('.btn-primary');
+        await pressElement(page, '.btn-primary');
         await page.waitForTimeout(100);
         expect(page.url()).to.equal(`${url}/?page=flp-overview`);
     });

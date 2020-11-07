@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement } = require('../defaults');
 const path = require('path');
 
 const { expect } = chai;
@@ -132,9 +132,9 @@ module.exports = () => {
         const tags = ['FOOD', 'OTHER'];
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
@@ -182,9 +182,9 @@ module.exports = () => {
 
     it('can navigate to tag creation screen', async () => {
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Expect the user to be at the tag creation screen when the URL is clicked on
@@ -202,9 +202,9 @@ module.exports = () => {
         const file2 = 'hadron_collider.jpg';
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
@@ -261,9 +261,9 @@ module.exports = () => {
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // We expect the clear button to not be visible yet
@@ -295,9 +295,9 @@ module.exports = () => {
         const runNumbersStr = '1';
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
@@ -344,9 +344,9 @@ module.exports = () => {
         const runNumbersStr = runNumbers.join(',');
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
