@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
 
 const { expect } = chai;
 
@@ -48,12 +48,7 @@ module.exports = () => {
 
     it('tag detail loads correctly', async () => {
         await page.goto(`${url}/?page=tag-detail&id=1`, { waitUntil: 'networkidle0' });
-
-        const postExists = await page.$('h2');
-        expect(Boolean(postExists)).to.be.true;
-
-        const title = await page.evaluate((element) => element.innerText, postExists);
-        expect(title).to.equal('Tag: FOOD');
+        await expectInnerText(page, 'h2', 'Tag: FOOD');
     });
 
     it('can navigate to the log panel', async () => {
@@ -93,21 +88,15 @@ module.exports = () => {
         // Navigate to a tag detail view with an id that cannot exist
         await page.goto(`${url}/?page=tag-detail&id=abc`, { waitUntil: 'networkidle0' });
 
-        // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "params.tagId" must be a number');
+        // Because this tag id is invalid, we expect an error message to appear
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.tagId" must be a number');
     });
 
     it('notifies if a specified tag id is not found', async () => {
         // Navigate to a tag detail view with an id that cannot exist
         await page.goto(`${url}/?page=tag-detail&id=999`, { waitUntil: 'networkidle0' });
 
-        // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Tag with this id (999) could not be found');
+        // Because this tag does not exist, we expect an error message to appear
+        await expectInnerText(page, '.alert', 'Tag with this id (999) could not be found');
     });
 };

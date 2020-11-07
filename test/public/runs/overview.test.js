@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
 
 const { expect } = chai;
 
@@ -206,10 +206,8 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
-        const error = await page.$('.alert-danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "query.page.limit" must be less than or equal to 100');
+        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
 
         // Revert changes for next test
         await page.evaluate(() => {

@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
 
 const { expect } = chai;
 
@@ -48,12 +48,7 @@ module.exports = () => {
 
     it('flp detail loads correctly', async () => {
         await page.goto(`${url}/?page=flp-detail&id=1`, { waitUntil: 'networkidle0' });
-
-        const postExists = await page.$('h2');
-        expect(Boolean(postExists)).to.be.true;
-
-        const title = await page.evaluate((element) => element.innerText, postExists);
-        expect(title).to.equal('Flp #1');
+        await expectInnerText(page, 'h2', 'Flp #1');
     });
 
     it('can navigate to the log panel', async () => {
@@ -93,10 +88,7 @@ module.exports = () => {
         await page.goto(`${url}/?page=flp-detail&id=abc`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "params.flpId" must be a number');
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.flpId" must be a number');
     });
 
     it('notifies if a specified flp id is not found', async () => {
@@ -104,22 +96,16 @@ module.exports = () => {
         await page.goto(`${url}/?page=flp-detail&id=999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Flp with this id (999) could not be found');
+        await expectInnerText(page, '.alert', 'Flp with this id (999) could not be found');
     });
 
     it('can return to the overview page if an error occurred', async () => {
         // We expect there to be a button to return to the overview page
-        const returnButton = await page.$('.btn-primary');
-        const returnButtonText = await page.evaluate((element) => element.innerText, returnButton);
-        expect(returnButtonText).to.equal('Return to Overview');
+        await expectInnerText(page, '.btn-primary', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await returnButton.click();
+        await page.click('.btn-primary');
         await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=flp-overview`)).to.be.true;
+        expect(page.url()).to.equal(`${url}/?page=flp-overview`);
     });
 };

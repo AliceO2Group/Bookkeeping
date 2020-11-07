@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
 
 const { expect } = chai;
 
@@ -41,10 +41,8 @@ module.exports = () => {
         await page.goto(`${url}/?page=log-detail&id=99999999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert-danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Log with this id (99999999) could not be found');
+        const expectedMessage = 'Log with this id (99999999) could not be found';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 
     it('allows navigating to an associated run', async () => {
