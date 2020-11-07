@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -64,7 +64,7 @@ module.exports = () => {
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
-        await page.click(`#${firstRowId}`);
+        await pressElement(page, `#${firstRowId}`);
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=${parsedFirstRowId}`)).to.be.true;
@@ -75,11 +75,11 @@ module.exports = () => {
         const buttonOverviews = await page.$('#overviews');
         await buttonOverviews.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        await page.click('#tag-overview');
+        await pressElement(page, '#tag-overview');
         await page.waitForTimeout(250);
 
         // Click on the button to start creating a new tag
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(250);
 
         // Expect the page to be the tag creation page at this point

@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -72,7 +72,7 @@ module.exports = () => {
         await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
-        await page.click(`#reply-to-${parentLogId}`);
+        await pressElement(page, `#reply-to-${parentLogId}`);
         await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();

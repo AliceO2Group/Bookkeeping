@@ -52,3 +52,8 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
     const elementInnerText = await page.$eval(selector, (element) => element.innerText);
     expect(elementInnerText).to.equal(innerText);
 };
+
+module.exports.pressElement = async (page, selector) => {
+    await page.waitForSelector(selector);
+    await page.click(selector);
+};
