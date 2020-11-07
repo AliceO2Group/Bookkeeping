@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
 
 const { expect } = chai;
 
@@ -48,12 +48,7 @@ module.exports = () => {
 
     it('subsystem detail loads correctly', async () => {
         await page.goto(`${url}/?page=subsystem-detail&id=1`, { waitUntil: 'networkidle0' });
-
-        const postExists = await page.$('h2');
-        expect(Boolean(postExists)).to.be.true;
-
-        const title = await page.evaluate((element) => element.innerText, postExists);
-        expect(title).to.equal('Subsystem: Subsystem Plant #1');
+        await expectInnerText(page, 'h2', 'Subsystem: Subsystem Plant #1');
     });
 
     it('can navigate to the log panel', async () => {
@@ -93,10 +88,7 @@ module.exports = () => {
         await page.goto(`${url}/?page=subsystem-detail&id=abc`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "params.subsystemId" must be a number');
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.subsystemId" must be a number');
     });
 
     it('notifies if a specified subsystem id is not found', async () => {
@@ -104,9 +96,6 @@ module.exports = () => {
         await page.goto(`${url}/?page=subsystem-detail&id=999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Subsystem with this id (999) could not be found:');
+        await expectInnerText(page, '.alert', 'Subsystem with this id (999) could not be found:');
     });
 };

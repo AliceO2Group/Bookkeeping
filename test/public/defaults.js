@@ -11,9 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const chai = require('chai');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
+
+const { expect } = chai;
 
 module.exports.defaultBefore = async (page, browser) => {
     browser = await puppeteer.launch({ args: ['--no-sandbox'] });
@@ -42,4 +45,10 @@ module.exports.defaultAfter = async (page, browser) => {
     await browser.close();
 
     return [page, browser];
+};
+
+module.exports.expectInnerText = async (page, selector, innerText) => {
+    await page.waitForSelector(selector);
+    const elementInnerText = await page.$eval(selector, (element) => element.innerText);
+    expect(elementInnerText).to.equal(innerText);
 };

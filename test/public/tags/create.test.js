@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
 
 const { expect } = chai;
 
@@ -40,9 +40,7 @@ module.exports = () => {
         await page.click('button#send');
 
         // Verify the title of the page
-        await page.waitForSelector('.mv2');
-        const tagTitle = await page.$eval('.mv2', (element) => element.innerText);
-        expect(tagTitle).to.equal(`Tag: ${text}`);
+        await expectInnerText(page, '.mv2', `Tag: ${text}`);
 
         // Return the page to the tag overview
         await page.goto(`${url}/?page=tag-overview`, { waitUntil: 'networkidle0' });
@@ -69,8 +67,6 @@ module.exports = () => {
         await page.click('button#send');
 
         // Because this tag already exists, we expect an error message to appear
-        await page.waitForSelector('.alert');
-        const errorMessage = await page.$eval('.alert', (element) => element.innerText);
-        expect(errorMessage).to.equal('Conflict: The provided entity already exists');
+        await expectInnerText(page, '.alert', 'Conflict: The provided entity already exists');
     });
 };
