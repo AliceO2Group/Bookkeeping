@@ -48,7 +48,7 @@ module.exports = () => {
             page.coverage.startJSCoverage({ resetOnNavigation: false }),
             page.coverage.startCSSCoverage(),
         ]);
-        page.setViewport({
+        await page.setViewport({
             width: 700,
             height: 720,
             deviceScaleFactor: 1,
