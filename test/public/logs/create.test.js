@@ -257,7 +257,7 @@ module.exports = () => {
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1}\n, \n${file2}`);
-    });
+    }).timeout(10000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
