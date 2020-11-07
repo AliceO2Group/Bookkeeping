@@ -148,6 +148,7 @@ module.exports = () => {
         await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
             el.value = '111';
+            // eslint-disable-next-line no-undef
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
