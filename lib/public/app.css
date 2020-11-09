@@ -189,7 +189,7 @@ html, body {
     left: auto;
     margin-top: 0.25rem;
     margin-right: 0.125rem;
-  }
+}
 
 .navbar-dropdown .dropdown-toggle::after {
     display: inline-block;
@@ -226,4 +226,12 @@ html, body {
 
 .gray-dark {
     color: var(--color-gray-dark) !important;
+}
+
+.display-none {
+    display: none;
+}
+
+.display-block {
+    display: block;
 }
