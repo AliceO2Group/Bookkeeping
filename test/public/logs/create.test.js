@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, pressElement } = require('../defaults');
 const path = require('path');
 
 const { expect } = chai;
@@ -42,30 +40,16 @@ module.exports = () => {
     let firstRowId;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-        page.setViewport({
+        [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
             width: 700,
             height: 720,
             deviceScaleFactor: 1,
         });
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
     });
 
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('correctly loads the log creation page', async () => {
@@ -148,9 +132,9 @@ module.exports = () => {
         const tags = ['FOOD', 'OTHER'];
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
@@ -198,9 +182,9 @@ module.exports = () => {
 
     it('can navigate to tag creation screen', async () => {
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Expect the user to be at the tag creation screen when the URL is clicked on
@@ -218,9 +202,9 @@ module.exports = () => {
         const file2 = 'hadron_collider.jpg';
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
@@ -273,13 +257,13 @@ module.exports = () => {
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1}\n, \n${file2}`);
-    });
+    }).timeout(10000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // We expect the clear button to not be visible yet
@@ -311,9 +295,9 @@ module.exports = () => {
         const runNumbersStr = '1';
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
@@ -360,9 +344,9 @@ module.exports = () => {
         const runNumbersStr = runNumbers.join(',');
 
         // Return to the creation page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(500);
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it

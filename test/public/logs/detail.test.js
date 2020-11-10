@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -24,25 +22,10 @@ module.exports = () => {
     let url;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
+        [page, browser, url] = await defaultBefore(page, browser);
     });
-
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('log detail loads correctly', async () => {
@@ -58,10 +41,8 @@ module.exports = () => {
         await page.goto(`${url}/?page=log-detail&id=99999999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert-danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Log with this id (99999999) could not be found');
+        const expectedMessage = 'Log with this id (99999999) could not be found';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 
     it('allows navigating to an associated run', async () => {
@@ -91,7 +72,7 @@ module.exports = () => {
         await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
-        await page.click(`#reply-to-${parentLogId}`);
+        await pressElement(page, `#reply-to-${parentLogId}`);
         await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();
