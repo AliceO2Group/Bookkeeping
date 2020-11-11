@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -24,30 +22,14 @@ module.exports = () => {
     let url;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
+        [page, browser, url] = await defaultBefore(page, browser);
     });
-
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('log detail loads correctly', async () => {
-        await page.goto(`${url}/?page=log-detail&id=1`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=log-detail&id=1`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
         const postExists = await page.$('#post1');
@@ -56,14 +38,11 @@ module.exports = () => {
 
     it('notifies if a specified log id is invalid', async () => {
         // Navigate to a log detail view with an id that cannot exist
-        await page.goto(`${url}/?page=log-detail&id=99999999`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=log-detail&id=99999999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert-danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Log with this id (99999999) could not be found');
+        const expectedMessage = 'Log with this id (99999999) could not be found';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 
     it('allows navigating to an associated run', async () => {
@@ -71,8 +50,7 @@ module.exports = () => {
         const runId = 1;
 
         // Navigate to a log detail view
-        await page.goto(`${url}/?page=log-detail&id=${logId}`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=log-detail&id=${logId}`, { waitUntil: 'networkidle0' });
 
         // We expect the correct associated runs to be shown
         const runField = await page.$(`#post${logId}-runs`);
@@ -82,7 +60,7 @@ module.exports = () => {
         // We expect the associated runs to be clickable with a valid link
         const runLink = await page.$(`#post${logId}-runs a`);
         await runLink.click();
-        await page.waitFor(1000);
+        await page.waitForTimeout(1000);
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
@@ -91,12 +69,11 @@ module.exports = () => {
 
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
-        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`);
-        await page.waitFor(250);
+        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
-        await page.click(`#reply-to-${parentLogId}`);
-        await page.waitFor(1000);
+        await pressElement(page, `#reply-to-${parentLogId}`);
+        await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
@@ -107,12 +84,12 @@ module.exports = () => {
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Create the new log
         const button = await page.$('button#send');
         await button.evaluate((button) => button.click());
-        await page.waitFor(1000);
+        await page.waitForTimeout(1000);
 
         // Expect to be redirected to the new log
         const postSendUrl = await page.url();
