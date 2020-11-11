@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, pressElement } = require('../defaults');
 const path = require('path');
 
 const { expect } = chai;
@@ -42,35 +40,20 @@ module.exports = () => {
     let firstRowId;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-        page.setViewport({
+        [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
             width: 700,
             height: 720,
             deviceScaleFactor: 1,
         });
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
     });
 
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('correctly loads the log creation page', async () => {
-        await page.goto(`${url}/?page=log-create`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=log-create`, { waitUntil: 'networkidle0' });
 
         // We expect the log creation screen to be shown correctly
         const header = await page.$('h2');
@@ -98,12 +81,12 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Ensure you are at the overview page again
         const redirectedUrl = await page.url();
@@ -115,7 +98,7 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
     });
 
     it('can collapse and expand logs with long titles', async () => {
@@ -127,7 +110,7 @@ module.exports = () => {
         const expandButton = await page.$(`#${firstRowId}-title-plus`);
         expect(Boolean(expandButton)).to.be.true;
         await expandButton.evaluate((button) => button.click());
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
 
         const expandedTitle = await page.$(`#${firstRowId}-title`);
         const expandedTitleHeight = await page.evaluate((element) => element.clientHeight, expandedTitle);
@@ -135,7 +118,7 @@ module.exports = () => {
         const collapseButton = await page.$(`#${firstRowId}-title-minus`);
         expect(Boolean(collapseButton)).to.be.true;
         await collapseButton.evaluate((button) => button.click());
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
 
         const collapsedTitle = await page.$(`#${firstRowId}-title`);
         const collapsedTitleHeight = await page.evaluate((element) => element.clientHeight, collapsedTitle);
@@ -149,10 +132,10 @@ module.exports = () => {
         const tags = ['FOOD', 'OTHER'];
 
         // Return to the creation page
-        await page.click('#log-overview');
-        await page.waitFor(500);
-        await page.click('#create');
-        await page.waitFor(500);
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(500);
+        await pressElement(page, '#create');
+        await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -182,12 +165,12 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Get the latest post and verify that the selected tags correspond to the posted tags
         const table = await page.$$('tr');
@@ -199,15 +182,15 @@ module.exports = () => {
 
     it('can navigate to tag creation screen', async () => {
         // Return to the creation page
-        await page.click('#log-overview');
-        await page.waitFor(500);
-        await page.click('#create');
-        await page.waitFor(500);
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(500);
+        await pressElement(page, '#create');
+        await page.waitForTimeout(500);
 
         // Expect the user to be at the tag creation screen when the URL is clicked on
         const tagCreationLink = await page.$('#tagCreateLink');
         await page.evaluate((button) => button.click(), tagCreationLink);
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=tag-create`);
     });
@@ -219,10 +202,10 @@ module.exports = () => {
         const file2 = 'hadron_collider.jpg';
 
         // Return to the creation page
-        await page.click('#log-overview');
-        await page.waitFor(500);
-        await page.click('#create');
-        await page.waitFor(500);
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(500);
+        await pressElement(page, '#create');
+        await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -234,7 +217,7 @@ module.exports = () => {
         const file1Path = path.resolve(__dirname, '../..', 'assets', file1);
         const file2Path = path.resolve(__dirname, '../..', 'assets', file2);
         attachmentsInput.uploadFile(file1Path, file2Path);
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // Ensure that both file attachments were received
         const attachmentNames = await page.$('#attachmentNames');
@@ -245,12 +228,12 @@ module.exports = () => {
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
         // Sizable delay to allow for file uploading
-        await page.waitFor(2500);
+        await page.waitForTimeout(2500);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
@@ -267,21 +250,21 @@ module.exports = () => {
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // Verify that the attachment names match the ones we uploaded
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1}\n, \n${file2}`);
-    });
+    }).timeout(10000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
-        await page.click('#log-overview');
-        await page.waitFor(500);
-        await page.click('#create');
-        await page.waitFor(500);
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(500);
+        await pressElement(page, '#create');
+        await page.waitForTimeout(500);
 
         // We expect the clear button to not be visible yet
         let clearButton = await page.$('#clearAttachments');
@@ -290,7 +273,7 @@ module.exports = () => {
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
         attachmentsInput.uploadFile(path.resolve(__dirname, '../..', 'assets', '1200px-CERN_logo.png'));
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // We expect the clear button to appear
         clearButton = await page.$('#clearAttachments');
@@ -301,7 +284,7 @@ module.exports = () => {
         expect(uploadedAttachments.endsWith('1200px-CERN_logo.png')).to.be.true;
 
         await clearButton.evaluate((clearButton) => clearButton.click());
-        await page.waitFor(100);
+        await page.waitForTimeout(100);
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
     });
@@ -312,10 +295,10 @@ module.exports = () => {
         const runNumbersStr = '1';
 
         // Return to the creation page
-        await page.click('#log-overview');
-        await page.waitFor(500);
-        await page.click('#create');
-        await page.waitFor(500);
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(500);
+        await pressElement(page, '#create');
+        await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -328,12 +311,12 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Find the created log
         const table = await page.$$('tr');
@@ -345,7 +328,7 @@ module.exports = () => {
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // Verify that the runs are linked to the log
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
@@ -361,10 +344,10 @@ module.exports = () => {
         const runNumbersStr = runNumbers.join(',');
 
         // Return to the creation page
-        await page.click('#log-overview');
-        await page.waitFor(500);
-        await page.click('#create');
-        await page.waitFor(500);
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(500);
+        await pressElement(page, '#create');
+        await page.waitForTimeout(500);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -377,12 +360,12 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitFor(250);
+        await page.waitForTimeout(250);
 
         // Find the created log
         const table = await page.$$('tr');
@@ -394,7 +377,7 @@ module.exports = () => {
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitFor(500);
+        await page.waitForTimeout(500);
 
         // Verify that the runs are linked to the log
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);

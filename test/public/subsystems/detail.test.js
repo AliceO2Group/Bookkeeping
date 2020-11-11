@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -42,58 +40,34 @@ module.exports = () => {
     let firstRowId;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
+        [page, browser, url] = await defaultBefore(page, browser);
     });
-
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)), {
-            includeHostname: false,
-            storagePath: './.nyc_output/lib/public',
-        });
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('subsystem detail loads correctly', async () => {
-        await page.goto(`${url}/?page=subsystem-detail&id=1`);
-        await page.waitFor(100);
-
-        const postExists = await page.$('h2');
-        expect(Boolean(postExists)).to.be.true;
-
-        const title = await page.evaluate((element) => element.innerText, postExists);
-        expect(title).to.equal('Subsystem: Subsystem Plant #1');
+        await page.goto(`${url}/?page=subsystem-detail&id=1`, { waitUntil: 'networkidle0' });
+        await expectInnerText(page, 'h2', 'Subsystem: Subsystem Plant #1');
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#logs-tab');
-        await page.waitFor(100);
+        await pressElement(page, '#logs-tab');
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to the main panel', async () => {
-        await page.click('#main-tab');
-        await page.waitFor(100);
+        await pressElement(page, '#main-tab');
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=1&panel=main`)).to.be.true;
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#logs-tab');
-        await page.waitFor(100);
+        await pressElement(page, '#logs-tab');
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=1&panel=logs`)).to.be.true;
     });
@@ -103,33 +77,25 @@ module.exports = () => {
         firstRowId = await getFirstRow(table, page);
 
         // We expect the entry page to have the same id as the id from the subsystem overview
-        await page.click(`#${firstRowId}`);
-        await page.waitFor(100);
+        await pressElement(page, `#${firstRowId}`);
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=3`)).to.be.true;
     });
 
     it('notifies if a specified subsystem id is invalid', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem-detail&id=abc`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=subsystem-detail&id=abc`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "params.subsystemId" must be a number');
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.subsystemId" must be a number');
     });
 
     it('notifies if a specified subsystem id is not found', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem-detail&id=999`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=subsystem-detail&id=999`, { waitUntil: 'networkidle0' });
 
         // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Subsystem with this id (999) could not be found:');
+        await expectInnerText(page, '.alert', 'Subsystem with this id (999) could not be found:');
     });
 };

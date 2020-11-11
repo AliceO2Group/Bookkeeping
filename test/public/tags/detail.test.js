@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -42,55 +40,34 @@ module.exports = () => {
     let firstRowId;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
+        [page, browser, url] = await defaultBefore(page, browser);
     });
-
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('tag detail loads correctly', async () => {
-        await page.goto(`${url}/?page=tag-detail&id=1`);
-        await page.waitFor(100);
-
-        const postExists = await page.$('h2');
-        expect(Boolean(postExists)).to.be.true;
-
-        const title = await page.evaluate((element) => element.innerText, postExists);
-        expect(title).to.equal('Tag: FOOD');
+        await page.goto(`${url}/?page=tag-detail&id=1`, { waitUntil: 'networkidle0' });
+        await expectInnerText(page, 'h2', 'Tag: FOOD');
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#logs-tab');
-        await page.waitFor(100);
+        await pressElement(page, '#logs-tab');
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to the main panel', async () => {
-        await page.click('#main-tab');
-        await page.waitFor(100);
+        await pressElement(page, '#main-tab');
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=1&panel=main`)).to.be.true;
     });
 
     it('can navigate to the log panel', async () => {
-        await page.click('#logs-tab');
-        await page.waitFor(100);
+        await pressElement(page, '#logs-tab');
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=1&panel=logs`)).to.be.true;
     });
@@ -101,33 +78,25 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
-        await page.click(`#${firstRowId}`);
-        await page.waitFor(100);
+        await pressElement(page, `#${firstRowId}`);
+        await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
 
     it('notifies if a specified tag id is invalid', async () => {
         // Navigate to a tag detail view with an id that cannot exist
-        await page.goto(`${url}/?page=tag-detail&id=abc`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=tag-detail&id=abc`, { waitUntil: 'networkidle0' });
 
-        // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "params.tagId" must be a number');
+        // Because this tag id is invalid, we expect an error message to appear
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.tagId" must be a number');
     });
 
     it('notifies if a specified tag id is not found', async () => {
         // Navigate to a tag detail view with an id that cannot exist
-        await page.goto(`${url}/?page=tag-detail&id=999`);
-        await page.waitFor(100);
+        await page.goto(`${url}/?page=tag-detail&id=999`, { waitUntil: 'networkidle0' });
 
-        // We expect there to be an error message
-        const error = await page.$('.alert');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Tag with this id (999) could not be found');
+        // Because this tag does not exist, we expect an error message to appear
+        await expectInnerText(page, '.alert', 'Tag with this id (999) could not be found');
     });
 };
