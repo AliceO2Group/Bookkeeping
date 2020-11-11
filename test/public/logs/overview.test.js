@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -62,30 +60,16 @@ module.exports = () => {
     let parsedFirstRowId;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-        page.setViewport({
+        [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
             width: 700,
             height: 720,
             deviceScaleFactor: 1,
         });
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
     });
 
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('loads the page successfully', async () => {
@@ -106,7 +90,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Open the title filter
-        await page.click('#titleFilterToggle');
+        await pressElement(page, '#titleFilterToggle');
         await page.waitForTimeout(100);
 
         // Insert some text into the filter
@@ -140,7 +124,7 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
         // Close the created at filters now that we are done with them
-        await page.click('#titleFilterToggle');
+        await pressElement(page, '#titleFilterToggle');
         await page.waitForTimeout(100);
     });
 
@@ -151,7 +135,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Open the author filter
-        await page.click('#authorFilterToggle');
+        await pressElement(page, '#authorFilterToggle');
         await page.waitForTimeout(100);
 
         // Insert some text into the filter
@@ -185,13 +169,13 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
         // Close the created at filters now that we are done with them
-        await page.click('#authorFilterToggle');
+        await pressElement(page, '#authorFilterToggle');
         await page.waitForTimeout(100);
     });
 
     it('can filter by creation date', async () => {
         // Open the created at filters
-        await page.click('#createdAtFilterToggle');
+        await pressElement(page, '#createdAtFilterToggle');
         await page.waitForTimeout(100);
 
         // Insert a minimum date into the filter
@@ -235,18 +219,18 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         // Close the title filter now that we are done with it
-        await page.click('#createdAtFilterToggle');
+        await pressElement(page, '#createdAtFilterToggle');
         await page.waitForTimeout(100);
     });
 
     it('can filter by tags', async () => {
         // Open the tag filters
-        await page.click('#tagsFilterToggle');
+        await pressElement(page, '#tagsFilterToggle');
         await page.waitForTimeout(100);
 
         // Select the first available filter and wait for the changes to be processed
         const firstCheckboxId = 'tagCheckbox1';
-        await page.click(`#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(100);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -255,7 +239,7 @@ module.exports = () => {
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Deselect the filter and wait for the changes to process
-        await page.click(`#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(100);
 
         // Expect the total number of rows to equal the original total
@@ -264,9 +248,9 @@ module.exports = () => {
 
         // Select the first two available filters at once
         const secondCheckboxId = 'tagCheckbox2';
-        await page.click(`#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(100);
-        await page.click(`#${secondCheckboxId}`);
+        await pressElement(page, `#${secondCheckboxId}`);
         await page.waitForTimeout(100);
 
         // Expect the table to be empty
@@ -275,7 +259,7 @@ module.exports = () => {
         expect(secondFilteredNumberOfRows).to.equal(0);
 
         // Set the filter operation to "OR"
-        await page.click('#tagFilterOperationRadioButtonOR');
+        await pressElement(page, '#tagFilterOperationRadioButtonOR');
         await page.waitForTimeout(100);
 
         // Expect there now to be more rows than both the previous table and the table with only one filter
@@ -296,7 +280,7 @@ module.exports = () => {
         const buttonId = '#toggleMoreTags';
 
         // Open the tag filters again
-        await page.click('#tagsFilterToggle');
+        await pressElement(page, '#tagsFilterToggle');
         await page.waitForTimeout(100);
 
         // Expect the page to have a button allowing for showing more tags
@@ -305,7 +289,7 @@ module.exports = () => {
         expect(buttonText.trim()).to.equal('More tags');
 
         // Expect the button to show at least one extra tag when clicked
-        await page.click(buttonId);
+        await pressElement(page, buttonId);
         await page.waitForTimeout(100);
         let extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.true;
@@ -315,13 +299,13 @@ module.exports = () => {
         expect(buttonText.trim()).to.equal('Less tags');
 
         // Expect the button to remove the extra tag when clicked again
-        await page.click(buttonId);
+        await pressElement(page, buttonId);
         await page.waitForTimeout(100);
         extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.false;
 
         // Close the tag filters now that we are done with them
-        await page.click('#tagsFilterToggle');
+        await pressElement(page, '#tagsFilterToggle');
         await page.waitForTimeout(100);
     });
 
@@ -486,7 +470,7 @@ module.exports = () => {
         expect(Boolean(pageSixButton)).to.be.false;
 
         // Expect the page one button to have fallen away when clicking on page five button
-        await page.click('#page5');
+        await pressElement(page, '#page5');
         await page.waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
@@ -500,7 +484,7 @@ module.exports = () => {
 
     it('can navigate to the log creation page', async () => {
         // Click on the button to start creating a new log
-        await page.click('#create');
+        await pressElement(page, '#create');
         await page.waitForTimeout(500);
 
         // Expect the page to be the log creation page at this point
@@ -510,7 +494,7 @@ module.exports = () => {
 
     it('notifies if table loading returned an error', async () => {
         // Go back to the home page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(100);
 
         /*
@@ -524,10 +508,8 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
-        const error = await page.$('.alert-danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "query.page.limit" must be less than or equal to 100');
+        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
 
         // Revert changes for next test
         await page.evaluate(() => {
@@ -539,7 +521,7 @@ module.exports = () => {
 
     it('can navigate to a log detail page', async () => {
         // Go back to the home page
-        await page.click('#log-overview');
+        await pressElement(page, '#log-overview');
         await page.waitForTimeout(100);
 
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);

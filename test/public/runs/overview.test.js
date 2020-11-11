@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -42,30 +40,16 @@ module.exports = () => {
     let firstRowId;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-        page.setViewport({
+        [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
             width: 700,
             height: 720,
             deviceScaleFactor: 1,
         });
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
     });
 
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('loads the page successfully', async () => {
@@ -142,6 +126,17 @@ module.exports = () => {
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
+
+        // Expect the custom per page input to have red border and text color if wrong value typed
+        const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
+        await customPerPageInput.evaluate((input) => input.focus());
+        await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
+            el.value = '111';
+            // eslint-disable-next-line no-undef
+            el.dispatchEvent(new Event('input'));
+        });
+        await page.waitForTimeout(100);
+        expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
     });
 
     it('can switch between pages of runs', async () => {
@@ -193,7 +188,7 @@ module.exports = () => {
         expect(Boolean(pageSixButton)).to.be.false;
 
         // Expect the page one button to have fallen away when clicking on page five button
-        await page.click('#page5');
+        await pressElement(page, '#page5');
         await page.waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
@@ -211,10 +206,8 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
-        const error = await page.$('.alert-danger');
-        expect(Boolean(error)).to.be.true;
-        const message = await page.evaluate((element) => element.innerText, error);
-        expect(message).to.equal('Invalid Attribute: "query.page.limit" must be less than or equal to 100');
+        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
 
         // Revert changes for next test
         await page.evaluate(() => {
@@ -230,7 +223,7 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the run overview
-        await page.click(`#${firstRowId}`);
+        await pressElement(page, `#${firstRowId}`);
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;

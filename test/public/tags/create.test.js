@@ -12,9 +12,7 @@
  */
 
 const chai = require('chai');
-const puppeteer = require('puppeteer');
-const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../../lib/application');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -24,25 +22,10 @@ module.exports = () => {
     let url;
 
     before(async () => {
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-        page = await browser.newPage();
-        await Promise.all([
-            page.coverage.startJSCoverage({ resetOnNavigation: false }),
-            page.coverage.startCSSCoverage(),
-        ]);
-
-        const { port } = server.address();
-        url = `http://localhost:${port}`;
+        [page, browser, url] = await defaultBefore(page, browser);
     });
-
     after(async () => {
-        const [jsCoverage, cssCoverage] = await Promise.all([
-            page.coverage.stopJSCoverage(),
-            page.coverage.stopCSSCoverage(),
-        ]);
-
-        pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)));
-        await browser.close();
+        [page, browser] = await defaultAfter(page, browser);
     });
 
     it('can create a tag', async () => {
@@ -54,12 +37,10 @@ module.exports = () => {
         await page.type('#text', text);
 
         // Create the new tag
-        await page.click('button#send');
+        await pressElement(page, 'button#send');
 
         // Verify the title of the page
-        await page.waitForSelector('.mv2');
-        const tagTitle = await page.$eval('.mv2', (element) => element.innerText);
-        expect(tagTitle).to.equal(`Tag: ${text}`);
+        await expectInnerText(page, '.mv2', `Tag: ${text}`);
 
         // Return the page to the tag overview
         await page.goto(`${url}/?page=tag-overview`, { waitUntil: 'networkidle0' });
@@ -76,18 +57,16 @@ module.exports = () => {
         const text = 'EXAMPLE';
 
         // Go to the tag creation page
-        await page.click('button#create');
+        await pressElement(page, 'button#create');
 
         // Enter the duplicate text value
         await page.waitForSelector('#text');
         await page.type('#text', text);
 
         // Create the new tag
-        await page.click('button#send');
+        await pressElement(page, 'button#send');
 
         // Because this tag already exists, we expect an error message to appear
-        await page.waitForSelector('.alert');
-        const errorMessage = await page.$eval('.alert', (element) => element.innerText);
-        expect(errorMessage).to.equal('Conflict: The provided entity already exists');
+        await expectInnerText(page, '.alert', 'Conflict: The provided entity already exists');
     });
 };
