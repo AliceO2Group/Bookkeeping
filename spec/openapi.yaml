@@ -1,4 +1,4 @@
-# Generated on Wed, 04 Nov 2020 20:55:30 GMT
+# Generated on Fri, 13 Nov 2020 16:58:42 GMT
 
 openapi: 3.0.0
 info:
@@ -1578,14 +1578,15 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMQReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+        bytesFairMqReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
           $ref: '#/components/schemas/FlpBytesRecordingReadOut'
         nTimeframes:
           $ref: '#/components/schemas/FlpTimeframes'
+      additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
       type: object

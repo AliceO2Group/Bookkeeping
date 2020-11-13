@@ -85,22 +85,22 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-      patch:
-        operationId: updateFlp
-        summary: Update an existing flp
-        requestBody:
-          $ref: '#/components/requestBodies/UpdateFlp'
-        responses:
-          '200':
-            $ref: '#/components/responses/Flp'
-          '400':
-            $ref: '#/components/responses/BadRequest'
-          '404':
-            $ref: '#/components/responses/NotFound'
-          default:
-            $ref: '#/components/responses/UnexpectedError'
-        tags:
-          - flp
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   '/flps/{flpId}':
     parameters:
       - $ref: '#/components/parameters/FlpId'
@@ -1582,8 +1582,9 @@ components:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
         bytesRecordingReadOut:
           $ref: '#/components/schemas/FlpBytesRecordingReadOut'
-        bytesFairMQReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+        bytesFairMqReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+      additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
       type: object
