@@ -365,7 +365,6 @@ module.exports = () => {
                 });
         });
 
-
         it('should return 201 if a proper body was sent', (done) => {
             request(server)
                 .post('/api/flps')
@@ -390,6 +389,4 @@ module.exports = () => {
                 });
         });
     });
-
-    
 };
