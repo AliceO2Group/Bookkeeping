@@ -339,4 +339,57 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('POST api/flps', () => {
+        it('should return 400 if no name or hostname is provided', (done) => {
+            request(server)
+                .post('/api/flps')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const nameError = errors.find((err) => err.source.pointer === '/data/attributes/body/name');
+                    expect(nameError.detail).to.equal('"body.name" is required');
+
+                    const hostnameError = errors.find((err) => err.source.pointer === '/data/attributes/body/hostname');
+                    expect(hostnameError.detail).to.equal('"body.hostname" is required');
+
+                    done();
+                });
+        });
+
+
+        it('should return 201 if a proper body was sent', (done) => {
+            request(server)
+                .post('/api/flps')
+                .send({
+                    name: 'FLPIEE',
+                    hostname: 'www.home.cern',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.name).to.equal('FLPIEE');
+                    expect(res.body.data.hostname).to.equal('www.home.cern');
+
+                    done();
+                });
+        });
+    });
+
+    
 };
