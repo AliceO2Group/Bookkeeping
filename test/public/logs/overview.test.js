@@ -89,6 +89,10 @@ module.exports = () => {
         originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(100);
+
         // Open the title filter
         await pressElement(page, '#titleFilterToggle');
         await page.waitForTimeout(100);
