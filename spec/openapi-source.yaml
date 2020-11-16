@@ -85,11 +85,12 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-    patch:
-      operationId: updateFlp
-      summary: Update an existing flp
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateFlp'
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -101,12 +102,11 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-  '/flps/{flpId}':
-    parameters:
-      - $ref: '#/components/parameters/FlpId'
-    get:
-      operationId: getFlpById
-      summary: Gets a flp by Id
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -1066,8 +1066,8 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
@@ -1090,7 +1090,7 @@ components:
           format: int64
       required:
         - bytesEquipmentReadOut
-        - bytesFairMqReadOut
+        - bytesFairMQReadOut
         - bytesProcessed
         - bytesRecordingReadOut
         - hostname
@@ -1104,7 +1104,7 @@ components:
         Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
-    FlpBytesFairMqReadOut:
+    FlpBytesFairMQReadOut:
       description: >-
         Total data volume out from the readout 'fmq' component in bytes. Can
         reach PetaBytes. Updated regularly.
@@ -1582,8 +1582,8 @@ components:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
         bytesRecordingReadOut:
           $ref: '#/components/schemas/FlpBytesRecordingReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
