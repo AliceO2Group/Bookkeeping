@@ -1,4 +1,4 @@
-# Generated on Fri, 13 Nov 2020 16:58:42 GMT
+# Generated on Mon, 23 Nov 2020 19:33:23 GMT
 
 openapi: 3.0.0
 info:
@@ -87,11 +87,12 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-    patch:
-      operationId: updateFlp
-      summary: Update an existing flp
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateFlp'
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -103,12 +104,11 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-  '/flps/{flpId}':
-    parameters:
-      - $ref: '#/components/parameters/FlpId'
-    get:
-      operationId: getFlpById
-      summary: Gets a flp by Id
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -1068,8 +1068,8 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
@@ -1092,7 +1092,7 @@ components:
           format: int64
       required:
         - bytesEquipmentReadOut
-        - bytesFairMqReadOut
+        - bytesFairMQReadOut
         - bytesProcessed
         - bytesRecordingReadOut
         - hostname
@@ -1106,7 +1106,7 @@ components:
         Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
-    FlpBytesFairMqReadOut:
+    FlpBytesFairMQReadOut:
       description: >-
         Total data volume out from the readout 'fmq' component in bytes. Can
         reach PetaBytes. Updated regularly.
@@ -1578,8 +1578,8 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
