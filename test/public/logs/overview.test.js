@@ -474,9 +474,10 @@ module.exports = () => {
         expect(Boolean(pageSixButton)).to.be.false;
 
         // Expect the page one button to have fallen away when clicking on page five button
+        await page.waitForTimeout(500);
         await page.waitForSelector('#page5');
         await pressElement(page, '#page5');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(500);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
 
