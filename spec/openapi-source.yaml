@@ -878,16 +878,6 @@ components:
       required:
         - text
       additionalProperties: false
-    UpdateRunTags:
-      description: List of labels attached to something for the purpose of identification.
-      type: object
-      properties:
-        tags:
-          type: array
-          description: Array of tags IDs
-          items:
-            type: number
-            description: Tag ID
     DeployInformation:
       description: Deploy information
       type: object
@@ -1545,6 +1535,17 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateRunTags:
+      description: List of labels attached to something for the purpose of identification.
+      type: object
+      properties:
+        tags:
+          type: array
+          description: Array of tags IDs
+          items:
+            type: number
+            description: Tag ID
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
