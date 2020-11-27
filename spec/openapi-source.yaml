@@ -238,6 +238,22 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+    post:
+      operationId: updateRunTags
+      summary: Update (overwrite) run tags by runId
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunTags'
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /status:
     get:
       operationId: getDeployInformation
@@ -499,6 +515,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTag'
+    UpdateRunTags:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -856,6 +878,14 @@ components:
       required:
         - text
       additionalProperties: false
+    UpdateRunTags:
+      description: List of labels attached to something for the purpose of identification.
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: number
     DeployInformation:
       description: Deploy information
       type: object
