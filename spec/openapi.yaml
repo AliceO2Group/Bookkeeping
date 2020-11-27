@@ -1,4 +1,4 @@
-# Generated on Fri, 27 Nov 2020 20:33:58 GMT
+# Generated on Fri, 27 Nov 2020 20:48:13 GMT
 
 openapi: 3.0.0
 info:
@@ -886,8 +886,10 @@ components:
       properties:
         tags:
           type: array
+          description: Array of tags IDs
           items:
             type: number
+            description: Tag ID
     DeployInformation:
       description: Deploy information
       type: object

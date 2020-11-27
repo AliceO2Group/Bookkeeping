@@ -884,8 +884,10 @@ components:
       properties:
         tags:
           type: array
+          description: Array of tags IDs
           items:
             type: number
+            description: Tag ID
     DeployInformation:
       description: Deploy information
       type: object
