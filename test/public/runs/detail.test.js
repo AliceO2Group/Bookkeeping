@@ -51,6 +51,14 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
+    it('can change run tags', async () => {
+        await pressElement(page, '#tags-control option[value="1"]');
+        await page.waitForTimeout(100);
+        await pressElement(page, '.btn-success');
+        await page.waitForTimeout(500);
+        expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
+    });
+
     it('can navigate to the log panel', async () => {
         await pressElement(page, '#logs-tab');
         await page.waitForTimeout(100);
@@ -81,15 +89,6 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
-    });
-
-    it('can change run tags', async () => {
-        console.warn('LOGHERE', await page.$('#tags-control'));
-        await pressElement(page, '#tags-control option[value="1"]');
-        await page.waitForTimeout(100);
-        await pressElement(page, '.btn-success');
-        await page.waitForTimeout(500);
-        expect(await page.$('#tags-control option[value="1"]').selected).to.be.true;
     });
 
     it('notifies if a specified run id is invalid', async () => {
