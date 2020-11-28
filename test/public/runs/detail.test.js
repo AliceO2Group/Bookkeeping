@@ -83,6 +83,15 @@ module.exports = () => {
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
     });
 
+    it('can change run tags', async () => {
+        console.warn('LOGHERE', await page.$('#tags-control'));
+        await pressElement(page, '#tags-control option[value="1"]');
+        await page.waitForTimeout(100);
+        await pressElement(page, '.btn-success');
+        await page.waitForTimeout(500);
+        expect(await page.$('#tags-control option[value="1"]').selected).to.be.true;
+    });
+
     it('notifies if a specified run id is invalid', async () => {
         // Navigate to a run detail view with an id that cannot exist
         await page.goto(`${url}/?page=run-detail&id=abc`, { waitUntil: 'networkidle0' });
