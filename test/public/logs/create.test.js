@@ -98,7 +98,7 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(500);
     });
 
     it('can collapse and expand logs with long titles', async () => {
@@ -107,6 +107,8 @@ module.exports = () => {
          * Ideally, this test would be in the overview suite, unfortunately we cannot relay data between suites
          * Here, we are certain we have a log with a long title, and therefore the test can succeed
          */
+        await pressElement(page, '#log-overview');
+        await page.waitForTimeout(800);
         const expandButton = await page.$(`#${firstRowId}-title-plus`);
         expect(Boolean(expandButton)).to.be.true;
         await expandButton.evaluate((button) => button.click());
