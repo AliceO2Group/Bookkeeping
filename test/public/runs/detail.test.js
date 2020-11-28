@@ -55,7 +55,7 @@ module.exports = () => {
         await pressElement(page, '#tags-control option[value="1"]');
         await page.waitForTimeout(100);
         await pressElement(page, '.btn-success');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(100);
         expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
     });
 
