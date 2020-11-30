@@ -14,7 +14,8 @@
     "ignorePatterns": [
         "node_modules/",
         "database/data/",
-        "lib/public/assets/"
+        "lib/public/assets/",
+        "cpp-api-client/"
     ],
     "rules": {
         "array-bracket-newline": [
