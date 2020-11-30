@@ -145,7 +145,7 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
-                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
+                    expect(res.body.data[0].createdAt * 1000).to.be.gte(timeFrom);
 
                     done();
                 });
@@ -168,8 +168,8 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(1);
-                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
-                    expect(res.body.data[0].createdAt).to.be.lte(timeTo);
+                    expect(res.body.data[0].createdAt * 1000).to.be.gte(timeFrom);
+                    expect(res.body.data[0].createdAt * 1000).to.be.lte(timeTo);
 
                     done();
                 });

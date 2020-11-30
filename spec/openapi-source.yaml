@@ -71,12 +71,42 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+    post:
+      operationId: createFlp
+      summary: Adds a new flp
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFlp'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   '/flps/{flpId}':
     parameters:
       - $ref: '#/components/parameters/FlpId'
     get:
       operationId: getFlpById
       summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -497,6 +527,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFlp'
     CreateLog:
       required: true
       content:
@@ -515,6 +551,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTag'
+    UpdateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFlp'
     UpdateRunTags:
       required: true
       content:
@@ -840,6 +882,20 @@ components:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
       additionalProperties: false
+    CreateFlp:
+      description: Describes an flp
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/FlpName'
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+      required:
+        - name
+        - hostname
+      additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1032,8 +1088,8 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
@@ -1056,7 +1112,7 @@ components:
           format: int64
       required:
         - bytesEquipmentReadOut
-        - bytesFairMqReadOut
+        - bytesFairMQReadOut
         - bytesProcessed
         - bytesRecordingReadOut
         - hostname
@@ -1070,7 +1126,7 @@ components:
         Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
-    FlpBytesFairMqReadOut:
+    FlpBytesFairMQReadOut:
       description: >-
         Total data volume out from the readout 'fmq' component in bytes. Can
         reach PetaBytes. Updated regularly.
@@ -1535,6 +1591,21 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateFlp:
+      description: Describes an update to an flp
+      type: object
+      properties:
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
       additionalProperties: false
     UpdateRunTags:
       description: List of labels attached to something for the purpose of identification.
