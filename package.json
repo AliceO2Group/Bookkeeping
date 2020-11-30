@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "author": "CERN",
   "license": "GPL-3.0",
   "scripts": {
@@ -14,7 +14,7 @@
     "test": "mocha --exit --timeout 5000"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.13.3",
+    "@aliceo2/web-ui": "1.14.0",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "joi": "17.1.1",
@@ -25,13 +25,13 @@
   },
   "devDependencies": {
     "chai": "4.2.0",
-    "chai-openapi-response-validator": "0.10.0",
-    "eslint": "7.13.0",
+    "chai-openapi-response-validator": "0.11.0",
+    "eslint": "7.14.0",
     "js-yaml": "3.14.0",
     "mocha": "8.2.1",
     "nodemon": "2.0.6",
     "nyc": "15.1.0",
-    "puppeteer": "5.4.1",
+    "puppeteer": "5.5.0",
     "puppeteer-to-istanbul": "git+https://github.com/SoftwareForScience/puppeteer-to-istanbul.git",
     "supertest": "6.0.1"
   }

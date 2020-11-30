@@ -110,21 +110,22 @@ module.exports = () => {
         await pressElement(page, '#log-overview');
         await page.waitForTimeout(800);
         const expandButton = await page.$(`#${firstRowId}-title-plus`);
+        await page.waitForTimeout(500);
         expect(Boolean(expandButton)).to.be.true;
         await expandButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(500);
 
         const expandedTitle = await page.$(`#${firstRowId}-title`);
         const expandedTitleHeight = await page.evaluate((element) => element.clientHeight, expandedTitle);
 
         const collapseButton = await page.$(`#${firstRowId}-title-minus`);
+        await page.waitForTimeout(1000);
         expect(Boolean(collapseButton)).to.be.true;
         await collapseButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(1000);
 
         const collapsedTitle = await page.$(`#${firstRowId}-title`);
         const collapsedTitleHeight = await page.evaluate((element) => element.clientHeight, collapsedTitle);
-
         expect(expandedTitleHeight).to.be.greaterThan(collapsedTitleHeight);
     });
 
@@ -298,9 +299,9 @@ module.exports = () => {
 
         // Return to the creation page
         await pressElement(page, '#log-overview');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
         await pressElement(page, '#create');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -313,12 +314,12 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await page.waitForTimeout(800);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await page.waitForTimeout(800);
 
         // Find the created log
         const table = await page.$$('tr');
@@ -330,7 +331,7 @@ module.exports = () => {
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         // Verify that the runs are linked to the log
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
@@ -347,9 +348,9 @@ module.exports = () => {
 
         // Return to the creation page
         await pressElement(page, '#log-overview');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
         await pressElement(page, '#create');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -362,12 +363,12 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await page.waitForTimeout(800);
 
         // Return the page to home
         const buttonHome = await page.$('#log-overview');
         await buttonHome.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await page.waitForTimeout(800);
 
         // Find the created log
         const table = await page.$$('tr');
@@ -379,7 +380,7 @@ module.exports = () => {
         // Go to the log detail page
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(800);
 
         // Verify that the runs are linked to the log
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
