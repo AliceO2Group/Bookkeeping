@@ -70,6 +70,10 @@ html, body {
 .mb2 { margin-bottom: var(--space-s); }
 .mb3 { margin-bottom: var(--space-m); }
 .mb4 { margin-bottom: var(--space-l); }
+.mlauto { margin-left: auto; }
+.mrauto { margin-right: auto; }
+.mtauto { margin-top: auto; }
+.mbauto { margin-bottom: auto; }
 
 .table {
     margin-bottom: 0px;
@@ -190,7 +194,7 @@ html, body {
     left: auto;
     margin-top: 0.25rem;
     margin-right: 0.125rem;
-  }
+}
 
 .navbar-dropdown .dropdown-toggle::after {
     display: inline-block;
@@ -229,6 +233,27 @@ html, body {
     color: var(--color-gray-dark) !important;
 }
 
+.display-none {
+    display: none;
+}
+
+.display-block {
+    display: block;
+}
+
+.filters {
+    z-index: 1000;
+    background-color: white;
+    height: fit-content;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.header-container {
+    max-height: 70px;
+    align-items: baseline;
+}
 .border-danger {
     border: 1px solid var(--color-danger) !important;
 }

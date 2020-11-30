@@ -1,4 +1,4 @@
-# Generated on Mon, 12 Oct 2020 10:03:01 GMT
+# Generated on Mon, 30 Nov 2020 10:48:05 GMT
 
 openapi: 3.0.0
 info:
@@ -73,12 +73,42 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+    post:
+      operationId: createFlp
+      summary: Adds a new flp
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFlp'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   '/flps/{flpId}':
     parameters:
       - $ref: '#/components/parameters/FlpId'
     get:
       operationId: getFlpById
       summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -229,6 +259,22 @@ paths:
     get:
       operationId: getRunById
       summary: Gets a run by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+    post:
+      operationId: updateRunTags
+      summary: Update (overwrite) run tags by runId
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunTags'
       responses:
         '200':
           $ref: '#/components/responses/Run'
@@ -483,6 +529,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFlp'
     CreateLog:
       required: true
       content:
@@ -501,6 +553,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTag'
+    UpdateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFlp'
+    UpdateRunTags:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -820,6 +884,20 @@ components:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
       additionalProperties: false
+    CreateFlp:
+      description: Describes an flp
+      type: object
+      properties:
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        name:
+          $ref: '#/components/schemas/FlpName'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+      required:
+        - hostname
+        - name
+      additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1012,8 +1090,8 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
@@ -1036,7 +1114,7 @@ components:
           format: int64
       required:
         - bytesEquipmentReadOut
-        - bytesFairMqReadOut
+        - bytesFairMQReadOut
         - bytesProcessed
         - bytesRecordingReadOut
         - hostname
@@ -1050,7 +1128,7 @@ components:
         Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
-    FlpBytesFairMqReadOut:
+    FlpBytesFairMQReadOut:
       description: >-
         Total data volume out from the readout 'fmq' component in bytes. Can
         reach PetaBytes. Updated regularly.
@@ -1515,6 +1593,32 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateFlp:
+      description: Describes an update to an flp
+      type: object
+      properties:
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+      additionalProperties: false
+    UpdateRunTags:
+      description: List of labels attached to something for the purpose of identification.
+      type: object
+      properties:
+        tags:
+          type: array
+          description: Array of tags IDs
+          items:
+            type: number
+            description: Tag ID
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
