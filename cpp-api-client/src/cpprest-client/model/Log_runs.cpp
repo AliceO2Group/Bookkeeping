@@ -23,9 +23,9 @@ namespace model {
 
 Log_runs::Log_runs()
 {
-    m_Id = 0L;
+    m_Id = 0;
     m_IdIsSet = false;
-    m_RunNumber = 0L;
+    m_RunNumber = 0;
     m_RunNumberIsSet = false;
 }
 
@@ -64,7 +64,7 @@ bool Log_runs::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_id;
+            int32_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -74,7 +74,7 @@ bool Log_runs::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("runNumber"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_runNumber;
+            int32_t refVal_runNumber;
             ok &= ModelBase::fromJson(fieldValue, refVal_runNumber);
             setRunNumber(refVal_runNumber);
         }
@@ -110,25 +110,25 @@ bool Log_runs::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const
 
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int64_t refVal_id;
+        int32_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("runNumber")))
     {
-        int64_t refVal_runNumber;
+        int32_t refVal_runNumber;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("runNumber")), refVal_runNumber );
         setRunNumber(refVal_runNumber);
     }
     return ok;
 }
 
-int64_t Log_runs::getId() const
+int32_t Log_runs::getId() const
 {
     return m_Id;
 }
 
-void Log_runs::setId(int64_t value)
+void Log_runs::setId(int32_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -143,12 +143,12 @@ void Log_runs::unsetId()
 {
     m_IdIsSet = false;
 }
-int64_t Log_runs::getRunNumber() const
+int32_t Log_runs::getRunNumber() const
 {
     return m_RunNumber;
 }
 
-void Log_runs::setRunNumber(int64_t value)
+void Log_runs::setRunNumber(int32_t value)
 {
     m_RunNumber = value;
     m_RunNumberIsSet = true;

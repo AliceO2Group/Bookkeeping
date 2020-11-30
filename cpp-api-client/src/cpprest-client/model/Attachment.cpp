@@ -23,15 +23,15 @@ namespace model {
 
 Attachment::Attachment()
 {
-    m_CreatedAt = utility::datetime();
+    m_CreatedAt = 0;
     m_CreatedAtIsSet = false;
     m_Encoding = utility::conversions::to_string_t("");
     m_EncodingIsSet = false;
     m_FileName = utility::conversions::to_string_t("");
     m_FileNameIsSet = false;
-    m_Id = 0L;
+    m_Id = 0;
     m_IdIsSet = false;
-    m_LogId = 0L;
+    m_LogId = 0;
     m_LogIdIsSet = false;
     m_MimeType = utility::conversions::to_string_t("");
     m_MimeTypeIsSet = false;
@@ -41,7 +41,7 @@ Attachment::Attachment()
     m_PathIsSet = false;
     m_Size = 0;
     m_SizeIsSet = false;
-    m_UpdatedAt = utility::datetime();
+    m_UpdatedAt = 0;
     m_UpdatedAtIsSet = false;
 }
 
@@ -112,7 +112,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_createdAt;
+            int32_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -142,7 +142,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_id;
+            int32_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -152,7 +152,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("logId"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_logId;
+            int32_t refVal_logId;
             ok &= ModelBase::fromJson(fieldValue, refVal_logId);
             setLogId(refVal_logId);
         }
@@ -202,7 +202,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_updatedAt;
+            int32_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -270,7 +270,7 @@ bool Attachment::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
 
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        utility::datetime refVal_createdAt;
+        int32_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
@@ -288,13 +288,13 @@ bool Attachment::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int64_t refVal_id;
+        int32_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("logId")))
     {
-        int64_t refVal_logId;
+        int32_t refVal_logId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("logId")), refVal_logId );
         setLogId(refVal_logId);
     }
@@ -324,19 +324,19 @@ bool Attachment::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        utility::datetime refVal_updatedAt;
+        int32_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
     return ok;
 }
 
-utility::datetime Attachment::getCreatedAt() const
+int32_t Attachment::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Attachment::setCreatedAt(const utility::datetime& value)
+void Attachment::setCreatedAt(int32_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -391,12 +391,12 @@ void Attachment::unsetFileName()
 {
     m_FileNameIsSet = false;
 }
-int64_t Attachment::getId() const
+int32_t Attachment::getId() const
 {
     return m_Id;
 }
 
-void Attachment::setId(int64_t value)
+void Attachment::setId(int32_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -411,12 +411,12 @@ void Attachment::unsetId()
 {
     m_IdIsSet = false;
 }
-int64_t Attachment::getLogId() const
+int32_t Attachment::getLogId() const
 {
     return m_LogId;
 }
 
-void Attachment::setLogId(int64_t value)
+void Attachment::setLogId(int32_t value)
 {
     m_LogId = value;
     m_LogIdIsSet = true;
@@ -511,12 +511,12 @@ void Attachment::unsetSize()
 {
     m_SizeIsSet = false;
 }
-utility::datetime Attachment::getUpdatedAt() const
+int32_t Attachment::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Attachment::setUpdatedAt(const utility::datetime& value)
+void Attachment::setUpdatedAt(int32_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

@@ -55,26 +55,26 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getId() const;
+    int32_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int64_t value);
+    void setId(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getRunNumber() const;
+    int32_t getRunNumber() const;
     bool runNumberIsSet() const;
     void unsetRunNumber();
 
-    void setRunNumber(int64_t value);
+    void setRunNumber(int32_t value);
 
 
 protected:
-    int64_t m_Id;
+    int32_t m_Id;
     bool m_IdIsSet;
-    int64_t m_RunNumber;
+    int32_t m_RunNumber;
     bool m_RunNumberIsSet;
 };
 

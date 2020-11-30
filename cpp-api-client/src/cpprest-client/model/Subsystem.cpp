@@ -23,13 +23,13 @@ namespace model {
 
 Subsystem::Subsystem()
 {
-    m_CreatedAt = utility::datetime();
+    m_CreatedAt = 0;
     m_CreatedAtIsSet = false;
-    m_Id = 0L;
+    m_Id = 0;
     m_IdIsSet = false;
     m_Name = utility::conversions::to_string_t("");
     m_NameIsSet = false;
-    m_UpdatedAt = utility::datetime();
+    m_UpdatedAt = 0;
     m_UpdatedAtIsSet = false;
 }
 
@@ -76,7 +76,7 @@ bool Subsystem::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_createdAt;
+            int32_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -86,7 +86,7 @@ bool Subsystem::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_id;
+            int32_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -106,7 +106,7 @@ bool Subsystem::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_updatedAt;
+            int32_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -150,13 +150,13 @@ bool Subsystem::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, cons
 
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        utility::datetime refVal_createdAt;
+        int32_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int64_t refVal_id;
+        int32_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -168,19 +168,19 @@ bool Subsystem::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, cons
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        utility::datetime refVal_updatedAt;
+        int32_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
     return ok;
 }
 
-utility::datetime Subsystem::getCreatedAt() const
+int32_t Subsystem::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Subsystem::setCreatedAt(const utility::datetime& value)
+void Subsystem::setCreatedAt(int32_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -195,12 +195,12 @@ void Subsystem::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int64_t Subsystem::getId() const
+int32_t Subsystem::getId() const
 {
     return m_Id;
 }
 
-void Subsystem::setId(int64_t value)
+void Subsystem::setId(int32_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -235,12 +235,12 @@ void Subsystem::unsetName()
 {
     m_NameIsSet = false;
 }
-utility::datetime Subsystem::getUpdatedAt() const
+int32_t Subsystem::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Subsystem::setUpdatedAt(const utility::datetime& value)
+void Subsystem::setUpdatedAt(int32_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

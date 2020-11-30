@@ -56,20 +56,20 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getCreatedAt() const;
+    int32_t getCreatedAt() const;
     bool createdAtIsSet() const;
     void unsetCreatedAt();
 
-    void setCreatedAt(const utility::datetime& value);
+    void setCreatedAt(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getId() const;
+    int32_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int64_t value);
+    void setId(int32_t value);
 
     /// <summary>
     /// The label value of the tag.
@@ -83,21 +83,21 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
-    utility::datetime getUpdatedAt() const;
+    int32_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdatedAt();
 
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(int32_t value);
 
 
 protected:
-    utility::datetime m_CreatedAt;
+    int32_t m_CreatedAt;
     bool m_CreatedAtIsSet;
-    int64_t m_Id;
+    int32_t m_Id;
     bool m_IdIsSet;
     utility::string_t m_Text;
     bool m_TextIsSet;
-    utility::datetime m_UpdatedAt;
+    int32_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };
 

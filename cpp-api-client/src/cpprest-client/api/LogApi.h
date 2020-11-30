@@ -69,8 +69,8 @@ public:
     /// <param name="logId">The id of the log to retrieve</param>
     /// <param name="attachmentId">The id of the attached to retrieve</param>
     pplx::task<std::shared_ptr<AttachmentResponse>> getLogAttachment(
-        int64_t logId,
-        int64_t attachmentId
+        int32_t logId,
+        int32_t attachmentId
     ) const;
     /// <summary>
     /// Gets a log by Id
@@ -80,7 +80,7 @@ public:
     /// </remarks>
     /// <param name="logId">The id of the log to retrieve</param>
     pplx::task<std::shared_ptr<LogResponse>> getLogById(
-        int64_t logId
+        int32_t logId
     ) const;
     /// <summary>
     /// Get the Log tree for a given Log
@@ -90,7 +90,7 @@ public:
     /// </remarks>
     /// <param name="logId">The id of the log to retrieve</param>
     pplx::task<std::shared_ptr<LogTreeResponse>> getLogTree(
-        int64_t logId
+        int32_t logId
     ) const;
     /// <summary>
     /// Get all attachments associated with a log
@@ -100,7 +100,7 @@ public:
     /// </remarks>
     /// <param name="logId">The id of the log to retrieve</param>
     pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> listLogAttachments(
-        int64_t logId
+        int32_t logId
     ) const;
     /// <summary>
     /// List all logs
@@ -118,7 +118,7 @@ public:
     /// </remarks>
     /// <param name="logId">The id of the log to retrieve</param>
     pplx::task<std::shared_ptr<ArrayOfTagsResponse>> listTagsByLogId(
-        int64_t logId
+        int32_t logId
     ) const;
 
 protected:

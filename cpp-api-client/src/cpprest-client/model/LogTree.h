@@ -92,20 +92,20 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getCreatedAt() const;
+    int32_t getCreatedAt() const;
     bool createdAtIsSet() const;
     void unsetCreatedAt();
 
-    void setCreatedAt(const utility::datetime& value);
+    void setCreatedAt(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getId() const;
+    int32_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int64_t value);
+    void setId(int32_t value);
 
     /// <summary>
     /// 
@@ -119,29 +119,29 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getParentLogId() const;
+    int32_t getParentLogId() const;
     bool parentLogIdIsSet() const;
     void unsetParentLogId();
 
-    void setParentLogId(int64_t value);
+    void setParentLogId(int32_t value);
 
     /// <summary>
     /// The amount of children of a root log.
     /// </summary>
-    int64_t getReplies() const;
+    int32_t getReplies() const;
     bool repliesIsSet() const;
     void unsetReplies();
 
-    void setReplies(int64_t value);
+    void setReplies(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getRootLogId() const;
+    int32_t getRootLogId() const;
     bool rootLogIdIsSet() const;
     void unsetRootLogId();
 
-    void setRootLogId(int64_t value);
+    void setRootLogId(int32_t value);
 
     /// <summary>
     /// Array of minified Run objects.
@@ -200,11 +200,11 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
-    utility::datetime getUpdatedAt() const;
+    int32_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdatedAt();
 
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(int32_t value);
 
 
 protected:
@@ -214,17 +214,17 @@ protected:
     bool m_AuthorIsSet;
     std::vector<std::shared_ptr<LogTree>> m_Children;
     bool m_ChildrenIsSet;
-    utility::datetime m_CreatedAt;
+    int32_t m_CreatedAt;
     bool m_CreatedAtIsSet;
-    int64_t m_Id;
+    int32_t m_Id;
     bool m_IdIsSet;
     std::shared_ptr<LogOrigin> m_Origin;
     bool m_OriginIsSet;
-    int64_t m_ParentLogId;
+    int32_t m_ParentLogId;
     bool m_ParentLogIdIsSet;
-    int64_t m_Replies;
+    int32_t m_Replies;
     bool m_RepliesIsSet;
-    int64_t m_RootLogId;
+    int32_t m_RootLogId;
     bool m_RootLogIdIsSet;
     std::vector<std::shared_ptr<Log_runs>> m_Runs;
     bool m_RunsIsSet;
@@ -238,7 +238,7 @@ protected:
     bool m_TextIsSet;
     utility::string_t m_Title;
     bool m_TitleIsSet;
-    utility::datetime m_UpdatedAt;
+    int32_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };
 

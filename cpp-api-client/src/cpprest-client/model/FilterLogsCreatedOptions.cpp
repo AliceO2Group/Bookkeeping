@@ -23,9 +23,9 @@ namespace model {
 
 FilterLogsCreatedOptions::FilterLogsCreatedOptions()
 {
-    m_From = utility::datetime();
+    m_From = 0;
     m_FromIsSet = false;
-    m_To = utility::datetime();
+    m_To = 0;
     m_ToIsSet = false;
 }
 
@@ -64,7 +64,7 @@ bool FilterLogsCreatedOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("from"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_from;
+            int32_t refVal_from;
             ok &= ModelBase::fromJson(fieldValue, refVal_from);
             setFrom(refVal_from);
         }
@@ -74,7 +74,7 @@ bool FilterLogsCreatedOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("to"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_to;
+            int32_t refVal_to;
             ok &= ModelBase::fromJson(fieldValue, refVal_to);
             setTo(refVal_to);
         }
@@ -110,25 +110,25 @@ bool FilterLogsCreatedOptions::fromMultiPart(std::shared_ptr<MultipartFormData> 
 
     if(multipart->hasContent(utility::conversions::to_string_t("from")))
     {
-        utility::datetime refVal_from;
+        int32_t refVal_from;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("from")), refVal_from );
         setFrom(refVal_from);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("to")))
     {
-        utility::datetime refVal_to;
+        int32_t refVal_to;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("to")), refVal_to );
         setTo(refVal_to);
     }
     return ok;
 }
 
-utility::datetime FilterLogsCreatedOptions::getFrom() const
+int32_t FilterLogsCreatedOptions::getFrom() const
 {
     return m_From;
 }
 
-void FilterLogsCreatedOptions::setFrom(const utility::datetime& value)
+void FilterLogsCreatedOptions::setFrom(int32_t value)
 {
     m_From = value;
     m_FromIsSet = true;
@@ -143,12 +143,12 @@ void FilterLogsCreatedOptions::unsetFrom()
 {
     m_FromIsSet = false;
 }
-utility::datetime FilterLogsCreatedOptions::getTo() const
+int32_t FilterLogsCreatedOptions::getTo() const
 {
     return m_To;
 }
 
-void FilterLogsCreatedOptions::setTo(const utility::datetime& value)
+void FilterLogsCreatedOptions::setTo(int32_t value)
 {
     m_To = value;
     m_ToIsSet = true;

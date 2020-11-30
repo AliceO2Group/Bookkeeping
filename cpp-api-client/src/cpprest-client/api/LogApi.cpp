@@ -184,7 +184,7 @@ pplx::task<std::shared_ptr<LogResponse>> LogApi::createLog(std::shared_ptr<Creat
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<AttachmentResponse>> LogApi::getLogAttachment(int64_t logId, int64_t attachmentId) const
+pplx::task<std::shared_ptr<AttachmentResponse>> LogApi::getLogAttachment(int32_t logId, int32_t attachmentId) const
 {
 
 
@@ -312,7 +312,7 @@ boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utilit
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<LogResponse>> LogApi::getLogById(int64_t logId) const
+pplx::task<std::shared_ptr<LogResponse>> LogApi::getLogById(int32_t logId) const
 {
 
 
@@ -439,7 +439,7 @@ pplx::task<std::shared_ptr<LogResponse>> LogApi::getLogById(int64_t logId) const
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<LogTreeResponse>> LogApi::getLogTree(int64_t logId) const
+pplx::task<std::shared_ptr<LogTreeResponse>> LogApi::getLogTree(int32_t logId) const
 {
 
 
@@ -566,7 +566,7 @@ pplx::task<std::shared_ptr<LogTreeResponse>> LogApi::getLogTree(int64_t logId) c
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> LogApi::listLogAttachments(int64_t logId) const
+pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> LogApi::listLogAttachments(int32_t logId) const
 {
 
 
@@ -819,7 +819,7 @@ pplx::task<std::shared_ptr<ArrayOfLogsResponse>> LogApi::listLogs() const
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<ArrayOfTagsResponse>> LogApi::listTagsByLogId(int64_t logId) const
+pplx::task<std::shared_ptr<ArrayOfTagsResponse>> LogApi::listTagsByLogId(int32_t logId) const
 {
 
 

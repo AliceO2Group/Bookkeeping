@@ -10,22 +10,22 @@
 #include <boost/date_time/local_time_adjustor.hpp>
 #include <boost/lexical_cast.hpp>
 
-namespace 
+namespace
 {
-std::string getEnvString(const std::string& key)
-{
-    char* env = std::getenv(key.c_str());
-    return (env == nullptr) ? std::string("") : std::string(env);
-}
-}
+    std::string getEnvString(const std::string &key)
+    {
+        char *env = std::getenv(key.c_str());
+        return (env == nullptr) ? std::string("") : std::string(env);
+    }
+} // namespace
 
 int main(int argc, char const *argv[])
 {
     std::cout << "Hello Bookkeeping-api-cpp!" << std::endl;
-	std::string url = getEnvString("BOOKKEEPING_URL");
+    std::string url = getEnvString("BOOKKEEPING_URL");
     std::string apiToken = getEnvString("BOOKKEEPING_API_TOKEN");
     std::cout << "BOOKKEEPING_URL: " << url << '\n'
-        << "BOOKKEEPING_API_TOKEN: " << apiToken << std::endl;
+              << "BOOKKEEPING_API_TOKEN: " << apiToken << std::endl;
 
     url = url + "?token=" + apiToken;
     std::cout << url << std::endl;
@@ -33,59 +33,51 @@ int main(int argc, char const *argv[])
 
     auto api = bookkeeping::getApiInstance(url, apiToken);
 
-    
     // Start & end run, with FLPs
     {
-        auto now = boost::posix_time::microsec_clock::universal_time();
+        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::cout << "Starting run " << runNumber << std::endl;
         api->runStart(runNumber, now, now, "cpp-api", RunType::TECHNICAL, 123, 200, 100);
-        
-        // std::cout << "Adding FLPs" << std::endl;
-        // api->flpAdd(runNumber, "flp-1", "localhost");
-        // api->flpAdd(runNumber, "flp-2", "localhost");
 
-        // std::cout << "Updating FLPs" << std::endl;
-        // api->flpUpdateCounters(runNumber, "flp-1", 123, 123408, 5834, 9192);
-        // api->flpUpdateCounters(runNumber, "flp-2", 13, 318, 23, 952);
-        
-        // std::cout << "Updating FLPs" << std::endl;
-        // api->flpUpdateCounters(runNumber, "flp-1", 234, 323408, 6834, 9292);
-        
+        std::cout << "Adding FLPs" << std::endl;
+        api->flpAdd("flp-1", "localhost");
+        api->flpAdd("flp-2", "localhost", runNumber);
+
+        std::cout << "Updating FLPs" << std::endl;
+        api->flpUpdateCounters(1, "flp-1", 123, 123408, 5834, 9192);
+        api->flpUpdateCounters(1, "flp-2", 13, 318, 23, 952);
 
         std::cout << "Ending run" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        now = boost::posix_time::microsec_clock::universal_time();
+        now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         api->runEnd(runNumber, now, now, RunQuality::UNKNOWN);
 
-        // std::cout << "Creating log" << std::endl;
-        // std::this_thread::sleep_for(std::chrono::seconds(1));
-        // now = boost::posix_time::microsec_clock::universal_time();
-        // Bookkeeping::CreateLogParameters parameters = {};
-        // parameters.title = "lel";
-        // parameters.text = "Some good run guys.. :)";
-        // parameters.runIds = {18};
-        // api->createLog("Some good run guys..", "LoggyTitle");
+        // todo: add attachments to request
+        std::cout << "Creating log" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        api->createLog("Porsche 911..", "LoggyTitle", {1, 5, 6}, 1);
     }
 
-    
-    // Get run
-    // return 0; // Disable for now...
-    // {
-    //     std::cout << "Getting runs" << std::endl;
-    //     Bookkeeping::GetRunsParameters params;
-    //     params.pageSize = 3;
-    //     params.orderDirection = Bookkeeping::OrderDirection::DESC;
-    //     std::vector<Bookkeeping::Run> runs = api->getRuns(params);
-    //     for (const auto& run : runs) {
-    //         std::cout << "  {\n"
-    //         << "    runNumber : " << run.runNumber << '\n'
-    //         << "    timeO2Start : " << boost::posix_time::to_iso_extended_string(run.timeO2Start) << '\n'
-    //         << "    runType : " << run.runType << '\n'
-    //         << "    nFlps : " << run.nFlps << '\n'
-    //         << "    bytesReadOut : " << run.bytesReadOut << '\n'
-    //         << "  },\n";
-    //     }
-    // }
+    {
+        std::cout << "Getting runs" << std::endl;
+        auto runs = api->getRuns();
 
+        for (const auto &run : runs)
+        {
+            std::cout << run->toJson() << std::endl;
+        }
+        std::cout << "Amount of runs retrieved: " << runs.size() << std::endl;
+    }
+
+    {
+        std::cout << "Getting logs" << std::endl;
+        auto logs = api->getLogs();
+
+        for (const auto &log : logs)
+        {
+            std::cout << log->toJson() << std::endl;
+        }
+        std::cout << "Amount of logs retrieved: " << logs.size() << std::endl;
+    }
     return 0;
 }

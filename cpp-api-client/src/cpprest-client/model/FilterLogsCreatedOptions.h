@@ -21,7 +21,6 @@
 
 #include "../ModelBase.h"
 
-#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
@@ -56,26 +55,26 @@ public:
     /// <summary>
     /// The earliest allowed unix timestamp for the fetched data.
     /// </summary>
-    utility::datetime getFrom() const;
+    int32_t getFrom() const;
     bool fromIsSet() const;
     void unsetFrom();
 
-    void setFrom(const utility::datetime& value);
+    void setFrom(int32_t value);
 
     /// <summary>
     /// The latest allowed unix timestamp for the fetched data.
     /// </summary>
-    utility::datetime getTo() const;
+    int32_t getTo() const;
     bool toIsSet() const;
     void unsetTo();
 
-    void setTo(const utility::datetime& value);
+    void setTo(int32_t value);
 
 
 protected:
-    utility::datetime m_From;
+    int32_t m_From;
     bool m_FromIsSet;
-    utility::datetime m_To;
+    int32_t m_To;
     bool m_ToIsSet;
 };
 

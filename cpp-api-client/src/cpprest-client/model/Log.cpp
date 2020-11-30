@@ -25,16 +25,16 @@ Log::Log()
 {
     m_AttachmentsIsSet = false;
     m_AuthorIsSet = false;
-    m_CreatedAt = utility::datetime();
+    m_CreatedAt = 0;
     m_CreatedAtIsSet = false;
-    m_Id = 0L;
+    m_Id = 0;
     m_IdIsSet = false;
     m_OriginIsSet = false;
-    m_ParentLogId = 0L;
+    m_ParentLogId = 0;
     m_ParentLogIdIsSet = false;
-    m_Replies = 0L;
+    m_Replies = 0;
     m_RepliesIsSet = false;
-    m_RootLogId = 0L;
+    m_RootLogId = 0;
     m_RootLogIdIsSet = false;
     m_RunsIsSet = false;
     m_SubsystemsIsSet = false;
@@ -44,7 +44,7 @@ Log::Log()
     m_TextIsSet = false;
     m_Title = utility::conversions::to_string_t("");
     m_TitleIsSet = false;
-    m_UpdatedAt = utility::datetime();
+    m_UpdatedAt = 0;
     m_UpdatedAtIsSet = false;
 }
 
@@ -155,7 +155,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_createdAt;
+            int32_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -165,7 +165,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_id;
+            int32_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -185,7 +185,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("parentLogId"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_parentLogId;
+            int32_t refVal_parentLogId;
             ok &= ModelBase::fromJson(fieldValue, refVal_parentLogId);
             setParentLogId(refVal_parentLogId);
         }
@@ -195,7 +195,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("replies"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_replies;
+            int32_t refVal_replies;
             ok &= ModelBase::fromJson(fieldValue, refVal_replies);
             setReplies(refVal_replies);
         }
@@ -205,7 +205,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("rootLogId"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_rootLogId;
+            int32_t refVal_rootLogId;
             ok &= ModelBase::fromJson(fieldValue, refVal_rootLogId);
             setRootLogId(refVal_rootLogId);
         }
@@ -275,7 +275,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_updatedAt;
+            int32_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -375,13 +375,13 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        utility::datetime refVal_createdAt;
+        int32_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int64_t refVal_id;
+        int32_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -393,19 +393,19 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("parentLogId")))
     {
-        int64_t refVal_parentLogId;
+        int32_t refVal_parentLogId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("parentLogId")), refVal_parentLogId );
         setParentLogId(refVal_parentLogId);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("replies")))
     {
-        int64_t refVal_replies;
+        int32_t refVal_replies;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("replies")), refVal_replies );
         setReplies(refVal_replies);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("rootLogId")))
     {
-        int64_t refVal_rootLogId;
+        int32_t refVal_rootLogId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("rootLogId")), refVal_rootLogId );
         setRootLogId(refVal_rootLogId);
     }
@@ -447,7 +447,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        utility::datetime refVal_updatedAt;
+        int32_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
@@ -494,12 +494,12 @@ void Log::unsetAuthor()
 {
     m_AuthorIsSet = false;
 }
-utility::datetime Log::getCreatedAt() const
+int32_t Log::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Log::setCreatedAt(const utility::datetime& value)
+void Log::setCreatedAt(int32_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -514,12 +514,12 @@ void Log::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int64_t Log::getId() const
+int32_t Log::getId() const
 {
     return m_Id;
 }
 
-void Log::setId(int64_t value)
+void Log::setId(int32_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -554,12 +554,12 @@ void Log::unsetOrigin()
 {
     m_OriginIsSet = false;
 }
-int64_t Log::getParentLogId() const
+int32_t Log::getParentLogId() const
 {
     return m_ParentLogId;
 }
 
-void Log::setParentLogId(int64_t value)
+void Log::setParentLogId(int32_t value)
 {
     m_ParentLogId = value;
     m_ParentLogIdIsSet = true;
@@ -574,12 +574,12 @@ void Log::unsetParentLogId()
 {
     m_ParentLogIdIsSet = false;
 }
-int64_t Log::getReplies() const
+int32_t Log::getReplies() const
 {
     return m_Replies;
 }
 
-void Log::setReplies(int64_t value)
+void Log::setReplies(int32_t value)
 {
     m_Replies = value;
     m_RepliesIsSet = true;
@@ -594,12 +594,12 @@ void Log::unsetReplies()
 {
     m_RepliesIsSet = false;
 }
-int64_t Log::getRootLogId() const
+int32_t Log::getRootLogId() const
 {
     return m_RootLogId;
 }
 
-void Log::setRootLogId(int64_t value)
+void Log::setRootLogId(int32_t value)
 {
     m_RootLogId = value;
     m_RootLogIdIsSet = true;
@@ -734,12 +734,12 @@ void Log::unsetTitle()
 {
     m_TitleIsSet = false;
 }
-utility::datetime Log::getUpdatedAt() const
+int32_t Log::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Log::setUpdatedAt(const utility::datetime& value)
+void Log::setUpdatedAt(int32_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

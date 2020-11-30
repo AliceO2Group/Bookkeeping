@@ -22,8 +22,11 @@
 #include "../ApiClient.h"
 
 #include "ArrayOfFlpsResponse.h"
+#include "CreateFlp.h"
 #include "Errors.h"
 #include "FlpResponse.h"
+#include "LogResponse.h"
+#include "UpdateFlp.h"
 
 
 #include <boost/optional.hpp>
@@ -46,6 +49,16 @@ public:
     virtual ~FlpApi();
 
     /// <summary>
+    /// Adds a new flp
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="createFlp"></param>
+    pplx::task<std::shared_ptr<LogResponse>> createFlp(
+        std::shared_ptr<CreateFlp> createFlp
+    ) const;
+    /// <summary>
     /// Gets a flp by Id
     /// </summary>
     /// <remarks>
@@ -53,7 +66,7 @@ public:
     /// </remarks>
     /// <param name="flpId">The id of the flp to retrieve</param>
     pplx::task<std::shared_ptr<FlpResponse>> getFlpById(
-        int64_t flpId
+        int32_t flpId
     ) const;
     /// <summary>
     /// List all flps
@@ -62,6 +75,18 @@ public:
     /// 
     /// </remarks>
     pplx::task<std::shared_ptr<ArrayOfFlpsResponse>> listFlps(
+    ) const;
+    /// <summary>
+    /// Update an existing flp
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="flpId">The id of the flp to retrieve</param>
+    /// <param name="updateFlp"></param>
+    pplx::task<std::shared_ptr<FlpResponse>> updateFlp(
+        int32_t flpId,
+        std::shared_ptr<UpdateFlp> updateFlp
     ) const;
 
 protected:

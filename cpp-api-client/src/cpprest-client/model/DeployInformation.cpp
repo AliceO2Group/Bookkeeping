@@ -25,7 +25,7 @@ DeployInformation::DeployInformation()
 {
     m_Age = 0.0;
     m_AgeIsSet = false;
-    m_Start = utility::datetime();
+    m_Start = 0;
     m_StartIsSet = false;
 }
 
@@ -74,7 +74,7 @@ bool DeployInformation::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("start"));
         if(!fieldValue.is_null())
         {
-            utility::datetime refVal_start;
+            int32_t refVal_start;
             ok &= ModelBase::fromJson(fieldValue, refVal_start);
             setStart(refVal_start);
         }
@@ -116,7 +116,7 @@ bool DeployInformation::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
     }
     if(multipart->hasContent(utility::conversions::to_string_t("start")))
     {
-        utility::datetime refVal_start;
+        int32_t refVal_start;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("start")), refVal_start );
         setStart(refVal_start);
     }
@@ -143,12 +143,12 @@ void DeployInformation::unsetAge()
 {
     m_AgeIsSet = false;
 }
-utility::datetime DeployInformation::getStart() const
+int32_t DeployInformation::getStart() const
 {
     return m_Start;
 }
 
-void DeployInformation::setStart(const utility::datetime& value)
+void DeployInformation::setStart(int32_t value)
 {
     m_Start = value;
     m_StartIsSet = true;

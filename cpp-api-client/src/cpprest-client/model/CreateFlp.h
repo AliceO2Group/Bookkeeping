@@ -10,17 +10,18 @@
  */
 
 /*
- * DeployInformation.h
+ * CreateFlp.h
  *
- * Deploy information
+ * Describes an flp
  */
 
-#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_DeployInformation_H_
-#define ORG_OPENAPITOOLS_CLIENT_MODEL_DeployInformation_H_
+#ifndef ORG_OPENAPITOOLS_CLIENT_MODEL_CreateFlp_H_
+#define ORG_OPENAPITOOLS_CLIENT_MODEL_CreateFlp_H_
 
 
 #include "../ModelBase.h"
 
+#include <cpprest/details/basic_types.h>
 
 namespace org {
 namespace openapitools {
@@ -29,14 +30,14 @@ namespace model {
 
 
 /// <summary>
-/// Deploy information
+/// Describes an flp
 /// </summary>
-class  DeployInformation
+class  CreateFlp
     : public ModelBase
 {
 public:
-    DeployInformation();
-    virtual ~DeployInformation();
+    CreateFlp();
+    virtual ~CreateFlp();
 
     /////////////////////////////////////////////
     /// ModelBase overrides
@@ -50,32 +51,43 @@ public:
     bool fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& namePrefix) override;
 
     /////////////////////////////////////////////
-    /// DeployInformation members
+    /// CreateFlp members
 
     /// <summary>
-    /// The number of seconds that the server is online.
+    /// FLP name.
     /// </summary>
-    double getAge() const;
-    bool ageIsSet() const;
-    void unsetAge();
+    utility::string_t getName() const;
+    bool nameIsSet() const;
+    void unsetName();
 
-    void setAge(double value);
+    void setName(const utility::string_t& value);
 
     /// <summary>
-    /// The unix timestamp of the moment that the the server went online.
+    /// FLP hostname.
     /// </summary>
-    int32_t getStart() const;
-    bool startIsSet() const;
-    void unsetStart();
+    utility::string_t getHostname() const;
+    bool hostnameIsSet() const;
+    void unsetHostname();
 
-    void setStart(int32_t value);
+    void setHostname(const utility::string_t& value);
+
+    /// <summary>
+    /// The unique identifier of this entity.
+    /// </summary>
+    int32_t getRunNumber() const;
+    bool runNumberIsSet() const;
+    void unsetRunNumber();
+
+    void setRunNumber(int32_t value);
 
 
 protected:
-    double m_Age;
-    bool m_AgeIsSet;
-    int32_t m_Start;
-    bool m_StartIsSet;
+    utility::string_t m_Name;
+    bool m_NameIsSet;
+    utility::string_t m_Hostname;
+    bool m_HostnameIsSet;
+    int32_t m_RunNumber;
+    bool m_RunNumberIsSet;
 };
 
 
@@ -84,4 +96,4 @@ protected:
 }
 }
 
-#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_DeployInformation_H_ */
+#endif /* ORG_OPENAPITOOLS_CLIENT_MODEL_CreateFlp_H_ */

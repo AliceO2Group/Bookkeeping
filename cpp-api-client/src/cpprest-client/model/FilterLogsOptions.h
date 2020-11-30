@@ -86,20 +86,20 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getParentLog() const;
+    int32_t getParentLog() const;
     bool parentLogIsSet() const;
     void unsetParentLog();
 
-    void setParentLog(int64_t value);
+    void setParentLog(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getRootLog() const;
+    int32_t getRootLog() const;
     bool rootLogIsSet() const;
     void unsetRootLog();
 
-    void setRootLog(int64_t value);
+    void setRootLog(int32_t value);
 
     /// <summary>
     /// 
@@ -127,9 +127,9 @@ protected:
     bool m_CreatedIsSet;
     std::shared_ptr<LogOrigin> m_Origin;
     bool m_OriginIsSet;
-    int64_t m_ParentLog;
+    int32_t m_ParentLog;
     bool m_ParentLogIsSet;
-    int64_t m_RootLog;
+    int32_t m_RootLog;
     bool m_RootLogIsSet;
     std::shared_ptr<FilterLogsTagOptions> m_Tag;
     bool m_TagIsSet;

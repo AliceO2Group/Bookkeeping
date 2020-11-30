@@ -65,7 +65,7 @@ public:
     /// </remarks>
     /// <param name="tagId">The id of the tag to retrieve</param>
     pplx::task<std::shared_ptr<TagResponse>> deleteTagById(
-        int64_t tagId
+        int32_t tagId
     ) const;
     /// <summary>
     /// Gets all logs with this tag id
@@ -75,7 +75,7 @@ public:
     /// </remarks>
     /// <param name="tagId">The id of the tag to retrieve</param>
     pplx::task<std::shared_ptr<ArrayOfLogsResponse>> getLogsByTagId(
-        int64_t tagId
+        int32_t tagId
     ) const;
     /// <summary>
     /// Gets a tag by Id
@@ -85,7 +85,7 @@ public:
     /// </remarks>
     /// <param name="tagId">The id of the tag to retrieve</param>
     pplx::task<std::shared_ptr<TagResponse>> getTagById(
-        int64_t tagId
+        int32_t tagId
     ) const;
     /// <summary>
     /// List all tags

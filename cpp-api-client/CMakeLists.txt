@@ -71,6 +71,7 @@ set(SOURCE_FILES
     src/cpprest-client/model/Attachment.cpp
     src/cpprest-client/model/AttachmentResponse.cpp
     src/cpprest-client/model/CreateAttachments.cpp
+    src/cpprest-client/model/CreateFlp.cpp
     src/cpprest-client/model/CreateLog.cpp
     src/cpprest-client/model/CreateSubsystem.cpp
     src/cpprest-client/model/CreateTag.cpp
@@ -107,6 +108,7 @@ set(SOURCE_FILES
     src/cpprest-client/model/Tag.cpp
     src/cpprest-client/model/TagResponse.cpp
     src/cpprest-client/model/User.cpp
+    src/cpprest-client/model/UpdateFlp.cpp
     src/BookkeepingApi.cpp
     src/BookkeepingFactory.cpp)
 

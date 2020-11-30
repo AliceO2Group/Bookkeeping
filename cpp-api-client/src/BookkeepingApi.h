@@ -12,17 +12,17 @@ class BookkeepingApi : public virtual BookkeepingInterface
 {
     public:
     BookkeepingApi(std::string url, std::string token);
-    virtual void runStart(int64_t runNumber, boost::posix_time::ptime o2Start,
-      boost::posix_time::ptime triggerStart, utility::string_t activityId, 
+    virtual void runStart(int64_t runNumber, std::time_t o2Start,
+      std::time_t triggerStart, utility::string_t activityId, 
       RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns) override;
-    virtual void runEnd(int64_t runNumber, boost::posix_time::ptime o2End, boost::posix_time::ptime triggerEnd,
+    virtual void runEnd(int64_t runNumber, std::time_t o2End, std::time_t triggerEnd,
       RunQuality runQuality) override;
-    // virtual void flpAdd(int64_t runNumber, std::string flpName, std::string hostName) override;
-    // virtual void flpUpdateCounters(int64_t runNumber, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
-    //   int64_t nRecordingBytes, int64_t nFairMqBytes) override;
-    // virtual std::vector<Run> getRuns(const GetRunsParameters& parameters) override;
+    virtual void flpAdd(std::string flpName, std::string hostName, int64_t runNumber = -1) override;
+    virtual void flpUpdateCounters(int64_t flpId, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
+      int64_t nRecordingBytes, int64_t nFairMQBytes) override;
+    virtual std::vector<std::shared_ptr<org::openapitools::client::model::Run>> getRuns() override;
     virtual void createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers = {}, std::int64_t parentLogId = -1) override;
-    // virtual std::vector<Log> getLogs(const GetLogsParameters& parameters) override;
+    virtual std::vector<std::shared_ptr<org::openapitools::client::model::Log>> getLogs() override;
     
     private:
     std::shared_ptr<org::openapitools::client::api::ApiClient> apiClient;

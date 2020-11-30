@@ -23,9 +23,9 @@ namespace model {
 
 User::User()
 {
-    m_ExternalId = 0L;
+    m_ExternalId = 0;
     m_ExternalIdIsSet = false;
-    m_Id = 0L;
+    m_Id = 0;
     m_IdIsSet = false;
     m_Name = utility::conversions::to_string_t("");
     m_NameIsSet = false;
@@ -70,7 +70,7 @@ bool User::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("externalId"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_externalId;
+            int32_t refVal_externalId;
             ok &= ModelBase::fromJson(fieldValue, refVal_externalId);
             setExternalId(refVal_externalId);
         }
@@ -80,7 +80,7 @@ bool User::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_id;
+            int32_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -130,13 +130,13 @@ bool User::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const uti
 
     if(multipart->hasContent(utility::conversions::to_string_t("externalId")))
     {
-        int64_t refVal_externalId;
+        int32_t refVal_externalId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("externalId")), refVal_externalId );
         setExternalId(refVal_externalId);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int64_t refVal_id;
+        int32_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -149,12 +149,12 @@ bool User::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const uti
     return ok;
 }
 
-int64_t User::getExternalId() const
+int32_t User::getExternalId() const
 {
     return m_ExternalId;
 }
 
-void User::setExternalId(int64_t value)
+void User::setExternalId(int32_t value)
 {
     m_ExternalId = value;
     m_ExternalIdIsSet = true;
@@ -169,12 +169,12 @@ void User::unsetExternalId()
 {
     m_ExternalIdIsSet = false;
 }
-int64_t User::getId() const
+int32_t User::getId() const
 {
     return m_Id;
 }
 
-void User::setId(int64_t value)
+void User::setId(int32_t value)
 {
     m_Id = value;
     m_IdIsSet = true;

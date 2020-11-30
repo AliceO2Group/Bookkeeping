@@ -67,74 +67,74 @@ public:
     /// <summary>
     /// Total data volume read out from the detectors by the O2 system in bytes.
     /// </summary>
-    int64_t getBytesReadOut() const;
+    int32_t getBytesReadOut() const;
     bool bytesReadOutIsSet() const;
     void unsetBytesReadOut();
 
-    void setBytesReadOut(int64_t value);
+    void setBytesReadOut(int32_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getCreatedAt() const;
+    int32_t getCreatedAt() const;
     bool createdAtIsSet() const;
     void unsetCreatedAt();
 
-    void setCreatedAt(const utility::datetime& value);
+    void setCreatedAt(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getId() const;
+    int32_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int64_t value);
+    void setId(int32_t value);
 
     /// <summary>
     /// The amount of detectors in a single run.
     /// </summary>
-    int64_t getNDetectors() const;
+    int32_t getNDetectors() const;
     bool nDetectorsIsSet() const;
     void unsetNDetectors();
 
-    void setNDetectors(int64_t value);
+    void setNDetectors(int32_t value);
 
     /// <summary>
     /// The amount of Epns nodes in a single run.
     /// </summary>
-    int64_t getNEpns() const;
+    int32_t getNEpns() const;
     bool nEpnsIsSet() const;
     void unsetNEpns();
 
-    void setNEpns(int64_t value);
+    void setNEpns(int32_t value);
 
     /// <summary>
     /// The amount of Flps nodes in a single run.
     /// </summary>
-    int64_t getNFlps() const;
+    int32_t getNFlps() const;
     bool nFlpsIsSet() const;
     void unsetNFlps();
 
-    void setNFlps(int64_t value);
+    void setNFlps(int32_t value);
 
     /// <summary>
     /// Total number of subtimeframes processed by the O2 system.
     /// </summary>
-    int64_t getNSubtimeframes() const;
+    int32_t getNSubtimeframes() const;
     bool nSubtimeframesIsSet() const;
     void unsetNSubtimeframes();
 
-    void setNSubtimeframes(int64_t value);
+    void setNSubtimeframes(int32_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getRunNumber() const;
+    int32_t getRunNumber() const;
     bool runNumberIsSet() const;
     void unsetRunNumber();
 
-    void setRunNumber(int64_t value);
+    void setRunNumber(int32_t value);
 
     /// <summary>
     /// 
@@ -157,81 +157,81 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getTimeO2End() const;
+    int32_t getTimeO2End() const;
     bool timeO2EndIsSet() const;
     void unsetTimeO2End();
 
-    void setTimeO2End(const utility::datetime& value);
+    void setTimeO2End(int32_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getTimeO2Start() const;
+    int32_t getTimeO2Start() const;
     bool timeO2StartIsSet() const;
     void unsetTimeO2Start();
 
-    void setTimeO2Start(const utility::datetime& value);
+    void setTimeO2Start(int32_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getTimeTrgEnd() const;
+    int32_t getTimeTrgEnd() const;
     bool timeTrgEndIsSet() const;
     void unsetTimeTrgEnd();
 
-    void setTimeTrgEnd(const utility::datetime& value);
+    void setTimeTrgEnd(int32_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getTimeTrgStart() const;
+    int32_t getTimeTrgStart() const;
     bool timeTrgStartIsSet() const;
     void unsetTimeTrgStart();
 
-    void setTimeTrgStart(const utility::datetime& value);
+    void setTimeTrgStart(int32_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
-    utility::datetime getUpdatedAt() const;
+    int32_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdatedAt();
 
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(int32_t value);
 
 
 protected:
     utility::string_t m_ActivityId;
     bool m_ActivityIdIsSet;
-    int64_t m_BytesReadOut;
+    int32_t m_BytesReadOut;
     bool m_BytesReadOutIsSet;
-    utility::datetime m_CreatedAt;
+    int32_t m_CreatedAt;
     bool m_CreatedAtIsSet;
-    int64_t m_Id;
+    int32_t m_Id;
     bool m_IdIsSet;
-    int64_t m_NDetectors;
+    int32_t m_NDetectors;
     bool m_NDetectorsIsSet;
-    int64_t m_NEpns;
+    int32_t m_NEpns;
     bool m_NEpnsIsSet;
-    int64_t m_NFlps;
+    int32_t m_NFlps;
     bool m_NFlpsIsSet;
-    int64_t m_NSubtimeframes;
+    int32_t m_NSubtimeframes;
     bool m_NSubtimeframesIsSet;
-    int64_t m_RunNumber;
+    int32_t m_RunNumber;
     bool m_RunNumberIsSet;
     std::shared_ptr<RunQuality> m_RunQuality;
     bool m_RunQualityIsSet;
     std::shared_ptr<RunType> m_RunType;
     bool m_RunTypeIsSet;
-    utility::datetime m_TimeO2End;
+    int32_t m_TimeO2End;
     bool m_TimeO2EndIsSet;
-    utility::datetime m_TimeO2Start;
+    int32_t m_TimeO2Start;
     bool m_TimeO2StartIsSet;
-    utility::datetime m_TimeTrgEnd;
+    int32_t m_TimeTrgEnd;
     bool m_TimeTrgEndIsSet;
-    utility::datetime m_TimeTrgStart;
+    int32_t m_TimeTrgStart;
     bool m_TimeTrgStartIsSet;
-    utility::datetime m_UpdatedAt;
+    int32_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };
 

@@ -63,7 +63,7 @@ public:
     /// </remarks>
     /// <param name="attachmentId">The id of the attached to retrieve</param>
     pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> getAttachment(
-        int64_t attachmentId
+        int32_t attachmentId
     ) const;
 
 protected:

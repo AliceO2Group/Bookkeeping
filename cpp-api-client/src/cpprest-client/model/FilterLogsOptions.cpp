@@ -27,9 +27,9 @@ FilterLogsOptions::FilterLogsOptions()
     m_AuthorIsSet = false;
     m_CreatedIsSet = false;
     m_OriginIsSet = false;
-    m_ParentLog = 0L;
+    m_ParentLog = 0;
     m_ParentLogIsSet = false;
-    m_RootLog = 0L;
+    m_RootLog = 0;
     m_RootLogIsSet = false;
     m_TagIsSet = false;
     m_Title = utility::conversions::to_string_t("");
@@ -121,7 +121,7 @@ bool FilterLogsOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("parentLog"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_parentLog;
+            int32_t refVal_parentLog;
             ok &= ModelBase::fromJson(fieldValue, refVal_parentLog);
             setParentLog(refVal_parentLog);
         }
@@ -131,7 +131,7 @@ bool FilterLogsOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("rootLog"));
         if(!fieldValue.is_null())
         {
-            int64_t refVal_rootLog;
+            int32_t refVal_rootLog;
             ok &= ModelBase::fromJson(fieldValue, refVal_rootLog);
             setRootLog(refVal_rootLog);
         }
@@ -225,13 +225,13 @@ bool FilterLogsOptions::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
     }
     if(multipart->hasContent(utility::conversions::to_string_t("parentLog")))
     {
-        int64_t refVal_parentLog;
+        int32_t refVal_parentLog;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("parentLog")), refVal_parentLog );
         setParentLog(refVal_parentLog);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("rootLog")))
     {
-        int64_t refVal_rootLog;
+        int32_t refVal_rootLog;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("rootLog")), refVal_rootLog );
         setRootLog(refVal_rootLog);
     }
@@ -310,12 +310,12 @@ void FilterLogsOptions::unsetOrigin()
 {
     m_OriginIsSet = false;
 }
-int64_t FilterLogsOptions::getParentLog() const
+int32_t FilterLogsOptions::getParentLog() const
 {
     return m_ParentLog;
 }
 
-void FilterLogsOptions::setParentLog(int64_t value)
+void FilterLogsOptions::setParentLog(int32_t value)
 {
     m_ParentLog = value;
     m_ParentLogIsSet = true;
@@ -330,12 +330,12 @@ void FilterLogsOptions::unsetParentLog()
 {
     m_ParentLogIsSet = false;
 }
-int64_t FilterLogsOptions::getRootLog() const
+int32_t FilterLogsOptions::getRootLog() const
 {
     return m_RootLog;
 }
 
-void FilterLogsOptions::setRootLog(int64_t value)
+void FilterLogsOptions::setRootLog(int32_t value)
 {
     m_RootLog = value;
     m_RootLogIsSet = true;

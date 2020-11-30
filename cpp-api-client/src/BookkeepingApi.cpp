@@ -16,6 +16,15 @@ namespace bookkeeping
 
 namespace
 {
+
+static uint64_t getUnixTimeStamp(const std::time_t* t = nullptr)
+{
+    //if specific time is not passed then get current time
+    std::time_t st = t == nullptr ? std::time(nullptr) : *t;
+    auto millisecs = (static_cast<std::chrono::milliseconds>(st).count() * 1000);
+    return static_cast<uint64_t>(millisecs);
+}
+
 std::string orderDirectionToString(OrderDirection orderDirection) {
     switch (orderDirection) {
         case OrderDirection::ASC: return "ASC";
@@ -116,15 +125,15 @@ BookkeepingApi::BookkeepingApi(std::string url, std::string token)
 }
 
 
-void BookkeepingApi::runStart(int64_t runNumber, boost::posix_time::ptime o2Start,
-      boost::posix_time::ptime triggerStart, utility::string_t activityId, 
+void BookkeepingApi::runStart(int64_t runNumber, std::time_t o2Start,
+      std::time_t triggerStart, utility::string_t activityId, 
       RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns) 
 {
     org::openapitools::client::api::RunApi runApi(apiClient);
     auto run = std::make_shared<org::openapitools::client::model::Run>();
     run->setRunNumber(runNumber);
-    run->setTimeO2Start(ptimeToDateTime(o2Start));
-    run->setTimeTrgStart(ptimeToDateTime(triggerStart));
+    run->setTimeO2Start(getUnixTimeStamp(&o2Start));
+    run->setTimeTrgStart(getUnixTimeStamp(&triggerStart));
     run->setRunType(runTypeToActualRunType(runType));
     run->setActivityId(activityId);
     run->setNDetectors(nDetectors);
@@ -133,95 +142,49 @@ void BookkeepingApi::runStart(int64_t runNumber, boost::posix_time::ptime o2Star
     runApi.createRun(run).get();
 }
 
-void BookkeepingApi::runEnd(int64_t runNumber, boost::posix_time::ptime o2End, boost::posix_time::ptime triggerEnd,
+void BookkeepingApi::runEnd(int64_t runNumber, std::time_t o2End, std::time_t triggerEnd,
       RunQuality runQuality)
 {
     org::openapitools::client::api::RunApi runApi(apiClient);
     auto run = std::make_shared<org::openapitools::client::model::Run>();
-    run->setTimeO2End(ptimeToDateTime(o2End));
-    run->setTimeTrgEnd(ptimeToDateTime(triggerEnd));
+    run->setTimeO2End(getUnixTimeStamp(&o2End));
+    run->setTimeTrgEnd(getUnixTimeStamp(&triggerEnd));
     run->setRunQuality(runQualityToActualRunQuality(runQuality));
     runApi.endRun(runNumber, run).get();
 }
 
-// void BookkeepingApi::flpAdd(int64_t runNumber, std::string flpName, std::string hostName)
-// {
-//     org::openapitools::client::api::FlpApi flpApi(apiClient);
-//     auto dto = std::make_shared<org::openapitools::client::model::Flp>();
-//     dto->set(runNumber);
-//     dto->setName(flpName);
-//     dto->setHostname(hostName);
-//     flpApi.flpPost(dto).get();
-// }
+void BookkeepingApi::flpAdd(std::string flpName, std::string hostName, int64_t runNumber)
+{
+    org::openapitools::client::api::FlpApi flpApi(apiClient);
+    auto flp = std::make_shared<org::openapitools::client::model::CreateFlp>();
 
-// void BookkeepingApi::flpUpdateCounters(int64_t runNumber, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
-//       int64_t nRecordingBytes, int64_t nFairMqBytes)
-// {
-//     org::openapitools::client::api::FlpApi flpApi(apiClient);
-//     auto dto = std::make_shared<org::openapitools::client::model::Flp>();
-//     dto->setBytesEquipmentReadOut(nEquipmentBytes);
-//     dto->setBytesFairMqReadOut(nFairMqBytes);
-//     // dto->setNSubTimeframes(nSubtimeframes);
-//     dto->setBytesRecordingReadOut(nRecordingBytes);
-//     flpApi.flpNameRunsIdPatch(dto, flpName, runNumber).get();
-// }
+    if(runNumber != -1)
+    {
+        flp->setRunNumber(runNumber);
+    }
 
-// std::vector<Run> BookkeepingApi::getRuns(const GetRunsParameters& params)
-// {
-//     org::openapitools::client::api::RunApi runsApi(apiClient);
-//     auto emptyString = boost::optional<std::string>();
-//     auto emptyTime = boost::optional<utility::datetime>();
-//     auto emptyInt = boost::optional<int64_t>();
+    flp->setName(flpName);
+    flp->setHostname(hostName);
+    flpApi.createFlp(flp).get();
+}
 
-//     pplx::task<std::shared_ptr<org::openapitools::client::model::Run>> taskRunsGet = runsApi.runsGet(
-//         params.orderBy,
-//         params.orderDirection ? orderDirectionToString(*params.orderDirection) : emptyString,
-//         params.pageSize ? *params.pageSize : emptyInt,
-//         params.pageNumber ? *params.pageNumber : emptyInt,
-//         params.runNumber ? *params.runNumber : emptyInt,
-//         params.startTimeO2Start ? ptimeToDateTime(*params.startTimeO2Start) : emptyTime,
-//         params.endTimeO2Start ? ptimeToDateTime(*params.endTimeO2Start) : emptyTime,
-//         params.startTimeTrgStart ? ptimeToDateTime(*params.startTimeTrgStart) : emptyTime,
-//         params.endTimeTrgStart ? ptimeToDateTime(*params.endTimeTrgStart) : emptyTime,
-//         params.startTimeTrgEnd ? ptimeToDateTime(*params.startTimeTrgEnd) : emptyTime,
-//         params.endTimeTrgEnd ? ptimeToDateTime(*params.endTimeTrgEnd) : emptyTime,  
-//         params.startTimeO2End ? ptimeToDateTime(*params.startTimeO2End) : emptyTime,
-//         params.endTimeO2End ? ptimeToDateTime(*params.endTimeO2End) : emptyTime,
-//         params.activityId,
-//         params.runType ? runTypeToString(*params.runType) : emptyString,
-//         params.runQuality ? runQualityToString(*params.runQuality) : emptyString);
+void BookkeepingApi::flpUpdateCounters(int64_t flpId, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
+      int64_t nRecordingBytes, int64_t nFairMQBytes)
+{
+    org::openapitools::client::api::FlpApi flpApi(apiClient);
+    auto flp = std::make_shared<org::openapitools::client::model::UpdateFlp>();
+    flp->setBytesEquipmentReadOut(nEquipmentBytes);
+    flp->setBytesFairMQReadOut(nFairMQBytes);
+    flp->setNTimeframes(nSubtimeframes);
+    flp->setBytesRecordingReadOut(nRecordingBytes);
+    flpApi.updateFlp(flpId, flp).get();
+}
 
-//     std::shared_ptr<org::openapitools::client::model::Run> result = taskRunsGet.get();
-//     std::vector<Run> runs;
-//     if (result) {
-//         auto data = result->getValue("data");
-//         int count = data.at("count").as_integer();
-//         if (count > 0) {
-//             auto runsJson = data.at("runs").as_array();
-//             for (const auto& item : runsJson) {
-//                 const auto& runJson = item.as_object();
-//                 Run run;
-//                 run.runNumber = runJson.at("runNumber").as_number().to_int64();
-//                 run.timeO2Start = ptimeFromString(runJson.at("timeO2Start").as_string());
-//                 run.timeTrgStart = ptimeFromString(runJson.at("timeTrgStart").as_string());
-//                 run.timeO2End = ptimeFromString(runJson.at("timeO2End").as_string());
-//                 run.timeTrgEnd = ptimeFromString(runJson.at("timeTrgEnd").as_string());
-//                 run.runType = runJson.at("runType").as_string();
-//                 run.runQuality = runJson.at("runQuality").as_string();
-//                 run.activityId = runJson.at("activityId").as_string();
-//                 run.nDetectors = runJson.at("nDetectors").as_number().to_int64();
-//                 run.nFlps = runJson.at("nFlps").as_number().to_int64();
-//                 run.nEpns = runJson.at("nEpns").as_number().to_int64();
-//                 run.nTimeframes = runJson.at("nTimeframes").as_number().to_int64();
-//                 run.nSubtimeframes = runJson.at("nSubtimeframes").as_number().to_int64();
-//                 run.bytesReadOut = runJson.at("bytesReadOut").as_number().to_int64();
-//                 run.bytesTimeframeBuilder = runJson.at("bytesTimeframeBuilder").as_number().to_int64();
-//                 runs.push_back(run);
-//             }
-//         }
-//     }
-//     return runs;
-// }
+std::vector<std::shared_ptr<org::openapitools::client::model::Run>> BookkeepingApi::getRuns()
+{
+    return org::openapitools::client::api::RunApi(apiClient).listRuns().get()->getData();
+}
+
 
 void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers, std::int64_t parentLogId)
 {
@@ -229,34 +192,25 @@ void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, 
     auto log = std::make_shared<org::openapitools::client::model::CreateLog>();
     log->setText(text);
     log->setTitle(title);
-    // log->setRunNumbers("");
-    // log->unsetRunNumbers();
-    // std::cout <<log->getRunNumbers() << std::endl;
-    // log->unsetParentLogId();
-    // log->unsetAttachments();
 
     // Convert to serialized string of run numbers, comma separated.
-    // std::string s;
-    // for(auto const& e : runNumbers) s += std::to_string(e) + ",";
-    // s.pop_back();
+    std::string s = "";
+    for(auto const& e : runNumbers) s += std::to_string(e) + ",";
+    s.pop_back();
+    log->setRunNumbers(s);
 
-    // log->setRunNumbers(s);
-    // if(parentLogId != -1){
-    //     log->setParentLogId(parentLogId);
-    // }
+    if(parentLogId != -1){
+        log->setParentLogId(parentLogId);
+    }
     
-    // std::cout << s << std::endl;
+    std::cout << s << std::endl;
     api.createLog(log).get();
-
-    // std::shared_ptr<org::openapitools::client::model::Log> result = api.createLog(dto).get();
-    // TODO check if result is OK and return log ID
-    // return result->getLogId();
 }
 
-// std::vector<Log> BookkeepingApi::getLogs(const GetLogsParameters& params)
-// {
-//     throw std::runtime_error("BookkeepingApi::getLogs() not yet supported");
-//     return {};
-// }
+std::vector<std::shared_ptr<org::openapitools::client::model::Log>> BookkeepingApi::getLogs()
+{
+    return org::openapitools::client::api::LogApi(apiClient).listLogs().get()->getData();
+}
+
 
 }

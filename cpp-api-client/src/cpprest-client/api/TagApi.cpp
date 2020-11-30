@@ -184,7 +184,7 @@ pplx::task<std::shared_ptr<TagResponse>> TagApi::createTag(std::shared_ptr<Creat
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<TagResponse>> TagApi::deleteTagById(int64_t tagId) const
+pplx::task<std::shared_ptr<TagResponse>> TagApi::deleteTagById(int32_t tagId) const
 {
 
 
@@ -311,7 +311,7 @@ pplx::task<std::shared_ptr<TagResponse>> TagApi::deleteTagById(int64_t tagId) co
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<ArrayOfLogsResponse>> TagApi::getLogsByTagId(int64_t tagId) const
+pplx::task<std::shared_ptr<ArrayOfLogsResponse>> TagApi::getLogsByTagId(int32_t tagId) const
 {
 
 
@@ -438,7 +438,7 @@ pplx::task<std::shared_ptr<ArrayOfLogsResponse>> TagApi::getLogsByTagId(int64_t 
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<TagResponse>> TagApi::getTagById(int64_t tagId) const
+pplx::task<std::shared_ptr<TagResponse>> TagApi::getTagById(int32_t tagId) const
 {
 
 

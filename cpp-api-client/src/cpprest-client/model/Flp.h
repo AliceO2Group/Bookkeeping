@@ -56,47 +56,47 @@ public:
     /// <summary>
     /// Total data volume out from the readout &#39;equipment&#39; component in bytes. Can reach PetaBytes. Updated regularly.
     /// </summary>
-    int64_t getBytesEquipmentReadOut() const;
+    int32_t getBytesEquipmentReadOut() const;
     bool bytesEquipmentReadOutIsSet() const;
     void unsetBytesEquipmentReadOut();
 
-    void setBytesEquipmentReadOut(int64_t value);
+    void setBytesEquipmentReadOut(int32_t value);
 
     /// <summary>
     /// Total data volume out from the readout &#39;fmq&#39; component in bytes. Can reach PetaBytes. Updated regularly.
     /// </summary>
-    int64_t getBytesFairMqReadOut() const;
-    bool bytesFairMqReadOutIsSet() const;
-    void unsetBytesFairMqReadOut();
+    int32_t getBytesFairMQReadOut() const;
+    bool bytesFairMQReadOutIsSet() const;
+    void unsetBytesFairMQReadOut();
 
-    void setBytesFairMqReadOut(int64_t value);
+    void setBytesFairMQReadOut(int32_t value);
 
     /// <summary>
     /// Total data volume read out in bytes.
     /// </summary>
-    int64_t getBytesProcessed() const;
+    int32_t getBytesProcessed() const;
     bool bytesProcessedIsSet() const;
     void unsetBytesProcessed();
 
-    void setBytesProcessed(int64_t value);
+    void setBytesProcessed(int32_t value);
 
     /// <summary>
     /// Total data volume out from the readout &#39;recording&#39; component in bytes. Can reach PetaBytes. Updated regularly.
     /// </summary>
-    int64_t getBytesRecordingReadOut() const;
+    int32_t getBytesRecordingReadOut() const;
     bool bytesRecordingReadOutIsSet() const;
     void unsetBytesRecordingReadOut();
 
-    void setBytesRecordingReadOut(int64_t value);
+    void setBytesRecordingReadOut(int32_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    utility::datetime getCreatedAt() const;
+    int32_t getCreatedAt() const;
     bool createdAtIsSet() const;
     void unsetCreatedAt();
 
-    void setCreatedAt(const utility::datetime& value);
+    void setCreatedAt(int32_t value);
 
     /// <summary>
     /// FLP hostname.
@@ -110,20 +110,20 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int64_t getId() const;
+    int32_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int64_t value);
+    void setId(int32_t value);
 
     /// <summary>
     /// Number of subtimeframes processed in this FLP. Updated regularly.
     /// </summary>
-    int64_t getNTimeframes() const;
+    int32_t getNTimeframes() const;
     bool nTimeframesIsSet() const;
     void unsetNTimeframes();
 
-    void setNTimeframes(int64_t value);
+    void setNTimeframes(int32_t value);
 
     /// <summary>
     /// FLP name.
@@ -137,33 +137,33 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
-    utility::datetime getUpdatedAt() const;
+    int32_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdatedAt();
 
-    void setUpdatedAt(const utility::datetime& value);
+    void setUpdatedAt(int32_t value);
 
 
 protected:
-    int64_t m_BytesEquipmentReadOut;
+    int32_t m_BytesEquipmentReadOut;
     bool m_BytesEquipmentReadOutIsSet;
-    int64_t m_BytesFairMqReadOut;
-    bool m_BytesFairMqReadOutIsSet;
-    int64_t m_BytesProcessed;
+    int32_t m_BytesFairMQReadOut;
+    bool m_BytesFairMQReadOutIsSet;
+    int32_t m_BytesProcessed;
     bool m_BytesProcessedIsSet;
-    int64_t m_BytesRecordingReadOut;
+    int32_t m_BytesRecordingReadOut;
     bool m_BytesRecordingReadOutIsSet;
-    utility::datetime m_CreatedAt;
+    int32_t m_CreatedAt;
     bool m_CreatedAtIsSet;
     utility::string_t m_Hostname;
     bool m_HostnameIsSet;
-    int64_t m_Id;
+    int32_t m_Id;
     bool m_IdIsSet;
-    int64_t m_NTimeframes;
+    int32_t m_NTimeframes;
     bool m_NTimeframesIsSet;
     utility::string_t m_Name;
     bool m_NameIsSet;
-    utility::datetime m_UpdatedAt;
+    int32_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };
 
