@@ -12,9 +12,9 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const {defaultBefore, defaultAfter, expectInnerText, pressElement} = require('../defaults');
 
-const { expect } = chai;
+const {expect} = chai;
 
 module.exports = () => {
     let page;
@@ -33,7 +33,7 @@ module.exports = () => {
 
     it('run export loads correctly', async () => {
         console.log("hallo")
-        await page.goto(`${url}/?page=run-export`, { waitUntil: 'networkidle0' });
+        await page.goto(`${url}/?page=run-export`, {waitUntil: 'networkidle0'});
 
         // We expect the log creation screen to be shown correctly
         const header = await page.$('h2');
@@ -78,10 +78,10 @@ module.exports = () => {
         }
 
         // Select the collection of runs fields
-        await page.select('select#runs-fields', ...optionsToSelect);
+        await page.select('select#fields', ...optionsToSelect);
         //
         // Expect to have selected two options
-        const runsFieldsSelection = await page.$('select#runs-fields');
+        const runsFieldsSelection = await page.$('select#fields');
         console.log("runsFieldsSelection", runsFieldsSelection)
         const runsFieldsSelectedOptions = await page.evaluate((element) => element.selectedOptions, runsFieldsSelection);
         console.log("runsFieldsSelectedOptions", runsFieldsSelectedOptions)
