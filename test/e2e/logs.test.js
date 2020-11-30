@@ -972,7 +972,7 @@ module.exports = () => {
         });
 
         it('should return 400 if an invalid run number string was provided', (done) => {
-            const runNumbers = 'This should only allow (comma-seperated) numbers';
+            const runNumbers = 'This should only allow (comma-separated) numbers';
             request(server)
                 .post('/api/logs')
                 .send({
@@ -990,7 +990,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const expectedErrorMsg = 'Run numbers should be comma-seperated, and should only contain numbers';
+                    const expectedErrorMsg = 'Run numbers should be comma-separated, and should only contain numbers';
                     expect(res.body.errors[0].title).to.equal(expectedErrorMsg);
 
                     done();
