@@ -1,4 +1,4 @@
-# Generated on Mon, 23 Nov 2020 19:33:23 GMT
+# Generated on Mon, 30 Nov 2020 10:48:05 GMT
 
 openapi: 3.0.0
 info:
@@ -259,6 +259,22 @@ paths:
     get:
       operationId: getRunById
       summary: Gets a run by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+    post:
+      operationId: updateRunTags
+      summary: Update (overwrite) run tags by runId
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunTags'
       responses:
         '200':
           $ref: '#/components/responses/Run'
@@ -543,6 +559,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateFlp'
+    UpdateRunTags:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -1586,6 +1608,17 @@ components:
           $ref: '#/components/schemas/FlpBytesRecordingReadOut'
         nTimeframes:
           $ref: '#/components/schemas/FlpTimeframes'
+      additionalProperties: false
+    UpdateRunTags:
+      description: List of labels attached to something for the purpose of identification.
+      type: object
+      properties:
+        tags:
+          type: array
+          description: Array of tags IDs
+          items:
+            type: number
+            description: Tag ID
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
