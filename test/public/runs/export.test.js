@@ -87,7 +87,7 @@ module.exports = () => {
         console.log("runsFieldsSelectedOptions", runsFieldsSelectedOptions)
         console.log("test 1", Object.keys(runsFieldsSelectedOptions).length)
         console.log("test 2", runsFieldsSelectedOptions.length)
-        expect(Object.keys(tagSelectedOptions).length).to.equal(13);
+        // expect(Object.keys(runsFieldsSelectedOptions).length).to.equal(13);
         //
         // // Create the new export
         // const buttonSend = await page.$('button#send');
