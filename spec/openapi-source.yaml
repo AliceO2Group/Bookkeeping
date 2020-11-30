@@ -275,7 +275,7 @@ paths:
       tags:
         - run
     patch:
-      operationId: endRun
+      operationId: updateRun
       summary: Updates certain fields of a run
       requestBody:
         $ref: '#/components/requestBodies/EndRun'

@@ -1,4 +1,4 @@
-# Generated on Mon, 30 Nov 2020 12:55:12 GMT
+# Generated on Mon, 30 Nov 2020 13:04:46 GMT
 
 openapi: 3.0.0
 info:
@@ -277,7 +277,7 @@ paths:
       tags:
         - run
     patch:
-      operationId: endRun
+      operationId: updateRun
       summary: Updates certain fields of a run
       requestBody:
         $ref: '#/components/requestBodies/EndRun'
