@@ -145,7 +145,7 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
-                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
+                    expect(res.body.data[0].createdAt * 1000).to.be.gte(timeFrom);
 
                     done();
                 });
@@ -168,8 +168,8 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(1);
-                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
-                    expect(res.body.data[0].createdAt).to.be.lte(timeTo);
+                    expect(res.body.data[0].createdAt * 1000).to.be.gte(timeFrom);
+                    expect(res.body.data[0].createdAt * 1000).to.be.lte(timeTo);
 
                     done();
                 });
@@ -972,7 +972,7 @@ module.exports = () => {
         });
 
         it('should return 400 if an invalid run number string was provided', (done) => {
-            const runNumbers = 'This should only allow (comma-seperated) numbers';
+            const runNumbers = 'This should only allow (comma-separated) numbers';
             request(server)
                 .post('/api/logs')
                 .send({
@@ -990,7 +990,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const expectedErrorMsg = 'Run numbers should be comma-seperated, and should only contain numbers';
+                    const expectedErrorMsg = 'Run numbers should be comma-separated, and should only contain numbers';
                     expect(res.body.errors[0].title).to.equal(expectedErrorMsg);
 
                     done();
