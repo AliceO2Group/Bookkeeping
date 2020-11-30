@@ -13,7 +13,7 @@
 
 const OverviewSuite = require('./overview.test');
 const DetailSuite = require('./detail.test');
-const CreateSuite = require('./export.test')
+const CreateSuite = require('./export.test');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
