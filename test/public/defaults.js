@@ -18,6 +18,8 @@ const { server } = require('../../lib/application');
 
 const { expect } = chai;
 
+const getUrl = ()=> `http://localhost:${server.address().port}`;
+
 module.exports.defaultBefore = async (page, browser) => {
     browser = await puppeteer.launch({ args: ['--no-sandbox'] });
     page = await browser.newPage();
@@ -26,10 +28,7 @@ module.exports.defaultBefore = async (page, browser) => {
         page.coverage.startCSSCoverage(),
     ]);
 
-    const { port } = server.address();
-    const url = `http://localhost:${port}`;
-
-    return [page, browser, url];
+    return [page, browser, getUrl()];
 };
 
 module.exports.defaultAfter = async (page, browser) => {
@@ -54,6 +53,30 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
 };
 
 module.exports.pressElement = async (page, selector) => {
+    return await Promise.all([
+        page.waitForSelector(selector),
+        page.click(selector),
+      ]);
+};
+
+/**
+ * Goes to a specific page and waits until everything is loaded.
+ * @param {Object} page Puppeteer page object
+ * @param {String} pageText Value of pageText in: URL/?page={pageText}&...
+ */
+module.exports.goToPage = (page, pageText) => {
+    return page.goto(`${getUrl()}/?page=${pageText}`, {waitUntil: 'networkidle0'});
+};
+
+/**
+ * 
+ * @param {Object} page Puppeteer page object
+ * @param {String} selector Css selector
+ * @returns {Object} Element matching the selector
+ */
+module.exports.validateElement = async (page, selector) => {
     await page.waitForSelector(selector);
-    await page.click(selector);
+    const element = page.$(selector);
+    expect(Boolean(element)).to.be.true;
+    return element;
 };
