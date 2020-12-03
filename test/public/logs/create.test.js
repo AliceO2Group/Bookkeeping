@@ -308,7 +308,7 @@ module.exports = () => {
         const runsField = await page.$(`#post${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
-    });
+    }).timeout(10000);
 
     it('can create a log with multiple run numbers', async () => {
         const title = 'Multiple run numbers test';
@@ -350,5 +350,5 @@ module.exports = () => {
         for (const runNumber of runNumbers) {
             expect(runsText).to.include(runNumber);
         }
-    });
+    }).timeout(10000);
 };
