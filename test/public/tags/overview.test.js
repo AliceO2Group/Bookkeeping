@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -71,16 +71,8 @@ module.exports = () => {
     });
 
     it('can navigate to the tag creation page', async () => {
-        // Return the page to the tag overview
-        const buttonOverviews = await page.$('#overviews');
-        await buttonOverviews.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
-        await pressElement(page, '#tag-overview');
-        await page.waitForTimeout(250);
-
         // Click on the button to start creating a new tag
-        await pressElement(page, '#create');
-        await page.waitForTimeout(250);
+        await goToPage(page, 'tag-create');
 
         // Expect the page to be the tag creation page at this point
         const redirectedUrl = await page.url();
