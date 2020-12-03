@@ -57,7 +57,7 @@ module.exports = () => {
         const text = 'EXAMPLE';
 
         // Go to the tag creation page
-        await goToPage(page, "tag-create");
+        await goToPage(page, 'tag-create');
 
         // Enter the duplicate text value
         await page.waitForSelector('#text');

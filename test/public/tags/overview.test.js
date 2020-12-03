@@ -72,7 +72,7 @@ module.exports = () => {
 
     it('can navigate to the tag creation page', async () => {
         // Click on the button to start creating a new tag
-        await goToPage(page, "tag-create");
+        await goToPage(page, 'tag-create');
 
         // Expect the page to be the tag creation page at this point
         const redirectedUrl = await page.url();
