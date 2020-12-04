@@ -60,9 +60,9 @@ make -j $(expr $(nproc) - 1)
 ```
 
 # Example code
-If your api is at `http://myhost.server.address/api`:
+If your api is at `http://localhost:4000/api`:
 ```console
-export BOOKKEEPING_URL=http://myhost.server.address/api
+export BOOKKEEPING_URL=http://localhost:4000/api
 export BOOKKEEPING_API_TOKEN=jnk5vh43785ycj4gdvlvm84fg...
 ./bookkeeping-api-cpp-example 1  # argument is run number to add
 ```

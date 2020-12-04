@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -57,7 +57,7 @@ module.exports = () => {
         const text = 'EXAMPLE';
 
         // Go to the tag creation page
-        await pressElement(page, 'button#create');
+        await goToPage(page, 'tag-create');
 
         // Enter the duplicate text value
         await page.waitForSelector('#text');
