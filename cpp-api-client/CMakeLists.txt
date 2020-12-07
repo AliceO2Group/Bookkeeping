@@ -14,15 +14,7 @@ message("A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # Update require components as necessary
 find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time program_options filesystem)
-find_package(OpenSSL 1.0.0 REQUIRED)
-find_library(CPPREST_LIBRARIES cpprest PATHS ${CPPREST_LIB} PATH_SUFFIXES lib lib64)
-
-# build and set path to cpp rest sdk
-set(CPPREST_INCLUDE_DIR ${CPPREST_ROOT}/include)
-
-if( NOT DEFINED CPPREST_ROOT )
-    message( FATAL_ERROR "Failed to find cpprest SDK (or missing components). Double check that \"CPPREST_ROOT\" is properly set")
-endif( NOT DEFINED CPPREST_ROOT )
+find_package(cpprestsdk REQUIRED)
 
 set(SOURCE_FILES
     src/cpprest-client/ApiClient.cpp
@@ -113,7 +105,8 @@ set(SOURCE_FILES
     src/BookkeepingFactory.cpp)
 
 add_library(
-    ${PROJECT_NAME}
+    BookkeepingApiCpp
+    SHARED
     ${SOURCE_FILES})
 
 target_include_directories(
@@ -122,23 +115,23 @@ target_include_directories(
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/api>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/model>
-    ${CPPREST_INCLUDE_DIR}
-    ${Boost_INCLUDE_DIRS}
-    ${OPENSSL_INCLUDE_DIR})
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/model>)
 
 target_link_libraries(
     BookkeepingApiCpp
+    PUBLIC
+    cpprestsdk::cpprest
     PRIVATE
-    ${CPPREST_LIBRARIES} 
-    ${Boost_LIBRARIES} 
-    ${OPENSSL_LIBRARIES} 
+    Boost::system
+    Boost::date_time
     pthread)
 
 target_compile_features(
-    ${PROJECT_NAME}
+    BookkeepingApiCpp
     PUBLIC
     cxx_std_17)
+
+set_target_properties(BookkeepingApiCpp PROPERTIES OUTPUT_NAME "O2BookkeepingApiCpp")
 
 add_executable(
     bookkeeping-api-cpp-example
@@ -147,7 +140,9 @@ add_executable(
 target_link_libraries(
     bookkeeping-api-cpp-example 
     PRIVATE
-    ${PROJECT_NAME})
+    Boost::headers
+    OpenSSL::SSL # This is temporary workaround as the target should come from cpprestsdk
+    BookkeepingApiCpp)
 
 
 # Set CMAKE_INSTALL_LIBDIR explicitly to lib (to avoid lib64 on CC7)
