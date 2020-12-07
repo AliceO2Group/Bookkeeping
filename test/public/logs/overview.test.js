@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -491,8 +491,7 @@ module.exports = () => {
 
     it('can navigate to the log creation page', async () => {
         // Click on the button to start creating a new log
-        await pressElement(page, '#create');
-        await page.waitForTimeout(500);
+        await goToPage(page, 'log-create');
 
         // Expect the page to be the log creation page at this point
         const redirectedUrl = await page.url();
@@ -501,8 +500,7 @@ module.exports = () => {
 
     it('notifies if table loading returned an error', async () => {
         // Go back to the home page
-        await pressElement(page, '#log-overview');
-        await page.waitForTimeout(100);
+        await goToPage(page, 'log-overview');
 
         /*
          * As an example, override the amount of logs visible per page manually
@@ -528,8 +526,7 @@ module.exports = () => {
 
     it('can navigate to a log detail page', async () => {
         // Go back to the home page
-        await pressElement(page, '#log-overview');
-        await page.waitForTimeout(100);
+        await goToPage(page, 'log-overview');
 
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
@@ -544,9 +541,7 @@ module.exports = () => {
 
     it('does not reset pagination filters when navigating away', async () => {
         // Go back to the home page
-        const homeButton = await page.$('#log-overview');
-        await homeButton.evaluate((button) => button.click());
-        await page.waitForTimeout(500);
+        await goToPage(page, 'log-overview');
 
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
