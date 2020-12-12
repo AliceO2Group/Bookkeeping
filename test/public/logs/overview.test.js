@@ -424,7 +424,6 @@ module.exports = () => {
         });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
-        console.log('ROWS', tableRows.length > 20, tableRows.length);
 
         expect(tableRows.length > 20).to.be.true;
     });
@@ -471,7 +470,7 @@ module.exports = () => {
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(500);
         const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
