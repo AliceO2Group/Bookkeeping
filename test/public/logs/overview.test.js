@@ -416,6 +416,7 @@ module.exports = () => {
         await menuItems[menuItems.length - 1].evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
+        await page.mouse.wheel({ deltaY: 100 });
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
     });
