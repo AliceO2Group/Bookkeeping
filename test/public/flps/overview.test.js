@@ -113,9 +113,13 @@ module.exports = () => {
         await menuItems[menuItems.length - 1].evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
-        await page.mouse.wheel({ deltaY: 100 });
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+
+        await page.mouse.wheel({ deltaY: 100 });
+        await page.waitForTimeout(400);
+        const tableRows = await page.$$('table tr');
+        expect(tableRows.length > 20).to.be.true;
     });
 
     it('can set how many flps are available per page', async () => {
