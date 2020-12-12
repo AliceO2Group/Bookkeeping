@@ -100,21 +100,39 @@ module.exports = () => {
         }
     });
 
-    it('can set how many flps are available per page', async () => {
-        // Expect the amount selector to currently be set to 10 pages
-        const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
+    it('can switch to infinite mode in amountSelector', async () => {
+        const amountSelectorButton = await page.$('#amountSelector button');
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropdown-menu');
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        const menuItems = await page.$$('#amountSelector .dropdown-menu .menu-item');
+        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        await page.mouse.wheel({ deltaY: 100 });
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+    });
+
+    it('can set how many flps are available per page', async () => {
+        // Expect the amount selector to currently be set to Infinite (after the previous test)
+        const amountSelectorId = '#amountSelector';
+        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible flps to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
+        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 

@@ -403,7 +403,7 @@ module.exports = () => {
         }
     });
 
-    it('can switch on infinite mode in amountSelector', async () => {
+    it('can switch to infinite mode in amountSelector', async () => {
         const amountSelectorButton = await page.$('#amountSelector button');
 
         // Expect the dropdown options to be visible when it is selected
