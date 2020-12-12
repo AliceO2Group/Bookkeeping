@@ -403,6 +403,24 @@ module.exports = () => {
         }
     });
 
+    it('can switch on infinite mode in amountSelector', async () => {
+        const amountSelectorButton = await page.$('#amountSelector button');
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropdown-menu');
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        const lastMenuItem =
+            await page.$$eval('#amountSelector .dropdown-menu .menu-item', (items) => items[items.length - 1]);
+        await lastMenuItem.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+    });
+
     it('can set how many logs are available per page', async () => {
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
