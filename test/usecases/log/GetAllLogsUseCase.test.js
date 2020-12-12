@@ -59,7 +59,7 @@ module.exports = () => {
     });
 
     it('should return a reply count if applicable', async () => {
-        const rootLogId = 1;
+        const rootLogId = 117;
         getAllLogsDto.query = { filter: { rootLog: rootLogId } };
 
         const filteredResult = await new GetAllLogsUseCase()
