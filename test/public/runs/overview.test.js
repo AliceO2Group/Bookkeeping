@@ -120,7 +120,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         await page.mouse.wheel({ deltaY: 100 });
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        const amountSelectorButtonText = await page.$eval('#amountSelector button', (btn) => btn.innerText);
         expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
     });
 
