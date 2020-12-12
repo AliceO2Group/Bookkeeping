@@ -122,7 +122,9 @@ module.exports = () => {
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
 
-        await page.mouse.wheel({ deltaY: 100 });
+        await page.evaluate(() => {
+            window.scrollBy(0, window.innerHeight);
+        });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
         expect(tableRows.length > 20).to.be.true;
