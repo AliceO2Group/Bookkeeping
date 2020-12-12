@@ -121,6 +121,8 @@ module.exports = () => {
         });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
+        // eslint-disable-next-line no-undef
+        expect(model.flps.isInfiniteScrollEnabled()).to.be.true;
         expect(tableRows.length > 20).to.be.true;
     });
 
