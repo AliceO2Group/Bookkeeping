@@ -87,15 +87,16 @@ module.exports = () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
+        await page.waitForTimeout(200);
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
         // Open the title filter
         await pressElement(page, '#titleFilterToggle');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
         // Insert some text into the filter
         await page.type('#titleFilterText', 'entry');
@@ -136,11 +137,12 @@ module.exports = () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
+        await page.waitForTimeout(200);
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Open the author filter
         await pressElement(page, '#authorFilterToggle');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
         // Insert some text into the filter
         await page.type('#authorFilterText', 'John');
@@ -178,6 +180,7 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
+        await page.waitForTimeout(200);
         // Open the created at filters
         await pressElement(page, '#createdAtFilterToggle');
         await page.waitForTimeout(100);
@@ -228,6 +231,7 @@ module.exports = () => {
     });
 
     it('can filter by tags', async () => {
+        await page.waitForTimeout(200);
         // Open the tag filters
         await pressElement(page, '#tagsFilterToggle');
         await page.waitForTimeout(100);
@@ -283,9 +287,10 @@ module.exports = () => {
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
 
+        await page.waitForTimeout(200);
         // Open the tag filters again
         await pressElement(page, '#tagsFilterToggle');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
         // Expect the page to have a button allowing for showing more tags
         const toggleFiltersButton = await page.$(buttonId);
@@ -320,8 +325,10 @@ module.exports = () => {
         const sortingPreviewIndicator = await page.$('#title-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
+        await page.waitForTimeout(200);
         // Sort by log title in an ascending manner
         const titleHeader = await page.$('th#title');
+        await page.waitForTimeout(200);
         await titleHeader.evaluate((button) => button.click());
         await page.waitForTimeout(200);
 
@@ -404,8 +411,10 @@ module.exports = () => {
     });
 
     it('can set how many logs are available per page', async () => {
+        await page.waitForTimeout(200);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
+        await page.waitForTimeout(200);
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
