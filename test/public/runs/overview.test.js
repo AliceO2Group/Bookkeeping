@@ -107,41 +107,37 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await page.waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
-        await page.waitForTimeout(600);
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        await page.waitForTimeout(600);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(300);
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
-        await page.waitForTimeout(600);
         await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
-        await page.waitForTimeout(600);
         expect(tableRows.length - 1).to.equal(5);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
-        await page.waitForTimeout(600);
         await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
             el.value = '111';
             // eslint-disable-next-line no-undef
             el.dispatchEvent(new Event('input'));
         });
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
     });
 
@@ -150,44 +146,36 @@ module.exports = () => {
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(300);
         expect(pageSelectorButtons.length).to.equal(2);
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
-        await page.waitForTimeout(600);
         await secondPage.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
-        await page.waitForTimeout(600);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
 
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
-        await page.waitForTimeout(600);
         await prevPage.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         const oldFirstPageButton = await page.$('#page1');
-        await page.waitForTimeout(600);
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
-        await page.waitForTimeout(600);
         expect(oldFirstPageButtonClass).to.include('selected');
 
         // The same, but for the other (right) arrow
         const nextPage = await page.$('#pageMoveRight');
-        await page.waitForTimeout(600);
         await nextPage.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         const newFirstPageButton = await page.$('#page1');
-        await page.waitForTimeout(600);
         const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
-        await page.waitForTimeout(600);
         expect(newFirstPageButtonClass).to.not.include('selected');
     });
 

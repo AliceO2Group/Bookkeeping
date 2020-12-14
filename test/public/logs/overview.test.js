@@ -420,53 +420,44 @@ module.exports = () => {
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await page.waitForTimeout(500);
         await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(100);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
-        await page.waitForTimeout(500);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
-        await page.waitForTimeout(500);
 
         // Expect the amount of visible logs to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
-        await page.waitForTimeout(500);
         await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
-        await page.waitForTimeout(500);
         expect(tableRows.length - 1).to.equal(5);
     });
 
     it('can switch between pages of logs', async () => {
         // Expect the page selector to be available with two pages
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(300);
         const pageSelectorId = '#amountSelector';
-        await page.waitForTimeout(500);
         const pageSelector = await page.$(pageSelectorId);
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        await page.waitForTimeout(600);
         expect(pageSelectorButtons.length).to.equal(2);
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         table = await page.$$('tr');
-        await page.waitForTimeout(600);
         const newFirstRowId = await getFirstRow(table, page);
-        await page.waitForTimeout(600);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
 
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
-        await page.waitForTimeout(600);
+        await page.waitForTimeout(100);
         const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
