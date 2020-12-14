@@ -161,9 +161,7 @@ module.exports = () => {
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
-    });
 
-    it('can switch between pages of runs ', async () => {
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
