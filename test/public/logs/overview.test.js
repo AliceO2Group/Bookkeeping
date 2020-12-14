@@ -424,10 +424,13 @@ module.exports = () => {
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
+        await page.waitForTimeout(500);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await page.waitForTimeout(500);
 
         // Expect the amount of visible logs to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
+        await page.waitForTimeout(500);
         await menuItem.evaluate((button) => button.click());
         await page.waitForTimeout(500);
 
@@ -438,12 +441,13 @@ module.exports = () => {
 
     it('can switch between pages of logs', async () => {
         // Expect the page selector to be available with two pages
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         const pageSelectorId = '#amountSelector';
+        await page.waitForTimeout(500);
         const pageSelector = await page.$(pageSelectorId);
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         expect(Boolean(pageSelector)).to.be.true;
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
         await page.waitForTimeout(600);
         expect(pageSelectorButtons.length).to.equal(2);
