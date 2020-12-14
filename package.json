@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "author": "CERN",
   "license": "GPL-3.0",
   "scripts": {
@@ -14,11 +14,11 @@
     "test": "mocha --exit --timeout 5000"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.14.0",
+    "@aliceo2/web-ui": "1.15.0",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "joi": "17.1.1",
-    "mariadb": "2.5.1",
+    "mariadb": "2.5.2",
     "multer": "1.4.2",
     "sequelize": "6.3.5",
     "umzug": "2.3.0"
@@ -26,8 +26,8 @@
   "devDependencies": {
     "chai": "4.2.0",
     "chai-openapi-response-validator": "0.11.0",
-    "eslint": "7.14.0",
-    "js-yaml": "3.14.0",
+    "eslint": "7.15.0",
+    "js-yaml": "3.14.1",
     "mocha": "8.2.1",
     "nodemon": "2.0.6",
     "nyc": "15.1.0",

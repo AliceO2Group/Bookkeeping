@@ -146,6 +146,7 @@ module.exports = () => {
     });
 
     it('can switch between pages of runs', async () => {
+        await page.waitForTimeout(300);
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);

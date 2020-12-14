@@ -55,7 +55,7 @@
       "array_of_arrays": "error",
       "inconsistent_property_type": "error",
       "property_case_convention": [
-        "error",
+        "warning",
         "lower_camel_case"
       ],
       "property_case_collision": "error",

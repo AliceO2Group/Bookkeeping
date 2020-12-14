@@ -1,0 +1,49 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Cmake files
+/CMakeFiles*
+Makefile
+CMakeCache.txt
+cmake_install.cmake
+
+# Exclude all auto-generated files in cmake directory
+/cmake/*
+!/cmake/*.in
+
+# Dependencies
+/cpprestsdk*
+
+# IDE files
+.vscode*
+
+# Build files
+bookkeeping-api-cpp-example
+openapi-generator-cli.jar

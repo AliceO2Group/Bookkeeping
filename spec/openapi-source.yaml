@@ -59,12 +59,23 @@ paths:
     get:
       operationId: listFlps
       summary: List all flps
-      parameters:
-        - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/FlpSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfFlps'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+    post:
+      operationId: createFlp
+      summary: Adds a new flp
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFlp'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
         '400':
           $ref: '#/components/responses/BadRequest'
         default:
@@ -88,14 +99,26 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
   /logs:
     get:
       operationId: listLogs
       summary: List all logs
-      parameters:
-        - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/FilterLogs'
-        - $ref: '#/components/parameters/LogSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
@@ -209,14 +232,27 @@ paths:
     get:
       operationId: listRuns
       summary: List all runs
-      parameters:
-        - $ref: '#/components/parameters/Pagination'
-        - $ref: '#/components/parameters/RunSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfRuns'
         '400':
           $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+    post:
+      operationId: createRun
+      summary: Creates a run
+      requestBody:
+        $ref: '#/components/requestBodies/CreateRun'
+      responses:
+        '201':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -238,18 +274,18 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
-    post:
-      operationId: updateRunTags
-      summary: Update (overwrite) run tags by runId
+    patch:
+      operationId: updateRun
+      summary: Updates certain fields of a run
       requestBody:
-        $ref: '#/components/requestBodies/UpdateRunTags'
+        $ref: '#/components/requestBodies/EndRun'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/Run'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -271,8 +307,6 @@ paths:
     get:
       operationId: listSubsystems
       summary: List all subsystems
-      parameters:
-        - $ref: '#/components/parameters/Pagination'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfSubsystems'
@@ -333,8 +367,6 @@ paths:
     get:
       operationId: listTags
       summary: List all tags
-      parameters:
-        - $ref: '#/components/parameters/Pagination'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfTags'
@@ -497,12 +529,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFlp'
     CreateLog:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateLog'
+    CreateRun:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Run'
     CreateSubsystem:
       required: true
       content:
@@ -515,6 +559,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTag'
+    EndRun:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Run'
+    UpdateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFlp'
     UpdateRunTags:
       required: true
       content:
@@ -719,11 +775,6 @@ components:
       required:
         - page
       additionalProperties: false
-    ArrayOfRunNumbers:
-      description: A list of run numbers
-      type: array
-      items:
-        $ref: '#/components/schemas/RunNumber'
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -795,7 +846,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         encoding:
           $ref: '#/components/schemas/FileEncoding'
         fileName:
@@ -813,9 +865,10 @@ components:
         size:
           $ref: '#/components/schemas/FileSize'
         updatedAt:
-          description: Unix timestamp when this entity was last updated.
+          description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - id
       additionalProperties: false
@@ -840,6 +893,20 @@ components:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
       additionalProperties: false
+    CreateFlp:
+      description: Describes an flp
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/FlpName'
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+      required:
+        - name
+        - hostname
+      additionalProperties: false
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
@@ -853,7 +920,7 @@ components:
         title:
           $ref: '#/components/schemas/LogTitle'
         runNumbers:
-          $ref: '#/components/schemas/ArrayOfRunNumbers'
+          $ref: '#/components/schemas/RunNumbers'
       required:
         - text
         - title
@@ -887,7 +954,9 @@ components:
           type: number
         start:
           description: The unix timestamp of the moment that the the server went online.
-          type: number
+          type: integer
+          minimum: 0
+          example: 853113599
       required:
         - age
         - start
@@ -899,19 +968,20 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - id
     EntityId:
       description: The unique identifier of this entity.
       type: integer
-      format: int64
       minimum: 1
     Error:
       description: An Error object.
@@ -981,13 +1051,13 @@ components:
         from:
           description: The earliest allowed unix timestamp for the fetched data.
           type: integer
-          format: int64
-          example: 1577833200000
+          minimum: 0
+          example: 853113599
         to:
           description: The latest allowed unix timestamp for the fetched data.
           type: integer
-          format: int64
-          example: 1578437999999
+          minimum: 0
+          example: 853113599
       additionalProperties: false
     FilterLogsOptions:
       description: Specifies the log related filter requirements for a request.
@@ -1032,8 +1102,8 @@ components:
       properties:
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesFairMqReadOut:
-          $ref: '#/components/schemas/FlpBytesFairMqReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
         bytesProcessed:
           $ref: '#/components/schemas/FlpBytesProcessed'
         bytesRecordingReadOut:
@@ -1041,7 +1111,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         hostname:
           $ref: '#/components/schemas/FlpHostname'
         id:
@@ -1053,10 +1124,11 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - bytesEquipmentReadOut
-        - bytesFairMqReadOut
+        - bytesFairMQReadOut
         - bytesProcessed
         - bytesRecordingReadOut
         - hostname
@@ -1069,23 +1141,23 @@ components:
         Total data volume out from the readout 'equipment' component in bytes.
         Can reach PetaBytes. Updated regularly.
       type: integer
-      format: int64
-    FlpBytesFairMqReadOut:
+      minimum: 0
+    FlpBytesFairMQReadOut:
       description: >-
         Total data volume out from the readout 'fmq' component in bytes. Can
         reach PetaBytes. Updated regularly.
       type: integer
-      format: int64
+      minimum: 0
     FlpBytesProcessed:
       description: Total data volume read out in bytes.
       type: integer
-      format: int64
+      minimum: 0
     FlpBytesRecordingReadOut:
       description: >-
         Total data volume out from the readout 'recording' component in bytes.
         Can reach PetaBytes. Updated regularly.
       type: integer
-      format: int64
+      minimum: 0
     FlpHostname:
       description: FLP hostname.
       type: string
@@ -1111,7 +1183,7 @@ components:
     FlpTimeframes:
       description: Number of subtimeframes processed in this FLP. Updated regularly.
       type: integer
-      format: int64
+      minimum: 0
     Log:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1123,7 +1195,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         origin:
@@ -1162,7 +1235,8 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - author
         - id
@@ -1182,7 +1256,6 @@ components:
     LogReplies:
       description: The amount of children of a root log.
       type: integer
-      format: int64
       minimum: 0
     LogResponse:
       description: Response containing a single log.
@@ -1239,7 +1312,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         origin:
@@ -1278,7 +1352,8 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - author
         - children
@@ -1346,7 +1421,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         nDetectors:
@@ -1374,7 +1450,8 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - activityId
         - bytesReadOut
@@ -1393,36 +1470,40 @@ components:
       additionalProperties: false
     RunActivityId:
       description: The unique identifier of this entity.
-      type: integer
-      format: int64
+      type: string
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
-      format: int64
+      minimum: 0
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
-      format: int64
+      minimum: 0
     RunEpns:
       description: The amount of Epns nodes in a single run.
       type: integer
-      format: int64
+      minimum: 0
     RunFlps:
       description: The amount of Flps nodes in a single run.
       type: integer
-      format: int64
     RunNumber:
       description: The unique identifier of this entity.
       type: integer
-      format: int64
+      minimum: 0
+    RunNumbers:
+      description: A serialized string of run numbers
+      type: string
+      example: '1,2,3,4,5,6,7,8'
     RunO2End:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      minimum: 0
+      example: 853113599
     RunO2Start:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      minimum: 0
+      example: 853113599
     RunOrigin:
       description: Type of creator.
       type: string
@@ -1454,15 +1535,17 @@ components:
     RunSubtimeframes:
       description: Total number of subtimeframes processed by the O2 system.
       type: integer
-      format: int64
+      minimum: 0
     RunTrgEnd:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      minimum: 0
+      example: 853113599
     RunTrgStart:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      minimum: 0
+      example: 853113599
     RunType:
       description: Specifies the type of run.
       type: string
@@ -1483,7 +1566,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         name:
@@ -1492,7 +1576,8 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - id
         - name
@@ -1513,7 +1598,8 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         text:
@@ -1522,7 +1608,8 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          minimum: 0
+          example: 853113599
       required:
         - id
         - text
@@ -1535,6 +1622,21 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateFlp:
+      description: Describes an update to an flp
+      type: object
+      properties:
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
       additionalProperties: false
     UpdateRunTags:
       description: List of labels attached to something for the purpose of identification.
