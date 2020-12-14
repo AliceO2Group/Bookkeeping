@@ -12,9 +12,9 @@
  */
 
 const chai = require('chai');
-const {defaultBefore, defaultAfter, expectInnerText, pressElement} = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
-const {expect} = chai;
+const { expect } = chai;
 
 /**
  * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
@@ -53,7 +53,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=run-overview`, {waitUntil: 'networkidle0'});
+        const response = await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
