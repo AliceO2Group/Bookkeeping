@@ -120,12 +120,6 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
-    });
-
-    it('can set how many runs are available per page', async () => {
-        await page.waitForTimeout(300);
-        // Expect the amount selector to currently be set to 10 pages
-        const amountSelectorId = '#amountSelector';
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
