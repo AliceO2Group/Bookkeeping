@@ -411,10 +411,10 @@ module.exports = () => {
     });
 
     it('can set how many logs are available per page', async () => {
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(500);
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
@@ -436,9 +436,12 @@ module.exports = () => {
 
     it('can switch between pages of logs', async () => {
         // Expect the page selector to be available with two pages
+        await page.waitForTimeout(300);
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
         expect(pageSelectorButtons.length).to.equal(2);
 
