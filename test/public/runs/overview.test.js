@@ -12,9 +12,9 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const {defaultBefore, defaultAfter, expectInnerText, pressElement} = require('../defaults');
 
-const { expect } = chai;
+const {expect} = chai;
 
 /**
  * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
@@ -53,7 +53,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        const response = await page.goto(`${url}?page=run-overview`, {waitUntil: 'networkidle0'});
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -120,6 +120,12 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
+    });
+
+    it('can set how many runs are available per page', async () => {
+        await page.waitForTimeout(300);
+        // Expect the amount selector to currently be set to 10 pages
+        const amountSelectorId = '#amountSelector';
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
@@ -161,7 +167,9 @@ module.exports = () => {
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
+    });
 
+    it('can switch between pages of runs ', async () => {
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
