@@ -107,10 +107,12 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await page.waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        await page.waitForTimeout(300);
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
@@ -140,11 +142,15 @@ module.exports = () => {
     });
 
     it('can switch between pages of runs', async () => {
+        await page.waitForTimeout(300);
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
+        await page.waitForTimeout(300);
         expect(pageSelectorButtons.length).to.equal(2);
 
         // Expect the table rows to change upon page navigation
