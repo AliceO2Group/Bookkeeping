@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.15.0",
+  "version": "0.15.2",
   "author": "CERN",
   "license": "GPL-3.0",
   "scripts": {
@@ -11,7 +11,9 @@
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
-    "test": "mocha --exit --timeout 5000"
+    "test": "mocha --exit --timeout 5000",
+    "docker-run": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "docker-test":  "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.15.0",
@@ -26,7 +28,7 @@
   "devDependencies": {
     "chai": "4.2.0",
     "chai-openapi-response-validator": "0.11.0",
-    "eslint": "7.14.0",
+    "eslint": "7.15.0",
     "js-yaml": "3.14.1",
     "mocha": "8.2.1",
     "nodemon": "2.0.6",

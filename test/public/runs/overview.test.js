@@ -107,20 +107,22 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await page.waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        await page.waitForTimeout(300);
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
+        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
+        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
@@ -140,11 +142,15 @@ module.exports = () => {
     });
 
     it('can switch between pages of runs', async () => {
+        await page.waitForTimeout(300);
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
+        await page.waitForTimeout(300);
         expect(pageSelectorButtons.length).to.equal(2);
 
         // Expect the table rows to change upon page navigation
