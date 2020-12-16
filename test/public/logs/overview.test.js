@@ -378,10 +378,10 @@ module.exports = () => {
     });
 
     it('can set how many logs are available per page', async () => {
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(500);
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
@@ -389,11 +389,11 @@ module.exports = () => {
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
+        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible logs to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
+        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
@@ -403,9 +403,12 @@ module.exports = () => {
 
     it('can switch between pages of logs', async () => {
         // Expect the page selector to be available with two pages
+        await page.waitForTimeout(300);
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
         expect(pageSelectorButtons.length).to.equal(2);
 
