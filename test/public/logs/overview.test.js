@@ -94,10 +94,6 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        // Open the title filter
-        await pressElement(page, '#titleFilterToggle');
-        await page.waitForTimeout(200);
-
         // Insert some text into the filter
         await page.type('#titleFilterText', 'entry');
         await page.waitForTimeout(500);
@@ -140,10 +136,6 @@ module.exports = () => {
         await page.waitForTimeout(200);
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
-        // Open the author filter
-        await pressElement(page, '#authorFilterToggle');
-        await page.waitForTimeout(200);
-
         // Insert some text into the filter
         await page.type('#authorFilterText', 'John');
         await page.waitForTimeout(500);
@@ -181,9 +173,6 @@ module.exports = () => {
 
     it('can filter by creation date', async () => {
         await page.waitForTimeout(200);
-        // Open the created at filters
-        await pressElement(page, '#createdAtFilterToggle');
-        await page.waitForTimeout(100);
 
         // Insert a minimum date into the filter
         await page.focus('#createdFilterFrom');
@@ -232,9 +221,6 @@ module.exports = () => {
 
     it('can filter by tags', async () => {
         await page.waitForTimeout(200);
-        // Open the tag filters
-        await pressElement(page, '#tagsFilterToggle');
-        await page.waitForTimeout(100);
 
         // Select the first available filter and wait for the changes to be processed
         const firstCheckboxId = 'tagCheckbox1';
@@ -287,9 +273,6 @@ module.exports = () => {
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
 
-        await page.waitForTimeout(200);
-        // Open the tag filters again
-        await pressElement(page, '#tagsFilterToggle');
         await page.waitForTimeout(200);
 
         // Expect the page to have a button allowing for showing more tags
