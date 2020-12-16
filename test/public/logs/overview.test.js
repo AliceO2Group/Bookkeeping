@@ -123,10 +123,6 @@ module.exports = () => {
         const unfilteredRows = await page.$$('table tr');
         const unfilteredNumberOfRows = unfilteredRows.length - 1;
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
-
-        // Close the created at filters now that we are done with them
-        await pressElement(page, '#titleFilterToggle');
-        await page.waitForTimeout(100);
     });
 
     it('can filter by log author', async () => {
@@ -165,10 +161,6 @@ module.exports = () => {
         const unfilteredRows = await page.$$('table tr');
         const unfilteredNumberOfRows = unfilteredRows.length - 1;
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
-
-        // Close the created at filters now that we are done with them
-        await pressElement(page, '#authorFilterToggle');
-        await page.waitForTimeout(100);
     });
 
     it('can filter by creation date', async () => {
@@ -212,10 +204,6 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.resetLogsParams();
         });
-        await page.waitForTimeout(100);
-
-        // Close the title filter now that we are done with it
-        await pressElement(page, '#createdAtFilterToggle');
         await page.waitForTimeout(100);
     });
 
@@ -295,10 +283,6 @@ module.exports = () => {
         await page.waitForTimeout(100);
         extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.false;
-
-        // Close the tag filters now that we are done with them
-        await pressElement(page, '#tagsFilterToggle');
-        await page.waitForTimeout(100);
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
