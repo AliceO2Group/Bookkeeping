@@ -12,24 +12,9 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, validateElement, validateElementEqualTo, takeScreenshot, getFirstRow } = require('../defaults');
 
 const { expect } = chai;
-
-/**
- * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire run table
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @return {Promise<String>} The ID of the first matching row with data
- */
-async function getFirstRow(table, page) {
-    for await (const child of table) {
-        const id = await page.evaluate((element) => element.id, child);
-        if (id.startsWith('row')) {
-            return id;
-        }
-    }
-}
 
 module.exports = () => {
     let page;
@@ -142,22 +127,17 @@ module.exports = () => {
     });
 
     it('can switch between pages of runs', async () => {
-        await page.waitForTimeout(300);
-        // Expect the page selector to be available with two pages
-        const pageSelectorId = '#amountSelector';
-        const pageSelector = await page.$(pageSelectorId);
-        await page.waitForTimeout(300);
-        expect(Boolean(pageSelector)).to.be.true;
-        await page.waitForTimeout(300);
-        const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        await page.waitForTimeout(300);
-        expect(pageSelectorButtons.length).to.equal(2);
+        await validateElement(page, '#amountSelector');
+        await validateElementEqualTo(page, '.btn-tab', 7);
 
+        await takeScreenshot(page, "one");
         // Expect the table rows to change upon page navigation
-        const oldFirstRowId = await getFirstRow(table, page);
-        const secondPage = await page.$('#page2');
-        await secondPage.evaluate((button) => button.click());
         await page.waitForTimeout(100);
+        const oldFirstRowId = await getFirstRow(table, page);
+        await pressElement(page, '#page2');
+        await takeScreenshot(page, "two");
+        await page.waitForFunction('document.querySelector("#page2").classList.contains("selected")');
+        await takeScreenshot(page, "three");
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
@@ -169,6 +149,7 @@ module.exports = () => {
         const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
+        console.log("here5");
 
         // The same, but for the other (right) arrow
         const nextPage = await page.$('#pageMoveRight');
@@ -177,7 +158,7 @@ module.exports = () => {
         const newFirstPageButton = await page.$('#page1');
         const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
         expect(newFirstPageButtonClass).to.not.include('selected');
-    });
+    }).timeout(15000);
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
