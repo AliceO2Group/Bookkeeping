@@ -128,10 +128,12 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await page.waitForTimeout(300);
         // Expect the amount selector to currently be set to Infinite (after the previous test)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        await page.waitForTimeout(300);
         expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
@@ -147,13 +149,26 @@ module.exports = () => {
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
+
+        // Expect the custom per page input to have red border and text color if wrong value typed
+        const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
+        await customPerPageInput.evaluate((input) => input.focus());
+        await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
+            el.value = '111';
+            el.dispatchEvent(new Event('input'));
+        });
+        await page.waitForTimeout(100);
+        expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
     });
 
     it('can switch between pages of runs', async () => {
+        await page.waitForTimeout(300);
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
+        await page.waitForTimeout(300);
         expect(Boolean(pageSelector)).to.be.true;
+        await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
         expect(pageSelectorButtons.length).to.equal(5);
 
