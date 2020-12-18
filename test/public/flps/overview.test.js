@@ -150,7 +150,7 @@ module.exports = () => {
         const pageSelector = await page.$(pageSelectorId);
         expect(Boolean(pageSelector)).to.be.true;
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        expect(pageSelectorButtons.length).to.equal(2);
+        expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
