@@ -450,7 +450,7 @@ module.exports = () => {
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
         await page.waitForTimeout(300);
-        const oldFirstPageButton = await page.$('#page2'); // Infinite scroll affected this so old page is #2
+        const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
 
