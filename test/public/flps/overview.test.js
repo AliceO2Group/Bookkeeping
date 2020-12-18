@@ -106,10 +106,10 @@ module.exports = () => {
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$('#amountSelector .dropdown-menu');
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        const menuItems = await page.$$('#amountSelector .dropdown-menu .menu-item');
+        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
         await menuItems[menuItems.length - 1].evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
@@ -121,8 +121,7 @@ module.exports = () => {
         });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
-        // eslint-disable-next-line no-undef
-        expect(model.flps.isInfiniteScrollEnabled()).to.be.true;
+
         expect(tableRows.length > 20).to.be.true;
     });
 
