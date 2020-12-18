@@ -112,7 +112,7 @@ module.exports = () => {
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$('#amountSelector .dropdown-menu');
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         const menuItems = await page.$$('#amountSelector .dropdown-menu .menu-item');
