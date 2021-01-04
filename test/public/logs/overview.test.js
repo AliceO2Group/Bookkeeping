@@ -84,7 +84,8 @@ module.exports = () => {
     });
 
     it('can filter by log title', async () => {
-        await pressElement(page, '#log-overview');
+        await goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
@@ -127,6 +128,7 @@ module.exports = () => {
     });
 
     it('can filter by log author', async () => {
+        await goToPage(page, 'log-overview');
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
@@ -165,6 +167,7 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
+        await goToPage(page, 'log-overview');
         await page.waitForTimeout(200);
 
         // Insert a minimum date into the filter
@@ -209,6 +212,7 @@ module.exports = () => {
     });
 
     it('can filter by tags', async () => {
+        await goToPage(page, 'log-overview');
         await page.waitForTimeout(200);
 
         // Select the first available filter and wait for the changes to be processed
@@ -259,6 +263,7 @@ module.exports = () => {
     });
 
     it('can show and hide extra tags if available', async () => {
+        await goToPage(page, 'log-overview');
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
 
@@ -379,7 +384,7 @@ module.exports = () => {
     });
 
     it('can set how many logs are available per page', async () => {
-        await page.waitForTimeout(500);
+        await goToPage(page, 'log-overview');
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
         await page.waitForTimeout(500);
@@ -403,6 +408,7 @@ module.exports = () => {
     });
 
     it('can switch between pages of logs', async () => {
+        await goToPage(page, 'log-overview');
         // Expect the page selector to be available with two pages
         await page.waitForTimeout(300);
         const pageSelectorId = '#amountSelector';
@@ -440,6 +446,8 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
@@ -519,6 +527,8 @@ module.exports = () => {
     });
 
     it('does not reset pagination filters when navigating away', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
