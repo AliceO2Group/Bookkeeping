@@ -84,6 +84,7 @@ module.exports = () => {
     });
 
     it('can filter by log title', async () => {
+        await pressElement(page, '#log-overview');
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
