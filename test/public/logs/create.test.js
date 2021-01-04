@@ -63,7 +63,7 @@ module.exports = () => {
     });
 
     it('can create a log', async () => {
-        const title = 'A very long title that should be collapsed in t...'
+        const title = 'A very long title that should be collapsed in t...';
         const text = 'Sample Text';
 
         // Select the boxes and send the values of the title and text to it
