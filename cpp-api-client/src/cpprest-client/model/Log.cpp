@@ -25,14 +25,14 @@ Log::Log()
 {
     m_AttachmentsIsSet = false;
     m_AuthorIsSet = false;
-    m_CreatedAt = 0;
+    m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
     m_Id = 0;
     m_IdIsSet = false;
     m_OriginIsSet = false;
     m_ParentLogId = 0;
     m_ParentLogIdIsSet = false;
-    m_Replies = 0;
+    m_Replies = 0L;
     m_RepliesIsSet = false;
     m_RootLogId = 0;
     m_RootLogIdIsSet = false;
@@ -44,7 +44,7 @@ Log::Log()
     m_TextIsSet = false;
     m_Title = utility::conversions::to_string_t("");
     m_TitleIsSet = false;
-    m_UpdatedAt = 0;
+    m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
 
@@ -155,7 +155,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_createdAt;
+            int64_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -195,7 +195,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("replies"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_replies;
+            int64_t refVal_replies;
             ok &= ModelBase::fromJson(fieldValue, refVal_replies);
             setReplies(refVal_replies);
         }
@@ -275,7 +275,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_updatedAt;
+            int64_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -375,7 +375,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        int32_t refVal_createdAt;
+        int64_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
@@ -399,7 +399,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("replies")))
     {
-        int32_t refVal_replies;
+        int64_t refVal_replies;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("replies")), refVal_replies );
         setReplies(refVal_replies);
     }
@@ -447,7 +447,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        int32_t refVal_updatedAt;
+        int64_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
@@ -494,12 +494,12 @@ void Log::unsetAuthor()
 {
     m_AuthorIsSet = false;
 }
-int32_t Log::getCreatedAt() const
+int64_t Log::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Log::setCreatedAt(int32_t value)
+void Log::setCreatedAt(int64_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -574,12 +574,12 @@ void Log::unsetParentLogId()
 {
     m_ParentLogIdIsSet = false;
 }
-int32_t Log::getReplies() const
+int64_t Log::getReplies() const
 {
     return m_Replies;
 }
 
-void Log::setReplies(int32_t value)
+void Log::setReplies(int64_t value)
 {
     m_Replies = value;
     m_RepliesIsSet = true;
@@ -734,12 +734,12 @@ void Log::unsetTitle()
 {
     m_TitleIsSet = false;
 }
-int32_t Log::getUpdatedAt() const
+int64_t Log::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Log::setUpdatedAt(int32_t value)
+void Log::setUpdatedAt(int64_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

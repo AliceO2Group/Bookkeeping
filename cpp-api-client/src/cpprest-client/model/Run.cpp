@@ -25,33 +25,33 @@ Run::Run()
 {
     m_ActivityId = utility::conversions::to_string_t("");
     m_ActivityIdIsSet = false;
-    m_BytesReadOut = 0;
+    m_BytesReadOut = 0L;
     m_BytesReadOutIsSet = false;
-    m_CreatedAt = 0;
+    m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
     m_Id = 0;
     m_IdIsSet = false;
-    m_NDetectors = 0;
+    m_NDetectors = 0L;
     m_NDetectorsIsSet = false;
-    m_NEpns = 0;
+    m_NEpns = 0L;
     m_NEpnsIsSet = false;
     m_NFlps = 0;
     m_NFlpsIsSet = false;
-    m_NSubtimeframes = 0;
+    m_NSubtimeframes = 0L;
     m_NSubtimeframesIsSet = false;
-    m_RunNumber = 0;
+    m_RunNumber = 0L;
     m_RunNumberIsSet = false;
     m_RunQualityIsSet = false;
     m_RunTypeIsSet = false;
-    m_TimeO2End = 0;
+    m_TimeO2End = 0L;
     m_TimeO2EndIsSet = false;
-    m_TimeO2Start = 0;
+    m_TimeO2Start = 0L;
     m_TimeO2StartIsSet = false;
-    m_TimeTrgEnd = 0;
+    m_TimeTrgEnd = 0L;
     m_TimeTrgEndIsSet = false;
-    m_TimeTrgStart = 0;
+    m_TimeTrgStart = 0L;
     m_TimeTrgStartIsSet = false;
-    m_UpdatedAt = 0;
+    m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
 
@@ -156,7 +156,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesReadOut;
+            int64_t refVal_bytesReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesReadOut);
             setBytesReadOut(refVal_bytesReadOut);
         }
@@ -166,7 +166,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_createdAt;
+            int64_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -186,7 +186,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("nDetectors"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_nDetectors;
+            int64_t refVal_nDetectors;
             ok &= ModelBase::fromJson(fieldValue, refVal_nDetectors);
             setNDetectors(refVal_nDetectors);
         }
@@ -196,7 +196,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("nEpns"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_nEpns;
+            int64_t refVal_nEpns;
             ok &= ModelBase::fromJson(fieldValue, refVal_nEpns);
             setNEpns(refVal_nEpns);
         }
@@ -216,7 +216,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("nSubtimeframes"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_nSubtimeframes;
+            int64_t refVal_nSubtimeframes;
             ok &= ModelBase::fromJson(fieldValue, refVal_nSubtimeframes);
             setNSubtimeframes(refVal_nSubtimeframes);
         }
@@ -226,7 +226,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("runNumber"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_runNumber;
+            int64_t refVal_runNumber;
             ok &= ModelBase::fromJson(fieldValue, refVal_runNumber);
             setRunNumber(refVal_runNumber);
         }
@@ -256,7 +256,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("timeO2End"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_timeO2End;
+            int64_t refVal_timeO2End;
             ok &= ModelBase::fromJson(fieldValue, refVal_timeO2End);
             setTimeO2End(refVal_timeO2End);
         }
@@ -266,7 +266,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("timeO2Start"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_timeO2Start;
+            int64_t refVal_timeO2Start;
             ok &= ModelBase::fromJson(fieldValue, refVal_timeO2Start);
             setTimeO2Start(refVal_timeO2Start);
         }
@@ -276,7 +276,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("timeTrgEnd"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_timeTrgEnd;
+            int64_t refVal_timeTrgEnd;
             ok &= ModelBase::fromJson(fieldValue, refVal_timeTrgEnd);
             setTimeTrgEnd(refVal_timeTrgEnd);
         }
@@ -286,7 +286,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("timeTrgStart"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_timeTrgStart;
+            int64_t refVal_timeTrgStart;
             ok &= ModelBase::fromJson(fieldValue, refVal_timeTrgStart);
             setTimeTrgStart(refVal_timeTrgStart);
         }
@@ -296,7 +296,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_updatedAt;
+            int64_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -394,13 +394,13 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesReadOut")))
     {
-        int32_t refVal_bytesReadOut;
+        int64_t refVal_bytesReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesReadOut")), refVal_bytesReadOut );
         setBytesReadOut(refVal_bytesReadOut);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        int32_t refVal_createdAt;
+        int64_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
@@ -412,13 +412,13 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("nDetectors")))
     {
-        int32_t refVal_nDetectors;
+        int64_t refVal_nDetectors;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("nDetectors")), refVal_nDetectors );
         setNDetectors(refVal_nDetectors);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("nEpns")))
     {
-        int32_t refVal_nEpns;
+        int64_t refVal_nEpns;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("nEpns")), refVal_nEpns );
         setNEpns(refVal_nEpns);
     }
@@ -430,13 +430,13 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("nSubtimeframes")))
     {
-        int32_t refVal_nSubtimeframes;
+        int64_t refVal_nSubtimeframes;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("nSubtimeframes")), refVal_nSubtimeframes );
         setNSubtimeframes(refVal_nSubtimeframes);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("runNumber")))
     {
-        int32_t refVal_runNumber;
+        int64_t refVal_runNumber;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("runNumber")), refVal_runNumber );
         setRunNumber(refVal_runNumber);
     }
@@ -454,31 +454,31 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("timeO2End")))
     {
-        int32_t refVal_timeO2End;
+        int64_t refVal_timeO2End;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("timeO2End")), refVal_timeO2End );
         setTimeO2End(refVal_timeO2End);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("timeO2Start")))
     {
-        int32_t refVal_timeO2Start;
+        int64_t refVal_timeO2Start;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("timeO2Start")), refVal_timeO2Start );
         setTimeO2Start(refVal_timeO2Start);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("timeTrgEnd")))
     {
-        int32_t refVal_timeTrgEnd;
+        int64_t refVal_timeTrgEnd;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("timeTrgEnd")), refVal_timeTrgEnd );
         setTimeTrgEnd(refVal_timeTrgEnd);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("timeTrgStart")))
     {
-        int32_t refVal_timeTrgStart;
+        int64_t refVal_timeTrgStart;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("timeTrgStart")), refVal_timeTrgStart );
         setTimeTrgStart(refVal_timeTrgStart);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        int32_t refVal_updatedAt;
+        int64_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
@@ -505,12 +505,12 @@ void Run::unsetActivityId()
 {
     m_ActivityIdIsSet = false;
 }
-int32_t Run::getBytesReadOut() const
+int64_t Run::getBytesReadOut() const
 {
     return m_BytesReadOut;
 }
 
-void Run::setBytesReadOut(int32_t value)
+void Run::setBytesReadOut(int64_t value)
 {
     m_BytesReadOut = value;
     m_BytesReadOutIsSet = true;
@@ -525,12 +525,12 @@ void Run::unsetBytesReadOut()
 {
     m_BytesReadOutIsSet = false;
 }
-int32_t Run::getCreatedAt() const
+int64_t Run::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Run::setCreatedAt(int32_t value)
+void Run::setCreatedAt(int64_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -565,12 +565,12 @@ void Run::unsetId()
 {
     m_IdIsSet = false;
 }
-int32_t Run::getNDetectors() const
+int64_t Run::getNDetectors() const
 {
     return m_NDetectors;
 }
 
-void Run::setNDetectors(int32_t value)
+void Run::setNDetectors(int64_t value)
 {
     m_NDetectors = value;
     m_NDetectorsIsSet = true;
@@ -585,12 +585,12 @@ void Run::unsetNDetectors()
 {
     m_NDetectorsIsSet = false;
 }
-int32_t Run::getNEpns() const
+int64_t Run::getNEpns() const
 {
     return m_NEpns;
 }
 
-void Run::setNEpns(int32_t value)
+void Run::setNEpns(int64_t value)
 {
     m_NEpns = value;
     m_NEpnsIsSet = true;
@@ -625,12 +625,12 @@ void Run::unsetNFlps()
 {
     m_NFlpsIsSet = false;
 }
-int32_t Run::getNSubtimeframes() const
+int64_t Run::getNSubtimeframes() const
 {
     return m_NSubtimeframes;
 }
 
-void Run::setNSubtimeframes(int32_t value)
+void Run::setNSubtimeframes(int64_t value)
 {
     m_NSubtimeframes = value;
     m_NSubtimeframesIsSet = true;
@@ -645,12 +645,12 @@ void Run::unsetNSubtimeframes()
 {
     m_NSubtimeframesIsSet = false;
 }
-int32_t Run::getRunNumber() const
+int64_t Run::getRunNumber() const
 {
     return m_RunNumber;
 }
 
-void Run::setRunNumber(int32_t value)
+void Run::setRunNumber(int64_t value)
 {
     m_RunNumber = value;
     m_RunNumberIsSet = true;
@@ -705,12 +705,12 @@ void Run::unsetRunType()
 {
     m_RunTypeIsSet = false;
 }
-int32_t Run::getTimeO2End() const
+int64_t Run::getTimeO2End() const
 {
     return m_TimeO2End;
 }
 
-void Run::setTimeO2End(int32_t value)
+void Run::setTimeO2End(int64_t value)
 {
     m_TimeO2End = value;
     m_TimeO2EndIsSet = true;
@@ -725,12 +725,12 @@ void Run::unsetTimeO2End()
 {
     m_TimeO2EndIsSet = false;
 }
-int32_t Run::getTimeO2Start() const
+int64_t Run::getTimeO2Start() const
 {
     return m_TimeO2Start;
 }
 
-void Run::setTimeO2Start(int32_t value)
+void Run::setTimeO2Start(int64_t value)
 {
     m_TimeO2Start = value;
     m_TimeO2StartIsSet = true;
@@ -745,12 +745,12 @@ void Run::unsetTimeO2Start()
 {
     m_TimeO2StartIsSet = false;
 }
-int32_t Run::getTimeTrgEnd() const
+int64_t Run::getTimeTrgEnd() const
 {
     return m_TimeTrgEnd;
 }
 
-void Run::setTimeTrgEnd(int32_t value)
+void Run::setTimeTrgEnd(int64_t value)
 {
     m_TimeTrgEnd = value;
     m_TimeTrgEndIsSet = true;
@@ -765,12 +765,12 @@ void Run::unsetTimeTrgEnd()
 {
     m_TimeTrgEndIsSet = false;
 }
-int32_t Run::getTimeTrgStart() const
+int64_t Run::getTimeTrgStart() const
 {
     return m_TimeTrgStart;
 }
 
-void Run::setTimeTrgStart(int32_t value)
+void Run::setTimeTrgStart(int64_t value)
 {
     m_TimeTrgStart = value;
     m_TimeTrgStartIsSet = true;
@@ -785,12 +785,12 @@ void Run::unsetTimeTrgStart()
 {
     m_TimeTrgStartIsSet = false;
 }
-int32_t Run::getUpdatedAt() const
+int64_t Run::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Run::setUpdatedAt(int32_t value)
+void Run::setUpdatedAt(int64_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

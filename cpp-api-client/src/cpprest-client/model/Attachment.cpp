@@ -23,7 +23,7 @@ namespace model {
 
 Attachment::Attachment()
 {
-    m_CreatedAt = 0;
+    m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
     m_Encoding = utility::conversions::to_string_t("");
     m_EncodingIsSet = false;
@@ -39,9 +39,9 @@ Attachment::Attachment()
     m_OriginalNameIsSet = false;
     m_Path = utility::conversions::to_string_t("");
     m_PathIsSet = false;
-    m_Size = 0;
+    m_Size = 0L;
     m_SizeIsSet = false;
-    m_UpdatedAt = 0;
+    m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
 
@@ -112,7 +112,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_createdAt;
+            int64_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -192,7 +192,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("size"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_size;
+            int64_t refVal_size;
             ok &= ModelBase::fromJson(fieldValue, refVal_size);
             setSize(refVal_size);
         }
@@ -202,7 +202,7 @@ bool Attachment::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_updatedAt;
+            int64_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -270,7 +270,7 @@ bool Attachment::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
 
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        int32_t refVal_createdAt;
+        int64_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
@@ -318,25 +318,25 @@ bool Attachment::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, con
     }
     if(multipart->hasContent(utility::conversions::to_string_t("size")))
     {
-        int32_t refVal_size;
+        int64_t refVal_size;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("size")), refVal_size );
         setSize(refVal_size);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        int32_t refVal_updatedAt;
+        int64_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
     return ok;
 }
 
-int32_t Attachment::getCreatedAt() const
+int64_t Attachment::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Attachment::setCreatedAt(int32_t value)
+void Attachment::setCreatedAt(int64_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -491,12 +491,12 @@ void Attachment::unsetPath()
 {
     m_PathIsSet = false;
 }
-int32_t Attachment::getSize() const
+int64_t Attachment::getSize() const
 {
     return m_Size;
 }
 
-void Attachment::setSize(int32_t value)
+void Attachment::setSize(int64_t value)
 {
     m_Size = value;
     m_SizeIsSet = true;
@@ -511,12 +511,12 @@ void Attachment::unsetSize()
 {
     m_SizeIsSet = false;
 }
-int32_t Attachment::getUpdatedAt() const
+int64_t Attachment::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Attachment::setUpdatedAt(int32_t value)
+void Attachment::setUpdatedAt(int64_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;
