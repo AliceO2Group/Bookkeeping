@@ -64,17 +64,17 @@ public:
     /// <summary>
     /// The unix timestamp of the moment that the the server went online.
     /// </summary>
-    int32_t getStart() const;
+    int64_t getStart() const;
     bool startIsSet() const;
     void unsetStart();
 
-    void setStart(int32_t value);
+    void setStart(int64_t value);
 
 
 protected:
     double m_Age;
     bool m_AgeIsSet;
-    int32_t m_Start;
+    int64_t m_Start;
     bool m_StartIsSet;
 };
 

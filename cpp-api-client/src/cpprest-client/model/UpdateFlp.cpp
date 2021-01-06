@@ -23,15 +23,15 @@ namespace model {
 
 UpdateFlp::UpdateFlp()
 {
-    m_NTimeframes = 0;
+    m_NTimeframes = 0L;
     m_NTimeframesIsSet = false;
-    m_BytesProcessed = 0;
+    m_BytesProcessed = 0L;
     m_BytesProcessedIsSet = false;
-    m_BytesEquipmentReadOut = 0;
+    m_BytesEquipmentReadOut = 0L;
     m_BytesEquipmentReadOutIsSet = false;
-    m_BytesRecordingReadOut = 0;
+    m_BytesRecordingReadOut = 0L;
     m_BytesRecordingReadOutIsSet = false;
-    m_BytesFairMQReadOut = 0;
+    m_BytesFairMQReadOut = 0L;
     m_BytesFairMQReadOutIsSet = false;
 }
 
@@ -82,7 +82,7 @@ bool UpdateFlp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("nTimeframes"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_nTimeframes;
+            int64_t refVal_nTimeframes;
             ok &= ModelBase::fromJson(fieldValue, refVal_nTimeframes);
             setNTimeframes(refVal_nTimeframes);
         }
@@ -92,7 +92,7 @@ bool UpdateFlp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesProcessed"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesProcessed;
+            int64_t refVal_bytesProcessed;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesProcessed);
             setBytesProcessed(refVal_bytesProcessed);
         }
@@ -102,7 +102,7 @@ bool UpdateFlp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesEquipmentReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesEquipmentReadOut;
+            int64_t refVal_bytesEquipmentReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesEquipmentReadOut);
             setBytesEquipmentReadOut(refVal_bytesEquipmentReadOut);
         }
@@ -112,7 +112,7 @@ bool UpdateFlp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesRecordingReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesRecordingReadOut;
+            int64_t refVal_bytesRecordingReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesRecordingReadOut);
             setBytesRecordingReadOut(refVal_bytesRecordingReadOut);
         }
@@ -122,7 +122,7 @@ bool UpdateFlp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesFairMQReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesFairMQReadOut;
+            int64_t refVal_bytesFairMQReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesFairMQReadOut);
             setBytesFairMQReadOut(refVal_bytesFairMQReadOut);
         }
@@ -170,43 +170,43 @@ bool UpdateFlp::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, cons
 
     if(multipart->hasContent(utility::conversions::to_string_t("nTimeframes")))
     {
-        int32_t refVal_nTimeframes;
+        int64_t refVal_nTimeframes;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("nTimeframes")), refVal_nTimeframes );
         setNTimeframes(refVal_nTimeframes);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesProcessed")))
     {
-        int32_t refVal_bytesProcessed;
+        int64_t refVal_bytesProcessed;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesProcessed")), refVal_bytesProcessed );
         setBytesProcessed(refVal_bytesProcessed);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesEquipmentReadOut")))
     {
-        int32_t refVal_bytesEquipmentReadOut;
+        int64_t refVal_bytesEquipmentReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesEquipmentReadOut")), refVal_bytesEquipmentReadOut );
         setBytesEquipmentReadOut(refVal_bytesEquipmentReadOut);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesRecordingReadOut")))
     {
-        int32_t refVal_bytesRecordingReadOut;
+        int64_t refVal_bytesRecordingReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesRecordingReadOut")), refVal_bytesRecordingReadOut );
         setBytesRecordingReadOut(refVal_bytesRecordingReadOut);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesFairMQReadOut")))
     {
-        int32_t refVal_bytesFairMQReadOut;
+        int64_t refVal_bytesFairMQReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesFairMQReadOut")), refVal_bytesFairMQReadOut );
         setBytesFairMQReadOut(refVal_bytesFairMQReadOut);
     }
     return ok;
 }
 
-int32_t UpdateFlp::getNTimeframes() const
+int64_t UpdateFlp::getNTimeframes() const
 {
     return m_NTimeframes;
 }
 
-void UpdateFlp::setNTimeframes(int32_t value)
+void UpdateFlp::setNTimeframes(int64_t value)
 {
     m_NTimeframes = value;
     m_NTimeframesIsSet = true;
@@ -221,12 +221,12 @@ void UpdateFlp::unsetNTimeframes()
 {
     m_NTimeframesIsSet = false;
 }
-int32_t UpdateFlp::getBytesProcessed() const
+int64_t UpdateFlp::getBytesProcessed() const
 {
     return m_BytesProcessed;
 }
 
-void UpdateFlp::setBytesProcessed(int32_t value)
+void UpdateFlp::setBytesProcessed(int64_t value)
 {
     m_BytesProcessed = value;
     m_BytesProcessedIsSet = true;
@@ -241,12 +241,12 @@ void UpdateFlp::unsetBytesProcessed()
 {
     m_BytesProcessedIsSet = false;
 }
-int32_t UpdateFlp::getBytesEquipmentReadOut() const
+int64_t UpdateFlp::getBytesEquipmentReadOut() const
 {
     return m_BytesEquipmentReadOut;
 }
 
-void UpdateFlp::setBytesEquipmentReadOut(int32_t value)
+void UpdateFlp::setBytesEquipmentReadOut(int64_t value)
 {
     m_BytesEquipmentReadOut = value;
     m_BytesEquipmentReadOutIsSet = true;
@@ -261,12 +261,12 @@ void UpdateFlp::unsetBytesEquipmentReadOut()
 {
     m_BytesEquipmentReadOutIsSet = false;
 }
-int32_t UpdateFlp::getBytesRecordingReadOut() const
+int64_t UpdateFlp::getBytesRecordingReadOut() const
 {
     return m_BytesRecordingReadOut;
 }
 
-void UpdateFlp::setBytesRecordingReadOut(int32_t value)
+void UpdateFlp::setBytesRecordingReadOut(int64_t value)
 {
     m_BytesRecordingReadOut = value;
     m_BytesRecordingReadOutIsSet = true;
@@ -281,12 +281,12 @@ void UpdateFlp::unsetBytesRecordingReadOut()
 {
     m_BytesRecordingReadOutIsSet = false;
 }
-int32_t UpdateFlp::getBytesFairMQReadOut() const
+int64_t UpdateFlp::getBytesFairMQReadOut() const
 {
     return m_BytesFairMQReadOut;
 }
 
-void UpdateFlp::setBytesFairMQReadOut(int32_t value)
+void UpdateFlp::setBytesFairMQReadOut(int64_t value)
 {
     m_BytesFairMQReadOut = value;
     m_BytesFairMQReadOutIsSet = true;
