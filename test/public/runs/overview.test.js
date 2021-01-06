@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -107,6 +107,7 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await goToPage(page, 'run-overview');
         await page.waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 pages
         const amountSelectorId = '#amountSelector';
@@ -142,6 +143,7 @@ module.exports = () => {
     });
 
     it('can switch between pages of runs', async () => {
+        await goToPage(page, 'run-overview');
         await page.waitForTimeout(300);
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
