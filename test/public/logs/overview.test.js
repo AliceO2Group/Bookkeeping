@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, takeScreenshot } = require('../defaults');
 
 const { expect } = chai;
 
@@ -142,6 +142,7 @@ module.exports = () => {
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        takeScreenshot(page);
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert some other text into the filter
