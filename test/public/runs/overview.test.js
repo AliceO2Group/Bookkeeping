@@ -130,14 +130,11 @@ module.exports = () => {
         await validateElement(page, '#amountSelector');
         await validateElementEqualTo(page, '.btn-tab', 7);
 
-        await takeScreenshot(page, "one");
-        // Expect the table rows to change upon page navigation
-        await page.waitForTimeout(100);
         const oldFirstRowId = await getFirstRow(table, page);
-        await pressElement(page, '#page2');
-        await takeScreenshot(page, "two");
+        // Works correctly if this line is uncommented
+        // takeScreenshot(page);
+        pressElement(page, '#page2');
         await page.waitForFunction('document.querySelector("#page2").classList.contains("selected")');
-        await takeScreenshot(page, "three");
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
