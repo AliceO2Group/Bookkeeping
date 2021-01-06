@@ -64,17 +64,17 @@ public:
     /// <summary>
     /// The number of items to skip before starting to collect the result set.
     /// </summary>
-    int32_t getOffset() const;
+    int64_t getOffset() const;
     bool offsetIsSet() const;
     void unsetOffset();
 
-    void setOffset(int32_t value);
+    void setOffset(int64_t value);
 
 
 protected:
     int32_t m_Limit;
     bool m_LimitIsSet;
-    int32_t m_Offset;
+    int64_t m_Offset;
     bool m_OffsetIsSet;
 };
 

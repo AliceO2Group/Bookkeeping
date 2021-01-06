@@ -23,25 +23,25 @@ namespace model {
 
 Flp::Flp()
 {
-    m_BytesEquipmentReadOut = 0;
+    m_BytesEquipmentReadOut = 0L;
     m_BytesEquipmentReadOutIsSet = false;
-    m_BytesFairMQReadOut = 0;
+    m_BytesFairMQReadOut = 0L;
     m_BytesFairMQReadOutIsSet = false;
-    m_BytesProcessed = 0;
+    m_BytesProcessed = 0L;
     m_BytesProcessedIsSet = false;
-    m_BytesRecordingReadOut = 0;
+    m_BytesRecordingReadOut = 0L;
     m_BytesRecordingReadOutIsSet = false;
-    m_CreatedAt = 0;
+    m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
     m_Hostname = utility::conversions::to_string_t("");
     m_HostnameIsSet = false;
     m_Id = 0;
     m_IdIsSet = false;
-    m_NTimeframes = 0;
+    m_NTimeframes = 0L;
     m_NTimeframesIsSet = false;
     m_Name = utility::conversions::to_string_t("");
     m_NameIsSet = false;
-    m_UpdatedAt = 0;
+    m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
 
@@ -112,7 +112,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesEquipmentReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesEquipmentReadOut;
+            int64_t refVal_bytesEquipmentReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesEquipmentReadOut);
             setBytesEquipmentReadOut(refVal_bytesEquipmentReadOut);
         }
@@ -122,7 +122,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesFairMQReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesFairMQReadOut;
+            int64_t refVal_bytesFairMQReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesFairMQReadOut);
             setBytesFairMQReadOut(refVal_bytesFairMQReadOut);
         }
@@ -132,7 +132,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesProcessed"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesProcessed;
+            int64_t refVal_bytesProcessed;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesProcessed);
             setBytesProcessed(refVal_bytesProcessed);
         }
@@ -142,7 +142,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("bytesRecordingReadOut"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_bytesRecordingReadOut;
+            int64_t refVal_bytesRecordingReadOut;
             ok &= ModelBase::fromJson(fieldValue, refVal_bytesRecordingReadOut);
             setBytesRecordingReadOut(refVal_bytesRecordingReadOut);
         }
@@ -152,7 +152,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_createdAt;
+            int64_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -182,7 +182,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("nTimeframes"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_nTimeframes;
+            int64_t refVal_nTimeframes;
             ok &= ModelBase::fromJson(fieldValue, refVal_nTimeframes);
             setNTimeframes(refVal_nTimeframes);
         }
@@ -202,7 +202,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_updatedAt;
+            int64_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -270,31 +270,31 @@ bool Flp::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
 
     if(multipart->hasContent(utility::conversions::to_string_t("bytesEquipmentReadOut")))
     {
-        int32_t refVal_bytesEquipmentReadOut;
+        int64_t refVal_bytesEquipmentReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesEquipmentReadOut")), refVal_bytesEquipmentReadOut );
         setBytesEquipmentReadOut(refVal_bytesEquipmentReadOut);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesFairMQReadOut")))
     {
-        int32_t refVal_bytesFairMQReadOut;
+        int64_t refVal_bytesFairMQReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesFairMQReadOut")), refVal_bytesFairMQReadOut );
         setBytesFairMQReadOut(refVal_bytesFairMQReadOut);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesProcessed")))
     {
-        int32_t refVal_bytesProcessed;
+        int64_t refVal_bytesProcessed;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesProcessed")), refVal_bytesProcessed );
         setBytesProcessed(refVal_bytesProcessed);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesRecordingReadOut")))
     {
-        int32_t refVal_bytesRecordingReadOut;
+        int64_t refVal_bytesRecordingReadOut;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("bytesRecordingReadOut")), refVal_bytesRecordingReadOut );
         setBytesRecordingReadOut(refVal_bytesRecordingReadOut);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        int32_t refVal_createdAt;
+        int64_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
@@ -312,7 +312,7 @@ bool Flp::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("nTimeframes")))
     {
-        int32_t refVal_nTimeframes;
+        int64_t refVal_nTimeframes;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("nTimeframes")), refVal_nTimeframes );
         setNTimeframes(refVal_nTimeframes);
     }
@@ -324,19 +324,19 @@ bool Flp::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        int32_t refVal_updatedAt;
+        int64_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
     return ok;
 }
 
-int32_t Flp::getBytesEquipmentReadOut() const
+int64_t Flp::getBytesEquipmentReadOut() const
 {
     return m_BytesEquipmentReadOut;
 }
 
-void Flp::setBytesEquipmentReadOut(int32_t value)
+void Flp::setBytesEquipmentReadOut(int64_t value)
 {
     m_BytesEquipmentReadOut = value;
     m_BytesEquipmentReadOutIsSet = true;
@@ -351,12 +351,12 @@ void Flp::unsetBytesEquipmentReadOut()
 {
     m_BytesEquipmentReadOutIsSet = false;
 }
-int32_t Flp::getBytesFairMQReadOut() const
+int64_t Flp::getBytesFairMQReadOut() const
 {
     return m_BytesFairMQReadOut;
 }
 
-void Flp::setBytesFairMQReadOut(int32_t value)
+void Flp::setBytesFairMQReadOut(int64_t value)
 {
     m_BytesFairMQReadOut = value;
     m_BytesFairMQReadOutIsSet = true;
@@ -371,12 +371,12 @@ void Flp::unsetBytesFairMQReadOut()
 {
     m_BytesFairMQReadOutIsSet = false;
 }
-int32_t Flp::getBytesProcessed() const
+int64_t Flp::getBytesProcessed() const
 {
     return m_BytesProcessed;
 }
 
-void Flp::setBytesProcessed(int32_t value)
+void Flp::setBytesProcessed(int64_t value)
 {
     m_BytesProcessed = value;
     m_BytesProcessedIsSet = true;
@@ -391,12 +391,12 @@ void Flp::unsetBytesProcessed()
 {
     m_BytesProcessedIsSet = false;
 }
-int32_t Flp::getBytesRecordingReadOut() const
+int64_t Flp::getBytesRecordingReadOut() const
 {
     return m_BytesRecordingReadOut;
 }
 
-void Flp::setBytesRecordingReadOut(int32_t value)
+void Flp::setBytesRecordingReadOut(int64_t value)
 {
     m_BytesRecordingReadOut = value;
     m_BytesRecordingReadOutIsSet = true;
@@ -411,12 +411,12 @@ void Flp::unsetBytesRecordingReadOut()
 {
     m_BytesRecordingReadOutIsSet = false;
 }
-int32_t Flp::getCreatedAt() const
+int64_t Flp::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void Flp::setCreatedAt(int32_t value)
+void Flp::setCreatedAt(int64_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -471,12 +471,12 @@ void Flp::unsetId()
 {
     m_IdIsSet = false;
 }
-int32_t Flp::getNTimeframes() const
+int64_t Flp::getNTimeframes() const
 {
     return m_NTimeframes;
 }
 
-void Flp::setNTimeframes(int32_t value)
+void Flp::setNTimeframes(int64_t value)
 {
     m_NTimeframes = value;
     m_NTimeframesIsSet = true;
@@ -511,12 +511,12 @@ void Flp::unsetName()
 {
     m_NameIsSet = false;
 }
-int32_t Flp::getUpdatedAt() const
+int64_t Flp::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void Flp::setUpdatedAt(int32_t value)
+void Flp::setUpdatedAt(int64_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

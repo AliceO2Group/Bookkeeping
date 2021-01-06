@@ -82,11 +82,11 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    int32_t getCreatedAt() const;
+    int64_t getCreatedAt() const;
     bool createdAtIsSet() const;
     void unsetCreatedAt();
 
-    void setCreatedAt(int32_t value);
+    void setCreatedAt(int64_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
@@ -118,11 +118,11 @@ public:
     /// <summary>
     /// The amount of children of a root log.
     /// </summary>
-    int32_t getReplies() const;
+    int64_t getReplies() const;
     bool repliesIsSet() const;
     void unsetReplies();
 
-    void setReplies(int32_t value);
+    void setReplies(int64_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
@@ -190,11 +190,11 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
-    int32_t getUpdatedAt() const;
+    int64_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdatedAt();
 
-    void setUpdatedAt(int32_t value);
+    void setUpdatedAt(int64_t value);
 
 
 protected:
@@ -202,7 +202,7 @@ protected:
     bool m_AttachmentsIsSet;
     std::shared_ptr<User> m_Author;
     bool m_AuthorIsSet;
-    int32_t m_CreatedAt;
+    int64_t m_CreatedAt;
     bool m_CreatedAtIsSet;
     int32_t m_Id;
     bool m_IdIsSet;
@@ -210,7 +210,7 @@ protected:
     bool m_OriginIsSet;
     int32_t m_ParentLogId;
     bool m_ParentLogIdIsSet;
-    int32_t m_Replies;
+    int64_t m_Replies;
     bool m_RepliesIsSet;
     int32_t m_RootLogId;
     bool m_RootLogIdIsSet;
@@ -226,7 +226,7 @@ protected:
     bool m_TextIsSet;
     utility::string_t m_Title;
     bool m_TitleIsSet;
-    int32_t m_UpdatedAt;
+    int64_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };
 
