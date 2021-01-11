@@ -54,8 +54,22 @@ func startRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, run
 }
 
 
+func flpAdd(name string, hostName string, runNumber int64 ){
+
+	run := sw.CreateFlp{
+		Name : name,
+		Hostname : hostName,
+		RunNumber : runNumber, 
+	}
+
+	arrayResponse, response, err := api.FlpApi.CreateFlp(auth, run)
+	fmt.Println(arrayResponse, response, err)
+}
+
+
 func main() {
 	innitializeApi("http://localhost:4000/api", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJBbm9ueW1vdXMiLCJhY2Nlc3MiOjAsImlhdCI6MTYxMDM5MDMzMSwiZXhwIjoxNjEwNDc2NzMxLCJpc3MiOiJvMi11aSJ9.bCCaE4FVZnjvFyVCoGFgtq7YER2TzkKLdEdXfJOyRkM")
 	startRun("cpp-api", 5, 5, 5, 9000, sw.COSMICS_RunType, 12040213, 12040213)
 	endRun(9000, sw.BAD_RunQuality, 12040213, 12040213)
+	flpAdd("someRandomName", "someRandomhost", 5102)
 }
