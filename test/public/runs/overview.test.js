@@ -106,14 +106,35 @@ module.exports = () => {
         }
     });
 
+    it('can switch to infinite mode in amountSelector', async () => {
+        const amountSelectorButton = await page.$('#amountSelector button');
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
+        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        await page.evaluate(() => {
+            window.scrollBy(0, window.innerHeight);
+        });
+        await page.waitForTimeout(400);
+        const tableRows = await page.$$('table tr');
+        expect(tableRows.length > 20).to.be.true;
+    });
+
     it('can set how many runs are available per page', async () => {
         await page.waitForTimeout(300);
-        // Expect the amount selector to currently be set to 10 pages
+        // Expect the amount selector to currently be set to Infinite (after the previous test)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
@@ -134,7 +155,6 @@ module.exports = () => {
         await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
             el.value = '111';
-            // eslint-disable-next-line no-undef
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
@@ -150,8 +170,7 @@ module.exports = () => {
         expect(Boolean(pageSelector)).to.be.true;
         await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        await page.waitForTimeout(300);
-        expect(pageSelectorButtons.length).to.equal(2);
+        expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
