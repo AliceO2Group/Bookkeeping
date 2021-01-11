@@ -158,7 +158,7 @@ SubsystemApiService Deletes a subsystem by Id
  * @param subsystemId The id of the subsystem to retrieve
 @return SubsystemResponse
 */
-func (a *SubsystemApiService) DeleteSubsystem(ctx context.Context, subsystemId int32) (SubsystemResponse, *http.Response, error) {
+func (a *SubsystemApiService) DeleteSubsystem(ctx context.Context, subsystemId int64) (SubsystemResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Delete")
 		localVarPostBody   interface{}
@@ -285,7 +285,7 @@ SubsystemApiService Get a subsystem by Id
  * @param subsystemId The id of the subsystem to retrieve
 @return SubsystemResponse
 */
-func (a *SubsystemApiService) GetSubsystem(ctx context.Context, subsystemId int32) (SubsystemResponse, *http.Response, error) {
+func (a *SubsystemApiService) GetSubsystem(ctx context.Context, subsystemId int64) (SubsystemResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}

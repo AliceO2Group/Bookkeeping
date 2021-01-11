@@ -4,7 +4,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Attachments** | [***[]Attachment**](array.md) |  | [optional] [default to null]
-**ParentLogId** | **int32** |  | [optional] [default to null]
+**ParentLogId** | **int64** |  | [optional] [default to null]
 **Text** | **string** |  | [default to null]
 **Title** | **string** |  | [default to null]
 **RunNumbers** | **string** |  | [optional] [default to null]

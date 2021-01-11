@@ -22,7 +22,20 @@ func innitializeApi(baseUrl string, apiKey string) {
 	})
 }
 
-func createRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, runNumber int64, runType sw.RunType, timeO2Start int64, timeTrgStart int64){
+func endRun(runNumber int64, runQuality sw.RunQuality, timeO2End int64, timeTrgEnd int64){
+	var runquality sw.RunQuality = runQuality
+
+	run := sw.Run{
+		RunQuality : &runquality,
+		TimeO2End : timeO2End,
+		TimeTrgEnd : timeTrgEnd,
+	}
+
+	arrayResponse, response, err := api.RunApi.EndRun(auth, run, runNumber)
+	fmt.Println(arrayResponse, response, err)
+}
+
+func startRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, runNumber int64, runType sw.RunType, timeO2Start int64, timeTrgStart int64){
 	var runtype sw.RunType = runType
 
 	run := sw.Run{
@@ -42,6 +55,7 @@ func createRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, ru
 
 
 func main() {
-	innitializeApi("http://localhost:4000/api", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJBbm9ueW1vdXMiLCJhY2Nlc3MiOjAsImlhdCI6MTYxMDM4MTgyMCwiZXhwIjoxNjEwNDY4MjIwLCJpc3MiOiJvMi11aSJ9.F1kV3Xzw-H-YKR_VPuSbIzB-wFwZpFSplT7WwGN0zY8")
-	createRun("cpp-api", 5, 5, 5, 9000, sw.COSMICS_RunType, 12040213, 12040213)
+	innitializeApi("http://localhost:4000/api", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJBbm9ueW1vdXMiLCJhY2Nlc3MiOjAsImlhdCI6MTYxMDM5MDMzMSwiZXhwIjoxNjEwNDc2NzMxLCJpc3MiOiJvMi11aSJ9.bCCaE4FVZnjvFyVCoGFgtq7YER2TzkKLdEdXfJOyRkM")
+	startRun("cpp-api", 5, 5, 5, 9000, sw.COSMICS_RunType, 12040213, 12040213)
+	endRun(9000, sw.BAD_RunQuality, 12040213, 12040213)
 }

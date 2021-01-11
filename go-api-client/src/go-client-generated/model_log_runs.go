@@ -10,6 +10,6 @@ package swagger
 
 // Minified Run object.
 type LogRuns struct {
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 	RunNumber int64 `json:"runNumber"`
 }

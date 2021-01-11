@@ -12,7 +12,7 @@ package swagger
 type Entity struct {
 	// Unix timestamp when this entity was created.
 	CreatedAt int64 `json:"createdAt,omitempty"`
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int64 `json:"updatedAt,omitempty"`
 }

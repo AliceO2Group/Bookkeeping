@@ -1539,6 +1539,7 @@ components:
       minimum: 1
       type: integer
       description: The unique identifier of this entity.
+      format: int64
     Error:
       required:
       - status

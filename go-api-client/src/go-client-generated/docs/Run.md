@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 **ActivityId** | **string** |  | [optional] [default to null]
 **BytesReadOut** | **int64** |  | [optional] [default to null]
 **CreatedAt** | **int64** | Unix timestamp when this entity was created. | [optional] [default to null]
-**Id** | **int32** |  | [optional] [default to null]
+**Id** | **int64** |  | [optional] [default to null]
 **NDetectors** | **int64** |  | [optional] [default to null]
 **NEpns** | **int64** |  | [optional] [default to null]
 **NFlps** | **int64** |  | [optional] [default to null]

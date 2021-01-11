@@ -17,7 +17,7 @@ type Flp struct {
 	// Unix timestamp when this entity was created.
 	CreatedAt int64 `json:"createdAt,omitempty"`
 	Hostname string `json:"hostname"`
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 	NTimeframes int64 `json:"nTimeframes"`
 	Name string `json:"name"`
 	// Unix timestamp when this entity was last updated.

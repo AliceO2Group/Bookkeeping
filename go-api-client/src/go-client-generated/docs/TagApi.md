@@ -45,7 +45,7 @@ Deletes a tag by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **tagId** | [**int32**](.md)| The id of the tag to retrieve | 
+  **tagId** | [**int64**](.md)| The id of the tag to retrieve | 
 
 ### Return type
 
@@ -71,7 +71,7 @@ Gets all logs with this tag id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **tagId** | [**int32**](.md)| The id of the tag to retrieve | 
+  **tagId** | [**int64**](.md)| The id of the tag to retrieve | 
 
 ### Return type
 
@@ -97,7 +97,7 @@ Gets a tag by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **tagId** | [**int32**](.md)| The id of the tag to retrieve | 
+  **tagId** | [**int64**](.md)| The id of the tag to retrieve | 
 
 ### Return type
 

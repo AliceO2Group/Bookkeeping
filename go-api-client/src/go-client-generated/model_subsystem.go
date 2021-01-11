@@ -12,7 +12,7 @@ package swagger
 type Subsystem struct {
 	// Unix timestamp when this entity was created.
 	CreatedAt int64 `json:"createdAt,omitempty"`
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 	// The label value of the subsystem.
 	Name string `json:"name"`
 	// Unix timestamp when this entity was last updated.

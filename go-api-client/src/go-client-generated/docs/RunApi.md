@@ -45,7 +45,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **body** | [**Run**](Run.md)|  | 
-  **runId** | [**int32**](.md)| The id of the run to retrieve | 
+  **runId** | [**int64**](.md)| The id of the run to retrieve | 
 
 ### Return type
 
@@ -71,7 +71,7 @@ Gets a run by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **runId** | [**int32**](.md)| The id of the run to retrieve | 
+  **runId** | [**int64**](.md)| The id of the run to retrieve | 
 
 ### Return type
 

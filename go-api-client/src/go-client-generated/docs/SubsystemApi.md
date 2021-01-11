@@ -44,7 +44,7 @@ Deletes a subsystem by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **subsystemId** | [**int32**](.md)| The id of the subsystem to retrieve | 
+  **subsystemId** | [**int64**](.md)| The id of the subsystem to retrieve | 
 
 ### Return type
 
@@ -70,7 +70,7 @@ Get a subsystem by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **subsystemId** | [**int32**](.md)| The id of the subsystem to retrieve | 
+  **subsystemId** | [**int64**](.md)| The id of the subsystem to retrieve | 
 
 ### Return type
 

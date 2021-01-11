@@ -14,11 +14,11 @@ type Log struct {
 	Author *User `json:"author"`
 	// Unix timestamp when this entity was created.
 	CreatedAt int64 `json:"createdAt,omitempty"`
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 	Origin *LogOrigin `json:"origin"`
-	ParentLogId int32 `json:"parentLogId"`
+	ParentLogId int64 `json:"parentLogId"`
 	Replies int64 `json:"replies,omitempty"`
-	RootLogId int32 `json:"rootLogId"`
+	RootLogId int64 `json:"rootLogId"`
 	// Array of minified Run objects.
 	Runs []LogRuns `json:"runs,omitempty"`
 	Subsystems *[]Subsystem `json:"subsystems,omitempty"`

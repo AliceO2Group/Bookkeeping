@@ -14,7 +14,7 @@ type Run struct {
 	BytesReadOut int64 `json:"bytesReadOut,omitempty"`
 	// Unix timestamp when this entity was created.
 	CreatedAt int64 `json:"createdAt,omitempty"`
-	Id int32 `json:"id,omitempty"`
+	Id int64 `json:"id,omitempty"`
 	NDetectors int64 `json:"nDetectors,omitempty"`
 	NEpns int64 `json:"nEpns,omitempty"`
 	NFlps int64 `json:"nFlps,omitempty"`

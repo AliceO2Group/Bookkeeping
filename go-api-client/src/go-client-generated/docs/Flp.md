@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **BytesRecordingReadOut** | **int64** |  | [default to null]
 **CreatedAt** | **int64** | Unix timestamp when this entity was created. | [optional] [default to null]
 **Hostname** | **string** |  | [default to null]
-**Id** | **int32** |  | [default to null]
+**Id** | **int64** |  | [default to null]
 **NTimeframes** | **int64** |  | [default to null]
 **Name** | **string** |  | [default to null]
 **UpdatedAt** | **int64** | Unix timestamp when this entity was last updated. | [optional] [default to null]

@@ -14,8 +14,8 @@ type Attachment struct {
 	CreatedAt int64 `json:"createdAt,omitempty"`
 	Encoding string `json:"encoding,omitempty"`
 	FileName string `json:"fileName,omitempty"`
-	Id int32 `json:"id"`
-	LogId int32 `json:"logId,omitempty"`
+	Id int64 `json:"id"`
+	LogId int64 `json:"logId,omitempty"`
 	MimeType string `json:"mimeType,omitempty"`
 	OriginalName string `json:"originalName,omitempty"`
 	Path string `json:"path,omitempty"`

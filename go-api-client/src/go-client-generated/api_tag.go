@@ -158,7 +158,7 @@ TagApiService Deletes a tag by Id
  * @param tagId The id of the tag to retrieve
 @return TagResponse
 */
-func (a *TagApiService) DeleteTagById(ctx context.Context, tagId int32) (TagResponse, *http.Response, error) {
+func (a *TagApiService) DeleteTagById(ctx context.Context, tagId int64) (TagResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Delete")
 		localVarPostBody   interface{}
@@ -285,7 +285,7 @@ TagApiService Gets all logs with this tag id
  * @param tagId The id of the tag to retrieve
 @return ArrayOfLogsResponse
 */
-func (a *TagApiService) GetLogsByTagId(ctx context.Context, tagId int32) (ArrayOfLogsResponse, *http.Response, error) {
+func (a *TagApiService) GetLogsByTagId(ctx context.Context, tagId int64) (ArrayOfLogsResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -412,7 +412,7 @@ TagApiService Gets a tag by Id
  * @param tagId The id of the tag to retrieve
 @return TagResponse
 */
-func (a *TagApiService) GetTagById(ctx context.Context, tagId int32) (TagResponse, *http.Response, error) {
+func (a *TagApiService) GetTagById(ctx context.Context, tagId int64) (TagResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}

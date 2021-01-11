@@ -47,8 +47,8 @@ Get one specific attachment associated with a log
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **logId** | [**int32**](.md)| The id of the log to retrieve | 
-  **attachmentId** | [**int32**](.md)| The id of the attached to retrieve | 
+  **logId** | [**int64**](.md)| The id of the log to retrieve | 
+  **attachmentId** | [**int64**](.md)| The id of the attached to retrieve | 
 
 ### Return type
 
@@ -74,7 +74,7 @@ Gets a log by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **logId** | [**int32**](.md)| The id of the log to retrieve | 
+  **logId** | [**int64**](.md)| The id of the log to retrieve | 
 
 ### Return type
 
@@ -100,7 +100,7 @@ Get the Log tree for a given Log
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **logId** | [**int32**](.md)| The id of the log to retrieve | 
+  **logId** | [**int64**](.md)| The id of the log to retrieve | 
 
 ### Return type
 
@@ -126,7 +126,7 @@ Get all attachments associated with a log
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **logId** | [**int32**](.md)| The id of the log to retrieve | 
+  **logId** | [**int64**](.md)| The id of the log to retrieve | 
 
 ### Return type
 
@@ -174,7 +174,7 @@ Lists all tags associated with a log
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **logId** | [**int32**](.md)| The id of the log to retrieve | 
+  **logId** | [**int64**](.md)| The id of the log to retrieve | 
 
 ### Return type
 
