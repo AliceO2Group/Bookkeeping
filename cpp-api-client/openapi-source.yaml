@@ -1464,21 +1464,6 @@ components:
           type: integer
           format: int64
           example: 853113599
-      required:
-        - activityId
-        - bytesReadOut
-        - id
-        - nDetectors
-        - nEpns
-        - nFlps
-        - nSubtimeframes
-        - runNumber
-        - runQuality
-        - runType
-        - timeO2End
-        - timeO2Start
-        - timeTrgEnd
-        - timeTrgStart
       additionalProperties: false
     RunActivityId:
       description: The unique identifier of this entity.
