@@ -1483,6 +1483,7 @@ components:
     RunFlps:
       description: The amount of Flps nodes in a single run.
       type: integer
+      format: int64
     RunNumber:
       description: The unique identifier of this entity.
       type: integer

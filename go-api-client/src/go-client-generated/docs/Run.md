@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **Id** | **int32** |  | [optional] [default to null]
 **NDetectors** | **int64** |  | [optional] [default to null]
 **NEpns** | **int64** |  | [optional] [default to null]
-**NFlps** | **int32** |  | [optional] [default to null]
+**NFlps** | **int64** |  | [optional] [default to null]
 **NSubtimeframes** | **int64** |  | [optional] [default to null]
 **RunNumber** | **int64** |  | [optional] [default to null]
 **RunQuality** | [***RunQuality**](RunQuality.md) |  | [optional] [default to null]

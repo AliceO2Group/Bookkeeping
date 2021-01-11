@@ -17,7 +17,7 @@ type Run struct {
 	Id int32 `json:"id,omitempty"`
 	NDetectors int64 `json:"nDetectors,omitempty"`
 	NEpns int64 `json:"nEpns,omitempty"`
-	NFlps int32 `json:"nFlps,omitempty"`
+	NFlps int64 `json:"nFlps,omitempty"`
 	NSubtimeframes int64 `json:"nSubtimeframes,omitempty"`
 	RunNumber int64 `json:"runNumber,omitempty"`
 	RunQuality *RunQuality `json:"runQuality,omitempty"`
