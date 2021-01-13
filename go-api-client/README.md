@@ -33,9 +33,10 @@ make -j $(expr $(nproc) - 1)
 
 
 # Usage
-This library serves as an C++ API client to the O2 bookkeeping system.
-API endpoints are documented in docblocks in BookkeepingInterface.h, or in the documentation directory -> index.html -> Bookkeeping -> BookkeepingApi. 
-There's also an example of the usage in `Example.cpp`
+This library serves as a GO API client to the O2 bookkeeping system. 
+API endpoints are documented in the directory -> Bookkeeping -> go-api-client -> src -> 
+BookkeepingAPI.go 
+There's also an example of the usage in `Example.go`
 
 ### API token
 API token is loaded into the Bookkeeping request upon page load, and can be extracted by looking with the chrome inspector -> network -> reload page and fetch token from request. TODO: create fetchToken method.
