@@ -55,59 +55,59 @@ public:
     /// <summary>
     /// Number of subtimeframes processed in this FLP. Updated regularly.
     /// </summary>
-    int32_t getNTimeframes() const;
+    int64_t getNTimeframes() const;
     bool nTimeframesIsSet() const;
     void unsetNTimeframes();
 
-    void setNTimeframes(int32_t value);
+    void setNTimeframes(int64_t value);
 
     /// <summary>
     /// Total data volume read out in bytes.
     /// </summary>
-    int32_t getBytesProcessed() const;
+    int64_t getBytesProcessed() const;
     bool bytesProcessedIsSet() const;
     void unsetBytesProcessed();
 
-    void setBytesProcessed(int32_t value);
+    void setBytesProcessed(int64_t value);
 
     /// <summary>
     /// Total data volume out from the readout &#39;equipment&#39; component in bytes. Can reach PetaBytes. Updated regularly.
     /// </summary>
-    int32_t getBytesEquipmentReadOut() const;
+    int64_t getBytesEquipmentReadOut() const;
     bool bytesEquipmentReadOutIsSet() const;
     void unsetBytesEquipmentReadOut();
 
-    void setBytesEquipmentReadOut(int32_t value);
+    void setBytesEquipmentReadOut(int64_t value);
 
     /// <summary>
     /// Total data volume out from the readout &#39;recording&#39; component in bytes. Can reach PetaBytes. Updated regularly.
     /// </summary>
-    int32_t getBytesRecordingReadOut() const;
+    int64_t getBytesRecordingReadOut() const;
     bool bytesRecordingReadOutIsSet() const;
     void unsetBytesRecordingReadOut();
 
-    void setBytesRecordingReadOut(int32_t value);
+    void setBytesRecordingReadOut(int64_t value);
 
     /// <summary>
     /// Total data volume out from the readout &#39;fmq&#39; component in bytes. Can reach PetaBytes. Updated regularly.
     /// </summary>
-    int32_t getBytesFairMQReadOut() const;
+    int64_t getBytesFairMQReadOut() const;
     bool bytesFairMQReadOutIsSet() const;
     void unsetBytesFairMQReadOut();
 
-    void setBytesFairMQReadOut(int32_t value);
+    void setBytesFairMQReadOut(int64_t value);
 
 
 protected:
-    int32_t m_NTimeframes;
+    int64_t m_NTimeframes;
     bool m_NTimeframesIsSet;
-    int32_t m_BytesProcessed;
+    int64_t m_BytesProcessed;
     bool m_BytesProcessedIsSet;
-    int32_t m_BytesEquipmentReadOut;
+    int64_t m_BytesEquipmentReadOut;
     bool m_BytesEquipmentReadOutIsSet;
-    int32_t m_BytesRecordingReadOut;
+    int64_t m_BytesRecordingReadOut;
     bool m_BytesRecordingReadOutIsSet;
-    int32_t m_BytesFairMQReadOut;
+    int64_t m_BytesFairMQReadOut;
     bool m_BytesFairMQReadOutIsSet;
 };
 
