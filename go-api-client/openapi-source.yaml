@@ -994,6 +994,7 @@ components:
     EntityId:
       description: The unique identifier of this entity.
       type: integer
+      format: int64
       minimum: 1
     Error:
       description: An Error object.
