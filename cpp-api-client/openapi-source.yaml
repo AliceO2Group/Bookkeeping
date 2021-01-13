@@ -1464,21 +1464,6 @@ components:
           type: integer
           format: int64
           example: 853113599
-      required:
-        - activityId
-        - bytesReadOut
-        - id
-        - nDetectors
-        - nEpns
-        - nFlps
-        - nSubtimeframes
-        - runNumber
-        - runQuality
-        - runType
-        - timeO2End
-        - timeO2Start
-        - timeTrgEnd
-        - timeTrgStart
       additionalProperties: false
     RunActivityId:
       description: The unique identifier of this entity.
@@ -1498,6 +1483,7 @@ components:
     RunFlps:
       description: The amount of Flps nodes in a single run.
       type: integer
+      format: int64
     RunNumber:
       description: The unique identifier of this entity.
       type: integer

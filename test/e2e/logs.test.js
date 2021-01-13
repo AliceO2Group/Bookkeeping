@@ -167,7 +167,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data.length).to.equal(1);
+                    expect(res.body.data.length).to.equal(100);
                     expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
                     expect(res.body.data[0].createdAt).to.be.lte(timeTo);
 
@@ -928,7 +928,7 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                    tags: [1, 3, 10, 16],
+                    tags: [1, 3, 10000, 1666],
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -940,7 +940,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal('Tags with these ids (10, 16) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Tags with these ids (10000, 1666) could not be found');
 
                     done();
                 });
