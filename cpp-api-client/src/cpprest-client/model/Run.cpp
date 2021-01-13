@@ -35,7 +35,7 @@ Run::Run()
     m_NDetectorsIsSet = false;
     m_NEpns = 0L;
     m_NEpnsIsSet = false;
-    m_NFlps = 0;
+    m_NFlps = 0L;
     m_NFlpsIsSet = false;
     m_NSubtimeframes = 0L;
     m_NSubtimeframesIsSet = false;
@@ -206,7 +206,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("nFlps"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_nFlps;
+            int64_t refVal_nFlps;
             ok &= ModelBase::fromJson(fieldValue, refVal_nFlps);
             setNFlps(refVal_nFlps);
         }
@@ -424,7 +424,7 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("nFlps")))
     {
-        int32_t refVal_nFlps;
+        int64_t refVal_nFlps;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("nFlps")), refVal_nFlps );
         setNFlps(refVal_nFlps);
     }
@@ -605,12 +605,12 @@ void Run::unsetNEpns()
 {
     m_NEpnsIsSet = false;
 }
-int32_t Run::getNFlps() const
+int64_t Run::getNFlps() const
 {
     return m_NFlps;
 }
 
-void Run::setNFlps(int32_t value)
+void Run::setNFlps(int64_t value)
 {
     m_NFlps = value;
     m_NFlpsIsSet = true;

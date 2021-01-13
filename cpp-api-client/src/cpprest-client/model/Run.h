@@ -112,11 +112,11 @@ public:
     /// <summary>
     /// The amount of Flps nodes in a single run.
     /// </summary>
-    int32_t getNFlps() const;
+    int64_t getNFlps() const;
     bool nFlpsIsSet() const;
     void unsetNFlps();
 
-    void setNFlps(int32_t value);
+    void setNFlps(int64_t value);
 
     /// <summary>
     /// Total number of subtimeframes processed by the O2 system.
@@ -213,7 +213,7 @@ protected:
     bool m_NDetectorsIsSet;
     int64_t m_NEpns;
     bool m_NEpnsIsSet;
-    int32_t m_NFlps;
+    int64_t m_NFlps;
     bool m_NFlpsIsSet;
     int64_t m_NSubtimeframes;
     bool m_NSubtimeframesIsSet;
