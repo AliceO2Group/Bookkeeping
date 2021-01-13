@@ -7,7 +7,7 @@ import sw "./go-client-generated"
 var api *sw.APIClient
 var auth context.Context
 
-func innitializeApi(baseUrl string, apiKey string) {
+func initializeApi(baseUrl string, apiKey string) {
 	
 	cfg := &sw.Configuration{
 		BasePath:     baseUrl, // todo: host should be used in combination with basePath (which should be /api) but we haven't gotten it to work properly yet.

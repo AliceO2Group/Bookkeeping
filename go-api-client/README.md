@@ -1,41 +1,27 @@
 # Bookkeeping GO API client V0.0.1
 
-## Manual setup
-### Fedora
-Install dependencies and build the C++ client.
-In the root directory of the client:
-```console
-dnf install cpprest-devel boost-devel openssl-devel 
-mkdir build; cd build
-cmake -DCPPREST_ROOT=/usr/include/cpprest ..
+## Go dependencies
+```go
+go get golang.org/x/oauth2
 ```
 
-### Centos 7
-Install and build cpprestdk:
-```console
-git clone git@github.com:microsoft/cpprestsdk.git
-cd cpprestsdk
-git submodule update --init
-mkdir build; cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=~/cpprestsdk_install
-```
-
-Cmake and make the C++ client.
-In the root directory of the client:
-```console
-cmake . -DCPPREST_LIB=~/cpprestsdk_install -DCPPREST_ROOT=~/cpprestsdk_install
-make
-```
-Alternatively, you can speed up the build by adding the amount of cores it may run on:
-```console
-make -j $(expr $(nproc) - 1)
-```
+# API endpoints
+Class | Method  | Description
+------------ | ------------- | ------------- | -------------
+*BookkeepingApi.go* | **initializeApi**  | **Initializes the Go client with Url and Token.**  
+*BookkeepingApi.go* | **createRun** | Creates a new run
+*BookkeepingApi.go* | **updateRun** | Updates an existing run
+*BookkeepingApi.go* | **createFlp** | Creates a new flp
+*BookkeepingApi.go* | **updateFlp** | Updates an existing flp
+*BookkeepingApi.go* | **createLog** | Creates a new log
+*BookkeepingApi.go* | **getLogs** | Retrieve last 100 logs
+*BookkeepingApi.go* | **getRuns** | Retrieve last 100 runs
 
 
 # Usage
 This library serves as a GO API client to the O2 bookkeeping system. 
-API endpoints are documented in the directory -> Bookkeeping -> go-api-client -> src -> 
-BookkeepingAPI.go 
+API endpoints are documented in the directory ```go-api-client -> src -> 
+BookkeepingApi.go```
 There's also an example of the usage in `Example.go`
 
 ### API token
@@ -51,25 +37,8 @@ export BOOKKEEPING_API_TOKEN=jnk5vh43785ycj4gdvlvm84fg...
 Note: don't include the "Bearer " part of the token, it's added automatically.
 
 # Generate API client
-Generate the API client based on the OpenApi file in bookkeeping
-For generating the sourcecode we use an [openapi-generator](https://github.com/OpenAPITools/openapi-generator).
+Generate the API client based on the OpenApi file in Bookkeeping, which can be found under ```spec -> openapi-source.yaml```.
+For generating the Go source code, we use this online tool: https://editor.swagger.io/.
+Simply paste the editted OpenApi file in the tool, and generate the Go client. The source code will be downloaded automatically, and can be replaced with the source code in the Bookkeeping project.
 
-To use the stripped down version of the generator exectue the following command in the root directory of the api client:
-
-##### Mac/Linux:
-```console
-wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.0.0-beta2/openapi-generator-cli-5.0.0-beta2.jar -O openapi-generator-cli.jar
-```
-
-##### Windows:
-For Windows users, you will need to install wget or you can use Invoke-WebRequest in PowerShell (3.0+), e.g.
-
-```powershell
-Invoke-WebRequest -OutFile openapi-generator-cli.jar https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.0.0-beta2/openapi-generator-cli-5.0.0-beta2.jar
-```
-
-#### Usage
-Once the jar is downloaded, generate the api client with the following command. Please check that the paths are valid before doing so.
-```console
-java -jar openapi-generator-cli.jar generate -i openapi-source.yaml -g cpp-restsdk -o src/cpprest-client
-```
+Generating source code with the [openapi-generator](https://github.com/OpenAPITools/openapi-generator) CLI tool (as is done with the cpp-api-client), has proven to be insufficient for generating the Go-client. Perhaps this will be fixed somewhere in the future. Added this line as a friendly reminder.
