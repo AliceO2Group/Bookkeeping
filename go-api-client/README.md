@@ -27,14 +27,6 @@ There's also an example of the usage in `Example.go`
 ### API token
 API token is loaded into the Bookkeeping request upon page load, and can be extracted by looking with the chrome inspector -> network -> reload page and fetch token from request. TODO: create fetchToken method.
 
-### Example code
-If your api is at `http://localhost:4000/api`:
-```console
-export BOOKKEEPING_URL=http://localhost:4000/api
-export BOOKKEEPING_API_TOKEN=jnk5vh43785ycj4gdvlvm84fg...
-./bookkeeping-api-cpp-example 1  # argument is run number to add
-```
-Note: don't include the "Bearer " part of the token, it's added automatically.
 
 # Generate API client
 Generate the API client based on the OpenApi file in Bookkeeping, which can be found under ```spec -> openapi-source.yaml```.
