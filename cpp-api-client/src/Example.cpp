@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
     // todo: add attachments to request
     std::cout << "Creating log" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    api->createLog("Porsche 911..", "LoggyTitle", {1, 5, 6}, 1);
+    api->createLog("Porsche 911..", "LoggyTitle", {runNumber}, -1);
 
     // Get runs
     std::cout << "Getting runs" << std::endl;
