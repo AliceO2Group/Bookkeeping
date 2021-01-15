@@ -7,7 +7,7 @@ go get golang.org/x/oauth2
 
 # API endpoints
 Class | Method  | Description
------------- | ------------- | ------------- | -------------
+------------  | ------------- | -------------
 *BookkeepingApi.go* | **initializeApi**  | **Initializes the Go client with Url and Token.**  
 *BookkeepingApi.go* | **createRun** | Creates a new run
 *BookkeepingApi.go* | **updateRun** | Updates an existing run

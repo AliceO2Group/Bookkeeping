@@ -130,16 +130,26 @@ func UpdateFlp(flpId int64, name string, nSubtimeframes int64, nEquipmentBytes i
      */
 // todo: keep runNumbers as string? or convert to css (comma separated string) in function body?
 func CreateLog(text string, title string, runNumbers string, parentLogId int64){
-	
-	obj := sw.CreateLog{
-		Text : text,
-		Title : title,
-		RunNumbers : runNumbers,
-		ParentLogId : parentLogId, 
-	}
 
-	arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
-	fmt.Println(arrayResponse, response, err)
+	// todo: remove if-statement with optional parameter-like construct.
+	if(parentLogId == -1){
+		obj := sw.CreateLog{
+			Text : text,
+			Title : title,
+			RunNumbers : runNumbers,
+		}
+		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
+		fmt.Println(arrayResponse, response, err)
+	}else{
+		obj := sw.CreateLog{
+			Text : text,
+			Title : title,
+			RunNumbers : runNumbers,
+			ParentLogId : parentLogId,
+		}
+		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
+		fmt.Println(arrayResponse, response, err)
+	}
 }
 /**
      * Get all logs
