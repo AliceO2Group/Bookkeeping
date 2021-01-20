@@ -23,9 +23,9 @@ namespace model {
 
 FilterLogsCreatedOptions::FilterLogsCreatedOptions()
 {
-    m_From = 0;
+    m_From = 0L;
     m_FromIsSet = false;
-    m_To = 0;
+    m_To = 0L;
     m_ToIsSet = false;
 }
 
@@ -64,7 +64,7 @@ bool FilterLogsCreatedOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("from"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_from;
+            int64_t refVal_from;
             ok &= ModelBase::fromJson(fieldValue, refVal_from);
             setFrom(refVal_from);
         }
@@ -74,7 +74,7 @@ bool FilterLogsCreatedOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("to"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_to;
+            int64_t refVal_to;
             ok &= ModelBase::fromJson(fieldValue, refVal_to);
             setTo(refVal_to);
         }
@@ -110,25 +110,25 @@ bool FilterLogsCreatedOptions::fromMultiPart(std::shared_ptr<MultipartFormData> 
 
     if(multipart->hasContent(utility::conversions::to_string_t("from")))
     {
-        int32_t refVal_from;
+        int64_t refVal_from;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("from")), refVal_from );
         setFrom(refVal_from);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("to")))
     {
-        int32_t refVal_to;
+        int64_t refVal_to;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("to")), refVal_to );
         setTo(refVal_to);
     }
     return ok;
 }
 
-int32_t FilterLogsCreatedOptions::getFrom() const
+int64_t FilterLogsCreatedOptions::getFrom() const
 {
     return m_From;
 }
 
-void FilterLogsCreatedOptions::setFrom(int32_t value)
+void FilterLogsCreatedOptions::setFrom(int64_t value)
 {
     m_From = value;
     m_FromIsSet = true;
@@ -143,12 +143,12 @@ void FilterLogsCreatedOptions::unsetFrom()
 {
     m_FromIsSet = false;
 }
-int32_t FilterLogsCreatedOptions::getTo() const
+int64_t FilterLogsCreatedOptions::getTo() const
 {
     return m_To;
 }
 
-void FilterLogsCreatedOptions::setTo(int32_t value)
+void FilterLogsCreatedOptions::setTo(int64_t value)
 {
     m_To = value;
     m_ToIsSet = true;

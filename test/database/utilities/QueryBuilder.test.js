@@ -41,7 +41,7 @@ module.exports = () => {
 
                 const result = await LogRepository.findAll(queryBuilder);
                 expect(result).to.not.be.null;
-                expect(result).to.have.lengthOf(2);
+                expect(result).to.have.lengthOf(116);
                 expect(result[0].id).to.equal(4);
                 expect(result[1].id).to.equal(5);
             });

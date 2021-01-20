@@ -64,17 +64,17 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getRunNumber() const;
+    int64_t getRunNumber() const;
     bool runNumberIsSet() const;
     void unsetRunNumber();
 
-    void setRunNumber(int32_t value);
+    void setRunNumber(int64_t value);
 
 
 protected:
     int32_t m_Id;
     bool m_IdIsSet;
-    int32_t m_RunNumber;
+    int64_t m_RunNumber;
     bool m_RunNumberIsSet;
 };
 

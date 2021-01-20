@@ -85,21 +85,43 @@ module.exports = () => {
         }
     });
 
-    it('can set how many flps are available per page', async () => {
-        // Expect the amount selector to currently be set to 10 pages
-        const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
+    it('can switch to infinite mode in amountSelector', async () => {
+        const amountSelectorButton = await page.$('#amountSelector button');
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropdown-menu`);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
+        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        await page.evaluate(() => {
+            window.scrollBy(0, window.innerHeight);
+        });
+        await page.waitForTimeout(400);
+        const tableRows = await page.$$('table tr');
+
+        expect(tableRows.length > 20).to.be.true;
+    });
+
+    it('can set how many flps are available per page', async () => {
+        // Expect the amount selector to currently be set to Infinite (after the previous test)
+        const amountSelectorId = '#amountSelector';
+        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible flps to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropdown-menu .menu-item`);
+        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
@@ -113,13 +135,13 @@ module.exports = () => {
         const pageSelector = await page.$(pageSelectorId);
         expect(Boolean(pageSelector)).to.be.true;
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        expect(pageSelectorButtons.length).to.equal(2);
+        expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
@@ -185,15 +207,17 @@ module.exports = () => {
         await page.waitForTimeout(100);
     });
 
-    it('can navigate to a flp detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-
-        // We expect the entry page to have the same id as the id from the flp overview
-        await pressElement(page, `#${firstRowId}`);
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=${parsedFirstRowId}`)).to.be.true;
-    });
+    /*
+     * It('can navigate to a flp detail page', async () => {
+     *  table = await page.$$('tr');
+     *  firstRowId = await getFirstRow(table, page);
+     *  const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+     *
+     *  // We expect the entry page to have the same id as the id from the flp overview
+     *  await pressElement(page, `#${firstRowId}`);
+     *  await page.waitForTimeout(100);
+     *  const redirectedUrl = await page.url();
+     *  expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=${parsedFirstRowId}`)).to.be.true;
+     * });
+     */
 };

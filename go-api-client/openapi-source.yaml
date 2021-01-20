@@ -1,0 +1,1657 @@
+openapi: 3.0.0
+info:
+  title: ALICE Bookkeeping
+  version: 0.0.0
+  license:
+    name: GNU General Public License v3.0
+    url: 'http://alice-o2.web.cern.ch/license'
+servers:
+  - url: /api
+paths:
+  /:
+    get:
+      operationId: getServerInformation
+      summary: Get server information
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiInformation'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /attachments:
+    post:
+      operationId: createAttachment
+      summary: Create a new attachment on a log
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAttachments'
+      responses:
+        '201':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - attachment
+  '/attachments/{attachmentId}':
+    parameters:
+      - $ref: '#/components/parameters/AttachmentId'
+    get:
+      operationId: getAttachment
+      summary: Get one specific attachment
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - attachment
+  /flps:
+    get:
+      operationId: listFlps
+      summary: List all flps
+      # parameters:
+        # - $ref: '#/components/parameters/Pagination'
+        # - $ref: '#/components/parameters/FlpSorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfFlps'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+    post:
+      operationId: createFlp
+      summary: Adds a new flp
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFlp'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+  '/flps/{flpId}':
+    parameters:
+      - $ref: '#/components/parameters/FlpId'
+    get:
+      operationId: getFlpById
+      summary: Gets a flp by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+    patch:
+      operationId: updateFlp
+      summary: Update an existing flp
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateFlp'
+      responses:
+        '200':
+          $ref: '#/components/responses/Flp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - flp
+  /logs:
+    get:
+      operationId: listLogs
+      summary: List all logs
+      # parameters:
+        # - $ref: '#/components/parameters/Pagination'
+        # - $ref: '#/components/parameters/FilterLogs'
+        # - $ref: '#/components/parameters/LogSorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+    post:
+      operationId: createLog
+      summary: Adds a new log
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLog'
+      responses:
+        '201':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  '/logs/{logId}':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: getLogById
+      summary: Gets a log by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  '/logs/{logId}/attachments':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: listLogAttachments
+      summary: Get all attachments associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfAttachments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  '/logs/{logId}/attachments/{attachmentId}':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+      - $ref: '#/components/parameters/AttachmentId'
+    get:
+      operationId: getLogAttachment
+      summary: Get one specific attachment associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/Attachment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  '/logs/{logId}/tags':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: listTagsByLogId
+      summary: Lists all tags associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  '/logs/{logId}/tree':
+    parameters:
+      - $ref: '#/components/parameters/LogId'
+    get:
+      operationId: getLogTree
+      summary: Get the Log tree for a given Log
+      responses:
+        '200':
+          $ref: '#/components/responses/LogTree'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - log
+  /runs:
+    get:
+      operationId: listRuns
+      summary: List all runs
+      # parameters:
+        # - $ref: '#/components/parameters/Pagination'
+        # - $ref: '#/components/parameters/RunSorting'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfRuns'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+    post:
+      operationId: createRun
+      summary: Creates a run
+      requestBody:
+        $ref: '#/components/requestBodies/CreateRun'
+      responses:
+        '201':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+  '/runs/{runId}':
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      operationId: getRunById
+      summary: Gets a run by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+    patch:
+      operationId: endRun
+      summary: Updates certain fields of a run
+      requestBody:
+        $ref: '#/components/requestBodies/EndRun'
+      responses:
+        '201':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+  /status:
+    get:
+      operationId: getDeployInformation
+      summary: Get deploy information
+      responses:
+        '200':
+          description: Deploy information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployInformation'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /subsystems:
+    get:
+      operationId: listSubsystems
+      summary: List all subsystems
+      # parameters:
+        # - $ref: '#/components/parameters/Pagination'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfSubsystems'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - subsystem
+    post:
+      operationId: createSubsystem
+      summary: Adds a new subsystem
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSubsystem'
+      responses:
+        '201':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - subsystem
+  '/subsystems/{subsystemId}':
+    parameters:
+      - $ref: '#/components/parameters/SubsystemId'
+    get:
+      operationId: getSubsystem
+      summary: Get a subsystem by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - subsystem
+    delete:
+      operationId: deleteSubsystem
+      summary: Deletes a subsystem by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Subsystem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - subsystem
+  /tags:
+    get:
+      operationId: listTags
+      summary: List all tags
+      # parameters:
+        # - $ref: '#/components/parameters/Pagination'
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
+    post:
+      operationId: createTag
+      summary: Adds a new tag
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTag'
+      responses:
+        '201':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
+  '/tags/{tagId}':
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      operationId: getTagById
+      summary: Gets a tag by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
+    delete:
+      operationId: deleteTagById
+      summary: Deletes a tag by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
+  '/tags/{tagId}/logs':
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      operationId: getLogsByTagId
+      summary: Gets all logs with this tag id
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
+components:
+  parameters:
+    AttachmentId:
+      name: attachmentId
+      description: The id of the attached to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    FilterLogs:
+      name: filter
+      description: Specifies the filter requirements.
+      in: query
+      schema:
+        $ref: '#/components/schemas/FilterLogsOptions'
+      style: deepObject
+    FlpId:
+      name: flpId
+      description: The id of the flp to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    FlpSorting:
+      in: query
+      name: sort
+      description: Specifies the flp sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/FlpSortOptions'
+      style: deepObject
+    LogId:
+      name: logId
+      description: The id of the log to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    LogSorting:
+      in: query
+      name: sort
+      description: Specifies the log sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/LogSortOptions'
+      style: deepObject
+    Pagination:
+      name: page
+      description: Specifies the pagination requirements.
+      in: query
+      schema:
+        $ref: '#/components/schemas/PaginationOptions'
+      style: deepObject
+    RunId:
+      name: runId
+      description: The id of the run to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    RunSorting:
+      in: query
+      name: sort
+      description: Specifies the run sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/RunSortOptions'
+      style: deepObject
+    SubsystemId:
+      name: subsystemId
+      description: The id of the subsystem to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    TagId:
+      name: tagId
+      description: The id of the tag to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+  requestBodies:
+    CreateRun:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Run'
+    EndRun:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Run'
+    CreateAttachments:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateAttachments'
+    CreateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFlp'
+    CreateLog:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateLog'
+    CreateSubsystem:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateSubsystem'
+    CreateTag:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTag'
+    UpdateFlp:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFlp'
+  responses:
+    ArrayOfAttachments:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfFlps:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfFlpsResponse'
+    ArrayOfLogs:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfRuns:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfRunsResponse'
+    ArrayOfSubsystems:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfSubsystemsResponse'
+    ArrayOfTags:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfTagsResponse'
+    Attachment:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AttachmentResponse'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Flp:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FlpResponse'
+    Log:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogResponse'
+    LogTree:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogTreeResponse'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Run:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RunResponse'
+    ServiceUnavailable:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Subsystem:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubsystemResponse'
+    Tag:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TagResponse'
+    UnexpectedError:
+      description: Unexpected Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: token
+  schemas:
+    ApiInformation:
+      description: API information
+      type: object
+      properties:
+        name:
+          description: Name of the API
+          type: string
+        version:
+          description: Version of the API
+          type: string
+      required:
+        - name
+        - version
+      additionalProperties: false
+    ArrayOfAttachments:
+      description: A list of attachment objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
+    ArrayOfAttachmentsResponse:
+      description: Response containing multiple attachments.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfFlps:
+      description: A list of Flp objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Flp'
+    ArrayOfFlpsResponse:
+      description: Response containing multiple flps.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfFlps'
+        meta:
+          $ref: '#/components/schemas/ArrayOfFlpsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfFlpsResponseMeta:
+      description: The metadata related to an array of flps response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfLogTrees:
+      description: A list of Log tree objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LogTree'
+    ArrayOfLogs:
+      description: A list of Log objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Log'
+    ArrayOfLogsResponse:
+      description: Response containing multiple logs.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfLogs'
+        meta:
+          $ref: '#/components/schemas/ArrayOfLogsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfLogsResponseMeta:
+      description: The metadata related to an array of logs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    RunNumbers:
+      description: A serialized string of run numbers
+      type: string
+      example: "1,2,3,4,5,6,7,8"
+    ArrayOfRuns:
+      description: A list of Run objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Run'
+    ArrayOfRunsResponse:
+      description: Response containing multiple runs.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfRuns'
+        meta:
+          $ref: '#/components/schemas/ArrayOfRunsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfRunsResponseMeta:
+      description: The metadata related to an array of runs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfSubsystems:
+      description: A list of Subsystem objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Subsystem'
+    ArrayOfSubsystemsResponse:
+      description: Response containing multiple subsystems.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfSubsystems'
+        meta:
+          $ref: '#/components/schemas/ArrayOfSubsystemsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfSubsystemsResponseMeta:
+      description: The metadata related to an array of subsystems response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfTags:
+      description: A list of Tag objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Tag'
+    ArrayOfTagsResponse:
+      description: Response containing multiple tags.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfTags'
+      required:
+        - data
+      additionalProperties: false
+    Attachment:
+      description: Describes metadata of an attachment.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        encoding:
+          $ref: '#/components/schemas/FileEncoding'
+        fileName:
+          $ref: '#/components/schemas/FileName'
+        id:
+          $ref: '#/components/schemas/EntityId'
+        logId:
+          $ref: '#/components/schemas/EntityId'
+        mimeType:
+          $ref: '#/components/schemas/FileMimeType'
+        originalName:
+          $ref: '#/components/schemas/FileOriginalName'
+        path:
+          $ref: '#/components/schemas/FilePath'
+        size:
+          $ref: '#/components/schemas/FileSize'
+        updatedAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - id
+      additionalProperties: false
+    AttachmentResponse:
+      description: Response containing a single attachment.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Attachment'
+      required:
+        - data
+      additionalProperties: false
+    CommaSeparatedEntityIds:
+      description: CSV style string of EntityIds.
+      type: string
+      pattern: '^([1-9]+\d*,)*[1-9]+\d*$'
+      example: '1,2,3'
+    CreateAttachments:
+      description: Describes an attachment
+      type: object
+      properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+      additionalProperties: false
+    CreateFlp:
+      description: Describes an flp
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/FlpName'
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+      required:
+        - name
+        - hostname
+      additionalProperties: false
+    CreateLog:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        text:
+          $ref: '#/components/schemas/LogText'
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        runNumbers:
+          $ref: '#/components/schemas/RunNumbers'
+      required:
+        - text
+        - title
+      additionalProperties: false
+    CreateSubsystem:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        text:
+          description: The label value of the subsystem.
+          type: string
+      required:
+        - text
+      additionalProperties: false
+    CreateTag:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        text:
+          description: The label value of the tag.
+          type: string
+      required:
+        - text
+      additionalProperties: false
+    DeployInformation:
+      description: Deploy information
+      type: object
+      properties:
+        age:
+          description: The number of seconds that the server is online.
+          type: number
+        start:
+          description: The unix timestamp of the moment that the the server went online.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - age
+        - start
+      additionalProperties: false
+    Entity:
+      description: Base entity.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - id
+    EntityId:
+      description: The unique identifier of this entity.
+      type: integer
+      format: int64
+      minimum: 1
+    Error:
+      description: An Error object.
+      type: object
+      properties:
+        detail:
+          description: >-
+            A human-readable explanation specific to this occurrence of the
+            problem.
+          type: string
+        source:
+          $ref: '#/components/schemas/ErrorSource'
+        status:
+          description: The HTTP status code applicable to this problem.
+          type: string
+        title:
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+      required:
+        - status
+        - title
+      additionalProperties: false
+    ErrorSource:
+      description: An object containing references to the source of the error.
+      type: object
+      properties:
+        pointer:
+          description: A pointer to the associated entity in the request document.
+          type: string
+      additionalProperties: false
+    Errors:
+      description: A list of Error objects.
+      type: object
+      properties:
+        errors:
+          description: A list of Error objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+          minItems: 1
+      required:
+        - errors
+      additionalProperties: false
+    FileEncoding:
+      description: Encoding used on the file.
+      type: string
+    FileMimeType:
+      description: Mime-type of a file.
+      type: string
+    FileName:
+      description: Name of a file.
+      type: string
+    FileOriginalName:
+      description: Original name of a file.
+      type: string
+    FilePath:
+      description: Path of where the file is stored.
+      type: string
+    FileSize:
+      description: Size of a file.
+      type: integer
+      format: int64
+    FilterLogsCreatedOptions:
+      description: Specifies the creation time related filter requirements for a request.
+      type: object
+      properties:
+        from:
+          description: The earliest allowed unix timestamp for the fetched data.
+          type: integer
+          format: int64
+          example: 853113599
+        to:
+          description: The latest allowed unix timestamp for the fetched data.
+          type: integer
+          format: int64
+          example: 853113599
+      additionalProperties: false
+    FilterLogsOptions:
+      description: Specifies the log related filter requirements for a request.
+      type: object
+      properties:
+        author:
+          description: Name of the author.
+          type: string
+          example: John Doe
+        created:
+          $ref: '#/components/schemas/FilterLogsCreatedOptions'
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        parentLog:
+          $ref: '#/components/schemas/EntityId'
+        rootLog:
+          $ref: '#/components/schemas/EntityId'
+        tag:
+          $ref: '#/components/schemas/FilterLogsTagOptions'
+        title:
+          $ref: '#/components/schemas/LogTitle'
+      additionalProperties: false
+    FilterLogsTagOptions:
+      description: Specifies the tag related filter requirements for a request.
+      type: object
+      properties:
+        operation:
+          description: The operation indicating the relation between the data.
+          type: string
+          enum:
+            - and
+            - or
+        values:
+          $ref: '#/components/schemas/CommaSeparatedEntityIds'
+      required:
+        - operation
+        - values
+      additionalProperties: false
+    Flp:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        hostname:
+          $ref: '#/components/schemas/FlpHostname'
+        id:
+          $ref: '#/components/schemas/EntityId'
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        name:
+          $ref: '#/components/schemas/FlpName'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - bytesEquipmentReadOut
+        - bytesFairMQReadOut
+        - bytesProcessed
+        - bytesRecordingReadOut
+        - hostname
+        - id
+        - nTimeframes
+        - name
+      additionalProperties: false
+    FlpBytesEquipmentReadOut:
+      description: >-
+        Total data volume out from the readout 'equipment' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesFairMQReadOut:
+      description: >-
+        Total data volume out from the readout 'fmq' component in bytes. Can
+        reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpBytesProcessed:
+      description: Total data volume read out in bytes.
+      type: integer
+      format: int64
+    FlpBytesRecordingReadOut:
+      description: >-
+        Total data volume out from the readout 'recording' component in bytes.
+        Can reach PetaBytes. Updated regularly.
+      type: integer
+      format: int64
+    FlpHostname:
+      description: FLP hostname.
+      type: string
+    FlpName:
+      description: FLP name.
+      type: string
+    FlpResponse:
+      description: Response containing a single flp.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Flp'
+      required:
+        - data
+      additionalProperties: false
+    FlpSortOptions:
+      description: Specifies the sorting requirements of a flp request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    FlpTimeframes:
+      description: Number of subtimeframes processed in this FLP. Updated regularly.
+      type: integer
+      format: int64
+    Log:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+        author:
+          $ref: '#/components/schemas/User'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        replies:
+          $ref: '#/components/schemas/LogReplies'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            description: Minified Run object.
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              runNumber:
+                $ref: '#/components/schemas/RunNumber'
+            required:
+              - id
+              - runNumber
+            additionalProperties: false
+        subsystems:
+          $ref: '#/components/schemas/ArrayOfSubsystems'
+        subtype:
+          $ref: '#/components/schemas/LogSubtype'
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
+        text:
+          $ref: '#/components/schemas/LogText'
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - author
+        - id
+        - origin
+        - parentLogId
+        - rootLogId
+        - subtype
+        - text
+        - title
+      additionalProperties: false
+    LogOrigin:
+      description: Type of creator.
+      type: string
+      enum:
+        - human
+        - process
+    LogReplies:
+      description: The amount of children of a root log.
+      type: integer
+      format: int64
+    LogResponse:
+      description: Response containing a single log.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Log'
+      required:
+        - data
+      additionalProperties: false
+    LogSortOptions:
+      description: Specifies the sorting requirements of a log request.
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/SortOrder'
+        createdAt:
+          $ref: '#/components/schemas/SortOrder'
+        id:
+          $ref: '#/components/schemas/SortOrder'
+        tags:
+          $ref: '#/components/schemas/SortOrder'
+        title:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    LogSubtype:
+      description: The subtype of a Log.
+      type: string
+      enum:
+        - run
+        - subsystem
+        - announcement
+        - intervention
+        - comment
+    LogText:
+      description: Body of the log.
+      type: string
+      minLength: 3
+    LogTitle:
+      description: Title of the log.
+      type: string
+      minLength: 3
+      maxLength: 140
+    LogTree:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        attachments:
+          $ref: '#/components/schemas/ArrayOfAttachments'
+        author:
+          $ref: '#/components/schemas/User'
+        children:
+          $ref: '#/components/schemas/ArrayOfLogTrees'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        origin:
+          $ref: '#/components/schemas/LogOrigin'
+        parentLogId:
+          $ref: '#/components/schemas/EntityId'
+        replies:
+          $ref: '#/components/schemas/LogReplies'
+        rootLogId:
+          $ref: '#/components/schemas/EntityId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            description: Minified Run object.
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              runNumber:
+                $ref: '#/components/schemas/RunNumber'
+            required:
+              - id
+              - runNumber
+            additionalProperties: false
+        subsystems:
+          $ref: '#/components/schemas/ArrayOfSubsystems'
+        subtype:
+          $ref: '#/components/schemas/LogSubtype'
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
+        text:
+          $ref: '#/components/schemas/LogText'
+        title:
+          $ref: '#/components/schemas/LogTitle'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - author
+        - children
+        - id
+        - origin
+        - parentLogId
+        - rootLogId
+        - subtype
+        - text
+        - title
+      additionalProperties: false
+    LogTreeResponse:
+      description: Response containing a single log tree.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LogTree'
+      required:
+        - data
+      additionalProperties: false
+    PaginationLimit:
+      description: The numbers of items to return.
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 100
+    PaginationMeta:
+      description: The metadata related to pagination.
+      type: object
+      properties:
+        pageCount:
+          description: The total number of pages which contain data.
+          type: integer
+          format: int64
+        totalCount:
+          description: The total number of elements in the collection
+          type: integer
+          format: int64
+      required:
+        - pageCount
+        - totalCount
+      additionalProperties: false
+    PaginationOffset:
+      description: The number of items to skip before starting to collect the result set.
+      type: integer
+      format: int64
+      default: 0
+    PaginationOptions:
+      description: Specifies the pagination requirements of a request.
+      type: object
+      properties:
+        limit:
+          $ref: '#/components/schemas/PaginationLimit'
+        offset:
+          $ref: '#/components/schemas/PaginationOffset'
+      additionalProperties: false
+    Run:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        activityId:
+          $ref: '#/components/schemas/RunActivityId'
+        bytesReadOut:
+          $ref: '#/components/schemas/RunBytesReadOut'
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        nDetectors:
+          $ref: '#/components/schemas/RunDetectors'
+        nEpns:
+          $ref: '#/components/schemas/RunEpns'
+        nFlps:
+          $ref: '#/components/schemas/RunFlps'
+        nSubtimeframes:
+          $ref: '#/components/schemas/RunSubtimeframes'
+        runNumber:
+          $ref: '#/components/schemas/RunNumber'
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+        runType:
+          $ref: '#/components/schemas/RunType'
+        timeO2End:
+          $ref: '#/components/schemas/RunO2End'
+        timeO2Start:
+          $ref: '#/components/schemas/RunO2Start'
+        timeTrgEnd:
+          $ref: '#/components/schemas/RunTrgEnd'
+        timeTrgStart:
+          $ref: '#/components/schemas/RunTrgStart'
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      additionalProperties: false
+    RunActivityId:
+      description: The unique identifier of this entity.
+      type: string
+    RunBytesReadOut:
+      description: Total data volume read out from the detectors by the O2 system in bytes.
+      type: integer
+      format: int64
+    RunDetectors:
+      description: The amount of detectors in a single run.
+      type: integer
+      format: int64
+    RunEpns:
+      description: The amount of Epns nodes in a single run.
+      type: integer
+      format: int64
+    RunFlps:
+      description: The amount of Flps nodes in a single run.
+      type: integer
+      format: int64
+    RunNumber:
+      description: The unique identifier of this entity.
+      type: integer
+      format: int64
+    RunO2End:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+      example: 853113599
+    RunO2Start:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+      example: 853113599
+    RunOrigin:
+      description: Type of creator.
+      type: string
+      enum:
+        - process
+    RunQuality:
+      description: Specifies the type of run.
+      type: string
+      enum:
+        - good
+        - bad
+        - unknown
+    RunResponse:
+      description: Response containing a single run.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Run'
+      required:
+        - data
+      additionalProperties: false
+    RunSortOptions:
+      description: Specifies the sorting requirements of a run request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    RunSubtimeframes:
+      description: Total number of subtimeframes processed by the O2 system.
+      type: integer
+      format: int64
+    RunTrgEnd:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+      example: 853113599
+    RunTrgStart:
+      description: Unix timestamp when this entity was created.
+      type: integer
+      format: int64
+      example: 853113599
+    RunType:
+      description: Specifies the type of run.
+      type: string
+      enum:
+        - "physics"
+        - "cosmics"
+        - "technical"
+    SortOrder:
+      description: Specifies the sorting direction of a sorting option.
+      type: string
+      enum:
+        - asc
+        - desc
+    Subsystem:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        name:
+          description: The label value of the subsystem.
+          type: string
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - id
+        - name
+      additionalProperties: false
+    SubsystemResponse:
+      description: Response containing a single subsystem.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Subsystem'
+      required:
+        - data
+      additionalProperties: false
+    Tag:
+      description: A label attached to something for the purpose of identification.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          format: int64
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        text:
+          description: The label value of the tag.
+          type: string
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          format: int64
+          example: 853113599
+      required:
+        - id
+        - text
+      additionalProperties: false
+    TagResponse:
+      description: Response containing a single tag.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Tag'
+      required:
+        - data
+      additionalProperties: false
+    UpdateFlp:
+      description: Describes an update to an flp
+      type: object
+      properties:
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesEquipmentReadOut:
+          $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        bytesFairMQReadOut:
+          $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+      additionalProperties: false
+    User:
+      description: Describes an intervention or an event that happened.
+      type: object
+      properties:
+        externalId:
+          description: The unique CERN identifier of this user.
+          type: integer
+          format: int64
+        id:
+          description: The unique identifier of this entity.
+          type: integer
+          format: int64
+        name:
+          type: string
+          description: Name of the user.
+      required:
+        - externalId
+        - id
+        - name
+      additionalProperties: false
+security:
+  - ApiKeyAuth: []

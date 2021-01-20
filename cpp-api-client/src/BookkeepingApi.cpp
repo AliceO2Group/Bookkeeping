@@ -10,7 +10,6 @@
 #include "cpprest-client/api/RunApi.h"
 #include "cpprest-client/model/RunType.h"
 
-
 namespace bookkeeping
 {
 
@@ -180,12 +179,6 @@ void BookkeepingApi::flpUpdateCounters(int64_t flpId, std::string flpName, int64
     flpApi.updateFlp(flpId, flp).get();
 }
 
-std::vector<std::shared_ptr<org::openapitools::client::model::Run>> BookkeepingApi::getRuns()
-{
-    return org::openapitools::client::api::RunApi(apiClient).listRuns().get()->getData();
-}
-
-
 void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers, std::int64_t parentLogId)
 {
     org::openapitools::client::api::LogApi api(apiClient);
@@ -207,10 +200,17 @@ void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, 
     api.createLog(log).get();
 }
 
+// TODO: Doesn't work properly with 64 bit yet.
+// Changing the way of retrieving the data does seem to be the possible solution, but we haven't figured it out yet.
 std::vector<std::shared_ptr<org::openapitools::client::model::Log>> BookkeepingApi::getLogs()
 {
     return org::openapitools::client::api::LogApi(apiClient).listLogs().get()->getData();
 }
 
-
+// TODO: Doesn't work properly with 64 bit yet.
+// Changing the way of retrieving the data does seem to be the possible solution, but we haven't figured it out yet.
+std::vector<std::shared_ptr<org::openapitools::client::model::Run>> BookkeepingApi::getRuns()
+{
+    return org::openapitools::client::api::RunApi(apiClient).listRuns().get()->getData();
+}
 }
