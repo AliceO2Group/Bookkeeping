@@ -113,13 +113,14 @@ module.exports.validateElement = async (page, selector) => {
  * database/storage/screenshot.png
  * @param {*} page Puppeteer page object.
  * @param {String} name Name of the screenshot taken. Useful when taking multiple in a row.
+ * @returns {*} None
  */
-module.exports.takeScreenshot = async (page, name = "screenshot") => {
+module.exports.takeScreenshot = async (page, name = 'screenshot') => {
     await page.setViewport({ width: 1920, height: 1080 });
     await page.screenshot({
-     path: `/var/storage/${name}.png`,
-     type: "png",
-     fullPage: true
+        path: `/var/storage/${name}.png`,
+        type: 'png',
+        fullPage: true,
     });
 };
 
