@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields, takeScreenshot,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -52,6 +52,8 @@ module.exports = () => {
     });
 
     it('can filter by log title', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
@@ -525,7 +527,7 @@ module.exports = () => {
         // Go to the second page of "logs"
         const secondPageButton = await page.$('#page2');
         await secondPageButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(500);
 
         // Navigate to a log detail page
         table = await page.$$('tr');
