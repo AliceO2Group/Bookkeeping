@@ -96,6 +96,8 @@ module.exports = () => {
     });
 
     it('can filter by log author', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
@@ -135,6 +137,8 @@ module.exports = () => {
 
     it('can filter by creation date', async () => {
         await page.waitForTimeout(200);
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
 
         // Insert a minimum date into the filter
         await page.focus('#createdFilterFrom');
@@ -179,6 +183,8 @@ module.exports = () => {
 
     it('can filter by tags', async () => {
         await page.waitForTimeout(200);
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
 
         // Select the first available filter and wait for the changes to be processed
         const firstCheckboxId = 'tagCheckbox1';
@@ -228,6 +234,9 @@ module.exports = () => {
     });
 
     it('can show and hide extra tags if available', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
 
@@ -256,6 +265,9 @@ module.exports = () => {
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#title');
         await page.waitForTimeout(100);
@@ -313,6 +325,9 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
@@ -348,6 +363,9 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         const amountSelectorButton = await page.$('#amountSelector button');
 
         // Expect the dropdown options to be visible when it is selected
@@ -373,6 +391,9 @@ module.exports = () => {
     });
 
     it('can set how many logs are available per page', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to Infinite (after the previous test)
         const amountSelectorId = '#amountSelector';
@@ -397,6 +418,9 @@ module.exports = () => {
     });
 
     it('can switch between pages of logs', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         // Expect the page selector to be available with two pages
         await page.waitForTimeout(300);
         const pageSelectorId = '#amountSelector';
@@ -434,6 +458,9 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
+        goToPage(page, 'log-overview');
+        await page.waitForTimeout(500);
+
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
