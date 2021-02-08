@@ -16,7 +16,6 @@ const RunsSuite = require('./runs');
 const SubsystemsSuite = require('./subsystems');
 const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
-const HomeSuite = require('./home');
 
 module.exports = () => {
     describe('Logs', LogsSuite);
@@ -24,5 +23,4 @@ module.exports = () => {
     describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);
     describe('Flps', FlpsSuite);
-    describe('Home', HomeSuite);
 };
