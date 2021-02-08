@@ -23,9 +23,9 @@ namespace model {
 
 PaginationMeta::PaginationMeta()
 {
-    m_PageCount = 0;
+    m_PageCount = 0L;
     m_PageCountIsSet = false;
-    m_TotalCount = 0;
+    m_TotalCount = 0L;
     m_TotalCountIsSet = false;
 }
 
@@ -64,7 +64,7 @@ bool PaginationMeta::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("pageCount"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_pageCount;
+            int64_t refVal_pageCount;
             ok &= ModelBase::fromJson(fieldValue, refVal_pageCount);
             setPageCount(refVal_pageCount);
         }
@@ -74,7 +74,7 @@ bool PaginationMeta::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("totalCount"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_totalCount;
+            int64_t refVal_totalCount;
             ok &= ModelBase::fromJson(fieldValue, refVal_totalCount);
             setTotalCount(refVal_totalCount);
         }
@@ -110,25 +110,25 @@ bool PaginationMeta::fromMultiPart(std::shared_ptr<MultipartFormData> multipart,
 
     if(multipart->hasContent(utility::conversions::to_string_t("pageCount")))
     {
-        int32_t refVal_pageCount;
+        int64_t refVal_pageCount;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("pageCount")), refVal_pageCount );
         setPageCount(refVal_pageCount);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("totalCount")))
     {
-        int32_t refVal_totalCount;
+        int64_t refVal_totalCount;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("totalCount")), refVal_totalCount );
         setTotalCount(refVal_totalCount);
     }
     return ok;
 }
 
-int32_t PaginationMeta::getPageCount() const
+int64_t PaginationMeta::getPageCount() const
 {
     return m_PageCount;
 }
 
-void PaginationMeta::setPageCount(int32_t value)
+void PaginationMeta::setPageCount(int64_t value)
 {
     m_PageCount = value;
     m_PageCountIsSet = true;
@@ -143,12 +143,12 @@ void PaginationMeta::unsetPageCount()
 {
     m_PageCountIsSet = false;
 }
-int32_t PaginationMeta::getTotalCount() const
+int64_t PaginationMeta::getTotalCount() const
 {
     return m_TotalCount;
 }
 
-void PaginationMeta::setTotalCount(int32_t value)
+void PaginationMeta::setTotalCount(int64_t value)
 {
     m_TotalCount = value;
     m_TotalCountIsSet = true;

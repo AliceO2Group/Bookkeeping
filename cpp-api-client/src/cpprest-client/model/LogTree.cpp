@@ -26,14 +26,14 @@ LogTree::LogTree()
     m_AttachmentsIsSet = false;
     m_AuthorIsSet = false;
     m_ChildrenIsSet = false;
-    m_CreatedAt = 0;
+    m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
     m_Id = 0;
     m_IdIsSet = false;
     m_OriginIsSet = false;
     m_ParentLogId = 0;
     m_ParentLogIdIsSet = false;
-    m_Replies = 0;
+    m_Replies = 0L;
     m_RepliesIsSet = false;
     m_RootLogId = 0;
     m_RootLogIdIsSet = false;
@@ -45,7 +45,7 @@ LogTree::LogTree()
     m_TextIsSet = false;
     m_Title = utility::conversions::to_string_t("");
     m_TitleIsSet = false;
-    m_UpdatedAt = 0;
+    m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
 
@@ -170,7 +170,7 @@ bool LogTree::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("createdAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_createdAt;
+            int64_t refVal_createdAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_createdAt);
             setCreatedAt(refVal_createdAt);
         }
@@ -210,7 +210,7 @@ bool LogTree::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("replies"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_replies;
+            int64_t refVal_replies;
             ok &= ModelBase::fromJson(fieldValue, refVal_replies);
             setReplies(refVal_replies);
         }
@@ -290,7 +290,7 @@ bool LogTree::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_updatedAt;
+            int64_t refVal_updatedAt;
             ok &= ModelBase::fromJson(fieldValue, refVal_updatedAt);
             setUpdatedAt(refVal_updatedAt);
         }
@@ -400,7 +400,7 @@ bool LogTree::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const 
     }
     if(multipart->hasContent(utility::conversions::to_string_t("createdAt")))
     {
-        int32_t refVal_createdAt;
+        int64_t refVal_createdAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("createdAt")), refVal_createdAt );
         setCreatedAt(refVal_createdAt);
     }
@@ -424,7 +424,7 @@ bool LogTree::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const 
     }
     if(multipart->hasContent(utility::conversions::to_string_t("replies")))
     {
-        int32_t refVal_replies;
+        int64_t refVal_replies;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("replies")), refVal_replies );
         setReplies(refVal_replies);
     }
@@ -472,7 +472,7 @@ bool LogTree::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const 
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
-        int32_t refVal_updatedAt;
+        int64_t refVal_updatedAt;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("updatedAt")), refVal_updatedAt );
         setUpdatedAt(refVal_updatedAt);
     }
@@ -539,12 +539,12 @@ void LogTree::unsetChildren()
 {
     m_ChildrenIsSet = false;
 }
-int32_t LogTree::getCreatedAt() const
+int64_t LogTree::getCreatedAt() const
 {
     return m_CreatedAt;
 }
 
-void LogTree::setCreatedAt(int32_t value)
+void LogTree::setCreatedAt(int64_t value)
 {
     m_CreatedAt = value;
     m_CreatedAtIsSet = true;
@@ -619,12 +619,12 @@ void LogTree::unsetParentLogId()
 {
     m_ParentLogIdIsSet = false;
 }
-int32_t LogTree::getReplies() const
+int64_t LogTree::getReplies() const
 {
     return m_Replies;
 }
 
-void LogTree::setReplies(int32_t value)
+void LogTree::setReplies(int64_t value)
 {
     m_Replies = value;
     m_RepliesIsSet = true;
@@ -779,12 +779,12 @@ void LogTree::unsetTitle()
 {
     m_TitleIsSet = false;
 }
-int32_t LogTree::getUpdatedAt() const
+int64_t LogTree::getUpdatedAt() const
 {
     return m_UpdatedAt;
 }
 
-void LogTree::setUpdatedAt(int32_t value)
+void LogTree::setUpdatedAt(int64_t value)
 {
     m_UpdatedAt = value;
     m_UpdatedAtIsSet = true;

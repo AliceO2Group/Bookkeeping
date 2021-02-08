@@ -25,7 +25,7 @@ PaginationOptions::PaginationOptions()
 {
     m_Limit = 0;
     m_LimitIsSet = false;
-    m_Offset = 0;
+    m_Offset = 0L;
     m_OffsetIsSet = false;
 }
 
@@ -74,7 +74,7 @@ bool PaginationOptions::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("offset"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_offset;
+            int64_t refVal_offset;
             ok &= ModelBase::fromJson(fieldValue, refVal_offset);
             setOffset(refVal_offset);
         }
@@ -116,7 +116,7 @@ bool PaginationOptions::fromMultiPart(std::shared_ptr<MultipartFormData> multipa
     }
     if(multipart->hasContent(utility::conversions::to_string_t("offset")))
     {
-        int32_t refVal_offset;
+        int64_t refVal_offset;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("offset")), refVal_offset );
         setOffset(refVal_offset);
     }
@@ -143,12 +143,12 @@ void PaginationOptions::unsetLimit()
 {
     m_LimitIsSet = false;
 }
-int32_t PaginationOptions::getOffset() const
+int64_t PaginationOptions::getOffset() const
 {
     return m_Offset;
 }
 
-void PaginationOptions::setOffset(int32_t value)
+void PaginationOptions::setOffset(int64_t value)
 {
     m_Offset = value;
     m_OffsetIsSet = true;

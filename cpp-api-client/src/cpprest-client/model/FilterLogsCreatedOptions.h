@@ -55,26 +55,26 @@ public:
     /// <summary>
     /// The earliest allowed unix timestamp for the fetched data.
     /// </summary>
-    int32_t getFrom() const;
+    int64_t getFrom() const;
     bool fromIsSet() const;
     void unsetFrom();
 
-    void setFrom(int32_t value);
+    void setFrom(int64_t value);
 
     /// <summary>
     /// The latest allowed unix timestamp for the fetched data.
     /// </summary>
-    int32_t getTo() const;
+    int64_t getTo() const;
     bool toIsSet() const;
     void unsetTo();
 
-    void setTo(int32_t value);
+    void setTo(int64_t value);
 
 
 protected:
-    int32_t m_From;
+    int64_t m_From;
     bool m_FromIsSet;
-    int32_t m_To;
+    int64_t m_To;
     bool m_ToIsSet;
 };
 

@@ -56,11 +56,11 @@ public:
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    int32_t getCreatedAt() const;
+    int64_t getCreatedAt() const;
     bool createdAtIsSet() const;
     void unsetCreatedAt();
 
-    void setCreatedAt(int32_t value);
+    void setCreatedAt(int64_t value);
 
     /// <summary>
     /// Encoding used on the file.
@@ -128,24 +128,24 @@ public:
     /// <summary>
     /// Size of a file.
     /// </summary>
-    int32_t getSize() const;
+    int64_t getSize() const;
     bool sizeIsSet() const;
     void unsetSize();
 
-    void setSize(int32_t value);
+    void setSize(int64_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was created.
     /// </summary>
-    int32_t getUpdatedAt() const;
+    int64_t getUpdatedAt() const;
     bool updatedAtIsSet() const;
     void unsetUpdatedAt();
 
-    void setUpdatedAt(int32_t value);
+    void setUpdatedAt(int64_t value);
 
 
 protected:
-    int32_t m_CreatedAt;
+    int64_t m_CreatedAt;
     bool m_CreatedAtIsSet;
     utility::string_t m_Encoding;
     bool m_EncodingIsSet;
@@ -161,9 +161,9 @@ protected:
     bool m_OriginalNameIsSet;
     utility::string_t m_Path;
     bool m_PathIsSet;
-    int32_t m_Size;
+    int64_t m_Size;
     bool m_SizeIsSet;
-    int32_t m_UpdatedAt;
+    int64_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };
 

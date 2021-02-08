@@ -27,7 +27,7 @@ CreateFlp::CreateFlp()
     m_NameIsSet = false;
     m_Hostname = utility::conversions::to_string_t("");
     m_HostnameIsSet = false;
-    m_RunNumber = 0;
+    m_RunNumber = 0L;
     m_RunNumberIsSet = false;
 }
 
@@ -90,7 +90,7 @@ bool CreateFlp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("runNumber"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_runNumber;
+            int64_t refVal_runNumber;
             ok &= ModelBase::fromJson(fieldValue, refVal_runNumber);
             setRunNumber(refVal_runNumber);
         }
@@ -142,7 +142,7 @@ bool CreateFlp::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, cons
     }
     if(multipart->hasContent(utility::conversions::to_string_t("runNumber")))
     {
-        int32_t refVal_runNumber;
+        int64_t refVal_runNumber;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("runNumber")), refVal_runNumber );
         setRunNumber(refVal_runNumber);
     }
@@ -189,12 +189,12 @@ void CreateFlp::unsetHostname()
 {
     m_HostnameIsSet = false;
 }
-int32_t CreateFlp::getRunNumber() const
+int64_t CreateFlp::getRunNumber() const
 {
     return m_RunNumber;
 }
 
-void CreateFlp::setRunNumber(int32_t value)
+void CreateFlp::setRunNumber(int64_t value)
 {
     m_RunNumber = value;
     m_RunNumberIsSet = true;

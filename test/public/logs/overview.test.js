@@ -12,42 +12,10 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
+} = require('../defaults');
 
 const { expect } = chai;
-
-/**
- * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire log table
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @return {Promise<String>} The ID of the first matching row with data
- */
-async function getFirstRow(table, page) {
-    for await (const child of table) {
-        const id = await page.evaluate((element) => element.id, child);
-        if (id.startsWith('row')) {
-            return id;
-        }
-    }
-}
-
-/**
- * Special method built to gather all currently visible table entities from a specific column into an array
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {String} key The key for the column to gather entities of
- * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
- */
-async function getAllDataFields(page, key) {
-    const allData = await page.$$('td');
-    return await allData.reduce(async (accumulator, data) => {
-        const id = await page.evaluate((element) => element.id, data);
-        if (id.endsWith(`-${key}`)) {
-            const text = await page.evaluate((element) => element.innerText, data);
-            (await accumulator).push(text);
-        }
-        return accumulator;
-    }, []);
-}
 
 module.exports = () => {
     let page;
@@ -95,7 +63,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Insert some text into the filter
-        await page.type('#titleFilterText', 'entry');
+        await page.type('#titleFilterText', 'first');
         await page.waitForTimeout(500);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -377,14 +345,39 @@ module.exports = () => {
         }
     });
 
+    it('can switch to infinite mode in amountSelector', async () => {
+        const amountSelectorButton = await page.$('#amountSelector button');
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
+        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+
+        await page.evaluate(() => {
+            window.scrollBy(0, window.innerHeight);
+        });
+        await page.waitForTimeout(400);
+        const tableRows = await page.$$('table tr');
+
+        expect(tableRows.length > 20).to.be.true;
+    });
+
     it('can set how many logs are available per page', async () => {
         await page.waitForTimeout(500);
-        // Expect the amount selector to currently be set to 10 pages
+        // Expect the amount selector to currently be set to Infinite (after the previous test)
         const amountSelectorId = '#amountSelector';
         await page.waitForTimeout(500);
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.endsWith('10 ')).to.be.true;
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
@@ -410,7 +403,7 @@ module.exports = () => {
         expect(Boolean(pageSelector)).to.be.true;
         await page.waitForTimeout(300);
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        expect(pageSelectorButtons.length).to.equal(2);
+        expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
         const oldFirstRowId = await getFirstRow(table, page);
@@ -424,7 +417,7 @@ module.exports = () => {
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
@@ -506,11 +499,12 @@ module.exports = () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
+        const firstRow = await page.$('tr.clickable');
+        const firstRowId = await firstRow.evaluate((row) => row.id);
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
-        const row = await page.$(`tr#${firstRowId}`);
-        await row.evaluate((row) => row.click());
+        await firstRow.evaluate((row) => row.click());
         await page.waitForTimeout(500);
 
         const redirectedUrl = await page.url();
