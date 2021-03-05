@@ -56,7 +56,6 @@ func CreateRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, ru
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
 	fmt.Println(arrayResponse, response, err)
-	return arrayResponse;
 }
 
 /**
@@ -77,7 +76,7 @@ func UpdateRun(runNumber int64, runQuality sw.RunQuality, timeO2End int64, timeT
 	}
 
 	arrayResponse, response, err := api.RunApi.EndRun(auth, obj, runNumber)
-	return arrayResponse;
+	fmt.Println(arrayResponse, response, err)
 }
 
 /**
@@ -97,7 +96,6 @@ func CreateFlp(name string, hostName string, runNumber int64) {
 
 	arrayResponse, response, err := api.FlpApi.CreateFlp(auth, obj)
 	fmt.Println(arrayResponse, response, err)
-	return arrayResponse
 }
 
 /**
@@ -120,7 +118,6 @@ func UpdateFlp(flpId int64, name string, nSubtimeframes int64, nEquipmentBytes i
 
 	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpId)
 	fmt.Println(arrayResponse, response, err)
-	return arrayResponse;
 }
 
 /**
@@ -152,7 +149,6 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int64) 
 		}
 		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
 		fmt.Println(arrayResponse, response, err)
-		return arrayResponse;
 }
 
 /**
@@ -162,7 +158,6 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int64) 
 func GetLogs() {
 	arrayResponse, response, err := api.LogApi.ListLogs(auth)
 	fmt.Println(arrayResponse, response, err)
-	return arrayResponse;
 }
 
 /**
@@ -172,5 +167,4 @@ func GetLogs() {
 func GetRuns() {
 	arrayResponse, response, err := api.RunApi.ListRuns(auth)
 	fmt.Println(arrayResponse, response, err)
-	return arrayResponse;
 }
