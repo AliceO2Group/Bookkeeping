@@ -1,8 +1,11 @@
 package src
 
-import "context"
-import "fmt"
-import sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
+import (
+	"context"
+	"fmt"
+
+	sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
+)
 
 var api *sw.APIClient
 var auth context.Context
@@ -149,6 +152,7 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int64) 
 		}
 		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
 		fmt.Println(arrayResponse, response, err)
+	}
 }
 
 /**
