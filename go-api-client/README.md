@@ -3,6 +3,7 @@
 ## Go dependencies
 ```go
 go get golang.org/x/oauth2
+go build
 ```
 
 # API endpoints

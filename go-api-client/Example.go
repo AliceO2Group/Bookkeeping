@@ -1,19 +1,21 @@
 package main
 
-import apiClient "./src"
-import sw "./src/go-client-generated"
+import (
+	apiClient "github.com/AliceO2Group/Bookkeeping/go-api-client/src"
+	sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
+)
 
 func main() {
-    // Set base url and api token
-    baseUrl := "http://vm4.jiskefet.io/api"
-    apiToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzQ2NjQwLCJ1c2VybmFtZSI6ImF3ZWdyenluIiwiYWNjZXNzIjoxLCJpYXQiOjE2MTA1NDM0ODYsImV4cCI6MTYxMDYyOTg4NiwiaXNzIjoibzItdWkifQ.8pM1K0HIfpnZop7bJk_rD5GvkfeiWaNNs2S7ZM1tqYg"
+	// Set base url and api token
+	baseUrl := "http://vm4.jiskefet.io/api"
+	apiToken := "<insert jwt token>"
 
 	// Initialize api with manual JWT token + baseurl
 	// TODO: generate correct JWT token instead of manual insertion
 	apiClient.InitializeApi(baseUrl, apiToken)
 
-    // Create a run
-	apiClient.CreateRun("cpp-api", 5, 5, 1, 9000, sw.COSMICS_RunType, 12040213, 12040213)
+	// Create a run
+	apiClient.CreateRun("go-api", 5, 5, 1, 9000, sw.COSMICS_RunType, 12040213, 12040213)
 
 	// Update a run
 	apiClient.UpdateRun(9000, sw.BAD_RunQuality, 12040213, 12040213)
