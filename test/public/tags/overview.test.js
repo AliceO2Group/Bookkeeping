@@ -27,6 +27,11 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
+            width: 700,
+            height: 720,
+            deviceScaleFactor: 1,
+        });
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -62,5 +67,92 @@ module.exports = () => {
         // Expect the page to be the tag creation page at this point
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=tag-create`);
+    });
+
+    it('can navigate to the tag overview page', async () => {
+        // Click on the button to start creating a new tag
+        await goToPage(page, 'tag-overview');
+
+        // Expect the page to be the tag creation page at this point
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=tag-overview`);
+    });
+
+    it('can switch to infinite mode in amountSelector', async () => {
+        const amountSelectorButton = await page.$('#amountSelector button');
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
+        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+
+        await page.evaluate(() => {
+            window.scrollBy(0, window.innerHeight);
+        });
+        await page.waitForTimeout(400);
+        const tableRows = await page.$$('table tr');
+
+        expect(tableRows.length > 20).to.be.true;
+    });
+
+    it('can set how many tags are available per page', async () => {
+        await page.waitForTimeout(500);
+        // Expect the amount selector to currently be set to Infinite (after the previous test)
+        const amountSelectorId = '#amountSelector';
+        await page.waitForTimeout(500);
+        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+
+        // Expect the dropdown options to be visible when it is selected
+        await amountSelectorButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
+        expect(Boolean(amountSelectorDropdown)).to.be.true;
+
+        // Expect the amount of visible tags to reduce when the first option (5) is selected
+        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
+        await menuItem.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        const tableRows = await page.$$('table tr');
+        expect(tableRows.length - 1).to.equal(5);
+    });
+
+    it('dynamically switches between visible pages in the page selector', async () => {
+        // Override the amount of Tags visible per page manually
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.tags.setTagsPerPage(1);
+        });
+        await page.waitForTimeout(100);
+
+        // Expect the page five button to now be visible, but no more than that
+        const pageFiveButton = await page.$('#page5');
+        expect(Boolean(pageFiveButton)).to.be.true;
+        const pageSixButton = await page.$('#page6');
+        expect(Boolean(pageSixButton)).to.be.false;
+
+        // Expect the page one button to have fallen away when clicking on page five button
+        await page.waitForTimeout(500);
+        await page.waitForSelector('#page5');
+        await pressElement(page, '#page5');
+        await page.waitForTimeout(500);
+        const pageOneButton = await page.$('#page1');
+        expect(Boolean(pageOneButton)).to.be.false;
+
+        // Revert changes for next test
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.tags.setTagsPerPage(10);
+        });
     });
 };

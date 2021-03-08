@@ -838,8 +838,19 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/ArrayOfTags'
+        meta:
+          $ref: '#/components/schemas/ArrayOfTagsResponseMeta'
       required:
         - data
+      additionalProperties: false
+    ArrayOfTagsResponseMeta:
+      description: The metadata related to an array of tag response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
       additionalProperties: false
     Attachment:
       description: Describes metadata of an attachment.
