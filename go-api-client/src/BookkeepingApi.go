@@ -31,10 +31,6 @@ func InitializeApi(baseUrl string, apiKey string) {
 	})
 }
 
-func convertTime(change time.Time) int32 {
-	return int32(change.Unix())
-}
-
 /**
  * Starts a run
  *
@@ -49,7 +45,6 @@ func convertTime(change time.Time) int32 {
  */
 func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time) {
 	var runtype sw.RunType = runType
-	// var timeO2Start = time.Unix(int64(timeO2Start), 0)
 
 	obj := sw.Run{
 		ActivityId:   activityId,
@@ -64,8 +59,6 @@ func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, ru
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
 	fmt.Println(arrayResponse, response, err)
-	fmt.Println(timeO2Start)
-	fmt.Println(convertTime(timeO2Start))
 }
 
 /**

@@ -13,6 +13,8 @@ func main() {
 
 	// baseUrl := "http://localhost:4000/api"
 	// apiToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJBbm9ueW1vdXMiLCJhY2Nlc3MiOjAsImlhdCI6MTYxNzE3MTkwMSwiZXhwIjoxNjQ4NzI5NTAxLCJpc3MiOiJvMi11aSJ9.0XXslyLlFCiBuMveJZkEaPEnnwiXK5RcBzmqOJ77S-w"
+	
+	// Create an Unix Timestamp to local time.
 	testTime := time.Unix(time.Now().Unix(), 0)
 
 	// Initialize api with manual JWT token + baseurl
