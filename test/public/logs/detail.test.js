@@ -51,7 +51,7 @@ module.exports = () => {
 
         // Navigate to a log detail view
         await page.goto(`${url}/?page=log-detail&id=${logId}`, { waitUntil: 'networkidle0' });
-        const showAllButton = await page.$('button');
+        const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(1000);
         // We expect the correct associated runs to be shown
