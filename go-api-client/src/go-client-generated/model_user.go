@@ -11,9 +11,9 @@ package swagger
 // Describes an intervention or an event that happened.
 type User struct {
 	// The unique CERN identifier of this user.
-	ExternalId int64 `json:"externalId"`
+	ExternalId int32 `json:"externalId"`
 	// The unique identifier of this entity.
-	Id int64 `json:"id"`
+	Id int32 `json:"id"`
 	// Name of the user.
 	Name string `json:"name"`
 }

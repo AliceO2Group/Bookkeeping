@@ -158,7 +158,7 @@ AttachmentApiService Get one specific attachment
  * @param attachmentId The id of the attached to retrieve
 @return ArrayOfAttachmentsResponse
 */
-func (a *AttachmentApiService) GetAttachment(ctx context.Context, attachmentId int64) (ArrayOfAttachmentsResponse, *http.Response, error) {
+func (a *AttachmentApiService) GetAttachment(ctx context.Context, attachmentId int32) (ArrayOfAttachmentsResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}

@@ -42,7 +42,7 @@ Get one specific attachment
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **attachmentId** | [**int64**](.md)| The id of the attached to retrieve | 
+  **attachmentId** | [**int32**](.md)| The id of the attached to retrieve | 
 
 ### Return type
 

@@ -10,16 +10,16 @@ package swagger
 
 // Describes an intervention or an event that happened.
 type Flp struct {
-	BytesEquipmentReadOut int64 `json:"bytesEquipmentReadOut"`
-	BytesFairMQReadOut int64 `json:"bytesFairMQReadOut"`
-	BytesProcessed int64 `json:"bytesProcessed"`
-	BytesRecordingReadOut int64 `json:"bytesRecordingReadOut"`
+	BytesEquipmentReadOut int32 `json:"bytesEquipmentReadOut"`
+	BytesFairMQReadOut int32 `json:"bytesFairMQReadOut"`
+	BytesProcessed int32 `json:"bytesProcessed"`
+	BytesRecordingReadOut int32 `json:"bytesRecordingReadOut"`
 	// Unix timestamp when this entity was created.
-	CreatedAt int64 `json:"createdAt,omitempty"`
+	CreatedAt int32 `json:"createdAt,omitempty"`
 	Hostname string `json:"hostname"`
-	Id int64 `json:"id"`
-	NTimeframes int64 `json:"nTimeframes"`
+	Id int32 `json:"id"`
+	NTimeframes int32 `json:"nTimeframes"`
 	Name string `json:"name"`
 	// Unix timestamp when this entity was last updated.
-	UpdatedAt int64 `json:"updatedAt,omitempty"`
+	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }
