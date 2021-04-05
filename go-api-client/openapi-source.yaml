@@ -858,7 +858,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         encoding:
           $ref: '#/components/schemas/FileEncoding'
@@ -879,7 +879,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - id
@@ -967,7 +967,7 @@ components:
         start:
           description: The unix timestamp of the moment that the the server went online.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - age
@@ -980,21 +980,21 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - id
     EntityId:
       description: The unique identifier of this entity.
       type: integer
-      format: int64
+      format: int32
       minimum: 1
     Error:
       description: An Error object.
@@ -1056,7 +1056,7 @@ components:
     FileSize:
       description: Size of a file.
       type: integer
-      format: int64
+      format: int32
     FilterLogsCreatedOptions:
       description: Specifies the creation time related filter requirements for a request.
       type: object
@@ -1064,12 +1064,12 @@ components:
         from:
           description: The earliest allowed unix timestamp for the fetched data.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         to:
           description: The latest allowed unix timestamp for the fetched data.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       additionalProperties: false
     FilterLogsOptions:
@@ -1124,7 +1124,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         hostname:
           $ref: '#/components/schemas/FlpHostname'
@@ -1137,7 +1137,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - bytesEquipmentReadOut
@@ -1154,23 +1154,23 @@ components:
         Total data volume out from the readout 'equipment' component in bytes.
         Can reach PetaBytes. Updated regularly.
       type: integer
-      format: int64
+      format: int32
     FlpBytesFairMQReadOut:
       description: >-
         Total data volume out from the readout 'fmq' component in bytes. Can
         reach PetaBytes. Updated regularly.
       type: integer
-      format: int64
+      format: int32
     FlpBytesProcessed:
       description: Total data volume read out in bytes.
       type: integer
-      format: int64
+      format: int32
     FlpBytesRecordingReadOut:
       description: >-
         Total data volume out from the readout 'recording' component in bytes.
         Can reach PetaBytes. Updated regularly.
       type: integer
-      format: int64
+      format: int32
     FlpHostname:
       description: FLP hostname.
       type: string
@@ -1196,7 +1196,7 @@ components:
     FlpTimeframes:
       description: Number of subtimeframes processed in this FLP. Updated regularly.
       type: integer
-      format: int64
+      format: int32
     Log:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1208,7 +1208,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
@@ -1248,7 +1248,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - author
@@ -1269,7 +1269,7 @@ components:
     LogReplies:
       description: The amount of children of a root log.
       type: integer
-      format: int64
+      format: int32
     LogResponse:
       description: Response containing a single log.
       type: object
@@ -1325,7 +1325,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
@@ -1365,7 +1365,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - author
@@ -1400,11 +1400,11 @@ components:
         pageCount:
           description: The total number of pages which contain data.
           type: integer
-          format: int64
+          format: int32
         totalCount:
           description: The total number of elements in the collection
           type: integer
-          format: int64
+          format: int32
       required:
         - pageCount
         - totalCount
@@ -1412,7 +1412,7 @@ components:
     PaginationOffset:
       description: The number of items to skip before starting to collect the result set.
       type: integer
-      format: int64
+      format: int32
       default: 0
     PaginationOptions:
       description: Specifies the pagination requirements of a request.
@@ -1434,7 +1434,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
@@ -1463,7 +1463,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       additionalProperties: false
     RunActivityId:
@@ -1472,32 +1472,32 @@ components:
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
-      format: int64
+      format: int32
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
-      format: int64
+      format: int32
     RunEpns:
       description: The amount of Epns nodes in a single run.
       type: integer
-      format: int64
+      format: int32
     RunFlps:
       description: The amount of Flps nodes in a single run.
       type: integer
-      format: int64
+      format: int32
     RunNumber:
       description: The unique identifier of this entity.
       type: integer
-      format: int64
+      format: int32
     RunO2End:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      format: int32
       example: 853113599
     RunO2Start:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      format: int32
       example: 853113599
     RunOrigin:
       description: Type of creator.
@@ -1530,16 +1530,16 @@ components:
     RunSubtimeframes:
       description: Total number of subtimeframes processed by the O2 system.
       type: integer
-      format: int64
+      format: int32
     RunTrgEnd:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      format: int32
       example: 853113599
     RunTrgStart:
       description: Unix timestamp when this entity was created.
       type: integer
-      format: int64
+      format: int32
       example: 853113599
     RunType:
       description: Specifies the type of run.
@@ -1561,7 +1561,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
@@ -1571,7 +1571,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - id
@@ -1593,7 +1593,7 @@ components:
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
         id:
           $ref: '#/components/schemas/EntityId'
@@ -1603,7 +1603,7 @@ components:
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
-          format: int64
+          format: int32
           example: 853113599
       required:
         - id
@@ -1640,11 +1640,11 @@ components:
         externalId:
           description: The unique CERN identifier of this user.
           type: integer
-          format: int64
+          format: int32
         id:
           description: The unique identifier of this entity.
           type: integer
-          format: int64
+          format: int32
         name:
           type: string
           description: Name of the user.

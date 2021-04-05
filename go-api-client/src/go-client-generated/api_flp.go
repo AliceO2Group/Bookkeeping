@@ -148,7 +148,7 @@ FlpApiService Gets a flp by Id
  * @param flpId The id of the flp to retrieve
 @return FlpResponse
 */
-func (a *FlpApiService) GetFlpById(ctx context.Context, flpId int64) (FlpResponse, *http.Response, error) {
+func (a *FlpApiService) GetFlpById(ctx context.Context, flpId int32) (FlpResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -391,7 +391,7 @@ FlpApiService Update an existing flp
  * @param flpId The id of the flp to retrieve
 @return FlpResponse
 */
-func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpId int64) (FlpResponse, *http.Response, error) {
+func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpId int32) (FlpResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Patch")
 		localVarPostBody   interface{}

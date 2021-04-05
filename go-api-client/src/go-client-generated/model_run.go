@@ -8,24 +8,26 @@
  */
 package swagger
 
+import "time";
+
 // Describes an intervention or an event that happened.
 type Run struct {
 	ActivityId string `json:"activityId,omitempty"`
-	BytesReadOut int64 `json:"bytesReadOut,omitempty"`
+	BytesReadOut int32 `json:"bytesReadOut,omitempty"`
 	// Unix timestamp when this entity was created.
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	Id int64 `json:"id,omitempty"`
-	NDetectors int64 `json:"nDetectors,omitempty"`
-	NEpns int64 `json:"nEpns,omitempty"`
-	NFlps int64 `json:"nFlps,omitempty"`
-	NSubtimeframes int64 `json:"nSubtimeframes,omitempty"`
-	RunNumber int64 `json:"runNumber,omitempty"`
+	CreatedAt int32 `json:"createdAt,omitempty"`
+	Id int32 `json:"id,omitempty"`
+	NDetectors int32 `json:"nDetectors,omitempty"`
+	NEpns int32 `json:"nEpns,omitempty"`
+	NFlps int32 `json:"nFlps,omitempty"`
+	NSubtimeframes int32 `json:"nSubtimeframes,omitempty"`
+	RunNumber int32 `json:"runNumber,omitempty"`
 	RunQuality *RunQuality `json:"runQuality,omitempty"`
 	RunType *RunType `json:"runType,omitempty"`
-	TimeO2End int64 `json:"timeO2End,omitempty"`
-	TimeO2Start int64 `json:"timeO2Start,omitempty"`
-	TimeTrgEnd int64 `json:"timeTrgEnd,omitempty"`
-	TimeTrgStart int64 `json:"timeTrgStart,omitempty"`
+	TimeO2End *time.Time `json:"timeO2End,omitempty"`
+	TimeO2Start *time.Time `json:"timeO2Start,omitempty"`
+	TimeTrgEnd *time.Time `json:"timeTrgEnd,omitempty"`
+	TimeTrgStart *time.Time `json:"timeTrgStart,omitempty"`
 	// Unix timestamp when this entity was last updated.
-	UpdatedAt int64 `json:"updatedAt,omitempty"`
+	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }

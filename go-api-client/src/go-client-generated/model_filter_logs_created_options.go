@@ -11,7 +11,7 @@ package swagger
 // Specifies the creation time related filter requirements for a request.
 type FilterLogsCreatedOptions struct {
 	// The earliest allowed unix timestamp for the fetched data.
-	From int64 `json:"from,omitempty"`
+	From int32 `json:"from,omitempty"`
 	// The latest allowed unix timestamp for the fetched data.
-	To int64 `json:"to,omitempty"`
+	To int32 `json:"to,omitempty"`
 }

@@ -11,7 +11,7 @@ package swagger
 // The metadata related to pagination.
 type PaginationMeta struct {
 	// The total number of pages which contain data.
-	PageCount int64 `json:"pageCount"`
+	PageCount int32 `json:"pageCount"`
 	// The total number of elements in the collection
-	TotalCount int64 `json:"totalCount"`
+	TotalCount int32 `json:"totalCount"`
 }
