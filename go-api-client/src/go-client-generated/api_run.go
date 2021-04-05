@@ -159,7 +159,7 @@ RunApiService Updates certain fields of a run
  * @param runId The id of the run to retrieve
 @return RunResponse
 */
-func (a *RunApiService) EndRun(ctx context.Context, body Run, runId int64) (RunResponse, *http.Response, error) {
+func (a *RunApiService) EndRun(ctx context.Context, body Run, runId int32) (RunResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Patch")
 		localVarPostBody   interface{}
@@ -288,7 +288,7 @@ RunApiService Gets a run by Id
  * @param runId The id of the run to retrieve
 @return RunResponse
 */
-func (a *RunApiService) GetRunById(ctx context.Context, runId int64) (RunResponse, *http.Response, error) {
+func (a *RunApiService) GetRunById(ctx context.Context, runId int32) (RunResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}

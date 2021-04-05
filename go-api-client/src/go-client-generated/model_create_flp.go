@@ -12,5 +12,5 @@ package swagger
 type CreateFlp struct {
 	Name string `json:"name"`
 	Hostname string `json:"hostname"`
-	RunNumber int64 `json:"runNumber,omitempty"`
+	RunNumber int32 `json:"runNumber,omitempty"`
 }

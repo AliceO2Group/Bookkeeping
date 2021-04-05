@@ -44,7 +44,7 @@ Gets a flp by Id
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **flpId** | [**int64**](.md)| The id of the flp to retrieve | 
+  **flpId** | [**int32**](.md)| The id of the flp to retrieve | 
 
 ### Return type
 
@@ -93,7 +93,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **body** | [**UpdateFlp**](UpdateFlp.md)|  | 
-  **flpId** | [**int64**](.md)| The id of the flp to retrieve | 
+  **flpId** | [**int32**](.md)| The id of the flp to retrieve | 
 
 ### Return type
 

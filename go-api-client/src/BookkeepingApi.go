@@ -3,7 +3,7 @@ package src
 import (
 	"context"
 	"fmt"
-
+	"time"
 	sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
 )
 
@@ -43,7 +43,7 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param o2Start Time (UTC) when command to start a new Run was given
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
-func CreateRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, runNumber int64, runType sw.RunType, timeO2Start int64, timeTrgStart int64) {
+func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time) {
 	var runtype sw.RunType = runType
 
 	obj := sw.Run{
@@ -53,8 +53,8 @@ func CreateRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, ru
 		NFlps:        nFlps,
 		RunNumber:    runNumber,
 		RunType:      &runtype,
-		TimeO2Start:  timeO2Start,
-		TimeTrgStart: timeTrgStart,
+		TimeO2Start:  &timeO2Start,
+		TimeTrgStart: &timeTrgStart,
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
@@ -69,13 +69,13 @@ func CreateRun(activityId string, nDetectors int64, nEpns int64, nFlps int64, ru
  * @param o2End Time (UTC) when Run was completely stopped
  * @param triggerEnd (UTC) Time when Trigger subsystem was stopped
  */
-func UpdateRun(runNumber int64, runQuality sw.RunQuality, timeO2End int64, timeTrgEnd int64) {
+func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, timeTrgEnd time.Time) {
 	var runquality sw.RunQuality = runQuality
 
 	obj := sw.Run{
 		RunQuality: &runquality,
-		TimeO2End:  timeO2End,
-		TimeTrgEnd: timeTrgEnd,
+		TimeO2End:  &timeO2End,
+		TimeTrgEnd: &timeTrgEnd,
 	}
 
 	arrayResponse, response, err := api.RunApi.EndRun(auth, obj, runNumber)
@@ -89,7 +89,7 @@ func UpdateRun(runNumber int64, runQuality sw.RunQuality, timeO2End int64, timeT
  * @param hostName Host name of the FLP
  * @param runNumber Integer ID of a specific data taking session
  */
-func CreateFlp(name string, hostName string, runNumber int64) {
+func CreateFlp(name string, hostName string, runNumber int32) {
 
 	obj := sw.CreateFlp{
 		Name:      name,
@@ -111,7 +111,7 @@ func CreateFlp(name string, hostName string, runNumber int64) {
  * @param nRecordingBytes Data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
  * @param nFairMqBytes Data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
  */
-func UpdateFlp(flpId int64, name string, nSubtimeframes int64, nEquipmentBytes int64, nRecordingBytes int64, nFairMQBytes int64) {
+func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
 	obj := sw.UpdateFlp{
 		NTimeframes:           nSubtimeframes,
 		BytesEquipmentReadOut: nEquipmentBytes,
@@ -132,7 +132,7 @@ func UpdateFlp(flpId int64, name string, nSubtimeframes int64, nEquipmentBytes i
  * @param parentLogId Integer id of the parent log
  */
 // todo: keep runNumbers as string? or convert to css (comma separated string) in function body?
-func CreateLog(text string, title string, runNumbers string, parentLogId int64) {
+func CreateLog(text string, title string, runNumbers string, parentLogId int32) {
 
 	// todo: remove if-statement with optional parameter-like construct.
 	if parentLogId == -1 {

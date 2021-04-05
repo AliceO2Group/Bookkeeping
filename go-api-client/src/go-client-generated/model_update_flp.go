@@ -10,9 +10,9 @@ package swagger
 
 // Describes an update to an flp
 type UpdateFlp struct {
-	NTimeframes int64 `json:"nTimeframes,omitempty"`
-	BytesProcessed int64 `json:"bytesProcessed,omitempty"`
-	BytesEquipmentReadOut int64 `json:"bytesEquipmentReadOut,omitempty"`
-	BytesRecordingReadOut int64 `json:"bytesRecordingReadOut,omitempty"`
-	BytesFairMQReadOut int64 `json:"bytesFairMQReadOut,omitempty"`
+	NTimeframes int32 `json:"nTimeframes,omitempty"`
+	BytesProcessed int32 `json:"bytesProcessed,omitempty"`
+	BytesEquipmentReadOut int32 `json:"bytesEquipmentReadOut,omitempty"`
+	BytesRecordingReadOut int32 `json:"bytesRecordingReadOut,omitempty"`
+	BytesFairMQReadOut int32 `json:"bytesFairMQReadOut,omitempty"`
 }
