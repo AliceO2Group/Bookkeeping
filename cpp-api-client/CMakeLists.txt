@@ -14,7 +14,12 @@ message("A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # Update require components as necessary
 find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time program_options filesystem)
-find_package(cpprestsdk REQUIRED)
+
+# Find cpprest dependency
+set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
+include(CMakeFindDependencyMacro)
+find_dependency(cpprestsdk)
+
 
 set(SOURCE_FILES
     src/cpprest-client/ApiClient.cpp
@@ -108,7 +113,7 @@ add_library(
     BookkeepingApiCpp
     SHARED
     ${SOURCE_FILES})
-
+    
 target_include_directories(
     BookkeepingApiCpp
     PUBLIC
@@ -139,7 +144,6 @@ add_executable(
 
 target_link_libraries(
     bookkeeping-api-cpp-example 
-    PRIVATE
     Boost::headers
     OpenSSL::SSL # This is temporary workaround as the target should come from cpprestsdk
     BookkeepingApiCpp)
@@ -151,7 +155,7 @@ set(CMAKE_INSTALL_LIBDIR lib)
 install(
     TARGETS bookkeeping-api-cpp-example BookkeepingApiCpp
     EXPORT BookkeepingApiCppTargets
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 

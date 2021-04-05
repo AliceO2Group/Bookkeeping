@@ -8,14 +8,14 @@
 #include "LogOrigin.h"
 #include "LogSubtype.h"
 #include "OrderDirection.h"
-#include "cpprest-client/model/Run.h"
-#include "cpprest-client/model/Log.h"
 #include "RunType.h"
 #include "RunQuality.h"
 
-#include "ApiClient.h"
-#include "MultipartFormData.h"
-#include "ModelBase.h"
+#include "cpprest-client/model/Run.h"
+#include "cpprest-client/model/Log.h"
+#include "cpprest-client/ApiClient.h"
+#include "cpprest-client/MultipartFormData.h"
+#include "cpprest-client/ModelBase.h"
 
 #include <sstream>
 #include <limits>
