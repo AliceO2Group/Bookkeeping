@@ -21,7 +21,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let parsedFirstRowId;
     let table;
     let firstRowId;
 
@@ -46,22 +45,27 @@ module.exports = () => {
     it('Can find table', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect to find a table
-        expect(firstRowId).to.equal('rowundefined')
+        expect(firstRowId).to.equal('rowundefined');
     });
 
-    // it('can navigate to a log detail page', async () => {
-    //     const firstRow = await page.$('tr.clickable');
-    //     const firstRowId = await firstRow.evaluate((row) => row.id);
-    //     parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+    /*
+     * It('can navigate to a log detail page', async () => {
+     *     const firstRow = await page.$('tr.clickable');
+     *     const firstRowId = await firstRow.evaluate((row) => row.id);
+     *     parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+     */
 
-    //     // We expect the entry page to have the same id as the id from the log overview
-    //     await firstRow.evaluate((row) => row.click());
-    //     await page.waitForTimeout(500);
+    /*
+     *     // We expect the entry page to have the same id as the id from the log overview
+     *     await firstRow.evaluate((row) => row.click());
+     *     await page.waitForTimeout(500);
+     */
 
-    //     const redirectedUrl = await page.url();
-    //     expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
-    // });
+    /*
+     *     Const redirectedUrl = await page.url();
+     *     expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
+     * });
+     */
 };

@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
 
 const { expect } = chai;
 
@@ -51,10 +51,9 @@ module.exports = () => {
     it('Can find table', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect to find a table
         await pressElement(page, `#${firstRowId}`);
-        expect(firstRowId).to.equal('rowundefined')
+        expect(firstRowId).to.equal('rowundefined');
     });
 };
