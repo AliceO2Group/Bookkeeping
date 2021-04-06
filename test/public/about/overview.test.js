@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
 
 const { expect } = chai;
 
@@ -21,19 +21,24 @@ module.exports = () => {
     let browser;
     let url;
 
-    let parsedFirstRowId;
     let table;
     let firstRowId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
+            width: 700,
+            height: 720,
+            deviceScaleFactor: 1,
+        });
     });
+
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=home`, { waitUntil: 'networkidle0' });
+        const response = await page.goto(`${url}?page=about-overview`, { waitUntil: 'networkidle0' });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -49,19 +54,7 @@ module.exports = () => {
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect to find a table
+        await pressElement(page, `#${firstRowId}`);
         expect(firstRowId).to.equal('rowundefined')
     });
-
-    // it('can navigate to a log detail page', async () => {
-    //     const firstRow = await page.$('tr.clickable');
-    //     const firstRowId = await firstRow.evaluate((row) => row.id);
-    //     parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-
-    //     // We expect the entry page to have the same id as the id from the log overview
-    //     await firstRow.evaluate((row) => row.click());
-    //     await page.waitForTimeout(500);
-
-    //     const redirectedUrl = await page.url();
-    //     expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
-    // });
 };
