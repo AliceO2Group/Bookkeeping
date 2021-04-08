@@ -16,7 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     getFirstRow,
-    goToPage,
+    expectInnerText,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -88,7 +88,7 @@ module.exports = () => {
         }
     });
 
-    it('can navigate to a log detail page', async () => {
+    it('can navigate to a detail page', async () => {
         const firstRow = await page.$('tr.clickable');
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
@@ -100,18 +100,26 @@ module.exports = () => {
         expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
     });
 
-    it('can navigate to a run detail page', async () => {
-        // Go back to the home page
-        await goToPage(page, 'home');
+    it('notifies if table loading returned an error', async () => {
+        /*
+         * As an example, override the amount of runs visible per page manually
+         * We know the limit is 100 as specified by the Dto
+         */
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.setRunsPerPage(200);
+        });
+        await page.waitForTimeout(100);
 
-        const firstRow = await page.$('tr.clickable');
-        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        // We expect there to be a fitting error message
+        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
 
-        // We expect the entry page to have the same id as the id from the log overview
-        await firstRow.evaluate((row) => row.click());
-        await page.waitForTimeout(500);
-
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
+        // Revert changes for next test
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.setRunsPerPage(10);
+        });
+        await page.waitForTimeout(100);
     });
 };
