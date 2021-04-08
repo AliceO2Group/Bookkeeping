@@ -99,27 +99,4 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
     });
-
-    it('notifies if table loading returned an error', async () => {
-        /*
-         * As an example, override the amount of runs visible per page manually
-         * We know the limit is 100 as specified by the Dto
-         */
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(200);
-        });
-        await page.waitForTimeout(100);
-
-        // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
-
-        // Revert changes for next test
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(10);
-        });
-        await page.waitForTimeout(100);
-    });
 };
