@@ -16,7 +16,6 @@ const {
     defaultBefore,
     defaultAfter,
     getFirstRow,
-    expectInnerText,
 } = require('../defaults');
 
 const { expect } = chai;
