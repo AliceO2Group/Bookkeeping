@@ -12,7 +12,11 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, getFirstRow } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    getFirstRow,
+} = require('../defaults');
 
 const { expect } = chai;
 
@@ -47,25 +51,51 @@ module.exports = () => {
         firstRowId = await getFirstRow(table, page);
 
         // We expect to find a table
-        expect(firstRowId).to.equal('rowundefined');
+        expect(firstRowId).to.equal('row129');
     });
 
-    /*
-     * It('can navigate to a log detail page', async () => {
-     *     const firstRow = await page.$('tr.clickable');
-     *     const firstRowId = await firstRow.evaluate((row) => row.id);
-     *     parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-     */
+    it('shows correct datatypes in respective columns', async () => {
+        table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
 
-    /*
-     *     // We expect the entry page to have the same id as the id from the log overview
-     *     await firstRow.evaluate((row) => row.click());
-     *     await page.waitForTimeout(500);
-     */
+        // Expectations of header texts being of a certain datatype
+        const headerDatatypes = {
+            runNumber: (number) => typeof number == 'number',
+            timeO2Start: (date) => !isNaN(Date.parse(date)),
+            timeO2End: (date) => !isNaN(Date.parse(date)),
+        };
 
-    /*
-     *     Const redirectedUrl = await page.url();
-     *     expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
-     * });
-     */
+        // We find the headers matching the datatype keys
+        const headers = await page.$$('th');
+        const headerIndices = {};
+        for (const [index, header] of headers.entries()) {
+            const headerContent = await page.evaluate((element) => element.id, header);
+            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
+            if (matchingDatatype !== undefined) {
+                headerIndices[index] = matchingDatatype;
+            }
+        }
+
+        // We expect every value of a header matching a datatype key to actually be of that datatype
+        const firstRowCells = await page.$$(`#${firstRowId} td`);
+        for (const [index, cell] of firstRowCells.entries()) {
+            if (Object.keys(headerIndices).includes(index)) {
+                const cellContent = await page.evaluate((element) => element.innerText, cell);
+                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
+                expect(expectedDatatype).to.be.true;
+            }
+        }
+    });
+
+    it('can navigate to a detail page', async () => {
+        const firstRow = await page.$('tr.clickable');
+        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+
+        // We expect the entry page to have the same id as the id from the log overview
+        await firstRow.evaluate((row) => row.click());
+        await page.waitForTimeout(500);
+
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
+    });
 };
