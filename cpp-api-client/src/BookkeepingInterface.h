@@ -13,9 +13,9 @@
 #include "RunType.h"
 #include "RunQuality.h"
 
-#include "ApiClient.h"
-#include "MultipartFormData.h"
-#include "ModelBase.h"
+#include "cpprest-client/ApiClient.h"
+#include "cpprest-client/MultipartFormData.h"
+#include "cpprest-client/ModelBase.h"
 
 #include <sstream>
 #include <limits>
