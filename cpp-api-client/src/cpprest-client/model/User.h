@@ -56,20 +56,20 @@ public:
     /// <summary>
     /// The unique CERN identifier of this user.
     /// </summary>
-    int32_t getExternalId() const;
+    int64_t getExternalId() const;
     bool externalIdIsSet() const;
     void unsetExternalId();
 
-    void setExternalId(int32_t value);
+    void setExternalId(int64_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// Name of the user.
@@ -82,9 +82,9 @@ public:
 
 
 protected:
-    int32_t m_ExternalId;
+    int64_t m_ExternalId;
     bool m_ExternalIdIsSet;
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
     utility::string_t m_Name;
     bool m_NameIsSet;

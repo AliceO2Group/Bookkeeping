@@ -12,9 +12,11 @@
  */
 
 const OverviewSuite = require('./overview.test');
-const DetailSuite = require('./detail.test');
+// eslint-disable-next-line capitalized-comments
+// const DetailSuite = require('./detail.test');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
-    describe('Detail Page', DetailSuite);
+    // eslint-disable-next-line capitalized-comments
+    // describe('Detail Page', DetailSuite);
 };

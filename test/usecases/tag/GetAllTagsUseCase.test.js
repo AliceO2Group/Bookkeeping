@@ -18,9 +18,9 @@ const { expect } = chai;
 
 module.exports = () => {
     it('should return an array', async () => {
-        const result = await new GetAllTagsUseCase()
+        const { tags } = await new GetAllTagsUseCase()
             .execute();
 
-        expect(result).to.be.an('array');
+        expect(tags).to.be.an('array');
     });
 };

@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.15.0",
+  "version": "0.16.8",
   "author": "CERN",
   "license": "GPL-3.0",
   "scripts": {
@@ -11,28 +11,30 @@
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
-    "test": "mocha --exit --timeout 5000"
+    "test": "mocha --exit --timeout 5000",
+    "docker-run": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "docker-test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.14.0",
+    "@aliceo2/web-ui": "1.15.1",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "joi": "17.1.1",
-    "mariadb": "2.5.1",
+    "mariadb": "2.5.2",
     "multer": "1.4.2",
     "sequelize": "6.3.5",
     "umzug": "2.3.0"
   },
   "devDependencies": {
     "chai": "4.2.0",
-    "chai-openapi-response-validator": "0.11.0",
-    "eslint": "7.14.0",
-    "js-yaml": "3.14.0",
+    "chai-openapi-response-validator": "0.13.0",
+    "eslint": "7.15.0",
+    "js-yaml": "3.14.1",
     "mocha": "8.2.1",
-    "nodemon": "2.0.6",
+    "nodemon": "2.0.7",
     "nyc": "15.1.0",
-    "puppeteer": "5.5.0",
+    "puppeteer": "8.0.0",
     "puppeteer-to-istanbul": "git+https://github.com/SoftwareForScience/puppeteer-to-istanbul.git",
-    "supertest": "6.0.1"
+    "supertest": "6.1.1"
   }
 }

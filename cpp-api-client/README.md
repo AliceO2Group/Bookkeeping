@@ -2,32 +2,6 @@
 [![LICENSE](https://img.shields.io/github/license/rummens1337/bookkeeping-cpprest-client.svg)](https://github.com/rummens1337/bookkeeping-cpprest-client/blob/main/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/rummens1337/bookkeeping-cpprest-client)](https://github.com/rummens1337/bookkeeping-cpprest-client/graphs/contributors)
 
-
-The client currently only supports adding and ending a run. More endpoints will be supported soon.
-
-### runStart
-Signature
-```cpp
-void BookkeepingApi::runStart(int64_t runNumber, boost::posix_time::ptime o2Start,
-      boost::posix_time::ptime triggerStart, utility::string_t activityId, 
-      RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns) 
-```
-Description:
-Stores start information of a run in the Bookkeeping system
-
-### runStop
-Signature
-```cpp
-void BookkeepingApi::runEnd(int64_t runNumber, boost::posix_time::ptime o2End, boost::posix_time::ptime triggerEnd,
-      RunQuality runQuality)
-```
-Description:
-Stores stop information of a run in the Bookkeeping system
-
-### Example
-There's also an example of the usage in `src/Example.cpp`
-
-
 ## Manual setup
 ### Fedora
 Install dependencies and build the C++ client.
@@ -59,10 +33,19 @@ Alternatively, you can speed up the build by adding the amount of cores it may r
 make -j $(expr $(nproc) - 1)
 ```
 
-# Example code
-If your api is at `http://myhost.server.address/api`:
+
+# Usage
+This library serves as an C++ API client to the O2 bookkeeping system.
+API endpoints are documented in docblocks in BookkeepingInterface.h, or in the documentation directory -> index.html -> Bookkeeping -> BookkeepingApi. 
+There's also an example of the usage in `Example.cpp`
+
+### API token
+API token is loaded into the Bookkeeping request upon page load, and can be extracted by looking with the chrome inspector -> network -> reload page and fetch token from request. TODO: create fetchToken method.
+
+### Example code
+If your api is at `http://localhost:4000/api`:
 ```console
-export BOOKKEEPING_URL=http://myhost.server.address/api
+export BOOKKEEPING_URL=http://localhost:4000/api
 export BOOKKEEPING_API_TOKEN=jnk5vh43785ycj4gdvlvm84fg...
 ./bookkeeping-api-cpp-example 1  # argument is run number to add
 ```

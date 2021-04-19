@@ -55,26 +55,26 @@ public:
     /// <summary>
     /// The total number of pages which contain data.
     /// </summary>
-    int32_t getPageCount() const;
+    int64_t getPageCount() const;
     bool pageCountIsSet() const;
     void unsetPageCount();
 
-    void setPageCount(int32_t value);
+    void setPageCount(int64_t value);
 
     /// <summary>
     /// The total number of elements in the collection
     /// </summary>
-    int32_t getTotalCount() const;
+    int64_t getTotalCount() const;
     bool totalCountIsSet() const;
     void unsetTotalCount();
 
-    void setTotalCount(int32_t value);
+    void setTotalCount(int64_t value);
 
 
 protected:
-    int32_t m_PageCount;
+    int64_t m_PageCount;
     bool m_PageCountIsSet;
-    int32_t m_TotalCount;
+    int64_t m_TotalCount;
     bool m_TotalCountIsSet;
 };
 
