@@ -20,6 +20,7 @@ type Flp struct {
 	Id int32 `json:"id"`
 	NTimeframes int32 `json:"nTimeframes"`
 	Name string `json:"name"`
+	Runs int32 `json:"runs,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }

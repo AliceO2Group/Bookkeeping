@@ -8,9 +8,8 @@
  */
 package swagger
 
-// Describes an flp
-type CreateFlp struct {
-	Name string `json:"name"`
-	Hostname string `json:"hostname"`
-	Runs int32 `json:"runs,omitempty"`
+// Minified Run object.
+type FlpRuns struct {
+	Id int32 `json:"id"`
+	RunNumber int32 `json:"runNumber"`
 }
