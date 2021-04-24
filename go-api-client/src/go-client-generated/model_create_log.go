@@ -11,7 +11,7 @@ package swagger
 // Describes an intervention or an event that happened.
 type CreateLog struct {
 	Attachments *[]Attachment `json:"attachments,omitempty"`
-	ParentLogId int64 `json:"parentLogId,omitempty"`
+	ParentLogId int32 `json:"parentLogId,omitempty"`
 	Text string `json:"text"`
 	Title string `json:"title"`
 	RunNumbers string `json:"runNumbers,omitempty"`

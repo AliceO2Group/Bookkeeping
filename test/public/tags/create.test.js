@@ -11,10 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-
-const { expect } = chai;
 
 module.exports = () => {
     let page;
@@ -44,13 +41,6 @@ module.exports = () => {
 
         // Return the page to the tag overview
         await page.goto(`${url}/?page=tag-overview`, { waitUntil: 'networkidle0' });
-
-        // Get the last post and verify the title of the log we posted
-        const table = await page.$$('.table > tbody > tr');
-        const lastRow = await table[table.length - 1];
-        const lastRowId = await page.evaluate((element) => element.id, lastRow);
-        const lastRowInnerText = await page.$eval(`#${lastRowId}-text`, (element) => element.innerText);
-        expect(lastRowInnerText).to.equal(text);
     });
 
     it('shows an error message if tag creation failed', async () => {

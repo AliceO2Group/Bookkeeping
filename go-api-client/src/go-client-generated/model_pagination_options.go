@@ -11,5 +11,5 @@ package swagger
 // Specifies the pagination requirements of a request.
 type PaginationOptions struct {
 	Limit int32 `json:"limit,omitempty"`
-	Offset int64 `json:"offset,omitempty"`
+	Offset int32 `json:"offset,omitempty"`
 }

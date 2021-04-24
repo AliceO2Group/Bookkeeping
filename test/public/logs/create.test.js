@@ -12,25 +12,10 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, getFirstRow } = require('../defaults');
 const path = require('path');
 
 const { expect } = chai;
-
-/**
- * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire log table
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @return {Promise<String>} The ID of the first matching row with data
- */
-async function getFirstRow(table, page) {
-    for await (const child of table) {
-        const id = await page.evaluate((element) => element.id, child);
-        if (id.startsWith('row')) {
-            return id;
-        }
-    }
-}
 
 module.exports = () => {
     let page;
@@ -73,7 +58,7 @@ module.exports = () => {
 
         // Verify that the text from the first matches with the text posted and correct working of the redirect
         // eslint-disable-next-line no-undef
-        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors[0].getValue()))
+        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors['text'].getValue()))
             .includes(text);
         expect(doesContentMatch).to.equal(true);
 
@@ -243,7 +228,10 @@ module.exports = () => {
         const row = await page.$(`tr#${firstRowId}`);
         await row.evaluate((row) => row.click());
         await page.waitForTimeout(500);
-
+        // Click on "Show all" button
+        const showAllButton = await page.$('#toggleCollapse');
+        await showAllButton.click();
+        await page.waitForTimeout(500);
         // Verify that the attachment names match the ones we uploaded
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
@@ -310,6 +298,10 @@ module.exports = () => {
         // Go to the log detail page
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
         await goToPage(page, `log-detail&id=${rowId}`);
+        // Click on "Show all" button
+        const showAllButton = await page.$('#toggleCollapse');
+        await showAllButton.click();
+        await page.waitForTimeout(1000);
         const runsField = await page.$(`#post${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
@@ -348,6 +340,10 @@ module.exports = () => {
         // Go to the log detail page
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
         await page.goto(`${url}/?page=log-detail&id=${rowId}`, { waitUntil: 'networkidle0' });
+        // Click on "Show all" button
+        const showAllButton = await page.$('#toggleCollapse');
+        await showAllButton.click();
+        await page.waitForTimeout(1000);
         const runsField = await page.$(`#post${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         for (const runNumber of runNumbers) {

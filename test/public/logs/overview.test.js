@@ -12,42 +12,10 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
+} = require('../defaults');
 
 const { expect } = chai;
-
-/**
- * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire log table
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @return {Promise<String>} The ID of the first matching row with data
- */
-async function getFirstRow(table, page) {
-    for await (const child of table) {
-        const id = await page.evaluate((element) => element.id, child);
-        if (id.startsWith('row')) {
-            return id;
-        }
-    }
-}
-
-/**
- * Special method built to gather all currently visible table entities from a specific column into an array
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {String} key The key for the column to gather entities of
- * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
- */
-async function getAllDataFields(page, key) {
-    const allData = await page.$$('td');
-    return await allData.reduce(async (accumulator, data) => {
-        const id = await page.evaluate((element) => element.id, data);
-        if (id.endsWith(`-${key}`)) {
-            const text = await page.evaluate((element) => element.innerText, data);
-            (await accumulator).push(text);
-        }
-        return accumulator;
-    }, []);
-}
 
 module.exports = () => {
     let page;
@@ -73,7 +41,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(url, { waitUntil: 'networkidle0' });
+        const response = await page.goto(`${url}?page=log-overview`, { waitUntil: 'networkidle0' });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -557,7 +525,7 @@ module.exports = () => {
         // Go to the second page of "logs"
         const secondPageButton = await page.$('#page2');
         await secondPageButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(500);
 
         // Navigate to a log detail page
         table = await page.$$('tr');

@@ -14,8 +14,8 @@ type FilterLogsOptions struct {
 	Author string `json:"author,omitempty"`
 	Created *FilterLogsCreatedOptions `json:"created,omitempty"`
 	Origin *LogOrigin `json:"origin,omitempty"`
-	ParentLog int64 `json:"parentLog,omitempty"`
-	RootLog int64 `json:"rootLog,omitempty"`
+	ParentLog int32 `json:"parentLog,omitempty"`
+	RootLog int32 `json:"rootLog,omitempty"`
 	Tag *FilterLogsTagOptions `json:"tag,omitempty"`
 	Title string `json:"title,omitempty"`
 }

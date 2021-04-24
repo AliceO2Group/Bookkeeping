@@ -12,24 +12,9 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
 
 const { expect } = chai;
-
-/**
- * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire subsystem table
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @return {String} The ID of the first matching row with data
- */
-async function getFirstRow(table, page) {
-    for (const child of table) {
-        const id = await page.evaluate((element) => element.id, child);
-        if (id.startsWith('row')) {
-            return id;
-        }
-    }
-}
 
 module.exports = () => {
     let page;

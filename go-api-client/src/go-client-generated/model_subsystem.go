@@ -11,10 +11,10 @@ package swagger
 // A label attached to something for the purpose of identification.
 type Subsystem struct {
 	// Unix timestamp when this entity was created.
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	Id int64 `json:"id"`
+	CreatedAt int32 `json:"createdAt,omitempty"`
+	Id int32 `json:"id"`
 	// The label value of the subsystem.
 	Name string `json:"name"`
 	// Unix timestamp when this entity was last updated.
-	UpdatedAt int64 `json:"updatedAt,omitempty"`
+	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }

@@ -149,7 +149,7 @@ LogApiService Get one specific attachment associated with a log
  * @param attachmentId The id of the attached to retrieve
 @return AttachmentResponse
 */
-func (a *LogApiService) GetLogAttachment(ctx context.Context, logId int64, attachmentId int64) (AttachmentResponse, *http.Response, error) {
+func (a *LogApiService) GetLogAttachment(ctx context.Context, logId int32, attachmentId int32) (AttachmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -277,7 +277,7 @@ LogApiService Gets a log by Id
  * @param logId The id of the log to retrieve
 @return LogResponse
 */
-func (a *LogApiService) GetLogById(ctx context.Context, logId int64) (LogResponse, *http.Response, error) {
+func (a *LogApiService) GetLogById(ctx context.Context, logId int32) (LogResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -404,7 +404,7 @@ LogApiService Get the Log tree for a given Log
  * @param logId The id of the log to retrieve
 @return LogTreeResponse
 */
-func (a *LogApiService) GetLogTree(ctx context.Context, logId int64) (LogTreeResponse, *http.Response, error) {
+func (a *LogApiService) GetLogTree(ctx context.Context, logId int32) (LogTreeResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -531,7 +531,7 @@ LogApiService Get all attachments associated with a log
  * @param logId The id of the log to retrieve
 @return ArrayOfAttachmentsResponse
 */
-func (a *LogApiService) ListLogAttachments(ctx context.Context, logId int64) (ArrayOfAttachmentsResponse, *http.Response, error) {
+func (a *LogApiService) ListLogAttachments(ctx context.Context, logId int32) (ArrayOfAttachmentsResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -773,7 +773,7 @@ LogApiService Lists all tags associated with a log
  * @param logId The id of the log to retrieve
 @return ArrayOfTagsResponse
 */
-func (a *LogApiService) ListTagsByLogId(ctx context.Context, logId int64) (ArrayOfTagsResponse, *http.Response, error) {
+func (a *LogApiService) ListTagsByLogId(ctx context.Context, logId int32) (ArrayOfTagsResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
