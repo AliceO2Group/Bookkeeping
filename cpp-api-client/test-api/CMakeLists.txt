@@ -11,6 +11,8 @@ project(
 #Specify the CMakeLists.txt source (input) and build (output)
 #For example write in the terminal:  
     # cmake -S test-api -B test-api/build
+    #   -(S is the source and where your CMakeLists is located)
+    #   -(B is the location where the makefile wil be created.)
 #Go to the build folder with the terminal and activate the make 
     # cd test-api/build 
     # make
@@ -18,7 +20,6 @@ project(
     # ./test-api
 
 find_package(BookkeepingApiCpp)
-find_package(cpprestsdk)
 
 add_executable(
     ${PROJECT_NAME}
