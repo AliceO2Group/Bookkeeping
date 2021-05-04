@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
 
 const { expect } = chai;
 
@@ -20,9 +20,6 @@ module.exports = () => {
     let page;
     let browser;
     let url;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -33,15 +30,17 @@ module.exports = () => {
 
     it('flp detail loads correctly', async () => {
         await page.goto(`${url}/?page=flp-detail&id=1`, { waitUntil: 'networkidle0' });
-        await expectInnerText(page, 'h2', 'Flp #1');
+        await expectInnerText(page, 'h2', 'Flp #FLP-TPC-1');
     });
 
-    it('can navigate to the log panel', async () => {
-        await pressElement(page, '#logs-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
-    });
+    /*
+     * It('can navigate to the log panel', async () => {
+     *     await pressElement(page, '#logs-tab');
+     *     await page.waitForTimeout(100);
+     *     const redirectedUrl = await page.url();
+     *     expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
+     * });
+     */
 
     it('can navigate to the main panel', async () => {
         await pressElement(page, '#main-tab');
@@ -50,23 +49,29 @@ module.exports = () => {
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=main`)).to.be.true;
     });
 
-    it('can navigate to the log panel', async () => {
-        await pressElement(page, '#logs-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
-    });
+    /*
+     * It('can navigate to the log panel', async () => {
+     *     await pressElement(page, '#logs-tab');
+     *     await page.waitForTimeout(100);
+     *     const redirectedUrl = await page.url();
+     *     expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
+     * });
+     */
 
-    it('can navigate to a log detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+    /*
+     * It('can navigate to a log detail page', async () => {
+     *     table = await page.$$('tr');
+     *     firstRowId = await getFirstRow(table, page);
+     */
 
-        // We expect the entry page to have the same id as the id from the flp overview
-        await pressElement(page, `#${firstRowId}`);
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
-    });
+    /*
+     *     // We expect the entry page to have the same id as the id from the flp overview
+     *     await pressElement(page, `#${firstRowId}`);
+     *     await page.waitForTimeout(100);
+     *     const redirectedUrl = await page.url();
+     *     expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
+     * });
+     */
 
     it('notifies if a specified flp id is invalid', async () => {
         // Navigate to a flp detail view with an id that cannot exist
@@ -84,13 +89,39 @@ module.exports = () => {
         await expectInnerText(page, '.alert', 'Flp with this id (999) could not be found');
     });
 
-    it('can return to the overview page if an error occurred', async () => {
-        // We expect there to be a button to return to the overview page
-        await expectInnerText(page, '.btn-primary', 'Return to Overview');
+    it('allows navigating to an associated run', async () => {
+        const flpRoleId = 1;
+        const runId = 1;
 
-        // We expect the button to return the user to the overview page when pressed
-        await pressElement(page, '.btn-primary');
-        await page.waitForTimeout(100);
-        expect(page.url()).to.equal(`${url}/?page=flp-overview`);
+        // Navigate to a flp detail view
+        await page.goto(`${url}/?page=flp-detail&id=${flpRoleId}`, { waitUntil: 'networkidle0' });
+        // We expect the correct associated runs to be shown
+        const runField = await page.$('#Flp-runs');
+        const runText = await page.evaluate((element) => element.innerText, runField);
+        expect(runText).to.equal(`Runs:\n${runId}`);
+
+        // We expect the associated runs to be clickable with a valid link
+        const runLink = await page.$('#Flp-runs a');
+        await runLink.click();
+        await page.waitForTimeout(1000);
+
+        // We expect the link to navigate to the correct run detail page
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}&panel=main`);
     });
+
+    /*
+     * It('can return to the overview page if an error occurred', async () => {
+     *     await page.goto(`${url}/?page=flp-detail&id=1`, { waitUntil: 'networkidle0' });
+     *     // We expect there to be a button to return to the overview page
+     *     await expectInnerText(page, '.btn-primary', 'Return to Overview');
+     */
+
+    /*
+     *     // We expect the button to return the user to the overview page when pressed
+     *     await pressElement(page, '.btn-primary');
+     *     await page.waitForTimeout(100);
+     *     expect(page.url()).to.equal(`${url}/?page=flp-overview`);
+     * });
+     */
 };
