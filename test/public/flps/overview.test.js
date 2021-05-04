@@ -141,7 +141,7 @@ module.exports = () => {
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);

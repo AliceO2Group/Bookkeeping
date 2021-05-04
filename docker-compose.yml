@@ -9,6 +9,7 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_HOST: database
+      DATABASE_LOGGING: "${DATABASE_LOGGING}"
       JWT_SECRET: "${JWT_SECRET}"
       JWT_EXPIRATION: "${JWT_EXPIRATION}"
       JWT_ISSUER: "${JWT_ISSUER}"
