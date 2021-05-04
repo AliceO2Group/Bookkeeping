@@ -11,10 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const CreateFlpUseCase = require('./CreateFlpUseCase.test');
 const GetAllFlpsUseCase = require('./GetAllFlpsUseCase.test');
 const GetFlpUseCase = require('./GetFlpUseCase.test');
 
 module.exports = () => {
+    describe('CreateFlpUseCase', CreateFlpUseCase);
     describe('GetAllFlpsUseCase', GetAllFlpsUseCase);
     describe('GetFlpUseCase', GetFlpUseCase);
 };
