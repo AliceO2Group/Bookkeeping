@@ -26,7 +26,7 @@ jobs:
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_content_type: application/tar+gzip
-        asset_path: .${{ steps.tgz.outputs.tgz_name }}
+        asset_path: ./${{ steps.tgz.outputs.tgz_name }}
         asset_name: ${{ steps.tgz.outputs.tgz_name }}
     - name: Set output
       run: echo ::set-output name=asset_url::${{ steps.upload.browser_download_url }}
