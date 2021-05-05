@@ -44,11 +44,10 @@ target_include_directories(
 # Link external libraries to the project
 target_link_libraries(
     ${PROJECT_NAME}
-    PRIVATE
+    PUBLIC
     Boost::system
     Boost::date_time
     pthread
-    PUBLIC
     cpprestsdk::cpprest)
 
 target_compile_features(
