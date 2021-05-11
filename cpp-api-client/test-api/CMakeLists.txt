@@ -26,7 +26,10 @@ add_executable(
     ./Example.cpp)
 
 target_link_libraries(
-    ${PROJECT_NAME} PUBLIC
+    ${PROJECT_NAME} 
+    PRIVATE
+    OpenSSL:SSL # This is a temporary workaround as the target should come from ccprestsdk
+    PUBLIC
     BookkeepingApiCpp
     )
 

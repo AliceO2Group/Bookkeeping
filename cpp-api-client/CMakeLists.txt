@@ -63,7 +63,10 @@ add_executable(
     src/Example.cpp)
 
 target_link_libraries(
-    bookkeeping-api-cpp-example 
+    bookkeeping-api-cpp-example
+    PRIVATE
+    #Boost::headers
+    OpenSSL:SSL # This is a temporary workaround as the target should come from ccprestsdk
     BookkeepingApiCpp)
 
 # Set CMAKE_INSTALL_LIBDIR explicitly to lib (to avoid lib64 on CC7)
@@ -72,7 +75,7 @@ set(CMAKE_INSTALL_LIBDIR lib)
 install(
     TARGETS bookkeeping-api-cpp-example BookkeepingApiCpp
     EXPORT BookkeepingApiCppTargets
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    RUNTIME DESTINATION bin
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
@@ -81,10 +84,10 @@ install(
     FILE BookkeepingApiCppTargets.cmake
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/BookkeepingApiCpp")
 
-# install(
-#     DIRECTORY src/
-#     DESTINATION include/BookkeepingApiCpp
-#     FILES_MATCHING PATTERN "*.h")
+install(
+    DIRECTORY src/
+    DESTINATION include/BookkeepingApiCpp
+    FILES_MATCHING PATTERN "*.h")
 
 # Configure and install package config files
 include(CMakePackageConfigHelpers)
