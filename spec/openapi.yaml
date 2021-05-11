@@ -1322,6 +1322,8 @@ components:
           $ref: '#/components/schemas/FileEncoding'
         fileName:
           $ref: '#/components/schemas/FileName'
+        hash:
+          $ref: '#/components/schemas/FileHash'
         id:
           $ref: '#/components/schemas/EntityId'
         logId:
@@ -1655,6 +1657,10 @@ components:
     FileEncoding:
       description: Encoding used on the file.
       type: string
+    FileHash:
+      description: MD5 Hash of a file.
+      type: string
+      example: 6722351044a986f796e9b6518226ce46
     FileMimeType:
       description: Mime-type of a file.
       type: string
