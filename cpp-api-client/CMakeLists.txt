@@ -65,8 +65,8 @@ add_executable(
 target_link_libraries(
     bookkeeping-api-cpp-example
     PRIVATE
-    #Boost::headers
-    OpenSSL:SSL # This is a temporary workaround as the target should come from ccprestsdk
+    Boost::headers
+    OpenSSL::SSL # This is a temporary workaround as the target should come from ccprestsdk
     BookkeepingApiCpp)
 
 # Set CMAKE_INSTALL_LIBDIR explicitly to lib (to avoid lib64 on CC7)
