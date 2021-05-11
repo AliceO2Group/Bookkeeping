@@ -29,7 +29,8 @@ int main(int argc, char const *argv[])
 
     url = url + "?token=" + apiToken;
     std::cout << url << std::endl;
-    const int64_t runNumber = boost::lexical_cast<int64_t>(argv[1]);
+    // const int64_t runNumber = boost::lexical_cast<int64_t>(argv[1]);
+    const int64_t runNumber = 9003;
 
     // Create an API instance with url and APItoken.
     // Instance will be used to make the calls.
