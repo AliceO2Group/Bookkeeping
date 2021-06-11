@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.1] 
+
+* Updated @aliceo2/web-ui version from 1.15.1 to 1.18.2. A bug fix that adds a name to JWT token for the bookkeeping team. https://github.com/AliceO2Group/WebUi/releases/tag/%40aliceo2%2Fweb-ui%401.18.2
+
+* O2B-399 Add message in tags select box([#369](https://github.com/AliceO2Group/Bookkeeping/pull/369])
+* O2B-398 Improve display of Main tab in Run Details page ([#364]https://github.com/AliceO2Group/Bookkeeping/pull/364])
+* O2B-400 Update tags are fixed ([#370]https://github.com/AliceO2Group/Bookkeeping/pull/370)]
+
 ## [0.17.0] 
 
 * Reverted ibm-openapi-validator to version 0.44.0 in the bookkeeping/.github/workflows/openapi.yml file. Version 0.46.0 has problems with invalid configuration with validaterc. The GitHub checks for OpenApi / validate pull request would fail with version 0.46.0. However version 0.44.0 does not have this problem and the checks will pass, ready for the pull request to be merged with the master. This is a temporary solution and we should later try to fix the OpenApi/validate with the newest version 0.46.0.
