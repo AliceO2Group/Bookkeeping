@@ -2,8 +2,10 @@ package src
 
 import (
 	"context"
+	"reflect"
 	"fmt"
 	"time"
+	"net/http"
 	sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
 )
 
@@ -43,7 +45,8 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param o2Start Time (UTC) when command to start a new Run was given
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
-func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time) {
+ func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time) (sw.RunResponse, *http.Response, error) {
+	
 	var runtype sw.RunType = runType
 
 	obj := sw.Run{
@@ -58,7 +61,8 @@ func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, ru
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
-	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
+
 }
 
 /**
@@ -69,7 +73,7 @@ func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, ru
  * @param o2End Time (UTC) when Run was completely stopped
  * @param triggerEnd (UTC) Time when Trigger subsystem was stopped
  */
-func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, timeTrgEnd time.Time) {
+func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, timeTrgEnd time.Time) (sw.RunResponse, *http.Response, error) {
 	var runquality sw.RunQuality = runQuality
 
 	obj := sw.Run{
@@ -79,7 +83,7 @@ func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, t
 	}
 
 	arrayResponse, response, err := api.RunApi.EndRun(auth, obj, runNumber)
-	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -89,7 +93,7 @@ func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, t
  * @param hostName Host name of the FLP
  * @param runNumber Integer ID of a specific data taking session
  */
-func CreateFlp(name string, hostName string, runNumber int32) {
+func CreateFlp(name string, hostName string, runNumber int32) (sw.LogResponse, *http.Response, error) {
 
 	obj := sw.CreateFlp{
 		Name:      name,
@@ -98,7 +102,7 @@ func CreateFlp(name string, hostName string, runNumber int32) {
 	}
 
 	arrayResponse, response, err := api.FlpApi.CreateFlp(auth, obj)
-	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -111,7 +115,7 @@ func CreateFlp(name string, hostName string, runNumber int32) {
  * @param nRecordingBytes Data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
  * @param nFairMqBytes Data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
  */
-func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
+func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) (sw.FlpResponse, *http.Response, error) {
 	obj := sw.UpdateFlp{
 		NTimeframes:           nSubtimeframes,
 		BytesEquipmentReadOut: nEquipmentBytes,
@@ -120,7 +124,7 @@ func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes i
 	}
 
 	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpId)
-	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -132,7 +136,7 @@ func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes i
  * @param parentLogId Integer id of the parent log
  */
 // todo: keep runNumbers as string? or convert to css (comma separated string) in function body?
-func CreateLog(text string, title string, runNumbers string, parentLogId int32) {
+func CreateLog(text string, title string, runNumbers string, parentLogId int32) (sw.LogResponse, *http.Response, error) {
 
 	// todo: remove if-statement with optional parameter-like construct.
 	if parentLogId == -1 {
@@ -142,8 +146,9 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int32) 
 			RunNumbers: runNumbers,
 		}
 		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
-		fmt.Println(arrayResponse, response, err)
-	} else {
+
+		return arrayResponse, response, err
+		} else {
 		obj := sw.CreateLog{
 			Text:        text,
 			Title:       title,
@@ -151,7 +156,7 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int32) 
 			ParentLogId: parentLogId,
 		}
 		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
-		fmt.Println(arrayResponse, response, err)
+		return arrayResponse, response, err
 	}
 }
 
@@ -159,16 +164,16 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int32) 
  * Get all logs
  * @returns ArrayOfLogsResponse
  */
-func GetLogs() {
+func GetLogs() (sw.ArrayOfLogsResponse, *http.Response, error) {
 	arrayResponse, response, err := api.LogApi.ListLogs(auth)
-	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
  * Get all runs
  * @returns ArrayOfRunsResponse
  */
-func GetRuns() {
-	arrayResponse, response, err := api.RunApi.ListRuns(auth)
-	fmt.Println(arrayResponse, response, err)
+func GetRuns() (sw.ArrayOfRunsResponse, *http.Response, error) {
+	arrayResponse, response, err := api.RunApi.ListRuns(auth) 
+	return arrayResponse, response, err
 }
