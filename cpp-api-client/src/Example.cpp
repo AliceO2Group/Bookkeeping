@@ -22,8 +22,10 @@ namespace
 int main(int argc, char const *argv[])
 {
     std::cout << "Hello Bookkeeping-api-cpp!" << std::endl;
-    std::string url = getEnvString("BOOKKEEPING_URL");
-    std::string apiToken = getEnvString("BOOKKEEPING_API_TOKEN");
+    //Include url of your choice with http:// at the start, /api at the end. For example: http://localhost:4000/api
+    std::string url = "url/api";
+    //Input the JSONWebToken string here(JWT) for example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MjQyNzI3NzIsImV4cCI6MTY1NTgzMDM3MiwiaXNzIjoibzItdWkifQ.R_V1F0zQIS3o8XoYaRU_26H8oQEtsvUZQLMfOaP9VGM
+    std::string apiToken = "JWT";
     std::cout << "BOOKKEEPING_URL: " << url << '\n'
               << "BOOKKEEPING_API_TOKEN: " << apiToken << std::endl;
 
@@ -47,6 +49,7 @@ int main(int argc, char const *argv[])
     api->flpAdd("flp-2", "localhost", runNumber);
 
     // Update flp
+    // First parameter is the id of the FLP you want to update.
     std::cout << "Updating FLPs" << std::endl;
     api->flpUpdateCounters(1, "flp-1", 123, 123408, 5834, 9192);
     api->flpUpdateCounters(1, "flp-2", 13, 318, 23, 952);
@@ -82,6 +85,16 @@ int main(int argc, char const *argv[])
         std::cout << log->toJson() << std::endl;
     }
     std::cout << "Amount of logs retrieved: " << logs.size() << std::endl;
+
+    // Get flps
+    std::cout << "Getting flps" << std::endl;
+    auto flps = api->getFlps();
+
+    for (const auto &flp : flps)
+    {
+        std::cout << flp->toJson() << std::endl;
+    }
+    std::cout << "Amount of flps retrieved: " << flps.size() << std::endl;
 
     return 0;
 }

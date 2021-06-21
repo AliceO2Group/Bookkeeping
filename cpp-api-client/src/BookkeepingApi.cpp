@@ -213,4 +213,11 @@ std::vector<std::shared_ptr<org::openapitools::client::model::Run>> BookkeepingA
 {
     return org::openapitools::client::api::RunApi(apiClient).listRuns().get()->getData();
 }
+
+// TODO: Doesn't work properly with 64 bit yet.
+// Changing the way of retrieving the data does seem to be the possible solution, but we haven't figured it out yet.
+std::vector<std::shared_ptr<org::openapitools::client::model::Flp>> BookkeepingApi::getFlps()
+{
+    return org::openapitools::client::api::FlpApi(apiClient).listFlps().get()->getData();
+}
 }
