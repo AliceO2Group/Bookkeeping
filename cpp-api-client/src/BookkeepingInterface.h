@@ -10,6 +10,7 @@
 #include "OrderDirection.h"
 #include "cpprest-client/model/Run.h"
 #include "cpprest-client/model/Log.h"
+#include "cpprest-client/model/Flp.h"
 #include "RunType.h"
 #include "RunQuality.h"
 
@@ -102,5 +103,12 @@ namespace bookkeeping
      * @returns ArrayOfRunsResponse
      */
     virtual std::vector<std::shared_ptr<org::openapitools::client::model::Run>> getRuns() = 0;
+
+    /**
+     * @brief TODO: not working properly yet. Gets the last 100 flps
+     * @throws org::openapitools::client::api::ApiException
+     * @returns ArrayOfFlpResponse
+     */
+    virtual std::vector<std::shared_ptr<org::openapitools::client::model::Flp>> getFlps() = 0;
   };
 }

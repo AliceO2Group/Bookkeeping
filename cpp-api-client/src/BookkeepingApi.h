@@ -23,7 +23,7 @@ class BookkeepingApi : public virtual BookkeepingInterface
     virtual std::vector<std::shared_ptr<org::openapitools::client::model::Run>> getRuns() override;
     virtual void createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers = {}, std::int64_t parentLogId = -1) override;
     virtual std::vector<std::shared_ptr<org::openapitools::client::model::Log>> getLogs() override;
-    
+    virtual std::vector<std::shared_ptr<org::openapitools::client::model::Flp>> getFlps() override;
     private:
     std::shared_ptr<org::openapitools::client::api::ApiClient> apiClient;
 };
