@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.2]
+
+* O2B-410 CPP-api-client can now be updated with the unqiue combination of flpName and runNumber instead of a auto incrementend integer.
+* O2B-419 Fixed an issue where the log creation got a bug when both tag and attachment was selected. The issue was with multiform data and the way it accepts array data. 
+
 ## [0.17.1] 
 
 * Updated @aliceo2/web-ui version from 1.15.1 to 1.18.2. A bug fix that adds a name to JWT token for the bookkeeping team. https://github.com/AliceO2Group/WebUi/releases/tag/%40aliceo2%2Fweb-ui%401.18.2
