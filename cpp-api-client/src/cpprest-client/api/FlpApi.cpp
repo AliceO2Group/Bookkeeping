@@ -184,13 +184,14 @@ pplx::task<std::shared_ptr<LogResponse>> FlpApi::createFlp(std::shared_ptr<Creat
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<FlpResponse>> FlpApi::getFlpById(int32_t flpId) const
+pplx::task<std::shared_ptr<FlpResponse>> FlpApi::getFlpById(utility::string_t flpName, int64_t runNumber) const
 {
 
 
     std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
-    utility::string_t localVarPath = utility::conversions::to_string_t("/flps/{flpId}");
-    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("flpId") + utility::conversions::to_string_t("}"), ApiClient::parameterToString(flpId));
+    utility::string_t localVarPath = utility::conversions::to_string_t("/flps/{flpName}/runs/{runNumber}");
+    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("flpName") + utility::conversions::to_string_t("}"), ApiClient::parameterToString(flpName));
+boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("runNumber") + utility::conversions::to_string_t("}"), ApiClient::parameterToString(runNumber));
 
     std::map<utility::string_t, utility::string_t> localVarQueryParams;
     std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );
@@ -437,7 +438,7 @@ pplx::task<std::shared_ptr<ArrayOfFlpsResponse>> FlpApi::listFlps() const
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<FlpResponse>> FlpApi::updateFlp(int32_t flpId, std::shared_ptr<UpdateFlp> updateFlp) const
+pplx::task<std::shared_ptr<FlpResponse>> FlpApi::updateFlp(utility::string_t flpName, int64_t runNumber, std::shared_ptr<UpdateFlp> updateFlp) const
 {
 
     // verify the required parameter 'updateFlp' is set
@@ -448,8 +449,9 @@ pplx::task<std::shared_ptr<FlpResponse>> FlpApi::updateFlp(int32_t flpId, std::s
 
 
     std::shared_ptr<const ApiConfiguration> localVarApiConfiguration( m_ApiClient->getConfiguration() );
-    utility::string_t localVarPath = utility::conversions::to_string_t("/flps/{flpId}");
-    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("flpId") + utility::conversions::to_string_t("}"), ApiClient::parameterToString(flpId));
+    utility::string_t localVarPath = utility::conversions::to_string_t("/flps/{flpName}/runs/{runNumber}");
+    boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("flpName") + utility::conversions::to_string_t("}"), ApiClient::parameterToString(flpName));
+boost::replace_all(localVarPath, utility::conversions::to_string_t("{") + utility::conversions::to_string_t("runNumber") + utility::conversions::to_string_t("}"), ApiClient::parameterToString(runNumber));
 
     std::map<utility::string_t, utility::string_t> localVarQueryParams;
     std::map<utility::string_t, utility::string_t> localVarHeaderParams( localVarApiConfiguration->getDefaultHeaders() );

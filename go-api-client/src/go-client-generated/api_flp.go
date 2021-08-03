@@ -143,12 +143,13 @@ func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (LogRespo
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 /*
-FlpApiService Gets a flp by Id
+FlpApiService Gets a flp by Name
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param flpId The id of the flp to retrieve
+ * @param flpName The id of the flp to retrieve
+ * @param runNumber The id of the runNumber to retrieve
 @return FlpResponse
 */
-func (a *FlpApiService) GetFlpById(ctx context.Context, flpId int32) (FlpResponse, *http.Response, error) {
+func (a *FlpApiService) GetFlpById(ctx context.Context, flpName string, runNumber int32) (FlpResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -158,8 +159,9 @@ func (a *FlpApiService) GetFlpById(ctx context.Context, flpId int32) (FlpRespons
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/flps/{flpId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"flpId"+"}", fmt.Sprintf("%v", flpId), -1)
+	localVarPath := a.client.cfg.BasePath + "/flps/{flpName}/runs/{runNumber}"
+	localVarPath = strings.Replace(localVarPath, "{"+"flpName"+"}", fmt.Sprintf("%v", flpName), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"runNumber"+"}", fmt.Sprintf("%v", runNumber), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -388,10 +390,11 @@ func (a *FlpApiService) ListFlps(ctx context.Context) (ArrayOfFlpsResponse, *htt
 FlpApiService Update an existing flp
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param flpId The id of the flp to retrieve
+ * @param flpName The id of the flp to retrieve
+ * @param runNumber The id of the runNumber to retrieve
 @return FlpResponse
 */
-func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpId int32) (FlpResponse, *http.Response, error) {
+func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpName string, runNumber int32) (FlpResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Patch")
 		localVarPostBody   interface{}
@@ -401,8 +404,9 @@ func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpId int
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/flps/{flpId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"flpId"+"}", fmt.Sprintf("%v", flpId), -1)
+	localVarPath := a.client.cfg.BasePath + "/flps/{flpName}/runs/{runNumber}"
+	localVarPath = strings.Replace(localVarPath, "{"+"flpName"+"}", fmt.Sprintf("%v", flpName), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"runNumber"+"}", fmt.Sprintf("%v", runNumber), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

@@ -22,8 +22,10 @@ namespace
 int main(int argc, char const *argv[])
 {
     std::cout << "Hello Bookkeeping-api-cpp!" << std::endl;
-    std::string url = getEnvString("BOOKKEEPING_URL");
-    std::string apiToken = getEnvString("BOOKKEEPING_API_TOKEN");
+    // Example string url + api: "http://localhost:4000/api"
+    std::string url = "http://localhost:4000/api";
+    // Example JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MjgwMDY3ODMsImV4cCI6MTY1OTU2NDM4MywiaXNzIjoibzItdWkifQ.bJr6CZ2dvEobC5z9VrVPMfXdCQXcYSIYlES1NnyfMXU
+    std::string apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MjgwMTEwMjMsImV4cCI6MTY1OTU2ODYyMywiaXNzIjoibzItdWkifQ.p3HcBLJU4z95r2HCoFH9KUqkxe5UxGneQhxA4Y8MoUY";
     std::cout << "BOOKKEEPING_URL: " << url << '\n'
               << "BOOKKEEPING_API_TOKEN: " << apiToken << std::endl;
 
@@ -46,10 +48,10 @@ int main(int argc, char const *argv[])
     api->flpAdd("flp-1", "localhost");
     api->flpAdd("flp-2", "localhost", runNumber);
 
-    // Update flp
+    // Update flp. Input the combination of flpname("flp-2") and runNumber(runNumber) of the flp you want to update.
     std::cout << "Updating FLPs" << std::endl;
-    api->flpUpdateCounters(1, "flp-1", 123, 123408, 5834, 9192);
-    api->flpUpdateCounters(1, "flp-2", 13, 318, 23, 952);
+    api->flpUpdateCounters("flp-2", runNumber, 123, 123408, 5834, 9192);
+
 
     // End a run
     std::cout << "Ending run" << std::endl;

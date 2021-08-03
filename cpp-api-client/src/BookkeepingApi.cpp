@@ -167,7 +167,7 @@ void BookkeepingApi::flpAdd(std::string flpName, std::string hostName, int64_t r
     flpApi.createFlp(flp).get();
 }
 
-void BookkeepingApi::flpUpdateCounters(int64_t flpId, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
+void BookkeepingApi::flpUpdateCounters(std::string flpName, int64_t runNumber, int64_t nSubtimeframes, int64_t nEquipmentBytes,
       int64_t nRecordingBytes, int64_t nFairMQBytes)
 {
     org::openapitools::client::api::FlpApi flpApi(apiClient);
@@ -176,7 +176,7 @@ void BookkeepingApi::flpUpdateCounters(int64_t flpId, std::string flpName, int64
     flp->setBytesFairMQReadOut(nFairMQBytes);
     flp->setNTimeframes(nSubtimeframes);
     flp->setBytesRecordingReadOut(nRecordingBytes);
-    flpApi.updateFlp(flpId, flp).get();
+    flpApi.updateFlp(flpName, runNumber, flp).get();
 }
 
 void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers, std::int64_t parentLogId)
