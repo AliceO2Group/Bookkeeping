@@ -111,7 +111,7 @@ func CreateFlp(name string, hostName string, runNumber int32) {
  * @param nRecordingBytes Data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
  * @param nFairMqBytes Data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
  */
-func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
+func UpdateFlp(flpName string, runNumber int32, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
 	obj := sw.UpdateFlp{
 		NTimeframes:           nSubtimeframes,
 		BytesEquipmentReadOut: nEquipmentBytes,
@@ -119,7 +119,7 @@ func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes i
 		BytesFairMQReadOut:    nFairMQBytes,
 	}
 
-	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpId)
+	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpName, runNumber)
 	fmt.Println(arrayResponse, response, err)
 }
 

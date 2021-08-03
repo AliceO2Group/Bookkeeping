@@ -85,12 +85,13 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-  '/flps/{flpId}':
+  '/flps/{flpName}/runs/{runNumber}':
     parameters:
-      - $ref: '#/components/parameters/FlpId'
+      - $ref: '#/components/parameters/FlpName'
+      - $ref: '#/components/parameters/RunNumber'
     get:
       operationId: getFlpById
-      summary: Gets a flp by Id
+      summary: Gets a flp by Name
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -470,9 +471,16 @@ components:
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
       style: deepObject
-    FlpId:
-      name: flpId
+    FlpName:
+      name: flpName
       description: The id of the flp to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FlpName'
+    RunNumber:
+      name: runNumber
+      description: The id of the runNumber to retrieve
       in: path
       required: true
       schema:

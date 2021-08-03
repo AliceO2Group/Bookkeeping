@@ -18,7 +18,7 @@ class BookkeepingApi : public virtual BookkeepingInterface
     virtual void runEnd(int64_t runNumber, std::time_t o2End, std::time_t triggerEnd,
       RunQuality runQuality) override;
     virtual void flpAdd(std::string flpName, std::string hostName, int64_t runNumber = -1) override;
-    virtual void flpUpdateCounters(int64_t flpId, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
+    virtual void flpUpdateCounters(std::string flpName, int64_t runNumber,  int64_t nSubtimeframes, int64_t nEquipmentBytes,
       int64_t nRecordingBytes, int64_t nFairMQBytes) override;
     virtual std::vector<std::shared_ptr<org::openapitools::client::model::Run>> getRuns() override;
     virtual void createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers = {}, std::int64_t parentLogId = -1) override;
