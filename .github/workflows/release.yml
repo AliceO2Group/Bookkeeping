@@ -30,5 +30,11 @@ jobs:
         asset_content_type: application/tar+gzip
         asset_path: ./${{ steps.tgz.outputs.tgz_name }}
         asset_name: ${{ steps.tgz.outputs.tgz_name }}
-    - name: Set output
-      run: echo ::set-output name=asset_url::${{ steps.upload.browser_download_url }}
+    - name: Upload TARball to S3
+      uses: awegrzyn/s3-put-action@v1
+      with:
+        file: ./${{ needs.deploy-npm-module.outputs.PROJECT }}/${{ steps.tgz.outputs.tgz_name }}
+        bucket: 's3://system-configuration/TARS/'
+      env:
+        ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+        SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
