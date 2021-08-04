@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.3]
+
+* Bumped patch version to 0.17.3
+
 ## [0.17.2]
 
 * O2B-410 CPP-api-client can now be updated with the unqiue combination of flpName and runNumber instead of a auto incrementend integer.
