@@ -2,14 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.4]
+
+* Added text and made the UI more clear. Log create and run detail was unclear on how the tags were implemented. [#398](https://github.com/AliceO2Group/Bookkeeping/pull/398)
+* There was a unique error that when occured it made the title repeated in create log. This was prevented with changing the create tag file. [#397](https://github.com/AliceO2Group/Bookkeeping/pull/397)
+* Added an extra function that grabs all tags for the log creation page [#395] (https://github.com/AliceO2Group/Bookkeeping/pull/395)
+* When the log encouters an error and the user goes back to the page. Some fields were not reset. now all fields will be reset so the user have a blank slate to create a new log. [#394](https://github.com/AliceO2Group/Bookkeeping/pull/394)
+
 ## [0.17.3]
 
 * Bumped patch version to 0.17.3
 
 ## [0.17.2]
 
-* O2B-410 CPP-api-client can now be updated with the unqiue combination of flpName and runNumber instead of a auto incrementend integer.
-* O2B-419 Fixed an issue where the log creation got a bug when both tag and attachment was selected. The issue was with multiform data and the way it accepts array data. 
+* O2B-410 CPP-api-client can now be updated with the unqiue combination of flpName and runNumber instead of a auto incrementend integer. [$388] (https://github.com/AliceO2Group/Bookkeeping/pull/388)
+* O2B-419 Fixed an issue where the log creation got a bug when both tag and attachment was selected. The issue was with multiform data and the way it accepts array data. [#386](https://github.com/AliceO2Group/Bookkeeping/pull/386)
 
 ## [0.17.1] 
 
