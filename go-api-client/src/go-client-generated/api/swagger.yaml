@@ -151,16 +151,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-  /flps/{flpId}:
+  /flps/{flpName}/runs/{runNumber}:
     get:
       tags:
       - flp
-      summary: Gets a flp by Id
+      summary: Gets a flp by Name
       operationId: getFlpById
       parameters:
-      - name: flpId
+      - name: flpName
         in: path
         description: The id of the flp to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/FlpName'
+      - name: runNumber
+        in: path
+        description: The id of the runNumber to retrieve
         required: true
         style: simple
         explode: false
@@ -197,9 +205,17 @@ paths:
       summary: Update an existing flp
       operationId: updateFlp
       parameters:
-      - name: flpId
+      - name: flpName
         in: path
         description: The id of the flp to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/FlpName'
+      - name: runNumber
+        in: path
+        description: The id of the runNumber to retrieve
         required: true
         style: simple
         explode: false
@@ -1251,7 +1267,8 @@ components:
       description: Response containing multiple runs.
       example:
         data:
-        - timeTrgStart: 853113599
+        - epn: false
+          timeTrgStart: 853113599
           timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
@@ -1262,12 +1279,15 @@ components:
           nEpns: 5
           runQuality: good
           timeO2Start: 853113599
+          dcs: false
           nDetectors: 1
           nFlps: 5
+          dd_Flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
-        - timeTrgStart: 853113599
+        - epn: false
+          timeTrgStart: 853113599
           timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
@@ -1278,8 +1298,10 @@ components:
           nEpns: 5
           runQuality: good
           timeO2Start: 853113599
+          dcs: false
           nDetectors: 1
           nFlps: 5
+          dd_Flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
@@ -2250,6 +2272,12 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        dd_Flp:
+          $ref: '#/components/schemas/DataDistrubution'
+        dcs:
+          $ref: '#/components/schemas/DCS'
+        epn:
+          $ref: '#/components/schemas/EPN'
         updatedAt:
           type: integer
           description: Unix timestamp when this entity was last updated.
@@ -2258,6 +2286,7 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
+        epn: false
         timeTrgStart: 853113599
         timeO2End: 853113599
         timeTrgEnd: 853113599
@@ -2269,8 +2298,10 @@ components:
         nEpns: 5
         runQuality: good
         timeO2Start: 853113599
+        dcs: false
         nDetectors: 1
         nFlps: 5
+        dd_Flp: false
         runNumber: 7
         id: 1
         updatedAt: 853113599
@@ -2331,6 +2362,7 @@ components:
       description: Response containing a single run.
       example:
         data:
+          epn: false
           timeTrgStart: 853113599
           timeO2End: 853113599
           timeTrgEnd: 853113599
@@ -2342,8 +2374,10 @@ components:
           nEpns: 5
           runQuality: good
           timeO2Start: 853113599
+          dcs: false
           nDetectors: 1
           nFlps: 5
+          dd_Flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
@@ -2368,6 +2402,15 @@ components:
       description: Unix timestamp when this entity was created.
       format: int32
       example: 853113599
+    DataDistrubution:
+      type: boolean
+      example: false
+    DCS:
+      type: boolean
+      example: false
+    EPN:
+      type: boolean
+      example: false
     RunType:
       type: string
       description: Specifies the type of run.
@@ -2516,6 +2559,7 @@ components:
           $ref: '#/components/schemas/EntityId'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
+      additionalProperties: false
       description: Minified Run object.
       example:
         runNumber: 5
@@ -2648,10 +2692,19 @@ components:
       explode: false
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
-    FlpId:
-      name: flpId
+    FlpName:
+      name: flpName
       in: path
       description: The id of the flp to retrieve
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/FlpName'
+    RunNumber:
+      name: runNumber
+      in: path
+      description: The id of the runNumber to retrieve
       required: true
       style: simple
       explode: false

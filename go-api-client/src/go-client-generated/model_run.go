@@ -8,7 +8,7 @@
  */
 package swagger
 
-import "time";
+import "time"
 
 // Describes an intervention or an event that happened.
 type Run struct {
@@ -28,6 +28,9 @@ type Run struct {
 	TimeO2Start *time.Time `json:"timeO2Start,omitempty"`
 	TimeTrgEnd *time.Time `json:"timeTrgEnd,omitempty"`
 	TimeTrgStart *time.Time `json:"timeTrgStart,omitempty"`
+	DdFlp bool `json:"dd_Flp,omitempty"`
+	Dcs bool `json:"dcs,omitempty"`
+	Epn bool `json:"epn,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }

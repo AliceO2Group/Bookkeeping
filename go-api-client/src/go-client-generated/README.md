@@ -26,9 +26,9 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**GetDeployInformation**](docs/DefaultApi.md#getdeployinformation) | **Get** /status | Get deploy information
 *DefaultApi* | [**GetServerInformation**](docs/DefaultApi.md#getserverinformation) | **Get** / | Get server information
 *FlpApi* | [**CreateFlp**](docs/FlpApi.md#createflp) | **Post** /flps | Adds a new flp
-*FlpApi* | [**GetFlpById**](docs/FlpApi.md#getflpbyid) | **Get** /flps/{flpId} | Gets a flp by Id
+*FlpApi* | [**GetFlpById**](docs/FlpApi.md#getflpbyid) | **Get** /flps/{flpName}/runs/{runNumber} | Gets a flp by Name
 *FlpApi* | [**ListFlps**](docs/FlpApi.md#listflps) | **Get** /flps | List all flps
-*FlpApi* | [**UpdateFlp**](docs/FlpApi.md#updateflp) | **Patch** /flps/{flpId} | Update an existing flp
+*FlpApi* | [**UpdateFlp**](docs/FlpApi.md#updateflp) | **Patch** /flps/{flpName}/runs/{runNumber} | Update an existing flp
 *LogApi* | [**CreateLog**](docs/LogApi.md#createlog) | **Post** /logs | Adds a new log
 *LogApi* | [**GetLogAttachment**](docs/LogApi.md#getlogattachment) | **Get** /logs/{logId}/attachments/{attachmentId} | Get one specific attachment associated with a log
 *LogApi* | [**GetLogById**](docs/LogApi.md#getlogbyid) | **Get** /logs/{logId} | Gets a log by Id
