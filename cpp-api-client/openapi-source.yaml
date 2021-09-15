@@ -1468,6 +1468,12 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        dd_flp:
+          $ref: '#/components/schemas/DD_FLP'
+        dcs:
+          $ref: '#/components/schemas/DCS'
+        epn:
+          $ref: '#/components/schemas/EPN'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -1549,6 +1555,18 @@ components:
       type: integer
       format: int64
       example: 853113599
+    DD_FLP:
+      description: Boolean for Data Distrubution (FLP), On or Off.
+      type: boolean
+      example: 1
+    DCS:
+      description: Boolean for DCS, On or Off.
+      type: boolean
+      example: 1
+    EPN:
+      description: Boolean for EPN, On or Off.
+      type: boolean
+      example: 1
     RunType:
       description: Specifies the type of run.
       type: string

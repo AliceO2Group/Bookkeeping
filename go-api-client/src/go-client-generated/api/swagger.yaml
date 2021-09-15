@@ -1268,9 +1268,9 @@ components:
       example:
         data:
         - epn: false
-          timeTrgStart: 853113599
-          timeO2End: 853113599
-          timeTrgEnd: 853113599
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
           bytesReadOut: 0
           nSubtimeframes: 2
@@ -1278,18 +1278,18 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 853113599
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
           dcs: false
           nDetectors: 1
           nFlps: 5
-          dd_Flp: false
+          dd_flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
         - epn: false
-          timeTrgStart: 853113599
-          timeO2End: 853113599
-          timeTrgEnd: 853113599
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
           bytesReadOut: 0
           nSubtimeframes: 2
@@ -1297,11 +1297,11 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 853113599
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
           dcs: false
           nDetectors: 1
           nFlps: 5
-          dd_Flp: false
+          dd_flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
@@ -2272,8 +2272,8 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        dd_Flp:
-          $ref: '#/components/schemas/DataDistrubution'
+        dd_flp:
+          $ref: '#/components/schemas/DD_FLP'
         dcs:
           $ref: '#/components/schemas/DCS'
         epn:
@@ -2287,9 +2287,9 @@ components:
       description: Describes an intervention or an event that happened.
       example:
         epn: false
-        timeTrgStart: 853113599
-        timeO2End: 853113599
-        timeTrgEnd: 853113599
+        timeTrgStart: 2000-01-23T04:56:07.000+00:00
+        timeO2End: 2000-01-23T04:56:07.000+00:00
+        timeTrgEnd: 2000-01-23T04:56:07.000+00:00
         runType: physics
         bytesReadOut: 0
         nSubtimeframes: 2
@@ -2297,11 +2297,11 @@ components:
         createdAt: 853113599
         nEpns: 5
         runQuality: good
-        timeO2Start: 853113599
+        timeO2Start: 2000-01-23T04:56:07.000+00:00
         dcs: false
         nDetectors: 1
         nFlps: 5
-        dd_Flp: false
+        dd_flp: false
         runNumber: 7
         id: 1
         updatedAt: 853113599
@@ -2330,15 +2330,13 @@ components:
       description: The unique identifier of this entity.
       format: int32
     RunO2End:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
     RunO2Start:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
     RunOrigin:
       type: string
       description: Type of creator.
@@ -2363,9 +2361,9 @@ components:
       example:
         data:
           epn: false
-          timeTrgStart: 853113599
-          timeO2End: 853113599
-          timeTrgEnd: 853113599
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
           bytesReadOut: 0
           nSubtimeframes: 2
@@ -2373,11 +2371,11 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 853113599
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
           dcs: false
           nDetectors: 1
           nFlps: 5
-          dd_Flp: false
+          dd_flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
@@ -2393,23 +2391,24 @@ components:
       description: Total number of subtimeframes processed by the O2 system.
       format: int32
     RunTrgEnd:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
     RunTrgStart:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
-    DataDistrubution:
+      format: date-time
+    DD_FLP:
       type: boolean
+      description: "Boolean for Data Distrubution (FLP), On or Off."
       example: false
     DCS:
       type: boolean
+      description: "Boolean for DCS, On or Off."
       example: false
     EPN:
       type: boolean
+      description: "Boolean for EPN, On or Off."
       example: false
     RunType:
       type: string

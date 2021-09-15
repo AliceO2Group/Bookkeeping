@@ -37,10 +37,14 @@ namespace bookkeeping
      * @param nDetectors Number of detectors in the Run
      * @param nFlps Number of FLP nodes in the Run
      * @param nEpns Number of EPN nodes in the Run
+     * @param dd_flp Data Distrubtion(FLP) boolean of the RUn
+     * @param dcs DCS boolean of the Run
+     * @param epn EPN boolean of the Run
      * @throws org::openapitools::client::api::ApiException
      */
     virtual void runStart(int64_t runNumber, std::time_t o2Start, std::time_t triggerStart,
-                          utility::string_t activityId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns) = 0;
+                          utility::string_t activityId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
+                          bool dd_flp, bool dcs, bool epn) = 0;
 
     /** 
      * @brief Ends a run

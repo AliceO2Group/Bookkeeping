@@ -83,20 +83,20 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getLogId() const;
+    int64_t getLogId() const;
     bool logIdIsSet() const;
     void unsetLogId();
 
-    void setLogId(int32_t value);
+    void setLogId(int64_t value);
 
     /// <summary>
     /// Mime-type of a file.
@@ -151,9 +151,9 @@ protected:
     bool m_EncodingIsSet;
     utility::string_t m_FileName;
     bool m_FileNameIsSet;
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
-    int32_t m_LogId;
+    int64_t m_LogId;
     bool m_LogIdIsSet;
     utility::string_t m_MimeType;
     bool m_MimeTypeIsSet;
