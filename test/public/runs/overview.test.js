@@ -67,6 +67,9 @@ module.exports = () => {
             nEpns: (number) => typeof number == 'number',
             nSubtimeframes: (number) => typeof number == 'number',
             bytesReadOut: (number) => typeof number == 'number',
+            dd_flp: (boolean) => typeof boolean == 'boolean',
+            dcs: (boolean) => typeof boolean == 'boolean',
+            epn: (boolean) => typeof boolean == 'boolean',
         };
 
         // We find the headers matching the datatype keys
