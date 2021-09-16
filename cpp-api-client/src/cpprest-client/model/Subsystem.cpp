@@ -25,7 +25,7 @@ Subsystem::Subsystem()
 {
     m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_Name = utility::conversions::to_string_t("");
     m_NameIsSet = false;
@@ -86,7 +86,7 @@ bool Subsystem::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -156,7 +156,7 @@ bool Subsystem::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, cons
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -195,12 +195,12 @@ void Subsystem::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int32_t Subsystem::getId() const
+int64_t Subsystem::getId() const
 {
     return m_Id;
 }
 
-void Subsystem::setId(int32_t value)
+void Subsystem::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;

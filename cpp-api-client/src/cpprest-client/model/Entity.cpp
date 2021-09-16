@@ -25,7 +25,7 @@ Entity::Entity()
 {
     m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
@@ -80,7 +80,7 @@ bool Entity::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -136,7 +136,7 @@ bool Entity::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const u
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -169,12 +169,12 @@ void Entity::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int32_t Entity::getId() const
+int64_t Entity::getId() const
 {
     return m_Id;
 }
 
-void Entity::setId(int32_t value)
+void Entity::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;

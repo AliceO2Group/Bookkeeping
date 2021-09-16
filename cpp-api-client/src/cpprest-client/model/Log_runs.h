@@ -55,11 +55,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// The unique identifier of this entity.
@@ -72,7 +72,7 @@ public:
 
 
 protected:
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
     int64_t m_RunNumber;
     bool m_RunNumberIsSet;

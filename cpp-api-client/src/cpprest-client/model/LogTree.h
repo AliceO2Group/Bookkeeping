@@ -101,11 +101,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// 
@@ -119,11 +119,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getParentLogId() const;
+    int64_t getParentLogId() const;
     bool parentLogIdIsSet() const;
     void unsetParentLogId();
 
-    void setParentLogId(int32_t value);
+    void setParentLogId(int64_t value);
 
     /// <summary>
     /// The amount of children of a root log.
@@ -137,11 +137,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getRootLogId() const;
+    int64_t getRootLogId() const;
     bool rootLogIdIsSet() const;
     void unsetRootLogId();
 
-    void setRootLogId(int32_t value);
+    void setRootLogId(int64_t value);
 
     /// <summary>
     /// Array of minified Run objects.
@@ -216,15 +216,15 @@ protected:
     bool m_ChildrenIsSet;
     int64_t m_CreatedAt;
     bool m_CreatedAtIsSet;
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
     std::shared_ptr<LogOrigin> m_Origin;
     bool m_OriginIsSet;
-    int32_t m_ParentLogId;
+    int64_t m_ParentLogId;
     bool m_ParentLogIdIsSet;
     int64_t m_Replies;
     bool m_RepliesIsSet;
-    int32_t m_RootLogId;
+    int64_t m_RootLogId;
     bool m_RootLogIdIsSet;
     std::vector<std::shared_ptr<Log_runs>> m_Runs;
     bool m_RunsIsSet;

@@ -23,7 +23,7 @@ namespace model {
 
 Log_runs::Log_runs()
 {
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_RunNumber = 0L;
     m_RunNumberIsSet = false;
@@ -64,7 +64,7 @@ bool Log_runs::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -110,7 +110,7 @@ bool Log_runs::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const
 
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -123,12 +123,12 @@ bool Log_runs::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const
     return ok;
 }
 
-int32_t Log_runs::getId() const
+int64_t Log_runs::getId() const
 {
     return m_Id;
 }
 
-void Log_runs::setId(int32_t value)
+void Log_runs::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;

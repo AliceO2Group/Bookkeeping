@@ -85,11 +85,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// The amount of detectors in a single run.
@@ -191,6 +191,33 @@ public:
     void setTimeTrgStart(int64_t value);
 
     /// <summary>
+    /// Boolean for Data Distrubution (FLP), On or Off.
+    /// </summary>
+    bool isDdFlp() const;
+    bool ddFlpIsSet() const;
+    void unsetDd_flp();
+
+    void setDdFlp(bool value);
+
+    /// <summary>
+    /// Boolean for DCS, On or Off.
+    /// </summary>
+    bool isDcs() const;
+    bool dcsIsSet() const;
+    void unsetDcs();
+
+    void setDcs(bool value);
+
+    /// <summary>
+    /// Boolean for EPN, On or Off.
+    /// </summary>
+    bool isEpn() const;
+    bool epnIsSet() const;
+    void unsetEpn();
+
+    void setEpn(bool value);
+
+    /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
     int64_t getUpdatedAt() const;
@@ -207,7 +234,7 @@ protected:
     bool m_BytesReadOutIsSet;
     int64_t m_CreatedAt;
     bool m_CreatedAtIsSet;
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
     int64_t m_NDetectors;
     bool m_NDetectorsIsSet;
@@ -231,6 +258,12 @@ protected:
     bool m_TimeTrgEndIsSet;
     int64_t m_TimeTrgStart;
     bool m_TimeTrgStartIsSet;
+    bool m_Dd_flp;
+    bool m_Dd_flpIsSet;
+    bool m_Dcs;
+    bool m_DcsIsSet;
+    bool m_Epn;
+    bool m_EpnIsSet;
     int64_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };

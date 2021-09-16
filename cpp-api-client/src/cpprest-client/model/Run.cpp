@@ -29,7 +29,7 @@ Run::Run()
     m_BytesReadOutIsSet = false;
     m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_NDetectors = 0L;
     m_NDetectorsIsSet = false;
@@ -51,6 +51,12 @@ Run::Run()
     m_TimeTrgEndIsSet = false;
     m_TimeTrgStart = 0L;
     m_TimeTrgStartIsSet = false;
+    m_Dd_flp = false;
+    m_Dd_flpIsSet = false;
+    m_Dcs = false;
+    m_DcsIsSet = false;
+    m_Epn = false;
+    m_EpnIsSet = false;
     m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
@@ -129,6 +135,18 @@ web::json::value Run::toJson() const
     {
         val[utility::conversions::to_string_t("timeTrgStart")] = ModelBase::toJson(m_TimeTrgStart);
     }
+    if(m_Dd_flpIsSet)
+    {
+        val[utility::conversions::to_string_t("dd_flp")] = ModelBase::toJson(m_Dd_flp);
+    }
+    if(m_DcsIsSet)
+    {
+        val[utility::conversions::to_string_t("dcs")] = ModelBase::toJson(m_Dcs);
+    }
+    if(m_EpnIsSet)
+    {
+        val[utility::conversions::to_string_t("epn")] = ModelBase::toJson(m_Epn);
+    }
     if(m_UpdatedAtIsSet)
     {
         val[utility::conversions::to_string_t("updatedAt")] = ModelBase::toJson(m_UpdatedAt);
@@ -176,7 +194,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -291,6 +309,36 @@ bool Run::fromJson(const web::json::value& val)
             setTimeTrgStart(refVal_timeTrgStart);
         }
     }
+    if(val.has_field(utility::conversions::to_string_t("dd_flp")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("dd_flp"));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_dd_flp;
+            ok &= ModelBase::fromJson(fieldValue, refVal_dd_flp);
+            setDdFlp(refVal_dd_flp);
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("dcs")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("dcs"));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_dcs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_dcs);
+            setDcs(refVal_dcs);
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("epn")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("epn"));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_epn;
+            ok &= ModelBase::fromJson(fieldValue, refVal_epn);
+            setEpn(refVal_epn);
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t("updatedAt")))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
@@ -371,6 +419,18 @@ void Run::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utilit
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("timeTrgStart"), m_TimeTrgStart));
     }
+    if(m_Dd_flpIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("dd_flp"), m_Dd_flp));
+    }
+    if(m_DcsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("dcs"), m_Dcs));
+    }
+    if(m_EpnIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("epn"), m_Epn));
+    }
     if(m_UpdatedAtIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("updatedAt"), m_UpdatedAt));
@@ -406,7 +466,7 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -475,6 +535,24 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
         int64_t refVal_timeTrgStart;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("timeTrgStart")), refVal_timeTrgStart );
         setTimeTrgStart(refVal_timeTrgStart);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("dd_flp")))
+    {
+        bool refVal_dd_flp;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("dd_flp")), refVal_dd_flp );
+        setDdFlp(refVal_dd_flp);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("dcs")))
+    {
+        bool refVal_dcs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("dcs")), refVal_dcs );
+        setDcs(refVal_dcs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("epn")))
+    {
+        bool refVal_epn;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("epn")), refVal_epn );
+        setEpn(refVal_epn);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
@@ -545,12 +623,12 @@ void Run::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int32_t Run::getId() const
+int64_t Run::getId() const
 {
     return m_Id;
 }
 
-void Run::setId(int32_t value)
+void Run::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -784,6 +862,66 @@ bool Run::timeTrgStartIsSet() const
 void Run::unsetTimeTrgStart()
 {
     m_TimeTrgStartIsSet = false;
+}
+bool Run::isDdFlp() const
+{
+    return m_Dd_flp;
+}
+
+void Run::setDdFlp(bool value)
+{
+    m_Dd_flp = value;
+    m_Dd_flpIsSet = true;
+}
+
+bool Run::ddFlpIsSet() const
+{
+    return m_Dd_flpIsSet;
+}
+
+void Run::unsetDd_flp()
+{
+    m_Dd_flpIsSet = false;
+}
+bool Run::isDcs() const
+{
+    return m_Dcs;
+}
+
+void Run::setDcs(bool value)
+{
+    m_Dcs = value;
+    m_DcsIsSet = true;
+}
+
+bool Run::dcsIsSet() const
+{
+    return m_DcsIsSet;
+}
+
+void Run::unsetDcs()
+{
+    m_DcsIsSet = false;
+}
+bool Run::isEpn() const
+{
+    return m_Epn;
+}
+
+void Run::setEpn(bool value)
+{
+    m_Epn = value;
+    m_EpnIsSet = true;
+}
+
+bool Run::epnIsSet() const
+{
+    return m_EpnIsSet;
+}
+
+void Run::unsetEpn()
+{
+    m_EpnIsSet = false;
 }
 int64_t Run::getUpdatedAt() const
 {

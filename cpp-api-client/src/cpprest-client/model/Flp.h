@@ -110,11 +110,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// Number of subtimeframes processed in this FLP. Updated regularly.
@@ -157,7 +157,7 @@ protected:
     bool m_CreatedAtIsSet;
     utility::string_t m_Hostname;
     bool m_HostnameIsSet;
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
     int64_t m_NTimeframes;
     bool m_NTimeframesIsSet;

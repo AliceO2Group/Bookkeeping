@@ -64,11 +64,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getId() const;
+    int64_t getId() const;
     bool idIsSet() const;
     void unsetId();
 
-    void setId(int32_t value);
+    void setId(int64_t value);
 
     /// <summary>
     /// Unix timestamp when this entity was last updated.
@@ -83,7 +83,7 @@ public:
 protected:
     int64_t m_CreatedAt;
     bool m_CreatedAtIsSet;
-    int32_t m_Id;
+    int64_t m_Id;
     bool m_IdIsSet;
     int64_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;

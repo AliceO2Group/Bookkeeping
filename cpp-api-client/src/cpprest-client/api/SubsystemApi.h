@@ -64,7 +64,7 @@ public:
     /// </remarks>
     /// <param name="subsystemId">The id of the subsystem to retrieve</param>
     pplx::task<std::shared_ptr<SubsystemResponse>> deleteSubsystem(
-        int32_t subsystemId
+        int64_t subsystemId
     ) const;
     /// <summary>
     /// Get a subsystem by Id
@@ -74,7 +74,7 @@ public:
     /// </remarks>
     /// <param name="subsystemId">The id of the subsystem to retrieve</param>
     pplx::task<std::shared_ptr<SubsystemResponse>> getSubsystem(
-        int32_t subsystemId
+        int64_t subsystemId
     ) const;
     /// <summary>
     /// List all subsystems
