@@ -1435,8 +1435,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        activityId:
-          $ref: '#/components/schemas/RunActivityId'
+        environmentId:
+          $ref: '#/components/schemas/RunEnvironmentId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1480,7 +1480,7 @@ components:
           format: int64
           example: 853113599
       additionalProperties: false
-    RunActivityId:
+    RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
     RunBytesReadOut:

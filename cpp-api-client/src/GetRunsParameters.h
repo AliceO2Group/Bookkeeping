@@ -24,7 +24,7 @@ struct GetRunsParameters
     boost::optional<boost::posix_time::ptime> endTimeTrgEnd;
     boost::optional<boost::posix_time::ptime> startTimeO2End;
     boost::optional<boost::posix_time::ptime> endTimeO2End;
-    boost::optional<std::string> activityId;
+    boost::optional<std::string> environmentId;
     boost::optional<RunType> runType;
     boost::optional<RunQuality> runQuality;
 };

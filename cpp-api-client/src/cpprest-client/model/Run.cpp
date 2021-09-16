@@ -23,8 +23,8 @@ namespace model {
 
 Run::Run()
 {
-    m_ActivityId = utility::conversions::to_string_t("");
-    m_ActivityIdIsSet = false;
+    m_EnvironmentId = utility::conversions::to_string_t("");
+    m_EnvironmentIdIsSet = false;
     m_BytesReadOut = 0L;
     m_BytesReadOutIsSet = false;
     m_CreatedAt = 0L;
@@ -75,9 +75,9 @@ web::json::value Run::toJson() const
 
     web::json::value val = web::json::value::object();
     
-    if(m_ActivityIdIsSet)
+    if(m_EnvironmentIdIsSet)
     {
-        val[utility::conversions::to_string_t("activityId")] = ModelBase::toJson(m_ActivityId);
+        val[utility::conversions::to_string_t("environmentId")] = ModelBase::toJson(m_EnvironmentId);
     }
     if(m_BytesReadOutIsSet)
     {
@@ -159,14 +159,14 @@ bool Run::fromJson(const web::json::value& val)
 {
     bool ok = true;
     
-    if(val.has_field(utility::conversions::to_string_t("activityId")))
+    if(val.has_field(utility::conversions::to_string_t("environmentId")))
     {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("activityId"));
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("environmentId"));
         if(!fieldValue.is_null())
         {
-            utility::string_t refVal_activityId;
-            ok &= ModelBase::fromJson(fieldValue, refVal_activityId);
-            setActivityId(refVal_activityId);
+            utility::string_t refVal_environmentId;
+            ok &= ModelBase::fromJson(fieldValue, refVal_environmentId);
+            setEnvironmentId(refVal_environmentId);
         }
     }
     if(val.has_field(utility::conversions::to_string_t("bytesReadOut")))
@@ -359,9 +359,9 @@ void Run::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utilit
     {
         namePrefix += utility::conversions::to_string_t(".");
     }
-    if(m_ActivityIdIsSet)
+    if(m_EnvironmentIdIsSet)
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("activityId"), m_ActivityId));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("environmentId"), m_EnvironmentId));
     }
     if(m_BytesReadOutIsSet)
     {
@@ -446,11 +446,11 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
         namePrefix += utility::conversions::to_string_t(".");
     }
 
-    if(multipart->hasContent(utility::conversions::to_string_t("activityId")))
+    if(multipart->hasContent(utility::conversions::to_string_t("environmentId")))
     {
-        utility::string_t refVal_activityId;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("activityId")), refVal_activityId );
-        setActivityId(refVal_activityId);
+        utility::string_t refVal_environmentId;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("environmentId")), refVal_environmentId );
+        setEnvironmentId(refVal_environmentId);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesReadOut")))
     {
@@ -563,25 +563,25 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     return ok;
 }
 
-utility::string_t Run::getActivityId() const
+utility::string_t Run::getEnvironmentId() const
 {
-    return m_ActivityId;
+    return m_EnvironmentId;
 }
 
-void Run::setActivityId(const utility::string_t& value)
+void Run::setEnvironmentId(const utility::string_t& value)
 {
-    m_ActivityId = value;
-    m_ActivityIdIsSet = true;
+    m_EnvironmentId = value;
+    m_EnvironmentIdIsSet = true;
 }
 
-bool Run::activityIdIsSet() const
+bool Run::environmentIdIsSet() const
 {
-    return m_ActivityIdIsSet;
+    return m_EnvironmentIdIsSet;
 }
 
-void Run::unsetActivityId()
+void Run::unsetEnvironmentId()
 {
-    m_ActivityIdIsSet = false;
+    m_EnvironmentIdIsSet = false;
 }
 int64_t Run::getBytesReadOut() const
 {

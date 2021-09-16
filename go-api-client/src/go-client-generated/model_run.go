@@ -13,7 +13,7 @@ import (
 
 // Describes an intervention or an event that happened.
 type Run struct {
-	ActivityId string `json:"activityId,omitempty"`
+	EnvironmentId string `json:"environmentId,omitempty"`
 	BytesReadOut int32 `json:"bytesReadOut,omitempty"`
 	// Unix timestamp when this entity was created.
 	CreatedAt int32 `json:"createdAt,omitempty"`

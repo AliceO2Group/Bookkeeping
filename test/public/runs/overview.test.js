@@ -59,7 +59,7 @@ module.exports = () => {
             timeO2End: (date) => !isNaN(Date.parse(date)),
             timeTrgStart: (date) => !isNaN(Date.parse(date)),
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
-            activityId: (number) => typeof number == 'number',
+            environmentId: (number) => typeof number == 'number',
             runType: (string) => typeof string == 'string',
             runQuality: (string) => typeof string == 'string',
             nDetectors: (number) => typeof number == 'number',
