@@ -125,7 +125,7 @@ BookkeepingApi::BookkeepingApi(std::string url, std::string token)
 
 
 void BookkeepingApi::runStart(int64_t runNumber, std::time_t o2Start,
-      std::time_t triggerStart, utility::string_t activityId, 
+      std::time_t triggerStart, utility::string_t environmentId, 
       RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
       bool dd_flp, bool dcs, bool epn) 
 {
@@ -135,7 +135,7 @@ void BookkeepingApi::runStart(int64_t runNumber, std::time_t o2Start,
     run->setTimeO2Start(getUnixTimeStamp(&o2Start));
     run->setTimeTrgStart(getUnixTimeStamp(&triggerStart));
     run->setRunType(runTypeToActualRunType(runType));
-    run->setActivityId(activityId);
+    run->setEnvironmentId(environmentId);
     run->setNDetectors(nDetectors);
     run->setNFlps(nFlps);
     run->setNEpns(nEpns);

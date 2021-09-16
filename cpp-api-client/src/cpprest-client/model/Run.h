@@ -58,11 +58,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    utility::string_t getActivityId() const;
-    bool activityIdIsSet() const;
-    void unsetActivityId();
+    utility::string_t getEnvironmentId() const;
+    bool environmentIdIsSet() const;
+    void unsetEnvironmentId();
 
-    void setActivityId(const utility::string_t& value);
+    void setEnvironmentId(const utility::string_t& value);
 
     /// <summary>
     /// Total data volume read out from the detectors by the O2 system in bytes.
@@ -228,8 +228,8 @@ public:
 
 
 protected:
-    utility::string_t m_ActivityId;
-    bool m_ActivityIdIsSet;
+    utility::string_t m_EnvironmentId;
+    bool m_EnvironmentIdIsSet;
     int64_t m_BytesReadOut;
     bool m_BytesReadOutIsSet;
     int64_t m_CreatedAt;

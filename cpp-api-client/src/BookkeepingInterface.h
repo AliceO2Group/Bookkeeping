@@ -32,7 +32,7 @@ namespace bookkeeping
      * @param runNumber Integer ID of a specific data taking session
      * @param o2Start Time (UTC) when command to start a new Run was given
      * @param triggerStart Time (UTC) when Trigger subsystem was started
-     * @param activityId Control ID string. Can be a long hash, 32 or 64 character long
+     * @param environmentId Control ID string. Can be a long hash, 32 or 64 character long
      * @param runType Type of run. Might be replaced by tags
      * @param nDetectors Number of detectors in the Run
      * @param nFlps Number of FLP nodes in the Run
@@ -43,7 +43,7 @@ namespace bookkeeping
      * @throws org::openapitools::client::api::ApiException
      */
     virtual void runStart(int64_t runNumber, std::time_t o2Start, std::time_t triggerStart,
-                          utility::string_t activityId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
+                          utility::string_t environmentId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
                           bool dd_flp, bool dcs, bool epn) = 0;
 
     /** 

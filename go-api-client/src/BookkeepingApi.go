@@ -43,11 +43,11 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param o2Start Time (UTC) when command to start a new Run was given
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
-func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool) {
+func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool) {
 	var runtype sw.RunType = runType
 
 	obj := sw.Run{
-		ActivityId:   activityId,
+		EnvironmentId:   environmentId,
 		NDetectors:   nDetectors,
 		NEpns:        nEpns,
 		NFlps:        nFlps,

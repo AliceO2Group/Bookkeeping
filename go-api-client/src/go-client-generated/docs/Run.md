@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ActivityId** | **string** |  | [optional] [default to null]
+**EnvironmentId** | **string** |  | [optional] [default to null]
 **BytesReadOut** | **int32** |  | [optional] [default to null]
 **CreatedAt** | **int32** | Unix timestamp when this entity was created. | [optional] [default to null]
 **Id** | **int32** |  | [optional] [default to null]

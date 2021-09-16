@@ -1274,11 +1274,11 @@ components:
           runType: physics
           bytesReadOut: 0
           nSubtimeframes: 2
-          activityId: activityId
           createdAt: 853113599
           nEpns: 5
           runQuality: good
           timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
           dcs: false
           nDetectors: 1
           nFlps: 5
@@ -1293,11 +1293,11 @@ components:
           runType: physics
           bytesReadOut: 0
           nSubtimeframes: 2
-          activityId: activityId
           createdAt: 853113599
           nEpns: 5
           runQuality: good
           timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
           dcs: false
           nDetectors: 1
           nFlps: 5
@@ -2239,8 +2239,8 @@ components:
     Run:
       type: object
       properties:
-        activityId:
-          $ref: '#/components/schemas/RunActivityId'
+        environmentId:
+          $ref: '#/components/schemas/RunEnvironmentId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -2293,11 +2293,11 @@ components:
         runType: physics
         bytesReadOut: 0
         nSubtimeframes: 2
-        activityId: activityId
         createdAt: 853113599
         nEpns: 5
         runQuality: good
         timeO2Start: 2000-01-23T04:56:07.000+00:00
+        environmentId: environmentId
         dcs: false
         nDetectors: 1
         nFlps: 5
@@ -2305,7 +2305,7 @@ components:
         runNumber: 7
         id: 1
         updatedAt: 853113599
-    RunActivityId:
+    RunEnvironmentId:
       type: string
       description: The unique identifier of this entity.
     RunBytesReadOut:
@@ -2367,11 +2367,11 @@ components:
           runType: physics
           bytesReadOut: 0
           nSubtimeframes: 2
-          activityId: activityId
           createdAt: 853113599
           nEpns: 5
           runQuality: good
           timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
           dcs: false
           nDetectors: 1
           nFlps: 5
