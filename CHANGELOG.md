@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.6]
+* Add more information to run entries. [#406] (https://github.com/AliceO2Group/Bookkeeping/pull/406)
+* Hide/change existing Run Statistics fields. [#408] (https://github.com/AliceO2Group/Bookkeeping/pull/408)
+* Changes made to the database. Changes are registerd in the CHANGELOG.md file in the database folder.
+
+    * New fields to be added to the RUNS table:
+        - dd_flp
+        - dcs
+        - epn
+
+    * Changed a field to another name in the RUNS table:
+        - activity_id is changed to environment_id
+
 ## [0.17.4]
 
 * Added text and made the UI more clear. Log create and run detail was unclear on how the tags were implemented. [#398](https://github.com/AliceO2Group/Bookkeeping/pull/398)

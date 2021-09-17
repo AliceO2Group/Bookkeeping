@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Running validator
         run: |
           npm ci
@@ -32,6 +33,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Running validator
         run: |
           npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
