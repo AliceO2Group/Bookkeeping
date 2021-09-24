@@ -57,6 +57,8 @@ Run::Run()
     m_DcsIsSet = false;
     m_Epn = false;
     m_EpnIsSet = false;
+    m_EpnTopology = utility::conversions::to_string_t("");
+    m_EpnTopologyIsSet = false;
     m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
@@ -146,6 +148,10 @@ web::json::value Run::toJson() const
     if(m_EpnIsSet)
     {
         val[utility::conversions::to_string_t("epn")] = ModelBase::toJson(m_Epn);
+    }
+    if(m_EpnTopologyIsSet)
+    {
+        val[utility::conversions::to_string_t("epnTopology")] = ModelBase::toJson(m_EpnTopology);
     }
     if(m_UpdatedAtIsSet)
     {
@@ -339,6 +345,16 @@ bool Run::fromJson(const web::json::value& val)
             setEpn(refVal_epn);
         }
     }
+    if(val.has_field(utility::conversions::to_string_t("epnTopology")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("epnTopology"));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_epnTopology;
+            ok &= ModelBase::fromJson(fieldValue, refVal_epnTopology);
+            setEpnTopology(refVal_epnTopology);
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t("updatedAt")))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
@@ -430,6 +446,10 @@ void Run::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utilit
     if(m_EpnIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("epn"), m_Epn));
+    }
+    if(m_EpnTopologyIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("epnTopology"), m_EpnTopology));
     }
     if(m_UpdatedAtIsSet)
     {
@@ -553,6 +573,12 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
         bool refVal_epn;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("epn")), refVal_epn );
         setEpn(refVal_epn);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("epnTopology")))
+    {
+        utility::string_t refVal_epnTopology;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("epnTopology")), refVal_epnTopology );
+        setEpnTopology(refVal_epnTopology);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
@@ -922,6 +948,26 @@ bool Run::epnIsSet() const
 void Run::unsetEpn()
 {
     m_EpnIsSet = false;
+}
+utility::string_t Run::getEpnTopology() const
+{
+    return m_EpnTopology;
+}
+
+void Run::setEpnTopology(const utility::string_t& value)
+{
+    m_EpnTopology = value;
+    m_EpnTopologyIsSet = true;
+}
+
+bool Run::epnTopologyIsSet() const
+{
+    return m_EpnTopologyIsSet;
+}
+
+void Run::unsetEpnTopology()
+{
+    m_EpnTopologyIsSet = false;
 }
 int64_t Run::getUpdatedAt() const
 {

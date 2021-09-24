@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
     // Example string url + api: "http://localhost:4000/api"
     std::string url = "http://localhost:4000/api";
     // Example JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MjgwMDY3ODMsImV4cCI6MTY1OTU2NDM4MywiaXNzIjoibzItdWkifQ.bJr6CZ2dvEobC5z9VrVPMfXdCQXcYSIYlES1NnyfMXU
-    std::string apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MzE3MDIyMjgsImV4cCI6MTY2MzI1OTgyOCwiaXNzIjoibzItdWkifQ.mm8TSya-tRTXYGrDuNBidekMMJ8DtI8lJs8H27gwz2c";
+    std::string apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MzI0NzA1MjUsImV4cCI6MTY2NDAyODEyNSwiaXNzIjoibzItdWkifQ.IHKSp_GwITw8i0BnO7p85GXkxUKIola3LqjNnUHaxP8";
     std::cout << "BOOKKEEPING_URL: " << url << '\n'
               << "BOOKKEEPING_API_TOKEN: " << apiToken << std::endl;
 
@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
     // Start a run
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << "Starting run " << runNumber << " NOW: " << now << std::endl;
-    api->runStart(runNumber, now, now, "cpp-api", RunType::TECHNICAL, 123, 200, 100, false, true, false);
+    api->runStart(runNumber, now, now, "cpp-api", RunType::TECHNICAL, 123, 200, 100, false, true, false, "normal");
 
     // Add flp
     std::cout << "Adding FLPs" << std::endl;

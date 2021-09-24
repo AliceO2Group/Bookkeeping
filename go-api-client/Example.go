@@ -19,19 +19,19 @@ func main() {
 	apiClient.InitializeApi(baseUrl, apiToken)
 
 	// Create a run
-	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 9999, sw.COSMICS_RunType, testTime, testTime, true, false, true)
+	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 23, sw.COSMICS_RunType, testTime, testTime, false, false, true, "normal")
 
 	// Update a run
-	apiClient.UpdateRun(9999, sw.BAD_RunQuality, testTime, testTime)
+	apiClient.UpdateRun(23, sw.BAD_RunQuality, testTime, testTime)
 
 	// Create an flp
-	apiClient.CreateFlp("flpTestName", "flpTestHost", 9999)
+	apiClient.CreateFlp("flpTestName", "flpTestHost", 23)
 
 	// Update an flp
-	apiClient.UpdateFlp("flpTestName", 9999, 100, 200, 300, 400)
+	apiClient.UpdateFlp("flpTestName", 23, 100, 200, 300, 400)
 
 	// Create a log
-	apiClient.CreateLog("logTest", "logTest", "9999", -1)
+	apiClient.CreateLog("logTest", "logTest", "23", -1)
 
 	// // Retrieve all logs from the api
 	apiClient.GetLogs()

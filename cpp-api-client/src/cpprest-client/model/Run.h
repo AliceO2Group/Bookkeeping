@@ -218,6 +218,15 @@ public:
     void setEpn(bool value);
 
     /// <summary>
+    /// Topology for EPN.
+    /// </summary>
+    utility::string_t getEpnTopology() const;
+    bool epnTopologyIsSet() const;
+    void unsetEpnTopology();
+
+    void setEpnTopology(const utility::string_t& value);
+
+    /// <summary>
     /// Unix timestamp when this entity was last updated.
     /// </summary>
     int64_t getUpdatedAt() const;
@@ -264,6 +273,8 @@ protected:
     bool m_DcsIsSet;
     bool m_Epn;
     bool m_EpnIsSet;
+    utility::string_t m_EpnTopology;
+    bool m_EpnTopologyIsSet;
     int64_t m_UpdatedAt;
     bool m_UpdatedAtIsSet;
 };

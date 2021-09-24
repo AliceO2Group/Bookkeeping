@@ -1474,6 +1474,8 @@ components:
           $ref: '#/components/schemas/DCS'
         epn:
           $ref: '#/components/schemas/EPN'
+        epnTopology:
+          $ref: '#/components/schemas/EPN_Topology'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -1567,6 +1569,10 @@ components:
       description: Boolean for EPN, On or Off.
       type: boolean
       example: 1
+    EPN_Topology:
+      description: Topology for EPN.
+      type: string
+      example: 'normal'
     RunType:
       description: Specifies the type of run.
       type: string

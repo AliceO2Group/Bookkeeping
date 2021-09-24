@@ -15,7 +15,7 @@ class BookkeepingApi : public virtual BookkeepingInterface
     virtual void runStart(int64_t runNumber, std::time_t o2Start,
       std::time_t triggerStart, utility::string_t environmentId, 
       RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
-      bool dd_flp, bool dcs, bool epn) override;
+      bool dd_flp, bool dcs, bool epn, utility::string_t epnTopology) override;
     virtual void runEnd(int64_t runNumber, std::time_t o2End, std::time_t triggerEnd,
       RunQuality runQuality) override;
     virtual void flpAdd(std::string flpName, std::string hostName, int64_t runNumber = -1) override;
