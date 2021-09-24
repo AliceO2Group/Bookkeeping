@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+## [0.17.7]
+* Added the field epn_topology. [#411] (https://github.com/AliceO2Group/Bookkeeping/pull/411)
+* Changes made to the database. Changes are registerd in the CHANGELOG.md file in the database folder.
+
+    * New fields to be added to the RUNS table:
+        - epn_topology
+
 ## [0.17.6]
 * Add more information to run entries. [#406] (https://github.com/AliceO2Group/Bookkeeping/pull/406)
 * Hide/change existing Run Statistics fields. [#408] (https://github.com/AliceO2Group/Bookkeeping/pull/408)
