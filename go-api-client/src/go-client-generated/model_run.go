@@ -32,6 +32,7 @@ type Run struct {
 	DdFlp bool `json:"dd_flp,omitempty"`
 	Dcs bool `json:"dcs,omitempty"`
 	Epn bool `json:"epn,omitempty"`
+	EpnTopology string `json:"epnTopology,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }

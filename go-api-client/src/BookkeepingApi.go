@@ -41,9 +41,14 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param runNumber Integer ID of a specific data taking session
  * @param runType Type of run. Might be replaced by tags
  * @param o2Start Time (UTC) when command to start a new Run was given
+ * @param dd_flp Data Distrubtion(FLP) boolean of the Run. On or Off
+ * @param dcs DCS boolean of the Run. On or Off
+ * @param epn EPN boolean of the Run. On or Off
+ * @param epnTopology description of the EPN.
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
-func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool) {
+func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, 
+	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string) {
 	var runtype sw.RunType = runType
 
 	obj := sw.Run{
@@ -58,6 +63,7 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 		DdFlp: 	  	  dd_flp,
         Dcs:          dcs,
         Epn:          epn,
+		EpnTopology:  epnTopology,
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)

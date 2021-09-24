@@ -127,7 +127,7 @@ BookkeepingApi::BookkeepingApi(std::string url, std::string token)
 void BookkeepingApi::runStart(int64_t runNumber, std::time_t o2Start,
       std::time_t triggerStart, utility::string_t environmentId, 
       RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
-      bool dd_flp, bool dcs, bool epn) 
+      bool dd_flp, bool dcs, bool epn, utility::string_t epnTopology) 
 {
     org::openapitools::client::api::RunApi runApi(apiClient);
     auto run = std::make_shared<org::openapitools::client::model::Run>();

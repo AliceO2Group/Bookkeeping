@@ -40,11 +40,12 @@ namespace bookkeeping
      * @param dd_flp Data Distrubtion(FLP) boolean of the RUn
      * @param dcs DCS boolean of the Run
      * @param epn EPN boolean of the Run
+     * @param epnTopology description of the EPN
      * @throws org::openapitools::client::api::ApiException
      */
     virtual void runStart(int64_t runNumber, std::time_t o2Start, std::time_t triggerStart,
                           utility::string_t environmentId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
-                          bool dd_flp, bool dcs, bool epn) = 0;
+                          bool dd_flp, bool dcs, bool epn, utility::string_t epnTopology) = 0;
 
     /** 
      * @brief Ends a run
