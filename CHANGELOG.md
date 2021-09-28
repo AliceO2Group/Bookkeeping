@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.8]
+* updated dockerfile from version node:12.18.1-alpine3.12 to node:16.9.1-alpine3.12
 
 ## [0.17.7]
 * Added the field epn_topology. [#411] (https://github.com/AliceO2Group/Bookkeeping/pull/411)

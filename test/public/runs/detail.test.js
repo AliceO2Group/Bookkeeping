@@ -71,7 +71,7 @@ module.exports = () => {
 
         // We expect the entry page to have the same id as the id from the run overview
         await pressElement(page, `#${firstRowId}`);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
     });

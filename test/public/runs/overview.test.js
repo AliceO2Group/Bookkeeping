@@ -70,6 +70,7 @@ module.exports = () => {
             dd_flp: (boolean) => typeof boolean == 'boolean',
             dcs: (boolean) => typeof boolean == 'boolean',
             epn: (boolean) => typeof boolean == 'boolean',
+            epnTopology: (string) => typeof string == 'string',
         };
 
         // We find the headers matching the datatype keys
