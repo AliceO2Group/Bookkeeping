@@ -71,6 +71,7 @@ Class | Method | HTTP request | Description
  - [CreateSubsystem](docs/CreateSubsystem.md)
  - [CreateTag](docs/CreateTag.md)
  - [DeployInformation](docs/DeployInformation.md)
+ - [Detectors](docs/Detectors.md)
  - [Entity](docs/Entity.md)
  - [ErrorSource](docs/ErrorSource.md)
  - [Errors](docs/Errors.md)

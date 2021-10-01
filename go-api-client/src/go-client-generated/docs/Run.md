@@ -22,6 +22,7 @@ Name | Type | Description | Notes
 **Dcs** | **bool** |  | [optional] [default to null]
 **Epn** | **bool** |  | [optional] [default to null]
 **EpnTopology** | **string** |  | [optional] [default to null]
+**Detectors** | [***Detectors**](DETECTORS.md) |  | [optional] [default to null]
 **UpdatedAt** | **int32** | Unix timestamp when this entity was last updated. | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

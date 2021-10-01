@@ -1476,6 +1476,8 @@ components:
           $ref: '#/components/schemas/EPN'
         epnTopology:
           $ref: '#/components/schemas/EPN_Topology'
+        detectors:
+          $ref: '#/components/schemas/DETECTORS'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -1573,6 +1575,26 @@ components:
       description: Topology for EPN.
       type: string
       example: 'normal'
+    DETECTORS:
+      description: Adds one or multiple detectors to the run.
+      type: string
+      enum:
+        - "CPV"
+        - "EMC" 
+        - "FDD"
+        - "FT0"
+        - "FV0"
+        - "HMP"
+        - "ITS"
+        - "MCH"
+        - "MFT"
+        - "MID"
+        - "PHS"
+        - "TOF"
+        - "TPC"
+        - "TRD"
+        - "TST"
+        - "ZDC"
     RunType:
       description: Specifies the type of run.
       type: string
