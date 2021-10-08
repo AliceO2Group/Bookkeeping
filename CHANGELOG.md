@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. See [standa
             - type: SET 
                 - ALTER TABLE runs ADD detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
                 - ALTER TABLE runs modify detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
+                
 ## [0.17.10]
 * Make /logs, /flps and /attachment routes private again [#419] https://github.com/AliceO2Group/Bookkeeping/pull/419
 
