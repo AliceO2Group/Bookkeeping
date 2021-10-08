@@ -45,11 +45,13 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param dcs DCS boolean of the Run. On or Off
  * @param epn EPN boolean of the Run. On or Off
  * @param epnTopology description of the EPN.
+ * @param detectors types of detecotrs in the run.
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
 func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, 
-	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string) {
-	var runtype sw.RunType = runType
+	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string, detectors sw.Detectors) {
+	var run sw.RunType = runType
+	var det sw.Detectors = detectors
 
 	obj := sw.Run{
 		EnvironmentId:   environmentId,
@@ -57,13 +59,14 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 		NEpns:        nEpns,
 		NFlps:        nFlps,
 		RunNumber:    runNumber,
-		RunType:      &runtype,
+		RunType:      &run,
 		TimeO2Start:  &timeO2Start,
 		TimeTrgStart: &timeTrgStart,
 		DdFlp: 	  	  dd_flp,
         Dcs:          dcs,
         Epn:          epn,
 		EpnTopology:  epnTopology,
+		Detectors: 	  &det,
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)

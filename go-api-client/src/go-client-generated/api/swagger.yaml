@@ -1272,6 +1272,7 @@ components:
           timeO2End: 2000-01-23T04:56:07.000+00:00
           timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
+          detectors: CPV
           bytesReadOut: 0
           nSubtimeframes: 2
           createdAt: 853113599
@@ -1292,6 +1293,7 @@ components:
           timeO2End: 2000-01-23T04:56:07.000+00:00
           timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
+          detectors: CPV
           bytesReadOut: 0
           nSubtimeframes: 2
           createdAt: 853113599
@@ -2282,6 +2284,8 @@ components:
           $ref: '#/components/schemas/EPN'
         epnTopology:
           $ref: '#/components/schemas/EPN_Topology'
+        detectors:
+          $ref: '#/components/schemas/DETECTORS'
         updatedAt:
           type: integer
           description: Unix timestamp when this entity was last updated.
@@ -2295,6 +2299,7 @@ components:
         timeO2End: 2000-01-23T04:56:07.000+00:00
         timeTrgEnd: 2000-01-23T04:56:07.000+00:00
         runType: physics
+        detectors: CPV
         bytesReadOut: 0
         nSubtimeframes: 2
         createdAt: 853113599
@@ -2370,6 +2375,7 @@ components:
           timeO2End: 2000-01-23T04:56:07.000+00:00
           timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
+          detectors: CPV
           bytesReadOut: 0
           nSubtimeframes: 2
           createdAt: 853113599
@@ -2420,6 +2426,26 @@ components:
       type: string
       description: Topology for EPN.
       example: normal
+    DETECTORS:
+      type: string
+      description: Adds one or multiple detectors to the run.
+      enum:
+      - CPV
+      - EMC
+      - FDD
+      - FT0
+      - FV0
+      - HMP
+      - ITS
+      - MCH
+      - MFT
+      - MID
+      - PHS
+      - TOF
+      - TPC
+      - TRD
+      - TST
+      - ZDC
     RunType:
       type: string
       description: Specifies the type of run.

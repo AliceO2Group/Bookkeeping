@@ -9,7 +9,7 @@ import (
 func main() {
 	// Set base url and api token
 	baseUrl := "http://localhost:4000/api"
-	apiToken := ""<INSERT JWT TOKEN HERE>""
+	apiToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MzM2ODQ3MDcsImV4cCI6MTY2NTI0MjMwNywiaXNzIjoibzItdWkifQ.bWbXX5tSgElHCx9bEeRRjGbd2ISckPpCYSwJnOh8mV0"
 	
 	// Create an Unix Timestamp to local time.
 	testTime := time.Unix(time.Now().Unix(), 0)
@@ -19,19 +19,20 @@ func main() {
 	apiClient.InitializeApi(baseUrl, apiToken)
 
 	// Create a run
-	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 23, sw.COSMICS_RunType, testTime, testTime, false, false, true, "normal")
+	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 80, sw.COSMICS_RunType, testTime, testTime, false, false, true, "normal", 
+	(sw.CPV_Detectors+ "," +sw.ZDC_Detectors + "," + sw.EMC_Detectors))
 
 	// Update a run
-	apiClient.UpdateRun(23, sw.BAD_RunQuality, testTime, testTime)
+	apiClient.UpdateRun(80, sw.BAD_RunQuality, testTime, testTime)
 
 	// Create an flp
-	apiClient.CreateFlp("flpTestName", "flpTestHost", 23)
+	apiClient.CreateFlp("flpTestName", "flpTestHost", 80)
 
 	// Update an flp
-	apiClient.UpdateFlp("flpTestName", 23, 100, 200, 300, 400)
+	apiClient.UpdateFlp("flpTestName", 80, 100, 200, 300, 400)
 
 	// Create a log
-	apiClient.CreateLog("logTest", "logTest", "23", -1)
+	apiClient.CreateLog("logTest", "logTest", "80", -1)
 
 	// // Retrieve all logs from the api
 	apiClient.GetLogs()
