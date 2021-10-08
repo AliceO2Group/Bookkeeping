@@ -8,6 +8,8 @@ ALTER TABLE runs ADD detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'IT
 
 ## [0.17.8]
 * updated dockerfile from version node:12.18.1-alpine3.12 to node:16.9.1-alpine3.12
+* Made api/log and api/flp public [#415] (https://github.com/AliceO2Group/Bookkeeping/pull/415)
+*  log-overview changed id to runNumber [#416] (https://github.com/AliceO2Group/Bookkeeping/pull/416)
 
 ## [0.17.7]
 * Added the field epn_topology. [#411] (https://github.com/AliceO2Group/Bookkeeping/pull/411)
