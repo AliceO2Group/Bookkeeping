@@ -33,7 +33,7 @@ type Run struct {
 	Dcs bool `json:"dcs,omitempty"`
 	Epn bool `json:"epn,omitempty"`
 	EpnTopology string `json:"epnTopology,omitempty"`
-	Detectors *[]string `json:"detectors,omitempty"`
+	Detectors *Detectors `json:"detectors,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
 }

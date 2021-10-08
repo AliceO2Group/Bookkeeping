@@ -45,6 +45,7 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param dcs DCS boolean of the Run. On or Off
  * @param epn EPN boolean of the Run. On or Off
  * @param epnTopology description of the EPN.
+ * @param detectors types of detecotrs in the run.
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
 func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, 
