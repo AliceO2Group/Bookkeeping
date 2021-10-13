@@ -97,4 +97,28 @@ module.exports = () => {
         const postSendUrl = await page.url();
         expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
     });
+    it('can validate the empty title form', async () => {
+        const parentLogId = 116;
+        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
+
+        // We expect there to be at least one post in this log entry
+        await pressElement(page, `#reply-to-${parentLogId}`);
+        await page.waitForTimeout(1000);
+
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+
+        const title = '';
+        const text = 'Test the reply button';
+
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.waitForTimeout(250);
+
+        const isDisabled = await page.$eval('button#send', (button) => {
+            return button.disabled;
+          });
+        expect(isDisabled).to.equal(false);
+    });
 };
