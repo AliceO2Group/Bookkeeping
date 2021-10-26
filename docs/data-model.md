@@ -7,7 +7,21 @@ For simplicity, the following info is not described in this document:
 - creation and update timestamp fields
 - n-m junction tables
 
-### Runs
+## Further explanations of fields tables
+
+Concerning the **Update time** of the fields:
+- At SOR: synchronously at Start of Run 
+- At EOR: synchronously at End of Run 
+- During Run: periodically during the run, normally to update/overwrite counters
+- After EOR: asynchronously after the run finishes, normally by humans
+
+Concerning the **Update key** of the fields, it indicates which key will be provided to know which database record to update. 
+
+Concerning the **Update mode** of the fields: 
+- Insert: direct insert via the API
+- Replace: direct insert via the API, new value replaces existing one
+
+## Runs
 
 **Description:** A Run is a synchronous data taking time period, performed in the O2 computing farm with a specific and well-defined configuration. It normally ranges from a few minutes to tens of hours and can include one or many ALICE detectors. It provides a unique identifier for the data set generated during the run.   
 **DB main table**: `runs`   
@@ -29,7 +43,7 @@ For simplicity, the following info is not described in this document:
 | `detectors`                   | List of detectors in the run | `ITS,TPC,TOF` | At SOR | `run_number` | Insert |
 
 
-### Log Entries
+## Log Entries
 
 **Description:** Text message that describes a significant intervention or event that happened. Can be generated either by humans (e.g. a shifter enters his/her end-of-shift report) or by computer processes (e.g. AliECS stores a dump of the configuration parameters used) and are normally consumed by humans.   
 **DB main table**: `logs`
@@ -45,16 +59,19 @@ For simplicity, the following info is not described in this document:
 | `root_log_id`                 | When the Log Entry belongs to a thread, this field stores the ID of the top level Log Entry | `123` | At Log Entry creation | `id` | Insert |
 | `parent_log_id`               | When the Log Entry belongs to a thread, this field stores the ID of the parent/previous Log Entry | `123` | At Log Entry creation | `id` | Insert |
 
-## Further explanations of fields tables
+### Attachments
 
-Concerning the **Update time** of the fields:
-- At SOR: synchronously at Start of Run 
-- At EOR: synchronously at End of Run 
-- During Run: periodically during the run, normally to update/overwrite counters
-- After EOR: asynchronously after the run finishes, normally by humans
+**Description:** File attachment to a Log Entry   
+**DB main table**: `attachments`
 
-Concerning the **Update key** of the fields, it indicates which key will be provided to know which database record to update. 
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `file_name`                   | Server side created filename. | `1633208265696_Run502915.png`  | At Log Entry creation  | `id` | Insert |
+| `size`                        | File size in bytes. |  | At Log Entry creation | `id` | Insert |
+| `mime_type`                   | File MIME type. | `image/png` | At Log Entry creation | `id` | Insert |
+| `original_name`               | Client side original filename.  | `Run502915.png` | At Log Entry creation | `id` | Insert |
+| `path`                        | Server side path to file. | `/var/storage/1633208265696_Run502915.png` | At Log Entry creation | `id` | Insert |
+| `encoding`                    | File Content-Transfer-Encoding value. | `7bit` | At Log Entry creation | `id` | Insert |
+| `log_id`                      | ID of Log Entry to which the attachment belongs to. | `123` | At Log Entry creation | `id` | Insert |
 
-Concerning the **Update mode** of the fields: 
-- Insert: direct insert via the API
-- Replace: direct insert via the API, new value replaces existing one
+
