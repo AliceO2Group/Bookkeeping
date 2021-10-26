@@ -19,7 +19,7 @@ Concerning the **Update key** of the fields, it indicates which key will be prov
 
 Concerning the **Update mode** of the fields: 
 - Insert: direct insert via the API
-- Replace: direct insert via the API, new value replaces existing one
+- Update: direct insert via the API, new value replaces existing one
 
 ## Runs
 
