@@ -45,7 +45,7 @@ Concerning the **Update mode** of the fields:
 
 ## FLPs
 
-**Description:** First Level Processor (FLP) nodes are connected to the Front End Electronics of the detectors via P2P optical fibers. They provide the main function of detector readout while also running some local data processing and quality control.
+**Description:** First Level Processor (FLP) nodes are connected to the Front End Electronics of the detectors via P2P optical fibers. They provide the main function of detector readout while also running some local data processing and quality control.   
 **DB main table**: `flp_roles`   
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
@@ -93,7 +93,7 @@ Concerning the **Update mode** of the fields:
 
 ### Users
 
-**Description:** Bookkeeping user. Used to identify the author of a Log Entry.
+**Description:** Bookkeeping user. Used to identify the author of a Log Entry.   
 **DB main table**: `users`
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
