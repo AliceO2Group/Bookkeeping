@@ -43,6 +43,22 @@ Concerning the **Update mode** of the fields:
 | `detectors`                   | List of detectors in the run | `ITS,TPC,TOF` | At SOR | `run_number` | Insert |
 
 
+## FLPs
+
+**Description:** First Level Processor (FLP) nodes are connected to the Front End Electronics of the detectors via P2P optical fibers. They provide the main function of detector readout while also running some local data processing and quality control.
+**DB main table**: `flp_roles`   
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `name`                        |  |  | At SOR | | Insert |
+| `hostname`                    |  |  | At SOR | | Insert |
+| `n_timeframes`                |  |  | At EOR | | Update |
+| `bytes_processed`             |  |  | At SOR | | Update |
+| `bytes_equipment_read_out`    |  |  | At EOR | | Update |
+| `bytes_recording_read_out`    |  |  | At SOR | | Update |
+| `bytes_fair_m_q_read_out`     |  |  | At SOR | | Update |
+
+
 ## Log Entries
 
 **Description:** Text message that describes a significant intervention or event that happened. Can be generated either by humans (e.g. a shifter enters his/her end-of-shift report) or by computer processes (e.g. AliECS stores a dump of the configuration parameters used) and are normally consumed by humans.   
