@@ -50,13 +50,13 @@ Concerning the **Update mode** of the fields:
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
 | ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
-| `name`                        |  |  | At SOR | | Insert |
-| `hostname`                    |  |  | At SOR | | Insert |
-| `n_timeframes`                |  |  | At EOR | | Update |
-| `bytes_processed`             |  |  | At SOR | | Update |
-| `bytes_equipment_read_out`    |  |  | At EOR | | Update |
-| `bytes_recording_read_out`    |  |  | At SOR | | Update |
-| `bytes_fair_m_q_read_out`     |  |  | At SOR | | Update |
+| `name`                        | TBD |  | At SOR | | Insert |
+| `hostname`                    | TBD |  | At SOR | | Insert |
+| `n_timeframes`                | TBD |  | At EOR | | Update |
+| `bytes_processed`             | TBD |  | At SOR | | Update |
+| `bytes_equipment_read_out`    | TBD |  | At EOR | | Update |
+| `bytes_recording_read_out`    | TBD |  | At SOR | | Update |
+| `bytes_fair_m_q_read_out`     | TBD |  | At SOR | | Update |
 
 
 ## Log Entries
