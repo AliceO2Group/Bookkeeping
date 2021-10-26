@@ -75,3 +75,14 @@ Concerning the **Update mode** of the fields:
 | `log_id`                      | ID of Log Entry to which the attachment belongs to. | `123` | At Log Entry creation | `id` | Insert |
 
 
+### Tags
+
+**Description:** Free text labels to add to Runs or Log Entries. 
+**DB main table**: `tags`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `text`                        | Tag name. | `TPC`, `COSMICS`, `RC`  |   | `id` | Insert |
+
+
+
