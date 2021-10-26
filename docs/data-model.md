@@ -75,9 +75,20 @@ Concerning the **Update mode** of the fields:
 | `log_id`                      | ID of Log Entry to which the attachment belongs to. | `123` | At Log Entry creation | `id` | Insert |
 
 
+### Users
+
+**Description:** Bookkeeping user. Used to identify the author of a Log Entry.
+**DB main table**: `users`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `external_id`                 | User ID on the external Authentication system (e.g. CERN Authentication). | `568223`  | At first login  | `id` | Insert |
+| `name`                        | User full name.. |  | At first login | `id` | Insert |
+
+
 ### Tags
 
-**Description:** Free text labels to add to Runs or Log Entries. 
+**Description:** Free text labels to add to Runs or Log Entries.    
 **DB main table**: `tags`
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
