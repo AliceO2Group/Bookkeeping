@@ -100,9 +100,7 @@ module.exports = () => {
         expect(doesContentMatch).to.equal(true);
 
         // Create check disabled button
-        const isDisabled = await page.$eval('button#send', (button) => {
-            return button.disabled;
-          });
+        const isDisabled = await page.$eval('button#send', (button) => button.disabled);
 
         expect(isDisabled).to.equal(true);
     });

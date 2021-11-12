@@ -116,9 +116,7 @@ module.exports = () => {
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
         await page.waitForTimeout(250);
 
-        const isDisabled = await page.$eval('button#send', (button) => {
-            return button.disabled;
-          });
+        const isDisabled = await page.$eval('button#send', (button) => button.disabled);
         expect(isDisabled).to.equal(false);
     });
 };
