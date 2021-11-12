@@ -23,5 +23,5 @@ services:
 
   database:
     ports:
-      - target: 3307
-        published: 3307
+      - target: 3306
+        published: 3306
