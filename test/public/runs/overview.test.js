@@ -71,6 +71,7 @@ module.exports = () => {
             dcs: (boolean) => typeof boolean == 'boolean',
             epn: (boolean) => typeof boolean == 'boolean',
             epnTopology: (string) => typeof string == 'string',
+            detectors: (string) => typeof string == 'string',
         };
 
         // We find the headers matching the datatype keys
