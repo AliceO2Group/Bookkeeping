@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.12]
+* Added run filter to run-overview table [#433]https://github.com/AliceO2Group/Bookkeeping/pull/433
+* Changed verification of Title [#432]https://github.com/AliceO2Group/Bookkeeping/pull/432
+
 ## [0.17.11]
 * Changes made to the database and go-api-bindings[#420]https://github.com/AliceO2Group/Bookkeeping/pull/420
     * New field to be added to the RUNS table.
