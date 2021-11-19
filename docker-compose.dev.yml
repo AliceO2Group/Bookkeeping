@@ -6,6 +6,7 @@ services:
       target: development
     environment:
       NODE_ENV: development
+      DATABASE_LOGGING: "True"
     ports:
       - target: 4000
         published: 4000

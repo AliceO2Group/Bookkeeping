@@ -12,12 +12,14 @@
  */
 
 const LogSuite = require('./log');
+const FlpSuite = require('./flp');
 const ServerSuite = require('./server');
 const SubsystemSuite = require('./subsystem');
 const TagSuite = require('./tag');
 
 module.exports = () => {
     describe('Log', LogSuite);
+    describe('Flp', FlpSuite);
     describe('Server', ServerSuite);
     describe('Subsystem', SubsystemSuite);
     describe('Tag', TagSuite);

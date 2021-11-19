@@ -85,12 +85,13 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-  '/flps/{flpId}':
+  '/flps/{flpName}/runs/{runNumber}':
     parameters:
-      - $ref: '#/components/parameters/FlpId'
+      - $ref: '#/components/parameters/FlpName'
+      - $ref: '#/components/parameters/RunNumber'
     get:
       operationId: getFlpById
-      summary: Gets a flp by Id
+      summary: Gets a flp by Name
       responses:
         '200':
           $ref: '#/components/responses/Flp'
@@ -470,9 +471,16 @@ components:
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
       style: deepObject
-    FlpId:
-      name: flpId
+    FlpName:
+      name: flpName
       description: The id of the flp to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FlpName'
+    RunNumber:
+      name: runNumber
+      description: The id of the runNumber to retrieve
       in: path
       required: true
       schema:
@@ -1427,8 +1435,8 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        activityId:
-          $ref: '#/components/schemas/RunActivityId'
+        environmentId:
+          $ref: '#/components/schemas/RunEnvironmentId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1460,13 +1468,23 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        dd_flp:
+          $ref: '#/components/schemas/DD_FLP'
+        dcs:
+          $ref: '#/components/schemas/DCS'
+        epn:
+          $ref: '#/components/schemas/EPN'
+        epnTopology:
+          $ref: '#/components/schemas/EPN_Topology'
+        detectors:
+          $ref: '#/components/schemas/DETECTORS'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
           format: int32
           example: 853113599
       additionalProperties: false
-    RunActivityId:
+    RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
     RunBytesReadOut:
@@ -1491,13 +1509,13 @@ components:
       format: int32
     RunO2End:
       description: Unix timestamp when this entity was created.
-      type: integer
-      format: int32
+      type: string
+      format: date-time
       example: 853113599
     RunO2Start:
       description: Unix timestamp when this entity was created.
-      type: integer
-      format: int32
+      type: string
+      format: date-time
       example: 853113599
     RunOrigin:
       description: Type of creator.
@@ -1533,14 +1551,50 @@ components:
       format: int32
     RunTrgEnd:
       description: Unix timestamp when this entity was created.
-      type: integer
-      format: int32
+      type: string
+      format: date-time
       example: 853113599
     RunTrgStart:
       description: Unix timestamp when this entity was created.
-      type: integer
-      format: int32
+      type: string
+      format: date-time
       example: 853113599
+    DD_FLP:
+      description: Boolean for Data Distrubution (FLP), On or Off.
+      type: boolean
+      example: 1
+    DCS:
+      description: Boolean for DCS, On or Off.
+      type: boolean
+      example: 1
+    EPN:
+      description: Boolean for EPN, On or Off.
+      type: boolean
+      example: 1
+    EPN_Topology:
+      description: Topology for EPN.
+      type: string
+      example: 'normal'
+    DETECTORS:
+      description: Adds one or multiple detectors to the run.
+      type: string
+      enum:
+        - "CPV"
+        - "EMC" 
+        - "FDD"
+        - "FT0"
+        - "FV0"
+        - "HMP"
+        - "ITS"
+        - "MCH"
+        - "MFT"
+        - "MID"
+        - "PHS"
+        - "TOF"
+        - "TPC"
+        - "TRD"
+        - "TST"
+        - "ZDC"
     RunType:
       description: Specifies the type of run.
       type: string

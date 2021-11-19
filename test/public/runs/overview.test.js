@@ -59,7 +59,7 @@ module.exports = () => {
             timeO2End: (date) => !isNaN(Date.parse(date)),
             timeTrgStart: (date) => !isNaN(Date.parse(date)),
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
-            activityId: (number) => typeof number == 'number',
+            environmentId: (number) => typeof number == 'number',
             runType: (string) => typeof string == 'string',
             runQuality: (string) => typeof string == 'string',
             nDetectors: (number) => typeof number == 'number',
@@ -67,6 +67,11 @@ module.exports = () => {
             nEpns: (number) => typeof number == 'number',
             nSubtimeframes: (number) => typeof number == 'number',
             bytesReadOut: (number) => typeof number == 'number',
+            dd_flp: (boolean) => typeof boolean == 'boolean',
+            dcs: (boolean) => typeof boolean == 'boolean',
+            epn: (boolean) => typeof boolean == 'boolean',
+            epnTopology: (string) => typeof string == 'string',
+            detectors: (string) => typeof string == 'string',
         };
 
         // We find the headers matching the datatype keys

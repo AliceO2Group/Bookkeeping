@@ -184,7 +184,7 @@ pplx::task<std::shared_ptr<SubsystemResponse>> SubsystemApi::createSubsystem(std
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<SubsystemResponse>> SubsystemApi::deleteSubsystem(int32_t subsystemId) const
+pplx::task<std::shared_ptr<SubsystemResponse>> SubsystemApi::deleteSubsystem(int64_t subsystemId) const
 {
 
 
@@ -311,7 +311,7 @@ pplx::task<std::shared_ptr<SubsystemResponse>> SubsystemApi::deleteSubsystem(int
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<SubsystemResponse>> SubsystemApi::getSubsystem(int32_t subsystemId) const
+pplx::task<std::shared_ptr<SubsystemResponse>> SubsystemApi::getSubsystem(int64_t subsystemId) const
 {
 
 

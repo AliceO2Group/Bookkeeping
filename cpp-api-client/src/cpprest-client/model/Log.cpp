@@ -27,14 +27,14 @@ Log::Log()
     m_AuthorIsSet = false;
     m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_OriginIsSet = false;
-    m_ParentLogId = 0;
+    m_ParentLogId = 0L;
     m_ParentLogIdIsSet = false;
     m_Replies = 0L;
     m_RepliesIsSet = false;
-    m_RootLogId = 0;
+    m_RootLogId = 0L;
     m_RootLogIdIsSet = false;
     m_RunsIsSet = false;
     m_SubsystemsIsSet = false;
@@ -165,7 +165,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -185,7 +185,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("parentLogId"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_parentLogId;
+            int64_t refVal_parentLogId;
             ok &= ModelBase::fromJson(fieldValue, refVal_parentLogId);
             setParentLogId(refVal_parentLogId);
         }
@@ -205,7 +205,7 @@ bool Log::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("rootLogId"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_rootLogId;
+            int64_t refVal_rootLogId;
             ok &= ModelBase::fromJson(fieldValue, refVal_rootLogId);
             setRootLogId(refVal_rootLogId);
         }
@@ -381,7 +381,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -393,7 +393,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("parentLogId")))
     {
-        int32_t refVal_parentLogId;
+        int64_t refVal_parentLogId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("parentLogId")), refVal_parentLogId );
         setParentLogId(refVal_parentLogId);
     }
@@ -405,7 +405,7 @@ bool Log::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("rootLogId")))
     {
-        int32_t refVal_rootLogId;
+        int64_t refVal_rootLogId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("rootLogId")), refVal_rootLogId );
         setRootLogId(refVal_rootLogId);
     }
@@ -514,12 +514,12 @@ void Log::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int32_t Log::getId() const
+int64_t Log::getId() const
 {
     return m_Id;
 }
 
-void Log::setId(int32_t value)
+void Log::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -554,12 +554,12 @@ void Log::unsetOrigin()
 {
     m_OriginIsSet = false;
 }
-int32_t Log::getParentLogId() const
+int64_t Log::getParentLogId() const
 {
     return m_ParentLogId;
 }
 
-void Log::setParentLogId(int32_t value)
+void Log::setParentLogId(int64_t value)
 {
     m_ParentLogId = value;
     m_ParentLogIdIsSet = true;
@@ -594,12 +594,12 @@ void Log::unsetReplies()
 {
     m_RepliesIsSet = false;
 }
-int32_t Log::getRootLogId() const
+int64_t Log::getRootLogId() const
 {
     return m_RootLogId;
 }
 
-void Log::setRootLogId(int32_t value)
+void Log::setRootLogId(int64_t value)
 {
     m_RootLogId = value;
     m_RootLogIdIsSet = true;

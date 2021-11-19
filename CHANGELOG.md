@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.12]
+* Added run filter to run-overview table [#433]https://github.com/AliceO2Group/Bookkeeping/pull/433
+* Changed verification of Title [#432]https://github.com/AliceO2Group/Bookkeeping/pull/432
+
+## [0.17.11]
+* Changes made to the database and go-api-bindings[#420]https://github.com/AliceO2Group/Bookkeeping/pull/420
+    * New field to be added to the RUNS table.
+        - name: detectors
+            - type: SET 
+                - ALTER TABLE runs ADD detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
+                - ALTER TABLE runs modify detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
+                
+## [0.17.10]
+* Make /logs, /flps and /attachment routes private again [#419] https://github.com/AliceO2Group/Bookkeeping/pull/419
+
+## [0.17.9]
+* Added optional chaining to usecases.
+
+## [0.17.8]
+* updated dockerfile from version node:12.18.1-alpine3.12 to node:16.9.1-alpine3.12
+* Made api/log and api/flp public [#415] (https://github.com/AliceO2Group/Bookkeeping/pull/415)
+* log-overview changed id to runNumber [#416] (https://github.com/AliceO2Group/Bookkeeping/pull/416)
+
+## [0.17.7]
+* Added the field epn_topology. [#411] (https://github.com/AliceO2Group/Bookkeeping/pull/411)
+* Changes made to the database. Changes are registerd in the CHANGELOG.md file in the database folder.
+
+    * New fields to be added to the RUNS table:
+        - epn_topology
+            - type: string 
+
+## [0.17.6]
+* Add more information to run entries. [#406] (https://github.com/AliceO2Group/Bookkeeping/pull/406)
+* Hide/change existing Run Statistics fields. [#408] (https://github.com/AliceO2Group/Bookkeeping/pull/408)
+* Changes made to the database and go-api-bindings. Changes are registerd in the CHANGELOG.md file in the database folder.
+
+    * New fields to be added to the RUNS table:
+        - dd_flp
+            - type: boolean 
+        - dcs
+            - type: boolean 
+        - epn
+            - type: boolean 
+
+    * Changed a field to another name in the RUNS table:
+        - activity_id is changed to environment_id
+
+## [0.17.4]
+
+* Added text and made the UI more clear. Log create and run detail was unclear on how the tags were implemented. [#398](https://github.com/AliceO2Group/Bookkeeping/pull/398)
+* There was a unique error that when occured it made the title repeated in create log. This was prevented with changing the create tag file. [#397](https://github.com/AliceO2Group/Bookkeeping/pull/397)
+* Added an extra function that grabs all tags for the log creation page [#395] (https://github.com/AliceO2Group/Bookkeeping/pull/395)
+* When the log encouters an error and the user goes back to the page. Some fields were not reset. now all fields will be reset so the user have a blank slate to create a new log. [#394](https://github.com/AliceO2Group/Bookkeeping/pull/394)
+
+## [0.17.3]
+
+* Bumped patch version to 0.17.3
+
+## [0.17.2]
+
+* O2B-410 CPP-api-client can now be updated with the unqiue combination of flpName and runNumber instead of a auto incrementend integer. [$388] (https://github.com/AliceO2Group/Bookkeeping/pull/388)
+* O2B-419 Fixed an issue where the log creation got a bug when both tag and attachment was selected. The issue was with multiform data and the way it accepts array data. [#386](https://github.com/AliceO2Group/Bookkeeping/pull/386)
+
+## [0.17.1] 
+
+* Updated @aliceo2/web-ui version from 1.15.1 to 1.18.2. A bug fix that adds a name to JWT token for the bookkeeping team. https://github.com/AliceO2Group/WebUi/releases/tag/%40aliceo2%2Fweb-ui%401.18.2
+
+* O2B-399 Add message in tags select box([#369](https://github.com/AliceO2Group/Bookkeeping/pull/369])
+* O2B-398 Improve display of Main tab in Run Details page ([#364]https://github.com/AliceO2Group/Bookkeeping/pull/364])
+* O2B-400 Update tags are fixed ([#370]https://github.com/AliceO2Group/Bookkeeping/pull/370)]
+
+## [0.17.0] 
+
+* Reverted ibm-openapi-validator to version 0.44.0 in the bookkeeping/.github/workflows/openapi.yml file. Version 0.46.0 has problems with invalid configuration with validaterc. The GitHub checks for OpenApi / validate pull request would fail with version 0.46.0. However version 0.44.0 does not have this problem and the checks will pass, ready for the pull request to be merged with the master. This is a temporary solution and we should later try to fix the OpenApi/validate with the newest version 0.46.0.
+
 ## [0.14.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.13.0...v0.14.0) (2020-09-18)
 
 

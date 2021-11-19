@@ -184,7 +184,7 @@ pplx::task<std::shared_ptr<RunResponse>> RunApi::createRun(std::shared_ptr<Run> 
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<RunResponse>> RunApi::endRun(int32_t runId, std::shared_ptr<Run> run) const
+pplx::task<std::shared_ptr<RunResponse>> RunApi::endRun(int64_t runId, std::shared_ptr<Run> run) const
 {
 
     // verify the required parameter 'run' is set
@@ -334,7 +334,7 @@ pplx::task<std::shared_ptr<RunResponse>> RunApi::endRun(int32_t runId, std::shar
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<RunResponse>> RunApi::getRunById(int32_t runId) const
+pplx::task<std::shared_ptr<RunResponse>> RunApi::getRunById(int64_t runId) const
 {
 
 

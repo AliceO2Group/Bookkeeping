@@ -27,6 +27,7 @@
 #include "FlpResponse.h"
 #include "LogResponse.h"
 #include "UpdateFlp.h"
+#include <cpprest/details/basic_types.h>
 
 
 #include <boost/optional.hpp>
@@ -59,14 +60,16 @@ public:
         std::shared_ptr<CreateFlp> createFlp
     ) const;
     /// <summary>
-    /// Gets a flp by Id
+    /// Gets a flp by Name
     /// </summary>
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="flpId">The id of the flp to retrieve</param>
+    /// <param name="flpName">The id of the flp to retrieve</param>
+    /// <param name="runNumber">The id of the runNumber to retrieve</param>
     pplx::task<std::shared_ptr<FlpResponse>> getFlpById(
-        int32_t flpId
+        utility::string_t flpName,
+        int64_t runNumber
     ) const;
     /// <summary>
     /// List all flps
@@ -82,10 +85,12 @@ public:
     /// <remarks>
     /// 
     /// </remarks>
-    /// <param name="flpId">The id of the flp to retrieve</param>
+    /// <param name="flpName">The id of the flp to retrieve</param>
+    /// <param name="runNumber">The id of the runNumber to retrieve</param>
     /// <param name="updateFlp"></param>
     pplx::task<std::shared_ptr<FlpResponse>> updateFlp(
-        int32_t flpId,
+        utility::string_t flpName,
+        int64_t runNumber,
         std::shared_ptr<UpdateFlp> updateFlp
     ) const;
 

@@ -13,7 +13,7 @@ struct CreateRunParameters
     boost::posix_time::ptime timeTrgEnd;
     std::string runType;
     std::string runQuality;
-    std::string activityId;
+    std::string environmentId;
     int64_t nDetectors;
     int64_t nFlps;
     int64_t nEpns;

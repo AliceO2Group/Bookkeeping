@@ -14,136 +14,60 @@ message("A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # Update require components as necessary
 find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time program_options filesystem)
-find_package(cpprestsdk REQUIRED)
 
-set(SOURCE_FILES
-    src/cpprest-client/ApiClient.cpp
-    src/cpprest-client/ApiConfiguration.cpp
-    src/cpprest-client/ApiException.cpp
-    src/cpprest-client/HttpContent.cpp
-    src/cpprest-client/JsonBody.cpp
-    src/cpprest-client/ModelBase.cpp
-    src/cpprest-client/MultipartFormData.cpp
-    src/cpprest-client/Object.cpp
-    src/cpprest-client/api/AttachmentApi.cpp
-    src/cpprest-client/api/DefaultApi.cpp
-    # src/cpprest-client/api/AuthenticationApi.cpp
-    src/cpprest-client/api/FlpApi.cpp
-    src/cpprest-client/api/LogApi.cpp
-    # src/cpprest-client/api/OverviewApi.cpp
-    src/cpprest-client/api/RunApi.cpp
-    # src/cpprest-client/api/SettingApi.cpp
-    src/cpprest-client/api/SubsystemApi.cpp
-    # src/cpprest-client/api/UsersApi.cpp
-    src/cpprest-client/api/TagApi.cpp
-    # src/cpprest-client/model/CreateAttachmentDto.cpp
-    # src/cpprest-client/model/CreateFlpDto.cpp
-    # src/cpprest-client/model/CreateLogDto.cpp
-    # src/cpprest-client/model/CreateRunDto.cpp
-    # src/cpprest-client/model/CreateSubSystemPermissionDto.cpp
-    # src/cpprest-client/model/FlpRole.cpp
-    # src/cpprest-client/model/LinkLogToRunDto.cpp
-    # src/cpprest-client/model/LinkRunToLogDto.cpp
-    # src/cpprest-client/model/Log.cpp
-    # src/cpprest-client/model/PatchFlpDto.cpp
-    # src/cpprest-client/model/PatchRunDto.cpp
-    # src/cpprest-client/model/Run.cpp
-    # src/cpprest-client/model/SubSystem.cpp
-    src/cpprest-client/model/ApiInformation.cpp
-    src/cpprest-client/model/ArrayOfAttachmentsResponse.cpp
-    src/cpprest-client/model/ArrayOfFlpsResponse.cpp
-    src/cpprest-client/model/ArrayOfFlpsResponseMeta.cpp
-    src/cpprest-client/model/ArrayOfLogsResponse.cpp
-    src/cpprest-client/model/ArrayOfLogsResponseMeta.cpp
-    src/cpprest-client/model/ArrayOfRunsResponse.cpp
-    src/cpprest-client/model/ArrayOfRunsResponseMeta.cpp
-    src/cpprest-client/model/ArrayOfSubsystemsResponse.cpp
-    src/cpprest-client/model/ArrayOfSubsystemsResponseMeta.cpp
-    src/cpprest-client/model/ArrayOfTagsResponse.cpp
-    src/cpprest-client/model/Attachment.cpp
-    src/cpprest-client/model/AttachmentResponse.cpp
-    src/cpprest-client/model/CreateAttachments.cpp
-    src/cpprest-client/model/CreateFlp.cpp
-    src/cpprest-client/model/CreateLog.cpp
-    src/cpprest-client/model/CreateSubsystem.cpp
-    src/cpprest-client/model/CreateTag.cpp
-    src/cpprest-client/model/DeployInformation.cpp
-    src/cpprest-client/model/Entity.cpp
-    src/cpprest-client/model/Error.cpp
-    src/cpprest-client/model/Errors.cpp
-    src/cpprest-client/model/ErrorSource.cpp
-    src/cpprest-client/model/FilterLogsCreatedOptions.cpp
-    src/cpprest-client/model/FilterLogsOptions.cpp
-    src/cpprest-client/model/FilterLogsTagOptions.cpp
-    src/cpprest-client/model/Flp.cpp
-    src/cpprest-client/model/FlpResponse.cpp
-    src/cpprest-client/model/FlpSortOptions.cpp
-    src/cpprest-client/model/Log.cpp
-    src/cpprest-client/model/LogOrigin.cpp
-    src/cpprest-client/model/LogResponse.cpp
-    src/cpprest-client/model/Log_runs.cpp
-    src/cpprest-client/model/LogSortOptions.cpp
-    src/cpprest-client/model/LogSubtype.cpp
-    src/cpprest-client/model/LogTree.cpp
-    src/cpprest-client/model/LogTreeResponse.cpp
-    src/cpprest-client/model/PaginationMeta.cpp
-    src/cpprest-client/model/PaginationOptions.cpp
-    src/cpprest-client/model/Run.cpp
-    src/cpprest-client/model/RunOrigin.cpp
-    src/cpprest-client/model/RunQuality.cpp
-    src/cpprest-client/model/RunResponse.cpp
-    src/cpprest-client/model/RunSortOptions.cpp
-    src/cpprest-client/model/RunType.cpp
-    src/cpprest-client/model/SortOrder.cpp
-    src/cpprest-client/model/Subsystem.cpp
-    src/cpprest-client/model/SubsystemResponse.cpp
-    src/cpprest-client/model/Tag.cpp
-    src/cpprest-client/model/TagResponse.cpp
-    src/cpprest-client/model/User.cpp
-    src/cpprest-client/model/UpdateFlp.cpp
-    src/BookkeepingApi.cpp
-    src/BookkeepingFactory.cpp)
+# Find cpprest dependency
+include(CMakeFindDependencyMacro)
+find_dependency(cpprestsdk REQUIRED) 
 
+# Set source files
+file(GLOB SOURCES 
+    "src/*.cpp"
+    "src/cpprest-client/*.cpp"
+    "src/cpprest-client/api/*.cpp"
+    "src/cpprest-client/model/*.cpp")
+
+# Set library
 add_library(
-    BookkeepingApiCpp
+    ${PROJECT_NAME}
     SHARED
-    ${SOURCE_FILES})
+    ${SOURCES})
 
+# Set the paths where the files can be found
 target_include_directories(
-    BookkeepingApiCpp
+    ${PROJECT_NAME}
     PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/api>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/model>)
 
+# Link external libraries to the project
 target_link_libraries(
-    BookkeepingApiCpp
+    ${PROJECT_NAME}
     PUBLIC
-    cpprestsdk::cpprest
-    PRIVATE
     Boost::system
     Boost::date_time
-    pthread)
+    pthread
+    cpprestsdk::cpprest)
 
 target_compile_features(
-    BookkeepingApiCpp
+    ${PROJECT_NAME}
     PUBLIC
     cxx_std_17)
 
-set_target_properties(BookkeepingApiCpp PROPERTIES OUTPUT_NAME "O2BookkeepingApiCpp")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "O2BookkeepingApiCpp")
 
+# Executable for example.cpp
 add_executable(
     bookkeeping-api-cpp-example
     src/Example.cpp)
 
 target_link_libraries(
-    bookkeeping-api-cpp-example 
+    bookkeeping-api-cpp-example
     PRIVATE
     Boost::headers
-    OpenSSL::SSL # This is temporary workaround as the target should come from cpprestsdk
+    OpenSSL::SSL # This is a temporary workaround as the target should come from ccprestsdk
     BookkeepingApiCpp)
-
 
 # Set CMAKE_INSTALL_LIBDIR explicitly to lib (to avoid lib64 on CC7)
 set(CMAKE_INSTALL_LIBDIR lib)

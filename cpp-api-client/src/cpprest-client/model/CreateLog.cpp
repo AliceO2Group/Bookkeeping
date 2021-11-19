@@ -24,7 +24,7 @@ namespace model {
 CreateLog::CreateLog()
 {
     m_AttachmentsIsSet = false;
-    m_ParentLogId = 0;
+    m_ParentLogId = 0L;
     m_ParentLogIdIsSet = false;
     m_Text = utility::conversions::to_string_t("");
     m_TextIsSet = false;
@@ -91,7 +91,7 @@ bool CreateLog::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("parentLogId"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_parentLogId;
+            int64_t refVal_parentLogId;
             ok &= ModelBase::fromJson(fieldValue, refVal_parentLogId);
             setParentLogId(refVal_parentLogId);
         }
@@ -175,7 +175,7 @@ bool CreateLog::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, cons
     }
     if(multipart->hasContent(utility::conversions::to_string_t("parentLogId")))
     {
-        int32_t refVal_parentLogId;
+        int64_t refVal_parentLogId;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("parentLogId")), refVal_parentLogId );
         setParentLogId(refVal_parentLogId);
     }
@@ -220,12 +220,12 @@ void CreateLog::unsetAttachments()
 {
     m_AttachmentsIsSet = false;
 }
-int32_t CreateLog::getParentLogId() const
+int64_t CreateLog::getParentLogId() const
 {
     return m_ParentLogId;
 }
 
-void CreateLog::setParentLogId(int32_t value)
+void CreateLog::setParentLogId(int64_t value)
 {
     m_ParentLogId = value;
     m_ParentLogIdIsSet = true;

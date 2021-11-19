@@ -1,6 +1,6 @@
 #
 # ---- Base ----
-FROM node:12.18.1-alpine3.12 as base
+FROM node:16.9.1-alpine3.12 as base
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -14,7 +14,7 @@ RUN apk add --no-cache \
 
 #
 # ---- Development Dependencies ----
-FROM base as developmentDependencies
+FROM base as developmentdependencies
 
 # Installs Git and packages required for Puppeteer
 RUN apk add --no-cache \
@@ -42,7 +42,7 @@ COPY . .
 
 #
 # ---- Development ----
-FROM developmentDependencies as development
+FROM developmentdependencies as development
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
@@ -50,7 +50,7 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "st
 
 #
 # ---- Test ----
-FROM developmentDependencies as test
+FROM developmentdependencies as test
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
@@ -58,7 +58,7 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "co
 
 #
 # ---- Production Dependencies ----
-FROM base as productionDependencies
+FROM base as productiondependencies
 
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
@@ -72,7 +72,7 @@ COPY ./lib ./lib
 
 #
 # ---- Production ----
-FROM productionDependencies as production
+FROM productiondependencies as production
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "node", "lib/main.js" ]

@@ -65,7 +65,7 @@ public:
     /// <param name="runId">The id of the run to retrieve</param>
     /// <param name="run"></param>
     pplx::task<std::shared_ptr<RunResponse>> endRun(
-        int32_t runId,
+        int64_t runId,
         std::shared_ptr<Run> run
     ) const;
     /// <summary>
@@ -76,7 +76,7 @@ public:
     /// </remarks>
     /// <param name="runId">The id of the run to retrieve</param>
     pplx::task<std::shared_ptr<RunResponse>> getRunById(
-        int32_t runId
+        int64_t runId
     ) const;
     /// <summary>
     /// List all runs

@@ -41,20 +41,32 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param runNumber Integer ID of a specific data taking session
  * @param runType Type of run. Might be replaced by tags
  * @param o2Start Time (UTC) when command to start a new Run was given
+ * @param dd_flp Data Distrubtion(FLP) boolean of the Run. On or Off
+ * @param dcs DCS boolean of the Run. On or Off
+ * @param epn EPN boolean of the Run. On or Off
+ * @param epnTopology description of the EPN.
+ * @param detectors types of detecotrs in the run.
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
-func CreateRun(activityId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, timeO2Start time.Time, timeTrgStart time.Time) {
-	var runtype sw.RunType = runType
+func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, 
+	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string, detectors sw.Detectors) {
+	var run sw.RunType = runType
+	var det sw.Detectors = detectors
 
 	obj := sw.Run{
-		ActivityId:   activityId,
+		EnvironmentId:   environmentId,
 		NDetectors:   nDetectors,
 		NEpns:        nEpns,
 		NFlps:        nFlps,
 		RunNumber:    runNumber,
-		RunType:      &runtype,
+		RunType:      &run,
 		TimeO2Start:  &timeO2Start,
 		TimeTrgStart: &timeTrgStart,
+		DdFlp: 	  	  dd_flp,
+        Dcs:          dcs,
+        Epn:          epn,
+		EpnTopology:  epnTopology,
+		Detectors: 	  &det,
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
@@ -111,7 +123,7 @@ func CreateFlp(name string, hostName string, runNumber int32) {
  * @param nRecordingBytes Data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
  * @param nFairMqBytes Data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
  */
-func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
+func UpdateFlp(flpName string, runNumber int32, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
 	obj := sw.UpdateFlp{
 		NTimeframes:           nSubtimeframes,
 		BytesEquipmentReadOut: nEquipmentBytes,
@@ -119,7 +131,7 @@ func UpdateFlp(flpId int32, name string, nSubtimeframes int32, nEquipmentBytes i
 		BytesFairMQReadOut:    nFairMQBytes,
 	}
 
-	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpId)
+	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpName, runNumber)
 	fmt.Println(arrayResponse, response, err)
 }
 

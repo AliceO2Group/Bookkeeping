@@ -125,8 +125,9 @@ BookkeepingApi::BookkeepingApi(std::string url, std::string token)
 
 
 void BookkeepingApi::runStart(int64_t runNumber, std::time_t o2Start,
-      std::time_t triggerStart, utility::string_t activityId, 
-      RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns) 
+      std::time_t triggerStart, utility::string_t environmentId, 
+      RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
+      bool dd_flp, bool dcs, bool epn, utility::string_t epnTopology) 
 {
     org::openapitools::client::api::RunApi runApi(apiClient);
     auto run = std::make_shared<org::openapitools::client::model::Run>();
@@ -134,10 +135,13 @@ void BookkeepingApi::runStart(int64_t runNumber, std::time_t o2Start,
     run->setTimeO2Start(getUnixTimeStamp(&o2Start));
     run->setTimeTrgStart(getUnixTimeStamp(&triggerStart));
     run->setRunType(runTypeToActualRunType(runType));
-    run->setActivityId(activityId);
+    run->setEnvironmentId(environmentId);
     run->setNDetectors(nDetectors);
     run->setNFlps(nFlps);
     run->setNEpns(nEpns);
+    run->setDdFlp(dd_flp);
+    run->setDcs(dcs);
+    run->setEpn(epn);
     runApi.createRun(run).get();
 }
 
@@ -167,7 +171,7 @@ void BookkeepingApi::flpAdd(std::string flpName, std::string hostName, int64_t r
     flpApi.createFlp(flp).get();
 }
 
-void BookkeepingApi::flpUpdateCounters(int64_t flpId, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
+void BookkeepingApi::flpUpdateCounters(std::string flpName, int64_t runNumber, int64_t nSubtimeframes, int64_t nEquipmentBytes,
       int64_t nRecordingBytes, int64_t nFairMQBytes)
 {
     org::openapitools::client::api::FlpApi flpApi(apiClient);
@@ -176,7 +180,7 @@ void BookkeepingApi::flpUpdateCounters(int64_t flpId, std::string flpName, int64
     flp->setBytesFairMQReadOut(nFairMQBytes);
     flp->setNTimeframes(nSubtimeframes);
     flp->setBytesRecordingReadOut(nRecordingBytes);
-    flpApi.updateFlp(flpId, flp).get();
+    flpApi.updateFlp(flpName, runNumber, flp).get();
 }
 
 void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, std::vector<std::int64_t> runNumbers, std::int64_t parentLogId)
