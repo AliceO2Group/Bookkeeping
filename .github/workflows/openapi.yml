@@ -13,10 +13,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.18.0
+      - name: Use Node.js '14.x'
         uses: actions/setup-node@v1
         with:
-          node-version: '12.18.0'
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Running validator
         run: |
           npm ci
@@ -28,15 +29,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.18.0
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v1
         with:
-          node-version: '12.18.0'
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Running validator
         run: |
           npx @openapitools/openapi-generator-cli validate -i spec/openapi.yaml
           npx @openapitools/openapi-generator-cli validate -i spec/openapi-source.yaml
       - name: Running validator
         run: |
-          npx ibm-openapi-validator spec/openapi.yaml
-          npx ibm-openapi-validator spec/openapi-source.yaml
+          npx ibm-openapi-validator@0.44.0 spec/openapi.yaml
+          npx ibm-openapi-validator@0.44.0 spec/openapi-source.yaml

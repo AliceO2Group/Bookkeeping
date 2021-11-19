@@ -11,34 +11,48 @@
  * or submit itself to any jurisdiction.
  */
 
-const { flp: { GetAllFlpsUseCase } } = require('../../../lib/usecases');
-const { dtos: { GetAllFlpsDto } } = require('../../../lib/domain');
-const chai = require('chai');
+/*
+ * Const { flp: { GetAllFlpsUseCase } } = require('../../../lib/usecases');
+ * Const { dtos: { getAllFlpsDto } } = require('../../../lib/domain');
+ * const chai = require('chai');
+ */
 
-const { expect } = chai;
+// Const { expect } = chai;
 
-module.exports = () => {
-    let getAllFlpsDto;
+/*
+ * Module.exports = () => {
+ *     let getAllFlpsDto;
+ */
 
-    beforeEach(async () => {
-        getAllFlpsDto = await GetAllFlpsDto.validateAsync({});
-    });
+/*
+ *     BeforeEach(async () => {
+ *         getAllFlpsDto = await getAllFlpsDto.validateAsync({});
+ *     });
+ */
 
-    it('should return an array', async () => {
-        const { flps } = await new GetAllFlpsUseCase()
-            .execute();
+/*
+ *     It('should return an array', async () => {
+ *         const { flps } = await new GetAllFlpsUseCase()
+ *             .execute();
+ */
 
-        expect(flps).to.be.an('array');
-    });
+/*
+ *         Expect(flps).to.be.an('array');
+ *     });
+ */
 
-    it('should return an array, only containing human originated flps', async () => {
-        getAllFlpsDto.query = { filter: { origin: 'human' } };
-        const { flps } = await new GetAllFlpsUseCase()
-            .execute(getAllFlpsDto);
+/*
+ * It('should return an array, only containing human originated flps', async () => {
+ *     getAllFlpsDto.query = { filter: { origin: 'human' } };
+ *     const { flps } = await new GetAllFlpsUseCase()
+ *         .execute(getAllFlpsDto);
+ */
 
-        expect(flps).to.be.an('array');
-        for (const flp of flps) {
-            expect(flp.origin).to.equal('human');
-        }
-    });
-};
+/*
+ *     Expect(flps).to.be.an('array');
+ *     for (const flp of flps) {
+ *         expect(flp.origin).to.equal('human');
+ *     }
+ * });
+ */
+// };

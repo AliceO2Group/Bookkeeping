@@ -184,7 +184,7 @@ pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> AttachmentApi::createAtt
         return localVarResult;
     });
 }
-pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> AttachmentApi::getAttachment(int32_t attachmentId) const
+pplx::task<std::shared_ptr<ArrayOfAttachmentsResponse>> AttachmentApi::getAttachment(int64_t attachmentId) const
 {
 
 

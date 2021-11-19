@@ -13,9 +13,9 @@
 #include "RunType.h"
 #include "RunQuality.h"
 
-#include "ApiClient.h"
-#include "MultipartFormData.h"
-#include "ModelBase.h"
+#include "cpprest-client/ApiClient.h"
+#include "cpprest-client/MultipartFormData.h"
+#include "cpprest-client/ModelBase.h"
 
 #include <sstream>
 #include <limits>
@@ -32,15 +32,20 @@ namespace bookkeeping
      * @param runNumber Integer ID of a specific data taking session
      * @param o2Start Time (UTC) when command to start a new Run was given
      * @param triggerStart Time (UTC) when Trigger subsystem was started
-     * @param activityId Control ID string. Can be a long hash, 32 or 64 character long
+     * @param environmentId Control ID string. Can be a long hash, 32 or 64 character long
      * @param runType Type of run. Might be replaced by tags
      * @param nDetectors Number of detectors in the Run
      * @param nFlps Number of FLP nodes in the Run
      * @param nEpns Number of EPN nodes in the Run
+     * @param dd_flp Data Distrubtion(FLP) boolean of the RUn
+     * @param dcs DCS boolean of the Run
+     * @param epn EPN boolean of the Run
+     * @param epnTopology description of the EPN
      * @throws org::openapitools::client::api::ApiException
      */
     virtual void runStart(int64_t runNumber, std::time_t o2Start, std::time_t triggerStart,
-                          utility::string_t activityId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns) = 0;
+                          utility::string_t environmentId, RunType runType, int64_t nDetectors, int64_t nFlps, int64_t nEpns,
+                          bool dd_flp, bool dcs, bool epn, utility::string_t epnTopology) = 0;
 
     /** 
      * @brief Ends a run
@@ -68,14 +73,14 @@ namespace bookkeeping
      * @brief Update flp by id
      * 
      * @param flpId Integer ID of a specific data taking session.
-     * @param flpName Identifying name of the FLP.
+     * @param runNumber Integer ID of a specific data taking session
      * @param nSubtimeframes Number of subtimeframes processed in this FLP. Updated regularly.
      * @param nEquipmentBytes Data volume out from the readout 'equipment' component in bytes. Can reach PetaBytes. Updated regularly.
      * @param nRecordingBytes Data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
      * @param nFairMqBytes Data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
      * @throws org::openapitools::client::api::ApiException
      */
-    virtual void flpUpdateCounters(int64_t flpId, std::string flpName, int64_t nSubtimeframes, int64_t nEquipmentBytes,
+    virtual void flpUpdateCounters(std::string flpName, int64_t runNumber, int64_t nSubtimeframes, int64_t nEquipmentBytes,
                                    int64_t nRecordingBytes, int64_t nFairMQBytes) = 0;
 
     /** 

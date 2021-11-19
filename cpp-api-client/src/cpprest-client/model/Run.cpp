@@ -23,13 +23,13 @@ namespace model {
 
 Run::Run()
 {
-    m_ActivityId = utility::conversions::to_string_t("");
-    m_ActivityIdIsSet = false;
+    m_EnvironmentId = utility::conversions::to_string_t("");
+    m_EnvironmentIdIsSet = false;
     m_BytesReadOut = 0L;
     m_BytesReadOutIsSet = false;
     m_CreatedAt = 0L;
     m_CreatedAtIsSet = false;
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_NDetectors = 0L;
     m_NDetectorsIsSet = false;
@@ -51,6 +51,14 @@ Run::Run()
     m_TimeTrgEndIsSet = false;
     m_TimeTrgStart = 0L;
     m_TimeTrgStartIsSet = false;
+    m_Dd_flp = false;
+    m_Dd_flpIsSet = false;
+    m_Dcs = false;
+    m_DcsIsSet = false;
+    m_Epn = false;
+    m_EpnIsSet = false;
+    m_EpnTopology = utility::conversions::to_string_t("");
+    m_EpnTopologyIsSet = false;
     m_UpdatedAt = 0L;
     m_UpdatedAtIsSet = false;
 }
@@ -69,9 +77,9 @@ web::json::value Run::toJson() const
 
     web::json::value val = web::json::value::object();
     
-    if(m_ActivityIdIsSet)
+    if(m_EnvironmentIdIsSet)
     {
-        val[utility::conversions::to_string_t("activityId")] = ModelBase::toJson(m_ActivityId);
+        val[utility::conversions::to_string_t("environmentId")] = ModelBase::toJson(m_EnvironmentId);
     }
     if(m_BytesReadOutIsSet)
     {
@@ -129,6 +137,22 @@ web::json::value Run::toJson() const
     {
         val[utility::conversions::to_string_t("timeTrgStart")] = ModelBase::toJson(m_TimeTrgStart);
     }
+    if(m_Dd_flpIsSet)
+    {
+        val[utility::conversions::to_string_t("dd_flp")] = ModelBase::toJson(m_Dd_flp);
+    }
+    if(m_DcsIsSet)
+    {
+        val[utility::conversions::to_string_t("dcs")] = ModelBase::toJson(m_Dcs);
+    }
+    if(m_EpnIsSet)
+    {
+        val[utility::conversions::to_string_t("epn")] = ModelBase::toJson(m_Epn);
+    }
+    if(m_EpnTopologyIsSet)
+    {
+        val[utility::conversions::to_string_t("epnTopology")] = ModelBase::toJson(m_EpnTopology);
+    }
     if(m_UpdatedAtIsSet)
     {
         val[utility::conversions::to_string_t("updatedAt")] = ModelBase::toJson(m_UpdatedAt);
@@ -141,14 +165,14 @@ bool Run::fromJson(const web::json::value& val)
 {
     bool ok = true;
     
-    if(val.has_field(utility::conversions::to_string_t("activityId")))
+    if(val.has_field(utility::conversions::to_string_t("environmentId")))
     {
-        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("activityId"));
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("environmentId"));
         if(!fieldValue.is_null())
         {
-            utility::string_t refVal_activityId;
-            ok &= ModelBase::fromJson(fieldValue, refVal_activityId);
-            setActivityId(refVal_activityId);
+            utility::string_t refVal_environmentId;
+            ok &= ModelBase::fromJson(fieldValue, refVal_environmentId);
+            setEnvironmentId(refVal_environmentId);
         }
     }
     if(val.has_field(utility::conversions::to_string_t("bytesReadOut")))
@@ -176,7 +200,7 @@ bool Run::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -291,6 +315,46 @@ bool Run::fromJson(const web::json::value& val)
             setTimeTrgStart(refVal_timeTrgStart);
         }
     }
+    if(val.has_field(utility::conversions::to_string_t("dd_flp")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("dd_flp"));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_dd_flp;
+            ok &= ModelBase::fromJson(fieldValue, refVal_dd_flp);
+            setDdFlp(refVal_dd_flp);
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("dcs")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("dcs"));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_dcs;
+            ok &= ModelBase::fromJson(fieldValue, refVal_dcs);
+            setDcs(refVal_dcs);
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("epn")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("epn"));
+        if(!fieldValue.is_null())
+        {
+            bool refVal_epn;
+            ok &= ModelBase::fromJson(fieldValue, refVal_epn);
+            setEpn(refVal_epn);
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("epnTopology")))
+    {
+        const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("epnTopology"));
+        if(!fieldValue.is_null())
+        {
+            utility::string_t refVal_epnTopology;
+            ok &= ModelBase::fromJson(fieldValue, refVal_epnTopology);
+            setEpnTopology(refVal_epnTopology);
+        }
+    }
     if(val.has_field(utility::conversions::to_string_t("updatedAt")))
     {
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("updatedAt"));
@@ -311,9 +375,9 @@ void Run::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utilit
     {
         namePrefix += utility::conversions::to_string_t(".");
     }
-    if(m_ActivityIdIsSet)
+    if(m_EnvironmentIdIsSet)
     {
-        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("activityId"), m_ActivityId));
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("environmentId"), m_EnvironmentId));
     }
     if(m_BytesReadOutIsSet)
     {
@@ -371,6 +435,22 @@ void Run::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utilit
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("timeTrgStart"), m_TimeTrgStart));
     }
+    if(m_Dd_flpIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("dd_flp"), m_Dd_flp));
+    }
+    if(m_DcsIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("dcs"), m_Dcs));
+    }
+    if(m_EpnIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("epn"), m_Epn));
+    }
+    if(m_EpnTopologyIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("epnTopology"), m_EpnTopology));
+    }
     if(m_UpdatedAtIsSet)
     {
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("updatedAt"), m_UpdatedAt));
@@ -386,11 +466,11 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
         namePrefix += utility::conversions::to_string_t(".");
     }
 
-    if(multipart->hasContent(utility::conversions::to_string_t("activityId")))
+    if(multipart->hasContent(utility::conversions::to_string_t("environmentId")))
     {
-        utility::string_t refVal_activityId;
-        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("activityId")), refVal_activityId );
-        setActivityId(refVal_activityId);
+        utility::string_t refVal_environmentId;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("environmentId")), refVal_environmentId );
+        setEnvironmentId(refVal_environmentId);
     }
     if(multipart->hasContent(utility::conversions::to_string_t("bytesReadOut")))
     {
@@ -406,7 +486,7 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -476,6 +556,30 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("timeTrgStart")), refVal_timeTrgStart );
         setTimeTrgStart(refVal_timeTrgStart);
     }
+    if(multipart->hasContent(utility::conversions::to_string_t("dd_flp")))
+    {
+        bool refVal_dd_flp;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("dd_flp")), refVal_dd_flp );
+        setDdFlp(refVal_dd_flp);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("dcs")))
+    {
+        bool refVal_dcs;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("dcs")), refVal_dcs );
+        setDcs(refVal_dcs);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("epn")))
+    {
+        bool refVal_epn;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("epn")), refVal_epn );
+        setEpn(refVal_epn);
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("epnTopology")))
+    {
+        utility::string_t refVal_epnTopology;
+        ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("epnTopology")), refVal_epnTopology );
+        setEpnTopology(refVal_epnTopology);
+    }
     if(multipart->hasContent(utility::conversions::to_string_t("updatedAt")))
     {
         int64_t refVal_updatedAt;
@@ -485,25 +589,25 @@ bool Run::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     return ok;
 }
 
-utility::string_t Run::getActivityId() const
+utility::string_t Run::getEnvironmentId() const
 {
-    return m_ActivityId;
+    return m_EnvironmentId;
 }
 
-void Run::setActivityId(const utility::string_t& value)
+void Run::setEnvironmentId(const utility::string_t& value)
 {
-    m_ActivityId = value;
-    m_ActivityIdIsSet = true;
+    m_EnvironmentId = value;
+    m_EnvironmentIdIsSet = true;
 }
 
-bool Run::activityIdIsSet() const
+bool Run::environmentIdIsSet() const
 {
-    return m_ActivityIdIsSet;
+    return m_EnvironmentIdIsSet;
 }
 
-void Run::unsetActivityId()
+void Run::unsetEnvironmentId()
 {
-    m_ActivityIdIsSet = false;
+    m_EnvironmentIdIsSet = false;
 }
 int64_t Run::getBytesReadOut() const
 {
@@ -545,12 +649,12 @@ void Run::unsetCreatedAt()
 {
     m_CreatedAtIsSet = false;
 }
-int32_t Run::getId() const
+int64_t Run::getId() const
 {
     return m_Id;
 }
 
-void Run::setId(int32_t value)
+void Run::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;
@@ -784,6 +888,86 @@ bool Run::timeTrgStartIsSet() const
 void Run::unsetTimeTrgStart()
 {
     m_TimeTrgStartIsSet = false;
+}
+bool Run::isDdFlp() const
+{
+    return m_Dd_flp;
+}
+
+void Run::setDdFlp(bool value)
+{
+    m_Dd_flp = value;
+    m_Dd_flpIsSet = true;
+}
+
+bool Run::ddFlpIsSet() const
+{
+    return m_Dd_flpIsSet;
+}
+
+void Run::unsetDd_flp()
+{
+    m_Dd_flpIsSet = false;
+}
+bool Run::isDcs() const
+{
+    return m_Dcs;
+}
+
+void Run::setDcs(bool value)
+{
+    m_Dcs = value;
+    m_DcsIsSet = true;
+}
+
+bool Run::dcsIsSet() const
+{
+    return m_DcsIsSet;
+}
+
+void Run::unsetDcs()
+{
+    m_DcsIsSet = false;
+}
+bool Run::isEpn() const
+{
+    return m_Epn;
+}
+
+void Run::setEpn(bool value)
+{
+    m_Epn = value;
+    m_EpnIsSet = true;
+}
+
+bool Run::epnIsSet() const
+{
+    return m_EpnIsSet;
+}
+
+void Run::unsetEpn()
+{
+    m_EpnIsSet = false;
+}
+utility::string_t Run::getEpnTopology() const
+{
+    return m_EpnTopology;
+}
+
+void Run::setEpnTopology(const utility::string_t& value)
+{
+    m_EpnTopology = value;
+    m_EpnTopologyIsSet = true;
+}
+
+bool Run::epnTopologyIsSet() const
+{
+    return m_EpnTopologyIsSet;
+}
+
+void Run::unsetEpnTopology()
+{
+    m_EpnTopologyIsSet = false;
 }
 int64_t Run::getUpdatedAt() const
 {

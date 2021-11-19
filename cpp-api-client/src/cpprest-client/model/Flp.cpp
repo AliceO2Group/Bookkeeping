@@ -35,7 +35,7 @@ Flp::Flp()
     m_CreatedAtIsSet = false;
     m_Hostname = utility::conversions::to_string_t("");
     m_HostnameIsSet = false;
-    m_Id = 0;
+    m_Id = 0L;
     m_IdIsSet = false;
     m_NTimeframes = 0L;
     m_NTimeframesIsSet = false;
@@ -172,7 +172,7 @@ bool Flp::fromJson(const web::json::value& val)
         const web::json::value& fieldValue = val.at(utility::conversions::to_string_t("id"));
         if(!fieldValue.is_null())
         {
-            int32_t refVal_id;
+            int64_t refVal_id;
             ok &= ModelBase::fromJson(fieldValue, refVal_id);
             setId(refVal_id);
         }
@@ -306,7 +306,7 @@ bool Flp::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const util
     }
     if(multipart->hasContent(utility::conversions::to_string_t("id")))
     {
-        int32_t refVal_id;
+        int64_t refVal_id;
         ok &= ModelBase::fromHttpContent(multipart->getContent(utility::conversions::to_string_t("id")), refVal_id );
         setId(refVal_id);
     }
@@ -451,12 +451,12 @@ void Flp::unsetHostname()
 {
     m_HostnameIsSet = false;
 }
-int32_t Flp::getId() const
+int64_t Flp::getId() const
 {
     return m_Id;
 }
 
-void Flp::setId(int32_t value)
+void Flp::setId(int64_t value)
 {
     m_Id = value;
     m_IdIsSet = true;

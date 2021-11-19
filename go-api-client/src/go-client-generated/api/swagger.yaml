@@ -151,16 +151,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-  /flps/{flpId}:
+  /flps/{flpName}/runs/{runNumber}:
     get:
       tags:
       - flp
-      summary: Gets a flp by Id
+      summary: Gets a flp by Name
       operationId: getFlpById
       parameters:
-      - name: flpId
+      - name: flpName
         in: path
         description: The id of the flp to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/FlpName'
+      - name: runNumber
+        in: path
+        description: The id of the runNumber to retrieve
         required: true
         style: simple
         explode: false
@@ -197,9 +205,17 @@ paths:
       summary: Update an existing flp
       operationId: updateFlp
       parameters:
-      - name: flpId
+      - name: flpName
         in: path
         description: The id of the flp to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/FlpName'
+      - name: runNumber
+        in: path
+        description: The id of the runNumber to retrieve
         required: true
         style: simple
         explode: false
@@ -1251,35 +1267,45 @@ components:
       description: Response containing multiple runs.
       example:
         data:
-        - timeTrgStart: 853113599
-          timeO2End: 853113599
-          timeTrgEnd: 853113599
+        - epn: false
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
+          detectors: CPV
           bytesReadOut: 0
           nSubtimeframes: 2
-          activityId: activityId
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 853113599
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
+          dcs: false
+          epnTopology: normal
           nDetectors: 1
           nFlps: 5
+          dd_flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
-        - timeTrgStart: 853113599
-          timeO2End: 853113599
-          timeTrgEnd: 853113599
+        - epn: false
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
+          detectors: CPV
           bytesReadOut: 0
           nSubtimeframes: 2
-          activityId: activityId
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 853113599
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
+          dcs: false
+          epnTopology: normal
           nDetectors: 1
           nFlps: 5
+          dd_flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
@@ -2217,8 +2243,8 @@ components:
     Run:
       type: object
       properties:
-        activityId:
-          $ref: '#/components/schemas/RunActivityId'
+        environmentId:
+          $ref: '#/components/schemas/RunEnvironmentId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -2250,6 +2276,16 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        dd_flp:
+          $ref: '#/components/schemas/DD_FLP'
+        dcs:
+          $ref: '#/components/schemas/DCS'
+        epn:
+          $ref: '#/components/schemas/EPN'
+        epnTopology:
+          $ref: '#/components/schemas/EPN_Topology'
+        detectors:
+          $ref: '#/components/schemas/DETECTORS'
         updatedAt:
           type: integer
           description: Unix timestamp when this entity was last updated.
@@ -2258,23 +2294,28 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
-        timeTrgStart: 853113599
-        timeO2End: 853113599
-        timeTrgEnd: 853113599
+        epn: false
+        timeTrgStart: 2000-01-23T04:56:07.000+00:00
+        timeO2End: 2000-01-23T04:56:07.000+00:00
+        timeTrgEnd: 2000-01-23T04:56:07.000+00:00
         runType: physics
+        detectors: CPV
         bytesReadOut: 0
         nSubtimeframes: 2
-        activityId: activityId
         createdAt: 853113599
         nEpns: 5
         runQuality: good
-        timeO2Start: 853113599
+        timeO2Start: 2000-01-23T04:56:07.000+00:00
+        environmentId: environmentId
+        dcs: false
+        epnTopology: normal
         nDetectors: 1
         nFlps: 5
+        dd_flp: false
         runNumber: 7
         id: 1
         updatedAt: 853113599
-    RunActivityId:
+    RunEnvironmentId:
       type: string
       description: The unique identifier of this entity.
     RunBytesReadOut:
@@ -2299,15 +2340,13 @@ components:
       description: The unique identifier of this entity.
       format: int32
     RunO2End:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
     RunO2Start:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
     RunOrigin:
       type: string
       description: Type of creator.
@@ -2331,19 +2370,24 @@ components:
       description: Response containing a single run.
       example:
         data:
-          timeTrgStart: 853113599
-          timeO2End: 853113599
-          timeTrgEnd: 853113599
+          epn: false
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
+          detectors: CPV
           bytesReadOut: 0
           nSubtimeframes: 2
-          activityId: activityId
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 853113599
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
+          dcs: false
+          epnTopology: normal
           nDetectors: 1
           nFlps: 5
+          dd_flp: false
           runNumber: 7
           id: 1
           updatedAt: 853113599
@@ -2359,15 +2403,49 @@ components:
       description: Total number of subtimeframes processed by the O2 system.
       format: int32
     RunTrgEnd:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
     RunTrgStart:
-      type: integer
+      type: string
       description: Unix timestamp when this entity was created.
-      format: int32
-      example: 853113599
+      format: date-time
+    DD_FLP:
+      type: boolean
+      description: "Boolean for Data Distrubution (FLP), On or Off."
+      example: false
+    DCS:
+      type: boolean
+      description: "Boolean for DCS, On or Off."
+      example: false
+    EPN:
+      type: boolean
+      description: "Boolean for EPN, On or Off."
+      example: false
+    EPN_Topology:
+      type: string
+      description: Topology for EPN.
+      example: normal
+    DETECTORS:
+      type: string
+      description: Adds one or multiple detectors to the run.
+      enum:
+      - CPV
+      - EMC
+      - FDD
+      - FT0
+      - FV0
+      - HMP
+      - ITS
+      - MCH
+      - MFT
+      - MID
+      - PHS
+      - TOF
+      - TPC
+      - TRD
+      - TST
+      - ZDC
     RunType:
       type: string
       description: Specifies the type of run.
@@ -2516,6 +2594,7 @@ components:
           $ref: '#/components/schemas/EntityId'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
+      additionalProperties: false
       description: Minified Run object.
       example:
         runNumber: 5
@@ -2648,10 +2727,19 @@ components:
       explode: false
       schema:
         $ref: '#/components/schemas/FilterLogsOptions'
-    FlpId:
-      name: flpId
+    FlpName:
+      name: flpName
       in: path
       description: The id of the flp to retrieve
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/FlpName'
+    RunNumber:
+      name: runNumber
+      in: path
+      description: The id of the runNumber to retrieve
       required: true
       style: simple
       explode: false

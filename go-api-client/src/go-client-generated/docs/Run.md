@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ActivityId** | **string** |  | [optional] [default to null]
+**EnvironmentId** | **string** |  | [optional] [default to null]
 **BytesReadOut** | **int32** |  | [optional] [default to null]
 **CreatedAt** | **int32** | Unix timestamp when this entity was created. | [optional] [default to null]
 **Id** | **int32** |  | [optional] [default to null]
@@ -14,10 +14,15 @@ Name | Type | Description | Notes
 **RunNumber** | **int32** |  | [optional] [default to null]
 **RunQuality** | [***RunQuality**](RunQuality.md) |  | [optional] [default to null]
 **RunType** | [***RunType**](RunType.md) |  | [optional] [default to null]
-**TimeO2End** | **int32** |  | [optional] [default to null]
-**TimeO2Start** | **int32** |  | [optional] [default to null]
-**TimeTrgEnd** | **int32** |  | [optional] [default to null]
-**TimeTrgStart** | **int32** |  | [optional] [default to null]
+**TimeO2End** | [***time.Time**](time.Time.md) |  | [optional] [default to null]
+**TimeO2Start** | [***time.Time**](time.Time.md) |  | [optional] [default to null]
+**TimeTrgEnd** | [***time.Time**](time.Time.md) |  | [optional] [default to null]
+**TimeTrgStart** | [***time.Time**](time.Time.md) |  | [optional] [default to null]
+**DdFlp** | **bool** |  | [optional] [default to null]
+**Dcs** | **bool** |  | [optional] [default to null]
+**Epn** | **bool** |  | [optional] [default to null]
+**EpnTopology** | **string** |  | [optional] [default to null]
+**Detectors** | [***Detectors**](DETECTORS.md) |  | [optional] [default to null]
 **UpdatedAt** | **int32** | Unix timestamp when this entity was last updated. | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

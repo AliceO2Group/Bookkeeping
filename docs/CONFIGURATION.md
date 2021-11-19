@@ -12,6 +12,7 @@ The following configuration items can be set using environment variables, note t
 | DATABASE_CHARSET | The charset of the relational database. | utf8mb4 |
 | DATABASE_COLLATE | The collate of the relational database. | utf8mb4_unicode_ci |
 | DATABASE_TIMEZONE | The timezone of the database | Etc/GMT+0 |
+| DATABASE_LOGGING | If this variable is true, there is db requests in console | false |
 
 ## JSON Web Token (JWT)
 | Variable name | Description | Default value |

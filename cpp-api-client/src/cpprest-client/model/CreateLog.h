@@ -67,11 +67,11 @@ public:
     /// <summary>
     /// The unique identifier of this entity.
     /// </summary>
-    int32_t getParentLogId() const;
+    int64_t getParentLogId() const;
     bool parentLogIdIsSet() const;
     void unsetParentLogId();
 
-    void setParentLogId(int32_t value);
+    void setParentLogId(int64_t value);
 
     /// <summary>
     /// Body of the log.
@@ -104,7 +104,7 @@ public:
 protected:
     std::vector<std::shared_ptr<Attachment>> m_Attachments;
     bool m_AttachmentsIsSet;
-    int32_t m_ParentLogId;
+    int64_t m_ParentLogId;
     bool m_ParentLogIdIsSet;
     utility::string_t m_Text;
     bool m_TextIsSet;

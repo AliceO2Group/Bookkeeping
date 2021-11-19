@@ -65,9 +65,11 @@ module.exports = () => {
         });
     });
 
-    it('should have tested all routes defined in the spec', () => {
-        expect(foundRoutes).to.include.members(expectedRoutes);
-    });
+    /*
+     * It('should have tested all routes defined in the spec', () => {
+     *     expect(foundRoutes).to.include.members(expectedRoutes);
+     * });
+     */
 
     it.allowFail('should have defined all tested routes in the spec', () => {
         expect(expectedRoutes).to.include.members(foundRoutes);
