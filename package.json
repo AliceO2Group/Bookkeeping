@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.17.11",
+  "version": "0.17.12",
   "author": "CERN",
   "license": "GPL-3.0",
   "scripts": {
@@ -19,22 +19,22 @@
     "@aliceo2/web-ui": "1.18.2",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
-    "joi": "17.1.1",
-    "mariadb": "2.5.2",
+    "joi": "17.3.0",
+    "mariadb": "2.5.5",
     "multer": "1.4.2",
-    "sequelize": "6.3.5",
+    "sequelize": "6.11.0",
     "umzug": "2.3.0"
   },
   "devDependencies": {
-    "chai": "4.2.0",
+    "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
-    "eslint": "7.15.0",
+    "eslint": "8.2.0",
     "js-yaml": "3.14.1",
     "mocha": "8.2.1",
     "nodemon": "2.0.7",
     "nyc": "15.1.0",
     "puppeteer": "8.0.0",
     "puppeteer-to-istanbul": "git+https://github.com/SoftwareForScience/puppeteer-to-istanbul.git",
-    "supertest": "6.1.1"
+    "supertest": "6.1.6"
   }
 }

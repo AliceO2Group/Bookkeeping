@@ -83,6 +83,27 @@ module.exports = () => {
         await page.waitForTimeout(500);
     });
 
+    it('can disable submit with invalid data', async () => {
+        const title = 'A';
+        const text = 'Sample Text';
+
+        await goToPage(page, 'log-create');
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+
+        // Verify that the text from the first matches with the text posted and correct working of the redirect
+        // eslint-disable-next-line no-undef
+        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors['text'].getValue()))
+            .includes(text);
+        expect(doesContentMatch).to.equal(true);
+
+        // Create check disabled button
+        const isDisabled = await page.$eval('button#send', (button) => button.disabled);
+
+        expect(isDisabled).to.equal(true);
+    });
     it('can collapse and expand logs with long titles', async () => {
         /*
          * Collapse and de-collapse the opened title and verify the rendered height
