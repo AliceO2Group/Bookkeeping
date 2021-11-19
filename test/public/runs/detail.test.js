@@ -44,21 +44,7 @@ module.exports = () => {
         expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
     });
 
-    it('can navigate to the log panel', async () => {
-        await pressElement(page, '#logs-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=logs`)).to.be.true;
-    });
-
-    it('can navigate to the main panel', async () => {
-        await pressElement(page, '#main-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=main`)).to.be.true;
-    });
-
-    it('can navigate to the log panel', async () => {
+    it('can navigate to the logs panel', async () => {
         await pressElement(page, '#logs-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
