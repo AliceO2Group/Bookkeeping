@@ -221,7 +221,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if minimum is larger than maximum', (done) => {
+        it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/logs?filter[created][from]=946771200000&filter[created][to]=946684800000')
                 .expect(400)
@@ -508,7 +508,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be larger than or equal to 1');
+                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
 
                     done();
                 });

@@ -100,7 +100,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be larger than or equal to 1');
+                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
 
                     done();
                 });
