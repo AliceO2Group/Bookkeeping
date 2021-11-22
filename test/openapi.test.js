@@ -31,7 +31,7 @@ module.exports = () => {
 
     const routes = getRoutesAsList();
 
-    const spec = yaml.load(fs.readFileSync(path.resolve(__dirname, '..', 'spec', 'openapi.yaml'), 'utf8'));
+    const spec = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', 'spec', 'openapi.yaml'), 'utf8'));
 
     const expectedRoutes = [];
     Object.keys(spec.paths).forEach((specPath) => {
