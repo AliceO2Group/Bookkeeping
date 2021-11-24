@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -70,5 +70,19 @@ module.exports = () => {
          *     await page.evaluate((element) => element.selectedOptions, runsFieldsSelection);
          * expect(Object.keys(runsFieldsSelectedOptions).length).to.equal(14);
          */
+    });
+
+    it('shows error on incorrect run number', async () => {
+        await goToPage(page, 'run-export');
+        const runNumbersStr = '99999999';
+
+        // Send the value of the run numbers string to the input and select the id field
+        await page.type('#run-number', runNumbersStr);
+        await page.select('select#fields', 'id');
+        await page.click('#send');
+
+        // We expect there to be an error message
+        const expectedMessage = 'Run with this id (99999999) could not be found';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 };
