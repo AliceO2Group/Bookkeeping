@@ -32,29 +32,8 @@ module.exports = () => {
     });
 
     it('tag detail loads correctly', async () => {
-        await page.goto(`${url}/?page=tag-detail&id=1`, { waitUntil: 'networkidle0' });
+        await page.goto(`${url}/?page=tag-detail&id=1&panel=logs`, { waitUntil: 'networkidle0' });
         await expectInnerText(page, 'h2', 'Tag: FOOD');
-    });
-
-    it('can navigate to the log panel', async () => {
-        await pressElement(page, '#logs-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=1&panel=logs`)).to.be.true;
-    });
-
-    it('can navigate to the main panel', async () => {
-        await pressElement(page, '#main-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=1&panel=main`)).to.be.true;
-    });
-
-    it('can navigate to the log panel', async () => {
-        await pressElement(page, '#logs-tab');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=1&panel=logs`)).to.be.true;
     });
 
     it('can navigate to a log detail page', async () => {
