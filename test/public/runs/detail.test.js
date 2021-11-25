@@ -44,6 +44,13 @@ module.exports = () => {
         expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
     });
 
+    it('can navigate to the flp panel', async () => {
+        await pressElement(page, '#flps-tab');
+        await page.waitForTimeout(100);
+        const redirectedUrl = await page.url();
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=flps`)).to.be.true;
+    });
+
     it('can navigate to the logs panel', async () => {
         await pressElement(page, '#logs-tab');
         await page.waitForTimeout(100);
