@@ -1,6 +1,0 @@
-projectKey=Bookkeeping
-serverUrl=http://localhost:9000
-serverVersion=9.2.0.49834
-dashboardUrl=http://localhost:9000/dashboard?id=Bookkeeping
-ceTaskId=AX09wBGYb3frE98_RfeT
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AX09wBGYb3frE98_RfeT
