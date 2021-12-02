@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.0] 
+* Updates dependencies versions to avoid security flaws
+* Updates Dockerfile and fixes lint issues
+* Allow users to insert replies to logs without having to specify a title
+* Updates Run Details page to make use of the unused space and display logs for the run by default
+* Updates Tag Details page to show logs for the tag by default
+* Run Filters will inform users if there are no tags created
+* Fixes a bug in which updating the tags of a run would hide the logs for the run
+
 ## [0.17.12]
 * Added run filter to run-overview table [#433]https://github.com/AliceO2Group/Bookkeeping/pull/433
 * Changed verification of Title [#432]https://github.com/AliceO2Group/Bookkeeping/pull/432
