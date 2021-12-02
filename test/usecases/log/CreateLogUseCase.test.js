@@ -83,6 +83,12 @@ module.exports = () => {
         createLogDto.body.title = expectedTitle;
         createLogDto.body.parentLogId = expectedParentLogId;
 
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
         const { result } = await new CreateLogUseCase()
             .execute(createLogDto);
         expect(result.title).to.equal(expectedTitle);
