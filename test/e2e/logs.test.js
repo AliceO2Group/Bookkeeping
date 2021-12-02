@@ -1061,6 +1061,32 @@ module.exports = () => {
                 });
         });
 
+        it('this is not going to work', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: '',
+                    text: 'Text of yet another run',
+                    parentLogId: 2,
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.data.title).to.equal('');
+                    expect(res.body.data.text).to.equal('Text of yet another run');
+                    expect(res.body.data.rootLogId).to.equal(res.body.data.id);
+                    expect(res.body.data.parentLogId).to.equal(2);
+
+                    done();
+                });
+        });
+
         // 'send' and 'attach' are incompatible so we use 'field' instead
         it('should return 201 if a proper body with file attachments was sent', (done) => {
             request(server)
