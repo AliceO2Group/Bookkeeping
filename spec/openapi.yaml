@@ -1310,7 +1310,7 @@ components:
     LogTitle:
       description: Title of the log.
       type: string
-      minLength: 3
+      minLength: 0
       maxLength: 140
     LogTree:
       description: Describes an intervention or an event that happened.

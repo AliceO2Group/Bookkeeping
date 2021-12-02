@@ -75,4 +75,23 @@ module.exports = () => {
 
         expect(result.tags.map(({ id }) => id)).to.deep.equal(expectedTagIds);
     });
+
+    it('should create a new Log with empty title but a parent log', async () => {
+        const expectedTitle = '';
+        const expectedParentLogId = 3;
+
+        createLogDto.body.title = expectedTitle;
+        createLogDto.body.parentLogId = expectedParentLogId;
+
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { result } = await new CreateLogUseCase()
+            .execute(createLogDto);
+        expect(result.title).to.equal(expectedTitle);
+        expect(result.parentLogId).to.equal(expectedParentLogId);
+    });
 };
