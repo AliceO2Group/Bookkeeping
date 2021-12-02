@@ -19,7 +19,7 @@ const merge = require('deepmerge');
 const swaggerDocumentPath = path.resolve(__dirname, 'openapi-source.yaml');
 const swaggerGeneratedDocumentPath = path.resolve(__dirname, 'openapi.yaml');
 
-const swaggerDocument = yaml.safeLoad(fs.readFileSync(swaggerDocumentPath));
+const swaggerDocument = yaml.load(fs.readFileSync(swaggerDocumentPath));
 
 // eslint-disable-next-line require-jsdoc
 const arraysEqual = (a, b) => {
@@ -126,7 +126,7 @@ const convert = (obj) => {
 
 // eslint-disable-next-line require-jsdoc
 const dumpYaml = (loc, obj) => {
-    fs.writeFileSync(loc, yaml.safeDump(obj, {
+    fs.writeFileSync(loc, yaml.dump(obj, {
         indent: 2,
         lineWidth: 80,
         sortKeys: false,
@@ -143,7 +143,7 @@ const addGeneratedHeader = (loc) => {
 dumpYaml(swaggerDocumentPath, swaggerDocument);
 
 const swaggerGeneratedDocument = convert(swaggerDocument);
-const oldSwaggerGeneratedDocument = yaml.safeLoad(fs.readFileSync(swaggerGeneratedDocumentPath));
+const oldSwaggerGeneratedDocument = yaml.load(fs.readFileSync(swaggerGeneratedDocumentPath));
 if (JSON.stringify(oldSwaggerGeneratedDocument) !== JSON.stringify(swaggerGeneratedDocument)) {
     dumpYaml(swaggerGeneratedDocumentPath, swaggerGeneratedDocument);
     addGeneratedHeader(swaggerGeneratedDocumentPath);

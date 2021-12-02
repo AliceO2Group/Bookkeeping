@@ -4,7 +4,7 @@ info:
   version: 0.0.0
   license:
     name: GNU General Public License v3.0
-    url: 'http://alice-o2.web.cern.ch/license'
+    url: http://alice-o2.web.cern.ch/license
 servers:
   - url: /api
 paths:
@@ -38,7 +38,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
-  '/attachments/{attachmentId}':
+  /attachments/{attachmentId}:
     parameters:
       - $ref: '#/components/parameters/AttachmentId'
     get:
@@ -82,7 +82,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-  '/flps/{flpId}':
+  /flps/{flpId}:
     parameters:
       - $ref: '#/components/parameters/FlpId'
     get:
@@ -142,7 +142,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}':
+  /logs/{logId}:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -159,7 +159,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/attachments':
+  /logs/{logId}/attachments:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -176,7 +176,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/attachments/{attachmentId}':
+  /logs/{logId}/attachments/{attachmentId}:
     parameters:
       - $ref: '#/components/parameters/LogId'
       - $ref: '#/components/parameters/AttachmentId'
@@ -194,7 +194,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/tags':
+  /logs/{logId}/tags:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -211,7 +211,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/tree':
+  /logs/{logId}/tree:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -257,7 +257,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
-  '/runs/{runId}':
+  /runs/{runId}:
     parameters:
       - $ref: '#/components/parameters/RunId'
     get:
@@ -332,7 +332,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - subsystem
-  '/subsystems/{subsystemId}':
+  /subsystems/{subsystemId}:
     parameters:
       - $ref: '#/components/parameters/SubsystemId'
     get:
@@ -392,7 +392,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-  '/tags/{tagId}':
+  /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
     get:
@@ -423,7 +423,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-  '/tags/{tagId}/logs':
+  /tags/{tagId}/logs:
     parameters:
       - $ref: '#/components/parameters/TagId'
     get:
@@ -895,8 +895,8 @@ components:
     CommaSeparatedEntityIds:
       description: CSV style string of EntityIds.
       type: string
-      pattern: '^([1-9]+\d*,)*[1-9]+\d*$'
-      example: '1,2,3'
+      pattern: ^([1-9]+\d*,)*[1-9]+\d*$
+      example: 1,2,3
     CreateAttachments:
       description: Describes an attachment
       type: object
@@ -1009,7 +1009,7 @@ components:
           description: The HTTP status code applicable to this problem.
           type: string
         title:
-          description: 'A short, human-readable summary of the problem.'
+          description: A short, human-readable summary of the problem.
           type: string
       required:
         - status
@@ -1504,7 +1504,7 @@ components:
     RunNumbers:
       description: A serialized string of run numbers
       type: string
-      example: '1,2,3,4,5,6,7,8'
+      example: 1,2,3,4,5,6,7,8
     RunO2End:
       description: Unix timestamp when this entity was created.
       type: integer
