@@ -25,7 +25,8 @@
     "umzug": "2.3.0"
   },
   "files": [
-    "lib/"
+    "lib/",
+    "docs/"
   ],
   "bundledDependencies": [
     "@aliceo2/web-ui",
