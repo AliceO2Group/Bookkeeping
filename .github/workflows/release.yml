@@ -3,24 +3,49 @@ on:
   release:
     types: [created]
 jobs:
+   deploy-npm-module:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+        registry-url: 'https://registry.npmjs.org'
+    - name: Check released tag matches ALICE O2 naming pattern
+      run: |
+        if ! [[ $GITHUB_REF =~ @aliceo2\/[a-z]+-*[a-z]*@*.* ]]; then
+          echo "TAG: ${GITHUB_REF} does not match expected pattern";
+          exit 1;
+        else
+          echo "TAG is correct"
+        fi
+    - name: Set variables PROJECT and VERSION for what is being released
+      id: set-project
+      run: |
+        VERSION=$( echo "${GITHUB_REF/refs\/tags\/@aliceo2\/}" | cut -f2 -d"@")
+        PROJECT="Bookkeeping"
+        echo "Identified project: $PROJECT with version: $VERSION"
+        echo "PROJECT=$PROJECT" >> $GITHUB_ENV
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }}
   upload-asset:
     runs-on: ubuntu-latest
+    needs: deploy-npm-module
     outputs:
       ASSET_URL: ${{ steps.upload.outputs.asset_url }}
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v2
       with:
-        node-version: '14.x'
+        node-version: '16.x'
         registry-url: 'https://registry.npmjs.org'
-    - name: Install production deps
+    - name: Install production dependencies
       run: npm install --only=production
-    - name: Remove Go and C++ files
-      run: rm -rf cpp-api-client go-api-client
     - name: Create package tarball
       run:  echo ::set-output name=tgz_name::$(npm pack)
       id: tgz
-    - name: Upload tarball to release assets
+    - name: Upload tarball to GH release assets
       uses: actions/upload-release-asset@v1
       id: upload
       env:
