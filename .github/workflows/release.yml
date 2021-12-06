@@ -3,7 +3,7 @@ on:
   release:
     types: [created]
 jobs:
-   deploy-npm-module:
+  deploy-npm-module:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
