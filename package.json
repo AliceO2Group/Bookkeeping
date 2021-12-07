@@ -18,7 +18,7 @@
     "@aliceo2/web-ui": "1.21.3",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
-    "joi": "17.4.2",
+    "joi": "17.5.0",
     "mariadb": "2.5.5",
     "multer": "1.4.3",
     "sequelize": "6.11.0",
