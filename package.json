@@ -1,8 +1,7 @@
 {
   "name": "@aliceo2/bookkeeping",
   "version": "0.19.0",
-  "author": "CERN",
-  "license": "GPL-3.0",
+  "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
@@ -19,12 +18,26 @@
     "@aliceo2/web-ui": "1.21.3",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
-    "joi": "17.4.2",
+    "joi": "17.5.0",
     "mariadb": "2.5.5",
     "multer": "1.4.3",
     "sequelize": "6.11.0",
     "umzug": "2.3.0"
   },
+  "files": [
+    "lib/",
+    "docs/"
+  ],
+  "bundledDependencies": [
+    "@aliceo2/web-ui",
+    "cls-hooked",
+    "deepmerge",
+    "joi",
+    "mariadb",
+    "multer",
+    "sequelize",
+    "umzug"
+  ],
   "devDependencies": {
     "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
