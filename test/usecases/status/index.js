@@ -11,16 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const AttachmentsSuite = require('./attachments.test');
-const StatusSuite = require('./status.test');
-const LogsSuite = require('./logs.test');
-const SubsystemsSuite = require('./subsystems.test');
-const TagsSuite = require('./tags.test');
+const GetDatabaseStatusUseCase = require('./GetDatabaseStatusUseCase.test');
+const GetGuiStatusUseCase = require('./GetGuiStatusUseCase.test');
 
 module.exports = () => {
-    describe('Status', StatusSuite);
-    describe('Logs', LogsSuite);
-    describe('Subsystems', SubsystemsSuite);
-    describe('Tags', TagsSuite);
-    describe('Attachments', AttachmentsSuite);
+    describe('GetDatabaseStatusUseCase', GetDatabaseStatusUseCase);
+    describe('GetDatabaseStatusUseCase', GetGuiStatusUseCase);
 };
