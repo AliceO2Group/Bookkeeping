@@ -88,11 +88,11 @@ module.exports = () => {
     });
 
     it('can navigate to a detail page', async () => {
-        const firstRow = await page.$('tr.clickable');
-        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const firstButton = await page.$('button.clickable');
+        const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
-        await firstRow.evaluate((row) => row.click());
+        await firstButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
 
         const redirectedUrl = await page.url();
