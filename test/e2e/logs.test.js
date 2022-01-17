@@ -221,7 +221,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if minimum is larger than maximum', (done) => {
+        it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/logs?filter[created][from]=946771200000&filter[created][to]=946684800000')
                 .expect(400)
@@ -363,7 +363,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data).to.have.lengthOf(5);
 
                     done();
                 });
@@ -508,7 +508,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be larger than or equal to 1');
+                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
 
                     done();
                 });
@@ -1003,32 +1003,6 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.data.title).to.equal('Yet another run');
-                    expect(res.body.data.text).to.equal('Text of yet another run');
-                    expect(res.body.data.rootLogId).to.equal(res.body.data.id);
-                    expect(res.body.data.parentLogId).to.equal(res.body.data.id);
-
-                    done();
-                });
-        });
-
-        it('should return 201 if a proper body was sent', (done) => {
-            request(server)
-                .post('/api/logs')
-                .send({
-                    title: 'Yet another run',
-                    text: 'Text of yet another run',
                     tags: [1, 2],
                     parentLogId: 2,
                 })
@@ -1054,6 +1028,32 @@ module.exports = () => {
                             text: 'RUN',
                         },
                     ]);
+                    expect(res.body.data.rootLogId).to.equal(1);
+                    expect(res.body.data.parentLogId).to.equal(2);
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a title is empty', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: '',
+                    text: 'Text of yet another run',
+                    parentLogId: 2,
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.data.title).to.equal('');
+                    expect(res.body.data.text).to.equal('Text of yet another run');
                     expect(res.body.data.rootLogId).to.equal(1);
                     expect(res.body.data.parentLogId).to.equal(2);
 
