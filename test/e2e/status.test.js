@@ -38,7 +38,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return up to date server status', (done) => {
+        it.skip('should return up to date database connection status', (done) => {
             request(server)
                 .get('/api/status/database')
                 .expect(200)

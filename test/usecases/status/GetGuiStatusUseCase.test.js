@@ -16,7 +16,7 @@ const chai = require('chai');
 const { expect } = chai;
 
 module.exports = () => {
-    it('should give current database data', async () => {
+    it('should give current gui data', async () => {
         const request = {
             hostname: 'test',
             socket: {
@@ -24,10 +24,10 @@ module.exports = () => {
             },
         };
         const data = await new GetGuiStatusUseCase()
-            .execute();
+            .execute(request);
         expect(data.status.ok).to.equal(true);
-        expect(data.status.configured).equal.to(true);
-        expect(data.host).equal.to(request.hostname);
-        expect(data.port).equal.to(request.socket.localPort);
+        expect(data.status.configured).to.equal(true);
+        expect(data.host).to.equal(request.hostname);
+        expect(data.port).to.equal(request.socket.localPort);
     });
 };
