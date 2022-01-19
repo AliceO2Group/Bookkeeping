@@ -16,8 +16,10 @@ const FlpSuite = require('./flp');
 const ServerSuite = require('./server');
 const SubsystemSuite = require('./subsystem');
 const TagSuite = require('./tag');
+const StatusSuite = require('./status');
 
 module.exports = () => {
+    describe('Status', StatusSuite);
     describe('Log', LogSuite);
     describe('Flp', FlpSuite);
     describe('Server', ServerSuite);
