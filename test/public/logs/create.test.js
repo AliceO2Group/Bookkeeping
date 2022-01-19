@@ -246,8 +246,9 @@ module.exports = () => {
         expect(attachmentsCountText).to.equal('2');
 
         // Go to the log detail page
-        const row = await page.$(`tr#${firstRowId}`);
-        await row.evaluate((row) => row.click());
+        const buttonId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const button = await page.$(`button#btn${buttonId}`);
+        await button.evaluate((btn) => btn.click());
         await page.waitForTimeout(500);
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
