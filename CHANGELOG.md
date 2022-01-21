@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.19.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.19.0) 
+* Notable changes for users:
+  * Tables from `Logs`, `Runs` and `Home` pages benefit of a new button `More`, making the tables not actionable anymore; This will allows the users to easily copy table values;
+  * Fixes a bug in which users were not able to download attachments;
+  * In case of no tags in the system, run filter box will now inform the user about it;
+* Notable changes for developers:
+  * New API route added: status for providing information on bookkeeping and database;
+  * Adds new GitHub workflow to improve release & deployment procedures;
+  * Server will boot up even if database is not up and running;
+  * Refactors configuration loading files;
+  * Updates dependencies versions to avoid security flaws;
 ## [0.18.0] 
 * Updates dependencies versions to avoid security flaws
 * Updates Dockerfile and fixes lint issues
