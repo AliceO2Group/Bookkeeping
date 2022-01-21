@@ -255,7 +255,7 @@ html, body {
 }
 
 .header-container {
-    max-height: 70px;
+    max-height: 48px;
     align-items: baseline;
 }
 .border-danger {
