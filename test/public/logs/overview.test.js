@@ -30,8 +30,8 @@ module.exports = () => {
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
-            width: 700,
-            height: 720,
+            width: 1400,
+            height: 820,
             deviceScaleFactor: 1,
         });
     });
