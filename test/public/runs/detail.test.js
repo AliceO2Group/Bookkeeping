@@ -87,7 +87,7 @@ module.exports = () => {
 
     it('can return to the overview page if an error occurred', async () => {
         // We expect there to be a button to return to the overview page
-        await expectInnerText(page, '.btn-primary', 'Return to Overview');
+        await expectInnerText(page, '.btn-primary.btn-redirect', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
         await pressElement(page, '.btn-primary.btn-redirect');
