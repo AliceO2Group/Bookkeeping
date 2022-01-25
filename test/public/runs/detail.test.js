@@ -90,7 +90,7 @@ module.exports = () => {
         await expectInnerText(page, '.btn-primary', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await pressElement(page, '.btn-primary');
+        await pressElement(page, '.btn-primary.btn-redirect');
         await page.waitForTimeout(100);
         expect(page.url()).to.equal(`${url}/?page=run-overview`);
     });
