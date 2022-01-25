@@ -51,7 +51,7 @@ module.exports = () => {
         firstRowId = await getFirstRow(table, page);
 
         // We expect to find a table
-        expect(firstRowId).to.equal('row130');
+        expect(firstRowId).to.equal('row131');
     });
 
     it('shows correct datatypes in respective columns', async () => {
