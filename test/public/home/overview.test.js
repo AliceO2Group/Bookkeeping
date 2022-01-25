@@ -88,7 +88,7 @@ module.exports = () => {
     });
 
     it('can navigate to a detail page', async () => {
-        const firstButton = await page.$('button.clickable');
+        const firstButton = await page.$('button.btn-redirect');
         const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
