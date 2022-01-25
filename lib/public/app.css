@@ -31,7 +31,9 @@ html, body {
 .cell-xs:last-child .resizeWidth, .cell-s:last-child .resizeWidth, .cell-m:last-child .resizeWidth, .cell-l:last-child .resizeWidth, .cell-xl:last-child .resizeWidth { visibility: hidden; }
 
 /* width scale */
+.w-2   { width:   2.5%; }
 .w-5   { width:   5%; }
+.w-7   { width:   7.5%; }
 .w-10  { width:  10%; }
 .w-15  { width:  15%; }
 .w-20  { width:  20%; }
