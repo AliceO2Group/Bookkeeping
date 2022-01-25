@@ -243,7 +243,7 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        const firstButton = await page.$('button.clickable');
+        const firstButton = await page.$('button.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
