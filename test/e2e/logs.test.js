@@ -323,7 +323,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(2);
+                    expect(res.body.data).to.have.lengthOf(3);
 
                     done();
                 });
@@ -363,7 +363,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(5);
+                    expect(res.body.data).to.have.lengthOf(6);
 
                     done();
                 });

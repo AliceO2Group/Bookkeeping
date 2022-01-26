@@ -254,6 +254,10 @@ module.exports = () => {
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
+        // Close the filter panel
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#title');
         await page.waitForTimeout(100);
@@ -499,7 +503,7 @@ module.exports = () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
-        const firstButton = await page.$('button.clickable');
+        const firstButton = await page.$('button.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
@@ -528,7 +532,7 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Navigate to a log detail page
-        const firstRow = await page.$('button.clickable');
+        const firstRow = await page.$('button.btn-redirect');
         const firstRowId = await firstRow.evaluate((btn) => btn.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
         await firstRow.evaluate((button) => button.click());
