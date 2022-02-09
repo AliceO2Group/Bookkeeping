@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.20.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.20.0) 
+* Notable changes for users:
+  * All tables were refactored and are now fixed in width, reducing the text displayed if it is longer than the space;
+  * Tables take into consideration the user's screen space and adapt accordingly on first load;
+  * New log creation button placed on top of the navigation bar so that it can be accessed from any page;
+  * Users are allowed to copy the content of a log;
+  * "Reply logs" with no title will inherit the title of the parent log;
+* Notable changes for developers:
+  * `ca-certificates` dependency in docker updated
+  
 ## [0.19.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.19.0) 
 * Notable changes for users:
   * Tables from `Logs`, `Runs` and `Home` pages benefit of a new button `More`, making the tables not actionable anymore; This will allows the users to easily copy table values;
@@ -13,6 +23,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Server will boot up even if database is not up and running;
   * Refactors configuration loading files;
   * Updates dependencies versions to avoid security flaws;
+  
 ## [0.18.0] 
 * Updates dependencies versions to avoid security flaws
 * Updates Dockerfile and fixes lint issues
