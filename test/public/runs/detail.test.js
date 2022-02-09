@@ -26,6 +26,11 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
+            width: 1920,
+            height: 1080,
+            deviceScaleFactor: 1,
+        });
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
