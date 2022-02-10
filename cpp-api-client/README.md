@@ -55,22 +55,7 @@ Note: don't include the "Bearer " part of the token, it's added automatically.
 Generate the API client based on the OpenApi file.
 For generating the sourcecode we use an [openapi-generator](https://github.com/OpenAPITools/openapi-generator).
 
-To use the stripped down version of the generator exectue the following command in the root directory of the api client:
-
-##### Mac/Linux:
+From project root directory run:
 ```console
-wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.0.0-beta2/openapi-generator-cli-5.0.0-beta2.jar -O openapi-generator-cli.jar
-```
-
-##### Windows:
-For Windows users, you will need to install wget or you can use Invoke-WebRequest in PowerShell (3.0+), e.g.
-
-```powershell
-Invoke-WebRequest -OutFile openapi-generator-cli.jar https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.0.0-beta2/openapi-generator-cli-5.0.0-beta2.jar
-```
-
-#### Usage
-Once the jar is downloaded, generate the api client with the following command. Please check that the paths are valid before doing so.
-```console
-java -jar openapi-generator-cli.jar generate -i openapi-source.yaml -g cpp-restsdk -o src/cpprest-client
+openapi-generator-cli generate -g cpp-restsdk -i cpp-api-client/openapi-source.yaml -o cpp-api-client/src/cpprest-client/
 ```
