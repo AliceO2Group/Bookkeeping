@@ -41,12 +41,25 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
-    it('can change run tags', async () => {
+    it('successfully entered EDIT mode of a run', async () => {
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        await expectInnerText(page, '#save-run', 'Save');
+        await expectInnerText(page, '#cancel-run', 'Revert');
+    });
+
+    it('successfully changed run tags in EDIT mode', async () => {
         await pressElement(page, '#tags-control option[value="1"]');
         await page.waitForTimeout(100);
-        await pressElement(page, '.btn-success');
+        await pressElement(page, '#update-tags');
         await page.waitForTimeout(100);
         expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
+    });
+
+    it('successfully exited EDIT mode of a run', async () => {
+        await pressElement(page, '#cancel-run');
+        await page.waitForTimeout(100);
+        await expectInnerText(page, '#edit-run', 'Edit Run');
     });
 
     it('can navigate to the flp panel', async () => {
