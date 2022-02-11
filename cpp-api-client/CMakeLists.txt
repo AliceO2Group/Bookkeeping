@@ -66,6 +66,7 @@ target_link_libraries(
     bookkeeping-api-cpp-example
     PRIVATE
     Boost::headers
+    Boost::program_options
     OpenSSL::SSL # This is a temporary workaround as the target should come from ccprestsdk
     BookkeepingApiCpp)
 
