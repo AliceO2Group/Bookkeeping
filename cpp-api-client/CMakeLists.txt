@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5.2 FATAL_ERROR)
 
 project(
     BookkeepingApiCpp
-    VERSION 0.3.3
+    VERSION 0.17.3
     LANGUAGES CXX)
 
 find_package(Doxygen)
