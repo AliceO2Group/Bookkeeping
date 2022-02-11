@@ -1,0 +1,16 @@
+digraph "org::openapitools::client::model::ErrorSource"
+{
+ // INTERACTIVE_SVG=YES
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="{org::openapitools::\lclient::model::ErrorSource\n||+ ErrorSource()\l+ ~ErrorSource()\l+ validate()\l+ toJson()\l+ fromJson()\l+ toMultipart()\l+ fromMultiPart()\l+ getPointer()\l+ pointerIsSet()\l+ unsetPointer()\l+ setPointer()\l}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="An object containing references to the source of the error."];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node2 [label="{org::openapitools::\lclient::model::ModelBase\n||+ ModelBase()\l+ ~ModelBase()\l+ validate()\l+ toJson()\l+ fromJson()\l+ toMultipart()\l+ fromMultiPart()\l+ isSet()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toString()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ toJson()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromString()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ fromJson()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ toHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ fromHttpContent()\l+ toBase64()\l+ toBase64()\l+ fromBase64()\l}",height=0.2,width=0.4,color="grey75",URL="$classorg_1_1openapitools_1_1client_1_1model_1_1_model_base.html",tooltip=" "];
+  Node3 -> Node2 [color="grey25",fontsize="10",style="solid",label=" #m_IsSet" ,arrowhead="odiamond",fontname="Helvetica"];
+  Node3 [label="{bool\n||}",height=0.2,width=0.4,color="grey75",tooltip=" "];
+  Node4 -> Node1 [color="grey25",fontsize="10",style="solid",label=" #m_Pointer" ,arrowhead="odiamond",fontname="Helvetica"];
+  Node4 [label="{string_t\n||}",height=0.2,width=0.4,color="grey75",tooltip=" "];
+  Node3 -> Node1 [color="grey25",fontsize="10",style="solid",label=" #m_PointerIsSet" ,arrowhead="odiamond",fontname="Helvetica"];
+}

@@ -1,0 +1,3 @@
+/Users/adamwegrzynek/Bookkeeping/cpp-api-client/build/CMakeFiles/doc.dir
+/Users/adamwegrzynek/Bookkeeping/cpp-api-client/build/CMakeFiles/edit_cache.dir
+/Users/adamwegrzynek/Bookkeeping/cpp-api-client/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,10 @@
+digraph "Graphical Class Hierarchy"
+{
+ // INTERACTIVE_SVG=YES
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="org::openapitools::\lclient::api::DefaultApi",height=0.2,width=0.4,color="black",URL="$classorg_1_1openapitools_1_1client_1_1api_1_1_default_api.html",tooltip=" "];
+}

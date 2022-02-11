@@ -1,7 +1,7 @@
 # Bookkeeping C++ API client
 
 This library serves as an C++ API client to the Bookkeeping backend.
-API endpoints are documented in docblocks in BookkeepingInterface.h, or in the documentation directory -> index.html -> Bookkeeping -> BookkeepingApi.
+You can generate Doxygen pages by simply running `cmake .. -DONLYDOC=1` and `make`.
 
 ### JWT API token workaround
 Token management is not yet in place, therefore you need to manually extract it from HTTP request when you load Bookkeeping UI in your browser.
