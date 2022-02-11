@@ -2,8 +2,35 @@ cmake_minimum_required(VERSION 3.5.2 FATAL_ERROR)
 
 project(
     BookkeepingApiCpp
-    VERSION 0.3.3
+    VERSION 0.17.3
     LANGUAGES CXX)
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+  message("Generating Doxygen documentation for ${CMAKE_SOURCE_DIR}/src")
+  set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md")
+  set(DOXYGEN_GENERATE_TREEVIEW YES)
+  set(DOXYGEN_HIDE_UNDOC_RELATIONS NO)
+  set(DOXYGEN_HAVE_DOT YES)
+  set(DOXYGEN_DOT_NUM_THREADS 1)
+  set(DOXYGEN_UML_LOOK YES)
+  set(DOXYGEN_UML_LIMIT_NUM_FIELDS 50)
+  set(DOXYGEN_TEMPLATE_RELATIONS YES)
+  set(DOXYGEN_DOT_IMAGE_FORMAT svg)
+  set(DOXYGEN_INTERACTIVE_SVG YES)
+  set(DOXYGEN_DOT_GRAPH_MAX_NODES 100)
+  set(DOXYGEN_DOT_TRANSPARENT YES)
+
+  doxygen_add_docs(doc
+    ${CMAKE_SOURCE_DIR}/src
+    ALL
+    COMMENT "Generating Doxygen"
+  )
+endif()
+
+if(ONLYDOC)
+  return()
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
