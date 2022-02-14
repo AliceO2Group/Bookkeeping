@@ -5,7 +5,7 @@ set(BookkeepingApiCpp_VERSION @PROJECT_VERSION@)
 get_filename_component(BookkeepingApiCpp_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include(CMakeFindDependencyMacro)
 find_dependency(cpprestsdk REQUIRED) 
-find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time program_options filesystem)
+find_dependency(Boost 1.45.0 REQUIRED COMPONENTS system date_time)
 
 list(APPEND CMAKE_MODULE_PATH ${BookkeepingApiCpp_CMAKE_DIR})
 

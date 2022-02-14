@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5.2 FATAL_ERROR)
 
 project(
     BookkeepingApiCpp
-    VERSION 0.17.3
+    VERSION 0.21.0
     LANGUAGES CXX)
 
 find_package(Doxygen)
@@ -40,7 +40,7 @@ endif()
 message("A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # Update require components as necessary
-find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time program_options filesystem)
+find_package(Boost 1.45.0 REQUIRED COMPONENTS system date_time program_options)
 
 # Find cpprest dependency
 include(CMakeFindDependencyMacro)
@@ -64,6 +64,7 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     $<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:include/BookkeepingApiCpp/cpprest-client>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/api>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/model>)
@@ -71,11 +72,15 @@ target_include_directories(
 # Link external libraries to the project
 target_link_libraries(
     ${PROJECT_NAME}
+    PRIVATE
+    Boost::headers
+    Boost::program_options
     PUBLIC
-    Boost::system
     Boost::date_time
     pthread
-    cpprestsdk::cpprest)
+    cpprestsdk::cpprest
+    OpenSSL::SSL
+)
 
 target_compile_features(
     ${PROJECT_NAME}
@@ -94,14 +99,12 @@ target_link_libraries(
     PRIVATE
     Boost::headers
     Boost::program_options
-    OpenSSL::SSL # This is a temporary workaround as the target should come from ccprestsdk
     BookkeepingApiCpp)
 
 # Set CMAKE_INSTALL_LIBDIR explicitly to lib (to avoid lib64 on CC7)
 set(CMAKE_INSTALL_LIBDIR lib)
-
 install(
-    TARGETS bookkeeping-api-cpp-example BookkeepingApiCpp
+    TARGETS BookkeepingApiCpp bookkeeping-api-cpp-example
     EXPORT BookkeepingApiCppTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
