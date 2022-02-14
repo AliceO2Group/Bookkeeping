@@ -40,7 +40,7 @@ endif()
 message("A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # Update require components as necessary
-find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time filesystem program_options)
+find_package(Boost 1.45.0 REQUIRED COMPONENTS system date_time program_options)
 
 # Find cpprest dependency
 include(CMakeFindDependencyMacro)
@@ -73,7 +73,8 @@ target_include_directories(
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
-    Boost::system
+    Boost::headers
+    Boost::program_options
     PUBLIC
     Boost::date_time
     pthread
