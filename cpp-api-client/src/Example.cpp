@@ -4,86 +4,79 @@
 #include "BookkeepingFactory.h"
 #include "BookkeepingApi.h"
 #include "CreateLogParameters.h"
-
-#include <boost/date_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/local_time_adjustor.hpp>
-#include <boost/lexical_cast.hpp>
-
-namespace
-{
-    std::string getEnvString(const std::string &key)
-    {
-        char *env = std::getenv(key.c_str());
-        return (env == nullptr) ? std::string("") : std::string(env);
-    }
-} // namespace
+#include <boost/program_options.hpp>
 
 int main(int argc, char const *argv[])
 {
-    std::cout << "Hello Bookkeeping-api-cpp!" << std::endl;
-    // Example string url + api: "http://localhost:4000/api"
-    std::string url = "http://localhost:4000/api";
-    // Example JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MjgwMDY3ODMsImV4cCI6MTY1OTU2NDM4MywiaXNzIjoibzItdWkifQ.bJr6CZ2dvEobC5z9VrVPMfXdCQXcYSIYlES1NnyfMXU
-    std::string apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MzI0NzA1MjUsImV4cCI6MTY2NDAyODEyNSwiaXNzIjoibzItdWkifQ.IHKSp_GwITw8i0BnO7p85GXkxUKIola3LqjNnUHaxP8";
-    std::cout << "BOOKKEEPING_URL: " << url << '\n'
-              << "BOOKKEEPING_API_TOKEN: " << apiToken << std::endl;
+  boost::program_options::options_description desc("Allowed options");
+  desc.add_options()
+    ("url", boost::program_options::value<std::string>()->default_value("http://localhost:4000/api"), "Bookkeeping instance API URL")
+    ("token", boost::program_options::value<std::string>()->required(), "JWT token")
+    ("run", boost::program_options::value<int64_t>()->default_value(1), "Run number to be created");
+  boost::program_options::variables_map vm;
+  try {
+    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+    boost::program_options::notify(vm);
+  } catch(const boost::program_options::error& e) {
+    std::cout << desc << std::endl;
+    return 1;
+  }
 
-    url = url + "?token=" + apiToken;
-    std::cout << url << std::endl;
-    // const int64_t runNumber = boost::lexical_cast<int64_t>(argv[1]);
-    const int64_t runNumber = 9003;
+  const int64_t runNumber = vm["run"].as<int64_t>();
+  std::string url = vm["url"].as<std::string>() + "?token=" + vm["token"].as<std::string>();
+  std::cout << "Using URL: " << url << " and run number: " << runNumber << std::endl;
 
-    // Create an API instance with url and APItoken.
-    // Instance will be used to make the calls.
-    auto api = bookkeeping::getApiInstance(url, apiToken);
+  // Instance will be used to make the calls.
+  auto api = bookkeeping::getApiInstance(url, vm["token"].as<std::string>());
 
-    // Start a run
-    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::cout << "Starting run " << runNumber << " NOW: " << now << std::endl;
-    api->runStart(runNumber, now, now, "cpp-api", RunType::TECHNICAL, 123, 200, 100, false, true, false, "normal");
+  // Start a run
+  std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  std::cout << "Starting run " << runNumber << " NOW: " << now << std::endl;
+  api->runStart(runNumber, now, now, "cpp-api", RunType::TECHNICAL, 123, 200, 100, false, true, false, "normal");
 
-    // Add flp
-    std::cout << "Adding FLPs" << std::endl;
-    api->flpAdd("flp-1", "localhost");
-    api->flpAdd("flp-2", "localhost", runNumber);
+  // Add flp
+  std::cout << "Adding FLPs" << std::endl;
+  api->flpAdd("flp-1", "localhost");
+  api->flpAdd("flp-2", "localhost", runNumber);
 
-    // Update flp. Input the combination of flpname("flp-2") and runNumber(runNumber) of the flp you want to update.
-    std::cout << "Updating FLPs" << std::endl;
-    api->flpUpdateCounters("flp-2", runNumber, 123, 123408, 5834, 9192);
+  // Update flp. Input the combination of flpname("flp-2") and runNumber(runNumber) of the flp you want to update.
+  std::cout << "Updating FLPs" << std::endl;
+  api->flpUpdateCounters("flp-2", runNumber, 1, 2, 3, 4);
+  std::cout << "Zeroing counters" << std::endl;
+  api->flpUpdateCounters("flp-2", runNumber, 0, 0, 0, 0);
 
 
-    // End a run
-    std::cout << "Ending run" << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    api->runEnd(runNumber, now, now, RunQuality::UNKNOWN);
+  // End a run
+  std::cout << "Ending run" << std::endl;
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+  now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  api->runEnd(runNumber, now, now, RunQuality::UNKNOWN);
 
-    // Create a log
-    // todo: add attachments to request
-    std::cout << "Creating log" << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    api->createLog("Porsche 911..", "LoggyTitle", {runNumber}, -1);
+  // Create a log
+  // todo: add attachments to request
+  std::cout << "Creating log" << std::endl;
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+  api->createLog("Porsche 911..", "LoggyTitle", {runNumber}, -1);
 
-    // Get runs
-    std::cout << "Getting runs" << std::endl;
-    auto runs = api->getRuns();
+  // Get runs
+  std::cout << "Getting runs" << std::endl;
+  auto runs = api->getRuns();
 
-    for (const auto &run : runs)
-    {
-        std::cout << run->toJson() << std::endl;
-    }
-    std::cout << "Amount of runs retrieved: " << runs.size() << std::endl;
+  for (const auto &run : runs)
+  {
+      std::cout << run->toJson() << std::endl;
+  }
+  std::cout << "Amount of runs retrieved: " << runs.size() << std::endl;
 
-    // Get logs
-    std::cout << "Getting logs" << std::endl;
-    auto logs = api->getLogs();
+  // Get logs
+  std::cout << "Getting logs" << std::endl;
+  auto logs = api->getLogs();
 
-    for (const auto &log : logs)
-    {
-        std::cout << log->toJson() << std::endl;
-    }
-    std::cout << "Amount of logs retrieved: " << logs.size() << std::endl;
+  for (const auto &log : logs)
+  {
+      std::cout << log->toJson() << std::endl;
+  }
+  std::cout << "Amount of logs retrieved: " << logs.size() << std::endl;
 
-    return 0;
+  return 0;
 }
