@@ -14,8 +14,13 @@ int main(int argc, char const *argv[])
     ("token", boost::program_options::value<std::string>()->required(), "JWT token")
     ("run", boost::program_options::value<int64_t>()->default_value(1), "Run number to be created");
   boost::program_options::variables_map vm;
-  boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-  boost::program_options::notify(vm);
+  try {
+    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+    boost::program_options::notify(vm);
+  } catch(const boost::program_options::error& e) {
+    std::cout << desc << std::endl;
+    return 1;
+  }
 
   const int64_t runNumber = vm["run"].as<int64_t>();
   std::string url = vm["url"].as<std::string>() + "?token=" + vm["token"].as<std::string>();
