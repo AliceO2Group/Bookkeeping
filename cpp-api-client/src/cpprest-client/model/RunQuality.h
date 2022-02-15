@@ -49,7 +49,7 @@ public:
     {
         RunQuality_GOOD,
         RunQuality_BAD,
-        RunQuality_UNKNOWN,
+        RunQuality_TEST,
     };
 
     eRunQuality getValue() const;
