@@ -73,7 +73,7 @@ const std::shared_ptr<org::openapitools::client::model::RunQuality> runQualityTo
             break;
         case RunQuality::BAD: actualRunQuality->setValue(org::openapitools::client::model::RunQuality::eRunQuality::RunQuality_BAD);
             break;
-        case RunQuality::TEST: actualRunQuality->setValue(org::openapitools::client::model::RunQuality::eRunQuality::RunQuality_UNKNOWN);
+        case RunQuality::TEST: actualRunQuality->setValue(org::openapitools::client::model::RunQuality::eRunQuality::RunQuality_TEST);
             break;
         default: throw std::runtime_error("Unknown RunQuality enum value");
     }

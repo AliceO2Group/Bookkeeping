@@ -4,5 +4,5 @@ enum class RunQuality
 {
     GOOD,
     BAD,
-    UNKNOWN
+    TEST
 };

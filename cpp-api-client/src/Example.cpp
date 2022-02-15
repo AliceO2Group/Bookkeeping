@@ -50,7 +50,7 @@ int main(int argc, char const *argv[])
   std::cout << "Ending run" << std::endl;
   std::this_thread::sleep_for(std::chrono::seconds(1));
   now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  api->runEnd(runNumber, now, now, RunQuality::UNKNOWN);
+  api->runEnd(runNumber, now, now, RunQuality::TEST);
 
   // Create a log
   // todo: add attachments to request
