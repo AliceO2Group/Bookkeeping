@@ -30,8 +30,8 @@ RunQuality::eRunQuality toEnum(const EnumUnderlyingType& val)
         return RunQuality::eRunQuality::RunQuality_GOOD;
     if (val == utility::conversions::to_string_t(U("bad")))
         return RunQuality::eRunQuality::RunQuality_BAD;
-    if (val == utility::conversions::to_string_t(U("unknown")))
-        return RunQuality::eRunQuality::RunQuality_UNKNOWN;
+    if (val == utility::conversions::to_string_t(U("test")))
+        return RunQuality::eRunQuality::RunQuality_TEST;
     return {};
 }
 
@@ -43,8 +43,8 @@ EnumUnderlyingType fromEnum(RunQuality::eRunQuality e)
         return U("good");
     case RunQuality::eRunQuality::RunQuality_BAD:
         return U("bad");
-    case RunQuality::eRunQuality::RunQuality_UNKNOWN:
-        return U("unknown");
+    case RunQuality::eRunQuality::RunQuality_TEST:
+        return U("test");
     default:
         break;
     }
