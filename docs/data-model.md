@@ -35,7 +35,7 @@ Concerning the **Update mode** of the fields:
 | `time_trg_end`                | Time when the Trigger subsystem was stopped. | | At EOR | `run_number` | Insert |
 | `environment_id`              | Unique identifier of the AliECS environment. | `2UE5fEfvE4J` | At SOR | `run_number` | Insert |
 | `run_type`                    | Type of the run, each type will deploy different workflows and/or configurations.	| `PHYSICS`, `TECHNICAL`, `PEDESTAL` | At SOR | `run_number` | Insert |
-| `run_quality`                 | Overall quality of the data from the data taking point of view. | `Good`, `Bad`, `Unknown` | At EOR | `run_number` | Insert |
+| `run_quality`                 | Overall quality of the data from the data taking point of view. | `good`, `bad`, `test` | At EOR | `run_number` | Insert |
 | `n_detectors`                 | Number of detectors in the Run. | `4` | At SOR | `run_number` | Insert |
 | `n_flps`                      | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
 | `n_epns`                      | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |

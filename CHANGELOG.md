@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.21.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.0) 
+* Notable changes for users:
+  * Run Quality is now displayed in both `Run-Statistics` and `Run-Details` pages;
+  * Users are now able to update the quality of a run (`good`, `test`, `bad`);
+  * Users can filter `Run-Statistics` table by run quality;
+  * Bug fixed in which a page would not load if a run was missing properties;
+* Notable changes for developers:
+  * CPP API:
+    * Adds validation of URL and API token;
+    * Adds `/status` path;
+    * Improved error and exception handling;
+    * Fixed CMake config;
+  * Adds migration file for `run_quality` column so that enum accepts `test` as well;
+
 ## [0.20.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.20.0) 
 * Notable changes for users:
   * All tables were refactored and are now fixed in width, reducing the text displayed if it is longer than the space;
