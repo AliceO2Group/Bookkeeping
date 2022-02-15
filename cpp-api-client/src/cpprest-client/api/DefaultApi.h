@@ -23,8 +23,8 @@
 #include "ApiClient.h"
 
 #include "model/ApiInformation.h"
-#include "model/DeployInformation.h"
 #include "model/Errors.h"
+#include "model/StatusInformation.h"
 #include <boost/optional.hpp>
 
 namespace org {
@@ -45,12 +45,20 @@ public:
     virtual ~DefaultApi();
 
     /// <summary>
-    /// Get deploy information
+    /// Get DB status
     /// </summary>
     /// <remarks>
     /// 
     /// </remarks>
-    pplx::task<std::shared_ptr<DeployInformation>> getDeployInformation(
+    pplx::task<std::shared_ptr<StatusInformation>> getDbStatus(
+    ) const;
+    /// <summary>
+    /// Get GUI status
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    pplx::task<std::shared_ptr<StatusInformation>> getGuiStatus(
     ) const;
     /// <summary>
     /// Get server information
