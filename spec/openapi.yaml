@@ -1,4 +1,4 @@
-# Generated on Thu, 02 Dec 2021 15:38:41 GMT
+# Generated on Tue, 15 Feb 2022 17:30:35 GMT
 
 openapi: 3.0.0
 info:
@@ -1528,7 +1528,7 @@ components:
       enum:
         - good
         - bad
-        - unknown
+        - test
     RunResponse:
       description: Response containing a single run.
       type: object

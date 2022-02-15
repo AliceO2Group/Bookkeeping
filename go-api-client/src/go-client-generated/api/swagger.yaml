@@ -1015,7 +1015,6 @@ components:
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1025,7 +1024,6 @@ components:
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1111,14 +1109,12 @@ components:
       description: Response containing multiple logs.
       example:
         data:
-        - parentLogId: null
-          attachments:
+        - attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1128,7 +1124,6 @@ components:
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1142,41 +1137,32 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           createdAt: 853113599
           replies: 5
           subtype: run
-          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
-            id: null
           - runNumber: 5
-            id: null
           updatedAt: 853113599
-        - parentLogId: null
-          attachments:
+        - attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1186,7 +1172,6 @@ components:
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1200,32 +1185,25 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           createdAt: 853113599
           replies: 5
           subtype: run
-          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
-            id: null
           - runNumber: 5
-            id: null
           updatedAt: 853113599
         meta:
           page:
@@ -1268,9 +1246,9 @@ components:
       example:
         data:
         - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: {}
+          timeO2End: {}
+          timeTrgEnd: {}
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1278,7 +1256,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: {}
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1289,9 +1267,9 @@ components:
           id: 1
           updatedAt: 853113599
         - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: {}
+          timeO2End: {}
+          timeTrgEnd: {}
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1299,7 +1277,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: {}
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1347,11 +1325,9 @@ components:
         data:
         - createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
         - createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
         meta:
           page:
@@ -1388,11 +1364,9 @@ components:
       example:
         data:
         - createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
         - createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
     Attachment:
@@ -1434,7 +1408,6 @@ components:
         path: path
         fileName: fileName
         size: 6
-        logId: null
         id: 1
         mimeType: mimeType
         encoding: encoding
@@ -1455,7 +1428,6 @@ components:
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1542,7 +1514,7 @@ components:
       description: Deploy information
       example:
         start: 853113599
-        age: 0.80082819046101150206595775671303272247314453125
+        age: 0.8008281904610115
     Entity:
       required:
       - id
@@ -1840,14 +1812,12 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
-        parentLogId: null
         attachments:
         - originalName: originalName
           createdAt: 853113599
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1857,7 +1827,6 @@ components:
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1871,32 +1840,25 @@ components:
         subsystems:
         - createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
         - createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
         tags:
         - createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
         - createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
         createdAt: 853113599
         replies: 5
         subtype: run
-        rootLogId: null
         id: 1
         text: text
         runs:
         - runNumber: 5
-          id: null
         - runNumber: 5
-          id: null
         updatedAt: 853113599
     LogOrigin:
       type: string
@@ -1919,14 +1881,12 @@ components:
       description: Response containing a single log.
       example:
         data:
-          parentLogId: null
           attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1936,7 +1896,6 @@ components:
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1950,32 +1909,25 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           createdAt: 853113599
           replies: 5
           subtype: run
-          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
-            id: null
           - runNumber: 5
-            id: null
           updatedAt: 853113599
     LogSortOptions:
       type: object
@@ -2067,14 +2019,12 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
-        parentLogId: null
         attachments:
         - originalName: originalName
           createdAt: 853113599
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -2084,7 +2034,6 @@ components:
           path: path
           fileName: fileName
           size: 6
-          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -2098,19 +2047,15 @@ components:
         subsystems:
         - createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
         - createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
         tags:
         - createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
         - createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
         createdAt: 853113599
@@ -2119,14 +2064,11 @@ components:
         - null
         - null
         subtype: run
-        rootLogId: null
         id: 1
         text: text
         runs:
         - runNumber: 5
-          id: null
         - runNumber: 5
-          id: null
         updatedAt: 853113599
     LogTreeResponse:
       required:
@@ -2139,14 +2081,12 @@ components:
       description: Response containing a single log tree.
       example:
         data:
-          parentLogId: null
           attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -2156,7 +2096,6 @@ components:
             path: path
             fileName: fileName
             size: 6
-            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -2170,19 +2109,15 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
-            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           - createdAt: 853113599
-            id: null
             text: text
             updatedAt: 853113599
           createdAt: 853113599
@@ -2191,14 +2126,11 @@ components:
           - null
           - null
           subtype: run
-          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
-            id: null
           - runNumber: 5
-            id: null
           updatedAt: 853113599
     PaginationLimit:
       maximum: 100
@@ -2295,9 +2227,9 @@ components:
       description: Describes an intervention or an event that happened.
       example:
         epn: false
-        timeTrgStart: 2000-01-23T04:56:07.000+00:00
-        timeO2End: 2000-01-23T04:56:07.000+00:00
-        timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+        timeTrgStart: {}
+        timeO2End: {}
+        timeTrgEnd: {}
         runType: physics
         detectors: CPV
         bytesReadOut: 0
@@ -2305,7 +2237,7 @@ components:
         createdAt: 853113599
         nEpns: 5
         runQuality: good
-        timeO2Start: 2000-01-23T04:56:07.000+00:00
+        timeO2Start: {}
         environmentId: environmentId
         dcs: false
         epnTopology: normal
@@ -2358,7 +2290,7 @@ components:
       enum:
       - good
       - bad
-      - unknown
+      - test
     RunResponse:
       required:
       - data
@@ -2371,9 +2303,9 @@ components:
       example:
         data:
           epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: {}
+          timeO2End: {}
+          timeTrgEnd: {}
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -2381,7 +2313,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: {}
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -2485,7 +2417,6 @@ components:
       example:
         createdAt: 853113599
         name: name
-        id: null
         updatedAt: 853113599
     SubsystemResponse:
       required:
@@ -2500,7 +2431,6 @@ components:
         data:
           createdAt: 853113599
           name: name
-          id: null
           updatedAt: 853113599
     Tag:
       required:
@@ -2527,7 +2457,6 @@ components:
       description: A label attached to something for the purpose of identification.
       example:
         createdAt: 853113599
-        id: null
         text: text
         updatedAt: 853113599
     TagResponse:
@@ -2542,7 +2471,6 @@ components:
       example:
         data:
           createdAt: 853113599
-          id: null
           text: text
           updatedAt: 853113599
     UpdateFlp:
@@ -2598,7 +2526,6 @@ components:
       description: Minified Run object.
       example:
         runNumber: 5
-        id: null
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
