@@ -14,5 +14,5 @@ type RunQuality string
 const (
 	GOOD_RunQuality RunQuality = "good"
 	BAD_RunQuality RunQuality = "bad"
-	UNKNOWN_RunQuality RunQuality = "unknown"
+	TEST_RunQuality RunQuality = "test"
 )
