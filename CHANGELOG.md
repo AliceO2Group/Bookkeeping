@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.22.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.22.0) 
+* Notable changes for developers:
+  * Path for storing attachments of logs is now configurable via ATTACHMENT_PATH env;
+
 ## [0.21.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.1) 
 * Notable changes for developers:
   * Adds `run_quality` back to validation of `EndRun` request to ensure backwards compatibility;
