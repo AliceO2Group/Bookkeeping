@@ -86,7 +86,7 @@ Concerning the **Update mode** of the fields:
 | `size`                        | File size in bytes. |  | At Log Entry creation | `id` | Insert |
 | `mime_type`                   | File MIME type. | `image/png` | At Log Entry creation | `id` | Insert |
 | `original_name`               | Client side original filename.  | `Run502915.png` | At Log Entry creation | `id` | Insert |
-| `path`                        | Server side path to file. | `/var/storage/1633208265696_Run502915.png` | At Log Entry creation | `id` | Insert |
+| `path`                        | Server side path to file. | `/data/o2-bkp/1633208265696_Run502915.png` | At Log Entry creation | `id` | Insert |
 | `encoding`                    | File Content-Transfer-Encoding value. | `7bit` | At Log Entry creation | `id` | Insert |
 | `log_id`                      | ID of Log Entry to which the attachment belongs to. | `123` | At Log Entry creation | `id` | Insert |
 

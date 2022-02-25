@@ -14,6 +14,8 @@ JWT_SECRET=<TODO>
 OPENID_ID=<TODO>
 OPENID_SECRET=<TODO>
 OPENID_REDIRECT=http://localhost:4000/callback
+
+ATTACHMENT_PATH='/var/storage'
 ```
 
 ## Sequlize (CLI)
