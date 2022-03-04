@@ -4,7 +4,7 @@ info:
   version: 0.0.0
   license:
     name: GNU General Public License v3.0
-    url: 'http://alice-o2.web.cern.ch/license'
+    url: http://alice-o2.web.cern.ch/license
 servers:
   - url: /api
 paths:
@@ -38,7 +38,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
-  '/attachments/{attachmentId}':
+  /attachments/{attachmentId}:
     parameters:
       - $ref: '#/components/parameters/AttachmentId'
     get:
@@ -59,9 +59,6 @@ paths:
     get:
       operationId: listFlps
       summary: List all flps
-      # parameters:
-        # - $ref: '#/components/parameters/Pagination'
-        # - $ref: '#/components/parameters/FlpSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfFlps'
@@ -85,7 +82,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
-  '/flps/{flpName}/runs/{runNumber}':
+  /flps/{flpName}/runs/{runNumber}:
     parameters:
       - $ref: '#/components/parameters/FlpName'
       - $ref: '#/components/parameters/RunNumber'
@@ -123,10 +120,6 @@ paths:
     get:
       operationId: listLogs
       summary: List all logs
-      # parameters:
-        # - $ref: '#/components/parameters/Pagination'
-        # - $ref: '#/components/parameters/FilterLogs'
-        # - $ref: '#/components/parameters/LogSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfLogs'
@@ -150,7 +143,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}':
+  /logs/{logId}:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -167,7 +160,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/attachments':
+  /logs/{logId}/attachments:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -184,7 +177,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/attachments/{attachmentId}':
+  /logs/{logId}/attachments/{attachmentId}:
     parameters:
       - $ref: '#/components/parameters/LogId'
       - $ref: '#/components/parameters/AttachmentId'
@@ -202,7 +195,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/tags':
+  /logs/{logId}/tags:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -219,7 +212,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
-  '/logs/{logId}/tree':
+  /logs/{logId}/tree:
     parameters:
       - $ref: '#/components/parameters/LogId'
     get:
@@ -240,9 +233,6 @@ paths:
     get:
       operationId: listRuns
       summary: List all runs
-      # parameters:
-        # - $ref: '#/components/parameters/Pagination'
-        # - $ref: '#/components/parameters/RunSorting'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfRuns'
@@ -268,7 +258,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
-  '/runs/{runId}':
+  /runs/{runId}:
     parameters:
       - $ref: '#/components/parameters/RunId'
     get:
@@ -301,25 +291,36 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
-  /status:
+  /status/gui:
     get:
-      operationId: getDeployInformation
-      summary: Get deploy information
+      operationId: getGuiStatus
+      summary: Get GUI status
       responses:
         '200':
-          description: Deploy information
+          description: Response with GUI status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeployInformation'
+                $ref: '#/components/schemas/StatusInformation'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /status/database:
+    get:
+      operationId: getDbStatus
+      summary: Get DB status
+      responses:
+        '200':
+          description: Response with DB status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusInformation'
         default:
           $ref: '#/components/responses/UnexpectedError'
   /subsystems:
     get:
       operationId: listSubsystems
       summary: List all subsystems
-      # parameters:
-        # - $ref: '#/components/parameters/Pagination'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfSubsystems'
@@ -345,7 +346,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - subsystem
-  '/subsystems/{subsystemId}':
+  /subsystems/{subsystemId}:
     parameters:
       - $ref: '#/components/parameters/SubsystemId'
     get:
@@ -380,8 +381,6 @@ paths:
     get:
       operationId: listTags
       summary: List all tags
-      # parameters:
-        # - $ref: '#/components/parameters/Pagination'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfTags'
@@ -407,7 +406,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-  '/tags/{tagId}':
+  /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
     get:
@@ -438,7 +437,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
-  '/tags/{tagId}/logs':
+  /tags/{tagId}/logs:
     parameters:
       - $ref: '#/components/parameters/TagId'
     get:
@@ -794,7 +793,7 @@ components:
     RunNumbers:
       description: A serialized string of run numbers
       type: string
-      example: "1,2,3,4,5,6,7,8"
+      example: 1,2,3,4,5,6,7,8
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -904,8 +903,8 @@ components:
     CommaSeparatedEntityIds:
       description: CSV style string of EntityIds.
       type: string
-      pattern: '^([1-9]+\d*,)*[1-9]+\d*$'
-      example: '1,2,3'
+      pattern: ^([1-9]+\d*,)*[1-9]+\d*$
+      example: 1,2,3
     CreateAttachments:
       description: Describes an attachment
       type: object
@@ -965,21 +964,30 @@ components:
       required:
         - text
       additionalProperties: false
-    DeployInformation:
-      description: Deploy information
+    StatusResponse:
+      description: GUI or DB status
       type: object
       properties:
-        age:
-          description: The number of seconds that the server is online.
+        ok:
+          type: boolean
+        configured:
+          type: boolean
+    StatusDataResponse:
+      description: GUI or DB status
+      type: object
+      properties:
+        host:
+          type: string
+        port:
           type: number
-        start:
-          description: The unix timestamp of the moment that the the server went online.
-          type: integer
-          format: int64
-          example: 853113599
-      required:
-        - age
-        - start
+    StatusInformation:
+      description: GUI or DB status and data
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StatusDataResponse'
+        status:
+          $ref: '#/components/schemas/StatusResponse'
       additionalProperties: false
     Entity:
       description: Base entity.
@@ -1009,9 +1017,7 @@ components:
       type: object
       properties:
         detail:
-          description: >-
-            A human-readable explanation specific to this occurrence of the
-            problem.
+          description: A human-readable explanation specific to this occurrence of the problem.
           type: string
         source:
           $ref: '#/components/schemas/ErrorSource'
@@ -1019,7 +1025,7 @@ components:
           description: The HTTP status code applicable to this problem.
           type: string
         title:
-          description: 'A short, human-readable summary of the problem.'
+          description: A short, human-readable summary of the problem.
           type: string
       required:
         - status
@@ -1158,15 +1164,11 @@ components:
         - name
       additionalProperties: false
     FlpBytesEquipmentReadOut:
-      description: >-
-        Total data volume out from the readout 'equipment' component in bytes.
-        Can reach PetaBytes. Updated regularly.
+      description: Total data volume out from the readout 'equipment' component in bytes. Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
     FlpBytesFairMQReadOut:
-      description: >-
-        Total data volume out from the readout 'fmq' component in bytes. Can
-        reach PetaBytes. Updated regularly.
+      description: Total data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
     FlpBytesProcessed:
@@ -1174,9 +1176,7 @@ components:
       type: integer
       format: int64
     FlpBytesRecordingReadOut:
-      description: >-
-        Total data volume out from the readout 'recording' component in bytes.
-        Can reach PetaBytes. Updated regularly.
+      description: Total data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
       type: integer
       format: int64
     FlpHostname:
@@ -1526,7 +1526,7 @@ components:
       enum:
         - good
         - bad
-        - unknown
+        - test
     RunResponse:
       description: Response containing a single run.
       type: object
@@ -1572,14 +1572,14 @@ components:
     EPN_Topology:
       description: Topology for EPN.
       type: string
-      example: 'normal'
+      example: normal
     RunType:
       description: Specifies the type of run.
       type: string
       enum:
-        - "physics"
-        - "cosmics"
-        - "technical"
+        - physics
+        - cosmics
+        - technical
     SortOrder:
       description: Specifies the sorting direction of a sorting option.
       type: string

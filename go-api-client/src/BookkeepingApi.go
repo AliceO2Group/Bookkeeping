@@ -11,7 +11,7 @@ var api *sw.APIClient
 var auth context.Context
 
 /**
- * Initialeze api
+ * Initialize api
  *
  * @param baseUrl String which is the base url used
  * @param apiKey Current apikey while running the system

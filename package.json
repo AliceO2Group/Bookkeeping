@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.20.0",
+  "version": "0.22.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -21,7 +21,7 @@
     "joi": "17.6.0",
     "mariadb": "2.5.5",
     "multer": "1.4.3",
-    "sequelize": "6.15.1",
+    "sequelize": "6.16.1",
     "umzug": "2.3.0"
   },
   "files": [
@@ -39,14 +39,15 @@
     "umzug"
   ],
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "2.4.26",
     "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
-    "eslint": "8.8.0",
+    "eslint": "8.9.0",
     "js-yaml": "4.1.0",
     "mocha": "9.2.0",
     "nodemon": "2.0.15",
     "nyc": "15.1.0",
-    "puppeteer": "13.2.0",
+    "puppeteer": "13.3.2",
     "puppeteer-to-istanbul": "1.4.0",
     "sinon": "13.0.1",
     "supertest": "6.2.0"

@@ -1526,7 +1526,7 @@ components:
       enum:
         - good
         - bad
-        - unknown
+        - test
     RunResponse:
       description: Response containing a single run.
       type: object
