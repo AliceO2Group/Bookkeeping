@@ -1022,10 +1022,14 @@ module.exports = () => {
                         {
                             id: 1,
                             text: 'FOOD',
+                            email: null,
+                            mattermost: null,
                         },
                         {
                             id: 2,
                             text: 'RUN',
+                            email: null,
+                            mattermost: null,
                         },
                     ]);
                     expect(res.body.data.rootLogId).to.equal(1);
