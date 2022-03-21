@@ -17,6 +17,8 @@ const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
 const { tag: { CreateTagUseCase } } = require('../../lib/usecases');
 const { dtos: { CreateTagDto } } = require('../../lib/domain');
+const { beforeEach } = require('mocha');
+const { Logger } = require('../utilities');
 
 const { expect } = chai;
 
@@ -60,7 +62,6 @@ module.exports = () => {
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(1);
-
                     done();
                 });
         });
@@ -502,6 +503,105 @@ module.exports = () => {
                     expect(res.body.data
                         .every((log) => log.tags.length > 0 && log.tags.some((tag) => tag.id === 1)))
                         .to.be.true;
+
+                    done();
+                });
+        });
+    });
+    describe('PUT /api/tags', () => {
+        let createdTag;
+        beforeEach(async () => {
+            const createTagDto = await CreateTagDto.validateAsync({
+                body: {
+                    text: `TAG#${new Date().getTime()}`,
+                },
+            });
+            server.http.router.use(async (request, response, next)=>{
+                request.session.access = ['admin'];
+                next();
+            });
+            createdTag = await new CreateTagUseCase()
+                .execute(createTagDto);
+        });
+        it('should return 201 if no text is provided', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}`)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
+                    expect(titleError.detail).to.equal('"body.email" is required');
+
+                    done();
+                });
+        });
+        it('should return 201 if valid data is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}`)
+                .send({
+                    email: 'groupa, groupb',
+                    mattermost: 'groupa, groupb',
+                    session: {
+                        access: ['admin'],
+                    },
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    done();
+                });
+        });
+        it('should return 400 if invalid data is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}`)
+                .send({
+                    email: '(*&^%$#@)',
+                    mattermost: 'group1, group 2,group.3,group&4,group\\5,group/6',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
+                    expect(titleError.detail).to.equal('"body.email" is required');
+                    done();
+                });
+        });
+        it('should return 400 if invalid data is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}`)
+                .send({
+                    email: 'group1,group2',
+                    mattermost: ')(*&^%$#',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });

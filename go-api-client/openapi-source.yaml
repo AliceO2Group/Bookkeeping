@@ -1667,6 +1667,10 @@ components:
           type: integer
           format: int32
           example: 853113599
+        lastEditedName:
+          description: The last person that edited the email/mattermost fields
+          type: string
+          nullable: true
       required:
         - id
         - text

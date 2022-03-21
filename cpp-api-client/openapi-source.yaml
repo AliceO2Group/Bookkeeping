@@ -1645,6 +1645,10 @@ components:
           description: All the mattermost tags for updates
           type: string
           nullable: true
+        lastEditedName:
+          description: The last person that edited the email/mattermost fields
+          type: string
+          nullable: true
       required:
         - id
         - text

@@ -1018,20 +1018,20 @@ module.exports = () => {
 
                     expect(res.body.data.title).to.equal('Yet another run');
                     expect(res.body.data.text).to.equal('Text of yet another run');
-                    expect(res.body.data.tags).to.deep.equal([
-                        {
-                            id: 1,
-                            text: 'FOOD',
-                            email: null,
-                            mattermost: null,
-                        },
-                        {
-                            id: 2,
-                            text: 'RUN',
-                            email: null,
-                            mattermost: null,
-                        },
-                    ]);
+                    expect(res.body.data.tags[0]).to.include({
+                        id: 1,
+                        text: 'FOOD',
+                        email: null,
+                        mattermost: null,
+                        lastEditedName: null,
+                    });
+                    expect(res.body.data.tags[1]).to.include({
+                        id: 2,
+                        text: 'RUN',
+                        email: null,
+                        mattermost: null,
+                        lastEditedName: null,
+                    });
                     expect(res.body.data.rootLogId).to.equal(1);
                     expect(res.body.data.parentLogId).to.equal(2);
 
