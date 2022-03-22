@@ -94,7 +94,7 @@ module.exports = () => {
         expect(result.title).to.equal(expectedTitle);
         expect(result.parentLogId).to.equal(expectedParentLogId);
     });
-    it('should create a new Log and filter the title ', async () =>{
+    it('should create a new Log with no duplicate run numbers', async () =>{
         const expectedResult = [
             { id: 1, runNumber: 1 },
             { id: 2, runNumber: 2 },
