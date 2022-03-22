@@ -93,6 +93,19 @@ module.exports = () => {
             });
         });
 
+        describe('isOrNull', () => {
+            it('should return all entities with parent_log_id 1 or null', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('parent_log_id').isOrNull('1');
+
+                const result = await LogRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(118);
+                expect(result[0].parentLogId).to.equal(null); // From seeders file
+                expect(result[1].parentLogId).to.equal(1);
+            });
+        });
+
         describe('allOf', () => {
             it('should return no entities', async () => {
                 const queryBuilder = new QueryBuilder();
