@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.23.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.23.0) 
+* Notable changes for developers:
+  * Add as new feature the option to send email and mattermost log creation notification;
+
 ## [0.22.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.22.0) 
 * Notable changes for developers:
   * Path for storing attachments of logs is now configurable via ATTACHMENT_PATH env;
