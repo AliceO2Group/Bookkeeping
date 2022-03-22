@@ -68,7 +68,7 @@ module.exports = () => {
     });
 
     it('should return an array, only containing runs with epn true', async () => {
-        getAllRunsDto.query = { filter: { dcs: true } };
+        getAllRunsDto.query = { filter: { epn: true } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
@@ -77,7 +77,7 @@ module.exports = () => {
     });
 
     it('should return an array with default limit 100, only containing runs with dcs false or null', async () => {
-        getAllRunsDto.query = { filter: { dcs: false } };
+        getAllRunsDto.query = { filter: { epn: false } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
