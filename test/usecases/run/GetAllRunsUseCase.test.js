@@ -56,19 +56,19 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(15);
     });
     it('should return an array with only runs with dd_flp false or null', async () => {
-        getAllRunsDto.query = { filter: { dd_flp: false }, page: { limit: 25 } };
+        getAllRunsDto.query = { filter: { ddflp: false }, page: { limit: 25 } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(25);
+        expect(runs).to.have.lengthOf(7);
     });
-    it('should return an array only containing runs with dd_flp true', async () => {
-        getAllRunsDto.query = { filter: { dd_flp: true } };
+    it('should return an array only containing runs with ddflp true', async () => {
+        getAllRunsDto.query = { filter: { ddflp: true } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(100);
+        expect(runs).to.have.lengthOf(99);
     });
 };
