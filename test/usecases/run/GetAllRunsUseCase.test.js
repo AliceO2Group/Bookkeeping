@@ -31,14 +31,28 @@ module.exports = () => {
         expect(runs).to.be.an('array');
     });
 
-    it('should return an array, only containing human originated runs', async () => {
-        getAllRunsDto.query = { filter: { origin: 'human' } };
+    it('should return an array, only containing runs with dcs true', async () => {
+        getAllRunsDto.query = { filter: { dcs: true } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        for (const run of runs) {
-            expect(run.origin).to.equal('human');
-        }
+        expect(runs).to.have.lengthOf(1);
+    });
+    it('should return an array with default limit 100, only containing runs with dcs false or null', async () => {
+        getAllRunsDto.query = { filter: { dcs: false } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(100);
+    });
+    it('should return an array with specified limit, only containing runs with dcs false or null', async () => {
+        getAllRunsDto.query = { filter: { dcs: false }, page: { limit: 15 } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(15);
     });
 };
