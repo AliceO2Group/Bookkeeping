@@ -55,4 +55,20 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(15);
     });
+    it('should return an array with only runs with dd_flp false or null', async () => {
+        getAllRunsDto.query = { filter: { dd_flp: false }, page: { limit: 25 } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(25);
+    });
+    it('should return an array only containing runs with dd_flp true', async () => {
+        getAllRunsDto.query = { filter: { dd_flp: true } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(100);
+    });
 };
