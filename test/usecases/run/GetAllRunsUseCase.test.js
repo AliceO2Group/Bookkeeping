@@ -23,7 +23,6 @@ module.exports = () => {
     beforeEach(async () => {
         getAllRunsDto = await GetAllRunsDto.validateAsync({});
     });
-
     it('should return an array', async () => {
         const { runs } = await new GetAllRunsUseCase()
             .execute();
