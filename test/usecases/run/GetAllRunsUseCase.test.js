@@ -23,14 +23,12 @@ module.exports = () => {
     beforeEach(async () => {
         getAllRunsDto = await GetAllRunsDto.validateAsync({});
     });
-
     it('should return an array', async () => {
         const { runs } = await new GetAllRunsUseCase()
             .execute();
 
         expect(runs).to.be.an('array');
     });
-
     it('should return an array limited to default 100 with runs', async () => {
         getAllRunsDto.query = { };
         const { runs } = await new GetAllRunsUseCase()
@@ -39,7 +37,6 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
     });
-
     it('should return an array, only containing runs with dcs true', async () => {
         getAllRunsDto.query = { filter: { dcs: true } };
         const { runs } = await new GetAllRunsUseCase()
@@ -48,7 +45,6 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(1);
     });
-
     it('should return an array with default limit 100, only containing runs with dcs false or null', async () => {
         getAllRunsDto.query = { filter: { dcs: false } };
         const { runs } = await new GetAllRunsUseCase()
@@ -57,7 +53,6 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
     });
-
     it('should return an array with specified limit, only containing runs with dcs false or null', async () => {
         getAllRunsDto.query = { filter: { dcs: false }, page: { limit: 15 } };
         const { runs } = await new GetAllRunsUseCase()
@@ -66,7 +61,23 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(15);
     });
+    it('should return an array with only runs with dd_flp false or null', async () => {
+        getAllRunsDto.query = { filter: { ddflp: false }, page: { limit: 25 } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
 
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+    });
+    it('should return an array only containing runs with ddflp true', async () => {
+        getAllRunsDto.query = { filter: { ddflp: true }, page: { limit: 10, offset: 10 } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(10);
+        expect(runs[0].runNumber).to.equal(96);
+    });
     it('should return an array, only containing runs with epn true', async () => {
         getAllRunsDto.query = { filter: { epn: true } };
         const { runs } = await new GetAllRunsUseCase()
@@ -75,7 +86,6 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
     });
-
     it('should return an array with default limit 100, only containing runs with dcs false or null', async () => {
         getAllRunsDto.query = { filter: { epn: false } };
         const { runs } = await new GetAllRunsUseCase()
