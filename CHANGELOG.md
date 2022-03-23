@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.23.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.23.0) 
+* Notable changes for developers:
+  * Add as new feature the option to send email and mattermost log creation notification;
+
+## [0.22.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.22.0) 
+* Notable changes for developers:
+  * Path for storing attachments of logs is now configurable via ATTACHMENT_PATH env;
+
+## [0.21.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.1) 
+* Notable changes for developers:
+  * Adds `run_quality` back to validation of `EndRun` request to ensure backwards compatibility;
+
+## [0.21.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.0) 
+* Notable changes for users:
+  * Run Quality is now displayed in both `Run-Statistics` and `Run-Details` pages;
+  * Users are now able to update the quality of a run (`good`, `test`, `bad`);
+  * Users can filter `Run-Statistics` table by run quality;
+  * Bug fixed in which a page would not load if a run was missing properties;
+* Notable changes for developers:
+  * CPP API:
+    * Adds validation of URL and API token;
+    * Adds `/status` path;
+    * Improved error and exception handling;
+    * Fixed CMake config;
+  * Adds migration file for `run_quality` column so that enum accepts `test` as well;
+
+## [0.20.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.20.0) 
+* Notable changes for users:
+  * All tables were refactored and are now fixed in width, reducing the text displayed if it is longer than the space;
+  * Tables take into consideration the user's screen space and adapt accordingly on first load;
+  * New log creation button placed on top of the navigation bar so that it can be accessed from any page;
+  * Users are allowed to copy the content of a log;
+  * "Reply logs" with no title will inherit the title of the parent log;
+* Notable changes for developers:
+  * `ca-certificates` dependency in docker updated
+  
+## [0.19.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.19.0) 
+* Notable changes for users:
+  * Tables from `Logs`, `Runs` and `Home` pages benefit of a new button `More`, making the tables not actionable anymore; This will allows the users to easily copy table values;
+  * Fixes a bug in which users were not able to download attachments;
+  * In case of no tags in the system, run filter box will now inform the user about it;
+* Notable changes for developers:
+  * New API route added: status for providing information on bookkeeping and database;
+  * Adds new GitHub workflow to improve release & deployment procedures;
+  * Server will boot up even if database is not up and running;
+  * Refactors configuration loading files;
+  * Updates dependencies versions to avoid security flaws;
+  
+## [0.18.0] 
+* Updates dependencies versions to avoid security flaws
+* Updates Dockerfile and fixes lint issues
+* Allow users to insert replies to logs without having to specify a title
+* Updates Run Details page to make use of the unused space and display logs for the run by default
+* Updates Tag Details page to show logs for the tag by default
+* Run Filters will inform users if there are no tags created
+* Fixes a bug in which updating the tags of a run would hide the logs for the run
+
 ## [0.17.12]
 * Added run filter to run-overview table [#433]https://github.com/AliceO2Group/Bookkeeping/pull/433
 * Changed verification of Title [#432]https://github.com/AliceO2Group/Bookkeeping/pull/432

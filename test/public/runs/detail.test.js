@@ -26,6 +26,11 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({
+            width: 1920,
+            height: 1080,
+            deviceScaleFactor: 1,
+        });
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -36,12 +41,25 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
-    it('can change run tags', async () => {
+    it('successfully entered EDIT mode of a run', async () => {
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        await expectInnerText(page, '#save-run', 'Save');
+        await expectInnerText(page, '#cancel-run', 'Revert');
+    });
+
+    it('successfully changed run tags in EDIT mode', async () => {
         await pressElement(page, '#tags-control option[value="1"]');
         await page.waitForTimeout(100);
-        await pressElement(page, '.btn-success');
+        await pressElement(page, '#update-tags');
         await page.waitForTimeout(100);
         expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
+    });
+
+    it('successfully exited EDIT mode of a run', async () => {
+        await pressElement(page, '#cancel-run');
+        await page.waitForTimeout(100);
+        await expectInnerText(page, '#edit-run', 'Edit Run');
     });
 
     it('can navigate to the flp panel', async () => {
@@ -87,10 +105,10 @@ module.exports = () => {
 
     it('can return to the overview page if an error occurred', async () => {
         // We expect there to be a button to return to the overview page
-        await expectInnerText(page, '.btn-primary', 'Return to Overview');
+        await expectInnerText(page, '.btn-primary.btn-redirect', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await pressElement(page, '.btn-primary');
+        await pressElement(page, '.btn-primary.btn-redirect');
         await page.waitForTimeout(100);
         expect(page.url()).to.equal(`${url}/?page=run-overview`);
     });

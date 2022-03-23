@@ -6,6 +6,7 @@ ApiConfiguration.h
 ApiException.cpp
 ApiException.h
 CMakeLists.txt
+Config.cmake.in
 HttpContent.cpp
 HttpContent.h
 IHttpBody.h
@@ -69,8 +70,6 @@ model/CreateSubsystem.cpp
 model/CreateSubsystem.h
 model/CreateTag.cpp
 model/CreateTag.h
-model/DeployInformation.cpp
-model/DeployInformation.h
 model/Entity.cpp
 model/Entity.h
 model/Error.cpp
@@ -125,6 +124,12 @@ model/RunType.cpp
 model/RunType.h
 model/SortOrder.cpp
 model/SortOrder.h
+model/StatusDataResponse.cpp
+model/StatusDataResponse.h
+model/StatusInformation.cpp
+model/StatusInformation.h
+model/StatusResponse.cpp
+model/StatusResponse.h
 model/Subsystem.cpp
 model/Subsystem.h
 model/SubsystemResponse.cpp

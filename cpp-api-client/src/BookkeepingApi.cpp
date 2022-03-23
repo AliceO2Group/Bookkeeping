@@ -8,6 +8,7 @@
 #include "cpprest-client/api/FlpApi.h"
 #include "cpprest-client/api/LogApi.h"
 #include "cpprest-client/api/RunApi.h"
+#include "cpprest-client/api/DefaultApi.h"
 #include "cpprest-client/model/RunType.h"
 
 namespace bookkeeping
@@ -72,7 +73,7 @@ const std::shared_ptr<org::openapitools::client::model::RunQuality> runQualityTo
             break;
         case RunQuality::BAD: actualRunQuality->setValue(org::openapitools::client::model::RunQuality::eRunQuality::RunQuality_BAD);
             break;
-        case RunQuality::UNKNOWN: actualRunQuality->setValue(org::openapitools::client::model::RunQuality::eRunQuality::RunQuality_UNKNOWN);
+        case RunQuality::TEST: actualRunQuality->setValue(org::openapitools::client::model::RunQuality::eRunQuality::RunQuality_TEST);
             break;
         default: throw std::runtime_error("Unknown RunQuality enum value");
     }
@@ -83,7 +84,7 @@ std::string runQualityToString(RunQuality runQuality) {
     switch (runQuality) {
         case RunQuality::GOOD: return "GOOD";
         case RunQuality::BAD: return "BAD";
-        case RunQuality::UNKNOWN: return "UNKNOWN";
+        case RunQuality::TEST: return "TEST";
         default: throw std::runtime_error("Unknown RunQuality enum value");
     }    
 }
@@ -204,6 +205,19 @@ void BookkeepingApi::createLog(utility::string_t text, utility::string_t title, 
     api.createLog(log).get();
 }
 
+void BookkeepingApi::getStatus()
+{
+  try {
+    org::openapitools::client::api::DefaultApi(apiClient).getGuiStatus().get();
+  } catch(const std::exception& ex) {
+    throw std::runtime_error("Unable to connect to Bookkeeping backend, verify your URL...");
+  }
+  try {
+    org::openapitools::client::api::DefaultApi(apiClient).getDbStatus().get();
+  } catch(const std::exception& ex) {
+    throw std::runtime_error("Connected to Bookkeeping backend but the API token is invalid...");
+  }
+}
 // TODO: Doesn't work properly with 64 bit yet.
 // Changing the way of retrieving the data does seem to be the possible solution, but we haven't figured it out yet.
 std::vector<std::shared_ptr<org::openapitools::client::model::Log>> BookkeepingApi::getLogs()

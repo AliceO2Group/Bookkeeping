@@ -1,3 +1,9 @@
+## [0.21.0]
+* Changes made to the database:
+  * runQuality:
+    * ENUM('good', 'bad', 'unknown', 'test');
+    * defaultValue: 'test'
+* Respective changes were applied to GO and CPP APIs
 ## [0.17.11]
 * Changes made to the database and go-api-bindings[#420]https://github.com/AliceO2Group/Bookkeeping/pull/420
     * New field to be added to the RUNS table.

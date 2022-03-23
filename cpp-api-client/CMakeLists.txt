@@ -2,8 +2,35 @@ cmake_minimum_required(VERSION 3.5.2 FATAL_ERROR)
 
 project(
     BookkeepingApiCpp
-    VERSION 0.3.3
+    VERSION 0.21.0
     LANGUAGES CXX)
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+  message("Generating Doxygen documentation for ${CMAKE_SOURCE_DIR}/src")
+  set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md")
+  set(DOXYGEN_GENERATE_TREEVIEW YES)
+  set(DOXYGEN_HIDE_UNDOC_RELATIONS NO)
+  set(DOXYGEN_HAVE_DOT YES)
+  set(DOXYGEN_DOT_NUM_THREADS 1)
+  set(DOXYGEN_UML_LOOK YES)
+  set(DOXYGEN_UML_LIMIT_NUM_FIELDS 50)
+  set(DOXYGEN_TEMPLATE_RELATIONS YES)
+  set(DOXYGEN_DOT_IMAGE_FORMAT svg)
+  set(DOXYGEN_INTERACTIVE_SVG YES)
+  set(DOXYGEN_DOT_GRAPH_MAX_NODES 100)
+  set(DOXYGEN_DOT_TRANSPARENT YES)
+
+  doxygen_add_docs(doc
+    ${CMAKE_SOURCE_DIR}/src
+    ALL
+    COMMENT "Generating Doxygen"
+  )
+endif()
+
+if(ONLYDOC)
+  return()
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -13,7 +40,7 @@ endif()
 message("A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # Update require components as necessary
-find_package(Boost 1.45.0 REQUIRED COMPONENTS thread system regex date_time program_options filesystem)
+find_package(Boost 1.45.0 REQUIRED COMPONENTS system date_time program_options)
 
 # Find cpprest dependency
 include(CMakeFindDependencyMacro)
@@ -37,6 +64,7 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     $<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:include/BookkeepingApiCpp/cpprest-client>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/api>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/cpprest-client/model>)
@@ -44,11 +72,15 @@ target_include_directories(
 # Link external libraries to the project
 target_link_libraries(
     ${PROJECT_NAME}
+    PRIVATE
+    Boost::headers
+    Boost::program_options
     PUBLIC
-    Boost::system
     Boost::date_time
     pthread
-    cpprestsdk::cpprest)
+    cpprestsdk::cpprest
+    OpenSSL::SSL
+)
 
 target_compile_features(
     ${PROJECT_NAME}
@@ -66,14 +98,13 @@ target_link_libraries(
     bookkeeping-api-cpp-example
     PRIVATE
     Boost::headers
-    OpenSSL::SSL # This is a temporary workaround as the target should come from ccprestsdk
+    Boost::program_options
     BookkeepingApiCpp)
 
 # Set CMAKE_INSTALL_LIBDIR explicitly to lib (to avoid lib64 on CC7)
 set(CMAKE_INSTALL_LIBDIR lib)
-
 install(
-    TARGETS bookkeeping-api-cpp-example BookkeepingApiCpp
+    TARGETS BookkeepingApiCpp bookkeeping-api-cpp-example
     EXPORT BookkeepingApiCppTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

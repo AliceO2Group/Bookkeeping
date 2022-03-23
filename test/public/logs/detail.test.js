@@ -97,8 +97,9 @@ module.exports = () => {
         const postSendUrl = await page.url();
         expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
     });
-    it('can validate the empty title form', async () => {
-        const parentLogId = 116;
+
+    it('should successfully inherit parent log title if user does not provide one to a reply', async () => {
+        const parentLogId = 2;
         await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
 
         // We expect there to be at least one post in this log entry
@@ -108,15 +109,27 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
 
-        const title = '';
-        const text = 'Test the reply button';
+        const text = 'Test the reply log creation with no title';
 
-        await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
         await page.waitForTimeout(250);
 
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
         expect(isDisabled).to.equal(false);
+
+        const button = await page.$('button#send');
+        await button.evaluate((button) => button.click());
+        await page.waitForTimeout(1000);
+
+        // Expect to be redirected to the new log
+        const postSendUrl = await page.url();
+        expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
+
+        // Expect new log to inherit title of the parent
+        const newLogId = await page.evaluate(() => window.model.router.params.id);
+        const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#post${newLogId}title`).innerText, newLogId);
+        const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#post${parentLogId}title`).innerText, parentLogId);
+        expect(newLogTitle).to.equal(`Re: ${parentLogTitle}`);
     });
 };

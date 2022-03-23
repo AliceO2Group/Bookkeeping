@@ -12,13 +12,13 @@
  */
 
 const AttachmentsSuite = require('./attachments.test');
-const HomeSuite = require('./home.test');
+const StatusSuite = require('./status.test');
 const LogsSuite = require('./logs.test');
 const SubsystemsSuite = require('./subsystems.test');
 const TagsSuite = require('./tags.test');
 
 module.exports = () => {
-    describe('Home', HomeSuite);
+    describe('Status', StatusSuite);
     describe('Logs', LogsSuite);
     describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);

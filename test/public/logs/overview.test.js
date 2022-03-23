@@ -30,8 +30,8 @@ module.exports = () => {
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
-            width: 700,
-            height: 720,
+            width: 1400,
+            height: 820,
             deviceScaleFactor: 1,
         });
     });
@@ -254,6 +254,10 @@ module.exports = () => {
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
+        // Close the filter panel
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#title');
         await page.waitForTimeout(100);
@@ -499,12 +503,12 @@ module.exports = () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
-        const firstRow = await page.$('tr.clickable');
-        const firstRowId = await firstRow.evaluate((row) => row.id);
-        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const firstButton = await page.$('button.btn-redirect');
+        const firstRowId = await firstButton.evaluate((btn) => btn.id);
+        parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
-        await firstRow.evaluate((row) => row.click());
+        await firstButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
 
         const redirectedUrl = await page.url();
@@ -528,10 +532,10 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Navigate to a log detail page
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const row = await page.$(`tr#${firstRowId}`);
-        await row.evaluate((row) => row.click());
+        const firstRow = await page.$('button.btn-redirect');
+        const firstRowId = await firstRow.evaluate((btn) => btn.id);
+        parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
+        await firstRow.evaluate((button) => button.click());
         await page.waitForTimeout(500);
 
         // Go back to the home page again

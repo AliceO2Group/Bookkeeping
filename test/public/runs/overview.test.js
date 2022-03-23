@@ -243,12 +243,12 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
+        const firstButton = await page.$('button.btn-redirect');
+        const firstRowId = await firstButton.evaluate((btn) => btn.id);
+        const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the run overview
-        await pressElement(page, `#${firstRowId}`);
+        await firstButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;

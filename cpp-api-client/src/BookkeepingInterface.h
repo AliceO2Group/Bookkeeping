@@ -107,5 +107,6 @@ namespace bookkeeping
      * @returns ArrayOfRunsResponse
      */
     virtual std::vector<std::shared_ptr<org::openapitools::client::model::Run>> getRuns() = 0;
+    virtual void getStatus() = 0;
   };
 }

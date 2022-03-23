@@ -323,7 +323,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(2);
+                    expect(res.body.data).to.have.lengthOf(3);
 
                     done();
                 });
@@ -363,7 +363,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data).to.have.lengthOf(6);
 
                     done();
                 });
@@ -1003,32 +1003,6 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.data.title).to.equal('Yet another run');
-                    expect(res.body.data.text).to.equal('Text of yet another run');
-                    expect(res.body.data.rootLogId).to.equal(res.body.data.id);
-                    expect(res.body.data.parentLogId).to.equal(res.body.data.id);
-
-                    done();
-                });
-        });
-
-        it('should return 201 if a proper body was sent', (done) => {
-            request(server)
-                .post('/api/logs')
-                .send({
-                    title: 'Yet another run',
-                    text: 'Text of yet another run',
                     tags: [1, 2],
                     parentLogId: 2,
                 })
@@ -1054,6 +1028,32 @@ module.exports = () => {
                             text: 'RUN',
                         },
                     ]);
+                    expect(res.body.data.rootLogId).to.equal(1);
+                    expect(res.body.data.parentLogId).to.equal(2);
+
+                    done();
+                });
+        });
+
+        it('should return 201 if a title is empty', (done) => {
+            request(server)
+                .post('/api/logs')
+                .send({
+                    title: '',
+                    text: 'Text of yet another run',
+                    parentLogId: 2,
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.data.title).to.equal('');
+                    expect(res.body.data.text).to.equal('Text of yet another run');
                     expect(res.body.data.rootLogId).to.equal(1);
                     expect(res.body.data.parentLogId).to.equal(2);
 
@@ -1130,6 +1130,28 @@ module.exports = () => {
                     expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
                     expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
 
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body with duplicate run numbers', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .field('runNumbers', '1, 2, 2, 3, 3, 1, 2, 1')
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
+                    expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
+                    expect(res.body.data.runs).to.deep.include({ id: 3, runNumber: 3 });
                     done();
                 });
         });

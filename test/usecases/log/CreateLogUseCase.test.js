@@ -75,4 +75,43 @@ module.exports = () => {
 
         expect(result.tags.map(({ id }) => id)).to.deep.equal(expectedTagIds);
     });
+
+    it('should create a new Log with empty title but a parent log', async () => {
+        const expectedTitle = '';
+        const expectedParentLogId = 3;
+
+        createLogDto.body.title = expectedTitle;
+        createLogDto.body.parentLogId = expectedParentLogId;
+
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { result } = await new CreateLogUseCase()
+            .execute(createLogDto);
+        expect(result.title).to.equal(expectedTitle);
+        expect(result.parentLogId).to.equal(expectedParentLogId);
+    });
+    it('should create a new Log with no duplicate run numbers', async () =>{
+        const expectedResult = [
+            { id: 1, runNumber: 1 },
+            { id: 2, runNumber: 2 },
+            { id: 3, runNumber: 3 },
+        ];
+        const givenRunNumbers = '1,2,2,3,3,1,2,1,2,3';
+
+        createLogDto.body.runNumbers = givenRunNumbers;
+
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { result } = await new CreateLogUseCase()
+            .execute(createLogDto);
+        expect(result.runs).to.deep.equal(expectedResult);
+    });
 };
