@@ -64,11 +64,12 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(7);
     });
     it('should return an array only containing runs with ddflp true', async () => {
-        getAllRunsDto.query = { filter: { ddflp: true } };
+        getAllRunsDto.query = { filter: { ddflp: true }, page: { limit: 10, offset: 10 } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(99);
+        expect(runs).to.have.lengthOf(10);
+        expect(runs[0].run_number).to.equal(96);
     });
 };
