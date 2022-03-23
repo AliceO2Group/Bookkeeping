@@ -33,10 +33,29 @@ module.exports = () => {
         getAllRunsDto.query = { };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
-
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
     });
+    it('should return an array, only containing runs with specified run number', async () => {
+        getAllRunsDto.query = { filter: { runNumbers: '17,18' } };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(2);
+        expect(runs[0].runNumber).to.equal(18); // Default sorting order is dsc
+        expect(runs[1].runNumber).to.equal(17);
+    });
+
+    it('should return an array, only containing found runs from passed list (run numbers can be missing or non-numbers)', async () => {
+        getAllRunsDto.query = { filter: { runNumbers: '-2,17, ,400,18' } };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(2);
+        expect(runs[0].runNumber).to.equal(18); // Default sorting order is dsc
+        expect(runs[1].runNumber).to.equal(17);
+    });
+
     it('should return an array, only containing runs with dcs true', async () => {
         getAllRunsDto.query = { filter: { dcs: true } };
         const { runs } = await new GetAllRunsUseCase()
