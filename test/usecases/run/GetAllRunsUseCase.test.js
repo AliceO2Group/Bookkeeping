@@ -70,6 +70,6 @@ module.exports = () => {
 
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(10);
-        expect(runs[0].run_number).to.equal(96);
+        expect(runs[0].runNumber).to.equal(96);
     });
 };
