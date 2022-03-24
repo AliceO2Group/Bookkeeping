@@ -11,16 +11,18 @@
  * or submit itself to any jurisdiction.
  */
 
+const StatusSuite = require('./status');
 const LogSuite = require('./log');
+const RunSuite = require('./run');
 const FlpSuite = require('./flp');
 const ServerSuite = require('./server');
 const SubsystemSuite = require('./subsystem');
 const TagSuite = require('./tag');
-const StatusSuite = require('./status');
 
 module.exports = () => {
     describe('Status', StatusSuite);
     describe('Log', LogSuite);
+    describe('Run', RunSuite);
     describe('Flp', FlpSuite);
     describe('Server', ServerSuite);
     describe('Subsystem', SubsystemSuite);

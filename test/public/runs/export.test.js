@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -23,6 +23,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await page.setViewport({ width: 1920, height: 1080 });
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -40,7 +41,7 @@ module.exports = () => {
 
     it('can create a export with a run number and fields', async () => {
         const runNumbersStr = '1';
-        const runsFields = ['id', 'runNumber'];
+        const runsFields = ['runNumber'];
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
@@ -70,5 +71,19 @@ module.exports = () => {
          *     await page.evaluate((element) => element.selectedOptions, runsFieldsSelection);
          * expect(Object.keys(runsFieldsSelectedOptions).length).to.equal(14);
          */
+    });
+
+    it('shows error on incorrect run number', async () => {
+        await goToPage(page, 'run-export');
+        const runNumbersStr = '99999999';
+
+        // Send the value of the run numbers string to the input and select the id field
+        await page.type('#run-number', runNumbersStr);
+        await page.select('select#fields', 'runNumber');
+        await page.click('#send');
+
+        // We expect there to be an error message
+        const expectedMessage = 'No data found: No valid runs were found for provided run number(s)';
+        await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 };
