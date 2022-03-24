@@ -253,4 +253,24 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
+    it('updates to current date when empty and time is set', async () =>{
+        const timeList = ['#o2FilterFromTime', '#o2startFilterToTime', '#o2FilterFromTime', '#o2endFilterToTime'];
+        const dateList = ['#o2FilterFrom', '#o2startFilterTo', '#o2FilterFromT', '#o2endFilterTo'];
+        let today = new Date();
+        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+        [today] = today.toISOString().split('T');
+        const time = '00:01';
+        timeList.forEach(async (element) => {
+            await page.$eval(element, async (element, time) => {
+                element.value = time;
+                const event = new Event('input');
+                element.dispatchEvent(event);
+                await page.waitForTimeout(100);
+            }, time);
+        });
+        dateList.forEach(async (element) =>{
+            const selectedElement = await page.$eval(element);
+            expect(String(selectedElement.value)).to.equal(today);
+        });
+    });
 };
