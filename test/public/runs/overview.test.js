@@ -243,6 +243,8 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
         const firstButton = await page.$('button.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
@@ -254,23 +256,31 @@ module.exports = () => {
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
     it('updates to current date when empty and time is set', async () =>{
-        const timeList = ['#o2FilterFromTime', '#o2startFilterToTime', '#o2FilterFromTime', '#o2endFilterToTime'];
-        const dateList = ['#o2FilterFrom', '#o2startFilterTo', '#o2FilterFromT', '#o2endFilterTo'];
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+        // Open the filters
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+        const timeList = ['#o2startFilterFromTime', '#o2startFilterToTime', '#o2endFilterFromTime', '#o2endFilterToTime'];
+        const dateList = ['#o2startFilterFrom', '#o2startFilterTo', '#o2endFilterFrom', '#o2endFilterTo'];
         let today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
         [today] = today.toISOString().split('T');
+        const date = new Date();
         const time = '00:01';
-        timeList.forEach(async (element) => {
-            await page.$eval(element, async (element, time) => {
-                element.value = time;
-                const event = new Event('input');
-                element.dispatchEvent(event);
-                await page.waitForTimeout(100);
-            }, time);
+
+        for (let index = 0; index < timeList.length; index++) {
+            await page.type(timeList[index], time);
+            await page.waitForTimeout(500);
+        }
+        await dateList.forEach(async (selector) => {
+            const value = await page.$eval(selector, (element) => element.value);
+            expect(String(value)).to.equal(today);
         });
-        dateList.forEach(async (element) =>{
-            const selectedElement = await page.$eval(element);
-            expect(String(selectedElement.value)).to.equal(today);
-        });
+
+        const firstTill = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
+        const secondTill = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
+        expect(String(firstTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
+        expect(String(secondTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
     });
 };
