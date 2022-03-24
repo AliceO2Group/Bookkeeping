@@ -12,15 +12,69 @@
  */
 
 const { tag: { GetAllTagsUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetAllTagsDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    it('should return an array', async () => {
-        const { tags } = await new GetAllTagsUseCase()
-            .execute();
+    let getAllTagsDto;
+
+    beforeEach(async () => {
+        getAllTagsDto = await GetAllTagsDto.validateAsync({});
+    });
+    it('should successfully return an array with tags', async () => {
+        const { tags } = await new GetAllTagsUseCase().execute();
 
         expect(tags).to.be.an('array');
+    });
+    it('should successfully return an array with tags with specified ids', async () => {
+        getAllTagsDto.query = { filter: { ids: '1,2' } };
+        const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(2);
+        expect(tags[0].id).to.equal(1);
+        expect(tags[0].text).to.equal('FOOD');
+        expect(tags[1].id).to.equal(2);
+        expect(tags[1].text).to.equal('RUN');
+    });
+    it('should successfully return 204 status if no tag was found with specified ids', async () => {
+        getAllTagsDto.query = { filter: { ids: '5002' } };
+        const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(0);
+    });
+    it('should successfully return an array with tags with specified texts', async () => {
+        getAllTagsDto.query = { filter: { texts: 'FOOD,OTHER' } };
+        const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(2);
+        expect(tags[0].id).to.equal(1);
+        expect(tags[0].text).to.equal('FOOD');
+        expect(tags[1].id).to.equal(6);
+        expect(tags[1].text).to.equal('OTHER');
+    });
+    it('should successfully return an array with tags with specified emails', async () => {
+        getAllTagsDto.query = { filter: { emails: 'other-group@cern.ch' } };
+        const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(1);
+        expect(tags[0].id).to.equal(6);
+        expect(tags[0].text).to.equal('OTHER');
+    });
+    it('should successfully return an array with tags with specified mattermosts', async () => {
+        getAllTagsDto.query = { filter: { mattermosts: 'marathon,,food' } };
+        const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(2);
+        expect(tags[0].id).to.equal(1);
+        expect(tags[0].text).to.equal('FOOD');
+        expect(tags[1].id).to.equal(2);
+        expect(tags[1].text).to.equal('RUN');
     });
 };
