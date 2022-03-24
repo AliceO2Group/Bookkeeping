@@ -1654,14 +1654,6 @@ components:
         text:
           description: The label value of the tag.
           type: string
-        email:
-          description: The email for the tag.
-          type: string
-          nullable: true
-        mattermost:
-          description: All the mattermost tags for updates
-          type: string
-          nullable: true
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer

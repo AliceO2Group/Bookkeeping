@@ -1637,14 +1637,6 @@ components:
           type: integer
           format: int64
           example: 853113599
-        email:
-          description: The email for the tag.
-          type: string
-          nullable: true
-        mattermost:
-          description: All the mattermost tags for updates
-          type: string
-          nullable: true
       required:
         - id
         - text
