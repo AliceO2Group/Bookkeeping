@@ -24,6 +24,9 @@ module.exports = () => {
     let table;
     let firstRowId;
 
+    const timeList = ['#o2startFilterFromTime', '#o2startFilterToTime', '#o2endFilterFromTime', '#o2endFilterToTime'];
+    const dateList = ['#o2startFilterFrom', '#o2startFilterTo', '#o2endFilterFrom', '#o2endFilterTo'];
+
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
@@ -261,26 +264,97 @@ module.exports = () => {
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
-        const timeList = ['#o2startFilterFromTime', '#o2startFilterToTime', '#o2endFilterFromTime', '#o2endFilterToTime'];
-        const dateList = ['#o2startFilterFrom', '#o2startFilterTo', '#o2endFilterFrom', '#o2endFilterTo'];
         let today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
         [today] = today.toISOString().split('T');
         const date = new Date();
         const time = '00:01';
 
-        for (let index = 0; index < timeList.length; index++) {
-            await page.type(timeList[index], time);
+        for (let i = 0; i < timeList.length; i++) {
+            await page.type(timeList[i], time);
             await page.waitForTimeout(500);
         }
-        await dateList.forEach(async (selector) => {
-            const value = await page.$eval(selector, (element) => element.value);
+        for (let i = 0; i < dateList.length; i++) {
+            const value = await page.$eval(dateList[i], (element) => element.value);
             expect(String(value)).to.equal(today);
-        });
+        }
 
         const firstTill = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
         const secondTill = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
         expect(String(firstTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
         expect(String(secondTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
+    });
+    it('Validates date will not be set again', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+        const dateString = '03-21-2022';
+        const validValue = '2022-03-21';
+        // Open the filters
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+        // Set date
+        for (let i = 0; i < dateList.length; i++) {
+            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.waitForTimeout(500);
+            await page.type(timeList[i], '00-01-AM');
+            await page.waitForTimeout(500);
+            const value = await page.$eval(dateList[i], (element) => element.value);
+            expect(value).to.equal(validValue);
+        }
+    });
+    it('The max/min should be the right value when date is set to same day', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+        const dateString = '03-21-2022';
+        // Open the filters
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+        // Set date to an open day
+        for (let i = 0; i < dateList.length; i++) {
+            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.waitForTimeout(500);
+        }
+        await page.type(timeList[0], '11:11');
+        await page.type(timeList[1], '14:00');
+        await page.type(timeList[2], '11:11');
+        await page.type(timeList[3], '14:00');
+        await page.waitForTimeout(500);
+
+        // Validate if the max value is the same as the till values
+        const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
+        const endMax = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
+        expect(String(startMax)).to.equal(await page.$eval(timeList[1], (element) => element.value));
+        expect(String(endMax)).to.equal(await page.$eval(timeList[3], (element) => element.value));
+
+        // Validate if the min value is the same as the from values
+        const startMin = await page.$eval(timeList[1], (element) => element.getAttribute('min'));
+        const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
+        expect(String(startMin)).to.equal(await page.$eval(timeList[0], (element) => element.value));
+        expect(String(endMin)).to.equal(await page.$eval(timeList[2], (element) => element.value));
+    });
+    it('The max should be the maximum value when having different dates', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+        const dateString = '03-20-2022';
+        const maxTime = '23:59';
+        const minTime = '00:01';
+        // Open the filters
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+        // Set date to an open day
+        for (let i = 0; i < dateList.length; i++) {
+            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.waitForTimeout(500);
+        }
+        const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
+        const endMax = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
+        expect(String(startMax)).to.equal(maxTime);
+        expect(String(endMax)).to.equal(maxTime);
+
+        // Validate if the min value is the same as the from values
+        const startMin = await page.$eval(timeList[1], (element) => element.getAttribute('min'));
+        const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
+        expect(String(startMin)).to.equal(minTime);
+        expect(String(endMin)).to.equal(minTime);
     });
 };
