@@ -395,6 +395,24 @@ paths:
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
+    put:
+      operationId: UpdateTagById
+      summary: updates mattermost and email fields with admin privileges
+      requestBody:
+        $ref: '#/components/requestBodies/'
+      responses:
+        '201':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
     get:
       operationId: getTagById
       summary: Gets a tag by Id
@@ -571,6 +589,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateFlp'
+    UpdateTag:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTag'
     UpdateRunTags:
       required: true
       content:
@@ -652,6 +676,12 @@ components:
             $ref: '#/components/schemas/LogTreeResponse'
     NotFound:
       description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    Forbidden:
+      description: Forbidden
       content:
         application/json:
           schema:
@@ -1636,6 +1666,23 @@ components:
       required:
         - id
         - text
+      additionalProperties: false
+    UpdateTag:
+      description: An object to only update email and mattermost properties
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        email:
+          description: The email for the tag.
+          type: string
+          nullable: true
+        mattermost:
+          description: All the mattermost tags for updates
+          type: string
+          nullable: true
+      required:
+        - id
       additionalProperties: false
     TagResponse:
       description: Response containing a single tag.
