@@ -267,7 +267,6 @@ module.exports = () => {
         let today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
         [today] = today.toISOString().split('T');
-        const date = new Date();
         const time = '00:01';
 
         for (let i = 0; i < timeList.length; i++) {
@@ -278,7 +277,7 @@ module.exports = () => {
             const value = await page.$eval(dateList[i], (element) => element.value);
             expect(String(value)).to.equal(today);
         }
-
+        const date = new Date();
         const firstTill = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
         const secondTill = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
         expect(String(firstTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
