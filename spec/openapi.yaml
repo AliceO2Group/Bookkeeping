@@ -1,4 +1,4 @@
-# Generated on Tue, 29 Mar 2022 09:44:25 GMT
+# Generated on Tue, 29 Mar 2022 12:08:11 GMT
 
 openapi: 3.0.0
 info:
@@ -402,7 +402,7 @@ paths:
         - $ref: '#/components/parameters/TagName'
       responses:
         '200':
-          $ref: '#/components/responses/ArrayOfTags'
+          $ref: '#/components/responses/Tag'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -509,7 +509,7 @@ components:
       description: The name of a tag
       required: true
       schema:
-        $ref: '#/components/'
+        $ref: '#/components/schemas/TagName'
     Pagination:
       name: page
       description: Specifies the pagination requirements.

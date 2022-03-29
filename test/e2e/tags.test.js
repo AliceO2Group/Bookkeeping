@@ -510,23 +510,17 @@ module.exports = () => {
     describe('GET /api/tags/name', () => {
         it('should return 200 if a valid query is given', (done) => {
             request(server)
-                .get('/api/tags/name')
-                .query({
-                    name: 'FOOD',
-                })
+                .get('/api/tags/name?name=FOOD')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
-                    console.log(titleError);
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.errors[0].title).to.equal('');
+                    console.log(res)
+                    expect(res.body.data.text).to.equal('FOOD');
 
                     done();
                 });
@@ -534,10 +528,7 @@ module.exports = () => {
 
         it('should return 200 if urlencoded is given', (done) => {
             request(server)
-                .get('/api/tags/name')
-                .query({
-                    name: 'TEST%2FTAG%200',
-                })
+                .get('/api/tags/name?name=TEST%2FTAG%200')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -547,6 +538,9 @@ module.exports = () => {
 
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.text).to.equal('TEST/TAG 0');
+                    expect(res.body.data.email).to.equal('cake@cern.ch');
                     done();
                 });
         });
@@ -554,10 +548,7 @@ module.exports = () => {
         it('should return 404 if the tag id does not exist', (done) => {
             request(server)
                 .get('/api/tags/name?name=1234')
-                .query({
-                    name: 1234,
-                })
-                .expect(400)
+                .expect(404)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -567,7 +558,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal('Tag with this id (999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Tag with this name (1234) could not be found');
 
                     done();
                 });
