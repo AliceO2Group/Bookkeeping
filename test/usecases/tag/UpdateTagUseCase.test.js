@@ -24,7 +24,7 @@ module.exports = () => {
         updateTagDto = await UpdateTagDto.validateAsync({
             body: {
                 mattermost: 'tag,tag,tag',
-                email: null,
+                email: 'cern@tag.ch,cern@othertag.ch',
             },
             params: {
                 tagId: 3,
@@ -37,10 +37,31 @@ module.exports = () => {
         };
     });
     it('should save the correct values', async () => {
-        const expectedTag = updateTagDto.mattermost;
         const { result } = await new UpdateTagUseCase()
             .execute(updateTagDto);
-        expect(result.mattermost).to.equal(expectedTag);
-        expect(result.lastEditedName).to.equal(updateTagDto.session.name);
+        expect(result.mattermost).to.equal('tag,tag,tag');
+        expect(result.lastEditedName).to.equal('John Doe');
+        expect(result.email).to.equal('cern@tag.ch,cern@othertag.ch');
+    });
+
+    it('should return an error when calues do not match', async () => {
+        const newTagDto = await UpdateTagDto.validateAsync({
+            body: {
+                mattermost: 'tag,tag,tag',
+                email: 'cern@tag.ch',
+            },
+            params: {
+                tagId: 9999,
+            },
+        });
+        newTagDto.session = {
+            personid: 1,
+            id: 1,
+            name: 'John Do',
+        };
+        const { error } = await new UpdateTagUseCase()
+            .execute(newTagDto);
+        expect(error.status).to.equal(400);
+        expect(error.title).to.equal('this tag with this tag id: (9999) could not be found.');
     });
 };
