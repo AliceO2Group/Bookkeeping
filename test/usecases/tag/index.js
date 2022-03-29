@@ -15,12 +15,12 @@ const CreateTagUseCase = require('./CreateTagUseCase.test');
 const DeleteTagUseCase = require('./DeleteTagUseCase.test');
 const GetAllTagsUseCase = require('./GetAllTagsUseCase.test');
 const GetTagUseCase = require('./GetTagUseCase.test');
-const GetNotificationUseCase = require('./GetNotificationUseCase.test');
+const GetTagByNameUseCase = require('./GetTagByNameUseCase.test');
 
 module.exports = () => {
     describe('CreateTagUseCase', CreateTagUseCase);
     describe('DeleteTagUseCase', DeleteTagUseCase);
     describe('GetAllTagsUseCase', GetAllTagsUseCase);
     describe('GetTagUseCase', GetTagUseCase);
-    describe('GetNotification', GetNotificationUseCase);
+    describe('GetTagByNameUseCase', GetTagByNameUseCase);
 };

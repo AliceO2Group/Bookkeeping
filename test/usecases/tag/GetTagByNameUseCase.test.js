@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { tag: { GetNotificationUseCase } } = require('../../../lib/usecases');
-const { dtos: { GetNotificationDto } } = require('../../../lib/domain');
+const { tag: { GetTagByNameUseCase } } = require('../../../lib/usecases');
+const { dtos: { GetTagByNameDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
@@ -21,7 +21,7 @@ module.exports = () => {
     let getLogDto;
 
     beforeEach(async () => {
-        getLogDto = await GetNotificationDto.validateAsync({
+        getLogDto = await GetTagByNameDto.validateAsync({
             query: {
                 name: 'FOOD',
             },
@@ -29,33 +29,33 @@ module.exports = () => {
     });
 
     it('should return an object that has a valid email and mattermost fields', async () => {
-        const result = await new GetNotificationUseCase()
+        const result = await new GetTagByNameUseCase()
             .execute(getLogDto);
 
         expect(result.mattermost).to.equal('food');
         expect(result.email).to.equal('food-group@cern.ch');
     });
     it('should return null when invalid data is given', async () => {
-        getLogDto = await GetNotificationDto.validateAsync({
+        getLogDto = await GetTagByNameDto.validateAsync({
             query: {
                 name: '9999999999',
             },
         });
-        const result = await new GetNotificationUseCase()
+        const result = await new GetTagByNameUseCase()
             .execute(getLogDto);
 
         expect(result).to.be.null;
     });
     it('should return an object when the value is URI encoded', async () => {
-        getLogDto = await GetNotificationDto.validateAsync({
+        getLogDto = await GetTagByNameDto.validateAsync({
             query: {
                 name: 'TEST%2FTAG%200',
             },
         });
-        const result = await new GetNotificationUseCase()
+        const result = await new GetTagByNameUseCase()
             .execute(getLogDto);
 
         expect(result.mattermost).to.equal('cake');
-        expect(result.email).to.equal('cake@collider.ch');
+        expect(result.email).to.equal('cake@cern.ch');
     });
 };

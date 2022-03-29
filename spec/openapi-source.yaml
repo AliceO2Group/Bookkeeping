@@ -501,13 +501,6 @@ components:
       schema:
         $ref: '#/components/schemas/LogSortOptions'
       style: deepObject
-    TagName:
-      in: query
-      name: name
-      description: The name of a tag
-      required: true
-      schema:
-        $ref: '#/components/schemas/TagName'
     Pagination:
       name: page
       description: Specifies the pagination requirements.
@@ -544,6 +537,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    TagName:
+      in: query
+      name: name
+      description: The name of a tag
+      required: true
+      schema:
+        $ref: '#/components/schemas/TagName'
   requestBodies:
     CreateAttachments:
       required: true
@@ -1655,6 +1655,9 @@ components:
         - id
         - text
       additionalProperties: false
+    TagName:
+      description: The name of the tag
+      type: string
     TagResponse:
       description: Response containing a single tag.
       type: object
@@ -1664,9 +1667,6 @@ components:
       required:
         - data
       additionalProperties: false
-    TagName:
-      description: The name of the tag
-      type: string
     UpdateFlp:
       description: Describes an update to an flp
       type: object

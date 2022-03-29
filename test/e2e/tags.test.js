@@ -562,5 +562,23 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 404 if the tag id does not exist', (done) => {
+            request(server)
+                .get('/api/tags/name?notRightName=1234')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
     });
 };
