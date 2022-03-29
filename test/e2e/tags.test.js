@@ -507,4 +507,70 @@ module.exports = () => {
                 });
         });
     });
+    describe('GET /api/tags/name', () => {
+        it('should return 200 if a valid query is given', (done) => {
+            request(server)
+                .get('/api/tags/name')
+                .query({
+                    name: 'FOOD',
+                })
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
+                    console.log(titleError);
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('');
+
+                    done();
+                });
+        });
+
+        it('should return 200 if urlencoded is given', (done) => {
+            request(server)
+                .get('/api/tags/name')
+                .query({
+                    name: 'TEST%2FTAG%200',
+                })
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    done();
+                });
+        });
+
+        it('should return 404 if the tag id does not exist', (done) => {
+            request(server)
+                .get('/api/tags/name?name=1234')
+                .query({
+                    name: 1234,
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('Tag with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+    });
 };

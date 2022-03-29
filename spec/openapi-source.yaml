@@ -392,6 +392,21 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - tag
+  /tags/name:
+    get:
+      operationId: getTagByName
+      summary: Can find tag by name
+      parameters:
+        - $ref: '#/components/parameters/TagName'
+      responses:
+        '200':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
@@ -486,6 +501,13 @@ components:
       schema:
         $ref: '#/components/schemas/LogSortOptions'
       style: deepObject
+    TagName:
+      in: query
+      name: name
+      description: The name of a tag
+      required: true
+      schema:
+        $ref: '#/components/schemas/TagName'
     Pagination:
       name: page
       description: Specifies the pagination requirements.
@@ -1642,6 +1664,9 @@ components:
       required:
         - data
       additionalProperties: false
+    TagName:
+      description: The name of the tag
+      type: string
     UpdateFlp:
       description: Describes an update to an flp
       type: object
