@@ -519,7 +519,6 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    console.log(res)
                     expect(res.body.data.text).to.equal('FOOD');
 
                     done();
