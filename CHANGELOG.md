@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.24.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.24.0) 
+* Notable changes for users:
+  * RUN Filters Improvements:
+    * Allows users to filter by DD, DCS, EPN with ON,OFF or ANY
+  * RUN Exports:
+    * [FIXED] - exporting a list of runs by their runNumber would not retrieve the whole list;
+    * `o2TimeStart`, `o2TimeStop`, `o2TrgStart`, `o2TrgStop` converts timestamps to user friendly date formats;
+  * LOG Creation:
+    * [FIXED] - removes duplicated `runNumbers` when creating a log entry instead of throwing error;
+  * TAGS Page:
+    * Displays new tag information: `email` and `mattermost` groups;
+* Notable changes for developers:
+  * `/api/runs` - listRuns - accepts multiple `runNumbers` for filtering;
+  * `/api/runs` - listRuns - improves filtering for `dcs`, `dd_flp`, `epn`;
+  * `/api/tags` - listTags - accepts multiple `ids`, `texts`, `emails` and/or `mattermosts` as filters;
+
+## [0.23.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.23.0) 
+* Notable changes for developers:
+  * Add as new feature the option to send email and mattermost log creation notification;
+
 ## [0.22.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.22.0) 
 * Notable changes for developers:
   * Path for storing attachments of logs is now configurable via ATTACHMENT_PATH env;

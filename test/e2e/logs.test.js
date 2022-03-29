@@ -1022,10 +1022,14 @@ module.exports = () => {
                         {
                             id: 1,
                             text: 'FOOD',
+                            email: 'food-group@cern.ch',
+                            mattermost: 'food',
                         },
                         {
                             id: 2,
                             text: 'RUN',
+                            email: 'marathon-group@cern.ch',
+                            mattermost: 'marathon',
                         },
                     ]);
                     expect(res.body.data.rootLogId).to.equal(1);
@@ -1130,6 +1134,28 @@ module.exports = () => {
                     expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
                     expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
 
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body with duplicate run numbers', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .field('runNumbers', '1, 2, 2, 3, 3, 1, 2, 1')
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
+                    expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
+                    expect(res.body.data.runs).to.deep.include({ id: 3, runNumber: 3 });
                     done();
                 });
         });
