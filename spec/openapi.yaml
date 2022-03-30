@@ -1,4 +1,4 @@
-# Generated on Tue, 29 Mar 2022 12:53:54 GMT
+# Generated on Wed, 30 Mar 2022 15:12:14 GMT
 
 openapi: 3.0.0
 info:
@@ -412,6 +412,24 @@ paths:
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
+    put:
+      operationId: UpdateTagById
+      summary: updates mattermost and email fields with admin privileges
+      requestBody:
+        $ref: '#/components/requestBodies/'
+      responses:
+        '201':
+          $ref: '#/components/responses/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
     get:
       operationId: getTagById
       summary: Gets a tag by Id
@@ -595,6 +613,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateFlp'
+    UpdateTag:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTag'
     UpdateRunTags:
       required: true
       content:
@@ -662,6 +686,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FlpResponse'
+            
     Log:
       description: Expected response to a valid request.
       content:
@@ -1672,6 +1697,23 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateTag:
+      description: An object to only update email and mattermost properties
+      type: object
+      properties:
+        email:
+          description: The email for the tag.
+          type: string
+          nullable: true
+        id:
+          $ref: '#/components/schemas/EntityId'
+        mattermost:
+          description: All the mattermost tags for updates
+          type: string
+          nullable: true
+      required:
+        - id
       additionalProperties: false
     UpdateFlp:
       description: Describes an update to an flp
