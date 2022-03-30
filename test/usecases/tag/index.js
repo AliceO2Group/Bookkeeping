@@ -16,6 +16,7 @@ const DeleteTagUseCase = require('./DeleteTagUseCase.test');
 const GetAllTagsUseCase = require('./GetAllTagsUseCase.test');
 const GetTagUseCase = require('./GetTagUseCase.test');
 const GetTagByNameUseCase = require('./GetTagByNameUseCase.test');
+const UpdateTagUseCase = require('./UpdateTagUseCase.test');
 
 module.exports = () => {
     describe('CreateTagUseCase', CreateTagUseCase);
@@ -23,4 +24,5 @@ module.exports = () => {
     describe('GetAllTagsUseCase', GetAllTagsUseCase);
     describe('GetTagUseCase', GetTagUseCase);
     describe('GetTagByNameUseCase', GetTagByNameUseCase);
+    describe('UpdateTagsUseCase', UpdateTagUseCase);
 };
