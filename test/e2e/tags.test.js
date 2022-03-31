@@ -584,7 +584,6 @@ module.exports = () => {
     describe('PUT /api/tags', () => {
         let createdTag;
         let token;
-        const message = 'The values should be comma seperated and can only have letters, numbers and these symbols: #?!@$%^&*-';
 
         beforeEach(async () => {
             const createTagDto = await CreateTagDto.validateAsync({
@@ -598,7 +597,11 @@ module.exports = () => {
 
         it('should return 201 if no text is provided', (done) => {
             request(server)
-                .put(`/api/tags/${createdTag.id}?token=${token}`)
+                .put(`/api/tags/${createdTag.id}`)
+                .send({
+                    email: '',
+                    mattermost: '',
+                })
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -608,10 +611,6 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
-                    expect(titleError.detail).to.equal('"body.email" is required');
-
                     done();
                 });
         });
@@ -619,8 +618,8 @@ module.exports = () => {
             request(server)
                 .put(`/api/tags/${createdTag.id}?token=${token}`)
                 .send({
-                    email: 'groupa, groupb',
-                    mattermost: 'groupa, groupb',
+                    email: 'groupa@cern.ch,groupb@cern.ch',
+                    mattermost: 'groupa,groupb',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -639,7 +638,7 @@ module.exports = () => {
                 .put(`/api/tags/${createdTag.id}?token=${token}`)
                 .send({
                     email: '(*&^%$#@)',
-                    mattermost: 'group1, group 2,group.3,group&4,group\\5,group/6',
+                    mattermost: 'group1,group-2,group/3',
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -652,7 +651,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
-                    expect(titleError.detail).to.equal(message);
+                    expect(titleError.detail).to.equal('"body.email" must be a valid email');
                     done();
                 });
         });
@@ -660,7 +659,7 @@ module.exports = () => {
             request(server)
                 .put(`/api/tags/${createdTag.id}?token=${token}`)
                 .send({
-                    email: 'group1,group2',
+                    email: 'group1@cern.ch,group2@cern.ch',
                     mattermost: ')(*&^%$#',
                 })
                 .expect(400)
@@ -675,7 +674,7 @@ module.exports = () => {
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/mattermost');
                     expect(titleError.detail)
-                        .to.equal(message);
+                        .to.equal('The groups should be comma seperated and can only have letters, numbers and these symbols: /-');
                     done();
                 });
         });
@@ -683,8 +682,8 @@ module.exports = () => {
             request(server)
                 .put(`/api/tags/${createdTag.id}`)
                 .send({
-                    email: 'groupa, groupb',
-                    mattermost: 'groupa, groupb',
+                    email: 'groupa@cern.ch,groupb@cern.ch',
+                    mattermost: 'groupa,groupb',
                 })
                 .expect(403)
                 .end((err, res) => {
