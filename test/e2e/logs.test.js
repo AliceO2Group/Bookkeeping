@@ -1018,6 +1018,10 @@ module.exports = () => {
 
                     expect(res.body.data.title).to.equal('Yet another run');
                     expect(res.body.data.text).to.equal('Text of yet another run');
+                    delete res.body.data.tags[0].updatedAt;
+                    delete res.body.data.tags[1].updatedAt;
+                    delete res.body.data.tags[0].lastEditedName;
+                    delete res.body.data.tags[1].lastEditedName;
                     expect(res.body.data.tags).to.deep.equal([
                         {
                             id: 1,

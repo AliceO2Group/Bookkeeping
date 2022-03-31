@@ -1,4 +1,4 @@
-# Generated on Tue, 29 Mar 2022 12:53:54 GMT
+# Generated on Thu, 31 Mar 2022 10:14:50 GMT
 
 openapi: 3.0.0
 info:
@@ -662,6 +662,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FlpResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     Log:
       description: Expected response to a valid request.
       content:
@@ -1641,6 +1647,10 @@ components:
           nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
+        lastEditedName:
+          description: The last person that edited the email/mattermost fields
+          type: string
+          nullable: true
         mattermost:
           description: All the mattermost tags for updates
           type: string
@@ -1699,6 +1709,12 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        access:
+          type: array
+          description: Array of roles
+          items:
+            type: string
+            description: Role name
         externalId:
           description: The unique CERN identifier of this user.
           type: integer
