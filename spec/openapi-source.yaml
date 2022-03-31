@@ -414,7 +414,7 @@ paths:
       operationId: UpdateTagById
       summary: updates mattermost and email fields with admin privileges
       requestBody:
-        $ref: '#/components/requestBodies/'
+        $ref: '#/components/requestBodies/UpdateTag'
       responses:
         '201':
           $ref: '#/components/responses/Tag'

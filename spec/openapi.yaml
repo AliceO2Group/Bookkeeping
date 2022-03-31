@@ -1,4 +1,4 @@
-# Generated on Thu, 31 Mar 2022 09:45:33 GMT
+# Generated on Thu, 31 Mar 2022 09:56:38 GMT
 
 openapi: 3.0.0
 info:
@@ -416,7 +416,7 @@ paths:
       operationId: UpdateTagById
       summary: updates mattermost and email fields with admin privileges
       requestBody:
-        $ref: '#/components/requestBodies/'
+        $ref: '#/components/requestBodies/UpdateTag'
       responses:
         '201':
           $ref: '#/components/responses/Tag'
