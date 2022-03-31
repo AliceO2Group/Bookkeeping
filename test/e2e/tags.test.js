@@ -17,6 +17,7 @@ const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
 const { tag: { CreateTagUseCase } } = require('../../lib/usecases');
 const { dtos: { CreateTagDto } } = require('../../lib/domain');
+const { beforeEach } = require('mocha');
 
 const { expect } = chai;
 
@@ -60,7 +61,6 @@ module.exports = () => {
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(1);
-
                     done();
                 });
         });
@@ -576,6 +576,105 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+    });
+    describe('PUT /api/tags', () => {
+        let createdTag;
+
+        beforeEach(async () => {
+            const createTagDto = await CreateTagDto.validateAsync({
+                body: {
+                    text: `TAG#${new Date().getTime()}`,
+                },
+            });
+            createdTag = await new CreateTagUseCase()
+                .execute(createTagDto);
+        });
+
+        it('should return 201 if no text is provided', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
+                .send({
+                    email: '',
+                    mattermost: '',
+                })
+                .expect(201)
+                .end((err) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    done();
+                });
+        });
+        it('should return 201 if valid data is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
+                .send({
+                    email: 'groupa@cern.ch,groupb@cern.ch',
+                    mattermost: 'groupa,groupb',
+                })
+                .expect(201)
+                .end((err) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    done();
+                });
+        });
+        it('should return 400 if invalid email is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
+                .send({
+                    email: '(*&^%$#@)',
+                    mattermost: 'group1,group-2,group/3',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
+                    expect(titleError.detail).to.equal('"body.email" must be a valid email');
+                    done();
+                });
+        });
+        it('Should return 403 when no valid token is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}?token=guest`)
+                .send({
+                    email: 'groupa@cern.ch,groupb@cern.ch',
+                    mattermost: 'groupa,groupb',
+                })
+                .expect(403)
+                .end((err) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    done();
+                });
+        });
+        it('Should return 403 when no token is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}`)
+                .send({
+                    email: 'groupa@cern.ch,groupb@cern.ch',
+                    mattermost: 'groupa,groupb',
+                })
+                .expect(403)
+                .end((err) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
 
                     done();
                 });
