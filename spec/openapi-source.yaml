@@ -1764,6 +1764,9 @@ components:
         access:
           type: array
           description: Array of roles
+          items:
+            type: string
+            description: Role name
       required:
         - externalId
         - id

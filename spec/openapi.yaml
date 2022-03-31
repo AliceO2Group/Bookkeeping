@@ -1,4 +1,4 @@
-# Generated on Thu, 31 Mar 2022 09:11:30 GMT
+# Generated on Thu, 31 Mar 2022 09:45:33 GMT
 
 openapi: 3.0.0
 info:
@@ -1753,6 +1753,9 @@ components:
         access:
           type: array
           description: Array of roles
+          items:
+            type: string
+            description: Role name
         externalId:
           description: The unique CERN identifier of this user.
           type: integer
