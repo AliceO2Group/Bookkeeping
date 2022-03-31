@@ -28,6 +28,17 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
+    it('log detail loads correctly and is opened as does not have children', async () => {
+        await page.goto(`${url}/?page=log-detail&id=5`, { waitUntil: 'networkidle0' });
+
+        // We expect to be the only log on page and opened
+        const postExists = await page.$('#post5');
+        const openedLogs = await page.evaluate(() => window.model.logs.getDetailedPosts());
+        expect(openedLogs).to.have.lengthOf(1);
+        expect(openedLogs[0]).to.equal(5);
+        expect(Boolean(postExists)).to.be.true;
+    });
+
     it('log detail loads correctly', async () => {
         await page.goto(`${url}/?page=log-detail&id=1`, { waitUntil: 'networkidle0' });
 
