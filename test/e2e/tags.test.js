@@ -583,7 +583,6 @@ module.exports = () => {
     });
     describe('PUT /api/tags', () => {
         let createdTag;
-        let token;
 
         beforeEach(async () => {
             const createTagDto = await CreateTagDto.validateAsync({
@@ -597,7 +596,7 @@ module.exports = () => {
 
         it('should return 201 if no text is provided', (done) => {
             request(server)
-                .put(`/api/tags/${createdTag.id}`)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
                 .send({
                     email: '',
                     mattermost: '',
@@ -616,7 +615,7 @@ module.exports = () => {
         });
         it('should return 201 if valid data is given', (done) => {
             request(server)
-                .put(`/api/tags/${createdTag.id}?token=${token}`)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
                 .send({
                     email: 'groupa@cern.ch,groupb@cern.ch',
                     mattermost: 'groupa,groupb',
@@ -635,7 +634,7 @@ module.exports = () => {
         });
         it('should return 400 if invalid data is given', (done) => {
             request(server)
-                .put(`/api/tags/${createdTag.id}?token=${token}`)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
                 .send({
                     email: '(*&^%$#@)',
                     mattermost: 'group1,group-2,group/3',
@@ -657,7 +656,7 @@ module.exports = () => {
         });
         it('should return 400 if invalid data is given', (done) => {
             request(server)
-                .put(`/api/tags/${createdTag.id}?token=${token}`)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
                 .send({
                     email: 'group1@cern.ch,group2@cern.ch',
                     mattermost: ')(*&^%$#',
@@ -679,6 +678,25 @@ module.exports = () => {
                 });
         });
         it('Should return 403 when no valid token is given', (done) => {
+            request(server)
+                .put(`/api/tags/${createdTag.id}?token=guest`)
+                .send({
+                    email: 'groupa@cern.ch,groupb@cern.ch',
+                    mattermost: 'groupa,groupb',
+                })
+                .expect(403)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    done();
+                });
+        });
+        it('Should return 403 when no token is given', (done) => {
             request(server)
                 .put(`/api/tags/${createdTag.id}`)
                 .send({

@@ -1761,6 +1761,9 @@ components:
         name:
           type: string
           description: Name of the user.
+        access:
+          type: array
+          description: Array of roles
       required:
         - externalId
         - id
