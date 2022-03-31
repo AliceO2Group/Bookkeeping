@@ -660,6 +660,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FlpResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     Log:
       description: Expected response to a valid request.
       content:
@@ -1651,6 +1657,10 @@ components:
           description: All the mattermost tags for updates
           type: string
           nullable: true
+        lastEditedName:
+          description: The last person that edited the email/mattermost fields
+          type: string
+          nullable: true
       required:
         - id
         - text
@@ -1710,6 +1720,12 @@ components:
         name:
           type: string
           description: Name of the user.
+        access:
+          type: array
+          description: Array of roles
+          items:
+            type: string
+            description: Role name
       required:
         - externalId
         - id

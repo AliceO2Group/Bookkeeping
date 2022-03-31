@@ -113,4 +113,50 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(2);
     });
+    it('should return an array with runs on certain timestamps', async () => {
+        getAllRunsDto.query = { filter: {
+            o2start: {
+                from: 1647730800000,
+                to: 1648162799999,
+            },
+            o2end: {
+                from: 1647781200000,
+                to: 1648162799999,
+            },
+        } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs[0].runNumber).to.equal(1);
+    });
+    it('should return an array with only from values given', async () => {
+        getAllRunsDto.query = { filter: {
+            o2start: {
+                from: 1647730800000,
+            },
+            o2end: {
+                from: 1647781200000,
+            },
+        } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs[0].runNumber).to.equal(1);
+    });
+    it('should return an array with only to values given', async () => {
+        getAllRunsDto.query = { filter: {
+            o2start: {
+                to: 1648162799999,
+            },
+            o2end: {
+                to: 1648162799999,
+            },
+        } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(100);
+    });
 };
