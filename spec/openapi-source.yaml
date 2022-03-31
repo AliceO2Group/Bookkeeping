@@ -411,7 +411,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/TagId'
     put:
-      operationId: UpdateTagById
+      operationId: updateTagById
       summary: updates mattermost and email fields with admin privileges
       requestBody:
         $ref: '#/components/requestBodies/UpdateTag'
