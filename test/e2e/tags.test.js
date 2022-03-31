@@ -222,6 +222,111 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 201 if email/mattermost are filled in with admin rights', (done) => {
+            request(server)
+                .post('/api/tags?token=admin')
+                .send({
+                    text: 'test123123',
+                    mattermost: 'test-test',
+                    email: 'cake@cern.ch,test@cern.ch',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data.text).to.equal('test123123');
+                    expect(res.body.data.mattermost).to.equal('test-test');
+                    expect(res.body.data.email).to.equal('cake@cern.ch,test@cern.ch');
+
+                    done();
+                });
+        });
+        it('should return 201 only text is filled in with no admin rights', (done) => {
+            request(server)
+                .post('/api/tags?token=guest')
+                .send({
+                    text: 'guestTest',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    done();
+                });
+        });
+        it('should return 403 if email/mattermost are filled in with no admin rights', (done) => {
+            request(server)
+                .post('/api/tags?token=guest')
+                .send({
+                    text: 'test123123',
+                    mattermost: 'test-test',
+                    email: 'cake@cern.ch,test@cern.ch',
+                })
+                .expect(403)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    done();
+                });
+        });
+        it('should return 403 if email/mattermost are filled in with no admin rights', (done) => {
+            request(server)
+                .post('/api/tags?token=guest')
+                .send({
+                    text: 'test123123',
+                    mattermost: 'test-test',
+                })
+                .expect(403)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    done();
+                });
+        });
+        it('should return 403 if only email is filled in with no admin rights', (done) => {
+            request(server)
+                .post('/api/tags')
+                .send({
+                    text: 'test123123',
+                    email: 'cake@cern.ch,test@cern.ch',
+                })
+                .expect(403)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    done();
+                });
+        });
     });
 
     describe('GET /api/tags/:tagId', () => {
