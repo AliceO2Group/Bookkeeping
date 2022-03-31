@@ -632,7 +632,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 400 if invalid data is given', (done) => {
+        it('should return 400 if invalid email is given', (done) => {
             request(server)
                 .put(`/api/tags/${createdTag.id}?token=admin`)
                 .send({
@@ -651,29 +651,6 @@ module.exports = () => {
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
                     expect(titleError.detail).to.equal('"body.email" must be a valid email');
-                    done();
-                });
-        });
-        it('should return 400 if invalid data is given', (done) => {
-            request(server)
-                .put(`/api/tags/${createdTag.id}?token=admin`)
-                .send({
-                    email: 'group1@cern.ch,group2@cern.ch',
-                    mattermost: ')(*&^%$#',
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/mattermost');
-                    expect(titleError.detail)
-                        .to.equal('The groups should be comma seperated and can only have letters, numbers and these symbols: /-');
                     done();
                 });
         });
