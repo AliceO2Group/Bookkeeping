@@ -110,6 +110,9 @@ Concerning the **Update mode** of the fields:
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
 | ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
 | `text`                        | Tag name. | `TPC`, `COSMICS`, `RC`  |   | `id` | Insert |
+| `Mattermost`                  | Mattermost channels | `Food`, `Bookkeeping updates`| | `id`| Update |
+| `email`                  | Email groups | `food@cern.ch`, `Bookkeeping-updates@cern.ch`| | `id`| Update |
+| `last_edited_name`        | Name of the person who last edited the email/mattermost fields | `Anonymous`, `Jan Janssen` | When email/mattermost is edited | `id`| Update |
 
 
 

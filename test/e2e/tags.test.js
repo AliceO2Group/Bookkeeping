@@ -602,14 +602,11 @@ module.exports = () => {
                     mattermost: '',
                 })
                 .expect(201)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     done();
                 });
         });
@@ -621,13 +618,11 @@ module.exports = () => {
                     mattermost: 'groupa,groupb',
                 })
                 .expect(201)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
@@ -645,9 +640,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/email');
                     expect(titleError.detail).to.equal('"body.email" must be a valid email');
@@ -662,14 +654,11 @@ module.exports = () => {
                     mattermost: 'groupa,groupb',
                 })
                 .expect(403)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     done();
                 });
         });
@@ -681,13 +670,11 @@ module.exports = () => {
                     mattermost: 'groupa,groupb',
                 })
                 .expect(403)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
