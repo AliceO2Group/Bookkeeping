@@ -1,4 +1,4 @@
-# Generated on Thu, 31 Mar 2022 10:10:56 GMT
+# Generated on Thu, 31 Mar 2022 10:14:50 GMT
 
 openapi: 3.0.0
 info:
@@ -412,24 +412,6 @@ paths:
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
-    put:
-      operationId: updateTag
-      summary: updates mattermost and email fields with admin privileges
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateTag'
-      responses:
-        '201':
-          $ref: '#/components/responses/Tag'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-      tags:
-        - tag
     get:
       operationId: getTagById
       summary: Gets a tag by Id
@@ -619,12 +601,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunTags'
-    UpdateTag:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UpdateTag'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
