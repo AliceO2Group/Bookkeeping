@@ -61,7 +61,7 @@ module.exports = () => {
         };
         const { error } = await new UpdateTagUseCase()
             .execute(newTagDto);
-        expect(error.status).to.equal(400);
+        expect(error.status).to.equal('400');
         expect(error.title).to.equal('this tag with this tag id: (9999) could not be found.');
     });
 };
