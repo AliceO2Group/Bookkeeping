@@ -2,15 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.24.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.25.0) 
+## [0.25.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.25.0) 
 * Notable changes for users:
   * RUN Filters Improvements:
-    * Allow users to specify start and stop filters with time
-    * Allow admin users to edit tags and add emails and mattermost channels;
+    * Allow users to specify start and stop filters with time;
+  * Admin users can edit tags by adding emails and mattermost channels;
   * Fixes a bug in which infinite mode would display duplicated data;
-  * Opens log details if log tree contains one log only
+  * Opens log details if log tree contains one log only;
 * Notable changes for developers:
-  * `PUT /api/tags/:id` - Update the emails and mattermost channels for a tag if user has admin privileges
+  * `PUT /api/tags/:id` - Update the emails and mattermost channels for a tag if user has admin privileges;
+  * `GET /api/tags/name` - Expects a query parameter `name` to return one tag with specified name;
 
 ## [0.24.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.24.0) 
 * Notable changes for users:
