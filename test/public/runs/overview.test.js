@@ -304,13 +304,13 @@ module.exports = () => {
     it('The max/min should be the right value when date is set to same day', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const dateString = '03-21-2022';
+        const dateString = '03-02-2021';
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
         for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.type(dateList[i], dateString);
             await page.waitForTimeout(500);
         }
         await page.type(timeList[0], '11:11');
