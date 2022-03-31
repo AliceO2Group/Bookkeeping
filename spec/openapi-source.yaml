@@ -1727,23 +1727,6 @@ components:
             type: number
             description: Tag ID
       additionalProperties: false
-    UpdateTag:
-      description: An object to only update email and mattermost properties
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
-        email:
-          description: The email for the tag.
-          type: string
-          nullable: true
-        mattermost:
-          description: All the mattermost tags for updates
-          type: string
-          nullable: true
-      required:
-        - id
-      additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
       type: object
