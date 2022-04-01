@@ -286,14 +286,14 @@ module.exports = () => {
     it('Validates date will not be set again', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const dateString = '03-21-2022';
-        const validValue = '2022-03-21';
+        const dateString = '03-21-2021';
+        const validValue = '2021-03-21';
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date
         for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.type(dateList[i], dateString);
             await page.waitForTimeout(500);
             await page.type(timeList[i], '00-01-AM');
             await page.waitForTimeout(500);
@@ -334,15 +334,15 @@ module.exports = () => {
     it('The max should be the maximum value when having different dates', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const dateString = '03-20-2022';
+        const dateString = '03-20-2021';
         const maxTime = '23:59';
-        const minTime = '00:01';
+        const minTime = '00:00';
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
         for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.type(dateList[i], dateString);
             await page.waitForTimeout(500);
         }
         const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
