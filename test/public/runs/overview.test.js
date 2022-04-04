@@ -258,7 +258,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
-    it('updates to current date when empty and time is set', async () =>{
+    it('should update to current date when empty and time is set', async () =>{
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
         // Open the filters
@@ -278,10 +278,11 @@ module.exports = () => {
             expect(String(value)).to.equal(today);
         }
         const date = new Date();
+        const now = `${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`;
         const firstTill = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
         const secondTill = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
-        expect(String(firstTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
-        expect(String(secondTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
+        expect(String(firstTill)).to.equal(now);
+        expect(String(secondTill)).to.equal(now);
     });
     it('Validates date will not be set again', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
