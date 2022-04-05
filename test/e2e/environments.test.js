@@ -119,7 +119,7 @@ module.exports = () => {
     });
     describe('PUT /api/environment/:envId', () => {
         let createdEnv;
-        const teardownDate = new Date();
+        const toredownDate = new Date();
         beforeEach(async () => {
             const createEnvDto = await CreateEnvironmentDto.validateAsync({
                 body: {
@@ -168,7 +168,7 @@ module.exports = () => {
                 .put(`/api/environment/${createdEnv.envId}`)
                 .send({
                     run: 1,
-                    teardown: teardownDate,
+                    toredown: toredownDate,
                     status: 'STOPPED',
                     statusMessage: 'This is a good environment.',
                 })
@@ -183,7 +183,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
                     expect(res.body.runs.includes(1)).to.equal(true);
                     expect(res.body.status).to.equal('STOPPED');
-                    expect(res.body.teardownAt).to.equal(teardownDate);
+                    expect(res.body.toredownAt).to.equal(toredownDate);
                     expect(res.body.statusMessage).to.equal('This is a good environment.');
                     done();
                 });
