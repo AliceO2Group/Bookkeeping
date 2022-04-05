@@ -70,6 +70,23 @@ paths:
           $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
+  /environment/{envId}:
+    parameters:
+      - $ref: '#/components/parameters/EnvId'
+    put:
+      operationId: updateEnvrionment
+      summary: Update of the environment object.
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateEnvironment'
+      responses:
+        '201':
+          $ref: '#/components/responses/Environment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /flps:
     get:
       operationId: listFlps
@@ -479,6 +496,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    EnvId:
+      name: envId
+      description: The id of the envrionment to receive
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EnvironmentId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -608,6 +632,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Run'
+    UpdateEnvironment:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateEnvironment'
     UpdateFlp:
       required: true
       content:
@@ -966,7 +996,7 @@ components:
         envId:
           $ref: '#/components/schemas/EnvironmentId'
         createdAt:
-          $ref: '#/components/schemas/EnvironmentCreatedAt'
+          $ref: '#/components/schemas/EnvironmentAt'
         status:
           $ref: '#/components/schemas/EnvironmentStatus'
         statusMessage:
@@ -1118,7 +1148,7 @@ components:
     EnvironmentId:
       description: The environment identifier.
       type: string
-    EnvironmentCreatedAt:
+    EnvironmentAt:
       description: The earliest allowed unix timestamp for the fetched data.
       type: integer
       minimum: 0
@@ -1132,6 +1162,10 @@ components:
       required:
         - data
       additionalProperties: false
+    EnvironmentRun:
+      description: Run that needs to be added.
+      type: integer
+      minimum: 0
     EnvironmentStatus:
       description: Current environment status
       type: string
@@ -1794,6 +1828,19 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateEnvironment:
+      description: Describes an update to an environment
+      type: object
+      properties:
+        toredownAt:
+          $ref: '#/components/schemas/EnvironmentAt'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+        run:
+          $ref: '#/components/schemas/EnvironmentRun'
       additionalProperties: false
     UpdateFlp:
       description: Describes an update to an flp
