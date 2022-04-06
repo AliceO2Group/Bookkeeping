@@ -152,7 +152,29 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 400 if the title has illegal characters', (done) => {
+            request(server)
+                .post('/api/tags')
+                .send({
+                    text: '^%$#@',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
 
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail).to.equal('"body.text" Text can only include words, digits, spaces and "-+"');
+
+                    done();
+                });
+        });
         it('should return 400 if the title is too long', (done) => {
             request(server)
                 .post('/api/tags')
