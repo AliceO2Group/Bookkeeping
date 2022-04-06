@@ -170,7 +170,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
-                    expect(titleError.detail).to.equal('"body.text" Text can only include words, digits, spaces and "-+"');
+                    expect(titleError.detail).to.equal('"body.text" Text can only include words, digits and "-+"');
 
                     done();
                 });
