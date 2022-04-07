@@ -258,7 +258,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
-    it('updates to current date when empty and time is set', async () =>{
+    it('should update to current date when empty and time is set', async () =>{
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
         // Open the filters
@@ -278,22 +278,23 @@ module.exports = () => {
             expect(String(value)).to.equal(today);
         }
         const date = new Date();
+        const now = `${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`;
         const firstTill = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
         const secondTill = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
-        expect(String(firstTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
-        expect(String(secondTill)).to.equal(`${date.getHours()}:${date.getMinutes()}`);
+        expect(String(firstTill)).to.equal(now);
+        expect(String(secondTill)).to.equal(now);
     });
     it('Validates date will not be set again', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const dateString = '03-21-2022';
-        const validValue = '2022-03-21';
+        const dateString = '03-21-2021';
+        const validValue = '2021-03-21';
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date
         for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.type(dateList[i], dateString);
             await page.waitForTimeout(500);
             await page.type(timeList[i], '00-01-AM');
             await page.waitForTimeout(500);
@@ -334,15 +335,15 @@ module.exports = () => {
     it('The max should be the maximum value when having different dates', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const dateString = '03-20-2022';
+        const dateString = '03-20-2021';
         const maxTime = '23:59';
-        const minTime = '00:01';
+        const minTime = '00:00';
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
         for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], i & 1 ? '21' : dateString);
+            await page.type(dateList[i], dateString);
             await page.waitForTimeout(500);
         }
         const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
