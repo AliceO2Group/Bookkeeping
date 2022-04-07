@@ -17,6 +17,7 @@ const StatusSuite = require('./status.test');
 const LogsSuite = require('./logs.test');
 const SubsystemsSuite = require('./subsystems.test');
 const TagsSuite = require('./tags.test');
+const RunsSuite = require('./runs.test');
 
 module.exports = () => {
     describe('Status', StatusSuite);
@@ -24,5 +25,6 @@ module.exports = () => {
     describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);
     describe('Attachments', AttachmentsSuite);
+    describe('Runs', RunsSuite);
     describe('Environments', EnvironmentSuite);
 };

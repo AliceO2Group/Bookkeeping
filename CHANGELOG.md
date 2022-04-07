@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.26.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.0) 
+* Notable changes for users:
+  * Fixes a bug in which filters would not work due to cached date on server side;
+  * Admin users can specify emails and mattermost channels at TAG creation time;
+  * Fixes a bug in which admin users were not correctly identified;
+* Notable changes for developers:
+  * `POST /api/tags/` - Add emails and mattermost channels for a tag if user has admin privileges;
+
 ## [0.25.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.25.0) 
 * Notable changes for users:
   * RUN Filters Improvements:

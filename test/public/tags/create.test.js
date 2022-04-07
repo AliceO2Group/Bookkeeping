@@ -10,8 +10,11 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
+const chai = require('chai');
 
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+
+const { expect } = chai;
 
 module.exports = () => {
     let page;
@@ -58,5 +61,15 @@ module.exports = () => {
 
         // Because this tag already exists, we expect an error message to appear
         await expectInnerText(page, '.alert', 'Conflict: The provided entity already exists');
+    });
+    it('Should show no fields when having no admin roles', async () => {
+        await goToPage(page, 'tag-create');
+        await page.waitForTimeout(100);
+        await page.click('div[title="User Actions"]');
+        await page.waitForTimeout(100);
+        await page.click('span.slider.round');
+        await page.waitForTimeout(100);
+        expect(await page.$('#mattermost')).to.equal(null);
+        expect(await page.$('#email')).to.equal(null);
     });
 };
