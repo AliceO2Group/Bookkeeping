@@ -12,11 +12,13 @@
  */
 
 const CreateEnvironmentUseCase = require('./CreateEnvironmentUseCase.test');
+const GetAllEnvironmentsUseCase = require('./GetAllEnvironmentsUseCase.test');
 const GetEnvironmentUseCase = require('./GetEnvironmentUseCase.test');
 const UpdateEnvironmentUseCase = require('./UpdateEnvironmentUseCase.test');
 
 module.exports = () => {
     describe('CreateEnvironmentUseCase', CreateEnvironmentUseCase);
+    describe('GetAllEnvironmentsUseCase', GetAllEnvironmentsUseCase);
     describe('GetEnvironmentUseCase', GetEnvironmentUseCase);
     describe('UpdateEnvironmentUseCase', UpdateEnvironmentUseCase);
 };
