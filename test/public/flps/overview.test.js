@@ -129,7 +129,7 @@ module.exports = () => {
         expect(tableRows.length - 1).to.equal(5);
     });
 
-    it('can switch between pages of flps', async () => {
+    it.skip('can switch between pages of flps', async () => {
         // Expect the page selector to be available with two pages
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
