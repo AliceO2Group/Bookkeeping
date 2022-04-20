@@ -46,19 +46,18 @@ module.exports = () => {
     });
     it('should insert a new environment with the right values', async () => {
         const newId = 'newId';
-        createEnvDto.envId = newId;
-
+        createEnvDto.body.envId = newId;
         const { result } = await new CreateEnvironmentUseCase()
             .execute(createEnvDto);
         expect(result.id).to.equal(newId);
-        expect(result.status).to.equal(createEnvDto.status);
-        expect(result.createdAt).to.equal(createEnvDto.createdAt);
-        expect(result.statusMessage).to.equal(createEnvDto.statusMessage);
-    });
-    it('should block creations with the same envId', async () => {
-        const { result } = await new CreateEnvironmentUseCase()
-            .execute(createEnvDto);
 
-        expect(result.error.status).to.equal('409');
+        expect(result.status).to.equal('FAILED');
+        expect(result.statusMessage).to.equal(createEnvDto.body.statusMessage);
+    });
+
+    it('should block creations with the same envId', async () => {
+        const { error } = await new CreateEnvironmentUseCase()
+            .execute(createEnvDto);
+        expect(error.status).to.equal('409');
     });
 };

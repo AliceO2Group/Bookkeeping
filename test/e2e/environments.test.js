@@ -15,8 +15,16 @@ const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
-const { CreateEnvironmentDto } = require('../../lib/domain/dtos');
-const { CreateEnvironmentUseCase } = require('../../lib/usecases/environment');
+const {
+    dtos: {
+        CreateEnvironmentDto,
+    },
+} = require('../../lib/domain');
+const {
+    subsystem: {
+        CreateEnvironmentUseCase,
+    },
+} = require('../../lib/usecases');
 
 const { expect } = chai;
 
@@ -25,11 +33,11 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 module.exports = () => {
     const { server } = require('../../lib/application');
 
-    describe('POST /api/environment', () => {
-        const createdAtDate = new Date();
-        it('should return 201 if valid data is profided', (done) => {
+    describe('POST /api/environments', () => {
+        const createdAtDate = new Date().setMilliseconds(0);
+        it('should return 201 if valid data is provided', (done) => {
             request(server)
-                .post('/api/environment')
+                .post('/api/environments')
                 .expect(201)
                 .send({
                     envId: 'New original env',
@@ -45,17 +53,17 @@ module.exports = () => {
 
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.id).to.equal('New original env');
-                    expect(res.body.createdAt).to.equal(createdAtDate);
-                    expect(res.body.status).to.equal('STARTED');
-                    expect(res.body.statusMessage).to.equal('This is going very good');
+                    const { data } = res.body;
+                    expect(data.id).to.equal('New original env');
+                    expect(data.createdAt).to.equal(createdAtDate);
+                    expect(data.status).to.equal('STARTED');
+                    expect(data.statusMessage).to.equal('This is going very good');
                     done();
                 });
         });
         it('should return 400 if no id is provided', (done) => {
             request(server)
-                .post('/api/environment')
+                .post('/api/environments')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -75,10 +83,10 @@ module.exports = () => {
         });
         it('should return 400 if createdAt is no date', (done) => {
             request(server)
-                .post('/api/environment')
+                .post('/api/environments')
                 .expect(400)
                 .send({
-                    envId: 'Cake environment',
+                    envId: 'Cake environments',
                     createdAt: 'This is no date',
                 })
                 .end((err, res) => {
@@ -92,16 +100,16 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/createdAt');
-                    expect(titleError.detail).to.equal('"body.createdAt" is required');
+                    expect(titleError.detail).to.equal('"body.createdAt" must be a valid date');
 
                     done();
                 });
         });
         it('should return 400 if id already exists', (done) => {
             request(server)
-                .post('/api/environment')
+                .post('/api/environments')
                 .send({
-                    envId: 'first',
+                    envId: 'Dxi029djX',
                 })
                 .expect(409)
                 .end((err, res) => {
@@ -112,26 +120,15 @@ module.exports = () => {
 
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-
                     done();
                 });
         });
     });
     describe('PUT /api/environment/:envId', () => {
-        let createdEnv;
         const toredownDate = new Date();
-        beforeEach(async () => {
-            const createEnvDto = await CreateEnvironmentDto.validateAsync({
-                body: {
-                    envId: `ENV#${new Date().getTime()}`,
-                },
-            });
-            createdEnv = await new CreateEnvironmentUseCase()
-                .execute(createEnvDto);
-        });
         it('should return 400 if the wrong id is provided', (done) => {
             request(server)
-                .put('/api/environment/99999')
+                .put('/api/environments/99999')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -147,7 +144,7 @@ module.exports = () => {
         });
         it('should return 400 if run is not found', (done) => {
             request(server)
-                .put(`/api/environment/${createdEnv.envId}`)
+                .put('/api/environments/KGIS12DS')
                 .send({
                     run: 9999999999,
                 })
@@ -165,7 +162,7 @@ module.exports = () => {
         });
         it('should return 201 if valid data is given', (done) => {
             request(server)
-                .put(`/api/environment/${createdEnv.envId}`)
+                .put('/api/environments/KGIS12DS')
                 .send({
                     run: 1,
                     toredown: toredownDate,

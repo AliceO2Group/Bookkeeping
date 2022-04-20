@@ -19,10 +19,9 @@ const { expect } = chai;
 module.exports = () => {
     it('should return an object that has the `id` property', async () => {
         const result = await new GetEnvironmentUseCase()
-            .execute({ params: { envId: 'First environment' } });
-
+            .execute({ params: { envId: 'Dxi029djX' } });
         expect(result).to.have.ownProperty('id');
-        expect(result.id).to.equal('First environment');
+        expect(result.id).to.equal('Dxi029djX');
     });
     it('should return null when the id is false', async () => {
         const result = await new GetEnvironmentUseCase()

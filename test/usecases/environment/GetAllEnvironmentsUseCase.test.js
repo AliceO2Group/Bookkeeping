@@ -12,7 +12,7 @@
  */
 
 const { environment: { GetAllEnvironmentsUseCase } } = require('../../../lib/usecases');
-const { dto: { GetAllEnvironmentsDto } } = require('../../../lib/domain/dtos');
+const { dtos: { GetAllEnvironmentsDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
@@ -23,10 +23,9 @@ module.exports = () => {
     beforeEach(async () => {
         getAllEnvsDto = await GetAllEnvironmentsDto.validateAsync({});
     });
-    it('should return an object that has the `id` property', async () => {
+    it('should return all the environments', async () => {
         const result = await new GetAllEnvironmentsUseCase()
             .execute(getAllEnvsDto);
-
-        expect(result).to.be.an('array');
+        expect(result.environments).to.be.an('array');
     });
 };

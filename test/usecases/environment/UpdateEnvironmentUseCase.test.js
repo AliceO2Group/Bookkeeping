@@ -25,7 +25,7 @@ module.exports = () => {
     beforeEach(async () => {
         updateEnvironmentDto = await UpdateEnvironmentDto.validateAsync({
             params: {
-                envId: 'first',
+                envId: 'EIDO13i3D',
             },
             body: {
                 run: 1,
@@ -45,8 +45,7 @@ module.exports = () => {
     it('Should be able to update the environment with correct values', async () => {
         const { result } = await new UpdateEnvironmentUseCase()
             .execute(updateEnvironmentDto);
-
-        expect(result.runs).to.equal([1]);
+        expect(result.runs[0].id).to.equal(1);
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
@@ -66,9 +65,9 @@ module.exports = () => {
     });
 
     it('Should give an error when the id can not be found', async () => {
-        updateEnvironmentDto.body = {};
-        const { result } = await new UpdateEnvironmentUseCase()
+        updateEnvironmentDto.body.run = 99999;
+        const { error } = await new UpdateEnvironmentUseCase()
             .execute(updateEnvironmentDto);
-        expect(result.id).to.equal('first');
+        expect(error.status).to.equal('400');
     });
 };

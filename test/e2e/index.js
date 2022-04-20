@@ -12,7 +12,7 @@
  */
 
 const AttachmentsSuite = require('./attachments.test');
-const EnvironmentsSuite = require('./envrionments.test');
+const EnvironmentsSuite = require('./environments.test');
 const StatusSuite = require('./status.test');
 const LogsSuite = require('./logs.test');
 const SubsystemsSuite = require('./subsystems.test');

@@ -1,4 +1,4 @@
-# Generated on Thu, 31 Mar 2022 14:29:18 GMT
+# Generated on Tue, 19 Apr 2022 14:28:38 GMT
 
 openapi: 3.0.0
 info:
@@ -57,7 +57,19 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
-  /environment:
+  /environments:
+    get:
+      operationId: getEnvironments
+      summary: Fetches all the environments
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfEnvironments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
     post:
       operationId: createEnvironment
       summary: Creation of the environment object.
@@ -72,11 +84,11 @@ paths:
           $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
-  /environment/{envId}:
+  /environments/{envId}:
     parameters:
       - $ref: '#/components/parameters/EnvId'
     put:
-      operationId: updateEnvrionment
+      operationId: updateEnvironment
       summary: Update of the environment object.
       requestBody:
         $ref: '#/components/requestBodies/UpdateEnvironment'
@@ -502,7 +514,7 @@ components:
         $ref: '#/components/schemas/EntityId'
     EnvId:
       name: envId
-      description: The id of the envrionment to receive
+      description: The id of the environment to receive
       in: path
       required: true
       schema:
@@ -661,6 +673,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfEnvironments:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfEnvironmentsResponse'
     ArrayOfFlps:
       description: Expected response to a valid request.
       content:
@@ -808,6 +826,30 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
       required:
         - data
+      additionalProperties: false
+    ArrayOfEnvironments:
+      description: A list of Environment objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Environment'
+    ArrayOfEnvironmentsResponse:
+      description: Response containing multiple environments.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfEnvironments'
+        meta:
+          $ref: '#/components/schemas/ArrayOfEnvironmentsResponseMeta'
+      required:
+        - data
+    ArrayOfEnvironmentsResponseMeta:
+      description: The metadata related to an array of Environments response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
       additionalProperties: false
     ArrayOfFlps:
       description: A list of Flp objects.
@@ -1141,6 +1183,7 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+          nullable: true
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
