@@ -1176,7 +1176,7 @@ components:
           description: Array of minified Run objects.
           type: array
           items:
-            - $ref: '#/components/schemas/Run'
+            $ref: '#/components/schemas/Run'
       required:
         - id
       additionalProperties: false

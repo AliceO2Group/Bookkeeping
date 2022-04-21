@@ -1,4 +1,4 @@
-# Generated on Thu, 21 Apr 2022 08:10:45 GMT
+# Generated on Thu, 21 Apr 2022 09:07:28 GMT
 
 openapi: 3.0.0
 info:
@@ -1157,7 +1157,7 @@ components:
           description: Array of minified Run objects.
           type: array
           items:
-            - $ref: '#/components/schemas/Run'
+            $ref: '#/components/schemas/Run'
         status:
           description: The status of the environment.
           type: string
