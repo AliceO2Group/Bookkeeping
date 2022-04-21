@@ -33,16 +33,16 @@ describe('Bookkeeping', () => {
     });
 
     describe('Unit Suite', () => {
-        // describe('Database', DatabaseSuite);
-        // describe('Presentation', PresentationSuite);
-        // describe('Server', ServerSuite);
+        describe('Database', DatabaseSuite);
+        describe('Presentation', PresentationSuite);
+        describe('Server', ServerSuite);
         describe('Use Cases', UseCasesSuite);
-        // describe('Utilities', UtilitiesSuite);
-        // describe('OpenAPI Specification', OpenApiSuite);
+        describe('Utilities', UtilitiesSuite);
+        describe('OpenAPI Specification', OpenApiSuite);
     });
 
     describe('Integration Suite', () => {
-        // describe('UI', PublicSuite);
+        describe('UI', PublicSuite);
         describe('API', EndToEndSuite);
     });
 });
