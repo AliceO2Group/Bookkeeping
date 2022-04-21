@@ -57,7 +57,7 @@ paths:
         - attachment
   /environments:
     get:
-      operationId: getEnvironments
+      operationId: listEnvironments
       summary: Fetches all the environments
       responses:
         '200':
@@ -86,7 +86,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/EnvId'
     put:
-      operationId: updateEnvironment
+      operationId: replaceEnvironment
       summary: Update of the environment object.
       requestBody:
         $ref: '#/components/requestBodies/UpdateEnvironment'
@@ -1143,9 +1143,7 @@ components:
       type: object
       properties:
         id:
-          description: the given id to the environment.
-          type: string
-          nullable: false
+          $ref: '#/components/schemas/EnvironmentId'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer

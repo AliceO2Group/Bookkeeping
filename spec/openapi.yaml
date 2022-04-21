@@ -1,4 +1,4 @@
-# Generated on Thu, 21 Apr 2022 09:07:28 GMT
+# Generated on Thu, 21 Apr 2022 09:31:30 GMT
 
 openapi: 3.0.0
 info:
@@ -59,7 +59,7 @@ paths:
         - attachment
   /environments:
     get:
-      operationId: getEnvironments
+      operationId: listEnvironments
       summary: Fetches all the environments
       responses:
         '200':
@@ -88,7 +88,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/EnvId'
     put:
-      operationId: updateEnvironment
+      operationId: replaceEnvironment
       summary: Update of the environment object.
       requestBody:
         $ref: '#/components/requestBodies/UpdateEnvironment'
@@ -1150,9 +1150,7 @@ components:
           minimum: 0
           example: 853113599
         id:
-          description: the given id to the environment.
-          type: string
-          nullable: false
+          $ref: '#/components/schemas/EnvironmentId'
         runs:
           description: Array of minified Run objects.
           type: array
