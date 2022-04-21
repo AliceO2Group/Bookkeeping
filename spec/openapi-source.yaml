@@ -840,6 +840,7 @@ components:
           $ref: '#/components/schemas/ArrayOfEnvironmentsResponseMeta'
       required:
         - data
+      additionalProperties: false
     ArrayOfEnvironmentsResponseMeta:
       description: The metadata related to an array of Environments response.
       type: object
@@ -1178,14 +1179,14 @@ components:
       required:
         - id
       additionalProperties: false
-    EnvironmentId:
-      description: The environment identifier.
-      type: string
     EnvironmentAt:
       description: The earliest allowed unix timestamp for the fetched data.
       type: integer
       minimum: 0
       example: 853113599
+    EnvironmentId:
+      description: The environment identifier.
+      type: string
     EnvironmentResponse:
       description: The Environment response object
       type: object
