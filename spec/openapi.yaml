@@ -1,4 +1,4 @@
-# Generated on Tue, 19 Apr 2022 14:28:38 GMT
+# Generated on Thu, 21 Apr 2022 09:42:37 GMT
 
 openapi: 3.0.0
 info:
@@ -59,7 +59,7 @@ paths:
         - attachment
   /environments:
     get:
-      operationId: getEnvironments
+      operationId: listEnvironments
       summary: Fetches all the environments
       responses:
         '200':
@@ -88,7 +88,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/EnvId'
     put:
-      operationId: updateEnvironment
+      operationId: replaceEnvironment
       summary: Update of the environment object.
       requestBody:
         $ref: '#/components/requestBodies/UpdateEnvironment'
@@ -842,6 +842,7 @@ components:
           $ref: '#/components/schemas/ArrayOfEnvironmentsResponseMeta'
       required:
         - data
+      additionalProperties: false
     ArrayOfEnvironmentsResponseMeta:
       description: The metadata related to an array of Environments response.
       type: object
@@ -1150,24 +1151,12 @@ components:
           minimum: 0
           example: 853113599
         id:
-          description: the given id to the environment.
-          type: string
-          nullable: false
+          $ref: '#/components/schemas/EnvironmentId'
         runs:
           description: Array of minified Run objects.
           type: array
           items:
-            description: Minified Run object.
-            type: object
-            properties:
-              id:
-                $ref: '#/components/schemas/EntityId'
-              runNumber:
-                $ref: '#/components/schemas/RunNumber'
-            required:
-              - id
-              - runNumber
-            additionalProperties: false
+            $ref: '#/components/schemas/Run'
         status:
           description: The status of the environment.
           type: string
@@ -1192,14 +1181,14 @@ components:
       required:
         - id
       additionalProperties: false
-    EnvironmentId:
-      description: The environment identifier.
-      type: string
     EnvironmentAt:
       description: The earliest allowed unix timestamp for the fetched data.
       type: integer
       minimum: 0
       example: 853113599
+    EnvironmentId:
+      description: The environment identifier.
+      type: string
     EnvironmentResponse:
       description: The Environment response object
       type: object
@@ -1661,6 +1650,27 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+        dcs:
+          description: If dcs is enabled.
+          type: boolean
+        dd_flp:
+          description: If dd_flp is enabled.
+          type: boolean
+        detectors:
+          description: The detectors used
+          type: string
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
+        environmentId:
+          description: The given id for an environment
+          type: string
+          minimum: 0
+        epn:
+          description: If epn is enabled
+          type: boolean
+        epnTopology:
+          description: The topology of the epn
+          type: string
         id:
           $ref: '#/components/schemas/EntityId'
         nDetectors:
@@ -1677,6 +1687,8 @@ components:
           $ref: '#/components/schemas/RunQuality'
         runType:
           $ref: '#/components/schemas/RunType'
+        tags:
+          $ref: '#/components/schemas/ArrayOfTags'
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -1691,7 +1703,6 @@ components:
           minimum: 0
           example: 853113599
       required:
-        - activityId
         - bytesReadOut
         - id
         - nDetectors

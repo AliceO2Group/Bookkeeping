@@ -15,16 +15,6 @@ const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
-const {
-    dtos: {
-        CreateEnvironmentDto,
-    },
-} = require('../../lib/domain');
-const {
-    subsystem: {
-        CreateEnvironmentUseCase,
-    },
-} = require('../../lib/usecases');
 
 const { expect } = chai;
 
@@ -33,6 +23,26 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 module.exports = () => {
     const { server } = require('../../lib/application');
 
+    describe('GET /api/environments', () => {
+        it('should return 201 if valid data is provided', (done) => {
+            request(server)
+                .get('/api/environments')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+    });
     describe('POST /api/environments', () => {
         const createdAtDate = new Date().setMilliseconds(0);
         it('should return 201 if valid data is provided', (done) => {
@@ -125,7 +135,7 @@ module.exports = () => {
         });
     });
     describe('PUT /api/environment/:envId', () => {
-        const toredownDate = new Date();
+        const toredownDate = new Date().setMilliseconds('0');
         it('should return 400 if the wrong id is provided', (done) => {
             request(server)
                 .put('/api/environments/99999')
@@ -157,6 +167,7 @@ module.exports = () => {
 
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
+                    expect(res.body.errors[0].title).to.equal('Run with this id (9999999999) could not be found');
                     done();
                 });
         });
@@ -165,7 +176,7 @@ module.exports = () => {
                 .put('/api/environments/KGIS12DS')
                 .send({
                     run: 1,
-                    toredown: toredownDate,
+                    toredownAt: toredownDate,
                     status: 'STOPPED',
                     statusMessage: 'This is a good environment.',
                 })
@@ -175,13 +186,12 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.runs.includes(1)).to.equal(true);
-                    expect(res.body.status).to.equal('STOPPED');
-                    expect(res.body.toredownAt).to.equal(toredownDate);
-                    expect(res.body.statusMessage).to.equal('This is a good environment.');
+                    expect(res.body.data.runs[0].id).to.equal(1);
+                    expect(res.body.data.status).to.equal('STOPPED');
+                    expect(res.body.data.toredownAt).to.equal(toredownDate);
+                    expect(res.body.data.statusMessage).to.equal('This is a good environment.');
                     done();
                 });
         });
