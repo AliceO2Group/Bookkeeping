@@ -49,9 +49,8 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
 func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType, 
-	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string, detectors sw.Detectors) {
+	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string, detectors string) {
 	var run sw.RunType = runType
-	var det sw.Detectors = detectors
 
 	obj := sw.Run{
 		EnvironmentId:   environmentId,
@@ -60,13 +59,13 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 		NFlps:        nFlps,
 		RunNumber:    runNumber,
 		RunType:      &run,
-		TimeO2Start:  &timeO2Start,
-		TimeTrgStart: &timeTrgStart,
+		TimeO2Start:  int32(&timeO2Start.UnixMilli()),
+		TimeTrgStart: int32(timeTrgStart.UnixMilli()),
 		DdFlp: 	  	  dd_flp,
         Dcs:          dcs,
         Epn:          epn,
 		EpnTopology:  epnTopology,
-		Detectors: 	  &det,
+		Detectors: 	  detectors,
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
@@ -86,11 +85,11 @@ func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, t
 
 	obj := sw.Run{
 		RunQuality: &runquality,
-		TimeO2End:  &timeO2End,
-		TimeTrgEnd: &timeTrgEnd,
+		TimeO2End:  int32(&timeO2End.UnixMilli()),
+		TimeTrgEnd: int32(&timeTrgEnd.UnixMilli()),
 	}
 
-	arrayResponse, response, err := api.RunApi.EndRun(auth, obj, runNumber)
+	arrayResponse, response, err := api.RunApi.UpdateRun(auth, obj, runNumber)
 	fmt.Println(arrayResponse, response, err)
 }
 
@@ -182,5 +181,43 @@ func GetLogs() {
  */
 func GetRuns() {
 	arrayResponse, response, err := api.RunApi.ListRuns(auth)
+	fmt.Println(arrayResponse, response, err)
+}
+
+/**
+ * Create an environment
+ * @param envId Integer ID of a specific data taking session.
+ * @param createdAt The time of creation, if empty it will give a default time
+ * @param status The current status of the environment STARTED/STOPPED etc.
+ * @param statusMessage A message to elaborate onto 
+ */
+func CreateEnvironment(envId string, createdAt time.Time, status string, statusMessage string) {
+	obj := sw.CreateEnvironment{
+		EnvId: envId,
+		CreatedAt: int32(&createdAt.UnixMilli()),
+		Status: status,
+		StatusMessage: statusMessage,
+	}
+
+	arrayResponse, response, err := api.EnvironmentApi.CreateEnvironment(auth, obj)
+	fmt.Println(arrayResponse, response, err)
+}
+
+/**
+ * Update flp by id
+ *
+ * @param envId Integer ID of a specific data taking session.
+ * @param createdAt The time of creation, if empty it will give a default time
+ * @param status The current status of the environment STARTED/STOPPED etc.
+ * @param statusMessage A message to elaborate onto 
+ */
+func UpdateEnvironment(envId string, toredownAt time.Time, status string, statusMessage string) {
+	obj := sw.UpdateEnvironment{
+		ToredownAt: int32(&toredownAt.UnixMilli()),
+		Status: status,
+		StatusMessage: statusMessage,
+	}
+
+	arrayResponse, response, err := api.EnvironmentApi.ReplaceEnvironment(auth, obj, envId)
 	fmt.Println(arrayResponse, response, err)
 }

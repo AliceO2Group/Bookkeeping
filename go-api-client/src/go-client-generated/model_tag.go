@@ -15,6 +15,12 @@ type Tag struct {
 	Id int32 `json:"id"`
 	// The label value of the tag.
 	Text string `json:"text"`
+	// The email for the tag.
+	Email string `json:"email,omitempty"`
+	// All the mattermost tags for updates
+	Mattermost string `json:"mattermost,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
+	// The last person that edited the email/mattermost fields
+	LastEditedName string `json:"lastEditedName,omitempty"`
 }
