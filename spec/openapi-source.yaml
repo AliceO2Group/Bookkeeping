@@ -68,6 +68,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+       - environment
     post:
       operationId: createEnvironment
       summary: Creation of the environment object.
@@ -82,6 +84,8 @@ paths:
           $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+       - environment
   /environments/{envId}:
     parameters:
       - $ref: '#/components/parameters/EnvId'
@@ -99,6 +103,8 @@ paths:
           $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+       - environment
   /flps:
     get:
       operationId: listFlps
@@ -143,6 +149,10 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+  /flps/{flpName}/runs/{runNumber}:
+    parameters:
+     -  $ref: '#/components/parameters/FlpName'
+     -  $ref: '#/components/parameters/RunNumber'
     patch:
       operationId: updateFlp
       summary: Update an existing flp
@@ -453,6 +463,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
@@ -531,6 +543,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    FlpName:
+      name: flpName
+      description: the name of the flp object
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FlpName'
     FlpSorting:
       in: query
       name: sort
@@ -568,6 +587,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    RunNumber:
+      name: runNumber
+      description: The number given to the run.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
     RunSorting:
       in: query
       name: sort
@@ -1657,8 +1683,7 @@ components:
           description: If dd_flp is enabled.
           type: boolean
         detectors:
-          description: The detectors used
-          type: string
+          $ref: '#/components/schemas/RunDetectorsList'
         epn:
           description: If epn is enabled
           type: boolean
@@ -1726,6 +1751,26 @@ components:
       description: The amount of detectors in a single run.
       type: integer
       minimum: 0
+    RunDetectorsList:
+      description: A comma seperated string for the detectors used
+      type: string
+      enum:
+        - "CPV"
+        - "EMC" 
+        - "FDD"
+        - "FT0"
+        - "FV0"
+        - "HMP"
+        - "ITS"
+        - "MCH"
+        - "MFT"
+        - "MID"
+        - "PHS"
+        - "TOF"
+        - "TPC"
+        - "TRD"
+        - "TST"
+        - "ZDC"
     RunEpns:
       description: The amount of Epns nodes in a single run.
       type: integer
