@@ -713,7 +713,7 @@ paths:
       tags:
       - run
       summary: Updates certain fields of a run
-      operationId: endRun
+      operationId: updateRun
       parameters:
       - name: runId
         in: path
@@ -724,7 +724,7 @@ paths:
         schema:
           $ref: '#/components/schemas/EntityId'
       requestBody:
-        $ref: '#/components/requestBodies/EndRun'
+        $ref: '#/components/requestBodies/UpdateRun'
       responses:
         "201":
           description: Expected response to a valid request.
@@ -3351,7 +3351,7 @@ components:
           schema:
             $ref: '#/components/schemas/Run'
       required: true
-    EndRun:
+    UpdateRun:
       content:
         application/json:
           schema:

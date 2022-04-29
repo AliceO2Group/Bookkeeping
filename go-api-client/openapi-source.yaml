@@ -333,10 +333,10 @@ paths:
       tags:
         - run
     patch:
-      operationId: endRun
+      operationId: updateRun
       summary: Updates certain fields of a run
       requestBody:
-        $ref: '#/components/requestBodies/EndRun'
+        $ref: '#/components/requestBodies/UpdateRun'
       responses:
         '201':
           $ref: '#/components/responses/Run'
@@ -611,7 +611,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Run'
-    EndRun:
+    UpdateRun:
       required: true
       content:
         application/json:

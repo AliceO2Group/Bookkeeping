@@ -40,9 +40,9 @@ Class | Method | HTTP request | Description
 *LogApi* | [**ListLogs**](docs/LogApi.md#listlogs) | **Get** /logs | List all logs
 *LogApi* | [**ListTagsByLogId**](docs/LogApi.md#listtagsbylogid) | **Get** /logs/{logId}/tags | Lists all tags associated with a log
 *RunApi* | [**CreateRun**](docs/RunApi.md#createrun) | **Post** /runs | Creates a run
-*RunApi* | [**EndRun**](docs/RunApi.md#endrun) | **Patch** /runs/{runId} | Updates certain fields of a run
 *RunApi* | [**GetRunById**](docs/RunApi.md#getrunbyid) | **Get** /runs/{runId} | Gets a run by Id
 *RunApi* | [**ListRuns**](docs/RunApi.md#listruns) | **Get** /runs | List all runs
+*RunApi* | [**UpdateRun**](docs/RunApi.md#updaterun) | **Patch** /runs/{runId} | Updates certain fields of a run
 *SubsystemApi* | [**CreateSubsystem**](docs/SubsystemApi.md#createsubsystem) | **Post** /subsystems | Adds a new subsystem
 *SubsystemApi* | [**DeleteSubsystem**](docs/SubsystemApi.md#deletesubsystem) | **Delete** /subsystems/{subsystemId} | Deletes a subsystem by Id
 *SubsystemApi* | [**GetSubsystem**](docs/SubsystemApi.md#getsubsystem) | **Get** /subsystems/{subsystemId} | Get a subsystem by Id
