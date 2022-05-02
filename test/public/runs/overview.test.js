@@ -287,8 +287,8 @@ module.exports = () => {
     it('Validates date will not be set again', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const dateString = '03-21-2021';
-        const validValue = '2021-03-21';
+        const dateString = '03-02-2021';
+        const validValue = '2021-03-02';
         // Open the filters
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
