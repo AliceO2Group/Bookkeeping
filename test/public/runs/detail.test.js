@@ -41,7 +41,40 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
+    it('Should show next and previous', async () => {
+        await page.goto(`${url}/?page=run-detail&id=2`, { waitUntil: 'networkidle0' });
+        await page.waitForTimeout(300);
+        await expectInnerText(page, '#next-run', 'Next');
+        await expectInnerText(page, '#prev-run', 'Prev');
+    });
+
+    it('Should show only previous', async () => {
+        await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
+        await page.waitForTimeout(300);
+        const next = await page.$('#next-run') || null;
+        expect(next).to.be.equal(null);
+        await expectInnerText(page, '#prev-run', 'Prev');
+    });
+
+    it('Should be able to go to the next page', async () => {
+        await page.goto(`${url}/?page=run-detail&id=2`, { waitUntil: 'networkidle0' });
+        await page.waitForTimeout(300);
+        await pressElement(page, '#next-run');
+        await page.waitForTimeout(100);
+        const redirectedUrl = await page.url();
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1`)).to.be.true;
+    });
+    it('Should be able to go to the previous page', async () => {
+        await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
+        await page.waitForTimeout(300);
+        await pressElement(page, '#prev-run');
+        await page.waitForTimeout(100);
+        const redirectedUrl = await page.url();
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=2`)).to.be.true;
+    });
     it('successfully entered EDIT mode of a run', async () => {
+        await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
+        await page.waitForTimeout(300);
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
         await expectInnerText(page, '#save-run', 'Save');
