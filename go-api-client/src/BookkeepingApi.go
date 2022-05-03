@@ -3,6 +3,7 @@ package src
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
@@ -50,7 +51,7 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
 func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32, runNumber int32, runType sw.RunType,
-	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string, detectors sw.Detectors) {
+	timeO2Start time.Time, timeTrgStart time.Time, dd_flp bool, dcs bool, epn bool, epnTopology string, detectors sw.Detectors) (sw.RunResponse, *http.Response, error) {
 	var run sw.RunType = runType
 	var dets sw.Detectors = detectors
 	obj := sw.Run{
@@ -71,6 +72,7 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
 	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -81,7 +83,7 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
  * @param o2End Time (UTC) when Run was completely stopped
  * @param triggerEnd (UTC) Time when Trigger subsystem was stopped
  */
-func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, timeTrgEnd time.Time) {
+func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, timeTrgEnd time.Time) (sw.RunResponse, *http.Response, error) {
 	var runquality sw.RunQuality = runQuality
 
 	obj := sw.Run{
@@ -92,6 +94,7 @@ func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, t
 
 	arrayResponse, response, err := api.RunApi.UpdateRun(auth, obj, runNumber)
 	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -101,7 +104,7 @@ func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, t
  * @param hostName Host name of the FLP
  * @param runNumber Integer ID of a specific data taking session
  */
-func CreateFlp(name string, hostName string, runNumber int32) {
+func CreateFlp(name string, hostName string, runNumber int32) (sw.LogResponse, *http.Response, error) {
 
 	obj := sw.CreateFlp{
 		Name:      name,
@@ -111,6 +114,7 @@ func CreateFlp(name string, hostName string, runNumber int32) {
 
 	arrayResponse, response, err := api.FlpApi.CreateFlp(auth, obj)
 	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -123,7 +127,7 @@ func CreateFlp(name string, hostName string, runNumber int32) {
  * @param nRecordingBytes Data volume out from the readout 'recording' component in bytes. Can reach PetaBytes. Updated regularly.
  * @param nFairMqBytes Data volume out from the readout 'fmq' component in bytes. Can reach PetaBytes. Updated regularly.
  */
-func UpdateFlp(flpName string, runNumber int32, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) {
+func UpdateFlp(flpName string, runNumber int32, nSubtimeframes int32, nEquipmentBytes int32, nRecordingBytes int32, nFairMQBytes int32) (sw.FlpResponse, *http.Response, error) {
 	obj := sw.UpdateFlp{
 		NTimeframes:           nSubtimeframes,
 		BytesEquipmentReadOut: nEquipmentBytes,
@@ -133,6 +137,7 @@ func UpdateFlp(flpName string, runNumber int32, nSubtimeframes int32, nEquipment
 
 	arrayResponse, response, err := api.FlpApi.UpdateFlp(auth, obj, flpName, runNumber)
 	fmt.Println(arrayResponse, response, err)
+	return arrayResponse, response, err
 }
 
 /**
@@ -144,7 +149,7 @@ func UpdateFlp(flpName string, runNumber int32, nSubtimeframes int32, nEquipment
  * @param parentLogId Integer id of the parent log
  */
 // todo: keep runNumbers as string? or convert to css (comma separated string) in function body?
-func CreateLog(text string, title string, runNumbers string, parentLogId int32) {
+func CreateLog(text string, title string, runNumbers string, parentLogId int32) (sw.LogResponse, *http.Response, error) {
 
 	// todo: remove if-statement with optional parameter-like construct.
 	if parentLogId == -1 {
@@ -155,6 +160,7 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int32) 
 		}
 		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
 		fmt.Println(arrayResponse, response, err)
+		return arrayResponse, response, err
 	} else {
 		obj := sw.CreateLog{
 			Text:        text,
@@ -164,6 +170,7 @@ func CreateLog(text string, title string, runNumbers string, parentLogId int32) 
 		}
 		arrayResponse, response, err := api.LogApi.CreateLog(auth, obj)
 		fmt.Println(arrayResponse, response, err)
+		return arrayResponse, response, err
 	}
 }
 
@@ -192,7 +199,7 @@ func GetRuns() {
  * @param status The current status of the environment STARTED/STOPPED etc.
  * @param statusMessage A message to elaborate onto
  */
-func CreateEnvironment(envId string, createdAt time.Time, status string, statusMessage string) error{
+func CreateEnvironment(envId string, createdAt time.Time, status string, statusMessage string) (sw.EnvironmentResponse, *http.Response, error) {
 	obj := sw.CreateEnvironment{
 		EnvId:         envId,
 		CreatedAt:     &createdAt,
@@ -202,7 +209,7 @@ func CreateEnvironment(envId string, createdAt time.Time, status string, statusM
 
 	arrayResponse, response, err := api.EnvironmentApi.CreateEnvironment(auth, obj)
 	fmt.Println(arrayResponse, response, err)
-	return err
+	return arrayResponse, response, err
 }
 
 /**
@@ -213,7 +220,7 @@ func CreateEnvironment(envId string, createdAt time.Time, status string, statusM
  * @param status The current status of the environment STARTED/STOPPED etc.
  * @param statusMessage A message to elaborate onto
  */
-func UpdateEnvironment(envId string, toredownAt time.Time, status string, statusMessage string) error {
+func UpdateEnvironment(envId string, toredownAt time.Time, status string, statusMessage string) (sw.EnvironmentResponse, *http.Response, error) {
 	obj := sw.UpdateEnvironment{
 		ToredownAt:    &toredownAt,
 		Status:        status,
@@ -222,5 +229,5 @@ func UpdateEnvironment(envId string, toredownAt time.Time, status string, status
 
 	arrayResponse, response, err := api.EnvironmentApi.ReplaceEnvironment(auth, obj, envId)
 	fmt.Println(arrayResponse, response, err)
-	return err
+	return arrayResponse, response, err
 }
