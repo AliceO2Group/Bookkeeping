@@ -192,7 +192,7 @@ func GetRuns() {
  * @param status The current status of the environment STARTED/STOPPED etc.
  * @param statusMessage A message to elaborate onto
  */
-func CreateEnvironment(envId string, createdAt time.Time, status string, statusMessage string) {
+func CreateEnvironment(envId string, createdAt time.Time, status string, statusMessage string) error{
 	obj := sw.CreateEnvironment{
 		EnvId:         envId,
 		CreatedAt:     &createdAt,
@@ -202,6 +202,7 @@ func CreateEnvironment(envId string, createdAt time.Time, status string, statusM
 
 	arrayResponse, response, err := api.EnvironmentApi.CreateEnvironment(auth, obj)
 	fmt.Println(arrayResponse, response, err)
+	return err
 }
 
 /**
@@ -212,7 +213,7 @@ func CreateEnvironment(envId string, createdAt time.Time, status string, statusM
  * @param status The current status of the environment STARTED/STOPPED etc.
  * @param statusMessage A message to elaborate onto
  */
-func UpdateEnvironment(envId string, toredownAt time.Time, status string, statusMessage string) {
+func UpdateEnvironment(envId string, toredownAt time.Time, status string, statusMessage string) error {
 	obj := sw.UpdateEnvironment{
 		ToredownAt:    &toredownAt,
 		Status:        status,
@@ -221,4 +222,5 @@ func UpdateEnvironment(envId string, toredownAt time.Time, status string, status
 
 	arrayResponse, response, err := api.EnvironmentApi.ReplaceEnvironment(auth, obj, envId)
 	fmt.Println(arrayResponse, response, err)
+	return err
 }
