@@ -1751,23 +1751,6 @@ components:
     RunDetectorsList:
       description: A comma seperated string for the detectors used
       type: string
-      enum:
-        - CPV
-        - EMC
-        - FDD
-        - FT0
-        - FV0
-        - HMP
-        - ITS
-        - MCH
-        - MFT
-        - MID
-        - PHS
-        - TOF
-        - TPC
-        - TRD
-        - TST
-        - ZDC
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
