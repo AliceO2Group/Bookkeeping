@@ -560,7 +560,7 @@ components:
         $ref: '#/components/schemas/EntityId'
     FlpName:
       name: flpName
-      description: the name of the flp object
+      description: The name of the flp object
       in: path
       required: true
       schema:
@@ -1748,9 +1748,6 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunDetectorsList:
-      description: A comma seperated string for the detectors used
-      type: string
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
@@ -1767,6 +1764,9 @@ components:
       description: The amount of detectors in a single run.
       type: integer
       minimum: 0
+    RunDetectorsList:
+      description: A comma seperated string for the detectors used
+      type: string
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
