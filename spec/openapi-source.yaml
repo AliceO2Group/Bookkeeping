@@ -68,6 +68,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
     post:
       operationId: createEnvironment
       summary: Creation of the environment object.
@@ -82,6 +84,8 @@ paths:
           $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
   /environments/{envId}:
     parameters:
       - $ref: '#/components/parameters/EnvId'
@@ -99,6 +103,8 @@ paths:
           $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
   /flps:
     get:
       operationId: listFlps
@@ -143,6 +149,10 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+  /flps/{flpName}/runs/{runNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FlpName'
+      - $ref: '#/components/parameters/RunNumber'
     patch:
       operationId: updateFlp
       summary: Update an existing flp
@@ -468,6 +478,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
@@ -546,6 +558,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    FlpName:
+      name: flpName
+      description: the name of the flp object
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FlpName'
     FlpSorting:
       in: query
       name: sort
@@ -583,6 +602,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    RunNumber:
+      name: runNumber
+      description: The number given to the run.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
     RunSorting:
       in: query
       name: sort
@@ -1202,6 +1228,7 @@ components:
     EnvironmentId:
       description: The environment identifier.
       type: string
+      nullable: true
     EnvironmentResponse:
       description: The Environment response object
       type: object
@@ -1666,7 +1693,7 @@ components:
         dd_flp:
           $ref: '#/components/schemas/RunDdFlp'
         detectors:
-          $ref: '#/components/schemas/RunArrayOfDetectors'
+          $ref: '#/components/schemas/RunDetectorsList'
         environmentId:
           $ref: '#/components/schemas/RunEnvironmentId'
         epn:
@@ -1721,9 +1748,26 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunArrayOfDetectors:
+    RunDetectorsList:
+      description: A comma seperated string for the detectors used
       type: string
-      description: Comma seperated string
+      enum:
+        - CPV
+        - EMC
+        - FDD
+        - FT0
+        - FV0
+        - HMP
+        - ITS
+        - MCH
+        - MFT
+        - MID
+        - PHS
+        - TOF
+        - TPC
+        - TRD
+        - TST
+        - ZDC
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
