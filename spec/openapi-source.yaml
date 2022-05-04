@@ -334,6 +334,21 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+  /runs/{runId}/logs:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      operationId: getLogs
+      summary: Retreives all the logs of the run
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /status:
     get:
       operationId: getDeployInformation
@@ -1639,8 +1654,6 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        activityId:
-          $ref: '#/components/schemas/RunActivityId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1648,29 +1661,22 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+        dcs:
+          $ref: '#/components/schemas/RunDcs'
+        dd_flp:
+          $ref: '#/components/schemas/RunDdFlp'
+        detectors:
+          $ref: '#/components/schemas/RunArrayOfDetectors'
+        environmentId:
+          $ref: '#/components/schemas/RunEnvironmentId'
+        epn:
+          $ref: '#/components/schemas/RunEpn'
+        epnTopology:
+          $ref: '#/components/schemas/RunEpnTopology'
         id:
           $ref: '#/components/schemas/EntityId'
-        dcs:
-          description: If dcs is enabled.
-          type: boolean
-        dd_flp:
-          description: If dd_flp is enabled.
-          type: boolean
-        detectors:
-          description: The detectors used
-          type: string
-        epn:
-          description: If epn is enabled
-          type: boolean
-        epnTopology:
-          description: The topology of the epn
-          type: string
         envId:
           $ref: '#/components/schemas/EnvironmentId'
-        environmentId:
-          description: The given id for an environment
-          type: string
-          minimum: 0
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
@@ -1715,17 +1721,35 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunActivityId:
-      description: The unique identifier of this entity.
+    RunArrayOfDetectors:
       type: string
+      description: Comma seperated string
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
       minimum: 0
+    RunDcs:
+      description: Boolean if dcs is set.
+      type: boolean
+      nullable: true
+    RunDdFlp:
+      description: Boolean if dd_flp is set.
+      type: boolean
+      nullable: true
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
       minimum: 0
+    RunEnvironmentId:
+      description: The unique identifier of this entity.
+      type: string
+    RunEpn:
+      description: Boolean if epn is set
+      type: boolean
+      nullable: true
+    RunEpnTopology:
+      description: The topology for the epn
+      type: string
     RunEpns:
       description: The amount of Epns nodes in a single run.
       type: integer
@@ -1777,6 +1801,8 @@ components:
       type: object
       properties:
         id:
+          $ref: '#/components/schemas/SortOrder'
+        text:
           $ref: '#/components/schemas/SortOrder'
       additionalProperties: false
     RunSubtimeframes:
