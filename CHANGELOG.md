@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.26.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.1) 
+* Notable changes for users:
+  * Improves UX when users would input negative filter values;
+
 ## [0.26.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.0) 
 * Notable changes for users:
   * Fixes a bug in which filters would not work due to cached date on server side;

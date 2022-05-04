@@ -25,7 +25,7 @@ module.exports = () => {
     const { server } = require('../../lib/application');
 
     describe('GET /api/runs', () => {
-        it.skip('should return an array', (done) => {
+        it('should return an array', (done) => {
             request(server)
                 .get('/api/runs')
                 .expect(200)
@@ -37,14 +37,13 @@ module.exports = () => {
 
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
 
                     done();
                 });
         });
 
-        it.skip('should support pagination, offset 0 and limit 1', (done) => {
+        it('should support pagination, offset 0 and limit 1', (done) => {
             request(server)
                 .get('/api/runs?page[offset]=0&page[limit]=1&sort[id]=asc')
                 .expect(200)
@@ -64,7 +63,7 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should support pagination, offset 1 and limit 1', (done) => {
+        it('should support pagination, offset 1 and limit 1', (done) => {
             request(server)
                 .get('/api/runs?page[offset]=1&page[limit]=1&sort[id]=asc')
                 .expect(200)
@@ -105,7 +104,7 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should return the correct number of pages', (done) => {
+        it('should return the correct number of pages', (done) => {
             request(server)
                 .get('/api/runs?page[offset]=0&page[limit]=2')
                 .expect(200)
@@ -128,9 +127,9 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should support sorting, runNumber DESC', (done) => {
+        it('should support sorting, id DESC', (done) => {
             request(server)
-                .get('/api/runs?sort[runNumber]=desc')
+                .get('/api/runs?sort[id]=desc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -148,9 +147,9 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should support sorting, runNumber ASC', (done) => {
+        it('should support sorting, runNumber ASC', (done) => {
             request(server)
-                .get('/api/runs?sort[runNumber]=asc')
+                .get('/api/runs?sort[id]=asc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -162,7 +161,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
-                    expect(data[1].runNumber).to.be.greaterThan(data[0].runNumber);
+                    expect(data[1].id).to.be.above(data[0].id);
 
                     done();
                 });
@@ -310,7 +309,7 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should return 200 in all other cases', (done) => {
+        it('should return 200 in all other cases', (done) => {
             request(server)
                 .get('/api/runs/1')
                 .expect(200)
@@ -331,7 +330,7 @@ module.exports = () => {
     });
 
     describe('GET /api/runs/:runId/logs', () => {
-        it.skip('should return 400 if the run id is not a number', (done) => {
+        it('should return 400 if the run id is not a number', (done) => {
             request(server)
                 .get('/api/runs/abc/logs')
                 .expect(400)
@@ -352,7 +351,7 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should return 404 if the run could not be found', (done) => {
+        it('should return 404 if the run could not be found', (done) => {
             request(server)
                 .get('/api/runs/999999999/logs')
                 .expect(404)
@@ -371,7 +370,7 @@ module.exports = () => {
                 });
         });
 
-        it.skip('should return 200 in all other cases', (done) => {
+        it('should return 200 in all other cases', (done) => {
             request(server)
                 .get('/api/runs/1/logs')
                 .expect(200)
@@ -385,7 +384,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data).to.have.lengthOf(10);
 
                     expect(res.body.data[0].id).to.equal(1);
                     expect(res.body.data[0].runs).to.deep.equal([
