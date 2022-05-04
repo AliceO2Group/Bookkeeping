@@ -243,7 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LogResponse'
+                $ref: '#/components/schemas/FlpResponse'
         "400":
           description: Bad Request
           content:

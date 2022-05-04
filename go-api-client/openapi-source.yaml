@@ -125,7 +125,7 @@ paths:
         $ref: '#/components/requestBodies/CreateFlp'
       responses:
         '201':
-          $ref: '#/components/responses/Log'
+          $ref: '#/components/responses/Flp'
         '400':
           $ref: '#/components/responses/BadRequest'
         default:

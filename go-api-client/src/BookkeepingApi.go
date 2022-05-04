@@ -104,7 +104,7 @@ func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2End time.Time, t
  * @param hostName Host name of the FLP
  * @param runNumber Integer ID of a specific data taking session
  */
-func CreateFlp(name string, hostName string, runNumber int32) (sw.LogResponse, *http.Response, error) {
+func CreateFlp(name string, hostName string, runNumber int32) (sw.FlpResponse, *http.Response, error) {
 
 	obj := sw.CreateFlp{
 		Name:      name,
