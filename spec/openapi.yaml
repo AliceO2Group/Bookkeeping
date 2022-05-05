@@ -1,4 +1,4 @@
-# Generated on Fri, 08 Apr 2022 10:27:25 GMT
+# Generated on Wed, 04 May 2022 12:05:07 GMT
 
 openapi: 3.0.0
 info:
@@ -57,6 +57,56 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
+  /environments:
+    get:
+      operationId: listEnvironments
+      summary: Fetches all the environments
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfEnvironments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
+    post:
+      operationId: createEnvironment
+      summary: Creation of the environment object.
+      requestBody:
+        $ref: '#/components/requestBodies/CreateEnvironment'
+      responses:
+        '201':
+          $ref: '#/components/responses/Environment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
+  /environments/{envId}:
+    parameters:
+      - $ref: '#/components/parameters/EnvId'
+    put:
+      operationId: replaceEnvironment
+      summary: Update of the environment object.
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateEnvironment'
+      responses:
+        '201':
+          $ref: '#/components/responses/Environment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
   /flps:
     get:
       operationId: listFlps
@@ -101,6 +151,10 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+  /flps/{flpName}/runs/{runNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FlpName'
+      - $ref: '#/components/parameters/RunNumber'
     patch:
       operationId: updateFlp
       summary: Update an existing flp
@@ -426,6 +480,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
@@ -483,6 +539,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    EnvId:
+      name: envId
+      description: The id of the environment to receive
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EnvironmentId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -497,6 +560,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    FlpName:
+      name: flpName
+      description: The name of the flp object
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FlpName'
     FlpSorting:
       in: query
       name: sort
@@ -534,6 +604,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    RunNumber:
+      name: runNumber
+      description: The number given to the run.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
     RunSorting:
       in: query
       name: sort
@@ -570,6 +647,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateEnvironment:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateEnvironment'
     CreateFlp:
       required: true
       content:
@@ -606,6 +689,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Run'
+    UpdateEnvironment:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateEnvironment'
     UpdateFlp:
       required: true
       content:
@@ -625,6 +714,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfEnvironments:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfEnvironmentsResponse'
     ArrayOfFlps:
       description: Expected response to a valid request.
       content:
@@ -673,6 +768,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Environment:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EnvironmentResponse'
     Flp:
       description: Expected response to a valid request.
       content:
@@ -766,6 +867,31 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
       required:
         - data
+      additionalProperties: false
+    ArrayOfEnvironments:
+      description: A list of Environment objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Environment'
+    ArrayOfEnvironmentsResponse:
+      description: Response containing multiple environments.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfEnvironments'
+        meta:
+          $ref: '#/components/schemas/ArrayOfEnvironmentsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfEnvironmentsResponseMeta:
+      description: The metadata related to an array of Environments response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
       additionalProperties: false
     ArrayOfFlps:
       description: A list of Flp objects.
@@ -951,6 +1077,21 @@ components:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
       additionalProperties: false
+    CreateEnvironment:
+      description: Describes an environment
+      type: object
+      properties:
+        createdAt:
+          $ref: '#/components/schemas/EnvironmentAt'
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+      required:
+        - envId
+      additionalProperties: false
     CreateFlp:
       description: Describes an flp
       type: object
@@ -1041,6 +1182,76 @@ components:
       description: The unique identifier of this entity.
       type: integer
       minimum: 1
+    Environment:
+      description: The Environment object.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EnvironmentId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+        status:
+          description: The status of the environment.
+          type: string
+          nullable: true
+        statusMessage:
+          description: >-
+            A message explaining the status or the current state of the
+            environment.
+          type: string
+          nullable: true
+        toredownAt:
+          description: Unix timestamp when this entity was tore down.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      required:
+        - id
+      additionalProperties: false
+    EnvironmentAt:
+      description: The earliest allowed unix timestamp for the fetched data.
+      type: integer
+      minimum: 0
+      example: 853113599
+    EnvironmentId:
+      description: The environment identifier.
+      type: string
+      nullable: true
+    EnvironmentResponse:
+      description: The Environment response object
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Environment'
+      required:
+        - data
+      additionalProperties: false
+    EnvironmentRun:
+      description: Run that needs to be added.
+      type: integer
+      minimum: 0
+    EnvironmentStatus:
+      description: Current environment status
+      type: string
+      nullable: true
+    EnvironmentStatusMessage:
+      description: Message about the current status.
+      type: string
+      nullable: true
     Error:
       description: An Error object.
       type: object
@@ -1484,7 +1695,9 @@ components:
         dd_flp:
           $ref: '#/components/schemas/RunDdFlp'
         detectors:
-          $ref: '#/components/schemas/RunArrayOfDetectors'
+          $ref: '#/components/schemas/RunDetectorsList'
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
         environmentId:
           $ref: '#/components/schemas/RunEnvironmentId'
         epn:
@@ -1524,7 +1737,6 @@ components:
           example: 853113599
       required:
         - bytesReadOut
-        - environmentId
         - id
         - nDetectors
         - nEpns
@@ -1538,9 +1750,6 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunArrayOfDetectors:
-      type: string
-      description: Comma seperated string
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
@@ -1557,6 +1766,9 @@ components:
       description: The amount of detectors in a single run.
       type: integer
       minimum: 0
+    RunDetectorsList:
+      description: A comma seperated string for the detectors used
+      type: string
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
@@ -1727,6 +1939,19 @@ components:
           $ref: '#/components/schemas/Tag'
       required:
         - data
+      additionalProperties: false
+    UpdateEnvironment:
+      description: Describes an update to an environment
+      type: object
+      properties:
+        run:
+          $ref: '#/components/schemas/EnvironmentRun'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+        toredownAt:
+          $ref: '#/components/schemas/EnvironmentAt'
       additionalProperties: false
     UpdateFlp:
       description: Describes an update to an flp
