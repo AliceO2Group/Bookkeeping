@@ -54,11 +54,4 @@ module.exports = () => {
         expect(error.status).to.equal('400');
         expect(error.title).to.equal(`Environment with this envId (${wrongId}) could not be found`);
     });
-
-    it('Should give an error when the id can not be found', async () => {
-        updateEnvironmentDto.body.run = 99999;
-        const { error } = await new UpdateEnvironmentUseCase()
-            .execute(updateEnvironmentDto);
-        expect(error.status).to.equal('400');
-    });
 };
