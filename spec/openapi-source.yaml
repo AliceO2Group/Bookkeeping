@@ -69,7 +69,7 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
-       - environment
+        - environment
     post:
       operationId: createEnvironment
       summary: Creation of the environment object.
@@ -85,7 +85,7 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
-       - environment
+        - environment
   /environments/{envId}:
     parameters:
       - $ref: '#/components/parameters/EnvId'
@@ -104,7 +104,7 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
-       - environment
+        - environment
   /flps:
     get:
       operationId: listFlps
@@ -151,8 +151,8 @@ paths:
         - flp
   /flps/{flpName}/runs/{runNumber}:
     parameters:
-     -  $ref: '#/components/parameters/FlpName'
-     -  $ref: '#/components/parameters/RunNumber'
+      - $ref: '#/components/parameters/FlpName'
+      - $ref: '#/components/parameters/RunNumber'
     patch:
       operationId: updateFlp
       summary: Update an existing flp
@@ -344,6 +344,21 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+  /runs/{runId}/logs:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      operationId: getLogs
+      summary: Retreives all the logs of the run
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLogs'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /status:
     get:
       operationId: getDeployInformation
@@ -545,7 +560,7 @@ components:
         $ref: '#/components/schemas/EntityId'
     FlpName:
       name: flpName
-      description: the name of the flp object
+      description: The name of the flp object
       in: path
       required: true
       schema:
@@ -1213,6 +1228,7 @@ components:
     EnvironmentId:
       description: The environment identifier.
       type: string
+      nullable: true
     EnvironmentResponse:
       description: The Environment response object
       type: object
@@ -1665,8 +1681,6 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        activityId:
-          $ref: '#/components/schemas/RunActivityId'
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1674,28 +1688,22 @@ components:
           type: integer
           minimum: 0
           example: 853113599
-        id:
-          $ref: '#/components/schemas/EntityId'
         dcs:
-          description: If dcs is enabled.
-          type: boolean
+          $ref: '#/components/schemas/RunDcs'
         dd_flp:
-          description: If dd_flp is enabled.
-          type: boolean
+          $ref: '#/components/schemas/RunDdFlp'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        environmentId:
+          $ref: '#/components/schemas/RunEnvironmentId'
         epn:
-          description: If epn is enabled
-          type: boolean
+          $ref: '#/components/schemas/RunEpn'
         epnTopology:
-          description: The topology of the epn
-          type: string
+          $ref: '#/components/schemas/RunEpnTopology'
+        id:
+          $ref: '#/components/schemas/EntityId'
         envId:
           $ref: '#/components/schemas/EnvironmentId'
-        environmentId:
-          description: The given id for an environment
-          type: string
-          minimum: 0
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
@@ -1740,13 +1748,18 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunActivityId:
-      description: The unique identifier of this entity.
-      type: string
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
       minimum: 0
+    RunDcs:
+      description: Boolean if dcs is set.
+      type: boolean
+      nullable: true
+    RunDdFlp:
+      description: Boolean if dd_flp is set.
+      type: boolean
+      nullable: true
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
@@ -1754,23 +1767,16 @@ components:
     RunDetectorsList:
       description: A comma seperated string for the detectors used
       type: string
-      enum:
-        - "CPV"
-        - "EMC" 
-        - "FDD"
-        - "FT0"
-        - "FV0"
-        - "HMP"
-        - "ITS"
-        - "MCH"
-        - "MFT"
-        - "MID"
-        - "PHS"
-        - "TOF"
-        - "TPC"
-        - "TRD"
-        - "TST"
-        - "ZDC"
+    RunEnvironmentId:
+      description: The unique identifier of this entity.
+      type: string
+    RunEpn:
+      description: Boolean if epn is set
+      type: boolean
+      nullable: true
+    RunEpnTopology:
+      description: The topology for the epn
+      type: string
     RunEpns:
       description: The amount of Epns nodes in a single run.
       type: integer
@@ -1822,6 +1828,8 @@ components:
       type: object
       properties:
         id:
+          $ref: '#/components/schemas/SortOrder'
+        text:
           $ref: '#/components/schemas/SortOrder'
       additionalProperties: false
     RunSubtimeframes:

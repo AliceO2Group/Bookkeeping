@@ -152,30 +152,10 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 400 if run is not found', (done) => {
-            request(server)
-                .put('/api/environments/KGIS12DS')
-                .send({
-                    run: 9999999999,
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('Run with this id (9999999999) could not be found');
-                    done();
-                });
-        });
         it('should return 201 if valid data is given', (done) => {
             request(server)
                 .put('/api/environments/KGIS12DS')
                 .send({
-                    run: 1,
                     toredownAt: toredownDate,
                     status: 'STOPPED',
                     statusMessage: 'This is a good environment.',
@@ -188,7 +168,6 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.data.runs[0].id).to.equal(1);
                     expect(res.body.data.status).to.equal('STOPPED');
                     expect(res.body.data.toredownAt).to.equal(toredownDate);
                     expect(res.body.data.statusMessage).to.equal('This is a good environment.');
