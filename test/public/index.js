@@ -18,9 +18,11 @@ const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
 const AboutSuite = require('./about');
+const EnvsSuite = require('./envs');
 
 module.exports = () => {
     describe('Logs', LogsSuite);
+    describe('Envs', EnvsSuite);
     describe('Runs', RunsSuite);
     describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);
