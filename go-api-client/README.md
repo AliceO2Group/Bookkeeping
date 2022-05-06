@@ -15,6 +15,8 @@ Class | Method  | Description
 *BookkeepingApi.go* | **createFlp** | Creates a new flp
 *BookkeepingApi.go* | **updateFlp** | Updates an existing flp
 *BookkeepingApi.go* | **createLog** | Creates a new log
+*BookkeepingApi.go* | **createEnvironment** | Creates a new environment
+*BookkeepingApi.go* | **updateEnvironment** | Updates an existing environment
 *BookkeepingApi.go* | **getLogs** | Retrieve last 100 logs
 *BookkeepingApi.go* | **getRuns** | Retrieve last 100 runs
 

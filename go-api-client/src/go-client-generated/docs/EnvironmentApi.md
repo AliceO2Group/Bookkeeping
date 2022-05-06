@@ -4,25 +4,24 @@ All URIs are relative to */api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateRun**](RunApi.md#CreateRun) | **Post** /runs | Creates a run
-[**GetRunById**](RunApi.md#GetRunById) | **Get** /runs/{runId} | Gets a run by Id
-[**ListRuns**](RunApi.md#ListRuns) | **Get** /runs | List all runs
-[**UpdateRun**](RunApi.md#UpdateRun) | **Patch** /runs/{runId} | Updates certain fields of a run
+[**CreateEnvironment**](EnvironmentApi.md#CreateEnvironment) | **Post** /environments | Creation of the environment object.
+[**ListEnvironments**](EnvironmentApi.md#ListEnvironments) | **Get** /environments | Fetches all the environments
+[**ReplaceEnvironment**](EnvironmentApi.md#ReplaceEnvironment) | **Put** /environments/{envId} | Update of the environment object.
 
-# **CreateRun**
-> RunResponse CreateRun(ctx, body)
-Creates a run
+# **CreateEnvironment**
+> EnvironmentResponse CreateEnvironment(ctx, body)
+Creation of the environment object.
 
 ### Required Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **body** | [**Run**](Run.md)|  | 
+  **body** | [**CreateEnvironment**](CreateEnvironment.md)|  | 
 
 ### Return type
 
-[**RunResponse**](RunResponse.md)
+[**EnvironmentResponse**](EnvironmentResponse.md)
 
 ### Authorization
 
@@ -35,42 +34,16 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **GetRunById**
-> RunResponse GetRunById(ctx, runId)
-Gets a run by Id
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **runId** | [**int32**](.md)| The id of the run to retrieve | 
-
-### Return type
-
-[**RunResponse**](RunResponse.md)
-
-### Authorization
-
-[ApiKeyAuth](../README.md#ApiKeyAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ListRuns**
-> ArrayOfRunsResponse ListRuns(ctx, )
-List all runs
+# **ListEnvironments**
+> ArrayOfEnvironmentsResponse ListEnvironments(ctx, )
+Fetches all the environments
 
 ### Required Parameters
 This endpoint does not need any parameter.
 
 ### Return type
 
-[**ArrayOfRunsResponse**](ArrayOfRunsResponse.md)
+[**ArrayOfEnvironmentsResponse**](ArrayOfEnvironmentsResponse.md)
 
 ### Authorization
 
@@ -83,21 +56,21 @@ This endpoint does not need any parameter.
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **UpdateRun**
-> RunResponse UpdateRun(ctx, body, runId)
-Updates certain fields of a run
+# **ReplaceEnvironment**
+> EnvironmentResponse ReplaceEnvironment(ctx, body, envId)
+Update of the environment object.
 
 ### Required Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **body** | [**Run**](Run.md)|  | 
-  **runId** | [**int32**](.md)| The id of the run to retrieve | 
+  **body** | [**UpdateEnvironment**](UpdateEnvironment.md)|  | 
+  **envId** | [**string**](.md)| The id of the environment to receive | 
 
 ### Return type
 
-[**RunResponse**](RunResponse.md)
+[**EnvironmentResponse**](EnvironmentResponse.md)
 
 ### Authorization
 
