@@ -12,6 +12,7 @@
  */
 
 const AttachmentsSuite = require('./attachments.test');
+const EnvironmentsSuite = require('./environments.test');
 const StatusSuite = require('./status.test');
 const LogsSuite = require('./logs.test');
 const SubsystemsSuite = require('./subsystems.test');
@@ -25,4 +26,5 @@ module.exports = () => {
     describe('Tags', TagsSuite);
     describe('Attachments', AttachmentsSuite);
     describe('Runs', RunsSuite);
+    describe('Environments', EnvironmentsSuite);
 };

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.27.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.27.0) 
+* Notable changes for users:
+  * Introduces support for AliECS environments;
+* Notable changes for developers:
+  * Adds new Env SQL Table and migration scripts
+  * Adds a new page to display all environments
+  * `GET /api/environments` && `GET /api/environments/:envId` - Adds API routes to retrieve environments data
+  * `POST /api/environments` && `PUT /api/environments/:envId` - Adds API routes to store environment data
+  * Generates new OpenAPI GO plugin to include environments manipulation methods
+
 ## [0.26.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.1) 
 * Notable changes for users:
   * Improves UX when users would input negative filter values;

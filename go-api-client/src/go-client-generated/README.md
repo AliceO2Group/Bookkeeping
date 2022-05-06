@@ -25,6 +25,9 @@ Class | Method | HTTP request | Description
 *AttachmentApi* | [**GetAttachment**](docs/AttachmentApi.md#getattachment) | **Get** /attachments/{attachmentId} | Get one specific attachment
 *DefaultApi* | [**GetDeployInformation**](docs/DefaultApi.md#getdeployinformation) | **Get** /status | Get deploy information
 *DefaultApi* | [**GetServerInformation**](docs/DefaultApi.md#getserverinformation) | **Get** / | Get server information
+*EnvironmentApi* | [**CreateEnvironment**](docs/EnvironmentApi.md#createenvironment) | **Post** /environments | Creation of the environment object.
+*EnvironmentApi* | [**ListEnvironments**](docs/EnvironmentApi.md#listenvironments) | **Get** /environments | Fetches all the environments
+*EnvironmentApi* | [**ReplaceEnvironment**](docs/EnvironmentApi.md#replaceenvironment) | **Put** /environments/{envId} | Update of the environment object.
 *FlpApi* | [**CreateFlp**](docs/FlpApi.md#createflp) | **Post** /flps | Adds a new flp
 *FlpApi* | [**GetFlpById**](docs/FlpApi.md#getflpbyid) | **Get** /flps/{flpName}/runs/{runNumber} | Gets a flp by Name
 *FlpApi* | [**ListFlps**](docs/FlpApi.md#listflps) | **Get** /flps | List all flps
@@ -37,9 +40,9 @@ Class | Method | HTTP request | Description
 *LogApi* | [**ListLogs**](docs/LogApi.md#listlogs) | **Get** /logs | List all logs
 *LogApi* | [**ListTagsByLogId**](docs/LogApi.md#listtagsbylogid) | **Get** /logs/{logId}/tags | Lists all tags associated with a log
 *RunApi* | [**CreateRun**](docs/RunApi.md#createrun) | **Post** /runs | Creates a run
-*RunApi* | [**EndRun**](docs/RunApi.md#endrun) | **Patch** /runs/{runId} | Updates certain fields of a run
 *RunApi* | [**GetRunById**](docs/RunApi.md#getrunbyid) | **Get** /runs/{runId} | Gets a run by Id
 *RunApi* | [**ListRuns**](docs/RunApi.md#listruns) | **Get** /runs | List all runs
+*RunApi* | [**UpdateRun**](docs/RunApi.md#updaterun) | **Patch** /runs/{runId} | Updates certain fields of a run
 *SubsystemApi* | [**CreateSubsystem**](docs/SubsystemApi.md#createsubsystem) | **Post** /subsystems | Adds a new subsystem
 *SubsystemApi* | [**DeleteSubsystem**](docs/SubsystemApi.md#deletesubsystem) | **Delete** /subsystems/{subsystemId} | Deletes a subsystem by Id
 *SubsystemApi* | [**GetSubsystem**](docs/SubsystemApi.md#getsubsystem) | **Get** /subsystems/{subsystemId} | Get a subsystem by Id
@@ -54,6 +57,8 @@ Class | Method | HTTP request | Description
 
  - [ApiInformation](docs/ApiInformation.md)
  - [ArrayOfAttachmentsResponse](docs/ArrayOfAttachmentsResponse.md)
+ - [ArrayOfEnvironmentsResponse](docs/ArrayOfEnvironmentsResponse.md)
+ - [ArrayOfEnvironmentsResponseMeta](docs/ArrayOfEnvironmentsResponseMeta.md)
  - [ArrayOfFlpsResponse](docs/ArrayOfFlpsResponse.md)
  - [ArrayOfFlpsResponseMeta](docs/ArrayOfFlpsResponseMeta.md)
  - [ArrayOfLogsResponse](docs/ArrayOfLogsResponse.md)
@@ -66,6 +71,7 @@ Class | Method | HTTP request | Description
  - [Attachment](docs/Attachment.md)
  - [AttachmentResponse](docs/AttachmentResponse.md)
  - [CreateAttachments](docs/CreateAttachments.md)
+ - [CreateEnvironment](docs/CreateEnvironment.md)
  - [CreateFlp](docs/CreateFlp.md)
  - [CreateLog](docs/CreateLog.md)
  - [CreateSubsystem](docs/CreateSubsystem.md)
@@ -73,6 +79,8 @@ Class | Method | HTTP request | Description
  - [DeployInformation](docs/DeployInformation.md)
  - [Detectors](docs/Detectors.md)
  - [Entity](docs/Entity.md)
+ - [Environment](docs/Environment.md)
+ - [EnvironmentResponse](docs/EnvironmentResponse.md)
  - [ErrorSource](docs/ErrorSource.md)
  - [Errors](docs/Errors.md)
  - [FilterLogsCreatedOptions](docs/FilterLogsCreatedOptions.md)
@@ -103,6 +111,7 @@ Class | Method | HTTP request | Description
  - [SubsystemResponse](docs/SubsystemResponse.md)
  - [Tag](docs/Tag.md)
  - [TagResponse](docs/TagResponse.md)
+ - [UpdateEnvironment](docs/UpdateEnvironment.md)
  - [UpdateFlp](docs/UpdateFlp.md)
  - [User](docs/User.md)
 

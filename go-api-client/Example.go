@@ -1,16 +1,17 @@
 package main
 
 import (
+	"time"
+
 	apiClient "github.com/AliceO2Group/Bookkeeping/go-api-client/src"
 	sw "github.com/AliceO2Group/Bookkeeping/go-api-client/src/go-client-generated"
-	"time"
 )
 
 func main() {
 	// Set base url and api token
 	baseUrl := "http://localhost:4000/api"
 	apiToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcm5hbWUiOiJhbm9ueW1vdXMiLCJuYW1lIjoiQW5vbnltb3VzIiwiYWNjZXNzIjowLCJpYXQiOjE2MzM2ODQ3MDcsImV4cCI6MTY2NTI0MjMwNywiaXNzIjoibzItdWkifQ.bWbXX5tSgElHCx9bEeRRjGbd2ISckPpCYSwJnOh8mV0"
-	
+
 	// Create an Unix Timestamp to local time.
 	testTime := time.Unix(time.Now().Unix(), 0)
 
@@ -19,8 +20,8 @@ func main() {
 	apiClient.InitializeApi(baseUrl, apiToken)
 
 	// Create a run
-	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 80, sw.COSMICS_RunType, testTime, testTime, false, false, true, "normal", 
-	(sw.CPV_Detectors+ "," +sw.ZDC_Detectors + "," + sw.EMC_Detectors))
+	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 80, sw.COSMICS_RunType, testTime, testTime, false, false, true, "normal",
+		(sw.CPV_Detectors + "," + sw.ZDC_Detectors + "," + sw.EMC_Detectors))
 
 	// Update a run
 	apiClient.UpdateRun(80, sw.BAD_RunQuality, testTime, testTime)
