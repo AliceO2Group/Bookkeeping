@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const EnvironmentSuite = require('./environment');
 const StatusSuite = require('./status');
 const LogSuite = require('./log');
 const RunSuite = require('./run');
@@ -27,4 +28,5 @@ module.exports = () => {
     describe('Server', ServerSuite);
     describe('Subsystem', SubsystemSuite);
     describe('Tag', TagSuite);
+    describe('Environment', EnvironmentSuite);
 };

@@ -100,6 +100,111 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
+  /environments:
+    get:
+      tags:
+      - environment
+      summary: Fetches all the environments
+      operationId: listEnvironments
+      responses:
+        "200":
+          description: Expected response to a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfEnvironmentsResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+    post:
+      tags:
+      - environment
+      summary: Creation of the environment object.
+      operationId: createEnvironment
+      requestBody:
+        $ref: '#/components/requestBodies/CreateEnvironment'
+      responses:
+        "201":
+          description: Expected response to a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+  /environments/{envId}:
+    put:
+      tags:
+      - environment
+      summary: Update of the environment object.
+      operationId: replaceEnvironment
+      parameters:
+      - name: envId
+        in: path
+        description: The id of the environment to receive
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/EnvironmentId'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateEnvironment'
+      responses:
+        "201":
+          description: Expected response to a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
   /flps:
     get:
       tags:
@@ -138,7 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LogResponse'
+                $ref: '#/components/schemas/FlpResponse'
         "400":
           description: Bad Request
           content:
@@ -608,7 +713,7 @@ paths:
       tags:
       - run
       summary: Updates certain fields of a run
-      operationId: endRun
+      operationId: updateRun
       parameters:
       - name: runId
         in: path
@@ -619,7 +724,7 @@ paths:
         schema:
           $ref: '#/components/schemas/EntityId'
       requestBody:
-        $ref: '#/components/requestBodies/EndRun'
+        $ref: '#/components/requestBodies/UpdateRun'
       responses:
         "201":
           description: Expected response to a valid request.
@@ -1015,6 +1120,7 @@ components:
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1024,10 +1130,145 @@ components:
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
           updatedAt: 853113599
+    ArrayOfEnvironments:
+      type: array
+      description: A list of Environment objects.
+      items:
+        $ref: '#/components/schemas/Environment'
+      x-schema-name: ArrayOfEnvironments
+    ArrayOfEnvironmentsResponse:
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfEnvironments'
+        meta:
+          $ref: '#/components/schemas/ArrayOfEnvironmentsResponseMeta'
+      additionalProperties: false
+      description: Response containing multiple environments.
+      example:
+        data:
+        - createdAt: 853113599
+          toredownAt: 2000-01-23T04:56:07.000+00:00
+          id: id
+          runs:
+          - epn: false
+            timeTrgStart: 2000-01-23T04:56:07.000+00:00
+            timeO2End: 2000-01-23T04:56:07.000+00:00
+            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            runType: physics
+            detectors: CPV
+            bytesReadOut: 0
+            nSubtimeframes: 2
+            createdAt: 853113599
+            nEpns: 5
+            runQuality: good
+            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            environmentId: environmentId
+            dcs: false
+            epnTopology: normal
+            nDetectors: 1
+            nFlps: 5
+            dd_flp: false
+            runNumber: 7
+            id: 1
+            updatedAt: 853113599
+          - epn: false
+            timeTrgStart: 2000-01-23T04:56:07.000+00:00
+            timeO2End: 2000-01-23T04:56:07.000+00:00
+            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            runType: physics
+            detectors: CPV
+            bytesReadOut: 0
+            nSubtimeframes: 2
+            createdAt: 853113599
+            nEpns: 5
+            runQuality: good
+            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            environmentId: environmentId
+            dcs: false
+            epnTopology: normal
+            nDetectors: 1
+            nFlps: 5
+            dd_flp: false
+            runNumber: 7
+            id: 1
+            updatedAt: 853113599
+          statusMessage: statusMessage
+          updatedAt: 853113599
+          status: status
+        - createdAt: 853113599
+          toredownAt: 2000-01-23T04:56:07.000+00:00
+          id: id
+          runs:
+          - epn: false
+            timeTrgStart: 2000-01-23T04:56:07.000+00:00
+            timeO2End: 2000-01-23T04:56:07.000+00:00
+            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            runType: physics
+            detectors: CPV
+            bytesReadOut: 0
+            nSubtimeframes: 2
+            createdAt: 853113599
+            nEpns: 5
+            runQuality: good
+            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            environmentId: environmentId
+            dcs: false
+            epnTopology: normal
+            nDetectors: 1
+            nFlps: 5
+            dd_flp: false
+            runNumber: 7
+            id: 1
+            updatedAt: 853113599
+          - epn: false
+            timeTrgStart: 2000-01-23T04:56:07.000+00:00
+            timeO2End: 2000-01-23T04:56:07.000+00:00
+            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            runType: physics
+            detectors: CPV
+            bytesReadOut: 0
+            nSubtimeframes: 2
+            createdAt: 853113599
+            nEpns: 5
+            runQuality: good
+            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            environmentId: environmentId
+            dcs: false
+            epnTopology: normal
+            nDetectors: 1
+            nFlps: 5
+            dd_flp: false
+            runNumber: 7
+            id: 1
+            updatedAt: 853113599
+          statusMessage: statusMessage
+          updatedAt: 853113599
+          status: status
+        meta:
+          page:
+            pageCount: 9
+            totalCount: 3
+    ArrayOfEnvironmentsResponseMeta:
+      required:
+      - page
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      additionalProperties: false
+      description: The metadata related to an array of Environments response.
+      example:
+        page:
+          pageCount: 9
+          totalCount: 3
     ArrayOfFlps:
       type: array
       description: A list of Flp objects.
@@ -1069,8 +1310,8 @@ components:
           updatedAt: 853113599
         meta:
           page:
-            pageCount: 7
-            totalCount: 9
+            pageCount: 9
+            totalCount: 3
     ArrayOfFlpsResponseMeta:
       required:
       - page
@@ -1082,8 +1323,8 @@ components:
       description: The metadata related to an array of flps response.
       example:
         page:
-          pageCount: 7
-          totalCount: 9
+          pageCount: 9
+          totalCount: 3
     ArrayOfLogTrees:
       type: array
       description: A list of Log tree objects.
@@ -1109,12 +1350,14 @@ components:
       description: Response containing multiple logs.
       example:
         data:
-        - attachments:
+        - parentLogId: null
+          attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1124,6 +1367,7 @@ components:
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1137,32 +1381,47 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           createdAt: 853113599
           replies: 5
           subtype: run
+          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
+            id: null
           - runNumber: 5
+            id: null
           updatedAt: 853113599
-        - attachments:
+        - parentLogId: null
+          attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1172,6 +1431,7 @@ components:
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1185,30 +1445,43 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           createdAt: 853113599
           replies: 5
           subtype: run
+          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
+            id: null
           - runNumber: 5
+            id: null
           updatedAt: 853113599
         meta:
           page:
-            pageCount: 7
-            totalCount: 9
+            pageCount: 9
+            totalCount: 3
     ArrayOfLogsResponseMeta:
       required:
       - page
@@ -1220,8 +1493,8 @@ components:
       description: The metadata related to an array of logs response.
       example:
         page:
-          pageCount: 7
-          totalCount: 9
+          pageCount: 9
+          totalCount: 3
     RunNumbers:
       type: string
       description: A serialized string of run numbers
@@ -1246,9 +1519,9 @@ components:
       example:
         data:
         - epn: false
-          timeTrgStart: {}
-          timeO2End: {}
-          timeTrgEnd: {}
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1256,7 +1529,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: {}
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1267,9 +1540,9 @@ components:
           id: 1
           updatedAt: 853113599
         - epn: false
-          timeTrgStart: {}
-          timeO2End: {}
-          timeTrgEnd: {}
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1277,7 +1550,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: {}
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1289,8 +1562,8 @@ components:
           updatedAt: 853113599
         meta:
           page:
-            pageCount: 7
-            totalCount: 9
+            pageCount: 9
+            totalCount: 3
     ArrayOfRunsResponseMeta:
       required:
       - page
@@ -1302,8 +1575,8 @@ components:
       description: The metadata related to an array of runs response.
       example:
         page:
-          pageCount: 7
-          totalCount: 9
+          pageCount: 9
+          totalCount: 3
     ArrayOfSubsystems:
       type: array
       description: A list of Subsystem objects.
@@ -1325,14 +1598,16 @@ components:
         data:
         - createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
         - createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
         meta:
           page:
-            pageCount: 7
-            totalCount: 9
+            pageCount: 9
+            totalCount: 3
     ArrayOfSubsystemsResponseMeta:
       required:
       - page
@@ -1344,8 +1619,8 @@ components:
       description: The metadata related to an array of subsystems response.
       example:
         page:
-          pageCount: 7
-          totalCount: 9
+          pageCount: 9
+          totalCount: 3
     ArrayOfTags:
       type: array
       description: A list of Tag objects.
@@ -1364,10 +1639,18 @@ components:
       example:
         data:
         - createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
         - createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
     Attachment:
       required:
@@ -1408,6 +1691,7 @@ components:
         path: path
         fileName: fileName
         size: 6
+        logId: null
         id: 1
         mimeType: mimeType
         encoding: encoding
@@ -1428,6 +1712,7 @@ components:
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1444,6 +1729,21 @@ components:
           $ref: '#/components/schemas/ArrayOfAttachments'
       additionalProperties: false
       description: Describes an attachment
+    CreateEnvironment:
+      required:
+      - envId
+      type: object
+      properties:
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
+        createdAt:
+          $ref: '#/components/schemas/EnvironmentAt'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+      additionalProperties: false
+      description: Describes an environment
     CreateFlp:
       required:
       - hostname
@@ -1514,7 +1814,7 @@ components:
       description: Deploy information
       example:
         start: 853113599
-        age: 0.8008281904610115
+        age: 0.80082819046101150206595775671303272247314453125
     Entity:
       required:
       - id
@@ -1538,6 +1838,173 @@ components:
       type: integer
       description: The unique identifier of this entity.
       format: int32
+    Environment:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EnvironmentId'
+        createdAt:
+          minimum: 0
+          type: integer
+          description: Unix timestamp when this entity was created.
+          example: 853113599
+        updatedAt:
+          minimum: 0
+          type: integer
+          description: Unix timestamp when this entity was last updated.
+          example: 853113599
+        toredownAt:
+          type: string
+          description: Unix timestamp when this entity was tore down.
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          description: The status of the environment.
+          nullable: true
+        statusMessage:
+          type: string
+          description: A message explaining the status or the current state of the
+            environment.
+          nullable: true
+        runs:
+          type: array
+          description: Array of minified Run objects.
+          items:
+            $ref: '#/components/schemas/Run'
+      additionalProperties: false
+      description: The Environment object.
+      example:
+        createdAt: 853113599
+        toredownAt: 2000-01-23T04:56:07.000+00:00
+        id: id
+        runs:
+        - epn: false
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          runType: physics
+          detectors: CPV
+          bytesReadOut: 0
+          nSubtimeframes: 2
+          createdAt: 853113599
+          nEpns: 5
+          runQuality: good
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
+          dcs: false
+          epnTopology: normal
+          nDetectors: 1
+          nFlps: 5
+          dd_flp: false
+          runNumber: 7
+          id: 1
+          updatedAt: 853113599
+        - epn: false
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          runType: physics
+          detectors: CPV
+          bytesReadOut: 0
+          nSubtimeframes: 2
+          createdAt: 853113599
+          nEpns: 5
+          runQuality: good
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          environmentId: environmentId
+          dcs: false
+          epnTopology: normal
+          nDetectors: 1
+          nFlps: 5
+          dd_flp: false
+          runNumber: 7
+          id: 1
+          updatedAt: 853113599
+        statusMessage: statusMessage
+        updatedAt: 853113599
+        status: status
+    EnvironmentAt:
+      type: string
+      description: The earliest allowed unix timestamp for the fetched data.
+      format: date-time
+    EnvironmentId:
+      type: string
+      description: The environment identifier.
+    EnvironmentResponse:
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Environment'
+      additionalProperties: false
+      description: The Environment response object
+      example:
+        data:
+          createdAt: 853113599
+          toredownAt: 2000-01-23T04:56:07.000+00:00
+          id: id
+          runs:
+          - epn: false
+            timeTrgStart: 2000-01-23T04:56:07.000+00:00
+            timeO2End: 2000-01-23T04:56:07.000+00:00
+            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            runType: physics
+            detectors: CPV
+            bytesReadOut: 0
+            nSubtimeframes: 2
+            createdAt: 853113599
+            nEpns: 5
+            runQuality: good
+            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            environmentId: environmentId
+            dcs: false
+            epnTopology: normal
+            nDetectors: 1
+            nFlps: 5
+            dd_flp: false
+            runNumber: 7
+            id: 1
+            updatedAt: 853113599
+          - epn: false
+            timeTrgStart: 2000-01-23T04:56:07.000+00:00
+            timeO2End: 2000-01-23T04:56:07.000+00:00
+            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            runType: physics
+            detectors: CPV
+            bytesReadOut: 0
+            nSubtimeframes: 2
+            createdAt: 853113599
+            nEpns: 5
+            runQuality: good
+            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            environmentId: environmentId
+            dcs: false
+            epnTopology: normal
+            nDetectors: 1
+            nFlps: 5
+            dd_flp: false
+            runNumber: 7
+            id: 1
+            updatedAt: 853113599
+          statusMessage: statusMessage
+          updatedAt: 853113599
+          status: status
+    EnvironmentRun:
+      minimum: 0
+      type: integer
+      description: Run that needs to be added.
+    EnvironmentStatus:
+      type: string
+      description: Current environment status
+      nullable: true
+    EnvironmentStatusMessage:
+      type: string
+      description: Message about the current status.
+      nullable: true
     Error:
       required:
       - status
@@ -1812,12 +2279,14 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
+        parentLogId: null
         attachments:
         - originalName: originalName
           createdAt: 853113599
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1827,6 +2296,7 @@ components:
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -1840,25 +2310,38 @@ components:
         subsystems:
         - createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
         - createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
         tags:
         - createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
         - createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
         createdAt: 853113599
         replies: 5
         subtype: run
+        rootLogId: null
         id: 1
         text: text
         runs:
         - runNumber: 5
+          id: null
         - runNumber: 5
+          id: null
         updatedAt: 853113599
     LogOrigin:
       type: string
@@ -1881,12 +2364,14 @@ components:
       description: Response containing a single log.
       example:
         data:
+          parentLogId: null
           attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1896,6 +2381,7 @@ components:
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -1909,25 +2395,38 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           createdAt: 853113599
           replies: 5
           subtype: run
+          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
+            id: null
           - runNumber: 5
+            id: null
           updatedAt: 853113599
     LogSortOptions:
       type: object
@@ -2019,12 +2518,14 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
+        parentLogId: null
         attachments:
         - originalName: originalName
           createdAt: 853113599
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -2034,6 +2535,7 @@ components:
           path: path
           fileName: fileName
           size: 6
+          logId: null
           id: 1
           mimeType: mimeType
           encoding: encoding
@@ -2047,16 +2549,26 @@ components:
         subsystems:
         - createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
         - createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
         tags:
         - createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
         - createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
         createdAt: 853113599
         replies: 6
@@ -2064,11 +2576,14 @@ components:
         - null
         - null
         subtype: run
+        rootLogId: null
         id: 1
         text: text
         runs:
         - runNumber: 5
+          id: null
         - runNumber: 5
+          id: null
         updatedAt: 853113599
     LogTreeResponse:
       required:
@@ -2081,12 +2596,14 @@ components:
       description: Response containing a single log tree.
       example:
         data:
+          parentLogId: null
           attachments:
           - originalName: originalName
             createdAt: 853113599
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -2096,6 +2613,7 @@ components:
             path: path
             fileName: fileName
             size: 6
+            logId: null
             id: 1
             mimeType: mimeType
             encoding: encoding
@@ -2109,16 +2627,26 @@ components:
           subsystems:
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           - createdAt: 853113599
             name: name
+            id: null
             updatedAt: 853113599
           tags:
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           - createdAt: 853113599
+            lastEditedName: lastEditedName
+            mattermost: mattermost
+            id: null
             text: text
+            email: email
             updatedAt: 853113599
           createdAt: 853113599
           replies: 6
@@ -2126,11 +2654,14 @@ components:
           - null
           - null
           subtype: run
+          rootLogId: null
           id: 1
           text: text
           runs:
           - runNumber: 5
+            id: null
           - runNumber: 5
+            id: null
           updatedAt: 853113599
     PaginationLimit:
       maximum: 100
@@ -2155,8 +2686,8 @@ components:
       additionalProperties: false
       description: The metadata related to pagination.
       example:
-        pageCount: 7
-        totalCount: 9
+        pageCount: 9
+        totalCount: 3
     PaginationOffset:
       type: integer
       description: The number of items to skip before starting to collect the result
@@ -2227,9 +2758,9 @@ components:
       description: Describes an intervention or an event that happened.
       example:
         epn: false
-        timeTrgStart: {}
-        timeO2End: {}
-        timeTrgEnd: {}
+        timeTrgStart: 2000-01-23T04:56:07.000+00:00
+        timeO2End: 2000-01-23T04:56:07.000+00:00
+        timeTrgEnd: 2000-01-23T04:56:07.000+00:00
         runType: physics
         detectors: CPV
         bytesReadOut: 0
@@ -2237,7 +2768,7 @@ components:
         createdAt: 853113599
         nEpns: 5
         runQuality: good
-        timeO2Start: {}
+        timeO2Start: 2000-01-23T04:56:07.000+00:00
         environmentId: environmentId
         dcs: false
         epnTopology: normal
@@ -2303,9 +2834,9 @@ components:
       example:
         data:
           epn: false
-          timeTrgStart: {}
-          timeO2End: {}
-          timeTrgEnd: {}
+          timeTrgStart: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 2000-01-23T04:56:07.000+00:00
+          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -2313,7 +2844,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: {}
+          timeO2Start: 2000-01-23T04:56:07.000+00:00
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -2417,6 +2948,7 @@ components:
       example:
         createdAt: 853113599
         name: name
+        id: null
         updatedAt: 853113599
     SubsystemResponse:
       required:
@@ -2431,6 +2963,7 @@ components:
         data:
           createdAt: 853113599
           name: name
+          id: null
           updatedAt: 853113599
     Tag:
       required:
@@ -2448,16 +2981,32 @@ components:
         text:
           type: string
           description: The label value of the tag.
+        email:
+          type: string
+          description: The email for the tag.
+          nullable: true
+        mattermost:
+          type: string
+          description: All the mattermost tags for updates
+          nullable: true
         updatedAt:
           type: integer
           description: Unix timestamp when this entity was last updated.
           format: int32
           example: 853113599
+        lastEditedName:
+          type: string
+          description: The last person that edited the email/mattermost fields
+          nullable: true
       additionalProperties: false
       description: A label attached to something for the purpose of identification.
       example:
         createdAt: 853113599
+        lastEditedName: lastEditedName
+        mattermost: mattermost
+        id: null
         text: text
+        email: email
         updatedAt: 853113599
     TagResponse:
       required:
@@ -2471,8 +3020,25 @@ components:
       example:
         data:
           createdAt: 853113599
+          lastEditedName: lastEditedName
+          mattermost: mattermost
+          id: null
           text: text
+          email: email
           updatedAt: 853113599
+    UpdateEnvironment:
+      type: object
+      properties:
+        toredownAt:
+          $ref: '#/components/schemas/EnvironmentAt'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+        run:
+          $ref: '#/components/schemas/EnvironmentRun'
+      additionalProperties: false
+      description: Describes an update to an environment
     UpdateFlp:
       type: object
       properties:
@@ -2526,6 +3092,7 @@ components:
       description: Minified Run object.
       example:
         runNumber: 5
+        id: null
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -2533,6 +3100,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfEnvironments:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfEnvironmentsResponse'
     ArrayOfFlps:
       description: Expected response to a valid request.
       content:
@@ -2581,12 +3154,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Environment:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EnvironmentResponse'
     Flp:
       description: Expected response to a valid request.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/FlpResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
     Log:
       description: Expected response to a valid request.
       content:
@@ -2645,6 +3230,15 @@ components:
       explode: false
       schema:
         $ref: '#/components/schemas/EntityId'
+    EnvId:
+      name: envId
+      in: path
+      description: The id of the environment to receive
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/EnvironmentId'
     FilterLogs:
       name: filter
       in: query
@@ -2745,13 +3339,19 @@ components:
       schema:
         $ref: '#/components/schemas/EntityId'
   requestBodies:
+    CreateEnvironment:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateEnvironment'
+      required: true
     CreateRun:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Run'
       required: true
-    EndRun:
+    UpdateRun:
       content:
         application/json:
           schema:
@@ -2786,6 +3386,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateTag'
+      required: true
+    UpdateEnvironment:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateEnvironment'
       required: true
     UpdateFlp:
       content:

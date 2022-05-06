@@ -10,7 +10,7 @@ Method | HTTP request | Description
 [**UpdateFlp**](FlpApi.md#UpdateFlp) | **Patch** /flps/{flpName}/runs/{runNumber} | Update an existing flp
 
 # **CreateFlp**
-> LogResponse CreateFlp(ctx, body)
+> FlpResponse CreateFlp(ctx, body)
 Adds a new flp
 
 ### Required Parameters
@@ -22,7 +22,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**LogResponse**](LogResponse.md)
+[**FlpResponse**](FlpResponse.md)
 
 ### Authorization
 
