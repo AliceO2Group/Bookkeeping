@@ -10,6 +10,8 @@ For simplicity, the following info is not described in this document:
 ## Further explanations of fields tables
 
 Concerning the **Update time** of the fields:
+- At COE: synchronously at Environment creation
+- At EOE: synchronously at End of environment
 - At SOR: synchronously at Start of Run 
 - At EOR: synchronously at End of Run 
 - During Run: periodically during the run, normally to update/overwrite counters
@@ -115,4 +117,15 @@ Concerning the **Update mode** of the fields:
 | `last_edited_name`        | Name of the person who last edited the email/mattermost fields | `Anonymous`, `Jan Janssen` | When email/mattermost is edited | `id`| Update |
 
 
+### Environments
 
+**Description:** The overall environment the runs are performed in.    
+**DB main table**: `envronments`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | Environment id | `Dxi029djX`, `EIDO13i3D`  | AT COE| `id` | Insert |
+| `createdAt`                   | When the environment is created | | AT COE | `id`| Insert |
+| `toredownAt`                  | When the environment is stopped | | AT EOE | `id`| Update |
+| `status`                      | Actual status of the envrionment | `STOPPED`, `STARTED`|  | `id`| Update |
+| `statusMessage`               | A bigger message to show more detail about the status | `Environment sucessfully closed`, `Error creating envrionment: bad configuration` | | `id`| Update |
