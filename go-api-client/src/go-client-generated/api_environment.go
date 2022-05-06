@@ -23,24 +23,24 @@ var (
 	_ context.Context
 )
 
-type FlpApiService service
+type EnvironmentApiService service
 /*
-FlpApiService Adds a new flp
+EnvironmentApiService Creation of the environment object.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
-@return FlpResponse
+@return EnvironmentResponse
 */
-func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (FlpResponse, *http.Response, error) {
+func (a *EnvironmentApiService) CreateEnvironment(ctx context.Context, body CreateEnvironment) (EnvironmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue FlpResponse
+		localVarReturnValue EnvironmentResponse
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/flps"
+	localVarPath := a.client.cfg.BasePath + "/environments"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -108,7 +108,7 @@ func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (FlpRespo
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 201 {
-			var v FlpResponse
+			var v EnvironmentResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()
@@ -118,6 +118,16 @@ func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (FlpRespo
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 400 {
+			var v Errors
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 409 {
 			var v Errors
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
@@ -143,25 +153,21 @@ func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (FlpRespo
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 /*
-FlpApiService Gets a flp by Name
+EnvironmentApiService Fetches all the environments
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param flpName The id of the flp to retrieve
- * @param runNumber The id of the runNumber to retrieve
-@return FlpResponse
+@return ArrayOfEnvironmentsResponse
 */
-func (a *FlpApiService) GetFlpById(ctx context.Context, flpName string, runNumber int32) (FlpResponse, *http.Response, error) {
+func (a *EnvironmentApiService) ListEnvironments(ctx context.Context) (ArrayOfEnvironmentsResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue FlpResponse
+		localVarReturnValue ArrayOfEnvironmentsResponse
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/flps/{flpName}/runs/{runNumber}"
-	localVarPath = strings.Replace(localVarPath, "{"+"flpName"+"}", fmt.Sprintf("%v", flpName), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"runNumber"+"}", fmt.Sprintf("%v", runNumber), -1)
+	localVarPath := a.client.cfg.BasePath + "/environments"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -227,7 +233,7 @@ func (a *FlpApiService) GetFlpById(ctx context.Context, flpName string, runNumbe
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
-			var v FlpResponse
+			var v ArrayOfEnvironmentsResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()
@@ -246,7 +252,7 @@ func (a *FlpApiService) GetFlpById(ctx context.Context, flpName string, runNumbe
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 404 {
+		if localVarHttpResponse.StatusCode == 403 {
 			var v Errors
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
@@ -272,141 +278,24 @@ func (a *FlpApiService) GetFlpById(ctx context.Context, flpName string, runNumbe
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 /*
-FlpApiService List all flps
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-@return ArrayOfFlpsResponse
-*/
-func (a *FlpApiService) ListFlps(ctx context.Context) (ArrayOfFlpsResponse, *http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-		localVarReturnValue ArrayOfFlpsResponse
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/flps"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			
-			localVarQueryParams.Add("token", key)
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body: localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v ArrayOfFlpsResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v Errors
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v Errors
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-/*
-FlpApiService Update an existing flp
+EnvironmentApiService Update of the environment object.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param flpName The id of the flp to retrieve
- * @param runNumber The id of the runNumber to retrieve
-@return FlpResponse
+ * @param envId The id of the environment to receive
+@return EnvironmentResponse
 */
-func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpName string, runNumber int32) (FlpResponse, *http.Response, error) {
+func (a *EnvironmentApiService) ReplaceEnvironment(ctx context.Context, body UpdateEnvironment, envId string) (EnvironmentResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Patch")
+		localVarHttpMethod = strings.ToUpper("Put")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue FlpResponse
+		localVarReturnValue EnvironmentResponse
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/flps/{flpName}/runs/{runNumber}"
-	localVarPath = strings.Replace(localVarPath, "{"+"flpName"+"}", fmt.Sprintf("%v", flpName), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"runNumber"+"}", fmt.Sprintf("%v", runNumber), -1)
+	localVarPath := a.client.cfg.BasePath + "/environments/{envId}"
+	localVarPath = strings.Replace(localVarPath, "{"+"envId"+"}", fmt.Sprintf("%v", envId), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -473,8 +362,8 @@ func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpName s
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v FlpResponse
+		if localVarHttpResponse.StatusCode == 201 {
+			var v EnvironmentResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()
@@ -493,7 +382,7 @@ func (a *FlpApiService) UpdateFlp(ctx context.Context, body UpdateFlp, flpName s
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 404 {
+		if localVarHttpResponse.StatusCode == 409 {
 			var v Errors
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
