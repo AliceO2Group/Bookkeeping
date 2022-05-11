@@ -30,6 +30,8 @@ module.exports = () => {
                 runType: 'technical',
                 runQuality: 'good',
                 nDetectors: 3,
+                bytesReadOut: 1024,
+                nSubtimeframes: 10,
                 nFlps: 10,
                 nEpns: 10,
                 dd_flp: true,
