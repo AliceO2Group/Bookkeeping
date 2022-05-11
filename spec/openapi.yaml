@@ -1,4 +1,4 @@
-# Generated on Tue, 10 May 2022 13:37:34 GMT
+# Generated on Wed, 11 May 2022 19:52:48 GMT
 
 openapi: 3.0.0
 info:
@@ -314,10 +314,10 @@ paths:
       tags:
         - run
     patch:
+      summary: Updates a run by runNumber
+      operationId: updateRunByRunNumber
       parameters:
         - $ref: '#/components/parameters/RunNumberQuery'
-      operationId: updateRunByRunNumber
-      summary: Updates a run by runNumber
       requestBody:
         $ref: '#/components/requestBodies/UpdateRunByRunNumber'
       responses:
@@ -750,18 +750,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunByRunNumber'
-    UpdateRunTags:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UpdateRunTags'
     UpdateRunQuality:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunQuality'
+    UpdateRunTags:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -2075,6 +2075,12 @@ components:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
+    UpdateRunQuality:
+      description: Updates the run quality values
+      properties:
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+      additionalProperties: false
     UpdateRunTags:
       description: List of labels attached to something for the purpose of identification.
       type: object
@@ -2085,12 +2091,6 @@ components:
           items:
             type: number
             description: Tag ID
-      additionalProperties: false
-    UpdateRunQuality:
-      description: Updates the run quality values
-      properties:
-        runQuality:
-          $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.

@@ -312,10 +312,10 @@ paths:
       tags:
         - run
     patch:
+      summary: Updates a run by runNumber
+      operationId: updateRunByRunNumber
       parameters:
         - $ref: '#/components/parameters/RunNumberQuery'
-      operationId: updateRunByRunNumber
-      summary: Updates a run by runNumber
       requestBody:
         $ref: '#/components/requestBodies/UpdateRunByRunNumber'
       responses:
@@ -748,18 +748,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunByRunNumber'
-    UpdateRunTags:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UpdateRunTags'
     UpdateRunQuality:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunQuality'
+    UpdateRunTags:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -2073,6 +2073,12 @@ components:
           type: number
           nullable: true
       additionalProperties: false
+    UpdateRunQuality:
+      description: Updates the run quality values
+      properties:
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+      additionalProperties: false
     UpdateRunTags:
       description: List of labels attached to something for the purpose of identification.
       type: object
@@ -2083,12 +2089,6 @@ components:
           items:
             type: number
             description: Tag ID
-      additionalProperties: false
-    UpdateRunQuality:
-      description: Updates the run quality values
-      properties:
-        runQuality:
-          $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
