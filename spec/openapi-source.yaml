@@ -312,8 +312,8 @@ paths:
       tags:
         - run
     patch:
-      summary: Updates a run by runNumber
       operationId: updateRunByRunNumber
+      summary: Updates a run by runNumber
       parameters:
         - $ref: '#/components/parameters/RunNumberQuery'
       requestBody:

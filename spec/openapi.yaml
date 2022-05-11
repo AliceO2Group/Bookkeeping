@@ -1,4 +1,4 @@
-# Generated on Wed, 11 May 2022 19:52:48 GMT
+# Generated on Wed, 11 May 2022 20:35:29 GMT
 
 openapi: 3.0.0
 info:
@@ -314,8 +314,8 @@ paths:
       tags:
         - run
     patch:
-      summary: Updates a run by runNumber
       operationId: updateRunByRunNumber
+      summary: Updates a run by runNumber
       parameters:
         - $ref: '#/components/parameters/RunNumberQuery'
       requestBody:
