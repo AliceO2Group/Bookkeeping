@@ -1849,6 +1849,7 @@ components:
     RunDetectorsList:
       description: A comma seperated string for the detectors used
       type: string
+      nullable: true
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string

@@ -15,10 +15,12 @@ const EndRunUseCase = require('./EndRunUseCase.test');
 const GetAllRunsUseCase = require('./GetAllRunsUseCase.test');
 const GetRunUseCase = require('./GetRunUseCase.test');
 const UpdateRunUseCase = require('./UpdateRunUseCase.test');
+const StartRunUseCase = require('./StartRunUseCase.test');
 
 module.exports = () => {
     describe('GetAllRunsUseCase', GetAllRunsUseCase);
     describe('GetRunUseCase', GetRunUseCase);
     describe('UpdateRunUseCase', UpdateRunUseCase);
     describe('EndRunUseCase', EndRunUseCase);
+    describe('StartRunUseCase', StartRunUseCase);
 };
