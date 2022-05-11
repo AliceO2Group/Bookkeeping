@@ -1,4 +1,4 @@
-# Generated on Wed, 04 May 2022 12:05:07 GMT
+# Generated on Wed, 11 May 2022 13:45:41 GMT
 
 openapi: 3.0.0
 info:
@@ -1769,6 +1769,7 @@ components:
     RunDetectorsList:
       description: A comma seperated string for the detectors used
       type: string
+      nullable: true
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
