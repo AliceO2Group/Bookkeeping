@@ -1,4 +1,4 @@
-# Generated on Wed, 04 May 2022 12:05:07 GMT
+# Generated on Tue, 10 May 2022 13:37:34 GMT
 
 openapi: 3.0.0
 info:
@@ -313,6 +313,24 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+    patch:
+      parameters:
+        - $ref: '#/components/parameters/RunNumberQuery'
+      operationId: updateRunByRunNumber
+      summary: Updates a run by runNumber
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunByRunNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /runs/{runId}:
     parameters:
       - $ref: '#/components/parameters/RunId'
@@ -346,6 +364,22 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+    put:
+      operationId: replaceRun
+      summary: updates the run quality of a run
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunQuality'
+      responses:
+        '201':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /runs/{runId}/logs:
     parameters:
       - $ref: '#/components/parameters/RunId'
@@ -361,6 +395,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /status:
     get:
       operationId: getDeployInformation
@@ -611,6 +647,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/RunNumber'
+    RunNumberQuery:
+      name: runNumber
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
+      description: Run number but in the query
     RunSorting:
       in: query
       name: sort
@@ -701,12 +744,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateFlp'
+    UpdateRunByRunNumber:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunByRunNumber'
     UpdateRunTags:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunTags'
+    UpdateRunQuality:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunQuality'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -1683,6 +1738,14 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1706,6 +1769,23 @@ components:
           $ref: '#/components/schemas/RunEpnTopology'
         id:
           $ref: '#/components/schemas/EntityId'
+        lhcBeamEnergy:
+          description: Energy of the beam (GeV)
+          type: number
+          nullable: true
+        lhcBeamMode:
+          description: LHC Beam Mode (STABLE BEAMS,INJECTION PROBE BEAM, ...)
+          type: string
+          nullable: true
+        lhcBetaStar:
+          description: LHC Beta * in meters
+          type: number
+          nullable: true
+        lhcFillId:
+          description: Id of a lhcFill object
+          type: integer
+          minimum: 1
+          nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
@@ -1968,6 +2048,33 @@ components:
         nTimeframes:
           $ref: '#/components/schemas/FlpTimeframes'
       additionalProperties: false
+    UpdateRunByRunNumber:
+      description: Updates Run by runNumber
+      type: object
+      properties:
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
+        lhcBeamEnergy:
+          description: Energy of the beam (GeV)
+          type: number
+          nullable: true
+        lhcBeamMode:
+          description: LHC Beam Mode (STABLE BEAMS,INJECTION PROBE BEAM, ...)
+          type: string
+          nullable: true
+        lhcBetaStar:
+          description: LHC Beta * in meters
+          type: number
+          nullable: true
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+      additionalProperties: false
     UpdateRunTags:
       description: List of labels attached to something for the purpose of identification.
       type: object
@@ -1978,6 +2085,12 @@ components:
           items:
             type: number
             description: Tag ID
+      additionalProperties: false
+    UpdateRunQuality:
+      description: Updates the run quality values
+      properties:
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.
