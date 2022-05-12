@@ -397,4 +397,70 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('POST /api/runs', () => {
+        it('should successfully return the stored run entity', (done) => {
+            request(server)
+                .post('/api/runs')
+                .expect(201)
+                .send({
+                    runNumber: 109,
+                    timeO2Start: '2022-03-21 13:00:00',
+                    timeTrgStart: '2022-03-21 13:00:00',
+                    environmentId: '1234567890',
+                    runType: 'technical',
+                    runQuality: 'good',
+                    nDetectors: 3,
+                    nFlps: 10,
+                    nEpns: 10,
+                    dd_flp: true,
+                    dcs: true,
+                    epn: true,
+                    epnTopology: 'normal',
+                    detectors: 'CPV',
+                })
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    expect(res.body.data).to.be.an('object');
+                    expect(res.body.data.id).to.equal(109);
+
+                    done();
+                });
+        });
+        it('should return an error due to invalid detectors list', (done) => {
+            request(server)
+                .post('/api/runs')
+                .expect(400)
+                .send({
+                    runNumber: 109,
+                    timeO2Start: '2022-03-21 13:00:00',
+                    timeTrgStart: '2022-03-21 13:00:00',
+                    environmentId: '1234567890',
+                    runType: 'technical',
+                    runQuality: 'good',
+                    nDetectors: 3,
+                    nFlps: 10,
+                    nEpns: 10,
+                    dd_flp: true,
+                    dcs: true,
+                    epn: true,
+                    epnTopology: 'normal',
+                    detectors: 'CPV,UNKNOWN',
+                })
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    expect(res.body.errors).to.be.an('array');
+                    // eslint-disable-next-line max-len
+                    expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not defined, your custom type is missing the correct messages definition');
+
+                    done();
+                });
+        });
+    });
 };
