@@ -32,7 +32,7 @@ $ npx sequelize-cli --help
 
 ### Generates a new migration file
 ```sh
-$ npx sequelize-cli migration:generate --name <MIGRATION NAME>
+$ npx sequelize-cli migration:generate --name <MIGRATION_FILE_NAME>
 ```
 
 ### Run pending migrations
@@ -42,7 +42,7 @@ $ npx sequelize-cli db:migrate
 
 ### Generates a new seed file
 ```sh
-$ npx sequelize-cli seed:generate --name <MIGRATION NAME>
+$ npx sequelize-cli seed:generate --name <SEEDER_FILE_NAME>
 ```
 
 ### Run every seeder

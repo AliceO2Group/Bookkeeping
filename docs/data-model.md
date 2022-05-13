@@ -129,3 +129,17 @@ Concerning the **Update mode** of the fields:
 | `toredownAt`                  | When the environment is stopped | | AT EOE | `id`| Update |
 | `status`                      | Actual status of the envrionment | `STOPPED`, `STARTED`|  | `id`| Update |
 | `statusMessage`               | A bigger message to show more detail about the status | `Environment sucessfully closed`, `Error creating envrionment: bad configuration` | | `id`| Update |
+
+### End of run reasons
+
+**Description:** Reasons for which runs have ended
+**DB main table**: `eor_reasons`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | Auto-Incremented id for eor reason | `1`  | AT COE| `id` | Insert |
+| `category`                    | Category represented by a String | `Data Sanity and Quality`  | AT COE| `category` | Insert |
+| `title`                    | Title represented by a String | `Incomplete TF`  | AT COE| `title` | Insert |
+| `last_edited_name`        | Name of the person who last edited the fields | `Anonymous`, `Jan Janssen` | When fields are edited | `id`| Update |
+| `created_at`                   | When the entity is created | | AT COE | `id`| Insert |
+| `updated_at`        | When entity is edited |  | When fields are edited | `id`| Update |
