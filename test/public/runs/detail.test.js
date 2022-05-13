@@ -36,42 +36,38 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
-    it('run detail loads correctly', async () => {
+    it('should successfully load run-details correctly for run with id 1', async () => {
         await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
-    it('Should show next and previous', async () => {
+    it('should successfully display only next-run button when at first stored run', async () => {
+        const next = await page.$('#prev-run') || null;
+        expect(next).to.be.equal(null);
+        await expectInnerText(page, '#next-run', 'Next');
+    });
+
+    it('should successfully click and go to the next-run-details page', async () => {
+        await pressElement(page, '#next-run'); // Will navigate from run 1 to run 2
+        await page.waitForTimeout(100);
+        const redirectedUrl = await page.url();
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=2`)).to.be.true;
+    });
+
+    it('should successfully display next and previous buttons when run has neighbors', async () => {
         await page.goto(`${url}/?page=run-detail&id=2`, { waitUntil: 'networkidle0' });
         await page.waitForTimeout(300);
         await expectInnerText(page, '#next-run', 'Next');
         await expectInnerText(page, '#prev-run', 'Prev');
     });
 
-    it('Should show only previous', async () => {
-        await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
-        await page.waitForTimeout(300);
-        const next = await page.$('#next-run') || null;
-        expect(next).to.be.equal(null);
-        await expectInnerText(page, '#prev-run', 'Prev');
-    });
-
-    it('Should be able to go to the next page', async () => {
-        await page.goto(`${url}/?page=run-detail&id=2`, { waitUntil: 'networkidle0' });
-        await page.waitForTimeout(300);
-        await pressElement(page, '#next-run');
+    it('should successfully click and go to the prev run-details page', async () => {
+        await pressElement(page, '#prev-run'); // Will navigate from run 2 to run 1
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1`)).to.be.true;
     });
-    it('Should be able to go to the previous page', async () => {
-        await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
-        await page.waitForTimeout(300);
-        await pressElement(page, '#prev-run');
-        await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=2`)).to.be.true;
-    });
+
     it('successfully entered EDIT mode of a run', async () => {
         await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
         await page.waitForTimeout(300);
