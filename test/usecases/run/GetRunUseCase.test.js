@@ -35,4 +35,16 @@ module.exports = () => {
         expect(result).to.have.ownProperty('id');
         expect(result.id).to.equal(1);
     });
+
+    it('should return an object that has the `id` property and includes tags and eorReasons', async () => {
+        const result = await new GetRunUseCase()
+            .execute(getRunDto);
+
+        expect(result).to.have.ownProperty('id');
+        expect(result.id).to.equal(1);
+        expect(result.tags.length).to.equal(0);
+        expect(result.eorReasons.length).to.equal(2);
+        expect(result.eorReasons[0].category).to.equal('DETECTORS');
+        expect(result.eorReasons[0].title).to.equal('CPV');
+    });
 };
