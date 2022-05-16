@@ -503,7 +503,7 @@ module.exports = () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
-        const firstButton = await page.$('button.btn-redirect');
+        const firstButton = await page.$('a.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
