@@ -122,10 +122,6 @@ module.exports = () => {
             }
 
             if (path[0] === 'description') {
-                it('should start with a capital letter', () => {
-                    expect(parent).to.match(/^[A-Z].*$/);
-                });
-
                 it.allowFail('should end with a period', () => {
                     expect(parent).to.match(/^.*\.$/);
                 });
