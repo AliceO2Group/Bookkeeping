@@ -200,4 +200,24 @@ module.exports = () => {
                 });
         });
     });
+    describe('GET /api/lhcFills/:lhcFillId/runs', () => {
+        it('should return 200 and an array for a normal request', (done) => {
+            request(server)
+                .get('/api/lhcFills/1/runs')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+    });
 };
