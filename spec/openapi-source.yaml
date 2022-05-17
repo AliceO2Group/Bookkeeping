@@ -204,9 +204,11 @@ paths:
       summary: List all LhcFills
       responses:
         '200':
-          $ref: '#/components/responses/ArrayOfLhcFills'
+          $ref: '#/components/responses/LhcFill'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
