@@ -11,14 +11,17 @@
  * or submit itself to any jurisdiction.
  */
 
-const GetAllReasonTypesUseCase = require('./GetAllReasonTypesUseCase.test');
-const GetAllRunsUseCase = require('./GetAllRunsUseCase.test');
-const GetRunUseCase = require('./GetRunUseCase.test');
-const StartRunUseCase = require('./StartRunUseCase.test');
+const { run: { GetAllReasonTypesUseCase } } = require('../../../lib/usecases');
+const chai = require('chai');
+
+const { expect } = chai;
 
 module.exports = () => {
-    describe('GetAllReasonTypesUseCase', GetAllReasonTypesUseCase);
-    describe('GetAllRunsUseCase', GetAllRunsUseCase);
-    describe('GetRunUseCase', GetRunUseCase);
-    describe('StartRunUseCase', StartRunUseCase);
+    it('should successfully return a list of reason types objects', async () => {
+        const result = await new GetAllReasonTypesUseCase()
+            .execute();
+
+        expect(result).to.be.an('array');
+        expect(result).to.have.lengthOf(4);
+    });
 };
