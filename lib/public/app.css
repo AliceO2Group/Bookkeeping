@@ -292,8 +292,7 @@ html, body {
     top: 100%;
 }
 
-*:hover > .balloon-container.stretch.enabled > .balloon-sizer > .balloon-anchor,
-.balloon-container.enabled:hover > .balloon-sizer > .balloon-anchor {
+.balloon-container.enabled > .balloon-sizer > .balloon-anchor {
     display: flex;
 }
 
@@ -301,6 +300,7 @@ html, body {
     display: flex;
     flex-shrink: 0;
     max-width: var(--ui-component-medium);
+    position: relative;
 }
 
 @media screen and (max-width: 900px) {
