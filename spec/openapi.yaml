@@ -1,9 +1,9 @@
-# Generated on Mon, 16 May 2022 15:42:05 GMT
+# Generated on Mon, 16 May 2022 16:57:12 GMT
 
 openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
-  version: 0.0.0
+  version: 0.28.0
   license:
     name: GNU General Public License v3.0
     url: http://alice-o2.web.cern.ch/license
@@ -1469,6 +1469,56 @@ components:
       description: Message about the current status.
       type: string
       nullable: true
+    EorReason:
+      description: >-
+        An object containing information with regards to the reason a run was
+        ended.
+      type: object
+      properties:
+        category:
+          description: The category of the general reason for ending the run.
+          type: string
+          nullable: true
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        description:
+          description: The extra information if needed for an end of run. It can be empty.
+          type: string
+          nullable: true
+        id:
+          $ref: '#/components/schemas/EntityId'
+        lastEditedName:
+          description: The last person that edited the end-of-run reason.
+          type: string
+          nullable: true
+        reasonTypeId:
+          description: Id for the general reason that was selected.
+          type: integer
+          minimum: 0
+          nullable: false
+        runId:
+          description: Id for the run for which the eor reason was selected.
+          type: integer
+          minimum: 0
+          nullable: false
+        title:
+          description: The title of the general reason for ending the run.
+          type: string
+          nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      additionalProperties: false
+    EorReasonList:
+      description: A list of end of run reasons.
+      type: array
+      items:
+        $ref: '#/components/schemas/EorReason'
     Error:
       description: An Error object.
       type: object
@@ -1973,6 +2023,8 @@ components:
           $ref: '#/components/schemas/EnvironmentId'
         environmentId:
           $ref: '#/components/schemas/RunEnvironmentId'
+        eorReasons:
+          $ref: '#/components/schemas/EorReasonList'
         epn:
           $ref: '#/components/schemas/RunEpn'
         epnTopology:

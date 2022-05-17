@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
-  version: 0.0.0
+  version: 0.28.0
   license:
     name: GNU General Public License v3.0
     url: http://alice-o2.web.cern.ch/license
@@ -1467,6 +1467,56 @@ components:
       description: Message about the current status.
       type: string
       nullable: true
+    EorReason:
+      description: >-
+        An object containing information with regards to the reason a run was
+        ended.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        description:
+          description: The extra information if needed for an end of run. It can be empty.
+          type: string
+          nullable: true
+        title:
+          description: The title of the general reason for ending the run.
+          type: string
+          nullable: true
+        category:
+          description: The category of the general reason for ending the run.
+          type: string
+          nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+        reasonTypeId:
+          description: Id for the general reason that was selected.
+          type: integer
+          minimum: 0
+          nullable: false
+        runId:
+          description: Id for the run for which the eor reason was selected.
+          type: integer
+          minimum: 0
+          nullable: false
+        lastEditedName:
+          description: The last person that edited the end-of-run reason.
+          type: string
+          nullable: true
+      additionalProperties: false
+    EorReasonList:
+      description: A list of end of run reasons.
+      type: array
+      items:
+        $ref: '#/components/schemas/EorReason'
     Error:
       description: An Error object.
       type: object
@@ -1967,6 +2017,8 @@ components:
           $ref: '#/components/schemas/RunDdFlp'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        eorReasons:
+          $ref: '#/components/schemas/EorReasonList'
         envId:
           $ref: '#/components/schemas/EnvironmentId'
         environmentId:

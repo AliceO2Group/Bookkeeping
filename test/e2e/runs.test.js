@@ -226,6 +226,20 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/runs/reasonTypes', () => {
+        it('should successfully return status 200 and list of reason types', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/reasonTypes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(4);
+
+            expect(body.data[0].id).to.equal(1);
+            expect(body.data[0].category).to.equal('DETECTORS');
+        });
+    });
+
     describe('GET /api/runs/:runId', () => {
         it('should return 400 if the run id is not a number', (done) => {
             request(server)
