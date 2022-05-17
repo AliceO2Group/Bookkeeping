@@ -157,4 +157,67 @@ module.exports = () => {
                 });
         });
     });
+    describe('GET /api/lhcFills/:lhcFillId', () => {
+        it('should return 200 and an array for a normal request', (done) => {
+            request(server)
+                .get('/api/lhcFills/1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    const { data } = res.body;
+                    expect(data.stableBeamsStart).to.equal(1647961200000);
+                    expect(data.stableBeamsEnd).to.equal(1647961200000);
+                    expect(data.stableBeamsDuration).to.equal(600);
+                    expect(data.beamType).to.equal('Pb-Pb');
+                    expect(data.fillingSchemeName).to.equal('schemename');
+                    expect(data.id).to.equal(1);
+                    done();
+                });
+        });
+
+        it('should return 404 when a invalid run number is given', (done) => {
+            request(server)
+                .get('/api/lhcFills/99999')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.errors[0].title).to.equal('LhcFill with this id (99999) could not be found');
+                    done();
+                });
+        });
+    });
+    describe('GET /api/lhcFills/:lhcFillId/runs', () => {
+        it('should return 200 and an array for a normal request', (done) => {
+            request(server)
+                .get('/api/lhcFills/1/runs')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+    });
 };

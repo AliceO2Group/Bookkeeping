@@ -1,4 +1,4 @@
-# Generated on Mon, 16 May 2022 16:57:12 GMT
+# Generated on Tue, 17 May 2022 09:30:40 GMT
 
 openapi: 3.0.0
 info:
@@ -206,9 +206,11 @@ paths:
       summary: List all LhcFills
       responses:
         '200':
-          $ref: '#/components/responses/ArrayOfLhcFills'
+          $ref: '#/components/responses/LhcFill'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:

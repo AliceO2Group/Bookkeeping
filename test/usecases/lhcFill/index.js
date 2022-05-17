@@ -13,7 +13,7 @@
  */
 
 const GetLhcFillUseCase = require('./GetLhcFillUseCase.test');
-const CreateLhcFillUseCase = require('./CreateLhcFillsUseCase.test');
+const CreateLhcFillUseCase = require('./CreateLhcFillUseCase.test');
 const GetAllLhcFillsUseCase = require('./GetAllLhcFillsUseCase.test');
 const UpdateLhcFillUseCase = require('./UpdateLhcFillUseCase.test');
 const GetLhcFillRunByRunNumberUseCase = require('./GetLhcFillRunByRunNumberUseCase.test');
