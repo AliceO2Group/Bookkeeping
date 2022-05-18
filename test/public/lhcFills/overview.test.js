@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, getFirstRow } = require('../defaults');
 
 const { expect } = chai;
 
