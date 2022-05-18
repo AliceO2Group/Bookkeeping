@@ -196,8 +196,8 @@ module.exports = () => {
         const firstUnfilteredRows = await page.$$('table tr');
         expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
 
-        // Select the first two available filters at once
-        const secondCheckboxId = 'tagCheckbox2';
+        // Select the first available filter and the last one at once
+        const secondCheckboxId = 'tagCheckbox5';
         await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(100);
         await pressElement(page, `#${secondCheckboxId}`);
