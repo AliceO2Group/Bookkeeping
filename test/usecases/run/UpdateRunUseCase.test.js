@@ -83,8 +83,8 @@ module.exports = () => {
             updaterunDto.params.runId = wrongId;
             const { error } = await new UpdateRunUseCase()
                 .execute(updaterunDto);
-            expect(error.status).to.equal('400');
-            expect(error.title).to.equal(`Run with this id (${wrongId}) could not be found`);
+            expect(error.status).to.equal(500);
+            expect(error.detail).to.equal(`Run with this id (${wrongId}) could not be found`);
         });
         it('should successfully retrieve run via ID, store and return the new run with runQuality passed as to update fields', async () => {
             const run = await new GetRunUseCase().execute(getRunDto);
@@ -231,16 +231,16 @@ module.exports = () => {
             updateRunByRunNumberDto.query.runNumber = wrongId;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
-            expect(error.status).to.equal('500');
-            expect(error.title).to.equal(`Run with this runNumber (${wrongId}) could not be found`);
+            expect(error.status).to.equal(500);
+            expect(error.detail).to.equal(`Run with this runNumber (${wrongId}) could not be found`);
         });
 
         it('Should give an error when the id of the lhcFill cannot be found', async () => {
             updateRunByRunNumberDto.body.fillNumber = wrongId;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
-            expect(error.status).to.equal('500');
-            expect(error.title).to.equal('LhcFill with id (\'9999999999\') could not be found');
+            expect(error.status).to.equal(500);
+            expect(error.detail).to.equal('LhcFill with id (\'9999999999\') could not be found');
         });
     });
 };

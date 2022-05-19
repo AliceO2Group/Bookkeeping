@@ -33,11 +33,11 @@ module.exports = () => {
         };
     });
 
-    it('should return an object that has the `id` property', async () => {
+    it('should return an object that has the `fillNumber` property', async () => {
         const result = await new GetLhcFillUseCase()
             .execute(getLhcFillDto);
 
-        expect(result).to.have.ownProperty('id');
-        expect(result.id).to.equal(1);
+        expect(result).to.have.ownProperty('fillNumber');
+        expect(result.fillNumber).to.equal(1);
     });
 };
