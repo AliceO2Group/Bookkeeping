@@ -60,10 +60,23 @@ module.exports = () => {
         expect(run.eorReasons[0].description).to.equal('Some Reason other than selected');
 
         updateRunDto.params.runId = 1;
+
+        /*
+         * EorReasons with ID should be kept, those without ID should be inserted, existing EoRReasons in entry not matching
+         * this condition should be removed
+         */
         updateRunDto.body = {
             eorReasons: [
                 {
-                    description: 'Something went wrong',
+                    runId: 1,
+                    reasonTypeId: 1,
+                    lastEditedName: 'Anonymous',
+                },
+                {
+                    id: 1,
+                    title: 'DETECTORS',
+                    category: 'CPV',
+                    description: 'Some Reason other than selected',
                     runId: 1,
                     reasonTypeId: 1,
                     lastEditedName: 'Anonymous',
@@ -75,8 +88,11 @@ module.exports = () => {
         expect(error).to.be.an('undefined');
         expect(result).to.be.an('object');
         expect(result.id).to.equal(1);
-        expect(result.eorReasons).to.have.lengthOf(1);
-        expect(result.eorReasons[0].description).to.equal('Something went wrong');
+        expect(result.eorReasons).to.have.lengthOf(2);
+        expect(result.eorReasons[0].id).to.equal(1);
+        expect(result.eorReasons[0].description).to.equal('Some Reason other than selected');
+        expect(result.eorReasons[1].id).to.equal(6);
+        expect(result.eorReasons[1].description).to.be.null;
     });
 
     it('should return error if eor reasons do not match runId', async () => {
@@ -96,7 +112,7 @@ module.exports = () => {
         expect(result).to.be.an('undefined');
 
         expect(error).to.be.an('object');
-        expect(error.status).to.equal(400);
+        expect(error.status).to.equal(500);
         expect(error.detail).to.equal('Multiple run ids parameters passed in eorReasons list. Please send updates for one run only');
     });
 
@@ -123,7 +139,7 @@ module.exports = () => {
         expect(result).to.be.an('undefined');
 
         expect(error).to.be.an('object');
-        expect(error.status).to.equal(400);
+        expect(error.status).to.equal(500);
         expect(error.detail).to.equal('Multiple run ids parameters passed in eorReasons list. Please send updates for one run only');
     });
 
@@ -144,7 +160,7 @@ module.exports = () => {
         expect(result).to.be.an('undefined');
 
         expect(error).to.be.an('object');
-        expect(error.status).to.equal(400);
+        expect(error.status).to.equal(500);
         expect(error.detail).to.equal('Provided reason types do not exist');
     });
 };
