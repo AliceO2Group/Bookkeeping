@@ -43,8 +43,9 @@ module.exports = () => {
         });
     });
     it('should successfully store and return the saved entity', async () => {
-        const { result } = await new StartRunUseCase()
+        const { result, error } = await new StartRunUseCase()
             .execute(startRunDto);
+        expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.id).to.equal(107);
     });
@@ -52,8 +53,9 @@ module.exports = () => {
     it('should successfully store and return the saved entity with default values if not provided', async () => {
         delete startRunDto.body.detectors;
         startRunDto.body.runNumber = 108;
-        const { result } = await new StartRunUseCase()
+        const { result, error } = await new StartRunUseCase()
             .execute(startRunDto);
+        expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.id).to.equal(108);
         expect(result.detectors).to.equal(null);
