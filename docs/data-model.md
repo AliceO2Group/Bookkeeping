@@ -192,4 +192,4 @@ Concerning the **Update mode** of the fields:
 | `stableBeamsEnd`              | End of STABLE BEAMS                 |                                     |        | `fillNumber` | Update |
 | `stableBeamsDuration`         | STABLE BEAMS duration in seconds    |                                     |        | `fillNumber` | Update |
 | `beamType`                    | Type of collisions                  | `PROTON-PROTON` `Pb-Pb` `Pb-PROTON` |        | `fillNumber` | Update |
-| `FillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
+| `fillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
