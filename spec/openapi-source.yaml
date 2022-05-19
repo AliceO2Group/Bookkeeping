@@ -1752,6 +1752,10 @@ components:
           $ref: '#/components/schemas/RunEpn'
         epnTopology:
           $ref: '#/components/schemas/RunEpnTopology'
+        fillNumber:
+          description: Id of lhc fill
+          type: integer
+          nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
         envId:
