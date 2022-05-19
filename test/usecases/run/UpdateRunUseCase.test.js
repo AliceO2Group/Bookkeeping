@@ -73,7 +73,7 @@ module.exports = () => {
                     lastEditedName: 'Anonymous',
                 },
                 {
-                    id: 1,
+                    id: 2,
                     title: 'DETECTORS',
                     category: 'CPV',
                     description: 'Some Reason other than selected',
@@ -89,8 +89,8 @@ module.exports = () => {
         expect(result).to.be.an('object');
         expect(result.id).to.equal(1);
         expect(result.eorReasons).to.have.lengthOf(2);
-        expect(result.eorReasons[0].id).to.equal(1);
-        expect(result.eorReasons[0].description).to.equal('Some Reason other than selected');
+        expect(result.eorReasons[0].id).to.equal(2);
+        expect(result.eorReasons[0].description).to.equal('Some Reason other than selected plus one');
         expect(result.eorReasons[1].id).to.equal(6);
         expect(result.eorReasons[1].description).to.be.null;
     });
