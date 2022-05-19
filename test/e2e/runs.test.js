@@ -226,6 +226,20 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/runs/reasonTypes', () => {
+        it('should successfully return status 200 and list of reason types', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/reasonTypes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(4);
+
+            expect(body.data[0].id).to.equal(1);
+            expect(body.data[0].category).to.equal('DETECTORS');
+        });
+    });
+
     describe('GET /api/runs/:runId', () => {
         it('should return 400 if the run id is not a number', (done) => {
             request(server)
@@ -463,44 +477,78 @@ module.exports = () => {
                 });
         });
     });
-    describe('PUT /api/runs/:runId', () => {
-        it('should return 200 in all other cases', (done) => {
-            request(server)
-                .put('/api/runs/9999999999')
-                .send({
-                    runQuality: 'bad',
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('Run with this id (9999999999) could not be found');
 
-                    done();
-                });
-        });
-        it('should return 201 in all other cases', (done) => {
-            request(server)
+    describe('PUT /api/runs/:runId', () => {
+        it('should successfully return the updated run entity with new runQuality value', async () => {
+            const { body } = await request(server)
                 .put('/api/runs/1')
-                .send({
-                    runQuality: 'bad',
-                })
                 .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.data.runQuality).to.equal('bad');
-                    done();
+                .send({
+                    runQuality: 'test',
                 });
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(1);
+            expect(body.data.runQuality).to.equal('test');
+        });
+
+        it('should return an error due to invalid runQuality value', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(400)
+                .send({
+                    runQuality: 'wrong',
+                });
+            expect(body.errors).to.be.an('array');
+            // eslint-disable-next-line max-len
+            expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test]');
+        });
+
+        it('should return an error due to invalid eorReasons list', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(400)
+                .send({
+                    eorReasons: [
+                        {
+                            description: 'Some',
+                            runId: '1a',
+                            reasonTypeId: 1,
+                            lastEditedName: 'Anonymous',
+                        },
+                    ],
+                });
+            expect(body.errors).to.be.an('array');
+            expect(body.errors[0].detail).to.equal('"body.eorReasons[0].runId" must be a number');
+        });
+
+        it('should successfully add eorReasons to run', async () => {
+            const currentRun = await request(server)
+                .get('/api/runs/106')
+                .expect(200);
+            expect(currentRun.body.data).to.be.an('object');
+            expect(currentRun.body.data.id).to.equal(106);
+            expect(currentRun.body.data.eorReasons).to.have.lengthOf(0);
+
+            const { body } = await request(server)
+                .put('/api/runs/106')
+                .expect(201)
+                .send({
+                    eorReasons: [
+                        {
+                            description: 'Some',
+                            runId: 106,
+                            reasonTypeId: 1,
+                            lastEditedName: 'Anonymous',
+                        },
+                    ],
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(106);
+            expect(body.data.eorReasons).to.have.lengthOf(1);
+            expect(body.data.eorReasons[0].description).to.equal('Some');
         });
     });
+
     describe('PATCH api/runs query:runNumber', () => {
         it('should return 400 if the wrong id is given', (done) => {
             request(server)
@@ -548,52 +596,6 @@ module.exports = () => {
                     expect(res.body.data.lhcBetaStar).to.equal(123e-5);
                     expect(res.body.data.aliceL3Current).to.equal(561.2);
                     expect(res.body.data.aliceDipoleCurrent).to.equal(45654.1);
-                    done();
-                });
-        });
-    });
-    describe('PATCH api/runs/:runId', () => {
-        const dateValue = new Date('1-1-2021').setHours(0, 0, 0, 0);
-        it('should return 400 when runId is wrong', (done) => {
-            request(server)
-                .patch('/api/runs/9999999999')
-                .send({
-                    timeO2End: dateValue,
-                    timeTrgEnd: dateValue,
-                    runQuality: 'good',
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('run with this id (9999999999) could not be found');
-
-                    done();
-                });
-        });
-        it('should return 201 in all other cases', (done) => {
-            request(server)
-                .patch('/api/runs/1')
-                .send({
-                    timeO2End: dateValue,
-                    timeTrgEnd: dateValue,
-                    runQuality: 'test',
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.data.id).to.equal(1);
-                    expect(res.body.data.timeO2End).to.equal(dateValue);
-                    expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.runQuality).to.equal('test');
                     done();
                 });
         });

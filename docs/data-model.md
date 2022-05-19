@@ -1,5 +1,17 @@
 # Bookkeeping data model
 
+- [Bookkeeping data model](#bookkeeping-data-model)
+  - [Introduction](#introduction)
+  - [Further explanations of fields tables](#further-explanations-of-fields-tables)
+  - [Runs](#runs)
+    - [End of run reasons](#end-of-run-reasons)
+      - [Reason Types (for EOR)](#reason-types-for-eor)
+  - [FLPs](#flps)
+  - [Log Entries](#log-entries)
+    - [Attachments](#attachments)
+  - [Users](#users)
+  - [Tags](#tags)
+  - [Environments](#environments)
 ## Introduction
 This document describes the data model of the ALICE O2 Bookkeeping system.   
 For simplicity, the following info is not described in this document: 
@@ -27,6 +39,7 @@ Concerning the **Update mode** of the fields:
 ## Runs
 
 **Description:** A Run is a synchronous data taking time period, performed in the O2 computing farm with a specific and well-defined configuration. It normally ranges from a few minutes to tens of hours and can include one or many ALICE detectors. It provides a unique identifier for the data set generated during the run.   
+**Relation:** `run` hasMany `eor_reasons`
 **DB main table**: `runs`   
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
@@ -49,6 +62,35 @@ Concerning the **Update mode** of the fields:
 | `lhcBetaStar`                 | LHC Beta * in meters               | `ITS,TPC,TOF`                       |  | `run_number` | Update |
 | `aliceL3Current`              | Current in L3 magnet (Amperes)     | `3.14, 2`                           |  | `run_number` | Update |
 | `aliceDipoleCurrent`          | Current in Dipole magnet (Amperes) | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+
+### End of run reasons
+
+**Description:** EOR Reasons for which runs have ended. They contain a general reason_type and extra information with regards to user selecting it and other information
+**Relation:** `eor_reason` hasOne `reason_type`
+**DB main table**: `eor_reasons`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | Auto-Incremented id for eor reason | `1`  | AT COE| `id` | Insert |
+| `description`                    | Other information on the reason | `Run stopped due to faulty detector`  | AT COE| `description` | Insert |
+| `reason_type_id`                    | Id of the general reason type belonging to | '1'  | AT COE| `reason_type_id` | Insert |
+| `run_id`                    | RUN id for which the reason was added | `500540`  | AT COE| `run_id` | Insert |
+| `last_edited_name`        | Name of the person who last edited the fields | `Anonymous`, `Jan Janssen` | When fields are edited | `id`| Update |
+| `created_at`                   | When the entity is created | | AT COE | `created_at`| Insert |
+| `updated_at`        | When entity is edited |  | When fields are edited | `updated_at`| Update |
+
+#### Reason Types (for EOR)
+
+**Description:** Reason Tpes for which runs have ended. This table describes general reasons categories and titles as per the RC criteria
+**DB main table**: `reason_types`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | Auto-Incremented id for eor reason | `1`  | AT COE| `id` | Insert |
+| `category`                    | Category represented by a String | `Data Sanity and Quality`  | AT COE| `category` | Insert |
+| `title`                    | Title represented by a String | `Incomplete TF`  | AT COE| `title` | Insert |
+| `created_at`                   | When the entity is created | | AT COE | `created_at`| Insert |
+| `updated_at`        | When entity is edited |  | When fields are edited | `updated_at`| Update |
 
 ## FLPs
 
@@ -98,7 +140,7 @@ Concerning the **Update mode** of the fields:
 | `log_id`                      | ID of Log Entry to which the attachment belongs to. | `123` | At Log Entry creation | `id` | Insert |
 
 
-### Users
+## Users
 
 **Description:** Bookkeeping user. Used to identify the author of a Log Entry.   
 **DB main table**: `users`
@@ -109,7 +151,7 @@ Concerning the **Update mode** of the fields:
 | `name`                        | User full name.. |  | At first login | `id` | Insert |
 
 
-### Tags
+## Tags
 
 **Description:** Free text labels to add to Runs or Log Entries.    
 **DB main table**: `tags`
@@ -122,7 +164,7 @@ Concerning the **Update mode** of the fields:
 | `last_edited_name`        | Name of the person who last edited the email/mattermost fields | `Anonymous`, `Jan Janssen` | When email/mattermost is edited | `id`| Update |
 
 
-### Environments
+## Environments
 
 **Description:** The overall environment the runs are performed in.    
 **DB main table**: `envronments`
@@ -150,4 +192,4 @@ Concerning the **Update mode** of the fields:
 | `stableBeamsEnd`              | End of STABLE BEAMS                 |                                     |        | `fillNumber` | Update |
 | `stableBeamsDuration`         | STABLE BEAMS duration in seconds    |                                     |        | `fillNumber` | Update |
 | `beamType`                    | Type of collisions                  | `PROTON-PROTON` `Pb-Pb` `Pb-PROTON` |        | `fillNumber` | Update |
-| `FillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
+| `fillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
