@@ -11,10 +11,16 @@
  * or submit itself to any jurisdiction.
  */
 
+const GetAllReasonTypesUseCase = require('./GetAllReasonTypesUseCase.test');
 const GetAllRunsUseCase = require('./GetAllRunsUseCase.test');
 const GetRunUseCase = require('./GetRunUseCase.test');
+const StartRunUseCase = require('./StartRunUseCase.test');
+const UpdateRunUseCase = require('./UpdateRunUseCase.test');
 
 module.exports = () => {
+    describe('GetAllReasonTypesUseCase', GetAllReasonTypesUseCase);
     describe('GetAllRunsUseCase', GetAllRunsUseCase);
     describe('GetRunUseCase', GetRunUseCase);
+    describe('StartRunUseCase', StartRunUseCase);
+    describe('UpdateRunUseCase', UpdateRunUseCase);
 };

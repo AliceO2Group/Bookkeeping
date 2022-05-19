@@ -226,6 +226,20 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/runs/reasonTypes', () => {
+        it('should successfully return status 200 and list of reason types', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/reasonTypes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(4);
+
+            expect(body.data[0].id).to.equal(1);
+            expect(body.data[0].category).to.equal('DETECTORS');
+        });
+    });
+
     describe('GET /api/runs/:runId', () => {
         it('should return 400 if the run id is not a number', (done) => {
             request(server)
@@ -395,6 +409,143 @@ module.exports = () => {
                     ]);
                     done();
                 });
+        });
+    });
+
+    describe('POST /api/runs', () => {
+        it('should successfully return the stored run entity', (done) => {
+            request(server)
+                .post('/api/runs')
+                .expect(201)
+                .send({
+                    runNumber: 109,
+                    timeO2Start: '2022-03-21 13:00:00',
+                    timeTrgStart: '2022-03-21 13:00:00',
+                    environmentId: '1234567890',
+                    runType: 'technical',
+                    runQuality: 'good',
+                    nDetectors: 3,
+                    nFlps: 10,
+                    nEpns: 10,
+                    dd_flp: true,
+                    dcs: true,
+                    epn: true,
+                    epnTopology: 'normal',
+                    detectors: 'CPV',
+                })
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    expect(res.body.data).to.be.an('object');
+                    expect(res.body.data.id).to.equal(109);
+
+                    done();
+                });
+        });
+        it('should return an error due to invalid detectors list', (done) => {
+            request(server)
+                .post('/api/runs')
+                .expect(400)
+                .send({
+                    runNumber: 109,
+                    timeO2Start: '2022-03-21 13:00:00',
+                    timeTrgStart: '2022-03-21 13:00:00',
+                    environmentId: '1234567890',
+                    runType: 'technical',
+                    runQuality: 'good',
+                    nDetectors: 3,
+                    nFlps: 10,
+                    nEpns: 10,
+                    dd_flp: true,
+                    dcs: true,
+                    epn: true,
+                    epnTopology: 'normal',
+                    detectors: 'CPV,UNKNOWN',
+                })
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    expect(res.body.errors).to.be.an('array');
+                    // eslint-disable-next-line max-len
+                    expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not defined, your custom type is missing the correct messages definition');
+
+                    done();
+                });
+        });
+    });
+
+    describe('PUT /api/runs/:runId', () => {
+        it('should successfully return the updated run entity with new runQuality value', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(201)
+                .send({
+                    runQuality: 'test',
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(1);
+            expect(body.data.runQuality).to.equal('test');
+        });
+
+        it('should return an error due to invalid runQuality value', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(400)
+                .send({
+                    runQuality: 'wrong',
+                });
+            expect(body.errors).to.be.an('array');
+            // eslint-disable-next-line max-len
+            expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test]');
+        });
+
+        it('should return an error due to invalid eorReasons list', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(400)
+                .send({
+                    eorReasons: [
+                        {
+                            description: 'Some',
+                            runId: '1a',
+                            reasonTypeId: 1,
+                            lastEditedName: 'Anonymous',
+                        },
+                    ],
+                });
+            expect(body.errors).to.be.an('array');
+            expect(body.errors[0].detail).to.equal('"body.eorReasons[0].runId" must be a number');
+        });
+
+        it('should successfully add eorReasons to run', async () => {
+            const currentRun = await request(server)
+                .get('/api/runs/106')
+                .expect(200);
+            expect(currentRun.body.data).to.be.an('object');
+            expect(currentRun.body.data.id).to.equal(106);
+            expect(currentRun.body.data.eorReasons).to.have.lengthOf(0);
+
+            const { body } = await request(server)
+                .put('/api/runs/106')
+                .expect(201)
+                .send({
+                    eorReasons: [
+                        {
+                            description: 'Some',
+                            runId: 106,
+                            reasonTypeId: 1,
+                            lastEditedName: 'Anonymous',
+                        },
+                    ],
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(106);
+            expect(body.data.eorReasons).to.have.lengthOf(1);
+            expect(body.data.eorReasons[0].description).to.equal('Some');
         });
     });
 };

@@ -15,7 +15,7 @@
     "docker-test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "1.23.2",
+    "@aliceo2/web-ui": "1.24.0",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "joi": "17.6.0",
@@ -39,17 +39,17 @@
     "umzug"
   ],
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "2.4.26",
+    "@openapitools/openapi-generator-cli": "2.5.1",
     "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
-    "eslint": "8.14.0",
+    "eslint": "8.15.0",
     "js-yaml": "4.1.0",
-    "mocha": "9.2.0",
+    "mocha": "10.0.0",
     "nodemon": "2.0.15",
     "nyc": "15.1.0",
-    "puppeteer": "13.7.0",
+    "puppeteer": "14.1.0",
     "puppeteer-to-istanbul": "1.4.0",
-    "sinon": "13.0.1",
+    "sinon": "14.0.0",
     "supertest": "6.2.0"
   }
 }
