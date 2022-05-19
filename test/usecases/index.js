@@ -24,7 +24,7 @@ const TagSuite = require('./tag');
 module.exports = () => {
     describe('Status', StatusSuite);
     describe('Log', LogSuite);
-    describe('LhcFillSuite', LhcFillSuite);
+    describe('LhcFill', LhcFillSuite);
     describe('Run', RunSuite);
     describe('Flp', FlpSuite);
     describe('Server', ServerSuite);

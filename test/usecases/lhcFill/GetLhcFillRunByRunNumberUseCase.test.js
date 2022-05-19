@@ -22,7 +22,7 @@ module.exports = () => {
     beforeEach(async () => {
         getLhcFillRunDto = await GetLhcFillRunDto.validateAsync({
             params: {
-                lhcFillId: 1,
+                fillNumber: 1,
                 runNumber: 50,
             },
         });

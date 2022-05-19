@@ -48,6 +48,7 @@ module.exports = () => {
                 .post('/api/lhcFills')
                 .expect(201)
                 .send({
+                    fillNumber: 544455,
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
                     stableBeamsEnd: new Date('2022-03-22 15:00:00'),
                     stableBeamsDuration: 600,
@@ -72,7 +73,7 @@ module.exports = () => {
                 });
         });
     });
-    describe('PATCH /api/lhcFills/:lhcFillId', () => {
+    describe('PATCH /api/lhcFills/:fillNumber', () => {
         it('should return 400 if the wrong id is provided', (done) => {
             request(server)
                 .patch('/api/lhcFills/99999')
@@ -119,7 +120,7 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/lhcFills/:lhcFillId/runs/:runNumber', () => {
+    describe('GET /api/lhcFills/:fillNumber/runs/:runNumber', () => {
         it('should return 200 and an array for a normal request', (done) => {
             request(server)
                 .get('/api/lhcFills/1/runs/50')
@@ -157,7 +158,7 @@ module.exports = () => {
                 });
         });
     });
-    describe('GET /api/lhcFills/:lhcFillId', () => {
+    describe('GET /api/lhcFills/:fillNumber', () => {
         it('should return 200 and an array for a normal request', (done) => {
             request(server)
                 .get('/api/lhcFills/1')
@@ -177,7 +178,7 @@ module.exports = () => {
                     expect(data.stableBeamsDuration).to.equal(600);
                     expect(data.beamType).to.equal('Pb-Pb');
                     expect(data.fillingSchemeName).to.equal('schemename');
-                    expect(data.id).to.equal(1);
+                    expect(data.fillNumber).to.equal(1);
                     done();
                 });
         });
@@ -200,7 +201,7 @@ module.exports = () => {
                 });
         });
     });
-    describe('GET /api/lhcFills/:lhcFillId/runs', () => {
+    describe('GET /api/lhcFills/:fillNumber/runs', () => {
         it('should return 200 and an array for a normal request', (done) => {
             request(server)
                 .get('/api/lhcFills/1/runs')

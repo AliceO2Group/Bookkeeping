@@ -1,4 +1,4 @@
-# Generated on Tue, 17 May 2022 09:30:40 GMT
+# Generated on Thu, 19 May 2022 09:42:52 GMT
 
 openapi: 3.0.0
 info:
@@ -198,9 +198,9 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
-  /lhcFills/{lhcFillId}:
+  /lhcFills/{fillNumber}:
     parameters:
-      - $ref: '#/components/parameters/LhcFillId'
+      - $ref: '#/components/parameters/FillNumber'
     get:
       operationId: getLhcFillById
       summary: List all LhcFills
@@ -231,11 +231,11 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - lhcFill
-  /lhcFills/{lhcFillId}/runs:
+  /lhcFills/{fillNumber}/runs:
     parameters:
-      - $ref: '#/components/parameters/LhcFillId'
+      - $ref: '#/components/parameters/FillNumber'
     get:
-      operationId: listRunsByLhcFillId
+      operationId: listRunsByFillNumber
       summary: Lists all tags associated with a log
       responses:
         '200':
@@ -248,12 +248,12 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - lhcFill
-  /lhcFills/{lhcFillId}/runs/{runNumber}:
+  /lhcFills/{fillNumber}/runs/{runNumber}:
     parameters:
-      - $ref: '#/components/parameters/LhcFillId'
+      - $ref: '#/components/parameters/FillNumber'
       - $ref: '#/components/parameters/RunNumber'
     get:
-      operationId: getRunByLhcFillIdAndRunNumber
+      operationId: getRunByFillNumberAndRunNumber
       summary: Gives the possibility to find a run by run number
       responses:
         '200':
@@ -677,6 +677,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EnvironmentId'
+    FillNumber:
+      name: FillNumber
+      description: The id of the lhcFill to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -706,13 +713,6 @@ components:
       schema:
         $ref: '#/components/schemas/FlpSortOptions'
       style: deepObject
-    LhcFillId:
-      name: lhcFillId
-      description: The id of the lhcFill to retrieve
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/EntityId'
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -1728,12 +1728,12 @@ components:
       properties:
         beamType:
           $ref: '#/components/schemas/LhcFillBeamType'
+        fillNumber:
+          $ref: '#/components/schemas/EntityId'
         fillingSchemeName:
           description: Name of the filling schme
           type: string
           nullable: true
-        id:
-          $ref: '#/components/schemas/EntityId'
         runs:
           description: Array of minified Run objects.
           type: array
