@@ -1,4 +1,4 @@
-# Generated on Wed, 11 May 2022 20:35:29 GMT
+# Generated on Thu, 19 May 2022 09:31:37 GMT
 
 openapi: 3.0.0
 info:
@@ -1767,6 +1767,11 @@ components:
           $ref: '#/components/schemas/RunEpn'
         epnTopology:
           $ref: '#/components/schemas/RunEpnTopology'
+        fillNumber:
+          description: Id of a lhcFill object
+          type: integer
+          minimum: 1
+          nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
         lhcBeamEnergy:
@@ -1780,11 +1785,6 @@ components:
         lhcBetaStar:
           description: LHC Beta * in meters
           type: number
-          nullable: true
-        lhcFillId:
-          description: Id of a lhcFill object
-          type: integer
-          minimum: 1
           nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'

@@ -23,7 +23,7 @@ module.exports = () => {
     beforeEach(async () => {
         getLhcFillDto = await GetLhcFillDto.validateAsync({
             params: {
-                lhcFillId: 1,
+                fillNumber: 1,
             },
         });
         getLhcFillDto.session = {

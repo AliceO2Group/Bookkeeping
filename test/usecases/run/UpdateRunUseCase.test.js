@@ -48,7 +48,7 @@ module.exports = () => {
                 lhcBetaStar: 123e-5,
                 aliceL3Current: 561.2,
                 aliceDipoleCurrent: 45654.1,
-                lhcFillId: 1,
+                fillNumber: 1,
             },
         });
         updateRunByRunNumberDto.session = {
@@ -83,7 +83,7 @@ module.exports = () => {
             expect(result.lhcBetaStar).to.equal(123e-5);
             expect(result.aliceL3Current).to.equal(561.2);
             expect(result.aliceDipoleCurrent).to.equal(45654.1);
-            expect(result.lhcFillId).to.equal(1);
+            expect(result.fillNumber).to.equal(1);
         });
 
         it('Should give an error when the id of the run can not be found', async () => {
@@ -95,7 +95,7 @@ module.exports = () => {
         });
 
         it('Should give an error when the id of the lhcFill cannot be found', async () => {
-            updateRunByRunNumberDto.body.lhcFillId = wrongId;
+            updateRunByRunNumberDto.body.fillNumber = wrongId;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
             expect(error.status).to.equal('400');
