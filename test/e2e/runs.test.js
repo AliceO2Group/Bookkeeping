@@ -560,7 +560,7 @@ module.exports = () => {
                     aliceL3Current: 561.2,
                     aliceDipoleCurrent: 45654.1,
                 })
-                .expect(400)
+                .expect(500)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -568,7 +568,7 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('Run with this runNumber (99999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('ServiceUnavailable');
 
                     done();
                 });

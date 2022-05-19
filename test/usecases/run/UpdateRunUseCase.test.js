@@ -12,7 +12,6 @@
  * or submit itself to any jurisdiction.
  */
 
-
 const { run: { UpdateRunUseCase, GetRunUseCase } } = require('../../../lib/usecases');
 const { dtos: { UpdateRunDto, GetRunDto, UpdateRunByRunNumberDto } } = require('../../../lib/domain');
 const chai = require('chai');
@@ -92,15 +91,15 @@ module.exports = () => {
             expect(run).to.be.an('object');
             expect(run.id).to.equal(106);
             expect(run.runQuality).to.equal('good');
-    
+
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-    
+
             expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
             expect(result.runQuality).to.equal('test');
         });
-    
+
         it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {
             getRunDto.params.runId = 1;
             const run = await new GetRunUseCase().execute(getRunDto);
@@ -108,9 +107,9 @@ module.exports = () => {
             expect(run.id).to.equal(1);
             expect(run.eorReasons).to.have.lengthOf(2);
             expect(run.eorReasons[0].description).to.equal('Some Reason other than selected');
-    
+
             updateRunDto.params.runId = 1;
-    
+
             /*
              * EorReasons with ID should be kept, those without ID should be inserted, existing EoRReasons in entry not matching
              * this condition should be removed
@@ -134,7 +133,7 @@ module.exports = () => {
                 ],
             };
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-    
+
             expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(1);
@@ -144,7 +143,7 @@ module.exports = () => {
             expect(result.eorReasons[1].id).to.equal(6);
             expect(result.eorReasons[1].description).to.be.null;
         });
-    
+
         it('should return error if eor reasons do not match runId', async () => {
             updateRunDto.params.runId = 10;
             updateRunDto.body = {
@@ -158,14 +157,14 @@ module.exports = () => {
                 ],
             };
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-    
+
             expect(result).to.be.an('undefined');
-    
+
             expect(error).to.be.an('object');
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal('Multiple run ids parameters passed in eorReasons list. Please send updates for one run only');
         });
-    
+
         it('should return error if eor reasons contain different runIds', async () => {
             updateRunDto.params.runId = 1;
             updateRunDto.body = {
@@ -185,14 +184,14 @@ module.exports = () => {
                 ],
             };
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-    
+
             expect(result).to.be.an('undefined');
-    
+
             expect(error).to.be.an('object');
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal('Multiple run ids parameters passed in eorReasons list. Please send updates for one run only');
         });
-    
+
         it('should return error if eor reasons contains reason_type_id that does not exist', async () => {
             updateRunDto.params.runId = 1;
             updateRunDto.body = {
@@ -206,9 +205,9 @@ module.exports = () => {
                 ],
             };
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-    
+
             expect(result).to.be.an('undefined');
-    
+
             expect(error).to.be.an('object');
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal('Provided reason types do not exist');
@@ -232,7 +231,7 @@ module.exports = () => {
             updateRunByRunNumberDto.query.runNumber = wrongId;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
-            expect(error.status).to.equal('400');
+            expect(error.status).to.equal('500');
             expect(error.title).to.equal(`Run with this runNumber (${wrongId}) could not be found`);
         });
 
@@ -240,7 +239,7 @@ module.exports = () => {
             updateRunByRunNumberDto.body.fillNumber = wrongId;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
-            expect(error.status).to.equal('400');
+            expect(error.status).to.equal('500');
             expect(error.title).to.equal('LhcFill with id (\'9999999999\') could not be found');
         });
     });
