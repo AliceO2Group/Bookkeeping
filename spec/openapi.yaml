@@ -1,4 +1,5 @@
-# Generated on Thu, 19 May 2022 13:21:32 GMT
+# Generated on Fri, 20 May 2022 09:44:45 GMT
+
 openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
@@ -456,6 +457,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -472,6 +475,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -679,7 +684,7 @@ components:
       schema:
         $ref: '#/components/schemas/EnvironmentId'
     FillNumber:
-      name: FillNumber
+      name: fillNumber
       description: The id of the lhcFill to retrieve
       in: path
       required: true

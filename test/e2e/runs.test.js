@@ -484,7 +484,7 @@ module.exports = () => {
                 .send({
                     runQuality: 'bad',
                 })
-                .expect(400)
+                .expect(500)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -492,7 +492,7 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('Run with this id (9999999999) could not be found');
+                    expect(res.body.errors[0].detail).to.equal('Run with this id (9999999999) could not be found');
 
                     done();
                 });
