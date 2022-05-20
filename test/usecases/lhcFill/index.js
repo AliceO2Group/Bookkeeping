@@ -13,7 +13,15 @@
  */
 
 const GetLhcFillUseCase = require('./GetLhcFillUseCase.test');
+const CreateLhcFillUseCase = require('./CreateLhcFillUseCase.test');
+const GetAllLhcFillsUseCase = require('./GetAllLhcFillsUseCase.test');
+const UpdateLhcFillUseCase = require('./UpdateLhcFillUseCase.test');
+const GetLhcFillRunByRunNumberUseCase = require('./GetLhcFillRunByRunNumberUseCase.test');
 
 module.exports = ()=> {
     describe('GetLhcFillUseCase', GetLhcFillUseCase);
+    describe('GetAllLhcFillsUseCase', GetAllLhcFillsUseCase);
+    describe('CreateLhcFillUseCase', CreateLhcFillUseCase);
+    describe('UpdateLhcFillUseCase', UpdateLhcFillUseCase);
+    describe('GetLhcFillRunByRunNumberUseCase', GetLhcFillRunByRunNumberUseCase);
 };

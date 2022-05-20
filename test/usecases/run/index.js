@@ -15,8 +15,8 @@ const EndRunUseCase = require('./EndRunUseCase.test');
 const GetAllReasonTypesUseCase = require('./GetAllReasonTypesUseCase.test');
 const GetAllRunsUseCase = require('./GetAllRunsUseCase.test');
 const GetRunUseCase = require('./GetRunUseCase.test');
-const StartRunUseCase = require('./StartRunUseCase.test');
 const UpdateRunUseCase = require('./UpdateRunUseCase.test');
+const StartRunUseCase = require('./StartRunUseCase.test');
 
 module.exports = () => {
     describe('GetAllReasonTypesUseCase', GetAllReasonTypesUseCase);

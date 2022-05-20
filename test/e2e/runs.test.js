@@ -477,8 +477,44 @@ module.exports = () => {
                 });
         });
     });
-
     describe('PUT /api/runs/:runId', () => {
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .put('/api/runs/9999999999')
+                .send({
+                    runQuality: 'bad',
+                })
+                .expect(500)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.errors[0].detail).to.equal('Run with this id (9999999999) could not be found');
+
+                    done();
+                });
+        });
+        it('should return 201 in all other cases', (done) => {
+            request(server)
+                .put('/api/runs/1')
+                .send({
+                    runQuality: 'bad',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.data.runQuality).to.equal('bad');
+                    done();
+                });
+        });
+
         it('should successfully return the updated run entity with new runQuality value', async () => {
             const { body } = await request(server)
                 .put('/api/runs/1')
@@ -596,6 +632,52 @@ module.exports = () => {
                     expect(res.body.data.lhcBetaStar).to.equal(123e-5);
                     expect(res.body.data.aliceL3Current).to.equal(561.2);
                     expect(res.body.data.aliceDipoleCurrent).to.equal(45654.1);
+                    done();
+                });
+        });
+    });
+    describe('PATCH api/runs/:runId', () => {
+        const dateValue = new Date('1-1-2021').setHours(0, 0, 0, 0);
+        it('should return 400 when runId is wrong', (done) => {
+            request(server)
+                .patch('/api/runs/9999999999')
+                .send({
+                    timeO2End: dateValue,
+                    timeTrgEnd: dateValue,
+                    runQuality: 'good',
+                })
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.errors[0].title).to.equal('run with this id (9999999999) could not be found');
+
+                    done();
+                });
+        });
+        it('should return 201 in all other cases', (done) => {
+            request(server)
+                .patch('/api/runs/1')
+                .send({
+                    timeO2End: dateValue,
+                    timeTrgEnd: dateValue,
+                    runQuality: 'test',
+                })
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.data.id).to.equal(1);
+                    expect(res.body.data.timeO2End).to.equal(dateValue);
+                    expect(res.body.data.timeTrgEnd).to.equal(dateValue);
+                    expect(res.body.data.runQuality).to.equal('test');
                     done();
                 });
         });

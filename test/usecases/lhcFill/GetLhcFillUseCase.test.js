@@ -40,4 +40,11 @@ module.exports = () => {
         expect(result).to.have.ownProperty('fillNumber');
         expect(result.fillNumber).to.equal(1);
     });
+
+    it('should return null with an invalid id', async () => {
+        getLhcFillDto.params.fillNumber = 9999;
+        const result = await new GetLhcFillUseCase()
+            .execute(getLhcFillDto);
+        expect(result).to.equal(null);
+    });
 };

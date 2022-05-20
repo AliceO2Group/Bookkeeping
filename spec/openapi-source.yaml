@@ -169,6 +169,101 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+  /lhcFills:
+    get:
+      operationId: listLhcFills
+      summary: List all LhcFills
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLhcFills'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+    post:
+      operationId: createLhcFill
+      summary: Creates a lhcfill object
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLhcFill'
+      responses:
+        '201':
+          $ref: '#/components/responses/LhcFill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /lhcFills/{fillNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FillNumber'
+    get:
+      operationId: getLhcFillById
+      summary: List all LhcFills
+      responses:
+        '200':
+          $ref: '#/components/responses/LhcFill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+    patch:
+      operationId: updateLhcFill
+      summary: Adds a new LhcFill
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLhcFill'
+      responses:
+        '201':
+          $ref: '#/components/responses/LhcFill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+  /lhcFills/{fillNumber}/runs:
+    parameters:
+      - $ref: '#/components/parameters/FillNumber'
+    get:
+      operationId: listRunsByFillNumber
+      summary: Lists all tags associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfRuns'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+  /lhcFills/{fillNumber}/runs/{runNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FillNumber'
+      - $ref: '#/components/parameters/RunNumber'
+    get:
+      operationId: getRunByFillNumberAndRunNumber
+      summary: Gives the possibility to find a run by run number
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
   /logs:
     get:
       operationId: listLogs
@@ -360,6 +455,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -376,6 +473,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -582,6 +681,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EnvironmentId'
+    FillNumber:
+      name: fillNumber
+      description: The id of the lhcFill to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -702,6 +808,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateFlp'
+    CreateLhcFill:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateLhcFill'
     CreateLog:
       required: true
       content:
@@ -781,6 +893,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfFlpsResponse'
+    ArrayOfLhcFills:
+      description: Expected response to a valid request
+      content:
+        applicaiton/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLhcFillsResponse'
     ArrayOfLogs:
       description: Expected response to a valid request.
       content:
@@ -847,6 +965,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    LhcFill:
+      description: Expected response of an LhcFill
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LhcFillResponse'
     Log:
       description: Expected response to a valid request.
       content:
@@ -972,6 +1096,29 @@ components:
       additionalProperties: false
     ArrayOfFlpsResponseMeta:
       description: The metadata related to an array of flps response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfLhcFills:
+      description: A list of LhcFill objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LhcFill'
+    ArrayOfLhcFillsResponse:
+      description: Alist of LhcFills
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfLhcFills'
+        meta:
+          $ref: '#/components/schemas/ArrayOfLhcFillsResponseMeta'
+      additionalProperties: false
+    ArrayOfLhcFillsResponseMeta:
+      description: The metadata related to an array of LhcFills response.
       type: object
       properties:
         page:
@@ -1167,14 +1314,35 @@ components:
         - name
         - hostname
       additionalProperties: false
+    CreateLhcFill:
+      description: Describes an lhcfill
+      properties:
+        stableBeamsDuration:
+          description: Float value of the time
+          type: integer
+          nullable: true
+        stableBeamEnd:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        stableBeamStart:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        beamType:
+          $ref: '#/components/schemas/LhcFillBeamType'
+        fillingSchemeName:
+          description: Filling scheme name
+          type: string
+          nullable: true
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        attachments:
-          $ref: '#/components/schemas/ArrayOfAttachments'
-        parentLogId:
-          $ref: '#/components/schemas/EntityId'
         text:
           $ref: '#/components/schemas/LogText'
         title:
@@ -1566,6 +1734,54 @@ components:
       description: Number of subtimeframes processed in this FLP. Updated regularly.
       type: integer
       minimum: 0
+    LhcFill:
+      description: Describes the current situation of lhc
+      type: object
+      properties:
+        fillNumber:
+          $ref: '#/components/schemas/EntityId'
+        stableBeamsDuration:
+          description: Float value of the time
+          type: integer
+          nullable: true
+        stableBeamsEnd:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        stableBeamsStart:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        beamType:
+          $ref: '#/components/schemas/LhcFillBeamType'
+        fillingSchemeName:
+          description: Name of the filling schme
+          type: string
+          nullable: true
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+          nullable: true
+      additionalProperties: false
+    LhcFillBeamType:
+      description: A enum of the different collision types of the beam
+      nullable: true
+      type: string
+    LhcFillResponse:
+      description: Response containing a single LhcFill.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LhcFill'
+      required:
+        - data
+      additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
