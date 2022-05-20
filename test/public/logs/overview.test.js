@@ -531,8 +531,8 @@ module.exports = () => {
         await secondPageButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
 
-        // Navigate to a log detail page
-        const firstRow = await page.$('button.btn-redirect');
+        // Navigate to a log detail page via href
+        const firstRow = await page.$('a.btn-redirect');
         const firstRowId = await firstRow.evaluate((btn) => btn.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
         await firstRow.evaluate((button) => button.click());

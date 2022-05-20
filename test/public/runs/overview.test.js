@@ -248,7 +248,7 @@ module.exports = () => {
     it('can navigate to a run detail page', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
-        const firstButton = await page.$('button.btn-redirect');
+        const firstButton = await page.$('a.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 

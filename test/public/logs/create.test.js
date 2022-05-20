@@ -245,9 +245,9 @@ module.exports = () => {
         const attachmentsCountText = await page.evaluate((element) => element.innerText, firstRowAttachmentsCount);
         expect(attachmentsCountText).to.equal('2');
 
-        // Go to the log detail page
+        // Go to the log detail page via ahref link
         const buttonId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-        const button = await page.$(`button#btn${buttonId}`);
+        const button = await page.$(`a#btn${buttonId}`);
         await button.evaluate((btn) => btn.click());
         await page.waitForTimeout(500);
         // Click on "Show all" button
