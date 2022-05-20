@@ -2044,8 +2044,6 @@ components:
           $ref: '#/components/schemas/EnvironmentId'
         eorReasons:
           $ref: '#/components/schemas/EorReasonList'
-        envId:
-          $ref: '#/components/schemas/EnvironmentId'
         environmentId:
           $ref: '#/components/schemas/RunEnvironmentId'
         epn:
