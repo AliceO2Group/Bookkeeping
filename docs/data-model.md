@@ -22,6 +22,7 @@ For simplicity, the following info is not described in this document:
 ## Further explanations of fields tables
 
 Concerning the **Update time** of the fields:
+- At COF: synchronously at LhcFill creation
 - At COE: synchronously at Environment creation
 - At EOE: synchronously at End of environment
 - At SOR: synchronously at Start of Run 
@@ -55,8 +56,12 @@ Concerning the **Update mode** of the fields:
 | `n_flps`                      | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
 | `n_epns`                      | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
 | `epn_topology`                | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
-| `detectors`                   | List of detectors in the run | `ITS,TPC,TOF` | At SOR | `run_number` | Insert |
-
+| `fillNumber`                  | The fill connected to the run      | `1, 2, 1651`                        |  | `run_number` | Update |
+| `lhcBeamEnergy`               | Energy of the beam (GeV)           | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
+| `lhcBeamMode`                 | LHC Beam Mode                      | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
+| `lhcBetaStar`                 | LHC Beta * in meters               | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `aliceL3Current`              | Current in L3 magnet (Amperes)     | `3.14, 2`                           |  | `run_number` | Update |
+| `aliceDipoleCurrent`          | Current in Dipole magnet (Amperes) | `ITS,TPC,TOF`                       |  | `run_number` | Update |
 
 ### End of run reasons
 
@@ -171,3 +176,20 @@ Concerning the **Update mode** of the fields:
 | `toredownAt`                  | When the environment is stopped | | AT EOE | `id`| Update |
 | `status`                      | Actual status of the envrionment | `STOPPED`, `STARTED`|  | `id`| Update |
 | `statusMessage`               | A bigger message to show more detail about the status | `Environment sucessfully closed`, `Error creating envrionment: bad configuration` | | `id`| Update |
+
+
+### LhcFills
+
+**Description:** The fill of    
+**DB main table**: `lhcFills`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `fillNumber`                  | lhcFill id                          | `1, 2, 3215`                        | AT COF | `fillNumber` | Insert |
+| `createdAt`                   | When the lhcFill is created         |                                     | AT COF | `fillNumber` | Insert |
+| `updatedAt`                   | When the lhcFill is updated         |                                     |        | `fillNumber` | Update |
+| `stableBeamsStart`            | Start of STABLE BEAMS               |                                     |        | `fillNumber` | Update |
+| `stableBeamsEnd`              | End of STABLE BEAMS                 |                                     |        | `fillNumber` | Update |
+| `stableBeamsDuration`         | STABLE BEAMS duration in seconds    |                                     |        | `fillNumber` | Update |
+| `beamType`                    | Type of collisions                  | `PROTON-PROTON` `Pb-Pb` `Pb-PROTON` |        | `fillNumber` | Update |
+| `fillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
