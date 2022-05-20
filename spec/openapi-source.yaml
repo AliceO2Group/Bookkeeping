@@ -311,6 +311,26 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+    patch:
+      operationId: updateRunByRunNumber
+      summary: Updates a run by runNumber
+      parameters:
+        - $ref: '#/components/parameters/RunNumberQuery'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunByRunNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /runs/{runId}:
     parameters:
       - $ref: '#/components/parameters/RunId'
@@ -344,6 +364,22 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+    put:
+      operationId: replaceRun
+      summary: updates the run quality of a run
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunQuality'
+      responses:
+        '201':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /runs/{runId}/logs:
     parameters:
       - $ref: '#/components/parameters/RunId'
@@ -359,6 +395,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /status:
     get:
       operationId: getDeployInformation
@@ -609,6 +647,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/RunNumber'
+    RunNumberQuery:
+      name: runNumber
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
+      description: Run number but in the query
     RunSorting:
       in: query
       name: sort
@@ -699,6 +744,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateFlp'
+    UpdateRunByRunNumber:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunByRunNumber'
+    UpdateRunQuality:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunQuality'
     UpdateRunTags:
       required: true
       content:
@@ -780,6 +837,12 @@ components:
             $ref: '#/components/schemas/FlpResponse'
     Forbidden:
       description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    InternalServerError:
+      description: Internal server error
       content:
         application/json:
           schema:
@@ -1313,7 +1376,9 @@ components:
           $ref: '#/components/schemas/ErrorSource'
         status:
           description: The HTTP status code applicable to this problem.
-          type: string
+          oneOf:
+            - type: string
+            - type: integer
         title:
           description: A short, human-readable summary of the problem.
           type: string
@@ -1731,6 +1796,14 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1744,6 +1817,8 @@ components:
           $ref: '#/components/schemas/RunDdFlp'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
         eorReasons:
           $ref: '#/components/schemas/EorReasonList'
         environmentId:
@@ -1753,13 +1828,24 @@ components:
         epnTopology:
           $ref: '#/components/schemas/RunEpnTopology'
         fillNumber:
-          description: Id of lhc fill
+          description: Id of a lhcFill object
           type: integer
+          minimum: 1
           nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
-        envId:
-          $ref: '#/components/schemas/EnvironmentId'
+        lhcBeamEnergy:
+          description: Energy of the beam (GeV)
+          type: number
+          nullable: true
+        lhcBeamMode:
+          description: LHC Beam Mode (STABLE BEAMS,INJECTION PROBE BEAM, ...)
+          type: string
+          nullable: true
+        lhcBetaStar:
+          description: LHC Beta * in meters
+          type: number
+          nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
@@ -2022,6 +2108,39 @@ components:
           $ref: '#/components/schemas/FlpBytesRecordingReadOut'
         bytesFairMQReadOut:
           $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+      additionalProperties: false
+    UpdateRunByRunNumber:
+      description: Updates Run by runNumber
+      type: object
+      properties:
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+        lhcBeamEnergy:
+          description: Energy of the beam (GeV)
+          type: number
+          nullable: true
+        lhcBeamMode:
+          description: LHC Beam Mode (STABLE BEAMS,INJECTION PROBE BEAM, ...)
+          type: string
+          nullable: true
+        lhcBetaStar:
+          description: LHC Beta * in meters
+          type: number
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+      additionalProperties: false
+    UpdateRunQuality:
+      description: Updates the run quality values
+      properties:
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
     UpdateRunTags:
       description: List of labels attached to something for the purpose of identification.
