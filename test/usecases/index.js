@@ -13,6 +13,7 @@
 
 const EnvironmentSuite = require('./environment');
 const StatusSuite = require('./status');
+const LhcFillSuite = require('./lhcFill');
 const LogSuite = require('./log');
 const RunSuite = require('./run');
 const FlpSuite = require('./flp');
@@ -23,6 +24,7 @@ const TagSuite = require('./tag');
 module.exports = () => {
     describe('Status', StatusSuite);
     describe('Log', LogSuite);
+    describe('LhcFill', LhcFillSuite);
     describe('Run', RunSuite);
     describe('Flp', FlpSuite);
     describe('Server', ServerSuite);
