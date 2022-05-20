@@ -58,4 +58,10 @@ module.exports = () => {
         expect(result.beamType).to.equal('Pb-Pb');
         expect(result.fillingSchemeName).to.equal('schemename');
     });
+    it('should not be able to create with the same id', async () => {
+        const { error } = await new CreateLhcFillUseCase()
+            .execute(createLhcFillDto);
+        expect(error.status).to.equal('409');
+        expect(error.detail).to.equal('The provided fillNumber already exists');
+    });
 };

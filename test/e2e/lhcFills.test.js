@@ -72,6 +72,31 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 409 if the fillNumber is duplicate', (done) => {
+            request(server)
+                .post('/api/lhcFills')
+                .expect(409)
+                .send({
+                    fillNumber: 1,
+                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
+                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
+                    stableBeamsDuration: 600,
+                    beamType: 'Pb-Pb',
+                    fillingSchemeName: 'schemename',
+                })
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+                    expect(res.body.errors[0].detail).to.equal('The provided fillNumber already exists');
+
+                    done();
+                });
+        });
     });
     describe('PATCH /api/lhcFills/:fillNumber', () => {
         it('should return 400 if the wrong id is provided', (done) => {
