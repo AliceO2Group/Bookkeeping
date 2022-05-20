@@ -25,7 +25,7 @@ module.exports = () => {
     beforeEach(async () => {
         updateLhcFillDto = await UpdateLhcFillDto.validateAsync({
             params: {
-                lhcFillId: '1',
+                fillNumber: '1',
             },
             body: {
                 stableBeamsStart: new Date('2022-03-21 13:00:00'),
@@ -54,7 +54,7 @@ module.exports = () => {
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
-        updateLhcFillDto.params.lhcFillId = wrongId;
+        updateLhcFillDto.params.fillNumber = wrongId;
         const { error } = await new UpdateLhcFillUseCase()
             .execute(updateLhcFillDto);
         expect(error.status).to.equal('400');

@@ -1,4 +1,4 @@
-# Generated on Tue, 17 May 2022 09:30:40 GMT
+# Generated on Fri, 20 May 2022 10:11:48 GMT
 
 openapi: 3.0.0
 info:
@@ -194,13 +194,13 @@ paths:
           $ref: '#/components/responses/LhcFill'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         default:
           $ref: '#/components/responses/UnexpectedError'
-  /lhcFills/{lhcFillId}:
+  /lhcFills/{fillNumber}:
     parameters:
-      - $ref: '#/components/parameters/LhcFillId'
+      - $ref: '#/components/parameters/FillNumber'
     get:
       operationId: getLhcFillById
       summary: List all LhcFills
@@ -231,11 +231,11 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - lhcFill
-  /lhcFills/{lhcFillId}/runs:
+  /lhcFills/{fillNumber}/runs:
     parameters:
-      - $ref: '#/components/parameters/LhcFillId'
+      - $ref: '#/components/parameters/FillNumber'
     get:
-      operationId: listRunsByLhcFillId
+      operationId: listRunsByFillNumber
       summary: Lists all tags associated with a log
       responses:
         '200':
@@ -248,12 +248,12 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - lhcFill
-  /lhcFills/{lhcFillId}/runs/{runNumber}:
+  /lhcFills/{fillNumber}/runs/{runNumber}:
     parameters:
-      - $ref: '#/components/parameters/LhcFillId'
+      - $ref: '#/components/parameters/FillNumber'
       - $ref: '#/components/parameters/RunNumber'
     get:
-      operationId: getRunByLhcFillIdAndRunNumber
+      operationId: getRunByFillNumberAndRunNumber
       summary: Gives the possibility to find a run by run number
       responses:
         '200':
@@ -422,6 +422,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -455,6 +457,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -471,6 +475,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -677,6 +683,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EnvironmentId'
+    FillNumber:
+      name: fillNumber
+      description: The id of the lhcFill to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -951,6 +964,12 @@ components:
             $ref: '#/components/schemas/FlpResponse'
     Forbidden:
       description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    InternalServerError:
+      description: Internal server error
       content:
         application/json:
           schema:
@@ -1534,7 +1553,9 @@ components:
           $ref: '#/components/schemas/ErrorSource'
         status:
           description: The HTTP status code applicable to this problem.
-          type: string
+          oneOf:
+            - type: string
+            - type: integer
         title:
           description: A short, human-readable summary of the problem.
           type: string
@@ -1728,12 +1749,12 @@ components:
       properties:
         beamType:
           $ref: '#/components/schemas/LhcFillBeamType'
+        fillNumber:
+          $ref: '#/components/schemas/EntityId'
         fillingSchemeName:
           description: Name of the filling schme
           type: string
           nullable: true
-        id:
-          $ref: '#/components/schemas/EntityId'
         runs:
           description: Array of minified Run objects.
           type: array
@@ -2031,6 +2052,11 @@ components:
           $ref: '#/components/schemas/RunEpn'
         epnTopology:
           $ref: '#/components/schemas/RunEpnTopology'
+        fillNumber:
+          description: Id of a lhcFill object
+          type: integer
+          minimum: 1
+          nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
         lhcBeamEnergy:
@@ -2044,11 +2070,6 @@ components:
         lhcBetaStar:
           description: LHC Beta * in meters
           type: number
-          nullable: true
-        lhcFillId:
-          description: Id of a lhcFill object
-          type: integer
-          minimum: 1
           nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
