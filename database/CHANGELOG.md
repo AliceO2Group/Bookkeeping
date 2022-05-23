@@ -1,3 +1,13 @@
+## [0.28.0]
+* Changes made to the database:
+  * table `runs`:
+    * `detectors` is now STRING;
+    * new columns for LHC Fills data: `fill_number, lhc_beam_energy, lhc_beam_mode, lhc_beta_star, alice_l3_current, alice_dipole_current`
+  * new table `lhc_fills`
+  * new table `eor_reasons`
+  * new table `reason_types`
+* Respective changes were applied to GO APIs
+
 ## [0.21.0]
 * Changes made to the database:
   * runQuality:

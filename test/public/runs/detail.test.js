@@ -56,6 +56,13 @@ module.exports = () => {
         expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
     });
 
+    it('should show lhc data in edit mode', async () => {
+        await page.waitForTimeout(100);
+        const element = await page.$('#lhcFill-id>b');
+        const value = await element.evaluate((el) => el.textContent);
+        expect(value).to.equal('Lhc Data:');
+    });
+
     it('successfully exited EDIT mode of a run', async () => {
         await pressElement(page, '#cancel-run');
         await page.waitForTimeout(100);
@@ -75,7 +82,12 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=logs`)).to.be.true;
     });
-
+    it('should show lhc data in normal mode', async () => {
+        await page.waitForTimeout(100);
+        const element = await page.$('#lhcFill-id>b');
+        const value = await element.evaluate((el) => el.textContent);
+        expect(value).to.equal('Lhc Data:');
+    });
     it('can navigate to a log detail page', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
