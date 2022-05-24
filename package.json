@@ -21,7 +21,7 @@
     "joi": "17.6.0",
     "mariadb": "3.0.0",
     "multer": "1.4.3",
-    "sequelize": "6.19.0",
+    "sequelize": "6.20.0",
     "umzug": "2.3.0"
   },
   "files": [
