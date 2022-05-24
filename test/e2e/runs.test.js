@@ -468,24 +468,16 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return an error due to already existing run number', (done) => {
-            request(server)
+        it('should return an error due to already existing run number', async () => {
+            const response = await request(server)
                 .post('/api/runs')
-                .expect(409)
                 .send({
                     ...testRun,
-                })
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    expect(res.body.errors).to.be.an('array');
-                    // eslint-disable-next-line max-len
-                    expect(res.body.errors[0].detail).to.equal('A run already exists with run number 109');
-
-                    done();
                 });
+
+            expect(response.status).to.equal(409);
+            expect(response.body.errors).to.be.an('array');
+            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 109');
         });
     });
     describe('PUT /api/runs/:runId', () => {

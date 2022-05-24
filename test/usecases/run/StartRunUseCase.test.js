@@ -50,6 +50,18 @@ module.exports = () => {
         expect(result.id).to.equal(107);
     });
 
+    it('should fail to save a run with an already existing run number', async () => {
+        const { result, error } = await new StartRunUseCase()
+            .execute(startRunDto);
+
+        expect(result).to.be.undefined;
+        expect(error).to.eql({
+            status: 409,
+            title: 'Conflict',
+            detail: 'A run already exists with run number 107',
+        });
+    });
+
     it('should successfully store and return the saved entity with default values if not provided', async () => {
         delete startRunDto.body.detectors;
         startRunDto.body.runNumber = 108;
