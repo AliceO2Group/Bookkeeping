@@ -717,6 +717,13 @@ components:
       schema:
         $ref: '#/components/schemas/FlpSortOptions'
       style: deepObject
+    LhcFillId:
+      name: lhcFillId
+      description: The id of the lhcFill to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     LogId:
       name: logId
       description: The id of the log to retrieve
