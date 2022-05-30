@@ -329,12 +329,12 @@ module.exports = () => {
         [today] = today.toISOString().split('T');
         const time = '00:01';
 
-        for (let i = 0; i < timeList.length; i++) {
-            await page.type(timeList[i], time);
+        for (const selector of timeList) {
+            await page.type(selector, time);
             await page.waitForTimeout(500);
         }
-        for (let i = 0; i < dateList.length; i++) {
-            const value = await page.$eval(dateList[i], (element) => element.value);
+        for (const selector of dateList) {
+            const value = await page.$eval(selector, (element) => element.value);
             expect(String(value)).to.equal(today);
         }
         const date = new Date();
@@ -370,8 +370,8 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
-        for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], dateString);
+        for (const selector of dateList) {
+            await page.type(selector, dateString);
             await page.waitForTimeout(500);
         }
         await page.type(timeList[0], '11:11');
@@ -392,6 +392,7 @@ module.exports = () => {
         expect(String(startMin)).to.equal(await page.$eval(timeList[0], (element) => element.value));
         expect(String(endMin)).to.equal(await page.$eval(timeList[2], (element) => element.value));
     });
+
     it('The max should be the maximum value when having different dates', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
@@ -402,8 +403,8 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
-        for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], dateString);
+        for (const selector of dateList) {
+            await page.type(selector, dateString);
             await page.waitForTimeout(500);
         }
         const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
@@ -416,5 +417,49 @@ module.exports = () => {
         const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
         expect(String(startMin)).to.equal(minTime);
         expect(String(endMin)).to.equal(minTime);
+    });
+
+    it('Should successfully filter runs by their run quality', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const badFilterSelector = `${filterInputSelectorPrefix}bad`;
+        const testFilterSelector = `${filterInputSelectorPrefix}test`;
+
+        /**
+         * Checks that all the rows of the given table have a valid run quality
+         *
+         * @param {{evaluate: function}[]} rows the list of rows
+         * @param {string[]} authorizedRunQualities  the list of valid run qualities
+         * @return {void}
+         */
+        const checkTableRunQualities = async (rows, authorizedRunQualities) => {
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-runQuality-text`).innerText;
+                })).to.be.oneOf(authorizedRunQualities);
+            }
+        };
+
+        // Open filter toggle
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        await page.$eval(badFilterSelector, (element) => element.click());
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+        await checkTableRunQualities(table, ['bad']);
+
+        await page.$eval(testFilterSelector, (element) => element.click());
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        await checkTableRunQualities(table, ['bad', 'test']);
+
+        await page.$eval(testFilterSelector, (element) => element.click());
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+        await checkTableRunQualities(table, ['bad']);
     });
 };

@@ -22,7 +22,7 @@ const { expect } = chai;
  * Returns the URL with correct port postfixed.
  * @returns {String} URL specific to the port specified by user/host.
  */
-const getUrl = ()=> `http://localhost:${server.address().port}`;
+const getUrl = () => `http://localhost:${server.address().port}`;
 
 /**
  * Constructor to build elements before tests start.
@@ -81,10 +81,10 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
  * @param {String} selector Css selector.
  * @returns {Promise} Whether the element was clickable or not.
  */
-module.exports.pressElement = async (page, selector) => await Promise.all([
-    await page.waitForSelector(selector),
-    page.click(selector),
-]);
+module.exports.pressElement = async (page, selector) => {
+    await page.waitForSelector(selector);
+    await page.click(selector);
+};
 
 /**
  * Goes to a specific page and waits until everything is loaded.

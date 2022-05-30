@@ -224,6 +224,27 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should filter run on their quality', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[runQualities]=bad,test');
+            expect(response.status).to.equal(200);
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            // 47 because one run is added in start run use case with default quality which is test
+            expect(data.length).to.equal(47);
+        });
+        it('should return 400 if "runQuality" is invalid', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[runQualities]=invalid');
+            expect(response.status).to.equal(400);
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
+
+            const { errors } = response.body;
+            expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test]');
+        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
