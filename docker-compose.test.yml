@@ -15,3 +15,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
     restart: "no"
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data
+        target: /var/lib/mysql
+volumes:
+  database-data:
