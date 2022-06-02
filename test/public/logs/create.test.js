@@ -249,7 +249,7 @@ module.exports = () => {
         const buttonId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
         const button = await page.$(`a#btn${buttonId}`);
         await button.evaluate((btn) => btn.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(1000);
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
@@ -259,7 +259,7 @@ module.exports = () => {
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1}\n, \n${file2}`);
-    }).timeout(10000);
+    }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
