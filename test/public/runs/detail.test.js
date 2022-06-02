@@ -60,7 +60,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const element = await page.$('#lhcFill-id>b');
         const value = await element.evaluate((el) => el.textContent);
-        expect(value).to.equal('Lhc Data:');
+        expect(value).to.equal('LHC Data:');
     });
 
     it('successfully exited EDIT mode of a run', async () => {
@@ -86,7 +86,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const element = await page.$('#lhcFill-id>b');
         const value = await element.evaluate((el) => el.textContent);
-        expect(value).to.equal('Lhc Data:');
+        expect(value).to.equal('LHC Data:');
     });
     it('can navigate to a log detail page', async () => {
         table = await page.$$('tr');
