@@ -87,12 +87,12 @@ module.exports = () => {
         }
     });
 
-    it('can navigate to a detail page', async () => {
-        const firstButton = await page.$('button.btn-redirect');
+    it('can navigate to a detail page via ahref link', async () => {
+        const firstButton = await page.$('a.btn-redirect');
         const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
-        await firstButton.evaluate((button) => button.click());
+        await firstButton.evaluate((ahref) => ahref.click());
         await page.waitForTimeout(500);
 
         const redirectedUrl = await page.url();
