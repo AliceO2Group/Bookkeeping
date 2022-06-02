@@ -12,7 +12,15 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    getFirstRow,
+    goToPage,
+    getInnerHtml,
+} = require('../defaults');
 
 const { expect } = chai;
 
@@ -246,19 +254,71 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
-        page.waitForTimeout(100);
-        const firstButton = await page.$('a.btn-redirect');
-        const firstRowId = await firstButton.evaluate((btn) => btn.id);
-        const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        await page.waitForSelector('tbody tr');
+        const firstRow = await page.$('tbody tr');
+        const expectedRunId = await firstRow.evaluate((element) => element.id)
+            .then((id) => parseInt(id.slice('row'.length), 10));
 
-        // We expect the entry page to have the same id as the id from the run overview
-        await firstButton.evaluate((button) => button.click());
+        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;
+        // We expect the entry page to have the same id as the id from the run overview
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${expectedRunId}`)).to.be.true;
     });
-    it('should update to current date when empty and time is set', async () =>{
+
+    it('Should have balloon on detector, tags and topology column', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+
+        /**
+         * Check that the fist cell of the given column contains a balloon and that the balloon's content is correct
+         *
+         * @param {number} columnIndex the index of the column to look for balloon presence
+         * @returns {Promise<void>} void promise
+         */
+        const checkColumnBalloon = async (columnIndex) => {
+            const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
+            const balloon = await cell.$('.balloon');
+            expect(balloon).to.not.be.null;
+            const actualContent = await cell.$('.balloon-actual-content');
+            expect(actualContent).to.not.be.null;
+
+            expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
+        };
+
+        checkColumnBalloon(2);
+        checkColumnBalloon(3);
+        checkColumnBalloon(12);
+    });
+
+    it('Should display balloon if the text overflows', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        const cell = await page.$('tbody tr td:nth-of-type(2)');
+        // We need the actual content to overflow in order to display balloon
+        await cell.evaluate((element) => {
+            element.querySelector('.balloon-actual-content').innerText = 'a really long text'.repeat(50);
+        });
+        // Scroll to refresh the balloon triggers
+        await page.mouse.wheel({ deltaY: 100 });
+
+        const balloonAnchor = await cell.$('.balloon-anchor');
+        expect(balloonAnchor).to.not.be.null;
+
+        /**
+         * Returns the computed display attribute of the balloon anchor
+         * @returns {*} the computed display
+         */
+        const getBalloonDisplay = () => balloonAnchor.evaluate((element) => window.getComputedStyle(element).display);
+
+        expect(await getBalloonDisplay()).to.be.equal('none');
+        await cell.hover();
+        expect(await getBalloonDisplay()).to.be.equal('flex');
+    });
+
+    it('should update to current date when empty and time is set', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
         // Open the filters

@@ -171,3 +171,10 @@ module.exports.getAllDataFields = async (page, key) => {
         return accumulator;
     }, []);
 };
+
+/**
+ * Evaluate and return the html content of a given element handler
+ * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
+ * @returns {Promise<XPathResult>} the html content
+ */
+module.exports.getInnerHtml = async (elementHandler) => await elementHandler.evaluate((element) => element.innerHTML);
