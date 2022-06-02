@@ -1,5 +1,7 @@
 html, body {
     scroll-behavior: smooth;
+
+    --ui-component-medium: 550px;
 }
 
 .cell-xs { max-width: 2rem; }
@@ -255,12 +257,55 @@ html, body {
     max-height: 48px;
     align-items: baseline;
 }
+
 .border-danger {
     border: 1px solid var(--color-danger) !important;
 }
 
-@media screen and (max-width: 900px) {
-   .w-20 {
-       width: 40vh;
-   }
+/* Balloon system */
+
+.balloon-container {
+    overflow: visible;
+    display: flex;
 }
+
+.balloon-sizer {
+    display: flex;
+    flex: 0 0;
+    max-width: 100%;
+    position: relative;
+}
+
+.balloon-anchor {
+    position: absolute;
+    left: 50%;
+    width: 0;
+    justify-content: center;
+    display: none;
+}
+
+.balloon-anchor.anchor-top {
+    bottom: 100%;
+}
+
+.balloon-anchor:not(.anchor-top) {
+    top: 100%;
+}
+
+.balloon-container.enabled > .balloon-sizer > .balloon-anchor {
+    display: flex;
+}
+
+.balloon {
+    display: flex;
+    flex-shrink: 0;
+    max-width: var(--ui-component-medium);
+    position: relative;
+}
+
+@media screen and (max-width: 900px) {
+    .w-20 {
+        width: 40vh;
+    }
+}
+
