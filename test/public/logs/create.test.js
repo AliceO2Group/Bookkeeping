@@ -245,11 +245,11 @@ module.exports = () => {
         const attachmentsCountText = await page.evaluate((element) => element.innerText, firstRowAttachmentsCount);
         expect(attachmentsCountText).to.equal('2');
 
-        // Go to the log detail page
+        // Go to the log detail page via ahref link
         const buttonId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-        const button = await page.$(`button#btn${buttonId}`);
+        const button = await page.$(`a#btn${buttonId}`);
         await button.evaluate((btn) => btn.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(1000);
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
@@ -259,7 +259,7 @@ module.exports = () => {
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1}\n, \n${file2}`);
-    }).timeout(10000);
+    }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
