@@ -14,6 +14,7 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
 } = require('../defaults');
+const { checkColumnBalloon } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -49,6 +50,13 @@ module.exports = () => {
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping 2020');
+    });
+
+    it('Should have balloon on runs column', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForTimeout(100);
+
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('can filter by log title', async () => {

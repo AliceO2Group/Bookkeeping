@@ -19,8 +19,8 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
-    getInnerHtml,
 } = require('../defaults');
+const { checkColumnBalloon } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -272,25 +272,16 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
 
-        /**
-         * Check that the fist cell of the given column contains a balloon and that the balloon's content is correct
-         *
-         * @param {number} columnIndex the index of the column to look for balloon presence
-         * @returns {Promise<void>} void promise
-         */
-        const checkColumnBalloon = async (columnIndex) => {
-            const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
-            const balloon = await cell.$('.balloon');
-            expect(balloon).to.not.be.null;
-            const actualContent = await cell.$('.balloon-actual-content');
-            expect(actualContent).to.not.be.null;
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
 
-            expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
-        };
+        // Run 106 have data long enough to overflow
+        await page.type('#runId', '106');
+        await page.waitForTimeout(500);
 
-        checkColumnBalloon(2);
-        checkColumnBalloon(3);
-        checkColumnBalloon(12);
+        await checkColumnBalloon(page, 1, 2);
+        await checkColumnBalloon(page, 1, 3);
+        await checkColumnBalloon(page, 1, 12);
     });
 
     it('Should display balloon if the text overflows', async () => {

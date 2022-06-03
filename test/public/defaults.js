@@ -177,4 +177,24 @@ module.exports.getAllDataFields = async (page, key) => {
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
  * @returns {Promise<XPathResult>} the html content
  */
-module.exports.getInnerHtml = async (elementHandler) => await elementHandler.evaluate((element) => element.innerHTML);
+const getInnerHtml = async (elementHandler) => await elementHandler.evaluate((element) => element.innerHTML);
+
+module.exports.getInnerHtml = getInnerHtml;
+
+/**
+ * Check that the fist cell of the given column contains a balloon and that the balloon's content is correct
+ *
+ * @param {{$: function}} page the puppeteer page
+ * @param {number} rowIndex the index of the row to look for balloon presence
+ * @param {number} columnIndex the index of the column to look for balloon presence
+ * @returns {Promise<void>} void promise
+ */
+module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
+    const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
+    const balloon = await cell.$('.balloon');
+    expect(balloon).to.not.be.null;
+    const actualContent = await cell.$('.balloon-actual-content');
+    expect(actualContent).to.not.be.null;
+
+    expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
+};
