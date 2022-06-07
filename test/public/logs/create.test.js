@@ -140,7 +140,7 @@ module.exports = () => {
     it('can create a log with linked tags', async () => {
         const title = 'A short title';
         const text = 'Sample Text';
-        const tags = ['FOOD', 'OTHER'];
+        const tags = ['FOOD', 'GLOBAL'];
 
         // Return to the creation page
         await goToPage(page, 'log-create');
@@ -151,23 +151,17 @@ module.exports = () => {
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
 
         // Find the selection options corresponding to the tag texts
-        const optionsToSelect = [];
-        const tagOptions = await page.$$('option');
-        for (const _option of tagOptions) {
-            const option = await _option;
-            const optionText = await page.evaluate((element) => element.innerText, option);
+        const tagOptions = await page.$$('.tag-option');
+        for (const option of tagOptions) {
+            const optionText = await option.evaluate((element) => element.querySelector('label').innerText);
             if (tags.includes(optionText)) {
-                const optionValue = await page.evaluate((element) => element.value, option);
-                optionsToSelect.push(optionValue);
+                await option.evaluate((element) => element.querySelector('input').click());
+                await page.waitForTimeout(100);
             }
         }
 
-        // Select the collection of tags to be linked to the log
-        await page.select('select#tags', ...optionsToSelect);
-
         // Expect to have selected two options
-        const tagSelection = await page.$('select#tags');
-        const tagSelectedOptions = await page.evaluate((element) => element.selectedOptions, tagSelection);
+        const tagSelectedOptions = await page.$$('.tag-option input:checked');
         expect(Object.keys(tagSelectedOptions).length).to.equal(2);
 
         // Create the new log

@@ -82,11 +82,11 @@
         ],
         "function-call-argument-newline": [
             "error",
-            "never"
+            "consistent"
         ],
         "function-paren-newline": [
             "error",
-            "never"
+            "multiline"
         ],
         "indent": [
             "error",

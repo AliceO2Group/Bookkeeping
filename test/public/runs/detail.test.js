@@ -49,11 +49,11 @@ module.exports = () => {
     });
 
     it('successfully changed run tags in EDIT mode', async () => {
-        await pressElement(page, '#tags-control option[value="1"]');
+        await pressElement(page, '#tags-selection #tagCheckbox1');
         await page.waitForTimeout(100);
         await pressElement(page, '#update-tags');
         await page.waitForTimeout(100);
-        expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
+        expect(await page.$eval('#tags-selection #tagCheckbox1', (elem)=>elem.checked)).to.be.true;
     });
 
     it('should show lhc data in edit mode', async () => {
