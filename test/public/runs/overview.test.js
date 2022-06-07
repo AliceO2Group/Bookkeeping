@@ -453,4 +453,68 @@ module.exports = () => {
         expect(table.length).to.equal(1);
         await checkTableRunQualities(table, ['bad']);
     });
+    it('should successfully filter on nDetectors', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        const nDetectorOperatorSelector = '#nDetectors-operator';
+        const nDetectorOperator = await page.$(nDetectorOperatorSelector) || null;
+        expect(nDetectorOperator).to.not.be.null;
+        expect(await nDetectorOperator.evaluate((element) => element.value)).to.equal('=');
+
+        const nDetectorLimitSelector = '#nDetectors-limit';
+        const nDetectorLimit = await page.$(nDetectorLimitSelector) || null;
+        expect(nDetectorLimit).to.not.be.null;
+
+        await page.focus(nDetectorLimitSelector);
+        await page.keyboard.type('3');
+        await page.waitForTimeout(200);
+
+        await page.select(nDetectorOperatorSelector, '<=');
+        await page.waitForTimeout(200);
+
+        const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-detectors .nDetectors-badge`)?.innerText;
+        }));
+
+        /*
+         * The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in
+         * tests data
+         */
+        expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= '3' || nDetectors === null)).to.be.true;
+    });
+
+    it('should successfully filter on nFlps', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        const nFlpsOperatorSelector = '#nFlps-operator';
+        const nFlpsOperator = await page.$(nFlpsOperatorSelector) || null;
+        expect(nFlpsOperator).to.not.be.null;
+        expect(await nFlpsOperator.evaluate((element) => element.value)).to.equal('=');
+
+        const nFlpsLimitSelector = '#nFlps-limit';
+        const nFlpsLimit = await page.$(nFlpsLimitSelector) || null;
+        expect(nFlpsLimit).to.not.be.null;
+
+        await page.focus(nFlpsLimitSelector);
+        await page.keyboard.type('10');
+        await page.waitForTimeout(200);
+
+        await page.select(nFlpsOperatorSelector, '<=');
+        await page.waitForTimeout(200);
+
+        const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
+        }));
+        expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
+    });
 };
