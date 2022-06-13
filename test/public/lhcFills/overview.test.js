@@ -45,7 +45,7 @@ module.exports = () => {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping 2020');
+        expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
     it('shows correct datatypes in respective columns', async () => {
