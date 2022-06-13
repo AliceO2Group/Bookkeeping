@@ -69,6 +69,16 @@ module.exports = () => {
         await expectInnerText(page, '#edit-run', 'Edit Run');
     });
 
+    it('should not show edit run button when not admin', async () => {
+        await page.goto(`${url}/?page=run-detail&id=1`);
+        await page.waitForTimeout(100);
+        await page.click('div[title="User Actions"]');
+        await page.waitForTimeout(100);
+        await page.click('span.slider.round');
+        await page.waitForTimeout(100);
+        expect(await page.$('#edit-run')).to.equal(null);
+    });
+
     it('can navigate to the flp panel', async () => {
         await pressElement(page, '#flps-tab');
         await page.waitForTimeout(100);
