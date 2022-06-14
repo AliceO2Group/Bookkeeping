@@ -159,4 +159,15 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
     });
+
+    it('should successfully return an array containing only runs with specified run qualities', async () => {
+        const requiredQualities = ['bad', 'test'];
+        getAllRunsDto.query = { filter: { runQualities: requiredQualities }, page: { limit: 100 } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(46);
+        expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
+    });
 };
