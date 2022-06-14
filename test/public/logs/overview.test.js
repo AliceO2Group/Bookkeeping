@@ -12,9 +12,16 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    goToPage,
+    getFirstRow,
+    getAllDataFields,
+    checkColumnBalloon,
 } = require('../defaults');
-const { checkColumnBalloon } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -52,10 +59,12 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    it('Should have balloon on runs column', async () => {
+    it('Should have balloon on title, tags and runs columns', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForTimeout(100);
 
+        await checkColumnBalloon(page, 1, 1);
+        await checkColumnBalloon(page, 1, 4);
         await checkColumnBalloon(page, 1, 5);
     });
 

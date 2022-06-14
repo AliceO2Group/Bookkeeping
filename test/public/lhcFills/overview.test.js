@@ -12,7 +12,14 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    pressElement,
+    getFirstRow,
+    goToPage,
+    checkColumnBalloon,
+} = require('../defaults');
 
 const { expect } = chai;
 
@@ -83,6 +90,13 @@ module.exports = () => {
                 expect(expectedDatatype).to.be.true;
             }
         }
+    });
+
+    it('Should have balloon on runs column', async () => {
+        await goToPage(page, 'lhcFill-overview');
+        await page.waitForTimeout(100);
+
+        await checkColumnBalloon(page, 1, 7);
     });
 
     it('can set how many lhcFills are available per page', async () => {
