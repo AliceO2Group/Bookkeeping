@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.29.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.29.0) 
+* Notable changes for users:
+  * Improves Run-Overview page to better display information;
+  * Improves usability of LHC Fills page;
+  * Bug fixes for systems with no tags;
+
 ## [0.28.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.28.0) 
 * Notable changes for users:
   * Introduces support for AliECS - End Of Run - Reason;

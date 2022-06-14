@@ -60,13 +60,23 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const element = await page.$('#lhcFill-id>b');
         const value = await element.evaluate((el) => el.textContent);
-        expect(value).to.equal('Lhc Data:');
+        expect(value).to.equal('LHC Data:');
     });
 
     it('successfully exited EDIT mode of a run', async () => {
         await pressElement(page, '#cancel-run');
         await page.waitForTimeout(100);
         await expectInnerText(page, '#edit-run', 'Edit Run');
+    });
+
+    it('should not show edit run button when not admin', async () => {
+        await page.goto(`${url}/?page=run-detail&id=1`);
+        await page.waitForTimeout(100);
+        await page.click('div[title="User Actions"]');
+        await page.waitForTimeout(100);
+        await page.click('span.slider.round');
+        await page.waitForTimeout(100);
+        expect(await page.$('#edit-run')).to.equal(null);
     });
 
     it('can navigate to the flp panel', async () => {
@@ -86,7 +96,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const element = await page.$('#lhcFill-id>b');
         const value = await element.evaluate((el) => el.textContent);
-        expect(value).to.equal('Lhc Data:');
+        expect(value).to.equal('LHC Data:');
     });
     it('can navigate to a log detail page', async () => {
         table = await page.$$('tr');
