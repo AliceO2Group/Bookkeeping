@@ -243,6 +243,7 @@ module.exports = () => {
 
             const { errors } = response.body;
             expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test]');
+        });
 
         it('should return 400 if the detectors number filter is invalid', async () => {
             const response =
