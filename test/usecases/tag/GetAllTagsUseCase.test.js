@@ -28,6 +28,14 @@ module.exports = () => {
 
         expect(tags).to.be.an('array');
     });
+    it('should return tags sorted by text', async () => {
+        const { tags } = await new GetAllTagsUseCase().execute();
+
+        const sorted = Array.from(tags);
+        sorted.sort((a, b) => a.text.localeCompare(b.text));
+
+        expect(tags).to.eql(sorted);
+    });
     it('should successfully return an array with tags with specified ids', async () => {
         getAllTagsDto.query = { filter: { ids: '1,2' } };
         const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);

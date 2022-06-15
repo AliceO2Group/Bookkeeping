@@ -45,66 +45,6 @@ module.exports = () => {
                     done();
                 });
         });
-
-        it('should support pagination, offset 0 and limit 1', (done) => {
-            request(server)
-                .get('/api/tags?page[offset]=0&page[limit]=1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].id).to.equal(1);
-                    done();
-                });
-        });
-
-        it('should support pagination, offset 1 and limit 1', (done) => {
-            request(server)
-                .get('/api/tags?page[offset]=1&page[limit]=1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].id).to.equal(2);
-
-                    done();
-                });
-        });
-
-        it('should return 400 if the limit is below 1', (done) => {
-            request(server)
-                .get('/api/tags?page[offset]=0&page[limit]=0')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
-
-                    done();
-                });
-        });
     });
 
     describe('POST /api/tags', () => {
