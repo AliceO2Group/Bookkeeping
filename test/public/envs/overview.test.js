@@ -12,7 +12,14 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    pressElement,
+    getFirstRow,
+    goToPage,
+    checkColumnBalloon,
+} = require('../defaults');
 
 const { expect } = chai;
 
@@ -83,6 +90,14 @@ module.exports = () => {
                 expect(expectedDatatype).to.be.true;
             }
         }
+    });
+
+    it('Should have balloon on status message and runs columns', async () => {
+        await goToPage(page, 'env-overview');
+        await page.waitForTimeout(100);
+
+        await checkColumnBalloon(page, 1, 5);
+        await checkColumnBalloon(page, 1, 6);
     });
 
     it('can set how many environments are available per page', async () => {

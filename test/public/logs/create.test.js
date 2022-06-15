@@ -77,7 +77,7 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
         await page.waitForTimeout(500);
@@ -175,7 +175,7 @@ module.exports = () => {
         // Get the latest post and verify that the selected tags correspond to the posted tags
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTags = await page.$(`#${firstRowId}-tags-text`);
+        const firstRowTags = await page.$(`#${firstRowId}-tags .balloon-actual-content`);
         const tagsText = await page.evaluate((element) => element.innerText, firstRowTags);
         expect(tagsText).to.equal(tags.join(', '));
     });
@@ -230,7 +230,7 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
@@ -307,7 +307,7 @@ module.exports = () => {
         // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
@@ -349,7 +349,7 @@ module.exports = () => {
         // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
