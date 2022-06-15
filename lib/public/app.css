@@ -78,9 +78,10 @@ html, body {
 .mrauto { margin-right: auto; }
 .mtauto { margin-top: auto; }
 .mbauto { margin-bottom: auto; }
+.pt0 { padding-top: 0; }
 
 .table {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .table-hover tbody tr:hover {
@@ -260,6 +261,10 @@ html, body {
 
 .border-danger {
     border: 1px solid var(--color-danger) !important;
+}
+
+.va-top {
+    vertical-align: top;
 }
 
 /* Balloon system */
