@@ -51,7 +51,7 @@ module.exports = () => {
     it('should display name, last edited by, updated at, mattermost and email', async () => {
         const headers = await page.evaluate(() => {
             const ret = [];
-            document.querySelectorAll('thead th').forEach((th) => ret.push(th.innerHTML));
+            document.querySelectorAll('thead th').forEach((th) => ret.push(th.innerText));
             return ret;
         });
         expect(headers[0]).to.equal('Name');
@@ -89,5 +89,22 @@ module.exports = () => {
         // Expect the page to be the tag creation page at this point
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=tag-overview`);
+    });
+
+    it('can filter tags by text', async () => {
+        const inputSelector = 'thead th:first-of-type input';
+        await page.waitForSelector(inputSelector);
+
+        expect(await page.$eval(inputSelector, (input) => input.placeholder)).to.equal('Filter by name');
+
+        await page.type(inputSelector, '-TAG-');
+        await page.waitForTimeout(200);
+        let table = await page.$$('tbody tr');
+        expect(table.length).to.equal(43);
+
+        await page.type(inputSelector, 'DO-NOT-EXIST');
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(0);
     });
 };

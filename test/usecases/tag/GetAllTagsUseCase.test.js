@@ -65,6 +65,39 @@ module.exports = () => {
         expect(tags[1].id).to.equal(6);
         expect(tags[1].text).to.equal('OTHER');
     });
+    it('should successfully return an array with tags containing given text search', async () => {
+        getAllTagsDto.query = { filter: { partialText: 'MAI' } };
+        let { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(1);
+        expect(tags[0].id).to.equal(3);
+        expect(tags[0].text).to.equal('MAINTENANCE');
+
+        getAllTagsDto.query = { filter: { partialText: 'ANCE' } };
+
+        ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(1);
+        expect(tags[0].id).to.equal(3);
+        expect(tags[0].text).to.equal('MAINTENANCE');
+
+        getAllTagsDto.query = { filter: { partialText: '-TAG-' } };
+
+        ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(43);
+        expect(tags.every((tag) => tag.text.includes('-TAG-'))).to.be.true;
+
+        getAllTagsDto.query = { filter: { partialText: 'DO-NOT-EXISTS' } };
+
+        ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(0);
+    });
     it('should successfully return an array with tags with specified emails', async () => {
         getAllTagsDto.query = { filter: { emails: 'other-group@cern.ch' } };
         const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
