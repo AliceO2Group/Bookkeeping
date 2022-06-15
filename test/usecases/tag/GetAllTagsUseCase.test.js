@@ -28,6 +28,14 @@ module.exports = () => {
 
         expect(tags).to.be.an('array');
     });
+    it('should return tags sorted by text', async () => {
+        const { tags } = await new GetAllTagsUseCase().execute();
+
+        const sorted = Array.from(tags);
+        sorted.sort((a, b) => a.text.localeCompare(b.text));
+
+        expect(tags).to.eql(sorted);
+    });
     it('should successfully return an array with tags with specified ids', async () => {
         getAllTagsDto.query = { filter: { ids: '1,2' } };
         const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
@@ -56,6 +64,39 @@ module.exports = () => {
         expect(tags[0].text).to.equal('FOOD');
         expect(tags[1].id).to.equal(6);
         expect(tags[1].text).to.equal('OTHER');
+    });
+    it('should successfully return an array with tags containing given text search', async () => {
+        getAllTagsDto.query = { filter: { partialText: 'MAI' } };
+        let { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(1);
+        expect(tags[0].id).to.equal(3);
+        expect(tags[0].text).to.equal('MAINTENANCE');
+
+        getAllTagsDto.query = { filter: { partialText: 'ANCE' } };
+
+        ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(1);
+        expect(tags[0].id).to.equal(3);
+        expect(tags[0].text).to.equal('MAINTENANCE');
+
+        getAllTagsDto.query = { filter: { partialText: '-TAG-' } };
+
+        ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(43);
+        expect(tags.every((tag) => tag.text.includes('-TAG-'))).to.be.true;
+
+        getAllTagsDto.query = { filter: { partialText: 'DO-NOT-EXISTS' } };
+
+        ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
+
+        expect(tags).to.be.an('array');
+        expect(tags).to.have.lengthOf(0);
     });
     it('should successfully return an array with tags with specified emails', async () => {
         getAllTagsDto.query = { filter: { emails: 'other-group@cern.ch' } };
