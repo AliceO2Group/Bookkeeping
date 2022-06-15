@@ -16,14 +16,13 @@ const chai = require('chai');
 const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
 const { repositories: { RunRepository } } = require('../../lib/database');
+const { server } = require('../../lib/application');
 
 const { expect } = chai;
 
 chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
-    const { server } = require('../../lib/application');
-
     describe('GET /api/runs', () => {
         it('should return an array', (done) => {
             request(server)
@@ -244,6 +243,55 @@ module.exports = () => {
 
             const { errors } = response.body;
             expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test]');
+        });
+
+        it('should return 400 if the detectors number filter is invalid', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[nDetectors][operator]=invalid&filter[nDetectors][limit]=3');
+
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.nDetectors.operator" must be one of [<, <=, =, >=, >]');
+        });
+
+        it('should successfully filter on detectors number', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[nDetectors][operator]=>=&filter[nDetectors][limit]=6');
+
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+            expect(data).to.have.lengthOf(52);
+        });
+
+        it('should return 400 if the FLP number filter is invalid', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
+
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.nFlps.operator" must be one of [<, <=, =, >=, >]');
+        });
+
+        it('should successfully filter on detectors number', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[nFlps][operator]=<=&filter[nFlps][limit]=10');
+
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+            // 7 instead of 5 because 2 runs have been created with 10 as nFlps
+            expect(data).to.have.lengthOf(7);
         });
     });
 

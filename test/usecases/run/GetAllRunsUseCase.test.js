@@ -14,6 +14,7 @@
 const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
 const chai = require('chai');
+const { catchAsyncError } = require('../../testUtilities/catchAsyncError.js');
 
 const { expect } = chai;
 
@@ -149,6 +150,7 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(1);
         expect(runs[0].runNumber).to.equal(1);
     });
+
     it('should return an array with only to values given', async () => {
         getAllRunsDto.query = {
             filter: {
@@ -164,6 +166,119 @@ module.exports = () => {
             .execute(getAllRunsDto);
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
+    });
+
+    it('should throw error on invalid nDetectors filter', async () => {
+        getAllRunsDto.query = {
+            filter: {
+                nDetectors: 'invalid',
+            },
+        };
+
+        const getAllRunsUseCase = new GetAllRunsUseCase();
+        const expectedToThrow = getAllRunsUseCase.execute.bind(getAllRunsUseCase, getAllRunsDto);
+
+        let error = await catchAsyncError(expectedToThrow);
+        expect(error).to.be.not.null;
+        expect(error.message).to.equal('Unhandled operator: undefined');
+
+        getAllRunsDto.query.filter.nDetectors = { operator: 'invalid' };
+        error = await catchAsyncError(expectedToThrow);
+        expect(error).to.be.not.null;
+        expect(error.message).to.equal('Unhandled operator: invalid');
+    });
+
+    it('should successfully filter on detectors number', async () => {
+        const nDetectors = {
+            operator: '<',
+            limit: 3,
+        };
+        getAllRunsDto.query = { filter: { nDetectors } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
+
+        nDetectors.operator = '<=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(54);
+        expect(runs.every((run) => run.nDetectors <= 3)).to.be.true;
+
+        nDetectors.operator = '=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(54);
+        expect(runs.every((run) => run.nDetectors === 3)).to.be.true;
+
+        nDetectors.limit = 6;
+        nDetectors.operator = '>=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(52);
+        expect(runs.every((run) => run.nDetectors >= 6)).to.be.true;
+
+        nDetectors.operator = '>';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
+    });
+
+    it('should throw error on invalid nFlps filter', async () => {
+        getAllRunsDto.query = {
+            filter: {
+                nFlps: 'invalid',
+            },
+        };
+
+        const getAllRunsUseCase = new GetAllRunsUseCase();
+        const expectedToThrow = getAllRunsUseCase.execute.bind(getAllRunsUseCase, getAllRunsDto);
+
+        let error = await catchAsyncError(expectedToThrow);
+        expect(error).to.be.not.null;
+        expect(error.message).to.equal('Unhandled operator: undefined');
+
+        getAllRunsDto.query.filter.nFlps = { operator: 'invalid' };
+        error = await catchAsyncError(expectedToThrow);
+        expect(error).to.be.not.null;
+        expect(error.message).to.equal('Unhandled operator: invalid');
+    });
+
+    it('should successfully filter on flps number', async () => {
+        const nFlps = {
+            operator: '<',
+            limit: 10,
+        };
+        getAllRunsDto.query = { filter: { nFlps } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
+
+        nFlps.operator = '<=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(5);
+        expect(runs.every((run) => run.nFlps <= 10)).to.be.true;
+
+        nFlps.operator = '=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(5);
+        expect(runs.every((run) => run.nFlps === 10)).to.be.true;
+
+        nFlps.limit = 12;
+        nFlps.operator = '>=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        // 100 is the limit per page, true result must be 101
+        expect(runs).to.have.lengthOf(100);
+        expect(runs.every((run) => run.nFlps >= 12)).to.be.true;
+
+        nFlps.operator = '>';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
     });
 
     it('should successfully return an array, only containing runs found from passed list', async () => {
