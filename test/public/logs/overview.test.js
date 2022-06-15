@@ -14,6 +14,7 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
 } = require('../defaults');
+const { checkColumnBalloon } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -48,7 +49,14 @@ module.exports = () => {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping 2020');
+        expect(title).to.equal('AliceO2 Bookkeeping');
+    });
+
+    it('Should have balloon on runs column', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForTimeout(100);
+
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('can filter by log title', async () => {
@@ -503,7 +511,7 @@ module.exports = () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
-        const firstButton = await page.$('button.btn-redirect');
+        const firstButton = await page.$('a.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
@@ -515,7 +523,7 @@ module.exports = () => {
         expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
     });
 
-    it('does not reset pagination filters when navigating away', async () => {
+    it.skip('does not reset pagination filters when navigating away', async () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
@@ -530,23 +538,27 @@ module.exports = () => {
         const secondPageButton = await page.$('#page2');
         await secondPageButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
+        // Expect the pagination to still be on page two
+        let currentPageSelected = await page.evaluate(() => window.model.logs.getSelectedPage());
+        expect(currentPageSelected).to.equal(2);
 
-        // Navigate to a log detail page
-        const firstRow = await page.$('button.btn-redirect');
-        const firstRowId = await firstRow.evaluate((btn) => btn.id);
+        // Navigate to a log detail page via href
+        const firstRow = await page.$('a.btn-redirect');
+        const firstRowId = await firstRow.evaluate((aHref) => aHref.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
-        await firstRow.evaluate((button) => button.click());
+        await firstRow.evaluate((aHref) => aHref.click());
         await page.waitForTimeout(500);
+
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
 
         // Go back to the home page again
         await page.goBack();
-        await page.waitForTimeout(100);
-
+        await page.waitForTimeout(400);
+        const currentLocation = await page.url();
+        expect(currentLocation).to.equal(`${url}/?page=log-overview`);
         // Expect the pagination to still be on page two
-        const firstPageButton = await page.$('#page1');
-        const firstPageButtonClass = await page.evaluate((element) => element.className, firstPageButton);
-        const secondPageButtonClass = await page.evaluate((element) => element.className, secondPageButton);
-        expect(firstPageButtonClass).to.not.include('selected');
-        expect(secondPageButtonClass).to.include('selected');
+        currentPageSelected = await page.evaluate(() => window.model.logs.getSelectedPage());
+        expect(currentPageSelected).to.equal(2);
     });
 };

@@ -224,6 +224,27 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should filter run on their quality', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[runQualities]=bad,test');
+            expect(response.status).to.equal(200);
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            // 47 because one run is added in start run use case with default quality which is test
+            expect(data.length).to.equal(47);
+        });
+        it('should return 400 if "runQuality" is invalid', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[runQualities]=invalid');
+            expect(response.status).to.equal(400);
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
+
+            const { errors } = response.body;
+            expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test]');
+        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
@@ -413,25 +434,29 @@ module.exports = () => {
     });
 
     describe('POST /api/runs', () => {
+        const testRun = {
+            runNumber: 109,
+            timeO2Start: '2022-03-21 13:00:00',
+            timeTrgStart: '2022-03-21 13:00:00',
+            environmentId: '1234567890',
+            runType: 'technical',
+            runQuality: 'good',
+            nDetectors: 3,
+            nFlps: 10,
+            nEpns: 10,
+            dd_flp: true,
+            dcs: true,
+            epn: true,
+            epnTopology: 'normal',
+            detectors: 'CPV',
+        };
+
         it('should successfully return the stored run entity', (done) => {
             request(server)
                 .post('/api/runs')
                 .expect(201)
                 .send({
-                    runNumber: 109,
-                    timeO2Start: '2022-03-21 13:00:00',
-                    timeTrgStart: '2022-03-21 13:00:00',
-                    environmentId: '1234567890',
-                    runType: 'technical',
-                    runQuality: 'good',
-                    nDetectors: 3,
-                    nFlps: 10,
-                    nEpns: 10,
-                    dd_flp: true,
-                    dcs: true,
-                    epn: true,
-                    epnTopology: 'normal',
-                    detectors: 'CPV',
+                    ...testRun,
                 })
                 .end((err, res) => {
                     if (err) {
@@ -449,19 +474,7 @@ module.exports = () => {
                 .post('/api/runs')
                 .expect(400)
                 .send({
-                    runNumber: 109,
-                    timeO2Start: '2022-03-21 13:00:00',
-                    timeTrgStart: '2022-03-21 13:00:00',
-                    environmentId: '1234567890',
-                    runType: 'technical',
-                    runQuality: 'good',
-                    nDetectors: 3,
-                    nFlps: 10,
-                    nEpns: 10,
-                    dd_flp: true,
-                    dcs: true,
-                    epn: true,
-                    epnTopology: 'normal',
+                    ...testRun,
                     detectors: 'CPV,UNKNOWN',
                 })
                 .end((err, res) => {
@@ -475,6 +488,17 @@ module.exports = () => {
 
                     done();
                 });
+        });
+        it('should return an error due to already existing run number', async () => {
+            const response = await request(server)
+                .post('/api/runs')
+                .send({
+                    ...testRun,
+                });
+
+            expect(response.status).to.equal(409);
+            expect(response.body.errors).to.be.an('array');
+            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 109');
         });
     });
     describe('PUT /api/runs/:runId', () => {

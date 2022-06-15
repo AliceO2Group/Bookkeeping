@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
 
 const { expect } = chai;
 
@@ -45,7 +45,7 @@ module.exports = () => {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping 2020');
+        expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -117,5 +117,28 @@ module.exports = () => {
         });
         await page.waitForTimeout(100);
         expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
+    });
+
+    it('dynamically switches between visible pages in the page selector', async () => {
+        await page.goto(`${url}?page=env-overview`, { waitUntil: 'networkidle0' });
+
+        // Override the amount of runs visible per page manually
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.envs.envsPerPage = 1;
+        });
+        await page.waitForTimeout(100);
+
+        // Expect the page five button to now be visible, but no more than that
+        const pageFiveButton = await page.$('#page5');
+        expect(Boolean(pageFiveButton)).to.be.true;
+        const pageSixButton = await page.$('#page6');
+        expect(Boolean(pageSixButton)).to.be.false;
+
+        // Expect the page one button to have fallen away when clicking on page five button
+        await pressElement(page, '#page5');
+        await page.waitForTimeout(100);
+        const pageOneButton = await page.$('#page1');
+        expect(Boolean(pageOneButton)).to.be.false;
     });
 };
