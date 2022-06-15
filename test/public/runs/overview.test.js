@@ -276,7 +276,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Run 106 have data long enough to overflow
-        await page.type('#runId', '106');
+        await page.type('#runNumber', '106');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
@@ -453,6 +453,34 @@ module.exports = () => {
         expect(table.length).to.equal(1);
         await checkTableRunQualities(table, ['bad']);
     });
+
+    it('should successfully filter on a list of run ids and inform the user about it', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        const filterInputSelector = '#runNumber';
+        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+        await page.focus(filterInputSelector);
+        await page.keyboard.type('1, 2');
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+        expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+    });
+
+    it('should successfully filter on a list of environment ids and inform the user about it', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        const filterInputSelector = '#environmentIds';
+        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
+        await page.focus(filterInputSelector);
+        await page.keyboard.type('ABCDEFGHIJ, 0987654321');
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(10);
+    });
+
     it('should successfully filter on nDetectors', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
