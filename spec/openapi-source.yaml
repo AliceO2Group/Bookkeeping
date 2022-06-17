@@ -2093,6 +2093,8 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        triggerDuration:
+          $ref: '#/components/schemas/RunTriggerDuration'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -2163,11 +2165,13 @@ components:
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunO2Start:
       description: Unix timestamp when this entity was created.
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunOrigin:
       description: Type of creator.
       type: string
@@ -2207,11 +2211,18 @@ components:
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunTrgStart:
       description: Unix timestamp when this entity was created.
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
+    RunTriggerDuration:
+      description: The duration of the run between trigger start and trigger end in ms
+      type: integer
+      nullable: true
+      example: 60000
     RunType:
       description: Specifies the type of run.
       type: string
