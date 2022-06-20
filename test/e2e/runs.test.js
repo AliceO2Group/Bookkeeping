@@ -205,6 +205,32 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 400 if the duration filter is invalid', async () => {
+            const response = await request(server).get('/api/runs?filter[runDuration][operator]=invalid&filter[runDuration][limit]=10');
+
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.runDuration.operator" must be one of [<, <=, =, >=, >]');
+        });
+
+        it('should successfully filter on duration', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[runDuration][operator]=>&filter[runDuration][limit]=0');
+
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+
+            // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
+            expect(data).to.have.lengthOf(4);
+        });
+
         it('should filter run on their quality', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=bad,test');
@@ -252,8 +278,7 @@ module.exports = () => {
         });
 
         it('should return 400 if the FLP number filter is invalid', async () => {
-            const response =
-                await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
+            const response = await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
 
             expect(response.status).to.equal(400);
             expect(response).to.satisfyApiSpec;
@@ -514,7 +539,8 @@ module.exports = () => {
                     }
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
-                    expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not defined, your custom type is missing the correct messages definition');
+                    expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
+                        ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
