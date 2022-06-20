@@ -70,6 +70,10 @@ module.exports = () => {
             timeO2End: (date) => !isNaN(Date.parse(date)),
             timeTrgStart: (date) => !isNaN(Date.parse(date)),
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
+            runDuration: (fullDuration) => {
+                const [duration, unit] = fullDuration.split(' ');
+                return fullDuration === 'RUNNING' || !isNaN(parseInt(duration, 10)) && unit === 'sec';
+            },
             environmentId: (number) => typeof number == 'number',
             runType: (string) => typeof string == 'string',
             runQuality: (string) => typeof string == 'string',
@@ -408,6 +412,37 @@ module.exports = () => {
         const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
         expect(String(startMin)).to.equal(minTime);
         expect(String(endMin)).to.equal(minTime);
+    });
+
+    it('should successfully filter on duration', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        const runDurationOperatorSelector = '#duration-operator';
+        const runDurationOperator = await page.$(runDurationOperatorSelector) || null;
+        expect(runDurationOperator).to.not.be.null;
+        expect(await runDurationOperator.evaluate((element) => element.value)).to.equal('=');
+
+        const runDurationLimitSelector = '#duration-limit';
+        const runDurationLimit = await page.$(runDurationLimitSelector) || null;
+        expect(runDurationLimit).to.not.be.null;
+
+        await page.focus(runDurationLimitSelector);
+        await page.keyboard.type('1500');
+        await page.waitForTimeout(200);
+
+        await page.select(runDurationOperatorSelector, '>=');
+        await page.waitForTimeout(200);
+
+        const runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
+        }));
+
+        expect(runDurationList.every((runDuration) => parseInt(runDuration, 10) >= 1500)).to.be.true;
     });
 
     it('Should successfully filter runs by their run quality', async () => {
