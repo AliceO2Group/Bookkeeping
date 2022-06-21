@@ -1,4 +1,4 @@
-# Generated on Tue, 21 Jun 2022 06:51:21 GMT
+# Generated on Tue, 21 Jun 2022 09:47:34 GMT
 
 openapi: 3.0.0
 info:
@@ -2137,6 +2137,11 @@ components:
       description: A comma seperated string for the detectors used
       type: string
       nullable: true
+    RunDuration:
+      description: The duration of the run between trigger start and trigger end in ms
+      type: integer
+      nullable: true
+      example: 60000
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
@@ -2220,11 +2225,6 @@ components:
       minimum: 0
       example: 853113599
       nullable: true
-    RunDuration:
-      description: The duration of the run between trigger start and trigger end in ms
-      type: integer
-      nullable: true
-      example: 60000
     RunType:
       description: Specifies the type of run.
       type: string
