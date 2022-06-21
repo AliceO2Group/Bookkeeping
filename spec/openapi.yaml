@@ -1,4 +1,4 @@
-# Generated on Mon, 20 Jun 2022 12:15:40 GMT
+# Generated on Tue, 21 Jun 2022 06:51:21 GMT
 
 openapi: 3.0.0
 info:
@@ -2079,6 +2079,8 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        runDuration:
+          $ref: '#/components/schemas/RunDuration'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
@@ -2095,8 +2097,6 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        triggerDuration:
-          $ref: '#/components/schemas/RunTriggerDuration'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -2220,7 +2220,7 @@ components:
       minimum: 0
       example: 853113599
       nullable: true
-    RunTriggerDuration:
+    RunDuration:
       description: The duration of the run between trigger start and trigger end in ms
       type: integer
       nullable: true

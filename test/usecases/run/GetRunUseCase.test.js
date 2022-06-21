@@ -53,13 +53,13 @@ module.exports = () => {
         let result = await new GetRunUseCase().execute(getRunDto);
 
         expect(result.timeTrgStart).to.equal(null);
-        expect(result.triggerDuration).to.equal(null);
+        expect(result.runDuration).to.equal(null);
 
         getRunDto.params.runId = 104;
         result = await new GetRunUseCase().execute(getRunDto);
 
         expect(result.timeTrgStart).to.be.null;
-        expect(result.triggerDuration).to.be.null;
+        expect(result.runDuration).to.be.null;
     });
 
     it(
@@ -71,7 +71,7 @@ module.exports = () => {
 
             expect(result.timeTrgStart).to.be.not.null;
             expect(result.timeTrgEnd).to.be.null;
-            expect(result.triggerDuration).to.be.approximately(now.getTime() - result.timeTrgStart, 100);
+            expect(result.runDuration).to.be.approximately(now.getTime() - result.timeTrgStart, 100);
         },
     );
 
@@ -81,6 +81,6 @@ module.exports = () => {
 
         expect(result.timeTrgStart).to.be.not.null;
         expect(result.timeTrgEnd).to.be.not.null;
-        expect(result.triggerDuration).to.equal(result.timeTrgEnd - result.timeTrgStart);
+        expect(result.runDuration).to.equal(result.timeTrgEnd - result.timeTrgStart);
     });
 };

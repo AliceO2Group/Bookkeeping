@@ -2093,8 +2093,8 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        triggerDuration:
-          $ref: '#/components/schemas/RunTriggerDuration'
+        runDuration:
+          $ref: '#/components/schemas/RunDuration'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -2218,7 +2218,7 @@ components:
       minimum: 0
       example: 853113599
       nullable: true
-    RunTriggerDuration:
+    RunDuration:
       description: The duration of the run between trigger start and trigger end in ms
       type: integer
       nullable: true
