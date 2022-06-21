@@ -580,4 +580,49 @@ module.exports = () => {
         }));
         expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
     });
+
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+    it('should successfully display runs export button', async () => {
+        const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
+        expect(runsExportButton).to.be.not.null;
+    });
+
+    it('should successfully display runs export modal on click on export button', async () => {
+        let exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.be.null;
+
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForTimeout(100);
+        exportModal = await page.$('#export-runs-modal');
+
+        expect(exportModal).to.not.be.null;
+    });
+
+    it('should successfully display information when export will be truncated', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForTimeout(100);
+
+        const truncatedExportWarning = await page.$('#export-runs-modal #truncated-export-warning');
+        expect(truncatedExportWarning).to.not.be.null;
+        expect(await truncatedExportWarning.evaluate((warning) => warning.innerText)).to
+            .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
+    });
+
+    it('should successfully display disabled runs export button when there is no runs available', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Type a fake run number to have no runs
+        await page.focus('#runNumber');
+        await page.keyboard.type('99999999999');
+        await page.waitForTimeout(300);
+
+        expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
+    });
 };
