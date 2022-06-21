@@ -82,48 +82,30 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if the limit is below 1', (done) => {
-            request(server)
-                .get('/api/runs?page[offset]=0&page[limit]=0')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 400 if the limit is below 1', async () => {
+            const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=0');
+            expect(response.status).to.equal(400);
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+        }).timeout(1000);
 
-                    done();
-                });
-        });
+        it('should return the correct number of pages', async () => {
+            const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=2');
+            expect(response.status).to.equal(200);
 
-        it('should return the correct number of pages', (done) => {
-            request(server)
-                .get('/api/runs?page[offset]=0&page[limit]=2')
-                .expect(200)
-                .end(async (err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
+            const totalNumber = await RunRepository.count();
 
-                    const totalNumber = await RunRepository.count();
-
-                    expect(res.body.data).to.have.lengthOf(2);
-                    expect(res.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
-                    expect(res.body.meta.page.totalCount).to.equal(totalNumber);
-
-                    done();
-                });
+            expect(response.body.data).to.have.lengthOf(2);
+            expect(response.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
+            expect(response.body.meta.page.totalCount).to.equal(totalNumber);
         });
 
         it('should support sorting, id DESC', (done) => {
