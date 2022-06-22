@@ -442,7 +442,7 @@ module.exports = () => {
             return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
         }));
 
-        expect(runDurationList.every((runDuration) => parseInt(runDuration, 10) >= 1500)).to.be.true;
+        expect(runDurationList.every((runDuration) => parseInt(runDuration, 10) >= 1500 || runDuration === 'RUNNING')).to.be.true;
     });
 
     it('Should successfully filter runs by their run quality', async () => {
