@@ -82,48 +82,30 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if the limit is below 1', (done) => {
-            request(server)
-                .get('/api/runs?page[offset]=0&page[limit]=0')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 400 if the limit is below 1', async () => {
+            const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=0');
+            expect(response.status).to.equal(400);
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+        }).timeout(1000);
 
-                    done();
-                });
-        });
+        it('should return the correct number of pages', async () => {
+            const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=2');
+            expect(response.status).to.equal(200);
 
-        it('should return the correct number of pages', (done) => {
-            request(server)
-                .get('/api/runs?page[offset]=0&page[limit]=2')
-                .expect(200)
-                .end(async (err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+            // Response must satisfy the OpenAPI specification
+            expect(response).to.satisfyApiSpec;
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
+            const totalNumber = await RunRepository.count();
 
-                    const totalNumber = await RunRepository.count();
-
-                    expect(res.body.data).to.have.lengthOf(2);
-                    expect(res.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
-                    expect(res.body.meta.page.totalCount).to.equal(totalNumber);
-
-                    done();
-                });
+            expect(response.body.data).to.have.lengthOf(2);
+            expect(response.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
+            expect(response.body.meta.page.totalCount).to.equal(totalNumber);
         });
 
         it('should support sorting, id DESC', (done) => {
@@ -223,6 +205,32 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 400 if the duration filter is invalid', async () => {
+            const response = await request(server).get('/api/runs?filter[runDuration][operator]=invalid&filter[runDuration][limit]=10');
+
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.runDuration.operator" must be one of [<, <=, =, >=, >]');
+        });
+
+        it('should successfully filter on duration', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[runDuration][operator]=>&filter[runDuration][limit]=0');
+
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+
+            // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
+            expect(data).to.have.lengthOf(4);
+        });
+
         it('should filter run on their quality', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=bad,test');
@@ -270,8 +278,7 @@ module.exports = () => {
         });
 
         it('should return 400 if the FLP number filter is invalid', async () => {
-            const response =
-                await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
+            const response = await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
 
             expect(response.status).to.equal(400);
             expect(response).to.satisfyApiSpec;
@@ -532,7 +539,8 @@ module.exports = () => {
                     }
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
-                    expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not defined, your custom type is missing the correct messages definition');
+                    expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
+                        ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
