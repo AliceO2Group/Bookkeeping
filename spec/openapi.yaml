@@ -1,4 +1,4 @@
-# Generated on Fri, 20 May 2022 10:11:48 GMT
+# Generated on Thu, 23 Jun 2022 14:59:15 GMT
 
 openapi: 3.0.0
 info:
@@ -2025,9 +2025,17 @@ components:
           description: Current in Dipole magnet (Amperes) - signed
           type: number
           nullable: true
+        aliceDipolePolarity:
+          description: The polarity of the alice dipole current.
+          type: string
+          nullable: true
         aliceL3Current:
           description: Current in L3 magnet (Amperes) - signed
           type: number
+          nullable: true
+        aliceL3Polarity:
+          description: The polarity of the L3 magnet
+          type: string
           nullable: true
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'

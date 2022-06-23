@@ -666,7 +666,9 @@ module.exports = () => {
                     lhcBeamMode: 'STABLE BEAMS',
                     lhcBetaStar: 123e-5,
                     aliceL3Current: 561.2,
+                    aliceL3Polarity: 'POSITIVE',
                     aliceDipoleCurrent: 45654.1,
+                    aliceDipolePolarity: 'NEGATIVE',
                 })
                 .expect(500)
                 .end((err, res) => {
@@ -689,7 +691,9 @@ module.exports = () => {
                     lhcBeamMode: 'STABLE BEAMS',
                     lhcBetaStar: 123e-5,
                     aliceL3Current: 561.2,
+                    aliceL3Polarity: 'positive',
                     aliceDipoleCurrent: 45654.1,
+                    aliceDipolePolarity: 'negative',
                 })
                 .expect(200)
                 .end((err, res) => {
@@ -703,7 +707,9 @@ module.exports = () => {
                     expect(res.body.data.lhcBeamMode).to.equal('STABLE BEAMS');
                     expect(res.body.data.lhcBetaStar).to.equal(123e-5);
                     expect(res.body.data.aliceL3Current).to.equal(561.2);
+                    expect(res.body.data.aliceL3Polarity).to.equal('POSITIVE');
                     expect(res.body.data.aliceDipoleCurrent).to.equal(45654.1);
+                    expect(res.body.data.aliceDipolePolarity).to.equal('NEGATIVE');
                     done();
                 });
         });
