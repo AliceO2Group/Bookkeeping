@@ -62,7 +62,9 @@ module.exports = () => {
                 lhcBeamMode: 'STABLE BEAMS',
                 lhcBetaStar: 123e-5,
                 aliceL3Current: 561.2,
+                aliceL3Polarity: 'POSITIVE',
                 aliceDipoleCurrent: 45654.1,
+                aliceDipolePolarity: 'NEGATIVE',
                 fillNumber: 1,
             },
         });
@@ -222,8 +224,9 @@ module.exports = () => {
             expect(result.lhcBeamEnergy).to.equal(232.156);
             expect(result.lhcBeamMode).to.equal('STABLE BEAMS');
             expect(result.lhcBetaStar).to.equal(123e-5);
-            expect(result.aliceL3Current).to.equal(561.2);
+            expect(result.aliceL3Polarity).to.equal('POSITIVE');
             expect(result.aliceDipoleCurrent).to.equal(45654.1);
+            expect(result.aliceDipolePolarity).to.equal('NEGATIVE');
             expect(result.fillNumber).to.equal(1);
         });
 
