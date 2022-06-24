@@ -2,21 +2,29 @@
 
 ## Getting started
 ### Configuration
-The following `.env` configuration is the bare minimum required for development. At the moment of writing there are two OpenID configurations, one dedicated to the staging server and one for all developers to use for local development.
+The following `.env` configuration is the bare minimum required for development. It must be placed in the top dir. 
 ```ini
 ; Database
-MYSQL_ROOT_PASSWORD=<TODO>
+MYSQL_ROOT_PASSWORD=cern
+OPENID_ID=
+OPENID_SECRET=
+OPENID_REDIRECT=
 
-; JWT
-JWT_SECRET=<TODO>
+JWT_SECRET=
 
-; OpenID
-OPENID_ID=<TODO>
-OPENID_SECRET=<TODO>
-OPENID_REDIRECT=http://localhost:4000/callback
+ATTACHMENT_PATH=/var/storage
 
-ATTACHMENT_PATH='/var/storage'
+NOTIFICATION_BROKER=
 ```
+
+On mac, the file database/configuration/my.cnf must be modified to set this variable to 1 : 
+```
+lower_case_table_names=1
+```
+
+### Running
+
+Execute `npm run docker-run` to launch the application. Once it is running, go to [localhost:4000](localhost:4000).
 
 ## Sequlize (CLI)
 
