@@ -14,7 +14,6 @@
 const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
 const chai = require('chai');
-const { catchAsyncError } = require('../../testUtilities/catchAsyncError.js');
 
 const { expect } = chai;
 
@@ -168,24 +167,44 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(100);
     });
 
-    it('should throw error on invalid nDetectors filter', async () => {
-        getAllRunsDto.query = {
-            filter: {
-                nDetectors: 'invalid',
-            },
+    it('should successfully filter on duration', async () => {
+        const runDuration = {
+            operator: '<',
+            limit: 0,
         };
+        getAllRunsDto.query = { filter: { runDuration } };
 
         const getAllRunsUseCase = new GetAllRunsUseCase();
-        const expectedToThrow = getAllRunsUseCase.execute.bind(getAllRunsUseCase, getAllRunsDto);
+        let { runs } = await getAllRunsUseCase.execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
 
-        let error = await catchAsyncError(expectedToThrow);
-        expect(error).to.be.not.null;
-        expect(error.message).to.equal('Unhandled operator: undefined');
+        runDuration.operator = '<=';
+        ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs.every((run) => run.runDuration <= 0)).to.be.true;
 
-        getAllRunsDto.query.filter.nDetectors = { operator: 'invalid' };
-        error = await catchAsyncError(expectedToThrow);
-        expect(error).to.be.not.null;
-        expect(error.message).to.equal('Unhandled operator: invalid');
+        // One test run is about 25h, two other are more than 25 hours
+        const pivot = 25 * 60 * 60 * 1000;
+        runDuration.operator = '=';
+        runDuration.limit = pivot;
+        ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs.every((run) => run.runDuration === pivot)).to.be.true;
+
+        runDuration.operator = '>=';
+        ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        // 100 is the limit per page, true result must be 101
+        expect(runs).to.have.lengthOf(3);
+        expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
+
+        runDuration.operator = '>';
+        ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(2);
+        expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
     });
 
     it('should successfully filter on detectors number', async () => {
@@ -222,26 +241,6 @@ module.exports = () => {
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(0);
-    });
-
-    it('should throw error on invalid nFlps filter', async () => {
-        getAllRunsDto.query = {
-            filter: {
-                nFlps: 'invalid',
-            },
-        };
-
-        const getAllRunsUseCase = new GetAllRunsUseCase();
-        const expectedToThrow = getAllRunsUseCase.execute.bind(getAllRunsUseCase, getAllRunsDto);
-
-        let error = await catchAsyncError(expectedToThrow);
-        expect(error).to.be.not.null;
-        expect(error.message).to.equal('Unhandled operator: undefined');
-
-        getAllRunsDto.query.filter.nFlps = { operator: 'invalid' };
-        error = await catchAsyncError(expectedToThrow);
-        expect(error).to.be.not.null;
-        expect(error.message).to.equal('Unhandled operator: invalid');
     });
 
     it('should successfully filter on flps number', async () => {
