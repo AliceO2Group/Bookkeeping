@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.31.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
+* Notable changes for users:
+  * Adds `RunDuration` for Run-Overview, Run-Details and Run-Filters
+  * Adds option to export the currently filtered runs from Run-Overview Page
+  * Adds `aliceL3Polarity` and `aliceDipolePolarity` to Run-Details
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `runDuration` added as a virtual column with sequalize
 
 ## [0.30.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.30.0) 
 * Notable changes for users:
