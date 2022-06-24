@@ -80,6 +80,12 @@ html, body {
 .mbauto { margin-bottom: auto; }
 .pt0 { padding-top: 0; }
 
+/* z-index */
+.no-z-index {
+    z-index: unset;
+}
+
+/* table */
 .table {
     margin-bottom: 0;
 }

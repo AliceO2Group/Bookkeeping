@@ -1,4 +1,4 @@
-# Generated on Fri, 20 May 2022 10:11:48 GMT
+# Generated on Tue, 21 Jun 2022 09:47:34 GMT
 
 openapi: 3.0.0
 info:
@@ -2079,6 +2079,8 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        runDuration:
+          $ref: '#/components/schemas/RunDuration'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
@@ -2135,6 +2137,11 @@ components:
       description: A comma seperated string for the detectors used
       type: string
       nullable: true
+    RunDuration:
+      description: The duration of the run between trigger start and trigger end in ms
+      type: integer
+      nullable: true
+      example: 60000
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
@@ -2165,11 +2172,13 @@ components:
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunO2Start:
       description: Unix timestamp when this entity was created.
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunOrigin:
       description: Type of creator.
       type: string
@@ -2209,11 +2218,13 @@ components:
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunTrgStart:
       description: Unix timestamp when this entity was created.
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunType:
       description: Specifies the type of run.
       type: string
