@@ -1,3 +1,9 @@
+## [0.31.0]
+* Changes made to the database:
+  * table `runs`:
+    * `aliceL3Polarity` - string ('positive', 'negative')
+    * `aliceDipolePolarity` - string ('positive', 'negative')
+
 ## [0.28.0]
 * Changes made to the database:
   * table `runs`:
