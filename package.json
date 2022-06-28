@@ -47,7 +47,7 @@
     "mocha": "10.0.0",
     "nodemon": "2.0.15",
     "nyc": "15.1.0",
-    "puppeteer": "14.4.0",
+    "puppeteer": "15.1.1",
     "puppeteer-to-istanbul": "1.4.0",
     "sinon": "14.0.0",
     "supertest": "6.2.0"
