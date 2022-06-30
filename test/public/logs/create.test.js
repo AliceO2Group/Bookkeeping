@@ -80,7 +80,6 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
-        await page.waitForTimeout(500);
     });
 
     it('can disable submit with invalid data', async () => {
@@ -103,38 +102,6 @@ module.exports = () => {
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
 
         expect(isDisabled).to.equal(true);
-    });
-    it('can collapse and expand logs with long titles', async () => {
-        /*
-         * Collapse and de-collapse the opened title and verify the rendered height
-         * Ideally, this test would be in the overview suite, unfortunately we cannot relay data between suites
-         * Here, we are certain we have a log with a long title, and therefore the test can succeed
-         */
-        /*
-         * Await goToPage(page, "log-overview");
-         * await page.waitForSelector(`#${firstRowId}-title-plus`);
-         * const expandButton = await page.$(`#${firstRowId}-title-plus`);
-         * expect(Boolean(expandButton)).to.be.true;
-         */
-
-        // Await expandButton.evaluate((button) => button.click());
-
-        /*
-         * Const expandedTitle = await page.$(`#${firstRowId}-title`);
-         * const expandedTitleHeight = await page.evaluate((element) => element.clientHeight, expandedTitle);
-         */
-
-        /*
-         * Const collapseButton = await page.$(`#${firstRowId}-title-minus`);
-         * expect(Boolean(collapseButton)).to.be.true;
-         * await collapseButton.evaluate((button) => button.click());
-         */
-
-        /*
-         * Const collapsedTitle = await page.$(`#${firstRowId}-title`);
-         * const collapsedTitleHeight = await page.evaluate((element) => element.clientHeight, collapsedTitle);
-         * expect(expandedTitleHeight).to.be.greaterThan(collapsedTitleHeight);
-         */
     });
 
     it('can create a log with linked tags', async () => {
@@ -301,12 +268,14 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
+        await page.waitForTimeout(300);
         await goToPage(page, 'log-overview');
-        await page.waitForFunction('document.querySelector("body").innerText.includes("Single run number test")');
+        await page.waitForFunction(() => document.querySelector('body').innerText.includes('Single run number test'));
 
         // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
+
         const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
@@ -317,7 +286,7 @@ module.exports = () => {
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(200);
         const runsField = await page.$(`#post${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
