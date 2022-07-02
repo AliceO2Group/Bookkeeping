@@ -404,6 +404,30 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should filter on attributes when filter is set', (done) => {
+            request(server)
+                .get('/api/tags/1?filter[tags]=text,email')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    // Response must satisfy the OpenAPI specification
+                    // expect(res).to.satisfyApiSpec;
+
+                    const tag = res.body.data;
+
+                    expect(tag.id).not.to.exist;
+                    expect(tag.mattermost).not.to.exist;
+                    expect(tag.text).to.exist;
+                    expect(tag.email).to.exist;
+
+                    done();
+                });
+        });
     });
 
     describe('DELETE /api/tags/:tagId', () => {
