@@ -101,7 +101,6 @@ Class | Method | HTTP request | Description
  - [PaginationMeta](docs/PaginationMeta.md)
  - [PaginationOptions](docs/PaginationOptions.md)
  - [Run](docs/Run.md)
- - [RunOrigin](docs/RunOrigin.md)
  - [RunQuality](docs/RunQuality.md)
  - [RunResponse](docs/RunResponse.md)
  - [RunSortOptions](docs/RunSortOptions.md)

@@ -1700,14 +1700,14 @@ components:
       type: integer
       format: int32
     RunO2End:
-      description: Unix timestamp when this entity was created.
-      type: string
-      format: date-time
+      description: Unix timestamp when this entity was created in miliseconds.
+      type: integer
+      format: int64
       example: 853113599
     RunO2Start:
-      description: Unix timestamp when this entity was created.
-      type: string
-      format: date-time
+      description: Unix timestamp when this entity was created in miliseconds.
+      type: integer
+      format: int64
       example: 853113599
     RunOrigin:
       description: Type of creator.
@@ -1742,14 +1742,14 @@ components:
       type: integer
       format: int32
     RunTrgEnd:
-      description: Unix timestamp when this entity was created.
-      type: string
-      format: date-time
+      description: Unix timestamp when this entity was created in miliseconds.
+      type: integer
+      format: int64
       example: 853113599
     RunTrgStart:
-      description: Unix timestamp when this entity was created.
-      type: string
-      format: date-time
+      description: Unix timestamp when this entity was created in miliseconds.
+      type: integer
+      format: int64
       example: 853113599
     DD_FLP:
       description: Boolean for Data Distrubution (FLP), On or Off.

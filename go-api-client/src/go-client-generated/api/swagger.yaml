@@ -1159,9 +1159,9 @@ components:
           id: id
           runs:
           - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            timeTrgStart: 853113599
+            timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
@@ -1169,7 +1169,7 @@ components:
             createdAt: 853113599
             nEpns: 5
             runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
@@ -1180,9 +1180,9 @@ components:
             id: 1
             updatedAt: 853113599
           - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            timeTrgStart: 853113599
+            timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
@@ -1190,7 +1190,7 @@ components:
             createdAt: 853113599
             nEpns: 5
             runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
@@ -1208,9 +1208,9 @@ components:
           id: id
           runs:
           - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            timeTrgStart: 853113599
+            timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
@@ -1218,7 +1218,7 @@ components:
             createdAt: 853113599
             nEpns: 5
             runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
@@ -1229,9 +1229,9 @@ components:
             id: 1
             updatedAt: 853113599
           - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            timeTrgStart: 853113599
+            timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
@@ -1239,7 +1239,7 @@ components:
             createdAt: 853113599
             nEpns: 5
             runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
@@ -1519,9 +1519,9 @@ components:
       example:
         data:
         - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: 853113599
+          timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1529,7 +1529,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1540,9 +1540,9 @@ components:
           id: 1
           updatedAt: 853113599
         - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: 853113599
+          timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1550,7 +1550,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1882,9 +1882,9 @@ components:
         id: id
         runs:
         - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: 853113599
+          timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1892,7 +1892,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1903,9 +1903,9 @@ components:
           id: 1
           updatedAt: 853113599
         - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: 853113599
+          timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -1913,7 +1913,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -1949,9 +1949,9 @@ components:
           id: id
           runs:
           - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            timeTrgStart: 853113599
+            timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
@@ -1959,7 +1959,7 @@ components:
             createdAt: 853113599
             nEpns: 5
             runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
@@ -1970,9 +1970,9 @@ components:
             id: 1
             updatedAt: 853113599
           - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            timeTrgStart: 853113599
+            timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
@@ -1980,7 +1980,7 @@ components:
             createdAt: 853113599
             nEpns: 5
             runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
@@ -2758,9 +2758,9 @@ components:
       description: Describes an intervention or an event that happened.
       example:
         epn: false
-        timeTrgStart: 2000-01-23T04:56:07.000+00:00
-        timeO2End: 2000-01-23T04:56:07.000+00:00
-        timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+        timeTrgStart: 853113599
+        timeO2End: 853113599
+        timeTrgEnd: 853113599
         runType: physics
         detectors: CPV
         bytesReadOut: 0
@@ -2768,7 +2768,7 @@ components:
         createdAt: 853113599
         nEpns: 5
         runQuality: good
-        timeO2Start: 2000-01-23T04:56:07.000+00:00
+        timeO2Start: 853113599
         environmentId: environmentId
         dcs: false
         epnTopology: normal
@@ -2803,18 +2803,15 @@ components:
       description: The unique identifier of this entity.
       format: int32
     RunO2End:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     RunO2Start:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
-    RunOrigin:
-      type: string
-      description: Type of creator.
-      enum:
-      - process
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     RunQuality:
       type: string
       description: Specifies the type of run.
@@ -2834,9 +2831,9 @@ components:
       example:
         data:
           epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeTrgStart: 853113599
+          timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
@@ -2844,7 +2841,7 @@ components:
           createdAt: 853113599
           nEpns: 5
           runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
@@ -2866,13 +2863,15 @@ components:
       description: Total number of subtimeframes processed by the O2 system.
       format: int32
     RunTrgEnd:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     RunTrgStart:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     DD_FLP:
       type: boolean
       description: "Boolean for Data Distrubution (FLP), On or Off."
