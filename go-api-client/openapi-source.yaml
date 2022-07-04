@@ -1646,12 +1646,22 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpConfigOption:
+          description: Repository hash
+          type: string
+        pdpTopologyDescriptionLibraryFile:
+          description: Library file location of the pdp topology descrption.
+          type: string
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
           $ref: '#/components/schemas/RunType'
+        tfbDdMode:
+          type: string
+          maxLength: 64
+          example: processing
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -1660,6 +1670,14 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        trgEnabled:
+          description: Boolean if the trigger is enabled.
+          type: boolean
+          example: true
+        trgGlobalRunEnabled:
+          description: Boolean if the global run trigger is enabled.
+          type: boolean
+          example: true
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:

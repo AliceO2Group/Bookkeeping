@@ -19,13 +19,22 @@ type Run struct {
 	NEpns int32 `json:"nEpns,omitempty"`
 	NFlps int32 `json:"nFlps,omitempty"`
 	NSubtimeframes int32 `json:"nSubtimeframes,omitempty"`
+	// Repository hash
+	PdpConfigOption string `json:"pdpConfigOption,omitempty"`
+	// Library file location of the pdp topology descrption.
+	PdpTopologyDescriptionLibraryFile string `json:"pdpTopologyDescriptionLibraryFile,omitempty"`
 	RunNumber int32 `json:"runNumber,omitempty"`
 	RunQuality *RunQuality `json:"runQuality,omitempty"`
 	RunType *RunType `json:"runType,omitempty"`
+	TfbDdMode string `json:"tfbDdMode,omitempty"`
 	TimeO2End int64 `json:"timeO2End,omitempty"`
 	TimeO2Start int64 `json:"timeO2Start,omitempty"`
 	TimeTrgEnd int64 `json:"timeTrgEnd,omitempty"`
 	TimeTrgStart int64 `json:"timeTrgStart,omitempty"`
+	// Boolean if the trigger is enabled.
+	TrgEnabled bool `json:"trgEnabled,omitempty"`
+	// Boolean if the global run trigger is enabled.
+	TrgGlobalRunEnabled bool `json:"trgGlobalRunEnabled,omitempty"`
 	DdFlp bool `json:"dd_flp,omitempty"`
 	Dcs bool `json:"dcs,omitempty"`
 	Epn bool `json:"epn,omitempty"`
