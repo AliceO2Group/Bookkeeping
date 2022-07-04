@@ -2085,6 +2085,12 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpConfigOption:
+          type: string
+          nullable: true
+        pdpTopologyDescriptionLibraryFile:
+          type: string
+          nullable: true
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
@@ -2093,6 +2099,9 @@ components:
           $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        tfbDdMode:
+          type: string
+          nullable: true
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -2101,6 +2110,12 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        trgEnabled:
+          type: boolean
+          nullable: true
+        trgGlobalRunEnabled:
+          type: boolean
+          nullable: true
         runDuration:
           $ref: '#/components/schemas/RunDuration'
         updatedAt:
