@@ -1,4 +1,4 @@
-# Generated on Mon, 04 Jul 2022 15:23:30 GMT
+# Generated on Mon, 04 Jul 2022 15:59:23 GMT
 
 openapi: 3.0.0
 info:
@@ -2088,9 +2088,11 @@ components:
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
         pdpConfigOption:
+          description: The config option of the pdp.
           type: string
           nullable: true
         pdpTopologyDescriptionLibraryFile:
+          descrption: Pdp file location.
           type: string
           nullable: true
         runDuration:
@@ -2104,6 +2106,7 @@ components:
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
         tfbDdMode:
+          description: The mode of the tfb dd.
           type: string
           nullable: true
         timeO2End:
@@ -2115,9 +2118,11 @@ components:
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
         trgEnabled:
+          description: If the trigger is enabled.
           type: boolean
           nullable: true
         trgGlobalRunEnabled:
+          description: If the global run trigger is enabled.
           type: boolean
           nullable: true
         updatedAt:
