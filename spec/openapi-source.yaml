@@ -2090,7 +2090,7 @@ components:
           type: string
           nullable: true
         pdpTopologyDescriptionLibraryFile:
-          descrption: Pdp file location.
+          description: Pdp file location.
           type: string
           nullable: true
         runNumber:

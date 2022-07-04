@@ -1,4 +1,4 @@
-# Generated on Mon, 04 Jul 2022 15:59:23 GMT
+# Generated on Mon, 04 Jul 2022 16:01:42 GMT
 
 openapi: 3.0.0
 info:
@@ -2092,7 +2092,7 @@ components:
           type: string
           nullable: true
         pdpTopologyDescriptionLibraryFile:
-          descrption: Pdp file location.
+          description: Pdp file location.
           type: string
           nullable: true
         runDuration:
