@@ -773,7 +773,7 @@ module.exports = () => {
                 .expect(201)
                 .send({
                     runQuality: 'test',
-                    timeO2End: -1,
+                    timeO2End: dateValue,
                     timeO2Start: dateValue,
                     timeTrgStart: dateValue,
                     timeTrgEnd: dateValue,
@@ -784,7 +784,7 @@ module.exports = () => {
                     tfbDdMode: 'processing',
                 });
             expect(body.data).to.be.an('object');
-            expect(body.data.timeO2End).to.not.equal(dateValue);
+            expect(body.data.timeO2End).to.equal(dateValue);
             expect(body.data.timeO2Start).to.equal(dateValue);
             expect(body.data.timeTrgStart).to.equal(dateValue);
             expect(body.data.timeTrgEnd).to.equal(dateValue);
