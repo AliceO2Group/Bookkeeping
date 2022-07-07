@@ -116,7 +116,6 @@ module.exports.validateElement = async (page, selector) => {
  * @returns {*} None
  */
 module.exports.takeScreenshot = async (page, name = 'screenshot') => {
-    await page.setViewport({ width: 1920, height: 1080 });
     await page.screenshot({
         path: `/var/storage/${name}.png`,
         type: 'png',
