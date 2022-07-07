@@ -767,5 +767,33 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should be able to update with ', async () => {
+            const { body } = await request(server)
+                .patch('/api/runs/80')
+                .expect(201)
+                .send({
+                    runQuality: 'test',
+                    timeO2End: dateValue,
+                    timeO2Start: dateValue,
+                    timeTrgStart: dateValue,
+                    timeTrgEnd: dateValue,
+                    pdpConfigOption: 'Repository hash',
+                    trgGlobalRunEnabled: true,
+                    trgEnabled: false,
+                    pdpTopologyDescriptionLibraryFile: 'production/production.desc',
+                    tfbDdMode: 'processing',
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.timeO2End).to.equal(dateValue);
+            expect(body.data.timeO2Start).to.equal(dateValue);
+            expect(body.data.timeTrgStart).to.equal(dateValue);
+            expect(body.data.timeTrgEnd).to.equal(dateValue);
+            expect(body.data.runQuality).to.equal('test');
+            expect(body.data.pdpConfigOption).to.equal('Repository hash');
+            expect(body.data.trgGlobalRunEnabled).to.equal(true);
+            expect(body.data.trgEnabled).to.equal(false);
+            expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
+            expect(body.data.tfbDdMode).to.equal('processing');
+        });
     });
 };

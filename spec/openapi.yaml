@@ -1,4 +1,4 @@
-# Generated on Thu, 23 Jun 2022 14:59:15 GMT
+# Generated on Mon, 04 Jul 2022 16:01:42 GMT
 
 openapi: 3.0.0
 info:
@@ -2087,6 +2087,14 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpConfigOption:
+          description: The config option of the pdp.
+          type: string
+          nullable: true
+        pdpTopologyDescriptionLibraryFile:
+          description: Pdp file location.
+          type: string
+          nullable: true
         runDuration:
           $ref: '#/components/schemas/RunDuration'
         runNumber:
@@ -2097,6 +2105,10 @@ components:
           $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        tfbDdMode:
+          description: The mode of the tfb dd.
+          type: string
+          nullable: true
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -2105,6 +2117,14 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        trgEnabled:
+          description: If the trigger is enabled.
+          type: boolean
+          nullable: true
+        trgGlobalRunEnabled:
+          description: If the global run trigger is enabled.
+          type: boolean
+          nullable: true
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer

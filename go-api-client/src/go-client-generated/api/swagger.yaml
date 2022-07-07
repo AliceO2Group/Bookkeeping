@@ -1158,48 +1158,58 @@ components:
           toredownAt: 2000-01-23T04:56:07.000+00:00
           id: id
           runs:
-          - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          - timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
-            nSubtimeframes: 2
+            pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
-            runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            id: 1
+            tfbDdMode: processing
+            updatedAt: 853113599
+            epn: false
+            timeTrgStart: 853113599
+            pdpConfigOption: pdpConfigOption
+            nSubtimeframes: 2
+            runQuality: good
             nDetectors: 1
             nFlps: 5
+            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            id: 1
-            updatedAt: 853113599
-          - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            trgGlobalRunEnabled: true
+          - timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
-            nSubtimeframes: 2
+            pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
-            runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            id: 1
+            tfbDdMode: processing
+            updatedAt: 853113599
+            epn: false
+            timeTrgStart: 853113599
+            pdpConfigOption: pdpConfigOption
+            nSubtimeframes: 2
+            runQuality: good
             nDetectors: 1
             nFlps: 5
+            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            id: 1
-            updatedAt: 853113599
+            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -1207,48 +1217,58 @@ components:
           toredownAt: 2000-01-23T04:56:07.000+00:00
           id: id
           runs:
-          - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          - timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
-            nSubtimeframes: 2
+            pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
-            runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            id: 1
+            tfbDdMode: processing
+            updatedAt: 853113599
+            epn: false
+            timeTrgStart: 853113599
+            pdpConfigOption: pdpConfigOption
+            nSubtimeframes: 2
+            runQuality: good
             nDetectors: 1
             nFlps: 5
+            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            id: 1
-            updatedAt: 853113599
-          - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            trgGlobalRunEnabled: true
+          - timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
-            nSubtimeframes: 2
+            pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
-            runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            id: 1
+            tfbDdMode: processing
+            updatedAt: 853113599
+            epn: false
+            timeTrgStart: 853113599
+            pdpConfigOption: pdpConfigOption
+            nSubtimeframes: 2
+            runQuality: good
             nDetectors: 1
             nFlps: 5
+            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            id: 1
-            updatedAt: 853113599
+            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -1518,48 +1538,58 @@ components:
       description: Response containing multiple runs.
       example:
         data:
-        - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+        - timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
-          nSubtimeframes: 2
+          pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
-          runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          id: 1
+          tfbDdMode: processing
+          updatedAt: 853113599
+          epn: false
+          timeTrgStart: 853113599
+          pdpConfigOption: pdpConfigOption
+          nSubtimeframes: 2
+          runQuality: good
           nDetectors: 1
           nFlps: 5
+          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          id: 1
-          updatedAt: 853113599
-        - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          trgGlobalRunEnabled: true
+        - timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
-          nSubtimeframes: 2
+          pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
-          runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          id: 1
+          tfbDdMode: processing
+          updatedAt: 853113599
+          epn: false
+          timeTrgStart: 853113599
+          pdpConfigOption: pdpConfigOption
+          nSubtimeframes: 2
+          runQuality: good
           nDetectors: 1
           nFlps: 5
+          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          id: 1
-          updatedAt: 853113599
+          trgGlobalRunEnabled: true
         meta:
           page:
             pageCount: 9
@@ -1881,48 +1911,58 @@ components:
         toredownAt: 2000-01-23T04:56:07.000+00:00
         id: id
         runs:
-        - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+        - timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
-          nSubtimeframes: 2
+          pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
-          runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          id: 1
+          tfbDdMode: processing
+          updatedAt: 853113599
+          epn: false
+          timeTrgStart: 853113599
+          pdpConfigOption: pdpConfigOption
+          nSubtimeframes: 2
+          runQuality: good
           nDetectors: 1
           nFlps: 5
+          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          id: 1
-          updatedAt: 853113599
-        - epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          trgGlobalRunEnabled: true
+        - timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
-          nSubtimeframes: 2
+          pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
-          runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          id: 1
+          tfbDdMode: processing
+          updatedAt: 853113599
+          epn: false
+          timeTrgStart: 853113599
+          pdpConfigOption: pdpConfigOption
+          nSubtimeframes: 2
+          runQuality: good
           nDetectors: 1
           nFlps: 5
+          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          id: 1
-          updatedAt: 853113599
+          trgGlobalRunEnabled: true
         statusMessage: statusMessage
         updatedAt: 853113599
         status: status
@@ -1948,48 +1988,58 @@ components:
           toredownAt: 2000-01-23T04:56:07.000+00:00
           id: id
           runs:
-          - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          - timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
-            nSubtimeframes: 2
+            pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
-            runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            id: 1
+            tfbDdMode: processing
+            updatedAt: 853113599
+            epn: false
+            timeTrgStart: 853113599
+            pdpConfigOption: pdpConfigOption
+            nSubtimeframes: 2
+            runQuality: good
             nDetectors: 1
             nFlps: 5
+            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            id: 1
-            updatedAt: 853113599
-          - epn: false
-            timeTrgStart: 2000-01-23T04:56:07.000+00:00
-            timeO2End: 2000-01-23T04:56:07.000+00:00
-            timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+            trgGlobalRunEnabled: true
+          - timeO2End: 853113599
+            timeTrgEnd: 853113599
             runType: physics
             detectors: CPV
             bytesReadOut: 0
-            nSubtimeframes: 2
+            pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
-            runQuality: good
-            timeO2Start: 2000-01-23T04:56:07.000+00:00
+            timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            id: 1
+            tfbDdMode: processing
+            updatedAt: 853113599
+            epn: false
+            timeTrgStart: 853113599
+            pdpConfigOption: pdpConfigOption
+            nSubtimeframes: 2
+            runQuality: good
             nDetectors: 1
             nFlps: 5
+            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            id: 1
-            updatedAt: 853113599
+            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -2725,12 +2775,22 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpConfigOption:
+          type: string
+          description: Repository hash
+        pdpTopologyDescriptionLibraryFile:
+          type: string
+          description: Library file location of the pdp topology descrption.
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
           $ref: '#/components/schemas/RunType'
+        tfbDdMode:
+          maxLength: 64
+          type: string
+          example: processing
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -2739,6 +2799,14 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        trgEnabled:
+          type: boolean
+          description: Boolean if the trigger is enabled.
+          example: true
+        trgGlobalRunEnabled:
+          type: boolean
+          description: Boolean if the global run trigger is enabled.
+          example: true
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:
@@ -2757,27 +2825,32 @@ components:
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
-        epn: false
-        timeTrgStart: 2000-01-23T04:56:07.000+00:00
-        timeO2End: 2000-01-23T04:56:07.000+00:00
-        timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+        timeO2End: 853113599
+        timeTrgEnd: 853113599
         runType: physics
         detectors: CPV
         bytesReadOut: 0
-        nSubtimeframes: 2
+        pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
         createdAt: 853113599
         nEpns: 5
-        runQuality: good
-        timeO2Start: 2000-01-23T04:56:07.000+00:00
+        timeO2Start: 853113599
         environmentId: environmentId
         dcs: false
         epnTopology: normal
+        id: 1
+        tfbDdMode: processing
+        updatedAt: 853113599
+        epn: false
+        timeTrgStart: 853113599
+        pdpConfigOption: pdpConfigOption
+        nSubtimeframes: 2
+        runQuality: good
         nDetectors: 1
         nFlps: 5
+        trgEnabled: true
         dd_flp: false
         runNumber: 7
-        id: 1
-        updatedAt: 853113599
+        trgGlobalRunEnabled: true
     RunEnvironmentId:
       type: string
       description: The unique identifier of this entity.
@@ -2803,13 +2876,15 @@ components:
       description: The unique identifier of this entity.
       format: int32
     RunO2End:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     RunO2Start:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     RunOrigin:
       type: string
       description: Type of creator.
@@ -2833,27 +2908,32 @@ components:
       description: Response containing a single run.
       example:
         data:
-          epn: false
-          timeTrgStart: 2000-01-23T04:56:07.000+00:00
-          timeO2End: 2000-01-23T04:56:07.000+00:00
-          timeTrgEnd: 2000-01-23T04:56:07.000+00:00
+          timeO2End: 853113599
+          timeTrgEnd: 853113599
           runType: physics
           detectors: CPV
           bytesReadOut: 0
-          nSubtimeframes: 2
+          pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
-          runQuality: good
-          timeO2Start: 2000-01-23T04:56:07.000+00:00
+          timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          id: 1
+          tfbDdMode: processing
+          updatedAt: 853113599
+          epn: false
+          timeTrgStart: 853113599
+          pdpConfigOption: pdpConfigOption
+          nSubtimeframes: 2
+          runQuality: good
           nDetectors: 1
           nFlps: 5
+          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          id: 1
-          updatedAt: 853113599
+          trgGlobalRunEnabled: true
     RunSortOptions:
       type: object
       properties:
@@ -2866,13 +2946,15 @@ components:
       description: Total number of subtimeframes processed by the O2 system.
       format: int32
     RunTrgEnd:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     RunTrgStart:
-      type: string
-      description: Unix timestamp when this entity was created.
-      format: date-time
+      type: integer
+      description: Unix timestamp when this entity was created in miliseconds.
+      format: int64
+      example: 853113599
     DD_FLP:
       type: boolean
       description: "Boolean for Data Distrubution (FLP), On or Off."

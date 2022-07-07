@@ -2085,6 +2085,14 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpConfigOption:
+          description: The config option of the pdp.
+          type: string
+          nullable: true
+        pdpTopologyDescriptionLibraryFile:
+          description: Pdp file location.
+          type: string
+          nullable: true
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
@@ -2093,6 +2101,10 @@ components:
           $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        tfbDdMode:
+          description: The mode of the tfb dd.
+          type: string
+          nullable: true
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -2101,6 +2113,14 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        trgEnabled:
+          description: If the trigger is enabled.
+          type: boolean
+          nullable: true
+        trgGlobalRunEnabled:
+          description: If the global run trigger is enabled.
+          type: boolean
+          nullable: true
         runDuration:
           $ref: '#/components/schemas/RunDuration'
         updatedAt:
