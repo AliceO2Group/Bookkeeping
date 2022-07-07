@@ -100,9 +100,7 @@ module.exports = () => {
             { id: 2, runNumber: 2 },
             { id: 3, runNumber: 3 },
         ];
-        const givenRunNumbers = '1,2,2,3,3,1,2,1,2,3';
-
-        createLogDto.body.runNumbers = givenRunNumbers;
+        createLogDto.body.runNumbers = '1,2,2,3,3,1,2,1,2,3';
 
         createLogDto.session = {
             personid: 2,
