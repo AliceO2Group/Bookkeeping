@@ -118,7 +118,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter
-        await page.type('#authorFilterText', 'John');
+        await page.type('#authorFilterText', 'Jane');
         await page.waitForTimeout(500);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -149,13 +149,16 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
-        await page.waitForTimeout(200);
-
         // Insert a minimum date into the filter
+        await page.waitForTimeout(100);
+        // 6 logs are created before this test
+        const limitDate = new Date();
+        const limit = String(limitDate.getDate()).padStart(2, '0')
+            + String(limitDate.getMonth() + 1).padStart(2, '0')
+            + limitDate.getFullYear();
         await page.focus('#createdFilterFrom');
-        await page.waitForTimeout(100);
-        await page.type('#createdFilterFrom', '01012020');
-        await page.waitForTimeout(100);
+        await page.keyboard.type(limit);
+        await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -164,20 +167,18 @@ module.exports = () => {
 
         // Insert a maximum date into the filter
         await page.focus('#createdFilterTo');
-        await page.waitForTimeout(100);
-        await page.type('#createdFilterTo', '01022020');
-        await page.waitForTimeout(100);
+        await page.keyboard.type(limit);
+        await page.waitForTimeout(300);
 
-        // Expect the table to be empty
+        // 6 logs are created before this test
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(0);
+        expect(secondFilteredNumberOfRows).to.equal(6);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
-        await page.waitForTimeout(100);
-        await page.type('#createdFilterTo', '01012000');
-        await page.waitForTimeout(100);
+        await page.keyboard.type('01012000');
+        await page.waitForTimeout(300);
 
         // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
         const thirdFilteredRows = await page.$$('table tr');
