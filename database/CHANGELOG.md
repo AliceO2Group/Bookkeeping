@@ -1,3 +1,12 @@
+## [0.32.0]
+* Changes made to the database:
+    * table `runs` - added fields:
+        * `trgGlobalRunEnabled` - boolean ('true', 'false')
+        * `trgEnabled` - boolean ('true', 'false')
+        * `pdpConfigOption` - string ('Repository Hash')
+        * `pdpTopologyDescriptionLibraryFile` - string ('some/location.desc', 'production/production.desc')
+        * `tfbDdMode` - string ('processing')
+
 ## [0.31.0]
 * Changes made to the database:
   * table `runs`:
