@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.32.0]()
+* Notable changes for users:
+  * Adds new fields for Run-Details
+* Notable changes for developers:
+  * `POST` RUNS API:
+    * `timeTrgStart` and `timeO2Start` fields are not required anymore
+  * `PATCH` RUNS API:
+    * `timeO2Start`, `timeTrgStart`, `trgGlobalRunEnabled`, `trgEnabled`, `pdpConfigOption`, `pdpTopologyDescriptionLibraryFile`, `tfbDdMode` are now added and optional fields.
+
 ## [0.31.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
 * Notable changes for users:
   * Adds `RunDuration` for Run-Overview, Run-Details and Run-Filters

@@ -42,28 +42,33 @@ Concerning the **Update mode** of the fields:
 **Relation:** `run` hasMany `eor_reasons`
 **DB main table**: `runs`   
 
-| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
-| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
-| `run_number`                  | Integer ID of a specific data taking period. Should be positive and strictly increasing.| `23`  | At SOR | | Insert |
-| `time_o2_start`               | Time when Run was started (START transition). | | At SOR | `run_number` | Insert |
-| `time_o2_end`                 | Time when Run was stopped. (STOP transition). | | At EOR | `run_number` | Insert |
-| `time_trg_start`              | Time when the Trigger subsystem was started. | | At SOR | `run_number` | Insert |
-| `time_trg_end`                | Time when the Trigger subsystem was stopped. | | At EOR | `run_number` | Insert |
-| `environment_id`              | Unique identifier of the AliECS environment. | `2UE5fEfvE4J` | At SOR | `run_number` | Insert |
-| `run_type`                    | Type of the run, each type will deploy different workflows and/or configurations.	| `PHYSICS`, `TECHNICAL`, `PEDESTAL` | At SOR | `run_number` | Insert |
-| `run_quality`                 | Overall quality of the data from the data taking point of view. | `good`, `bad`, `test` | At EOR | `run_number` | Insert |
-| `n_detectors`                 | Number of detectors in the Run. | `4` | At SOR | `run_number` | Insert |
-| `n_flps`                      | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
-| `n_epns`                      | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
-| `epn_topology`                | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
-| `fillNumber`                  | The fill connected to the run      | `1, 2, 1651`                        |  | `run_number` | Update |
-| `lhcBeamEnergy`               | Energy of the beam (GeV)           | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
-| `lhcBeamMode`                 | LHC Beam Mode                      | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
-| `lhcBetaStar`                 | LHC Beta * in meters               | `ITS,TPC,TOF`                       |  | `run_number` | Update |
-| `aliceL3Current`              | Current in L3 magnet (Amperes)     | `3.14, 2`                           |  | `run_number` | Update |
-| `aliceL3Polarity`             | The polarity of the L3 magnet      | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
-| `aliceDipoleCurrent`          | Current in Dipole magnet (Amperes) | `ITS,TPC,TOF`                       |  | `run_number` | Update |
-| `aliceDipolePolarity`         | The polarity of the dipole magnet  | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| **Field**                            | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| -----------------------------------  | ---------------- | ------------|-----------------|----------------|-----------------|
+| `run_number`                         | Integer ID of a specific data taking period. Should be positive and strictly increasing.| `23`  | At SOR | | Insert |
+| `time_o2_start`                      | Time when Run was started (START transition). | | At SOR | `run_number` | Insert |
+| `time_o2_end`                        | Time when Run was stopped. (STOP transition). | | At EOR | `run_number` | Insert |
+| `time_trg_start`                     | Time when the Trigger subsystem was started. | | At SOR | `run_number` | Insert |
+| `time_trg_end`                       | Time when the Trigger subsystem was stopped. | | At EOR | `run_number` | Insert |
+| `environment_id`                     | Unique identifier of the AliECS environment. | `2UE5fEfvE4J` | At SOR | `run_number` | Insert |
+| `run_type`                           | Type of the run, each type will deploy different workflows and/or configurations.	| `PHYSICS`, `TECHNICAL`, `PEDESTAL` | At SOR | `run_number` | Insert |
+| `run_quality`                        | Overall quality of the data from the data taking point of view. | `good`, `bad`, `test` | At EOR | `run_number` | Insert |
+| `n_detectors`                        | Number of detectors in the Run. | `4` | At SOR | `run_number` | Insert |
+| `n_flps`                             | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
+| `n_epns`                             | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
+| `epn_topology`                       | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
+| `fillNumber`                         | The fill connected to the run        | `1, 2, 1651`                        |  | `run_number` | Update |
+| `lhcBeamEnergy`                      | Energy of the beam (GeV)             | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
+| `lhcBeamMode`                        | LHC Beam Mode                        | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
+| `lhcBetaStar`                        | LHC Beta * in meters                 | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `aliceL3Current`                     | Current in L3 magnet (Amperes)       | `3.14, 2`                           |  | `run_number` | Update |
+| `aliceL3Polarity`                    | The polarity of the L3 magnet        | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| `aliceDipoleCurrent`                 | Current in Dipole magnet (Amperes)   | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `aliceDipolePolarity`                | The polarity of the dipole magnet    | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| `trgGlobalRunEnabled`                | If the global run trigger is enabled | `true, false`                       |  | `run_number` | Update |
+| `trgEnabled`                         | If the trigger is enabled            | `true, false`                       |  | `run_number` | Update |
+| `pdpConfigOption`                    | Configuration option PDP             | `Repository Hash`                   |  | `run_number` | Update |
+| `pdpTopologyDescriptionLibraryFile`  | File location of the pdp topology    | `some/location.desc`                |  | `run_number` | Update |
+| `tfbDdMode`                          | The mode of the TFB DD               | `processing`                        |  | `run_number` | Update |
 
 ### End of run reasons
 
