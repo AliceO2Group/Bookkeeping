@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.32.0]()
+## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
 * Notable changes for users:
   * Adds new fields for Run-Details
+  * Fixes a bug in which infinite scrolling would not apply filters on runs & logs pages
+  * Runs older than 48 hours and without a trigger end timestamp will be displayed as UNKNOWN
 * Notable changes for developers:
   * `POST` RUNS API:
     * `timeTrgStart` and `timeO2Start` fields are not required anymore
