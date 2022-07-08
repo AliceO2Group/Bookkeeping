@@ -674,7 +674,9 @@ module.exports = () => {
                     lhcBeamMode: 'STABLE BEAMS',
                     lhcBetaStar: 123e-5,
                     aliceL3Current: 561.2,
+                    aliceL3Polarity: 'POSITIVE',
                     aliceDipoleCurrent: 45654.1,
+                    aliceDipolePolarity: 'NEGATIVE',
                 })
                 .expect(500)
                 .end((err, res) => {
@@ -697,7 +699,9 @@ module.exports = () => {
                     lhcBeamMode: 'STABLE BEAMS',
                     lhcBetaStar: 123e-5,
                     aliceL3Current: 561.2,
+                    aliceL3Polarity: 'positive',
                     aliceDipoleCurrent: 45654.1,
+                    aliceDipolePolarity: 'negative',
                 })
                 .expect(200)
                 .end((err, res) => {
@@ -711,7 +715,9 @@ module.exports = () => {
                     expect(res.body.data.lhcBeamMode).to.equal('STABLE BEAMS');
                     expect(res.body.data.lhcBetaStar).to.equal(123e-5);
                     expect(res.body.data.aliceL3Current).to.equal(561.2);
+                    expect(res.body.data.aliceL3Polarity).to.equal('POSITIVE');
                     expect(res.body.data.aliceDipoleCurrent).to.equal(45654.1);
+                    expect(res.body.data.aliceDipolePolarity).to.equal('NEGATIVE');
                     done();
                 });
         });
@@ -760,6 +766,34 @@ module.exports = () => {
                     expect(res.body.data.runQuality).to.equal('test');
                     done();
                 });
+        });
+        it('should be able to update with ', async () => {
+            const { body } = await request(server)
+                .patch('/api/runs/80')
+                .expect(201)
+                .send({
+                    runQuality: 'test',
+                    timeO2End: dateValue,
+                    timeO2Start: dateValue,
+                    timeTrgStart: dateValue,
+                    timeTrgEnd: dateValue,
+                    pdpConfigOption: 'Repository hash',
+                    trgGlobalRunEnabled: true,
+                    trgEnabled: false,
+                    pdpTopologyDescriptionLibraryFile: 'production/production.desc',
+                    tfbDdMode: 'processing',
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.timeO2End).to.equal(dateValue);
+            expect(body.data.timeO2Start).to.equal(dateValue);
+            expect(body.data.timeTrgStart).to.equal(dateValue);
+            expect(body.data.timeTrgEnd).to.equal(dateValue);
+            expect(body.data.runQuality).to.equal('test');
+            expect(body.data.pdpConfigOption).to.equal('Repository hash');
+            expect(body.data.trgGlobalRunEnabled).to.equal(true);
+            expect(body.data.trgEnabled).to.equal(false);
+            expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
+            expect(body.data.tfbDdMode).to.equal('processing');
         });
     });
 };

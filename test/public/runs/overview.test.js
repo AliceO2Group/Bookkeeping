@@ -32,13 +32,23 @@ module.exports = () => {
     let table;
     let firstRowId;
 
-    const timeList = ['#o2startFilterFromTime', '#o2startFilterToTime', '#o2endFilterFromTime', '#o2endFilterToTime'];
-    const dateList = ['#o2startFilterFrom', '#o2startFilterTo', '#o2endFilterFrom', '#o2endFilterTo'];
+    const timeFilterSelectors = {
+        startFrom: '#o2startFilterFromTime',
+        startTo: '#o2startFilterToTime',
+        endFrom: '#o2endFilterFromTime',
+        endTo: '#o2endFilterToTime',
+    };
+    const dateFilterSelectors = {
+        startFrom: '#o2startFilterFrom',
+        startTo: '#o2startFilterTo',
+        endFrom: '#o2endFilterFrom',
+        endTo: '#o2endFilterTo',
+    };
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
-            width: 700,
+            width: 1200,
             height: 720,
             deviceScaleFactor: 1,
         });
@@ -122,14 +132,14 @@ module.exports = () => {
 
         const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
         await menuItems[menuItems.length - 1].evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
 
         await page.evaluate(() => {
             window.scrollBy(0, window.innerHeight);
         });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length > 20).to.be.true;
+        expect(tableRows.length).to.be.greaterThan(20);
     });
 
     it('can set how many runs are available per page', async () => {
@@ -285,7 +295,7 @@ module.exports = () => {
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 12);
+        await checkColumnBalloon(page, 1, 13);
     });
 
     it('Should display balloon if the text overflows', async () => {
@@ -324,18 +334,18 @@ module.exports = () => {
         [today] = today.toISOString().split('T');
         const time = '00:01';
 
-        for (const selector of timeList) {
+        for (const selector of Object.values(timeFilterSelectors)) {
             await page.type(selector, time);
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(300);
         }
-        for (const selector of dateList) {
+        for (const selector of Object.values(dateFilterSelectors)) {
             const value = await page.$eval(selector, (element) => element.value);
             expect(String(value)).to.equal(today);
         }
         const date = new Date();
         const now = `${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`;
-        const firstTill = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
-        const secondTill = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
+        const firstTill = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
+        const secondTill = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
         expect(String(firstTill)).to.equal(now);
         expect(String(secondTill)).to.equal(now);
     });
@@ -348,12 +358,14 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date
-        for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], dateString);
+        for (const key in dateFilterSelectors) {
+            await page.focus(dateFilterSelectors[key]);
+            await page.keyboard.type(dateString);
             await page.waitForTimeout(500);
-            await page.type(timeList[i], '00-01-AM');
+            await page.focus(timeFilterSelectors[key]);
+            await page.keyboard.type('00-01-AM');
             await page.waitForTimeout(500);
-            const value = await page.$eval(dateList[i], (element) => element.value);
+            const value = await page.$eval(dateFilterSelectors[key], (element) => element.value);
             expect(value).to.equal(validValue);
         }
     });
@@ -365,27 +377,27 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
-        for (const selector of dateList) {
+        for (const selector of Object.values(dateFilterSelectors)) {
             await page.type(selector, dateString);
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(300);
         }
-        await page.type(timeList[0], '11:11');
-        await page.type(timeList[1], '14:00');
-        await page.type(timeList[2], '11:11');
-        await page.type(timeList[3], '14:00');
+        await page.type(timeFilterSelectors.startFrom, '11:11');
+        await page.type(timeFilterSelectors.startTo, '14:00');
+        await page.type(timeFilterSelectors.endFrom, '11:11');
+        await page.type(timeFilterSelectors.endTo, '14:00');
         await page.waitForTimeout(500);
 
         // Validate if the max value is the same as the till values
-        const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
-        const endMax = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
-        expect(String(startMax)).to.equal(await page.$eval(timeList[1], (element) => element.value));
-        expect(String(endMax)).to.equal(await page.$eval(timeList[3], (element) => element.value));
+        const startMax = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
+        const endMax = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
+        expect(String(startMax)).to.equal(await page.$eval(timeFilterSelectors.startTo, (element) => element.value));
+        expect(String(endMax)).to.equal(await page.$eval(timeFilterSelectors.endTo, (element) => element.value));
 
         // Validate if the min value is the same as the from values
-        const startMin = await page.$eval(timeList[1], (element) => element.getAttribute('min'));
-        const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
-        expect(String(startMin)).to.equal(await page.$eval(timeList[0], (element) => element.value));
-        expect(String(endMin)).to.equal(await page.$eval(timeList[2], (element) => element.value));
+        const startMin = await page.$eval(timeFilterSelectors.startTo, (element) => element.getAttribute('min'));
+        const endMin = await page.$eval(timeFilterSelectors.endTo, (element) => element.getAttribute('min'));
+        expect(String(startMin)).to.equal(await page.$eval(timeFilterSelectors.startFrom, (element) => element.value));
+        expect(String(endMin)).to.equal(await page.$eval(timeFilterSelectors.endFrom, (element) => element.value));
     });
 
     it('The max should be the maximum value when having different dates', async () => {
@@ -398,18 +410,18 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
-        for (const selector of dateList) {
+        for (const selector of Object.values(dateFilterSelectors)) {
             await page.type(selector, dateString);
             await page.waitForTimeout(500);
         }
-        const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
-        const endMax = await page.$eval(timeList[2], (element) => element.getAttribute('max'));
+        const startMax = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
+        const endMax = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
         expect(String(startMax)).to.equal(maxTime);
         expect(String(endMax)).to.equal(maxTime);
 
         // Validate if the min value is the same as the from values
-        const startMin = await page.$eval(timeList[1], (element) => element.getAttribute('min'));
-        const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
+        const startMin = await page.$eval(timeFilterSelectors.startTo, (element) => element.getAttribute('min'));
+        const endMin = await page.$eval(timeFilterSelectors.endTo, (element) => element.getAttribute('min'));
         expect(String(startMin)).to.equal(minTime);
         expect(String(endMin)).to.equal(minTime);
     });
@@ -432,10 +444,10 @@ module.exports = () => {
 
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('1500');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         await page.select(runDurationOperatorSelector, '>=');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         const runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
@@ -513,7 +525,7 @@ module.exports = () => {
         await page.keyboard.type('ABCDEFGHIJ, 0987654321');
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(10);
+        expect(table.length).to.equal(7);
     });
 
     it('should successfully filter on nDetectors', async () => {
@@ -532,12 +544,11 @@ module.exports = () => {
         const nDetectorLimit = await page.$(nDetectorLimitSelector) || null;
         expect(nDetectorLimit).to.not.be.null;
 
-        await page.focus(nDetectorLimitSelector);
+        await nDetectorLimit.focus();
         await page.keyboard.type('3');
-        await page.waitForTimeout(200);
-
+        await page.waitForTimeout(300);
         await page.select(nDetectorOperatorSelector, '<=');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
@@ -567,17 +578,61 @@ module.exports = () => {
         const nFlpsLimit = await page.$(nFlpsLimitSelector) || null;
         expect(nFlpsLimit).to.not.be.null;
 
-        await page.focus(nFlpsLimitSelector);
+        await nFlpsLimit.focus();
         await page.keyboard.type('10');
-        await page.waitForTimeout(200);
-
+        await page.waitForTimeout(300);
         await page.select(nFlpsOperatorSelector, '<=');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
         }));
         expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
+    });
+
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+    it('should successfully display runs export button', async () => {
+        const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
+        expect(runsExportButton).to.be.not.null;
+    });
+
+    it('should successfully display runs export modal on click on export button', async () => {
+        let exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.be.null;
+
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForTimeout(100);
+        exportModal = await page.$('#export-runs-modal');
+
+        expect(exportModal).to.not.be.null;
+    });
+
+    it('should successfully display information when export will be truncated', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForTimeout(100);
+
+        const truncatedExportWarning = await page.$('#export-runs-modal #truncated-export-warning');
+        expect(truncatedExportWarning).to.not.be.null;
+        expect(await truncatedExportWarning.evaluate((warning) => warning.innerText)).to
+            .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
+    });
+
+    it('should successfully display disabled runs export button when there is no runs available', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Type a fake run number to have no runs
+        await page.focus('#runNumber');
+        await page.keyboard.type('99999999999');
+        await page.waitForTimeout(300);
+
+        expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
     });
 };

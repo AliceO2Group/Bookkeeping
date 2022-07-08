@@ -288,7 +288,7 @@ module.exports = () => {
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(10);
+        expect(runs).to.have.lengthOf(7);
         expect(runs.every((run) => ['0987654321', 'ABCDEFGHIJ'].includes(run.environmentId))).to.be.true;
     });
 

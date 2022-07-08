@@ -28,7 +28,14 @@ module.exports = () => {
             },
             body: {
                 timeO2End: dateValue,
+                timeO2Start: dateValue,
+                timeTrgStart: dateValue,
                 timeTrgEnd: dateValue,
+                pdpConfigOption: 'Repository hash',
+                trgGlobalRunEnabled: true,
+                trgEnabled: false,
+                pdpTopologyDescriptionLibraryFile: 'production/production.desc',
+                tfbDdMode: 'processing',
             },
         });
 
@@ -41,8 +48,15 @@ module.exports = () => {
     it('Should be able to update the environment with correct values', async () => {
         const { result } = await new EndRunUseCase()
             .execute(endRunDto);
+        expect(result.timeO2Start).to.equal(dateValue);
         expect(result.timeO2End).to.equal(dateValue);
+        expect(result.timeTrgStart).to.equal(dateValue);
         expect(result.timeTrgEnd).to.equal(dateValue);
+        expect(result.pdpConfigOption).to.equal('Repository hash');
+        expect(result.trgGlobalRunEnabled).to.equal(true);
+        expect(result.trgEnabled).to.equal(false);
+        expect(result.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
+        expect(result.tfbDdMode).to.equal('processing');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {

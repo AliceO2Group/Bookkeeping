@@ -61,7 +61,9 @@ Concerning the **Update mode** of the fields:
 | `lhcBeamMode`                 | LHC Beam Mode                      | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
 | `lhcBetaStar`                 | LHC Beta * in meters               | `ITS,TPC,TOF`                       |  | `run_number` | Update |
 | `aliceL3Current`              | Current in L3 magnet (Amperes)     | `3.14, 2`                           |  | `run_number` | Update |
+| `aliceL3Polarity`             | The polarity of the L3 magnet      | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
 | `aliceDipoleCurrent`          | Current in Dipole magnet (Amperes) | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `aliceDipolePolarity`         | The polarity of the dipole magnet  | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
 
 ### End of run reasons
 
