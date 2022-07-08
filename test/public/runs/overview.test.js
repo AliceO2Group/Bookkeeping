@@ -82,7 +82,7 @@ module.exports = () => {
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
             runDuration: (fullDuration) => {
                 const [duration, unit] = fullDuration.split(' ');
-                return fullDuration === 'RUNNING' || !isNaN(parseInt(duration, 10)) && unit === 'sec';
+                return fullDuration === 'RUNNING' || 'UNKNOWN' || !isNaN(parseInt(duration, 10)) && unit === 'sec';
             },
             environmentId: (number) => typeof number == 'number',
             runType: (string) => typeof string == 'string',
@@ -446,15 +446,30 @@ module.exports = () => {
         await page.keyboard.type('1500');
         await page.waitForTimeout(300);
 
-        await page.select(runDurationOperatorSelector, '>=');
+        await page.select(runDurationOperatorSelector, '=');
         await page.waitForTimeout(300);
 
-        const runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
         }));
 
-        expect(runDurationList.every((runDuration) => parseInt(runDuration, 10) >= 1500 || runDuration === 'RUNNING')).to.be.true;
+        expect(runDurationList.every((runDuration) => parseInt(runDuration, 10) === 1500)).to.be.true;
+
+        await page.focus(runDurationLimitSelector);
+        await page.keyboard.type('3000');
+        await page.waitForTimeout(300);
+
+        await page.select(runDurationOperatorSelector, '>=');
+        await page.waitForTimeout(300);
+
+        // Expect only unknown
+        runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
+        }));
+
+        expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
     });
 
     it('Should successfully filter runs by their run quality', async () => {
@@ -484,18 +499,18 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
         await checkTableRunQualities(table, ['bad']);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         await checkTableRunQualities(table, ['bad', 'test']);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
         await checkTableRunQualities(table, ['bad']);
