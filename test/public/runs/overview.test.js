@@ -484,18 +484,18 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
         await checkTableRunQualities(table, ['bad']);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         await checkTableRunQualities(table, ['bad', 'test']);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
         await checkTableRunQualities(table, ['bad']);
