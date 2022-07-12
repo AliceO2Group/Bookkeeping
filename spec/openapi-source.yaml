@@ -1274,11 +1274,10 @@ components:
       required:
         - data
       additionalProperties: false
-    CommaSeparatedEntityIds:
-      description: CSV style string of EntityIds.
+    CommaSeparatedStrings:
+      description: CSV style string list
       type: string
-      pattern: ^([1-9]+\d*,)*[1-9]+\d*$
-      example: 1,2,3
+      example: FOOD,MAINTENANCE
     CreateAttachments:
       description: Describes an attachment
       type: object
@@ -1626,12 +1625,12 @@ components:
           $ref: '#/components/schemas/EntityId'
         rootLog:
           $ref: '#/components/schemas/EntityId'
-        tag:
-          $ref: '#/components/schemas/FilterLogsTagOptions'
+        tags:
+          $ref: '#/components/schemas/FilterLogsTagsOptions'
         title:
           $ref: '#/components/schemas/LogTitle'
       additionalProperties: false
-    FilterLogsTagOptions:
+    FilterLogsTagsOptions:
       description: Specifies the tag related filter requirements for a request.
       type: object
       properties:
@@ -1642,7 +1641,7 @@ components:
             - and
             - or
         values:
-          $ref: '#/components/schemas/CommaSeparatedEntityIds'
+          $ref: '#/components/schemas/CommaSeparatedStrings'
       required:
         - operation
         - values
