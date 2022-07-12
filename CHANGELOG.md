@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
+## [0.33.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.33.0)
+* Notable changes for users:
+  * Displays `UNKNOWN` for run duration above 48 hours, else `RUNNING`
+  * Add fill number information on run overview page and in its filtering
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `fillNumbers` is a new optional filter
+
+## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.32.0) 
 * Notable changes for users:
   * Adds new fields for Run-Details
   * Fixes a bug in which infinite scrolling would not apply filters on runs & logs pages
