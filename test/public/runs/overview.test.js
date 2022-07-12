@@ -76,6 +76,7 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             runNumber: (number) => typeof number == 'number',
+            fillNumber: (number) => typeof number == 'number',
             timeO2Start: (date) => !isNaN(Date.parse(date)),
             timeO2End: (date) => !isNaN(Date.parse(date)),
             timeTrgStart: (date) => !isNaN(Date.parse(date)),
@@ -295,7 +296,7 @@ module.exports = () => {
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 13);
+        await checkColumnBalloon(page, 1, 14);
     });
 
     it('Should display balloon if the text overflows', async () => {
@@ -528,6 +529,19 @@ module.exports = () => {
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+    });
+
+    it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        const filterInputSelector = '#fillNumbers';
+        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
+        await page.focus(filterInputSelector);
+        await page.keyboard.type('1, 3');
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(5);
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
