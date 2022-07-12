@@ -76,6 +76,7 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             runNumber: (number) => typeof number == 'number',
+            fillNumber: (number) => typeof number == 'number',
             timeO2Start: (date) => !isNaN(Date.parse(date)),
             timeO2End: (date) => !isNaN(Date.parse(date)),
             timeTrgStart: (date) => !isNaN(Date.parse(date)),
@@ -535,7 +536,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
         await page.$eval('#openRunFilterToggle', (element) => element.click());
         const filterInputSelector = '#fillNumbers';
-        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 134, 28...');
+        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
         await page.focus(filterInputSelector);
         await page.keyboard.type('1, 3');
         await page.waitForTimeout(300);
