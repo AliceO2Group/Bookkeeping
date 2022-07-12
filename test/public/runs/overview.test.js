@@ -530,19 +530,6 @@ module.exports = () => {
         expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
     });
 
-    it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
-        await page.reload();
-        await page.waitForTimeout(200);
-        await page.$eval('#openRunFilterToggle', (element) => element.click());
-        const filterInputSelector = '#fillNumbers';
-        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 134, 28...');
-        await page.focus(filterInputSelector);
-        await page.keyboard.type('1, 3');
-        await page.waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(5);
-    });
-
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
         await page.reload();
         await page.waitForTimeout(200);
