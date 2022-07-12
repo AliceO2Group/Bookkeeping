@@ -875,12 +875,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunQuality'
-    UpdateRunTags:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -2403,17 +2397,6 @@ components:
       properties:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
-      additionalProperties: false
-    UpdateRunTags:
-      description: List of labels attached to something for the purpose of identification.
-      type: object
-      properties:
-        tags:
-          type: array
-          description: Array of tags IDs
-          items:
-            type: number
-            description: Tag ID
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.

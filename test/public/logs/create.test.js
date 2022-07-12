@@ -73,6 +73,7 @@ module.exports = () => {
         // Ensure you are at the overview page again
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-overview`);
+        await page.waitForTimeout(100);
 
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
@@ -270,7 +271,7 @@ module.exports = () => {
         await buttonSend.evaluate((button) => button.click());
         await page.waitForTimeout(300);
         await goToPage(page, 'log-overview');
-        await page.waitForFunction(() => document.querySelector('body').innerText.includes('Single run number test'));
+        await page.waitForTimeout(100);
 
         // Find the created log
         const table = await page.$$('tr');

@@ -51,7 +51,9 @@ module.exports = () => {
     it('successfully changed run tags in EDIT mode', async () => {
         await pressElement(page, '#tags-selection #tagCheckbox1');
         await page.waitForTimeout(100);
-        await pressElement(page, '#update-tags');
+        await pressElement(page, '#save-run');
+        await page.waitForTimeout(100);
+        await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
         expect(await page.$eval('#tags-selection #tagCheckbox1', (elem)=>elem.checked)).to.be.true;
     });
