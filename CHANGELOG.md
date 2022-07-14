@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.34.0]()
 * Notable changes for users:
   * Run tags update is now integrated in the global run update
+  * LHC Fill overview's run lists are now hyperlinks to the corresponding run detail page
 * Notable changes for developers:
   * `POST` RUNS TAGS API:
     * Route has been deleted
