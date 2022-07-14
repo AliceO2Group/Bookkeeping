@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.34.0]()
+* Notable changes for users:
+  * Run tags update is now integrated in the global run update
+* Notable changes for developers:
+  * `POST` RUNS TAGS API:
+    * Route has been deleted
+  * `PUT` RUNS API:
+    * `tags` can be provided to update the tags linked to the run
+
 ## [0.33.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.33.0)
 * Notable changes for users:
   * Displays `UNKNOWN` for run duration above 48 hours, else `RUNNING`
