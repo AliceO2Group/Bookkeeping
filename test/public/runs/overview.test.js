@@ -663,4 +663,25 @@ module.exports = () => {
 
         expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
     });
+
+    it('should successfully navigate to the LHC fill details page', async () => {
+        await page.reload();
+        await page.waitForTimeout(100);
+
+        // Run 106 has a fill attached
+        const runId = 106;
+
+        const fillNumberCellSelector = `#row${runId}-fillNumber`;
+        const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);
+
+        await page.$eval(`${fillNumberCellSelector} a`, (link) => link.click());
+        await page.waitForNetworkIdle();
+        await page.waitForTimeout(100);
+
+        const redirectedUrl = await page.url();
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
+    });
 };

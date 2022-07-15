@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.34.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.34.0)
 * Notable changes for users:
   * Run tags update is now integrated in the global run update
+  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs 
+    overview
   * LHC Fill overview's run lists are now hyperlinks to the corresponding run detail page
   * A spinner is displayed in each table when data is loading
 * Notable changes for developers:

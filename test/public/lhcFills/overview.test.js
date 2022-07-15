@@ -45,7 +45,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=lhcFill-overview`, { waitUntil: 'networkidle0' });
+        const response = await page.goto(`${url}?page=lhc-fill-overview`, { waitUntil: 'networkidle0' });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -61,7 +61,7 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            id: (string) => typeof string == 'string',
+            fillNumber: (fill) => !isNaN(parseInt(fill, 10)),
             createdAt: (date) => !isNaN(Date.parse(date)),
             updatedAt: (date) => !isNaN(Date.parse(date)),
             toredownAt: (date) => !isNaN(Date.parse(date)),
@@ -93,7 +93,7 @@ module.exports = () => {
     });
 
     it('Should have balloon on runs column', async () => {
-        await goToPage(page, 'lhcFill-overview');
+        await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
 
         await checkColumnBalloon(page, 1, 7);
@@ -134,25 +134,44 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        await page.goto(`${url}?page=env-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'lhc-fill-overview');
 
-        // Override the amount of runs visible per page manually
+        // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.envs.envsPerPage = 1;
+            model.lhcFills.lhcFillsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
+        expect(pageFiveButton).to.be.not.null;
         const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+        expect(pageSixButton).to.be.null;
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
         await page.waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
-        expect(Boolean(pageOneButton)).to.be.false;
+        expect(pageOneButton).to.be.null;
+    });
+
+    it('should successfully navigate to the LHC fill details page', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await page.waitForTimeout(100);
+
+        const row = await page.$('tbody tr');
+        expect(row).to.be.not.null;
+        // Remove "row" prefix to get fill number
+        const fillNumber = await row.evaluate((element) => element.id.slice(3));
+
+        await row.$eval('td:first-of-type a', (link) => link.click());
+        await page.waitForNetworkIdle();
+        await page.waitForTimeout(100);
+        const redirectedUrl = await page.url();
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
 };
