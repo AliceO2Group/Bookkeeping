@@ -69,6 +69,7 @@ module.exports = () => {
 
         // Return the page to home
         await goToPage(page, 'log-overview');
+        await page.waitForTimeout(100);
 
         // Ensure you are at the overview page again
         const redirectedUrl = await page.url();
