@@ -162,6 +162,7 @@ html, body {
     border: 1px solid transparent;
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
+    cursor: pointer;
 }
 
 .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
@@ -244,12 +245,22 @@ html, body {
     color: var(--color-gray-dark) !important;
 }
 
+/* Display */
+
 .display-none {
     display: none;
 }
 
 .display-block {
     display: block;
+}
+
+.grid {
+    display: grid;
+}
+
+.gr-1-2 {
+    grid-template-columns: 1fr 2fr;
 }
 
 .filters {
@@ -370,8 +381,9 @@ html, body {
 .details-container {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-m) 0;
+    gap: var(--space-m);
+    padding: var(--space-s) 0;
+    margin-bottom: var(--space-m);
 }
 
 .detail-section {

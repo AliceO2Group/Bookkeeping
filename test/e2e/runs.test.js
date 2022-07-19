@@ -284,7 +284,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(52);
+            expect(data).to.have.lengthOf(53);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
