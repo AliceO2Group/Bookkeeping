@@ -244,7 +244,7 @@ module.exports = () => {
 
         it('should support filtering by tag', (done) => {
             request(server)
-                .get('/api/logs?filter[tag][values]=1&filter[tag][operation]=and')
+                .get('/api/logs?filter[tags][values]=FOOD&filter[tags][operation]=and')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -266,7 +266,7 @@ module.exports = () => {
 
         it('should support filtering by tag', (done) => {
             request(server)
-                .get('/api/logs?filter[tag][values]=2,5&filter[tag][operation]=and')
+                .get('/api/logs?filter[tags][values]=RUN,TEST&filter[tags][operation]=and')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -289,7 +289,7 @@ module.exports = () => {
 
         it('should support filtering by tag', (done) => {
             request(server)
-                .get('/api/logs?filter[tag][values]=5,6&filter[tag][operation]=or')
+                .get('/api/logs?filter[tags][values]=TEST,OTHER&filter[tags][operation]=or')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -928,7 +928,7 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                    tags: [1, 3, 10000, 1666],
+                    tags: ['FOOD', 'MAINTENANCE', 'DO-NOT-EXIST', 'DO-NOT-EXIST-EITHER'],
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -940,7 +940,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal('Tags with these ids (10000, 1666) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
 
                     done();
                 });
@@ -1003,7 +1003,7 @@ module.exports = () => {
                 .send({
                     title: 'Yet another run',
                     text: 'Text of yet another run',
-                    tags: [1, 2],
+                    tags: ['FOOD', 'RUN'],
                     parentLogId: 2,
                 })
                 .expect(201)

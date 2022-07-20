@@ -210,7 +210,6 @@ module.exports = () => {
      *     const oldFirstPageButton = await page.$('#page1');
      *     const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
      *     expect(oldFirstPageButtonClass).to.include('selected');
-     *     console.log("here5");
      */
 
     /*

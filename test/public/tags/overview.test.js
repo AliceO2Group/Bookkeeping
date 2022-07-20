@@ -98,7 +98,7 @@ module.exports = () => {
         expect(await page.$eval(inputSelector, (input) => input.placeholder)).to.equal('Filter by name');
 
         await page.type(inputSelector, '-TAG-');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         let table = await page.$$('tbody tr');
         expect(table.length).to.equal(43);
 
