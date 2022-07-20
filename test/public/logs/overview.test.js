@@ -39,7 +39,7 @@ module.exports = () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
             width: 1400,
-            height: 820,
+            height: 940,
             deviceScaleFactor: 1,
         });
     });
