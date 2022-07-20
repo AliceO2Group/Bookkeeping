@@ -21,7 +21,6 @@ const { expect } = chai;
 module.exports = () => {
     const wrongId = 9999999999;
 
-    let updaterunDto;
     let getRunDto;
     let updateRunDto;
     let updateRunByRunNumberDto;
@@ -39,20 +38,7 @@ module.exports = () => {
                 runId: 106,
             },
         });
-        updaterunDto = await UpdateRunDto.validateAsync({
-            params: {
-                runId: '1',
-            },
-            body: {
-                runQuality: 'good',
-            },
-        });
 
-        updaterunDto.session = {
-            personid: 1,
-            id: 1,
-            name: 'John Doe',
-        };
         updateRunByRunNumberDto = await UpdateRunByRunNumberDto.validateAsync({
             query: {
                 runNumber: 54,
@@ -68,23 +54,12 @@ module.exports = () => {
                 fillNumber: 1,
             },
         });
-        updateRunByRunNumberDto.session = {
-            personid: 1,
-            id: 1,
-            name: 'John Doe',
-        };
     });
     describe('updates with runId parameter.', () => {
-        it('Should be able to update the environment with correct values', async () => {
-            const { result } = await new UpdateRunUseCase()
-                .execute(updaterunDto);
-            expect(result.runQuality).to.equal('good');
-        });
-
         it('Should give an error when the id of the environment can not be found', async () => {
-            updaterunDto.params.runId = wrongId;
+            updateRunDto.params.runId = wrongId;
             const { error } = await new UpdateRunUseCase()
-                .execute(updaterunDto);
+                .execute(updateRunDto);
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal(`Run with this id (${wrongId}) could not be found`);
         });
@@ -213,6 +188,26 @@ module.exports = () => {
             expect(error).to.be.an('object');
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal('Provided reason types do not exist');
+        });
+
+        it('Should successfully update the run tags', async () => {
+            updateRunDto.body.tags = ['TEST-TAG-1', 'TEST-TAG-2'];
+            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
+
+            expect(error).to.be.undefined;
+            expect(result.tags.map((tag) => tag.text)).to.be.eql(['TEST-TAG-1', 'TEST-TAG-2']);
+        });
+
+        it('should throw an error when the at least one of the given tag do not exists', async () => {
+            updateRunDto.params.runId = 1;
+            updateRunDto.body.tags = ['FOOD', 'DO-NOT-EXIST', 'DO-NOT-EXIST-EITHER'];
+
+            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
+
+            expect(result).to.be.undefined;
+            expect(error).to.be.an('object');
+            expect(error.status).to.equal(500);
+            expect(error.detail).to.equal('Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
         });
     });
     describe('updates with run number', () => {
