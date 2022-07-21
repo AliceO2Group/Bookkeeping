@@ -140,6 +140,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.resetLogsParams();
         });
+        await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
 
         // Expect the total number of rows to once more equal the original total
