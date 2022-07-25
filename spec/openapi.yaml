@@ -1,4 +1,4 @@
-# Generated on Mon, 04 Jul 2022 16:01:42 GMT
+# Generated on Thu, 14 Jul 2022 10:11:27 GMT
 
 openapi: 3.0.0
 info:
@@ -877,12 +877,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunQuality'
-    UpdateRunTags:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UpdateRunTags'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -1282,11 +1276,10 @@ components:
       required:
         - data
       additionalProperties: false
-    CommaSeparatedEntityIds:
-      description: CSV style string of EntityIds.
+    CommaSeparatedStrings:
+      description: CSV style string list
       type: string
-      pattern: ^([1-9]+\d*,)*[1-9]+\d*$
-      example: 1,2,3
+      example: FOOD,MAINTENANCE
     CreateAttachments:
       description: Describes an attachment
       type: object
@@ -1634,12 +1627,12 @@ components:
           $ref: '#/components/schemas/EntityId'
         rootLog:
           $ref: '#/components/schemas/EntityId'
-        tag:
-          $ref: '#/components/schemas/FilterLogsTagOptions'
+        tags:
+          $ref: '#/components/schemas/FilterLogsTagsOptions'
         title:
           $ref: '#/components/schemas/LogTitle'
       additionalProperties: false
-    FilterLogsTagOptions:
+    FilterLogsTagsOptions:
       description: Specifies the tag related filter requirements for a request.
       type: object
       properties:
@@ -1650,7 +1643,7 @@ components:
             - and
             - or
         values:
-          $ref: '#/components/schemas/CommaSeparatedEntityIds'
+          $ref: '#/components/schemas/CommaSeparatedStrings'
       required:
         - operation
         - values
@@ -2405,17 +2398,6 @@ components:
       properties:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
-      additionalProperties: false
-    UpdateRunTags:
-      description: List of labels attached to something for the purpose of identification.
-      type: object
-      properties:
-        tags:
-          type: array
-          description: Array of tags IDs
-          items:
-            type: number
-            description: Tag ID
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.

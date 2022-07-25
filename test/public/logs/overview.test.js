@@ -140,6 +140,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.resetLogsParams();
         });
+        await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
 
         // Expect the total number of rows to once more equal the original total
@@ -289,6 +290,9 @@ module.exports = () => {
         // Expect the log titles to be in alphabetical order
         const firstTitles = await getAllDataFields(page, 'title');
         expect(firstTitles).to.deep.equal(firstTitles.sort());
+        // Hover something else to have title sort displayed
+        await page.hover('th#author');
+        await page.waitForTimeout(100);
         const sortingIndicator = await page.$('#title-sort');
         expect(Boolean(sortingIndicator)).to.be.true;
 

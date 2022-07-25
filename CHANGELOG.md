@@ -2,7 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
+## [0.34.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.34.0)
+* Notable changes for users:
+  * Run tags update is now integrated in the global run update
+  * LHC Fill overview's run lists are now hyperlinks to the corresponding run detail page
+  * A spinner is displayed in each table when data is loading
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `tag` filter do not exist anymore, it is replaced by `tags` which is the list of tags texts to filter on
+  * `PUT` RUNS API:
+    * `tags` can be provided to update the tags linked to the run, as a list of tag texts
+  * `POST` RUNS TAGS API:
+    * Route has been deleted
+  * `GET` LOGS API:
+    * `tag` filter do not exist anymore, it is replaced by `tags` which is the list of tags texts to filter on
+  * `POST` LOGS API:
+    * tags list is now the list of tag text and no tags ids
+
+## [0.33.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.33.0)
+* Notable changes for users:
+  * Displays `UNKNOWN` for run duration above 48 hours, else `RUNNING`
+  * Add fill number information on run overview page and in its filtering
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `fillNumbers` is a new optional filter
+
+## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.32.0) 
 * Notable changes for users:
   * Adds new fields for Run-Details
   * Fixes a bug in which infinite scrolling would not apply filters on runs & logs pages

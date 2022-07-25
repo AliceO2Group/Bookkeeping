@@ -239,8 +239,8 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            // 47 because one run is added in start run use case with default quality which is test
-            expect(data.length).to.equal(47);
+            // 48 because one run is added in start run use case with default quality which is test, and one is updated to quality test
+            expect(data.length).to.equal(48);
         });
         it('should return 400 if "runQuality" is invalid', async () => {
             const response = await request(server)
