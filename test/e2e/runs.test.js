@@ -557,6 +557,7 @@ module.exports = () => {
             expect(response.body.errors[0].detail).to.equal('A run already exists with run number 109');
         });
     });
+
     describe('PUT /api/runs/:runId', () => {
         it('should return 200 in all other cases', (done) => {
             request(server)
@@ -600,11 +601,11 @@ module.exports = () => {
                 .put('/api/runs/1')
                 .expect(201)
                 .send({
-                    runQuality: 'test',
+                    runQuality: 'good',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(1);
-            expect(body.data.runQuality).to.equal('test');
+            expect(body.data.runQuality).to.equal('good');
         });
 
         it('should return an error due to invalid runQuality value', async () => {
@@ -615,7 +616,6 @@ module.exports = () => {
                     runQuality: 'wrong',
                 });
             expect(body.errors).to.be.an('array');
-            // eslint-disable-next-line max-len
             expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test]');
         });
 
@@ -637,12 +637,25 @@ module.exports = () => {
             expect(body.errors[0].detail).to.equal('"body.eorReasons[0].runId" must be a number');
         });
 
-        it('should successfully add eorReasons to run', async () => {
+        it('should successfully return the updated run entity with new runQuality value', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/106')
+                .expect(201)
+                .send({
+                    runQuality: 'good',
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(106);
+            expect(body.data.runQuality).to.equal('good');
+        });
+
+        it('should successfully add eorReasons to run and check runQuality did not change', async () => {
             const currentRun = await request(server)
                 .get('/api/runs/106')
                 .expect(200);
             expect(currentRun.body.data).to.be.an('object');
             expect(currentRun.body.data.id).to.equal(106);
+            expect(currentRun.body.data.runQuality).to.equal('good');
             expect(currentRun.body.data.eorReasons).to.have.lengthOf(0);
 
             const { body } = await request(server)
@@ -662,6 +675,7 @@ module.exports = () => {
             expect(body.data.id).to.equal(106);
             expect(body.data.eorReasons).to.have.lengthOf(1);
             expect(body.data.eorReasons[0].description).to.equal('Some');
+            expect(body.data.runQuality).to.equal('good');
         });
     });
 
@@ -722,9 +736,9 @@ module.exports = () => {
                 });
         });
     });
-    describe('PATCH api/runs/:runId', () => {
+    describe('PATCH api/runs/:runNumber', () => {
         const dateValue = new Date('1-1-2021').setHours(0, 0, 0, 0);
-        it('should return 400 when runId is wrong', (done) => {
+        it('should return 400 when runNumber is wrong', (done) => {
             request(server)
                 .patch('/api/runs/9999999999')
                 .send({
@@ -745,13 +759,13 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 201 in all other cases', (done) => {
+        it('should successfully update a run by its RunNumber with partial information', (done) => {
             request(server)
                 .patch('/api/runs/1')
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'test',
+                    runQuality: 'good',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -763,20 +777,17 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.runQuality).to.equal('test');
+                    expect(res.body.data.runQuality).to.equal('good');
                     done();
                 });
         });
-        it('should be able to update with ', async () => {
+        it('should successfully update a run by its RunNumber with partial information and keep previous updated values the same', async () => {
             const { body } = await request(server)
-                .patch('/api/runs/80')
+                .patch('/api/runs/1')
                 .expect(201)
                 .send({
-                    runQuality: 'test',
-                    timeO2End: dateValue,
                     timeO2Start: dateValue,
                     timeTrgStart: dateValue,
-                    timeTrgEnd: dateValue,
                     pdpConfigOption: 'Repository hash',
                     trgGlobalRunEnabled: true,
                     trgEnabled: false,
@@ -784,11 +795,11 @@ module.exports = () => {
                     tfbDdMode: 'processing',
                 });
             expect(body.data).to.be.an('object');
-            expect(body.data.timeO2End).to.equal(dateValue);
-            expect(body.data.timeO2Start).to.equal(dateValue);
+            expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
+            expect(body.data.timeO2Start).to.equal(dateValue); // Values not passed should remain the same
             expect(body.data.timeTrgStart).to.equal(dateValue);
             expect(body.data.timeTrgEnd).to.equal(dateValue);
-            expect(body.data.runQuality).to.equal('test');
+            expect(body.data.runQuality).to.equal('good'); // Values not passed should remain the same
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.trgGlobalRunEnabled).to.equal(true);
             expect(body.data.trgEnabled).to.equal(false);
