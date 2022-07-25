@@ -114,3 +114,5 @@ temp/
 
 # Ignore .idea folder
 .idea
+
+.DS_store
