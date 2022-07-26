@@ -42,4 +42,6 @@ type Run struct {
 	Detectors *Detectors `json:"detectors,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
+	// A string that marks the period of the lhc
+	LhcPeriod string `json:"lhcPeriod,omitempty"`
 }

@@ -69,6 +69,7 @@ Concerning the **Update mode** of the fields:
 | `pdpConfigOption`                    | Configuration option PDP             | `Repository Hash`                   |  | `run_number` | Update |
 | `pdpTopologyDescriptionLibraryFile`  | File location of the pdp topology    | `some/location.desc`                |  | `run_number` | Update |
 | `tfbDdMode`                          | The mode of the TFB DD               | `processing`                        |  | `run_number` | Update |
+| `lhcPeriod`                          | The period value of the lhc          | ` `                        |  | `run_number` | Update |
 
 ### End of run reasons
 
