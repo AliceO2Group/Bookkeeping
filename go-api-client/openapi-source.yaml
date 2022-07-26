@@ -1693,6 +1693,9 @@ components:
           type: integer
           format: int32
           example: 853113599
+        lhcPeriod:
+          description: A string that marks the period of the lhc
+          type: string
       additionalProperties: false
     RunEnvironmentId:
       description: The unique identifier of this entity.

@@ -752,6 +752,7 @@ module.exports = () => {
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
                     runQuality: 'test',
+                    lhcPeriod: 'lhc22_b',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -764,10 +765,11 @@ module.exports = () => {
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
                     expect(res.body.data.runQuality).to.equal('test');
+                    expect(res.body.data.lhcPeriod).to.equal('lhc22_b');
                     done();
                 });
         });
-        it('should be able to update with ', async () => {
+        it('should be able to update with multiple run values', async () => {
             const { body } = await request(server)
                 .patch('/api/runs/80')
                 .expect(201)
@@ -782,6 +784,7 @@ module.exports = () => {
                     trgEnabled: false,
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
+                    lhcPeriod: 'lhc22_b',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue);
@@ -794,6 +797,7 @@ module.exports = () => {
             expect(body.data.trgEnabled).to.equal(false);
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
+            expect(body.data.lhcPeriod).to.equal('lhc22_b');
         });
     });
 };

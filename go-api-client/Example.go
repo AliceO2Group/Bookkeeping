@@ -23,7 +23,7 @@ func main() {
 		(sw.CPV_Detectors + "," + sw.ZDC_Detectors + "," + sw.EMC_Detectors))
 
 	// Update a run
-	apiClient.UpdateRun(80, sw.BAD_RunQuality, -1, testTime, -1, testTime, false, false, "Repository Hash", "production/production.desc", "processing")
+	apiClient.UpdateRun(80, sw.BAD_RunQuality, -1, testTime, -1, testTime, false, false, "Repository Hash", "production/production.desc", "processing", "lhc22_b")
 
 	// Create an flp
 	apiClient.CreateFlp("flpTestName", "flpTestHost", 80)
@@ -34,9 +34,9 @@ func main() {
 	// Create a log
 	apiClient.CreateLog("logTest", "logTest", "80", -1)
 
-	// // Retrieve all logs from the api
+	// Retrieve all logs from the api
 	apiClient.GetLogs()
 
-	// // Retrieve all runs from the api
+	// Retrieve all runs from the api
 	apiClient.GetRuns()
 }
