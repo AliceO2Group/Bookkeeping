@@ -752,7 +752,7 @@ module.exports = () => {
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
                     runQuality: 'test',
-                    lhcPeriod: '123123123',
+                    lhcPeriod: 'lhc22_b',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -765,11 +765,11 @@ module.exports = () => {
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
                     expect(res.body.data.runQuality).to.equal('test');
-                    expect(res.body.data.lhcPeriod).to.equal('123123123');
+                    expect(res.body.data.lhcPeriod).to.equal('lhc22_b');
                     done();
                 });
         });
-        it('should be able to update with lhc values', async () => {
+        it('should be able to update with multiple run values', async () => {
             const { body } = await request(server)
                 .patch('/api/runs/80')
                 .expect(201)

@@ -1,4 +1,4 @@
-## [0.3X.X]
+## [0.35.0]
 * Changes made to the database:
     * table `runs` - added fields:
         * `lhcPeriod` - string ('lhc22_b')
