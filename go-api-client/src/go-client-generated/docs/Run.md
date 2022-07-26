@@ -29,6 +29,7 @@ Name | Type | Description | Notes
 **EpnTopology** | **string** |  | [optional] [default to null]
 **Detectors** | [***Detectors**](DETECTORS.md) |  | [optional] [default to null]
 **UpdatedAt** | **int32** | Unix timestamp when this entity was last updated. | [optional] [default to null]
+**LhcPeriod** | **string** | A string that marks the period of the lhc | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -18,12 +18,12 @@ func main() {
 	// TODO: generate correct JWT token instead of manual insertion
 	apiClient.InitializeApi(baseUrl, apiToken)
 
-	// Create a run
+	// // Create a run
 	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 80, sw.COSMICS_RunType, false, false, true, "normal",
 		(sw.CPV_Detectors + "," + sw.ZDC_Detectors + "," + sw.EMC_Detectors))
 
 	// Update a run
-	apiClient.UpdateRun(80, sw.BAD_RunQuality, -1, testTime, -1, testTime, false, false, "Repository Hash", "production/production.desc", "processing")
+	apiClient.UpdateRun(80, sw.BAD_RunQuality, -1, testTime, -1, testTime, false, false, "Repository Hash", "production/production.desc", "processing", "123123123")
 
 	// Create an flp
 	apiClient.CreateFlp("flpTestName", "flpTestHost", 80)
@@ -34,9 +34,9 @@ func main() {
 	// Create a log
 	apiClient.CreateLog("logTest", "logTest", "80", -1)
 
-	// // Retrieve all logs from the api
+	// Retrieve all logs from the api
 	apiClient.GetLogs()
 
-	// // Retrieve all runs from the api
+	// Retrieve all runs from the api
 	apiClient.GetRuns()
 }

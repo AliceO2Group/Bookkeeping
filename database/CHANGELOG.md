@@ -1,3 +1,7 @@
+## [0.3X.X]
+* Changes made to the database:
+    * table `runs` - added fields:
+        * `lhcPeriod` - string ('')
 ## [0.32.0]
 * Changes made to the database:
     * table `runs` - added fields:
