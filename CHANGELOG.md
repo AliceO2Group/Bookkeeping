@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
   * Run LHC period is now shown in the run details and can be exported via the export runs tab;
 * Notable changes for developers:
+  * `GET` Runs API:
+    * `lhcPeriods` Runs can now be filtered by using the `lhcPeriods` field. Multiple values can be used with comma seperation. 
   * `PATCH` Runs API:
     * `lhcPeriod` is added to `endRun` endpoint and for the GO openAPI the `updateRun` function. 
 
