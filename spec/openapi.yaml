@@ -1,4 +1,4 @@
-# Generated on Thu, 14 Jul 2022 10:11:27 GMT
+# Generated on Tue, 26 Jul 2022 09:32:41 GMT
 
 openapi: 3.0.0
 info:
@@ -2071,6 +2071,10 @@ components:
         lhcBetaStar:
           description: LHC Beta * in meters
           type: number
+          nullable: true
+        lhcPeriod:
+          description: The period tag of an LHC
+          type: string
           nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'

@@ -2070,6 +2070,10 @@ components:
           description: LHC Beta * in meters
           type: number
           nullable: true
+        lhcPeriod:
+          description: The period tag of an LHC
+          type: string
+          nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:

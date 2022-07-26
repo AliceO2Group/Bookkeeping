@@ -277,6 +277,18 @@ module.exports = () => {
             expect(data).to.have.lengthOf(52);
         });
 
+        it('should successfully filter on lhcPeriod', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[lhcPeriod]=lhc22_b');
+
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+            expect(data).to.have.length().above(1);
+        });
+
         it('should return 400 if the FLP number filter is invalid', async () => {
             const response = await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
 
