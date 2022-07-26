@@ -18,7 +18,7 @@ func main() {
 	// TODO: generate correct JWT token instead of manual insertion
 	apiClient.InitializeApi(baseUrl, apiToken)
 
-	// // Create a run
+	// Create a run
 	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 80, sw.COSMICS_RunType, false, false, true, "normal",
 		(sw.CPV_Detectors + "," + sw.ZDC_Detectors + "," + sw.EMC_Detectors))
 
