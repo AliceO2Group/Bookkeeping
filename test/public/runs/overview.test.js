@@ -295,7 +295,7 @@ module.exports = () => {
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 14);
+        await checkColumnBalloon(page, 1, 15);
     });
 
     it('Should display balloon if the text overflows', async () => {
@@ -617,6 +617,35 @@ module.exports = () => {
             return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
         }));
         expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
+    });
+
+    it('should successfully filter on nEpns', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        const nEpnsOperatorSelector = '#nEpns-operator';
+        const nEpnsOperator = await page.$(nEpnsOperatorSelector) || null;
+        expect(nEpnsOperator).to.not.be.null;
+        expect(await nEpnsOperator.evaluate((element) => element.value)).to.equal('=');
+
+        const nEpnsLimitSelector = '#nEpns-limit';
+        const nEpnsLimit = await page.$(nEpnsLimitSelector) || null;
+        expect(nEpnsLimit).to.not.be.null;
+
+        await nEpnsLimit.focus();
+        await page.keyboard.type('10');
+        await page.waitForTimeout(300);
+        await page.select(nEpnsOperatorSelector, '<=');
+        await page.waitForTimeout(300);
+
+        const nEpnsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
+        }));
+        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= '10')).to.be.true;
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
