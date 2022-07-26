@@ -348,7 +348,7 @@ module.exports = () => {
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
-    it('should successfully return an array, only containing runs found from passed list', async () => {
+    it('should successfully return an array, only containing runs found with lhc period filter', async () => {
         getAllRunsDto.query = {
             filter: {
                 lhcPeriod: 'lhc22_b',
@@ -356,6 +356,6 @@ module.exports = () => {
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.length().above(1);
+        expect(runs).to.have.lengthOf.above(1);
     });
 };

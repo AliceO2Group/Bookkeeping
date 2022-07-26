@@ -286,7 +286,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.length().above(1);
+            expect(data).to.lengthOf.above(1);
         });
 
         it('should return 400 if the FLP number filter is invalid', async () => {
