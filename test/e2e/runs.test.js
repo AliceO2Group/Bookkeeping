@@ -279,7 +279,7 @@ module.exports = () => {
 
         it('should successfully filter on lhcPeriod', async () => {
             const response =
-                await request(server).get('/api/runs?filter[lhcPeriod]=lhc22_b');
+                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22_b');
 
             expect(response.status).to.equal(200);
             expect(response).to.satisfyApiSpec;
