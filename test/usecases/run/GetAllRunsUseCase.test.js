@@ -348,10 +348,10 @@ module.exports = () => {
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
-    it('should successfully return an array, only containing runs found with lhc period filter', async () => {
+    it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
             filter: {
-                lhcPeriod: 'lhc22_b',
+                lhcPeriods: 'lhc22_b',
             },
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
