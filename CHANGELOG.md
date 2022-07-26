@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [WIP] [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
+* Notable changes for users:
+  * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
+
 ## [0.34.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.34.0)
 * Notable changes for users:
   * Run tags update is now integrated in the global run update
