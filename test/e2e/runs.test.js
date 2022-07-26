@@ -784,7 +784,7 @@ module.exports = () => {
                     trgEnabled: false,
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
-                    lhcPeriod: '123123123',
+                    lhcPeriod: 'lhc22_b',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue);
@@ -797,7 +797,7 @@ module.exports = () => {
             expect(body.data.trgEnabled).to.equal(false);
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
-            expect(body.data.lhcPeriod).to.equal('123123123');
+            expect(body.data.lhcPeriod).to.equal('lhc22_b');
         });
     });
 };

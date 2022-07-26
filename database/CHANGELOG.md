@@ -1,7 +1,7 @@
 ## [0.3X.X]
 * Changes made to the database:
     * table `runs` - added fields:
-        * `lhcPeriod` - string ('')
+        * `lhcPeriod` - string ('lhc22_b')
 ## [0.32.0]
 * Changes made to the database:
     * table `runs` - added fields:

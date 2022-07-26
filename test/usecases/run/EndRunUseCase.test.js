@@ -36,7 +36,7 @@ module.exports = () => {
                 trgEnabled: false,
                 pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                 tfbDdMode: 'processing',
-                lhcPeriod: '123123123',
+                lhcPeriod: 'lhc22_b',
             },
         });
 
@@ -58,7 +58,7 @@ module.exports = () => {
         expect(result.trgEnabled).to.equal(false);
         expect(result.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
         expect(result.tfbDdMode).to.equal('processing');
-        expect(result.lhcPeriod).to.equal('123123123');
+        expect(result.lhcPeriod).to.equal('lhc22_b');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
