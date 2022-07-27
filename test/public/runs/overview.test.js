@@ -556,7 +556,7 @@ module.exports = () => {
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(1);
+        expect(table.length).to.equal(5);
         await checkTableRunQualities(table, ['OFF']);
     });
 

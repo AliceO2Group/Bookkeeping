@@ -2110,13 +2110,9 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        trgEnabled:
-          description: If the trigger is enabled.
-          type: boolean
-          nullable: true
-        trgGlobalRunEnabled:
-          description: If the global run trigger is enabled.
-          type: boolean
+        triggerValue:
+          description: Value of the current trigger can be OFF, LTU, CTP
+          type: string
           nullable: true
         runDuration:
           $ref: '#/components/schemas/RunDuration'

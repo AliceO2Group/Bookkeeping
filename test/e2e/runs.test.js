@@ -242,6 +242,16 @@ module.exports = () => {
             // 48 because one run is added in start run use case with default quality which is test, and one is updated to quality test
             expect(data.length).to.equal(47);
         });
+        it('should filter run on their trigger value', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[triggerValues]=OFF,CTP');
+            expect(response.status).to.equal(200);
+
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data.length).to.equal(10);
+        });
         it('should return 400 if "runQuality" is invalid', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=invalid');
@@ -816,24 +826,20 @@ module.exports = () => {
                     timeO2Start: dateValue,
                     timeTrgStart: dateValue,
                     pdpConfigOption: 'Repository hash',
-                    trgGlobalRunEnabled: true,
-                    trgEnabled: false,
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
                     lhcPeriod: 'lhc22_b',
+                    triggerValue: 'LTU',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
             expect(body.data.timeO2Start).to.equal(dateValue); // Values not passed should remain the same
-            expect(body.data.timeTrgStart).to.equal(dateValue);
-            expect(body.data.timeTrgEnd).to.equal(dateValue);
             expect(body.data.runQuality).to.equal('good'); // Values not passed should remain the same
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
-            expect(body.data.trgGlobalRunEnabled).to.equal(true);
-            expect(body.data.trgEnabled).to.equal(false);
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
             expect(body.data.lhcPeriod).to.equal('lhc22_b');
+            expect(body.data.triggerValue).to.equal('LTU');
         });
     });
 };
