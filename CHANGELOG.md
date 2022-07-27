@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. See [standa
 ## [WIP] [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
+  * Run LHC period and number of EPNs is now shown in the run details and can be exported via the export runs tab;
+* Notable changes for developers:
+  * `GET` Runs API:
+    * `lhcPeriods` Runs can now be filtered by using the `lhcPeriods` field. Multiple values can be used with comma seperation;
+    * `nEpns` Runs can now be filtered by using an operator and number;
+  * `PATCH` Runs API:
+    * `lhcPeriod` is added to `endRun` endpoint and for the GO openAPI the `updateRun` function;
 
 ## [0.34.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.34.0)
 * Notable changes for users:
