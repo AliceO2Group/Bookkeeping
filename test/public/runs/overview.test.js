@@ -516,6 +516,50 @@ module.exports = () => {
         await checkTableRunQualities(table, ['bad']);
     });
 
+    it('Should successfully filter runs by their run quality', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        const filterInputSelectorPrefix = '#triggerValueCheckbox';
+        const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
+        const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
+
+        /**
+         * Checks that all the rows of the given table have a valid run quality
+         *
+         * @param {{evaluate: function}[]} rows the list of rows
+         * @param {string[]} authorizedRunQualities  the list of valid run qualities
+         * @return {void}
+         */
+        const checkTableRunQualities = async (rows, authorizedRunQualities) => {
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-triggerValue-text`).innerText;
+                })).to.be.oneOf(authorizedRunQualities);
+            }
+        };
+
+        // Open filter toggle
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        await page.$eval(offFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(5);
+        await checkTableRunQualities(table, ['OFF']);
+
+        await page.$eval(ltuFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        await checkTableRunQualities(table, ['OFF', 'LTU']);
+
+        await page.$eval(ltuFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+        await checkTableRunQualities(table, ['OFF']);
+    });
+
     it('should successfully filter on a list of run ids and inform the user about it', async () => {
         await page.reload();
         await page.waitForTimeout(200);
