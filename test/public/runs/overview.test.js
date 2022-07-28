@@ -516,14 +516,14 @@ module.exports = () => {
         await checkTableRunQualities(table, ['bad']);
     });
 
-    it('Should successfully filter runs by their run quality', async () => {
+    it('Should successfully filter runs by their trigger value', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         const filterInputSelectorPrefix = '#triggerValueCheckbox';
         const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
         const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
 
         /**
-         * Checks that all the rows of the given table have a valid run quality
+         * Checks that all the rows of the given table have a valid trigger value
          *
          * @param {{evaluate: function}[]} rows the list of rows
          * @param {string[]} authorizedRunQualities  the list of valid run qualities
@@ -545,7 +545,7 @@ module.exports = () => {
         await page.$eval(offFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(5);
+        expect(table.length).to.equal(4);
         await checkTableRunQualities(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
@@ -556,7 +556,7 @@ module.exports = () => {
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(5);
+        expect(table.length).to.equal(4);
         await checkTableRunQualities(table, ['OFF']);
     });
 
