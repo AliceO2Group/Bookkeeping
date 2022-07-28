@@ -78,17 +78,34 @@ module.exports = () => {
     });
 
     it('successfully changed run tags in EDIT mode', async () => {
-        await pressElement(page, '#tags-control option[value="1"]');
+        await pressElement(page, '#tags-selection #tagCheckbox1');
         await page.waitForTimeout(100);
         await pressElement(page, '#update-tags');
         await page.waitForTimeout(100);
-        expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
+        expect(await page.$eval('#tags-selection #tagCheckbox1', (elem)=>elem.checked)).to.be.true;
+    });
+
+    it('should show lhc data in edit mode', async () => {
+        await page.waitForTimeout(100);
+        const element = await page.$('#lhcFill-id>b');
+        const value = await element.evaluate((el) => el.textContent);
+        expect(value).to.equal('LHC Data:');
     });
 
     it('successfully exited EDIT mode of a run', async () => {
         await pressElement(page, '#cancel-run');
         await page.waitForTimeout(100);
         await expectInnerText(page, '#edit-run', 'Edit Run');
+    });
+
+    it('should not show edit run button when not admin', async () => {
+        await page.goto(`${url}/?page=run-detail&id=1`);
+        await page.waitForTimeout(100);
+        await page.click('div[title="User Actions"]');
+        await page.waitForTimeout(100);
+        await page.click('span.slider.round');
+        await page.waitForTimeout(100);
+        expect(await page.$('#edit-run')).to.equal(null);
     });
 
     it('can navigate to the flp panel', async () => {
@@ -104,7 +121,12 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=logs`)).to.be.true;
     });
-
+    it('should show lhc data in normal mode', async () => {
+        await page.waitForTimeout(100);
+        const element = await page.$('#lhcFill-id>b');
+        const value = await element.evaluate((el) => el.textContent);
+        expect(value).to.equal('LHC Data:');
+    });
     it('can navigate to a log detail page', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);

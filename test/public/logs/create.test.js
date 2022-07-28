@@ -77,7 +77,7 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
         await page.waitForTimeout(500);
@@ -140,7 +140,7 @@ module.exports = () => {
     it('can create a log with linked tags', async () => {
         const title = 'A short title';
         const text = 'Sample Text';
-        const tags = ['FOOD', 'OTHER'];
+        const tags = ['FOOD', 'GLOBAL'];
 
         // Return to the creation page
         await goToPage(page, 'log-create');
@@ -151,23 +151,17 @@ module.exports = () => {
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
 
         // Find the selection options corresponding to the tag texts
-        const optionsToSelect = [];
-        const tagOptions = await page.$$('option');
-        for (const _option of tagOptions) {
-            const option = await _option;
-            const optionText = await page.evaluate((element) => element.innerText, option);
+        const tagOptions = await page.$$('.tag-option');
+        for (const option of tagOptions) {
+            const optionText = await option.evaluate((element) => element.querySelector('label').innerText);
             if (tags.includes(optionText)) {
-                const optionValue = await page.evaluate((element) => element.value, option);
-                optionsToSelect.push(optionValue);
+                await option.evaluate((element) => element.querySelector('input').click());
+                await page.waitForTimeout(100);
             }
         }
 
-        // Select the collection of tags to be linked to the log
-        await page.select('select#tags', ...optionsToSelect);
-
         // Expect to have selected two options
-        const tagSelection = await page.$('select#tags');
-        const tagSelectedOptions = await page.evaluate((element) => element.selectedOptions, tagSelection);
+        const tagSelectedOptions = await page.$$('.tag-option input:checked');
         expect(Object.keys(tagSelectedOptions).length).to.equal(2);
 
         // Create the new log
@@ -181,7 +175,7 @@ module.exports = () => {
         // Get the latest post and verify that the selected tags correspond to the posted tags
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTags = await page.$(`#${firstRowId}-tags-text`);
+        const firstRowTags = await page.$(`#${firstRowId}-tags .balloon-actual-content`);
         const tagsText = await page.evaluate((element) => element.innerText, firstRowTags);
         expect(tagsText).to.equal(tags.join(', '));
     });
@@ -236,7 +230,7 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
@@ -245,11 +239,11 @@ module.exports = () => {
         const attachmentsCountText = await page.evaluate((element) => element.innerText, firstRowAttachmentsCount);
         expect(attachmentsCountText).to.equal('2');
 
-        // Go to the log detail page
+        // Go to the log detail page via ahref link
         const buttonId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-        const button = await page.$(`button#btn${buttonId}`);
+        const button = await page.$(`a#btn${buttonId}`);
         await button.evaluate((btn) => btn.click());
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(1000);
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
@@ -259,7 +253,7 @@ module.exports = () => {
         const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1}\n, \n${file2}`);
-    }).timeout(10000);
+    }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
         // Return to the creation page
@@ -313,7 +307,7 @@ module.exports = () => {
         // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
@@ -355,7 +349,7 @@ module.exports = () => {
         // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title-text`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 

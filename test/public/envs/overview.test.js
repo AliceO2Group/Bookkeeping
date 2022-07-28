@@ -12,7 +12,14 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    pressElement,
+    getFirstRow,
+    goToPage,
+    checkColumnBalloon,
+} = require('../defaults');
 
 const { expect } = chai;
 
@@ -45,7 +52,7 @@ module.exports = () => {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping 2020');
+        expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -83,6 +90,14 @@ module.exports = () => {
                 expect(expectedDatatype).to.be.true;
             }
         }
+    });
+
+    it('Should have balloon on status message and runs columns', async () => {
+        await goToPage(page, 'env-overview');
+        await page.waitForTimeout(100);
+
+        await checkColumnBalloon(page, 1, 5);
+        await checkColumnBalloon(page, 1, 6);
     });
 
     it('can set how many environments are available per page', async () => {

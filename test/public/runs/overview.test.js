@@ -12,7 +12,15 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    getFirstRow,
+    goToPage,
+} = require('../defaults');
+const { checkColumnBalloon } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -48,7 +56,7 @@ module.exports = () => {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping 2020');
+        expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -246,19 +254,62 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
-        page.waitForTimeout(100);
-        const firstButton = await page.$('button.btn-redirect');
-        const firstRowId = await firstButton.evaluate((btn) => btn.id);
-        const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        await page.waitForSelector('tbody tr');
+        const firstRow = await page.$('tbody tr');
+        const expectedRunId = await firstRow.evaluate((element) => element.id)
+            .then((id) => parseInt(id.slice('row'.length), 10));
 
-        // We expect the entry page to have the same id as the id from the run overview
-        await firstButton.evaluate((button) => button.click());
+        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${parsedFirstRowId}`)).to.be.true;
+        // We expect the entry page to have the same id as the id from the run overview
+        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${expectedRunId}`)).to.be.true;
     });
-    it('should update to current date when empty and time is set', async () =>{
+
+    it('Should have balloon on detector, tags and topology column', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Run 106 have data long enough to overflow
+        await page.type('#runNumber', '106');
+        await page.waitForTimeout(500);
+
+        await checkColumnBalloon(page, 1, 2);
+        await checkColumnBalloon(page, 1, 3);
+        await checkColumnBalloon(page, 1, 12);
+    });
+
+    it('Should display balloon if the text overflows', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        const cell = await page.$('tbody tr td:nth-of-type(2)');
+        // We need the actual content to overflow in order to display balloon
+        await cell.evaluate((element) => {
+            element.querySelector('.balloon-actual-content').innerText = 'a really long text'.repeat(50);
+        });
+        // Scroll to refresh the balloon triggers
+        await page.mouse.wheel({ deltaY: 100 });
+
+        const balloonAnchor = await cell.$('.balloon-anchor');
+        expect(balloonAnchor).to.not.be.null;
+
+        /**
+         * Returns the computed display attribute of the balloon anchor
+         * @returns {*} the computed display
+         */
+        const getBalloonDisplay = () => balloonAnchor.evaluate((element) => window.getComputedStyle(element).display);
+
+        expect(await getBalloonDisplay()).to.be.equal('none');
+        await cell.hover();
+        expect(await getBalloonDisplay()).to.be.equal('flex');
+    });
+
+    it('should update to current date when empty and time is set', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
         // Open the filters
@@ -269,12 +320,12 @@ module.exports = () => {
         [today] = today.toISOString().split('T');
         const time = '00:01';
 
-        for (let i = 0; i < timeList.length; i++) {
-            await page.type(timeList[i], time);
+        for (const selector of timeList) {
+            await page.type(selector, time);
             await page.waitForTimeout(500);
         }
-        for (let i = 0; i < dateList.length; i++) {
-            const value = await page.$eval(dateList[i], (element) => element.value);
+        for (const selector of dateList) {
+            const value = await page.$eval(selector, (element) => element.value);
             expect(String(value)).to.equal(today);
         }
         const date = new Date();
@@ -310,8 +361,8 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
-        for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], dateString);
+        for (const selector of dateList) {
+            await page.type(selector, dateString);
             await page.waitForTimeout(500);
         }
         await page.type(timeList[0], '11:11');
@@ -332,6 +383,7 @@ module.exports = () => {
         expect(String(startMin)).to.equal(await page.$eval(timeList[0], (element) => element.value));
         expect(String(endMin)).to.equal(await page.$eval(timeList[2], (element) => element.value));
     });
+
     it('The max should be the maximum value when having different dates', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
@@ -342,8 +394,8 @@ module.exports = () => {
         await pressElement(page, '#openRunFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
-        for (let i = 0; i < dateList.length; i++) {
-            await page.type(dateList[i], dateString);
+        for (const selector of dateList) {
+            await page.type(selector, dateString);
             await page.waitForTimeout(500);
         }
         const startMax = await page.$eval(timeList[0], (element) => element.getAttribute('max'));
@@ -356,5 +408,141 @@ module.exports = () => {
         const endMin = await page.$eval(timeList[3], (element) => element.getAttribute('min'));
         expect(String(startMin)).to.equal(minTime);
         expect(String(endMin)).to.equal(minTime);
+    });
+
+    it('Should successfully filter runs by their run quality', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const badFilterSelector = `${filterInputSelectorPrefix}bad`;
+        const testFilterSelector = `${filterInputSelectorPrefix}test`;
+
+        /**
+         * Checks that all the rows of the given table have a valid run quality
+         *
+         * @param {{evaluate: function}[]} rows the list of rows
+         * @param {string[]} authorizedRunQualities  the list of valid run qualities
+         * @return {void}
+         */
+        const checkTableRunQualities = async (rows, authorizedRunQualities) => {
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-runQuality-text`).innerText;
+                })).to.be.oneOf(authorizedRunQualities);
+            }
+        };
+
+        // Open filter toggle
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        await page.$eval(badFilterSelector, (element) => element.click());
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+        await checkTableRunQualities(table, ['bad']);
+
+        await page.$eval(testFilterSelector, (element) => element.click());
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        await checkTableRunQualities(table, ['bad', 'test']);
+
+        await page.$eval(testFilterSelector, (element) => element.click());
+        await page.waitForTimeout(200);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+        await checkTableRunQualities(table, ['bad']);
+    });
+
+    it('should successfully filter on a list of run ids and inform the user about it', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        const filterInputSelector = '#runNumber';
+        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+        await page.focus(filterInputSelector);
+        await page.keyboard.type('1, 2');
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+        expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+    });
+
+    it('should successfully filter on a list of environment ids and inform the user about it', async () => {
+        await page.reload();
+        await page.waitForTimeout(200);
+        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        const filterInputSelector = '#environmentIds';
+        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
+        await page.focus(filterInputSelector);
+        await page.keyboard.type('ABCDEFGHIJ, 0987654321');
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(10);
+    });
+
+    it('should successfully filter on nDetectors', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        const nDetectorOperatorSelector = '#nDetectors-operator';
+        const nDetectorOperator = await page.$(nDetectorOperatorSelector) || null;
+        expect(nDetectorOperator).to.not.be.null;
+        expect(await nDetectorOperator.evaluate((element) => element.value)).to.equal('=');
+
+        const nDetectorLimitSelector = '#nDetectors-limit';
+        const nDetectorLimit = await page.$(nDetectorLimitSelector) || null;
+        expect(nDetectorLimit).to.not.be.null;
+
+        await page.focus(nDetectorLimitSelector);
+        await page.keyboard.type('3');
+        await page.waitForTimeout(200);
+
+        await page.select(nDetectorOperatorSelector, '<=');
+        await page.waitForTimeout(200);
+
+        const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-detectors .nDetectors-badge`)?.innerText;
+        }));
+
+        /*
+         * The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in
+         * tests data
+         */
+        expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= '3' || nDetectors === null)).to.be.true;
+    });
+
+    it('should successfully filter on nFlps', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        const nFlpsOperatorSelector = '#nFlps-operator';
+        const nFlpsOperator = await page.$(nFlpsOperatorSelector) || null;
+        expect(nFlpsOperator).to.not.be.null;
+        expect(await nFlpsOperator.evaluate((element) => element.value)).to.equal('=');
+
+        const nFlpsLimitSelector = '#nFlps-limit';
+        const nFlpsLimit = await page.$(nFlpsLimitSelector) || null;
+        expect(nFlpsLimit).to.not.be.null;
+
+        await page.focus(nFlpsLimitSelector);
+        await page.keyboard.type('10');
+        await page.waitForTimeout(200);
+
+        await page.select(nFlpsOperatorSelector, '<=');
+        await page.waitForTimeout(200);
+
+        const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+            const rowId = row.id;
+            return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
+        }));
+        expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
     });
 };

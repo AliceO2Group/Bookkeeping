@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+## [0.30.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.30.0) 
+* Notable changes for users:
+  * Improvements on RunFilters:
+    * Numerical input now accepts operators (<, <=, =, =>, >);
+    * Text inputs accept list of strings separated by commas;
+    * RunQuality filter is now represented with checkboxes;
+  * Tags UX improvements:
+    * Tags are sorted alphabetically across the platform;
+    * Tags selection is now uniform across the platform;
+  * Fixes a bug in which a run entry could duplicate a runNumber;
+  * Improves UX for table cells which are wider than space allows;
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `nDetectors` and `nFLPS` filter needs to provide both operator and limit for the values;
+    * `environmentId` is now `environmentIds` allowing for multiple values separated by comma;
+    * `runQuality` is now `runQualities` allowing for multiple values separated by comma;
+  
+## [0.29.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.29.0) 
+* Notable changes for users:
+  * Improves Run-Overview page to better display information;
+  * Improves usability of LHC Fills page;
+  * Bug fixes for systems with no tags;
+
+## [0.28.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.28.0) 
+* Notable changes for users:
+  * Introduces support for AliECS - End Of Run - Reason;
+  * Introduces support for LHC Fills Data;
+* Notable changes for developers:
+  * Adds new `eor_reasons` and `reason_types` SQL tables and migration scripts;
+  * Adds new lhc_fills SQL Table and migration scripts;
+  * Adds API routes to retrieve lhc fills data individually or collectively; 
+  * Adds API routes to retrieve eor reasons data individually or collectively; 
+
 ## [0.27.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.27.0) 
 * Notable changes for users:
   * Introduces support for AliECS environments;
