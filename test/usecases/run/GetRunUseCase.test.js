@@ -47,6 +47,7 @@ module.exports = () => {
         expect(result.eorReasons[0].category).to.equal('DETECTORS');
         expect(result.eorReasons[0].title).to.equal('CPV');
         expect(result.lhcPeriod).to.equal('lhc22_b');
+        expect(result.epnTopologyFullname).to.equal('hash');
     });
 
     it('should successfully return an object that contain a null duration if trigger-start is not defined', async () => {

@@ -1171,6 +1171,7 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1197,6 +1198,7 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1230,6 +1232,7 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1256,6 +1259,7 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1551,6 +1555,7 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1577,6 +1582,7 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1924,6 +1930,7 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1950,6 +1957,7 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -2001,6 +2009,7 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -2027,6 +2036,7 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
+            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -2806,6 +2816,9 @@ components:
           - "OFF"
           - LTU
           - CTP
+        odcTopologyFullname:
+          type: string
+          description: The fullname or file location of the odcTopology
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:
@@ -2840,6 +2853,7 @@ components:
         environmentId: environmentId
         dcs: false
         epnTopology: normal
+        odcTopologyFullname: odcTopologyFullname
         id: 1
         tfbDdMode: processing
         updatedAt: 853113599
@@ -2923,6 +2937,7 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
+          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599

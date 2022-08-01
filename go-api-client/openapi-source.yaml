@@ -1677,6 +1677,9 @@ components:
             - OFF
             - LTU
             - CTP
+        odcTopologyFullname:
+          description: The fullname or file location of the odcTopology
+          type: string
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:

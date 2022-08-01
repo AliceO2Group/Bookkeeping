@@ -550,6 +550,7 @@ module.exports = () => {
             epn: true,
             epnTopology: 'normal',
             detectors: 'CPV',
+            odcTopologyFullname: 'synchronous-workflow',
         };
 
         it('should successfully return the stored run entity', (done) => {
@@ -567,6 +568,7 @@ module.exports = () => {
                     expect(res.body.data.triggerValue).to.equal('OFF');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.id).to.equal(109);
+                    expect(res.body.data.odcTopologyFullname).to.equal('synchronous-workflow');
 
                     done();
                 });
@@ -814,6 +816,7 @@ module.exports = () => {
                     timeTrgEnd: dateValue,
                     runQuality: 'good',
                     lhcPeriod: 'lhc22_b',
+                    odcTopologyFullname: 'hash',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -821,12 +824,15 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+
                     expect(res).to.satisfyApiSpec;
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
                     expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22_b');
+                    expect(res.body.data.odcTopologyFullname).to.equal('hash');
+
                     done();
                 });
         });
@@ -843,6 +849,7 @@ module.exports = () => {
                     tfbDdMode: 'processing',
                     lhcPeriod: 'lhc22_b',
                     triggerValue: 'LTU',
+                    odcTopologyFullname: 'default',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
@@ -853,6 +860,7 @@ module.exports = () => {
             expect(body.data.tfbDdMode).to.equal('processing');
             expect(body.data.lhcPeriod).to.equal('lhc22_b');
             expect(body.data.triggerValue).to.equal('LTU');
+            expect(res.body.data.odcTopologyFullname).to.equal('default');
         });
     });
 };
