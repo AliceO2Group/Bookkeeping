@@ -566,9 +566,9 @@ module.exports = () => {
                         return;
                     }
                     expect(res.body.data.triggerValue).to.equal('OFF');
+                    expect(res.body.data.odcTopologyFullname).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.id).to.equal(109);
-                    expect(res.body.data.odcTopologyFullname).to.equal('synchronous-workflow');
 
                     done();
                 });
@@ -860,7 +860,7 @@ module.exports = () => {
             expect(body.data.tfbDdMode).to.equal('processing');
             expect(body.data.lhcPeriod).to.equal('lhc22_b');
             expect(body.data.triggerValue).to.equal('LTU');
-            expect(res.body.data.odcTopologyFullname).to.equal('default');
+            expect(body.data.odcTopologyFullname).to.equal('default');
         });
     });
 };
