@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [WIP] [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
+## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
   * Run LHC period, number of EPNs are now shown in the run details and can be exported via the export runs tab;
   * `trgEnabled` + `trgGlobalRunEnabled` are now shown as `triggerValue` and has the values `OFF or LTU or CTP`;
+  * Notification service will now include `runNumbers` when used together with creating a log;
 * Notable changes for developers:
   * `GET` Runs API:
     * `lhcPeriods` Runs can now be filtered by using the `lhcPeriods` field. Multiple values can be used with comma seperation;
