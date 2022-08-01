@@ -56,20 +56,21 @@ Concerning the **Update mode** of the fields:
 | `n_flps`                             | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
 | `n_epns`                             | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
 | `epn_topology`                       | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
-| `fillNumber`                         | The fill connected to the run        | `1, 2, 1651`                        |  | `run_number` | Update |
-| `lhcBeamEnergy`                      | Energy of the beam (GeV)             | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
-| `lhcBeamMode`                        | LHC Beam Mode                        | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
-| `lhcBetaStar`                        | LHC Beta * in meters                 | `ITS,TPC,TOF`                       |  | `run_number` | Update |
-| `aliceL3Current`                     | Current in L3 magnet (Amperes)       | `3.14, 2`                           |  | `run_number` | Update |
-| `aliceL3Polarity`                    | The polarity of the L3 magnet        | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
-| `aliceDipoleCurrent`                 | Current in Dipole magnet (Amperes)   | `ITS,TPC,TOF`                       |  | `run_number` | Update |
-| `aliceDipolePolarity`                | The polarity of the dipole magnet    | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
-| `trgGlobalRunEnabled`                | If the global run trigger is enabled | `true, false`                       |  | `run_number` | Update |
-| `trgEnabled`                         | If the trigger is enabled            | `true, false`                       |  | `run_number` | Update |
-| `pdpConfigOption`                    | Configuration option PDP             | `Repository Hash`                   |  | `run_number` | Update |
-| `pdpTopologyDescriptionLibraryFile`  | File location of the pdp topology    | `some/location.desc`                |  | `run_number` | Update |
-| `tfbDdMode`                          | The mode of the TFB DD               | `processing`                        |  | `run_number` | Update |
-| `lhcPeriod`                          | The period value of the lhc          | `lhc22_b`                           |  | `run_number` | Update |
+| `fillNumber`                         | The fill connected to the run                 | `1, 2, 1651`                        |  | `run_number` | Update |
+| `lhcBeamEnergy`                      | Energy of the beam (GeV)                      | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
+| `lhcBeamMode`                        | LHC Beam Mode                                 | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
+| `lhcBetaStar`                        | LHC Beta * in meters                          | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `aliceL3Current`                     | Current in L3 magnet (Amperes)                | `3.14, 2`                           |  | `run_number` | Update |
+| `aliceL3Polarity`                    | The polarity of the L3 magnet                 | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| `aliceDipoleCurrent`                 | Current in Dipole magnet (Amperes)            | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `aliceDipolePolarity`                | The polarity of the dipole magnet             | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| `trgGlobalRunEnabled`                | If the global run trigger is enabled          | `true, false`                       |  | `run_number` | Update |
+| `trgEnabled`                         | If the trigger is enabled                     | `true, false`                       |  | `run_number` | Update |
+| `pdpConfigOption`                    | Configuration option PDP                      | `Repository Hash`                   |  | `run_number` | Update |
+| `pdpTopologyDescriptionLibraryFile`  | File location of the pdp topology             | `some/location.desc`                |  | `run_number` | Update |
+| `tfbDdMode`                          | The mode of the TFB DD                        | `processing`                        |  | `run_number` | Update |
+| `lhcPeriod`                          | The period value of the lhc                   | `lhc22_b`                           |  | `run_number` | Update |
+| `odcTopologyFullname`                | File location or setting for odc topology     | `lhc22_b`                           |  | `run_number` | Update |
 
 ### End of run reasons
 

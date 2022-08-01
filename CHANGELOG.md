@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
+* Notable changes for users:
+  * `odcTopologyFullname` field added to the runs detail page and can be exported.
+* Notable changes for developers:
+  * Runs API:
+    * `GET`
+      * `odcTopologyFullname` Can now be fetched in runs and a specific run.
+    * `POST`
+      * `odcTopologyFullname` Can now be created when creating/starting a run.
+    * `PATCH`
+      * `odcTopologyFullname` Can now be updated when updating a run.
+
 ## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;

@@ -1,3 +1,8 @@
+## [0.36.0]
+* Changes made to the database:
+    * Table `runs` - added field:
+        * `odcTopologyFullname` - string ('default', 'hash')
+
 ## [0.35.0]
 * Changes made to the database:
     * table `runs` - added fields:
