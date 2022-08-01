@@ -1161,6 +1161,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1181,13 +1182,12 @@ components:
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1208,10 +1208,8 @@ components:
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -1222,6 +1220,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1242,13 +1241,12 @@ components:
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1269,10 +1267,8 @@ components:
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -1545,6 +1541,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1565,13 +1562,12 @@ components:
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1592,10 +1588,8 @@ components:
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         meta:
           page:
             pageCount: 9
@@ -1920,6 +1914,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1940,13 +1935,12 @@ components:
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1967,10 +1961,8 @@ components:
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         statusMessage: statusMessage
         updatedAt: 853113599
         status: status
@@ -1999,6 +1991,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2019,13 +2012,12 @@ components:
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2046,10 +2038,8 @@ components:
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -2809,14 +2799,13 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        trgEnabled:
-          type: boolean
-          description: Boolean if the trigger is enabled.
-          example: true
-        trgGlobalRunEnabled:
-          type: boolean
-          description: Boolean if the global run trigger is enabled.
-          example: true
+        triggerValue:
+          type: string
+          description: Trigger value
+          enum:
+          - "OFF"
+          - LTU
+          - CTP
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:
@@ -2841,6 +2830,7 @@ components:
         timeO2End: 853113599
         timeTrgEnd: 853113599
         runType: physics
+        triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
         pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2861,10 +2851,8 @@ components:
         runQuality: good
         nDetectors: 1
         nFlps: 5
-        trgEnabled: true
         dd_flp: false
         runNumber: 7
-        trgGlobalRunEnabled: true
     RunEnvironmentId:
       type: string
       description: The unique identifier of this entity.
@@ -2925,6 +2913,7 @@ components:
           timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2945,10 +2934,8 @@ components:
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
     RunSortOptions:
       type: object
       properties:

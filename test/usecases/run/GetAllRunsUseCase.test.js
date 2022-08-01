@@ -348,6 +348,15 @@ module.exports = () => {
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
+    it('should successfully return an array containing only runs with specified trigger values', async () => {
+        const requiredTriggers = ['OFF', 'CTP'];
+        getAllRunsDto.query = { filter: { triggerValues: requiredTriggers }, page: { limit: 100 } };
+        const { runs } = await new GetAllRunsUseCase()
+            .execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(10);
+    });
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
             filter: {
