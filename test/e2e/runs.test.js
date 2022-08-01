@@ -564,6 +564,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+                    expect(res.body.data.triggerValue).to.equal('OFF');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.id).to.equal(109);
 
