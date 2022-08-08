@@ -22,7 +22,7 @@ Name | Type | Description | Notes
 **TimeTrgEnd** | **int64** |  | [optional] [default to null]
 **TimeTrgStart** | **int64** |  | [optional] [default to null]
 **TriggerValue** | **string** | Trigger value | [optional] [default to null]
-**OdcTopologyFullname** | **string** | The fullname or file location of the odcTopology | [optional] [default to null]
+**OdcTopologyFullName** | **string** | The fullname or file location of the odcTopology | [optional] [default to null]
 **DdFlp** | **bool** |  | [optional] [default to null]
 **Dcs** | **bool** |  | [optional] [default to null]
 **Epn** | **bool** |  | [optional] [default to null]

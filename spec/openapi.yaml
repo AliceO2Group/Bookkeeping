@@ -1,4 +1,4 @@
-# Generated on Mon, 01 Aug 2022 13:31:44 GMT
+# Generated on Mon, 08 Aug 2022 12:57:20 GMT
 
 openapi: 3.0.0
 info:
@@ -2084,7 +2084,7 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
-        odcTopologyFullname:
+        odcTopologyFullName:
           description: The name or location of the odc topology
           type: string
           nullable: true

@@ -1677,7 +1677,7 @@ components:
             - OFF
             - LTU
             - CTP
-        odcTopologyFullname:
+        odcTopologyFullName:
           description: The fullname or file location of the odcTopology
           type: string
         dd_flp:

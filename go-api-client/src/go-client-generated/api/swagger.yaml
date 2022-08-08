@@ -1160,6 +1160,7 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
+            odcTopologyFullName: odcTopologyFullName
             runType: physics
             triggerValue: "OFF"
             detectors: CPV
@@ -1171,7 +1172,6 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
-            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1187,6 +1187,7 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
+            odcTopologyFullName: odcTopologyFullName
             runType: physics
             triggerValue: "OFF"
             detectors: CPV
@@ -1198,7 +1199,6 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
-            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1221,6 +1221,7 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
+            odcTopologyFullName: odcTopologyFullName
             runType: physics
             triggerValue: "OFF"
             detectors: CPV
@@ -1232,7 +1233,6 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
-            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1248,6 +1248,7 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
+            odcTopologyFullName: odcTopologyFullName
             runType: physics
             triggerValue: "OFF"
             detectors: CPV
@@ -1259,7 +1260,6 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
-            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -1544,6 +1544,7 @@ components:
         data:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
+          odcTopologyFullName: odcTopologyFullName
           runType: physics
           triggerValue: "OFF"
           detectors: CPV
@@ -1555,7 +1556,6 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
-          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1571,6 +1571,7 @@ components:
           runNumber: 7
         - timeO2End: 853113599
           timeTrgEnd: 853113599
+          odcTopologyFullName: odcTopologyFullName
           runType: physics
           triggerValue: "OFF"
           detectors: CPV
@@ -1582,7 +1583,6 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
-          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1919,6 +1919,7 @@ components:
         runs:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
+          odcTopologyFullName: odcTopologyFullName
           runType: physics
           triggerValue: "OFF"
           detectors: CPV
@@ -1930,7 +1931,6 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
-          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1946,6 +1946,7 @@ components:
           runNumber: 7
         - timeO2End: 853113599
           timeTrgEnd: 853113599
+          odcTopologyFullName: odcTopologyFullName
           runType: physics
           triggerValue: "OFF"
           detectors: CPV
@@ -1957,7 +1958,6 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
-          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
@@ -1998,6 +1998,7 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
+            odcTopologyFullName: odcTopologyFullName
             runType: physics
             triggerValue: "OFF"
             detectors: CPV
@@ -2009,7 +2010,6 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
-            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -2025,6 +2025,7 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
+            odcTopologyFullName: odcTopologyFullName
             runType: physics
             triggerValue: "OFF"
             detectors: CPV
@@ -2036,7 +2037,6 @@ components:
             environmentId: environmentId
             dcs: false
             epnTopology: normal
-            odcTopologyFullname: odcTopologyFullname
             id: 1
             tfbDdMode: processing
             updatedAt: 853113599
@@ -2816,7 +2816,7 @@ components:
           - "OFF"
           - LTU
           - CTP
-        odcTopologyFullname:
+        odcTopologyFullName:
           type: string
           description: The fullname or file location of the odcTopology
         dd_flp:
@@ -2842,6 +2842,7 @@ components:
       example:
         timeO2End: 853113599
         timeTrgEnd: 853113599
+        odcTopologyFullName: odcTopologyFullName
         runType: physics
         triggerValue: "OFF"
         detectors: CPV
@@ -2853,7 +2854,6 @@ components:
         environmentId: environmentId
         dcs: false
         epnTopology: normal
-        odcTopologyFullname: odcTopologyFullname
         id: 1
         tfbDdMode: processing
         updatedAt: 853113599
@@ -2926,6 +2926,7 @@ components:
         data:
           timeO2End: 853113599
           timeTrgEnd: 853113599
+          odcTopologyFullName: odcTopologyFullName
           runType: physics
           triggerValue: "OFF"
           detectors: CPV
@@ -2937,7 +2938,6 @@ components:
           environmentId: environmentId
           dcs: false
           epnTopology: normal
-          odcTopologyFullname: odcTopologyFullname
           id: 1
           tfbDdMode: processing
           updatedAt: 853113599
