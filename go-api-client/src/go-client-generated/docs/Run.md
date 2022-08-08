@@ -21,14 +21,14 @@ Name | Type | Description | Notes
 **TimeO2Start** | **int64** |  | [optional] [default to null]
 **TimeTrgEnd** | **int64** |  | [optional] [default to null]
 **TimeTrgStart** | **int64** |  | [optional] [default to null]
-**TrgEnabled** | **bool** | Boolean if the trigger is enabled. | [optional] [default to null]
-**TrgGlobalRunEnabled** | **bool** | Boolean if the global run trigger is enabled. | [optional] [default to null]
+**TriggerValue** | **string** | Trigger value | [optional] [default to null]
 **DdFlp** | **bool** |  | [optional] [default to null]
 **Dcs** | **bool** |  | [optional] [default to null]
 **Epn** | **bool** |  | [optional] [default to null]
 **EpnTopology** | **string** |  | [optional] [default to null]
 **Detectors** | [***Detectors**](DETECTORS.md) |  | [optional] [default to null]
 **UpdatedAt** | **int32** | Unix timestamp when this entity was last updated. | [optional] [default to null]
+**LhcPeriod** | **string** | A string that marks the period of the lhc | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

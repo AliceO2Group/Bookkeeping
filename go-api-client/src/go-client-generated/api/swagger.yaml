@@ -1161,6 +1161,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1174,19 +1175,19 @@ components:
             tfbDdMode: processing
             updatedAt: 853113599
             epn: false
+            lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1200,16 +1201,15 @@ components:
             tfbDdMode: processing
             updatedAt: 853113599
             epn: false
+            lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -1220,6 +1220,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1233,19 +1234,19 @@ components:
             tfbDdMode: processing
             updatedAt: 853113599
             epn: false
+            lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1259,16 +1260,15 @@ components:
             tfbDdMode: processing
             updatedAt: 853113599
             epn: false
+            lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -1541,6 +1541,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1554,19 +1555,19 @@ components:
           tfbDdMode: processing
           updatedAt: 853113599
           epn: false
+          lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1580,16 +1581,15 @@ components:
           tfbDdMode: processing
           updatedAt: 853113599
           epn: false
+          lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         meta:
           page:
             pageCount: 9
@@ -1914,6 +1914,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1927,19 +1928,19 @@ components:
           tfbDdMode: processing
           updatedAt: 853113599
           epn: false
+          lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1953,16 +1954,15 @@ components:
           tfbDdMode: processing
           updatedAt: 853113599
           epn: false
+          lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
         statusMessage: statusMessage
         updatedAt: 853113599
         status: status
@@ -1991,6 +1991,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2004,19 +2005,19 @@ components:
             tfbDdMode: processing
             updatedAt: 853113599
             epn: false
+            lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: physics
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2030,16 +2031,15 @@ components:
             tfbDdMode: processing
             updatedAt: 853113599
             epn: false
+            lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
             nDetectors: 1
             nFlps: 5
-            trgEnabled: true
             dd_flp: false
             runNumber: 7
-            trgGlobalRunEnabled: true
           statusMessage: statusMessage
           updatedAt: 853113599
           status: status
@@ -2799,14 +2799,13 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        trgEnabled:
-          type: boolean
-          description: Boolean if the trigger is enabled.
-          example: true
-        trgGlobalRunEnabled:
-          type: boolean
-          description: Boolean if the global run trigger is enabled.
-          example: true
+        triggerValue:
+          type: string
+          description: Trigger value
+          enum:
+          - "OFF"
+          - LTU
+          - CTP
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:
@@ -2822,12 +2821,16 @@ components:
           description: Unix timestamp when this entity was last updated.
           format: int32
           example: 853113599
+        lhcPeriod:
+          type: string
+          description: A string that marks the period of the lhc
       additionalProperties: false
       description: Describes an intervention or an event that happened.
       example:
         timeO2End: 853113599
         timeTrgEnd: 853113599
         runType: physics
+        triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
         pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2841,16 +2844,15 @@ components:
         tfbDdMode: processing
         updatedAt: 853113599
         epn: false
+        lhcPeriod: lhcPeriod
         timeTrgStart: 853113599
         pdpConfigOption: pdpConfigOption
         nSubtimeframes: 2
         runQuality: good
         nDetectors: 1
         nFlps: 5
-        trgEnabled: true
         dd_flp: false
         runNumber: 7
-        trgGlobalRunEnabled: true
     RunEnvironmentId:
       type: string
       description: The unique identifier of this entity.
@@ -2911,6 +2913,7 @@ components:
           timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: physics
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2924,16 +2927,15 @@ components:
           tfbDdMode: processing
           updatedAt: 853113599
           epn: false
+          lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
           nDetectors: 1
           nFlps: 5
-          trgEnabled: true
           dd_flp: false
           runNumber: 7
-          trgGlobalRunEnabled: true
     RunSortOptions:
       type: object
       properties:

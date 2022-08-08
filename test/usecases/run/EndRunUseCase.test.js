@@ -32,10 +32,10 @@ module.exports = () => {
                 timeTrgStart: dateValue,
                 timeTrgEnd: dateValue,
                 pdpConfigOption: 'Repository hash',
-                trgGlobalRunEnabled: true,
-                trgEnabled: false,
                 pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                 tfbDdMode: 'processing',
+                lhcPeriod: 'lhc22_b',
+                triggerValue: 'CTP',
             },
         });
 
@@ -53,10 +53,10 @@ module.exports = () => {
         expect(result.timeTrgStart).to.equal(dateValue);
         expect(result.timeTrgEnd).to.equal(dateValue);
         expect(result.pdpConfigOption).to.equal('Repository hash');
-        expect(result.trgGlobalRunEnabled).to.equal(true);
-        expect(result.trgEnabled).to.equal(false);
         expect(result.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
         expect(result.tfbDdMode).to.equal('processing');
+        expect(result.lhcPeriod).to.equal('lhc22_b');
+        expect(result.triggerValue).to.equal('CTP');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {

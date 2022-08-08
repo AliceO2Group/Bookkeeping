@@ -1,3 +1,9 @@
+## [0.35.0]
+* Changes made to the database:
+    * table `runs` - added fields:
+        * `lhcPeriod` - string ('lhc22_b')
+        * `nEpns` - number
+        * `trigger_value` - enum (OFF, CTP, LTU)
 ## [0.32.0]
 * Changes made to the database:
     * table `runs` - added fields:

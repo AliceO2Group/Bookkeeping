@@ -1,4 +1,4 @@
-# Generated on Thu, 14 Jul 2022 10:11:27 GMT
+# Generated on Wed, 27 Jul 2022 13:52:48 GMT
 
 openapi: 3.0.0
 info:
@@ -2072,6 +2072,10 @@ components:
           description: LHC Beta * in meters
           type: number
           nullable: true
+        lhcPeriod:
+          description: The period tag of an LHC
+          type: string
+          nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
@@ -2110,13 +2114,9 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        trgEnabled:
-          description: If the trigger is enabled.
-          type: boolean
-          nullable: true
-        trgGlobalRunEnabled:
-          description: If the global run trigger is enabled.
-          type: boolean
+        triggerValue:
+          description: Value of the current trigger can be OFF, LTU, CTP
+          type: string
           nullable: true
         updatedAt:
           description: Unix timestamp when this entity was last updated.

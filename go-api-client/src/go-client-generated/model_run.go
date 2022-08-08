@@ -31,10 +31,8 @@ type Run struct {
 	TimeO2Start int64 `json:"timeO2Start,omitempty"`
 	TimeTrgEnd int64 `json:"timeTrgEnd,omitempty"`
 	TimeTrgStart int64 `json:"timeTrgStart,omitempty"`
-	// Boolean if the trigger is enabled.
-	TrgEnabled bool `json:"trgEnabled,omitempty"`
-	// Boolean if the global run trigger is enabled.
-	TrgGlobalRunEnabled bool `json:"trgGlobalRunEnabled,omitempty"`
+	// Trigger value
+	TriggerValue string `json:"triggerValue,omitempty"`
 	DdFlp bool `json:"dd_flp,omitempty"`
 	Dcs bool `json:"dcs,omitempty"`
 	Epn bool `json:"epn,omitempty"`
@@ -42,4 +40,6 @@ type Run struct {
 	Detectors *Detectors `json:"detectors,omitempty"`
 	// Unix timestamp when this entity was last updated.
 	UpdatedAt int32 `json:"updatedAt,omitempty"`
+	// A string that marks the period of the lhc
+	LhcPeriod string `json:"lhcPeriod,omitempty"`
 }

@@ -1670,14 +1670,13 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
-        trgEnabled:
-          description: Boolean if the trigger is enabled.
-          type: boolean
-          example: true
-        trgGlobalRunEnabled:
-          description: Boolean if the global run trigger is enabled.
-          type: boolean
-          example: true
+        triggerValue:
+          description: Trigger value
+          type: string
+          enum:
+            - OFF
+            - LTU
+            - CTP
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:
@@ -1693,6 +1692,9 @@ components:
           type: integer
           format: int32
           example: 853113599
+        lhcPeriod:
+          description: A string that marks the period of the lhc
+          type: string
       additionalProperties: false
     RunEnvironmentId:
       description: The unique identifier of this entity.
