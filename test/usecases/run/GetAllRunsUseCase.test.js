@@ -360,7 +360,7 @@ module.exports = () => {
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
             filter: {
-                lhcPeriods: 'lhc22_b, lhc22_a',
+                lhcPeriods: 'lhc22b, lhc22a',
             },
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
