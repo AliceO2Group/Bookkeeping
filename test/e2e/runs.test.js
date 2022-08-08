@@ -300,7 +300,7 @@ module.exports = () => {
 
         it('should successfully filter on lhcPeriod', async () => {
             const response =
-                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22_b');
+                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22b');
 
             expect(response.status).to.equal(200);
             expect(response).to.satisfyApiSpec;
@@ -858,7 +858,7 @@ module.exports = () => {
                     pdpConfigOption: 'Repository hash',
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
-                    lhcPeriod: 'lhc22_b',
+                    lhcPeriod: 'lhc22b',
                     triggerValue: 'LTU',
                     odcTopologyFullName: 'default',
                 });
@@ -869,7 +869,7 @@ module.exports = () => {
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
-            expect(body.data.lhcPeriod).to.equal('lhc22_b');
+            expect(body.data.lhcPeriod).to.equal('lhc22b');
             expect(body.data.triggerValue).to.equal('LTU');
             expect(body.data.odcTopologyFullName).to.equal('default');
         });

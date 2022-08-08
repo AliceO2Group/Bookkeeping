@@ -12,6 +12,8 @@
   - [Users](#users)
   - [Tags](#tags)
   - [Environments](#environments)
+  - [LhcFills](#lhcfills)
+
 ## Introduction
 This document describes the data model of the ALICE O2 Bookkeeping system.   
 For simplicity, the following info is not described in this document: 
@@ -56,9 +58,9 @@ Concerning the **Update mode** of the fields:
 | `n_flps`                                 | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
 | `n_epns`                                 | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
 | `epn_topology`                           | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
-| `fillNumber`                             | The fill connected to the run                 | `1, 2, 1651`                        |  | `run_number` | Update |
-| `lhcBeamEnergy`                          | Energy of the beam (GeV)                      | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
-| `lhcBeamMode`                            | LHC Beam Mode                                 | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
+| `fill_number`                            | The fill connected to the run                 | `1, 2, 1651`                        |  | `run_number` | Update |
+| `lhc_beam_energy`                        | Energy of the beam (GeV)                      | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
+| `lhc_beam_mode`                          | LHC Beam Mode                                 | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
 | `lhc_beta_star`                          | LHC Beta * in meters                          | `ITS,TPC,TOF`                       |  | `run_number` | Update |
 | `alice_l3_current`                       | Current in L3 magnet (Amperes)                | `3.14, 2`                           |  | `run_number` | Update |
 | `alice_l3_polarity`                      | The polarity of the L3 magnet                 | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
