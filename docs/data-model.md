@@ -13,6 +13,7 @@
   - [Tags](#tags)
   - [Environments](#environments)
   - [LhcFills](#lhcfills)
+
 ## Introduction
 This document describes the data model of the ALICE O2 Bookkeeping system.   
 For simplicity, the following info is not described in this document: 
