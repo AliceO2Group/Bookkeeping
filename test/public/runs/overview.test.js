@@ -634,7 +634,7 @@ module.exports = () => {
         expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= '3' || nDetectors === null)).to.be.true;
     });
 
-    it('should successfully filter on nFlps', async () => {
+    it('should successfully filter on nFLPs', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
 
@@ -663,7 +663,7 @@ module.exports = () => {
         expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
     });
 
-    it('should successfully filter on nEpns', async () => {
+    it('should successfully filter on nEPNs', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
 

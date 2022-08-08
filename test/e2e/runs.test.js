@@ -289,7 +289,7 @@ module.exports = () => {
 
         it('should successfully filter on lhcPeriod', async () => {
             const response =
-                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22_b');
+                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22b');
 
             expect(response.status).to.equal(200);
             expect(response).to.satisfyApiSpec;
@@ -813,7 +813,7 @@ module.exports = () => {
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
                     runQuality: 'good',
-                    lhcPeriod: 'lhc22_b',
+                    lhcPeriod: 'lhc22b',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -826,7 +826,7 @@ module.exports = () => {
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
                     expect(res.body.data.runQuality).to.equal('good');
-                    expect(res.body.data.lhcPeriod).to.equal('lhc22_b');
+                    expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     done();
                 });
         });
@@ -841,7 +841,7 @@ module.exports = () => {
                     pdpConfigOption: 'Repository hash',
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
-                    lhcPeriod: 'lhc22_b',
+                    lhcPeriod: 'lhc22b',
                     triggerValue: 'LTU',
                 });
             expect(body.data).to.be.an('object');
@@ -851,7 +851,7 @@ module.exports = () => {
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
-            expect(body.data.lhcPeriod).to.equal('lhc22_b');
+            expect(body.data.lhcPeriod).to.equal('lhc22b');
             expect(body.data.triggerValue).to.equal('LTU');
         });
     });

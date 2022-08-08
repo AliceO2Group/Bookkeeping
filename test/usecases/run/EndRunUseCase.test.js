@@ -34,7 +34,7 @@ module.exports = () => {
                 pdpConfigOption: 'Repository hash',
                 pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                 tfbDdMode: 'processing',
-                lhcPeriod: 'lhc22_b',
+                lhcPeriod: 'lhc22b',
                 triggerValue: 'CTP',
             },
         });
@@ -55,7 +55,7 @@ module.exports = () => {
         expect(result.pdpConfigOption).to.equal('Repository hash');
         expect(result.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
         expect(result.tfbDdMode).to.equal('processing');
-        expect(result.lhcPeriod).to.equal('lhc22_b');
+        expect(result.lhcPeriod).to.equal('lhc22b');
         expect(result.triggerValue).to.equal('CTP');
     });
 
