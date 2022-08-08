@@ -252,7 +252,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data.length).to.equal(12);
         });
-        it('should filter run on their trigger value', async () => {
+        it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[odcTopologyFullName]=hash');
             expect(response.status).to.equal(200);
@@ -260,7 +260,7 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(5);
+            expect(data.length).to.equal(4);
         });
 
         it('should return 400 if "runQuality" is invalid', async () => {
