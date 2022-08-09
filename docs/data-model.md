@@ -12,6 +12,8 @@
   - [Users](#users)
   - [Tags](#tags)
   - [Environments](#environments)
+  - [LhcFills](#lhcfills)
+
 ## Introduction
 This document describes the data model of the ALICE O2 Bookkeeping system.   
 For simplicity, the following info is not described in this document: 
@@ -69,7 +71,7 @@ Concerning the **Update mode** of the fields:
 | `pdpConfigOption`                    | Configuration option PDP             | `Repository Hash`                   |  | `run_number` | Update |
 | `pdpTopologyDescriptionLibraryFile`  | File location of the pdp topology    | `some/location.desc`                |  | `run_number` | Update |
 | `tfbDdMode`                          | The mode of the TFB DD               | `processing`                        |  | `run_number` | Update |
-| `lhcPeriod`                          | The period value of the lhc          | `lhc22_b`                           |  | `run_number` | Update |
+| `lhcPeriod`                          | The period value of the lhc          | `lhc22b`                           |  | `run_number` | Update |
 
 ### End of run reasons
 
