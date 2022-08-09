@@ -71,8 +71,8 @@ Concerning the **Update mode** of the fields:
 | `pdp_config_option`                      | Configuration option PDP                      | `Repository Hash`                   |  | `run_number` | Update |
 | `pdp_topology_description_library_file`  | File location of the pdp topology             | `some/location.desc`                |  | `run_number` | Update |
 | `tfb_dd_mode`                            | The mode of the TFB DD                        | `processing`                        |  | `run_number` | Update |
-| `lhc_period`                             | The period value of the lhc                   | `lhc22_b`                           |  | `run_number` | Update |
-| `odc_topology_full_name`                 | File location or setting for odc topology     | `lhc22_b`                           |  | `run_number` | Update |
+| `lhc_period`                             | The period value of the lhc                   | `lhc22b`                            |  | `run_number` | Update |
+| `odc_topology_full_name`                 | File location or setting for odc topology     | `hash, some/location.desc`          |  | `run_number` | Update |
 
 ### End of run reasons
 
