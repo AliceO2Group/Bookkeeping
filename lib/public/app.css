@@ -323,7 +323,7 @@ html, body {
 }
 
 .textblock-text {
-    width: 120px;
+    min-width: 120px;
     background-color: rgba(191, 191, 191);
     color: rgb(0, 0, 0);
     text-align: center;
@@ -338,6 +338,9 @@ html, body {
     background-color: #fff;
     border: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-weight: normal;
 }
 
 .textblock-text.left {
@@ -352,13 +355,11 @@ html, body {
 }
 
 .textblock-text.bottom {
-    width: 120px;
     top: calc(100% + 2rem);
     transform: translate(-50%,0);
 }
 
 .textblock-text.top {
-    width: 120px;
     bottom: 100%;
     left: 50%;
     margin-left: -60px;
