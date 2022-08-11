@@ -228,7 +228,7 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(5);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should filter run on their quality', async () => {
