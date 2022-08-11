@@ -49,19 +49,6 @@ module.exports = () => {
         expect(runsTable.length).to.be.greaterThan(0);
     });
 
-    it('should successfully switch to physics runs only', async () => {
-        await page.$eval('#runs-type-filter .nav-item:last-of-type .nav-link', (element) => element.click());
-        await page.waitForTimeout(100);
-
-        const runsTable = await page.$$('#runs tbody tr');
-        expect(runsTable.length).to.be.greaterThan(0);
-        const tagsLists = await page.$$eval(
-            '#runs tbody tr',
-            (rows) => rows.map((row) => document.querySelector(`#${row.id}-tags`).innerText.split(',').map((tag) => tag.trim())),
-        );
-        expect(tagsLists.every((tags) => tags.includes('PHYSICS'))).to.be.true;
-    });
-
     it('should successfully navigate to run detail page', async () => {
         const row = await page.$('#runs tbody tr');
         expect(row).to.be.not.null;
