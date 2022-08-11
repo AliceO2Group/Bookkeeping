@@ -28,7 +28,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
  * Constructor to build elements before tests start.
  * @param {Object} page Puppeteer page object
  * @param {Object} browser Browser object to run tests on
- * @returns {Array} Array of multiple objects, consisting of Page, Browser and Url.
+ * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
 module.exports.defaultBefore = async (page, browser) => {
     browser = await puppeteer.launch({ args: ['--no-sandbox'] });
@@ -45,7 +45,7 @@ module.exports.defaultBefore = async (page, browser) => {
  * Destructor to cleanup after tests are finished.
  * @param {Object} page Puppeteer page object
  * @param {Object} browser Browser object to run tests on
- * @returns {Array} Array of multiple objects, consisting of Page and Browser.
+ * @returns {Promise<Array>} Array of multiple objects, consisting of Page and Browser.
  */
 module.exports.defaultAfter = async (page, browser) => {
     const [jsCoverage, cssCoverage] = await Promise.all([
@@ -67,7 +67,7 @@ module.exports.defaultAfter = async (page, browser) => {
  * @param {Object} page Puppeteer page object.
  * @param {String} selector Css selector.
  * @param {String} innerText Text to search for.
- * @returns {Boolean} Whether the text was found on the page or not.
+ * @returns {Promise<Boolean>} Whether the text was found on the page or not.
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
     await page.waitForSelector(selector);

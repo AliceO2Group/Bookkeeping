@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file. See [standa
       * Is based on the trigger when it exists
       * Is based on o2 when trigger does not exist and we is displayed with an Asterisk
       * Is based on o2_stop - o2_trigger_end when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
+  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs
+    overview
 * Notable changes for developers:
   * `GET` Runs API"
     * `runDuration` New logic to generating a time stamp:

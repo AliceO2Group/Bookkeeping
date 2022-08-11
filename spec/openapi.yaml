@@ -1,4 +1,4 @@
-# Generated on Wed, 27 Jul 2022 13:52:48 GMT
+# Generated on Tue, 09 Aug 2022 15:50:26 GMT
 
 openapi: 3.0.0
 info:
@@ -719,13 +719,6 @@ components:
       schema:
         $ref: '#/components/schemas/FlpSortOptions'
       style: deepObject
-    LhcFillId:
-      name: lhcFillId
-      description: The id of the lhcFill to retrieve
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/EntityId'
     LogId:
       name: logId
       description: The id of the log to retrieve
