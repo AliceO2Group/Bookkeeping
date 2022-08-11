@@ -16,20 +16,19 @@ const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    getFirstRow,
     goToPage,
     checkColumnBalloon,
 } = require('../defaults');
 
 const { expect } = chai;
 
+const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
+const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
+
 module.exports = () => {
     let page;
     let browser;
     let url;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -56,17 +55,24 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             fillNumber: (fill) => !isNaN(parseInt(fill, 10)),
+            // Seems to not exist anymore
             createdAt: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             updatedAt: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             toredownAt: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             status: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             statusMessage: (string) => typeof string == 'string',
+            efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
+            durationBeforeFirstRun: (data) => data === '-'
+                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
+            meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
+            totalRunsDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
         };
 
@@ -82,9 +88,11 @@ module.exports = () => {
         }
 
         // We expect every value of a header matching a datatype key to actually be of that datatype
-        const firstRowCells = await page.$$(`#${firstRowId} td`);
+
+        // Use the third row because it is where statistics are present
+        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
         for (const [index, cell] of firstRowCells.entries()) {
-            if (Object.keys(headerIndices).includes(index)) {
+            if (index in headerIndices) {
                 const cellContent = await page.evaluate((element) => element.innerText, cell);
                 const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
                 expect(expectedDatatype).to.be.true;
@@ -96,7 +104,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
 
-        await checkColumnBalloon(page, 1, 7);
+        await checkColumnBalloon(page, 1, 11);
     });
 
     it('can set how many lhcFills are available per page', async () => {
@@ -160,7 +168,8 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
 
-        const row = await page.$('tbody tr');
+        // Use the third row to have a fill with statistics
+        const row = await page.$('tbody tr:nth-of-type(3)');
         expect(row).to.be.not.null;
         // Remove "row" prefix to get fill number
         const fillNumber = await row.evaluate((element) => element.id.slice(3));

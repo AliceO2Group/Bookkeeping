@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
 * Notable changes for users:
-  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about related runs
+  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about fill efficiency and related runs
 
 ## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:

@@ -228,7 +228,7 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(4);
+            expect(data).to.have.lengthOf(7);
         });
 
         it('should filter run on their quality', async () => {
@@ -240,7 +240,7 @@ module.exports = () => {
 
             const { data } = response.body;
             // 48 because one run is added in start run use case with default quality which is test, and one is updated to quality test
-            expect(data.length).to.equal(47);
+            expect(data.length).to.equal(45);
         });
         it('should filter run on their trigger value', async () => {
             const response = await request(server)
@@ -250,7 +250,7 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(12);
+            expect(data.length).to.equal(15);
         });
         it('should return 400 if "runQuality" is invalid', async () => {
             const response = await request(server)
@@ -284,7 +284,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(53);
+            expect(data).to.have.lengthOf(51);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
