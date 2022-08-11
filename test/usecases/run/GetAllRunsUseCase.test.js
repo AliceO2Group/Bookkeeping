@@ -231,13 +231,13 @@ module.exports = () => {
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
         // 100 is the limit per page, true result must be 101
-        expect(runs).to.have.lengthOf(3);
+        expect(runs).to.have.lengthOf(4);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
         runDuration.operator = '>';
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(2);
+        expect(runs).to.have.lengthOf(3);
         expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
     });
 

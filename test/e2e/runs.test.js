@@ -228,7 +228,7 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(4);
+            expect(data).to.have.lengthOf(5);
         });
 
         it('should filter run on their quality', async () => {
@@ -464,7 +464,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 200 and no duration when there are no times', (done) => {
+        it('should return 200 and duration when there are trigger times', (done) => {
             request(server)
                 .get('/api/runs/106')
                 .expect(200)
@@ -477,7 +477,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(data.runDuration).to.equal(0);
+                    expect(data.runDuration).to.equal(90000000);
                     expect(data.timeO2Start).to.not.equal(null);
                     expect(data.timeO2End).to.not.equal(null);
                     expect(data.timeTrgStart).to.not.equal(null);
