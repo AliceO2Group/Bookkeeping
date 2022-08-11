@@ -19,6 +19,7 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
+    checkTooltip,
 } = require('../defaults');
 const { checkColumnBalloon } = require('../defaults.js');
 
@@ -280,6 +281,13 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         // We expect the entry page to have the same id as the id from the run overview
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${expectedRunId}`)).to.be.true;
+    });
+    it('Should show a tooltip when hovering over the i symbol', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        await checkTooltip(page, '#timeO2Start > span');
+        await checkTooltip(page, '#timeO2End > span');
+        await checkTooltip(page, '#runDuration > span');
     });
 
     it('Should have balloon on detector, tags and topology column', async () => {

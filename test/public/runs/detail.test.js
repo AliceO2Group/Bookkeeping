@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, checkTooltip } = require('../defaults');
 
 const { expect } = chai;
 
@@ -46,6 +46,10 @@ module.exports = () => {
         await page.waitForTimeout(100);
         await expectInnerText(page, '#save-run', 'Save');
         await expectInnerText(page, '#cancel-run', 'Revert');
+    });
+
+    it('should how run information when overing over the value', async () =>{
+        await checkTooltip(page, '#runDurationValue');
     });
 
     it('successfully changed run tags in EDIT mode', async () => {
