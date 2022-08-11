@@ -255,26 +255,27 @@ module.exports = () => {
         nDetectors.operator = '<=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(54);
+        expect(runs).to.have.lengthOf(53);
         expect(runs.every((run) => run.nDetectors <= 3)).to.be.true;
 
         nDetectors.operator = '=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(54);
+        expect(runs).to.have.lengthOf(53);
         expect(runs.every((run) => run.nDetectors === 3)).to.be.true;
 
         nDetectors.limit = 6;
         nDetectors.operator = '>=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(52);
+        expect(runs).to.have.lengthOf(53);
         expect(runs.every((run) => run.nDetectors >= 6)).to.be.true;
 
         nDetectors.operator = '>';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(0);
+        // 1 run has 15 detectors
+        expect(runs).to.have.lengthOf(1);
     });
 
     it('should successfully filter on flps number', async () => {

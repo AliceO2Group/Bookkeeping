@@ -24,14 +24,24 @@ module.exports = () => {
     });
 
     it('should successfully display lhc fills details page', async () => {
-        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=1`, { waitUntil: 'networkidle0' });
-        await expectInnerText(page, 'h2', 'Fill No. 1');
+        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=5`, { waitUntil: 'networkidle0' });
+        await expectInnerText(page, 'h2', 'Fill No. 5');
     });
 
     it('should successfully emphasize the fills that have a stable beams', async () => {
         // Fill #1 has a stable beam
         const stableBeamBadge = await page.$('#stable-beam-badge');
         expect(stableBeamBadge).to.be.not.null;
+    });
+
+    it('should successfully display runs statistics', async () => {
+        const statistics = await page.$('#statistics');
+        expect(statistics).to.be.not.null;
+        const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);
+        expect(statisticsContent).to.include('Over 2 minutes');
+        expect(statisticsContent).to.include('Under 2 minutes');
+        expect(statisticsContent).to.include('Per quality');
+        expect(statisticsContent).to.include('Per detectors');
     });
 
     it('should successfully display runs related to the fill', async () => {
