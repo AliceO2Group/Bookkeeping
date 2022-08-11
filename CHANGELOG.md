@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
+* Notable changes for users:
+  * `Runs`
+    * Run duration values:
+      * Is based on the trigger when it exists
+      * Is based on o2 when trigger does not exist and we is displayed with an Asterisk
+      * Is based on o2_stop - o2_trigger_end when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
+* Notable changes for developers:
+  * `GET` Runs API"
+    * `runDuration` New logic to generating a time stamp:
+      * Is based on the trigger when it exists;
+      * Is based on o2 when trigger does not exist;
+      * Is based on o2_stop - o2_trigger_end when there is a trigger start but there is no trigger_end;
+
 ## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
