@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
+* Notable changes for users:
+  * `odcTopologyFullname` field added to the runs detail page and can be exported.
+  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about:
+    * Fill efficiency 
+      * The fill efficiency, calculated based on the percent of time we had ongoing RUNS compared to the FILL duration during a stable beam
+      * The time elapsed between the stable beam start and the start of the first run, and the percentage that this time represents compared to the total SB duration (loss)
+      * The mean run duration
+      * The total run duration
+    * Related runs
+      * Total runs count
+      * Amount of runs above/under 2 minutes of duration
+      * Runs count grouped by quality
+      * Runs count grouped by detectors
+* Notable changes for developers:
+  * Runs API:
+    * `GET`
+      * `odcTopologyFullname` Can now be fetched in runs and a specific run.
+    * `POST`
+      * `odcTopologyFullname` Can now be created when creating/starting a run.
+    * `PATCH`
+      * `odcTopologyFullname` Can now be updated when updating a run.
+
 ## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
