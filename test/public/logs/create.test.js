@@ -69,6 +69,7 @@ module.exports = () => {
 
         // Return the page to home
         await goToPage(page, 'log-overview');
+        await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
 
         // Ensure you are at the overview page again
