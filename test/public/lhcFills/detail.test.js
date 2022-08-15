@@ -46,13 +46,13 @@ module.exports = () => {
 
     it('should display valid fill statistics', async () => {
         const efficiency = await page.$eval('#lhc-fill-efficiency', (element) => element.innerText);
-        expect(efficiency.endsWith('25.00%')).to.be.true;
+        expect(efficiency.endsWith('41.67%')).to.be.true;
         const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
         expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
         const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
-        expect(meanRunDuration.endsWith('01:30:00')).to.be.true;
+        expect(meanRunDuration.endsWith('01:40:00')).to.be.true;
         const totalRunsDuration = await page.$eval('#lhc-fill-totalRunsDuration', (element) => element.innerText);
-        expect(totalRunsDuration.endsWith('03:00:00')).to.be.true;
+        expect(totalRunsDuration.endsWith('05:00:00')).to.be.true;
     });
 
     it('should successfully display runs related to the fill', async () => {
