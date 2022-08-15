@@ -24,8 +24,8 @@ module.exports = () => {
     });
 
     it('should successfully display lhc fills details page', async () => {
-        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=5`, { waitUntil: 'networkidle0' });
-        await expectInnerText(page, 'h2', 'Fill No. 5');
+        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=6`, { waitUntil: 'networkidle0' });
+        await expectInnerText(page, 'h2', 'Fill No. 6');
     });
 
     it('should successfully emphasize the fills that have a stable beams', async () => {
@@ -42,6 +42,17 @@ module.exports = () => {
         expect(statisticsContent).to.include('Under 2 minutes');
         expect(statisticsContent).to.include('Per quality');
         expect(statisticsContent).to.include('Per detectors');
+    });
+
+    it('should display valid fill statistics', async () => {
+        const efficiency = await page.$eval('#lhc-fill-efficiency', (element) => element.innerText);
+        expect(efficiency.endsWith('41.67%')).to.be.true;
+        const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
+        expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
+        const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
+        expect(meanRunDuration.endsWith('01:40:00')).to.be.true;
+        const totalRunsDuration = await page.$eval('#lhc-fill-totalRunsDuration', (element) => element.innerText);
+        expect(totalRunsDuration.endsWith('05:00:00')).to.be.true;
     });
 
     it('should successfully display runs related to the fill', async () => {
