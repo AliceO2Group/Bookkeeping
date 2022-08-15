@@ -2077,6 +2077,10 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        odcTopologyFullName:
+          description: The name or location of the odc topology
+          type: string
+          nullable: true
         pdpConfigOption:
           description: The config option of the pdp.
           type: string

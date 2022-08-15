@@ -36,6 +36,7 @@ module.exports = () => {
                 tfbDdMode: 'processing',
                 lhcPeriod: 'lhc22b',
                 triggerValue: 'CTP',
+                odcTopologyFullName: 'synchronous-workflow',
             },
         });
 
@@ -57,6 +58,7 @@ module.exports = () => {
         expect(result.tfbDdMode).to.equal('processing');
         expect(result.lhcPeriod).to.equal('lhc22b');
         expect(result.triggerValue).to.equal('CTP');
+        expect(result.odcTopologyFullName).to.equal('synchronous-workflow');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
