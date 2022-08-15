@@ -259,8 +259,8 @@ html, body {
     display: grid;
 }
 
-.gr-1-2 {
-    grid-template-columns: 1fr 2fr;
+.sph2 {
+    grid-column: span 2;
 }
 
 .filters {

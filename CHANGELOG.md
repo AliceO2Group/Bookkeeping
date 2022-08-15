@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
 * Notable changes for users:
-  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about fill efficiency and related runs
+  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about:
+    * Fill efficiency 
+      * The fill efficiency, calculated based on the percent of time we had ongoing RUNS compared to the FILL duration during a stable beam
+      * The time elapsed between the stable beam start and the start of the first run, and the percentage that this time represents compared to the total SB duration (loss)
+      * The mean run duration
+      * The total run duration
+    * Related runs
+      * Total runs count
+      * Amount of runs above/under 2 minutes of duration
+      * Runs count grouped by quality
+      * Runs count grouped by detectors
 
 ## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
 * Notable changes for users:
