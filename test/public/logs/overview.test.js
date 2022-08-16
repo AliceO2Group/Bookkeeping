@@ -12,7 +12,15 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getFirstRow, getAllDataFields,
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    goToPage,
+    getFirstRow,
+    getAllDataFields,
+    checkColumnBalloon,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -48,7 +56,16 @@ module.exports = () => {
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping 2020');
+        expect(title).to.equal('AliceO2 Bookkeeping');
+    });
+
+    it('Should have balloon on title, tags and runs columns', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForTimeout(100);
+
+        await checkColumnBalloon(page, 1, 1);
+        await checkColumnBalloon(page, 1, 4);
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('can filter by log title', async () => {
@@ -64,7 +81,7 @@ module.exports = () => {
 
         // Insert some text into the filter
         await page.type('#titleFilterText', 'first');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -73,7 +90,7 @@ module.exports = () => {
 
         // Insert some other text into the filter
         await page.type('#titleFilterText', ' bogusbogusbogus');
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(300);
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
@@ -101,7 +118,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter
-        await page.type('#authorFilterText', 'John');
+        await page.type('#authorFilterText', 'Jane');
         await page.waitForTimeout(500);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -123,6 +140,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.resetLogsParams();
         });
+        await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
 
         // Expect the total number of rows to once more equal the original total
@@ -132,13 +150,16 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
-        await page.waitForTimeout(200);
-
         // Insert a minimum date into the filter
+        await page.waitForTimeout(100);
+        // 6 logs are created before this test
+        const limitDate = new Date();
+        const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
+            + String(limitDate.getDate()).padStart(2, '0')
+            + limitDate.getFullYear();
         await page.focus('#createdFilterFrom');
-        await page.waitForTimeout(100);
-        await page.type('#createdFilterFrom', '01012020');
-        await page.waitForTimeout(100);
+        await page.keyboard.type(limit);
+        await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -147,20 +168,18 @@ module.exports = () => {
 
         // Insert a maximum date into the filter
         await page.focus('#createdFilterTo');
-        await page.waitForTimeout(100);
-        await page.type('#createdFilterTo', '01022020');
-        await page.waitForTimeout(100);
+        await page.keyboard.type(limit);
+        await page.waitForTimeout(300);
 
-        // Expect the table to be empty
+        // 6 logs are created before this test
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(0);
+        expect(secondFilteredNumberOfRows).to.equal(6);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
-        await page.waitForTimeout(100);
-        await page.type('#createdFilterTo', '01012000');
-        await page.waitForTimeout(100);
+        await page.keyboard.type('01012000');
+        await page.waitForTimeout(300);
 
         // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
         const thirdFilteredRows = await page.$$('table tr');
@@ -172,16 +191,15 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.resetLogsParams();
         });
-        await page.waitForTimeout(100);
     });
 
     it('can filter by tags', async () => {
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Select the first available filter and wait for the changes to be processed
         const firstCheckboxId = 'tagCheckbox1';
         await pressElement(page, `#${firstCheckboxId}`);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -190,18 +208,18 @@ module.exports = () => {
 
         // Deselect the filter and wait for the changes to process
         await pressElement(page, `#${firstCheckboxId}`);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
 
         // Expect the total number of rows to equal the original total
         const firstUnfilteredRows = await page.$$('table tr');
         expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
 
-        // Select the first two available filters at once
-        const secondCheckboxId = 'tagCheckbox2';
+        // Select the first available filter and the last one at once
+        const secondCheckboxId = 'tagCheckbox5';
         await pressElement(page, `#${firstCheckboxId}`);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         await pressElement(page, `#${secondCheckboxId}`);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
@@ -210,7 +228,7 @@ module.exports = () => {
 
         // Set the filter operation to "OR"
         await pressElement(page, '#tagFilterOperationRadioButtonOR');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
 
         // Expect there now to be more rows than both the previous table and the table with only one filter
         const thirdFilteredRows = await page.$$('table tr');
@@ -229,7 +247,7 @@ module.exports = () => {
         const TAGS_LIMIT = 5;
         const buttonId = '#toggleMoreTags';
 
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect the page to have a button allowing for showing more tags
         const toggleFiltersButton = await page.$(buttonId);
@@ -238,7 +256,7 @@ module.exports = () => {
 
         // Expect the button to show at least one extra tag when clicked
         await pressElement(page, buttonId);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         let extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.true;
 
@@ -248,7 +266,7 @@ module.exports = () => {
 
         // Expect the button to remove the extra tag when clicked again
         await pressElement(page, buttonId);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.false;
     });
@@ -256,7 +274,7 @@ module.exports = () => {
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#title');
@@ -264,23 +282,23 @@ module.exports = () => {
         const sortingPreviewIndicator = await page.$('#title-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
-        await page.waitForTimeout(200);
         // Sort by log title in an ascending manner
         const titleHeader = await page.$('th#title');
-        await page.waitForTimeout(200);
         await titleHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect the log titles to be in alphabetical order
         const firstTitles = await getAllDataFields(page, 'title');
         expect(firstTitles).to.deep.equal(firstTitles.sort());
+        // Hover something else to have title sort displayed
+        await page.hover('th#author');
         await page.waitForTimeout(100);
         const sortingIndicator = await page.$('#title-sort');
         expect(Boolean(sortingIndicator)).to.be.true;
 
         // Toggle to sort this towards reverse alphabetical order
         await titleHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect the log titles to be in reverse alphabetical order
         const secondTitles = await getAllDataFields(page, 'title');
@@ -288,7 +306,7 @@ module.exports = () => {
 
         // Toggle to clear this sorting
         await titleHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect the log titles to no longer be sorted in any way
         const thirdTitles = await getAllDataFields(page, 'title');
@@ -298,7 +316,7 @@ module.exports = () => {
         // Sort by log author in ascending manner
         const authorHeader = await page.$('th#author');
         await authorHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect the authors to be in alphabetical order
         const firstAuthors = await getAllDataFields(page, 'author');
@@ -307,7 +325,7 @@ module.exports = () => {
         // Sort by creation date in ascending manner
         const createdAtHeader = await page.$('th#createdAt');
         await createdAtHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
 
         // Expect the log author column to be unsorted
         const secondAuthors = await getAllDataFields(page, 'author');
@@ -503,7 +521,7 @@ module.exports = () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
-        const firstButton = await page.$('button.btn-redirect');
+        const firstButton = await page.$('a.btn-redirect');
         const firstRowId = await firstButton.evaluate((btn) => btn.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
@@ -515,7 +533,7 @@ module.exports = () => {
         expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
     });
 
-    it('does not reset pagination filters when navigating away', async () => {
+    it.skip('does not reset pagination filters when navigating away', async () => {
         // Go back to the home page
         await goToPage(page, 'log-overview');
 
@@ -530,23 +548,27 @@ module.exports = () => {
         const secondPageButton = await page.$('#page2');
         await secondPageButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
+        // Expect the pagination to still be on page two
+        let currentPageSelected = await page.evaluate(() => window.model.logs.getSelectedPage());
+        expect(currentPageSelected).to.equal(2);
 
-        // Navigate to a log detail page
-        const firstRow = await page.$('button.btn-redirect');
-        const firstRowId = await firstRow.evaluate((btn) => btn.id);
+        // Navigate to a log detail page via href
+        const firstRow = await page.$('a.btn-redirect');
+        const firstRowId = await firstRow.evaluate((aHref) => aHref.id);
         parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
-        await firstRow.evaluate((button) => button.click());
+        await firstRow.evaluate((aHref) => aHref.click());
         await page.waitForTimeout(500);
+
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
 
         // Go back to the home page again
         await page.goBack();
-        await page.waitForTimeout(100);
-
+        await page.waitForTimeout(400);
+        const currentLocation = await page.url();
+        expect(currentLocation).to.equal(`${url}/?page=log-overview`);
         // Expect the pagination to still be on page two
-        const firstPageButton = await page.$('#page1');
-        const firstPageButtonClass = await page.evaluate((element) => element.className, firstPageButton);
-        const secondPageButtonClass = await page.evaluate((element) => element.className, secondPageButton);
-        expect(firstPageButtonClass).to.not.include('selected');
-        expect(secondPageButtonClass).to.include('selected');
+        currentPageSelected = await page.evaluate(() => window.model.logs.getSelectedPage());
+        expect(currentPageSelected).to.equal(2);
     });
 };

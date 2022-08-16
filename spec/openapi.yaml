@@ -1,9 +1,9 @@
-# Generated on Fri, 08 Apr 2022 10:27:25 GMT
+# Generated on Tue, 09 Aug 2022 15:50:26 GMT
 
 openapi: 3.0.0
 info:
   title: ALICE Bookkeeping
-  version: 0.0.0
+  version: 0.28.0
   license:
     name: GNU General Public License v3.0
     url: http://alice-o2.web.cern.ch/license
@@ -57,6 +57,56 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
+  /environments:
+    get:
+      operationId: listEnvironments
+      summary: Fetches all the environments
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfEnvironments'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
+    post:
+      operationId: createEnvironment
+      summary: Creation of the environment object.
+      requestBody:
+        $ref: '#/components/requestBodies/CreateEnvironment'
+      responses:
+        '201':
+          $ref: '#/components/responses/Environment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
+  /environments/{envId}:
+    parameters:
+      - $ref: '#/components/parameters/EnvId'
+    put:
+      operationId: replaceEnvironment
+      summary: Update of the environment object.
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateEnvironment'
+      responses:
+        '201':
+          $ref: '#/components/responses/Environment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - environment
   /flps:
     get:
       operationId: listFlps
@@ -101,6 +151,10 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+  /flps/{flpName}/runs/{runNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FlpName'
+      - $ref: '#/components/parameters/RunNumber'
     patch:
       operationId: updateFlp
       summary: Update an existing flp
@@ -117,6 +171,101 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - flp
+  /lhcFills:
+    get:
+      operationId: listLhcFills
+      summary: List all LhcFills
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfLhcFills'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+    post:
+      operationId: createLhcFill
+      summary: Creates a lhcfill object
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLhcFill'
+      responses:
+        '201':
+          $ref: '#/components/responses/LhcFill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /lhcFills/{fillNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FillNumber'
+    get:
+      operationId: getLhcFillById
+      summary: List all LhcFills
+      responses:
+        '200':
+          $ref: '#/components/responses/LhcFill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+    patch:
+      operationId: updateLhcFill
+      summary: Adds a new LhcFill
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLhcFill'
+      responses:
+        '201':
+          $ref: '#/components/responses/LhcFill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+  /lhcFills/{fillNumber}/runs:
+    parameters:
+      - $ref: '#/components/parameters/FillNumber'
+    get:
+      operationId: listRunsByFillNumber
+      summary: Lists all tags associated with a log
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfRuns'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
+  /lhcFills/{fillNumber}/runs/{runNumber}:
+    parameters:
+      - $ref: '#/components/parameters/FillNumber'
+      - $ref: '#/components/parameters/RunNumber'
+    get:
+      operationId: getRunByFillNumberAndRunNumber
+      summary: Gives the possibility to find a run by run number
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - lhcFill
   /logs:
     get:
       operationId: listLogs
@@ -259,6 +408,26 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+    patch:
+      operationId: updateRunByRunNumber
+      summary: Updates a run by runNumber
+      parameters:
+        - $ref: '#/components/parameters/RunNumberQuery'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunByRunNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /runs/{runId}:
     parameters:
       - $ref: '#/components/parameters/RunId'
@@ -288,6 +457,26 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
+    put:
+      operationId: replaceRun
+      summary: updates the run quality of a run
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunQuality'
+      responses:
+        '201':
+          $ref: '#/components/responses/Run'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       tags:
@@ -307,6 +496,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - run
   /status:
     get:
       operationId: getDeployInformation
@@ -426,6 +617,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - tag
   /tags/{tagId}:
     parameters:
       - $ref: '#/components/parameters/TagId'
@@ -483,6 +676,20 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    EnvId:
+      name: envId
+      description: The id of the environment to receive
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EnvironmentId'
+    FillNumber:
+      name: fillNumber
+      description: The id of the lhcFill to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
     FilterLogs:
       name: filter
       description: Specifies the filter requirements.
@@ -497,6 +704,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    FlpName:
+      name: flpName
+      description: The name of the flp object
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FlpName'
     FlpSorting:
       in: query
       name: sort
@@ -534,6 +748,20 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/EntityId'
+    RunNumber:
+      name: runNumber
+      description: The number given to the run.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
+    RunNumberQuery:
+      name: runNumber
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/RunNumber'
+      description: Run number but in the query
     RunSorting:
       in: query
       name: sort
@@ -570,12 +798,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAttachments'
+    CreateEnvironment:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateEnvironment'
     CreateFlp:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateFlp'
+    CreateLhcFill:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateLhcFill'
     CreateLog:
       required: true
       content:
@@ -606,18 +846,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Run'
+    UpdateEnvironment:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateEnvironment'
     UpdateFlp:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateFlp'
-    UpdateRunTags:
+    UpdateRunByRunNumber:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UpdateRunTags'
+            $ref: '#/components/schemas/UpdateRunByRunNumber'
+    UpdateRunQuality:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunQuality'
   responses:
     ArrayOfAttachments:
       description: Expected response to a valid request.
@@ -625,12 +877,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfEnvironments:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfEnvironmentsResponse'
     ArrayOfFlps:
       description: Expected response to a valid request.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfFlpsResponse'
+    ArrayOfLhcFills:
+      description: Expected response to a valid request
+      content:
+        applicaiton/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLhcFillsResponse'
     ArrayOfLogs:
       description: Expected response to a valid request.
       content:
@@ -673,6 +937,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    Environment:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EnvironmentResponse'
     Flp:
       description: Expected response to a valid request.
       content:
@@ -685,6 +955,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Errors'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    LhcFill:
+      description: Expected response of an LhcFill
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LhcFillResponse'
     Log:
       description: Expected response to a valid request.
       content:
@@ -767,6 +1049,31 @@ components:
       required:
         - data
       additionalProperties: false
+    ArrayOfEnvironments:
+      description: A list of Environment objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Environment'
+    ArrayOfEnvironmentsResponse:
+      description: Response containing multiple environments.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfEnvironments'
+        meta:
+          $ref: '#/components/schemas/ArrayOfEnvironmentsResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfEnvironmentsResponseMeta:
+      description: The metadata related to an array of Environments response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
     ArrayOfFlps:
       description: A list of Flp objects.
       type: array
@@ -785,6 +1092,29 @@ components:
       additionalProperties: false
     ArrayOfFlpsResponseMeta:
       description: The metadata related to an array of flps response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfLhcFills:
+      description: A list of LhcFill objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/LhcFill'
+    ArrayOfLhcFillsResponse:
+      description: Alist of LhcFills
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfLhcFills'
+        meta:
+          $ref: '#/components/schemas/ArrayOfLhcFillsResponseMeta'
+      additionalProperties: false
+    ArrayOfLhcFillsResponseMeta:
+      description: The metadata related to an array of LhcFills response.
       type: object
       properties:
         page:
@@ -939,17 +1269,31 @@ components:
       required:
         - data
       additionalProperties: false
-    CommaSeparatedEntityIds:
-      description: CSV style string of EntityIds.
+    CommaSeparatedStrings:
+      description: CSV style string list
       type: string
-      pattern: ^([1-9]+\d*,)*[1-9]+\d*$
-      example: 1,2,3
+      example: FOOD,MAINTENANCE
     CreateAttachments:
       description: Describes an attachment
       type: object
       properties:
         attachments:
           $ref: '#/components/schemas/ArrayOfAttachments'
+      additionalProperties: false
+    CreateEnvironment:
+      description: Describes an environment
+      type: object
+      properties:
+        createdAt:
+          $ref: '#/components/schemas/EnvironmentAt'
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+      required:
+        - envId
       additionalProperties: false
     CreateFlp:
       description: Describes an flp
@@ -965,14 +1309,35 @@ components:
         - hostname
         - name
       additionalProperties: false
+    CreateLhcFill:
+      description: Describes an lhcfill
+      properties:
+        beamType:
+          $ref: '#/components/schemas/LhcFillBeamType'
+        fillingSchemeName:
+          description: Filling scheme name
+          type: string
+          nullable: true
+        stableBeamEnd:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        stableBeamStart:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        stableBeamsDuration:
+          description: Float value of the time
+          type: integer
+          nullable: true
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
-        attachments:
-          $ref: '#/components/schemas/ArrayOfAttachments'
-        parentLogId:
-          $ref: '#/components/schemas/EntityId'
         runNumbers:
           $ref: '#/components/schemas/RunNumbers'
         text:
@@ -1041,6 +1406,126 @@ components:
       description: The unique identifier of this entity.
       type: integer
       minimum: 1
+    Environment:
+      description: The Environment object.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EnvironmentId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+        status:
+          description: The status of the environment.
+          type: string
+          nullable: true
+        statusMessage:
+          description: >-
+            A message explaining the status or the current state of the
+            environment.
+          type: string
+          nullable: true
+        toredownAt:
+          description: Unix timestamp when this entity was tore down.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      required:
+        - id
+      additionalProperties: false
+    EnvironmentAt:
+      description: The earliest allowed unix timestamp for the fetched data.
+      type: integer
+      minimum: 0
+      example: 853113599
+    EnvironmentId:
+      description: The environment identifier.
+      type: string
+      nullable: true
+    EnvironmentResponse:
+      description: The Environment response object
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Environment'
+      required:
+        - data
+      additionalProperties: false
+    EnvironmentRun:
+      description: Run that needs to be added.
+      type: integer
+      minimum: 0
+    EnvironmentStatus:
+      description: Current environment status
+      type: string
+      nullable: true
+    EnvironmentStatusMessage:
+      description: Message about the current status.
+      type: string
+      nullable: true
+    EorReason:
+      description: >-
+        An object containing information with regards to the reason a run was
+        ended.
+      type: object
+      properties:
+        category:
+          description: The category of the general reason for ending the run.
+          type: string
+          nullable: true
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        description:
+          description: The extra information if needed for an end of run. It can be empty.
+          type: string
+          nullable: true
+        id:
+          $ref: '#/components/schemas/EntityId'
+        lastEditedName:
+          description: The last person that edited the end-of-run reason.
+          type: string
+          nullable: true
+        reasonTypeId:
+          description: Id for the general reason that was selected.
+          type: integer
+          minimum: 0
+          nullable: false
+        runId:
+          description: Id for the run for which the eor reason was selected.
+          type: integer
+          minimum: 0
+          nullable: false
+        title:
+          description: The title of the general reason for ending the run.
+          type: string
+          nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      additionalProperties: false
+    EorReasonList:
+      description: A list of end of run reasons.
+      type: array
+      items:
+        $ref: '#/components/schemas/EorReason'
     Error:
       description: An Error object.
       type: object
@@ -1054,7 +1539,9 @@ components:
           $ref: '#/components/schemas/ErrorSource'
         status:
           description: The HTTP status code applicable to this problem.
-          type: string
+          oneOf:
+            - type: string
+            - type: integer
         title:
           description: A short, human-readable summary of the problem.
           type: string
@@ -1133,12 +1620,12 @@ components:
           $ref: '#/components/schemas/EntityId'
         rootLog:
           $ref: '#/components/schemas/EntityId'
-        tag:
-          $ref: '#/components/schemas/FilterLogsTagOptions'
+        tags:
+          $ref: '#/components/schemas/FilterLogsTagsOptions'
         title:
           $ref: '#/components/schemas/LogTitle'
       additionalProperties: false
-    FilterLogsTagOptions:
+    FilterLogsTagsOptions:
       description: Specifies the tag related filter requirements for a request.
       type: object
       properties:
@@ -1149,7 +1636,7 @@ components:
             - and
             - or
         values:
-          $ref: '#/components/schemas/CommaSeparatedEntityIds'
+          $ref: '#/components/schemas/CommaSeparatedStrings'
       required:
         - operation
         - values
@@ -1242,6 +1729,54 @@ components:
       description: Number of subtimeframes processed in this FLP. Updated regularly.
       type: integer
       minimum: 0
+    LhcFill:
+      description: Describes the current situation of lhc
+      type: object
+      properties:
+        beamType:
+          $ref: '#/components/schemas/LhcFillBeamType'
+        fillNumber:
+          $ref: '#/components/schemas/EntityId'
+        fillingSchemeName:
+          description: Name of the filling schme
+          type: string
+          nullable: true
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+          nullable: true
+        stableBeamsDuration:
+          description: Float value of the time
+          type: integer
+          nullable: true
+        stableBeamsEnd:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        stableBeamsStart:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+      additionalProperties: false
+    LhcFillBeamType:
+      description: A enum of the different collision types of the beam
+      nullable: true
+      type: string
+    LhcFillResponse:
+      description: Response containing a single LhcFill.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/LhcFill'
+      required:
+        - data
+      additionalProperties: false
     Log:
       description: Describes an intervention or an event that happened.
       type: object
@@ -1472,6 +2007,22 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceDipolePolarity:
+          description: The polarity of the alice dipole current.
+          type: string
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceL3Polarity:
+          description: The polarity of the L3 magnet
+          type: string
+          nullable: true
         bytesReadOut:
           $ref: '#/components/schemas/RunBytesReadOut'
         createdAt:
@@ -1484,15 +2035,40 @@ components:
         dd_flp:
           $ref: '#/components/schemas/RunDdFlp'
         detectors:
-          $ref: '#/components/schemas/RunArrayOfDetectors'
+          $ref: '#/components/schemas/RunDetectorsList'
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
         environmentId:
           $ref: '#/components/schemas/RunEnvironmentId'
+        eorReasons:
+          $ref: '#/components/schemas/EorReasonList'
         epn:
           $ref: '#/components/schemas/RunEpn'
         epnTopology:
           $ref: '#/components/schemas/RunEpnTopology'
+        fillNumber:
+          description: Id of a lhcFill object
+          type: integer
+          minimum: 1
+          nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
+        lhcBeamEnergy:
+          description: Energy of the beam (GeV)
+          type: number
+          nullable: true
+        lhcBeamMode:
+          description: LHC Beam Mode (STABLE BEAMS,INJECTION PROBE BEAM, ...)
+          type: string
+          nullable: true
+        lhcBetaStar:
+          description: LHC Beta * in meters
+          type: number
+          nullable: true
+        lhcPeriod:
+          description: The period tag of an LHC
+          type: string
+          nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
@@ -1501,6 +2077,20 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        odcTopologyFullName:
+          description: The name or location of the odc topology
+          type: string
+          nullable: true
+        pdpConfigOption:
+          description: The config option of the pdp.
+          type: string
+          nullable: true
+        pdpTopologyDescriptionLibraryFile:
+          description: Pdp file location.
+          type: string
+          nullable: true
+        runDuration:
+          $ref: '#/components/schemas/RunDuration'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
@@ -1509,6 +2099,10 @@ components:
           $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        tfbDdMode:
+          description: The mode of the tfb dd.
+          type: string
+          nullable: true
         timeO2End:
           $ref: '#/components/schemas/RunO2End'
         timeO2Start:
@@ -1517,6 +2111,10 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        triggerValue:
+          description: Value of the current trigger can be OFF, LTU, CTP
+          type: string
+          nullable: true
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -1524,7 +2122,6 @@ components:
           example: 853113599
       required:
         - bytesReadOut
-        - environmentId
         - id
         - nDetectors
         - nEpns
@@ -1538,9 +2135,6 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunArrayOfDetectors:
-      type: string
-      description: Comma seperated string
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
@@ -1557,6 +2151,15 @@ components:
       description: The amount of detectors in a single run.
       type: integer
       minimum: 0
+    RunDetectorsList:
+      description: A comma seperated string for the detectors used
+      type: string
+      nullable: true
+    RunDuration:
+      description: The duration of the run between trigger start and trigger end in ms
+      type: integer
+      nullable: true
+      example: 60000
     RunEnvironmentId:
       description: The unique identifier of this entity.
       type: string
@@ -1587,11 +2190,13 @@ components:
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunO2Start:
       description: Unix timestamp when this entity was created.
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunOrigin:
       description: Type of creator.
       type: string
@@ -1631,11 +2236,13 @@ components:
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunTrgStart:
       description: Unix timestamp when this entity was created.
       type: integer
       minimum: 0
       example: 853113599
+      nullable: true
     RunType:
       description: Specifies the type of run.
       type: string
@@ -1728,6 +2335,19 @@ components:
       required:
         - data
       additionalProperties: false
+    UpdateEnvironment:
+      description: Describes an update to an environment
+      type: object
+      properties:
+        run:
+          $ref: '#/components/schemas/EnvironmentRun'
+        status:
+          $ref: '#/components/schemas/EnvironmentStatus'
+        statusMessage:
+          $ref: '#/components/schemas/EnvironmentStatusMessage'
+        toredownAt:
+          $ref: '#/components/schemas/EnvironmentAt'
+      additionalProperties: false
     UpdateFlp:
       description: Describes an update to an flp
       type: object
@@ -1743,16 +2363,38 @@ components:
         nTimeframes:
           $ref: '#/components/schemas/FlpTimeframes'
       additionalProperties: false
-    UpdateRunTags:
-      description: List of labels attached to something for the purpose of identification.
+    UpdateRunByRunNumber:
+      description: Updates Run by runNumber
       type: object
       properties:
-        tags:
-          type: array
-          description: Array of tags IDs
-          items:
-            type: number
-            description: Tag ID
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
+        lhcBeamEnergy:
+          description: Energy of the beam (GeV)
+          type: number
+          nullable: true
+        lhcBeamMode:
+          description: LHC Beam Mode (STABLE BEAMS,INJECTION PROBE BEAM, ...)
+          type: string
+          nullable: true
+        lhcBetaStar:
+          description: LHC Beta * in meters
+          type: number
+          nullable: true
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
+      additionalProperties: false
+    UpdateRunQuality:
+      description: Updates the run quality values
+      properties:
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
     User:
       description: Describes an intervention or an event that happened.

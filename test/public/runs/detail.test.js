@@ -49,11 +49,20 @@ module.exports = () => {
     });
 
     it('successfully changed run tags in EDIT mode', async () => {
-        await pressElement(page, '#tags-control option[value="1"]');
+        await pressElement(page, '#tags-selection #tagCheckbox1');
         await page.waitForTimeout(100);
-        await pressElement(page, '#update-tags');
+        await pressElement(page, '#save-run');
         await page.waitForTimeout(100);
-        expect(await page.$eval('#tags-control option[value="1"]', (elem)=>elem.selected)).to.be.true;
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        expect(await page.$eval('#tags-selection #tagCheckbox1', (elem)=>elem.checked)).to.be.true;
+    });
+
+    it('should show lhc data in edit mode', async () => {
+        await page.waitForTimeout(100);
+        const element = await page.$('#lhc-fill-fillNumber>strong');
+        const value = await element.evaluate((el) => el.textContent);
+        expect(value).to.equal('Fill number:');
     });
 
     it('successfully exited EDIT mode of a run', async () => {
@@ -75,7 +84,12 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=logs`)).to.be.true;
     });
-
+    it('should show lhc data in normal mode', async () => {
+        await page.waitForTimeout(100);
+        const element = await page.$('#lhc-fill-fillNumber>strong');
+        const value = await element.evaluate((el) => el.textContent);
+        expect(value).to.equal('Fill number:');
+    });
     it('can navigate to a log detail page', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
@@ -85,6 +99,25 @@ module.exports = () => {
         await page.waitForTimeout(300);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
+    });
+
+    it('should successfully navigate to the LHC fill details page', async () => {
+        await page.goto(`${url}/?page=run-detail&id=106`, { waitUntil: 'networkidle0' });
+        await page.waitForTimeout(100);
+
+        const fillNumberSelector = '#lhc-fill-fillNumber a';
+        // Remove "row" prefix to get fill number
+        const fillNumber = await page.$eval(fillNumberSelector, (element) => element.innerText);
+
+        await page.$eval(fillNumberSelector, (link) => link.click());
+        await page.waitForNetworkIdle();
+        await page.waitForTimeout(100);
+
+        const redirectedUrl = await page.url();
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
 
     it('notifies if a specified run id is invalid', async () => {

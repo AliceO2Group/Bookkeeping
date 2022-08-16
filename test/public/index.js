@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const LhcFillsSuite = require('./lhcFills');
 const LogsSuite = require('./logs');
 const RunsSuite = require('./runs');
 const SubsystemsSuite = require('./subsystems');
@@ -18,9 +19,12 @@ const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
 const AboutSuite = require('./about');
+const EnvsSuite = require('./envs');
 
 module.exports = () => {
+    describe('LhcFills', LhcFillsSuite);
     describe('Logs', LogsSuite);
+    describe('Envs', EnvsSuite);
     describe('Runs', RunsSuite);
     describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);

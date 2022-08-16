@@ -1,5 +1,19 @@
 # Bookkeeping data model
 
+- [Bookkeeping data model](#bookkeeping-data-model)
+  - [Introduction](#introduction)
+  - [Further explanations of fields tables](#further-explanations-of-fields-tables)
+  - [Runs](#runs)
+    - [End of run reasons](#end-of-run-reasons)
+      - [Reason Types (for EOR)](#reason-types-for-eor)
+  - [FLPs](#flps)
+  - [Log Entries](#log-entries)
+    - [Attachments](#attachments)
+  - [Users](#users)
+  - [Tags](#tags)
+  - [Environments](#environments)
+  - [LhcFills](#lhcfills)
+
 ## Introduction
 This document describes the data model of the ALICE O2 Bookkeeping system.   
 For simplicity, the following info is not described in this document: 
@@ -10,6 +24,9 @@ For simplicity, the following info is not described in this document:
 ## Further explanations of fields tables
 
 Concerning the **Update time** of the fields:
+- At COF: synchronously at LhcFill creation
+- At COE: synchronously at Environment creation
+- At EOE: synchronously at End of environment
 - At SOR: synchronously at Start of Run 
 - At EOR: synchronously at End of Run 
 - During Run: periodically during the run, normally to update/overwrite counters
@@ -24,24 +41,67 @@ Concerning the **Update mode** of the fields:
 ## Runs
 
 **Description:** A Run is a synchronous data taking time period, performed in the O2 computing farm with a specific and well-defined configuration. It normally ranges from a few minutes to tens of hours and can include one or many ALICE detectors. It provides a unique identifier for the data set generated during the run.   
+**Relation:** `run` hasMany `eor_reasons`
 **DB main table**: `runs`   
+
+| **Field**                                | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ---------------------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `run_number`                             | Integer ID of a specific data taking period. Should be positive and strictly increasing.| `23`  | At SOR | | Insert |
+| `time_o2_start`                          | Time when Run was started (START transition). | | At SOR | `run_number` | Insert |
+| `time_o2_end`                            | Time when Run was stopped. (STOP transition). | | At EOR | `run_number` | Insert |
+| `time_trg_start`                         | Time when the Trigger subsystem was started. | | At SOR | `run_number` | Insert |
+| `time_trg_end`                           | Time when the Trigger subsystem was stopped. | | At EOR | `run_number` | Insert |
+| `environment_id`                         | Unique identifier of the AliECS environment. | `2UE5fEfvE4J` | At SOR | `run_number` | Insert |
+| `run_type`                               | Type of the run, each type will deploy different workflows and/or configurations.	| `PHYSICS`, `TECHNICAL`, `PEDESTAL` | At SOR | `run_number` | Insert |
+| `run_quality`                            | Overall quality of the data from the data taking point of view. | `good`, `bad`, `test` | At EOR | `run_number` | Insert |
+| `n_detectors`                            | Number of detectors in the Run. | `4` | At SOR | `run_number` | Insert |
+| `n_flps`                                 | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
+| `n_epns`                                 | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
+| `epn_topology`                           | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
+| `fill_number`                            | The fill connected to the run                 | `1, 2, 1651`                        |  | `run_number` | Update |
+| `lhc_beam_energy`                        | Energy of the beam (GeV)                      | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
+| `lhc_beam_mode`                          | LHC Beam Mode                                 | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
+| `lhc_beta_star`                          | LHC Beta * in meters                          | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `alice_l3_current`                       | Current in L3 magnet (Amperes)                | `3.14, 2`                           |  | `run_number` | Update |
+| `alice_l3_polarity`                      | The polarity of the L3 magnet                 | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| `alice_dipole_current`                   | Current in Dipole magnet (Amperes)            | `ITS,TPC,TOF`                       |  | `run_number` | Update |
+| `alice_dipole_polarity`                  | The polarity of the dipole magnet             | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
+| `trg_global_run_enabled`                 | If the global run trigger is enabled          | `true, false`                       |  | `run_number` | Update |
+| `trg_enabled`                            | If the trigger is enabled                     | `true, false`                       |  | `run_number` | Update |
+| `pdp_config_option`                      | Configuration option PDP                      | `Repository Hash`                   |  | `run_number` | Update |
+| `pdp_topology_description_library_file`  | File location of the pdp topology             | `some/location.desc`                |  | `run_number` | Update |
+| `tfb_dd_mode`                            | The mode of the TFB DD                        | `processing`                        |  | `run_number` | Update |
+| `lhc_period`                             | The period value of the lhc                   | `lhc22b`                            |  | `run_number` | Update |
+| `odc_topology_full_name`                 | File location or setting for odc topology     | `hash, some/location.desc`          |  | `run_number` | Update |
+
+### End of run reasons
+
+**Description:** EOR Reasons for which runs have ended. They contain a general reason_type and extra information with regards to user selecting it and other information
+**Relation:** `eor_reason` hasOne `reason_type`
+**DB main table**: `eor_reasons`
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
 | ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
-| `run_number`                  | Integer ID of a specific data taking period. Should be positive and strictly increasing.| `23`  | At SOR | | Insert |
-| `time_o2_start`               | Time when Run was started (START transition). | | At SOR | `run_number` | Insert |
-| `time_o2_end`                 | Time when Run was stopped. (STOP transition). | | At EOR | `run_number` | Insert |
-| `time_trg_start`              | Time when the Trigger subsystem was started. | | At SOR | `run_number` | Insert |
-| `time_trg_end`                | Time when the Trigger subsystem was stopped. | | At EOR | `run_number` | Insert |
-| `environment_id`              | Unique identifier of the AliECS environment. | `2UE5fEfvE4J` | At SOR | `run_number` | Insert |
-| `run_type`                    | Type of the run, each type will deploy different workflows and/or configurations.	| `PHYSICS`, `TECHNICAL`, `PEDESTAL` | At SOR | `run_number` | Insert |
-| `run_quality`                 | Overall quality of the data from the data taking point of view. | `good`, `bad`, `test` | At EOR | `run_number` | Insert |
-| `n_detectors`                 | Number of detectors in the Run. | `4` | At SOR | `run_number` | Insert |
-| `n_flps`                      | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
-| `n_epns`                      | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
-| `epn_topology`                | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
-| `detectors`                   | List of detectors in the run | `ITS,TPC,TOF` | At SOR | `run_number` | Insert |
+| `id`                          | Auto-Incremented id for eor reason | `1`  | AT COE| `id` | Insert |
+| `description`                    | Other information on the reason | `Run stopped due to faulty detector`  | AT COE| `description` | Insert |
+| `reason_type_id`                    | Id of the general reason type belonging to | '1'  | AT COE| `reason_type_id` | Insert |
+| `run_id`                    | RUN id for which the reason was added | `500540`  | AT COE| `run_id` | Insert |
+| `last_edited_name`        | Name of the person who last edited the fields | `Anonymous`, `Jan Janssen` | When fields are edited | `id`| Update |
+| `created_at`                   | When the entity is created | | AT COE | `created_at`| Insert |
+| `updated_at`        | When entity is edited |  | When fields are edited | `updated_at`| Update |
 
+#### Reason Types (for EOR)
+
+**Description:** Reason Tpes for which runs have ended. This table describes general reasons categories and titles as per the RC criteria
+**DB main table**: `reason_types`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | Auto-Incremented id for eor reason | `1`  | AT COE| `id` | Insert |
+| `category`                    | Category represented by a String | `Data Sanity and Quality`  | AT COE| `category` | Insert |
+| `title`                    | Title represented by a String | `Incomplete TF`  | AT COE| `title` | Insert |
+| `created_at`                   | When the entity is created | | AT COE | `created_at`| Insert |
+| `updated_at`        | When entity is edited |  | When fields are edited | `updated_at`| Update |
 
 ## FLPs
 
@@ -91,7 +151,7 @@ Concerning the **Update mode** of the fields:
 | `log_id`                      | ID of Log Entry to which the attachment belongs to. | `123` | At Log Entry creation | `id` | Insert |
 
 
-### Users
+## Users
 
 **Description:** Bookkeeping user. Used to identify the author of a Log Entry.   
 **DB main table**: `users`
@@ -102,7 +162,7 @@ Concerning the **Update mode** of the fields:
 | `name`                        | User full name.. |  | At first login | `id` | Insert |
 
 
-### Tags
+## Tags
 
 **Description:** Free text labels to add to Runs or Log Entries.    
 **DB main table**: `tags`
@@ -115,4 +175,32 @@ Concerning the **Update mode** of the fields:
 | `last_edited_name`        | Name of the person who last edited the email/mattermost fields | `Anonymous`, `Jan Janssen` | When email/mattermost is edited | `id`| Update |
 
 
+## Environments
 
+**Description:** The overall environment the runs are performed in.    
+**DB main table**: `envronments`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | Environment id | `Dxi029djX`, `EIDO13i3D`  | AT COE| `id` | Insert |
+| `createdAt`                   | When the environment is created | | AT COE | `id`| Insert |
+| `toredownAt`                  | When the environment is stopped | | AT EOE | `id`| Update |
+| `status`                      | Actual status of the envrionment | `STOPPED`, `STARTED`|  | `id`| Update |
+| `statusMessage`               | A bigger message to show more detail about the status | `Environment sucessfully closed`, `Error creating envrionment: bad configuration` | | `id`| Update |
+
+
+### LhcFills
+
+**Description:** The fill of    
+**DB main table**: `lhcFills`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `fillNumber`                  | lhcFill id                          | `1, 2, 3215`                        | AT COF | `fillNumber` | Insert |
+| `createdAt`                   | When the lhcFill is created         |                                     | AT COF | `fillNumber` | Insert |
+| `updatedAt`                   | When the lhcFill is updated         |                                     |        | `fillNumber` | Update |
+| `stableBeamsStart`            | Start of STABLE BEAMS               |                                     |        | `fillNumber` | Update |
+| `stableBeamsEnd`              | End of STABLE BEAMS                 |                                     |        | `fillNumber` | Update |
+| `stableBeamsDuration`         | STABLE BEAMS duration in seconds    |                                     |        | `fillNumber` | Update |
+| `beamType`                    | Type of collisions                  | `PROTON-PROTON` `Pb-Pb` `Pb-PROTON` |        | `fillNumber` | Update |
+| `fillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |

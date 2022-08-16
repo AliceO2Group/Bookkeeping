@@ -28,15 +28,15 @@ type FlpApiService service
 FlpApiService Adds a new flp
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
-@return LogResponse
+@return FlpResponse
 */
-func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (LogResponse, *http.Response, error) {
+func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (FlpResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue LogResponse
+		localVarReturnValue FlpResponse
 	)
 
 	// create path and map variables
@@ -108,7 +108,7 @@ func (a *FlpApiService) CreateFlp(ctx context.Context, body CreateFlp) (LogRespo
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 201 {
-			var v LogResponse
+			var v FlpResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()

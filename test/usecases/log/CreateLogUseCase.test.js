@@ -67,13 +67,13 @@ module.exports = () => {
     });
 
     it('should insert a new Log with the tags as provided', async () => {
-        const expectedTagIds = [1, 3];
+        const expectedTagTexts = ['FOOD', 'MAINTENANCE'];
 
-        createLogDto.body.tags = expectedTagIds;
+        createLogDto.body.tags = expectedTagTexts;
         const { result } = await new CreateLogUseCase()
             .execute(createLogDto);
 
-        expect(result.tags.map(({ id }) => id)).to.deep.equal(expectedTagIds);
+        expect(result.tags.map(({ text }) => text)).to.deep.equal(expectedTagTexts);
     });
 
     it('should create a new Log with empty title but a parent log', async () => {
@@ -100,9 +100,7 @@ module.exports = () => {
             { id: 2, runNumber: 2 },
             { id: 3, runNumber: 3 },
         ];
-        const givenRunNumbers = '1,2,2,3,3,1,2,1,2,3';
-
-        createLogDto.body.runNumbers = givenRunNumbers;
+        createLogDto.body.runNumbers = '1,2,2,3,3,1,2,1,2,3';
 
         createLogDto.session = {
             personid: 2,

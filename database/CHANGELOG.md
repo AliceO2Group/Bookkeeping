@@ -1,3 +1,39 @@
+## [0.36.0]
+* Changes made to the database:
+    * Table `runs` - added field:
+        * `odcTopologyFullname` - string ('default', 'hash')
+
+## [0.35.0]
+* Changes made to the database:
+    * table `runs` - added fields:
+        * `lhcPeriod` - string ('lhc22b')
+        * `nEpns` - number
+        * `trigger_value` - enum (OFF, CTP, LTU)
+## [0.32.0]
+* Changes made to the database:
+    * table `runs` - added fields:
+        * `trgGlobalRunEnabled` - boolean ('true', 'false')
+        * `trgEnabled` - boolean ('true', 'false')
+        * `pdpConfigOption` - string ('Repository Hash')
+        * `pdpTopologyDescriptionLibraryFile` - string ('some/location.desc', 'production/production.desc')
+        * `tfbDdMode` - string ('processing')
+
+## [0.31.0]
+* Changes made to the database:
+  * table `runs`:
+    * `aliceL3Polarity` - string ('positive', 'negative')
+    * `aliceDipolePolarity` - string ('positive', 'negative')
+
+## [0.28.0]
+* Changes made to the database:
+  * table `runs`:
+    * `detectors` is now STRING;
+    * new columns for LHC Fills data: `fill_number, lhc_beam_energy, lhc_beam_mode, lhc_beta_star, alice_l3_current, alice_dipole_current`
+  * new table `lhc_fills`
+  * new table `eor_reasons`
+  * new table `reason_types`
+* Respective changes were applied to GO APIs
+
 ## [0.21.0]
 * Changes made to the database:
   * runQuality:

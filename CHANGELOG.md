@@ -2,6 +2,135 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
+* Notable changes for users:
+  * `odcTopologyFullname` field added to the runs detail page and can be exported.
+  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about:
+    * Fill efficiency 
+      * The fill efficiency, calculated based on the percent of time we had ongoing RUNS compared to the FILL duration during a stable beam
+      * The time elapsed between the stable beam start and the start of the first run, and the percentage that this time represents compared to the total SB duration (loss)
+      * The mean run duration
+      * The total run duration
+    * Related runs
+      * Total runs count
+      * Amount of runs above/under 2 minutes of duration
+      * Runs count grouped by quality
+      * Runs count grouped by detectors
+* Notable changes for developers:
+  * Runs API:
+    * `GET`
+      * `odcTopologyFullname` Can now be fetched in runs and a specific run.
+    * `POST`
+      * `odcTopologyFullname` Can now be created when creating/starting a run.
+    * `PATCH`
+      * `odcTopologyFullname` Can now be updated when updating a run.
+
+## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
+* Notable changes for users:
+  * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
+  * Run LHC period, number of EPNs are now shown in the run details and can be exported via the export runs tab;
+  * `trgEnabled` + `trgGlobalRunEnabled` are now shown as `triggerValue` and has the values `OFF or LTU or CTP`;
+  * Notification service will now include `runNumbers` when used together with creating a log;
+* Notable changes for developers:
+  * `GET` Runs API:
+    * `lhcPeriods` Runs can now be filtered by using the `lhcPeriods` field. Multiple values can be used with comma seperation;
+    * `nEpns` Runs can now be filtered by using an operator and number;
+    * `triggerValue` Runs can now be filtered by using the `triggerValues` field. These values can be a string array of this enum: `OFF, LTU, CTP`;
+  * `PATCH` Runs API:
+    * `lhcPeriod` is added to `endRun` endpoint and for the GO openAPI the `updateRun` function;
+
+## [0.34.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.34.0)
+* Notable changes for users:
+  * Run tags update is now integrated in the global run update
+  * LHC Fill overview's run lists are now hyperlinks to the corresponding run detail page
+  * A spinner is displayed in each table when data is loading
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `tag` filter do not exist anymore, it is replaced by `tags` which is the list of tags texts to filter on
+  * `PUT` RUNS API:
+    * `tags` can be provided to update the tags linked to the run, as a list of tag texts
+  * `POST` RUNS TAGS API:
+    * Route has been deleted
+  * `GET` LOGS API:
+    * `tag` filter do not exist anymore, it is replaced by `tags` which is the list of tags texts to filter on
+  * `POST` LOGS API:
+    * tags list is now the list of tag text and no tags ids
+
+## [0.33.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.33.0)
+* Notable changes for users:
+  * Displays `UNKNOWN` for run duration above 48 hours, else `RUNNING`
+  * Add fill number information on run overview page and in its filtering
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `fillNumbers` is a new optional filter
+
+## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.32.0) 
+* Notable changes for users:
+  * Adds new fields for Run-Details
+  * Fixes a bug in which infinite scrolling would not apply filters on runs & logs pages
+  * Runs older than 48 hours and without a trigger end timestamp will be displayed as UNKNOWN
+* Notable changes for developers:
+  * `POST` RUNS API:
+    * `timeTrgStart` and `timeO2Start` fields are not required anymore
+  * `PATCH` RUNS API:
+    * `timeO2Start`, `timeTrgStart`, `trgGlobalRunEnabled`, `trgEnabled`, `pdpConfigOption`, `pdpTopologyDescriptionLibraryFile`, `tfbDdMode` are now added and optional fields.
+
+## [0.31.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
+* Notable changes for users:
+  * Adds `RunDuration` for Run-Overview, Run-Details and Run-Filters
+  * Adds option to export the currently filtered runs from Run-Overview Page
+  * Adds `aliceL3Polarity` and `aliceDipolePolarity` to Run-Details
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `runDuration` added as a virtual column with sequalize
+
+## [0.30.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.30.0) 
+* Notable changes for users:
+  * Improvements on RunFilters:
+    * Numerical input now accepts operators (<, <=, =, =>, >);
+    * Text inputs accept list of strings separated by commas;
+    * RunQuality filter is now represented with checkboxes;
+  * Tags UX improvements:
+    * Tags are sorted alphabetically across the platform;
+    * Tags selection is now uniform across the platform;
+  * Fixes a bug in which a run entry could duplicate a runNumber;
+  * Improves UX for table cells which are wider than space allows;
+* Notable changes for developers:
+  * `GET` RUNS API:
+    * `nDetectors` and `nFLPS` filter needs to provide both operator and limit for the values;
+    * `environmentId` is now `environmentIds` allowing for multiple values separated by comma;
+    * `runQuality` is now `runQualities` allowing for multiple values separated by comma;
+  
+## [0.29.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.29.0) 
+* Notable changes for users:
+  * Improves Run-Overview page to better display information;
+  * Improves usability of LHC Fills page;
+  * Bug fixes for systems with no tags;
+
+## [0.28.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.28.0) 
+* Notable changes for users:
+  * Introduces support for AliECS - End Of Run - Reason;
+  * Introduces support for LHC Fills Data;
+* Notable changes for developers:
+  * Adds new `eor_reasons` and `reason_types` SQL tables and migration scripts;
+  * Adds new lhc_fills SQL Table and migration scripts;
+  * Adds API routes to retrieve lhc fills data individually or collectively; 
+  * Adds API routes to retrieve eor reasons data individually or collectively; 
+
+## [0.27.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.27.0) 
+* Notable changes for users:
+  * Introduces support for AliECS environments;
+* Notable changes for developers:
+  * Adds new Env SQL Table and migration scripts
+  * Adds a new page to display all environments
+  * `GET /api/environments` && `GET /api/environments/:envId` - Adds API routes to retrieve environments data
+  * `POST /api/environments` && `PUT /api/environments/:envId` - Adds API routes to store environment data
+  * Generates new OpenAPI GO plugin to include environments manipulation methods
+
+## [0.26.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.1) 
+* Notable changes for users:
+  * Improves UX when users would input negative filter values;
+
 ## [0.26.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.0) 
 * Notable changes for users:
   * Fixes a bug in which filters would not work due to cached date on server side;

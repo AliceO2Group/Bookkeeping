@@ -35,4 +35,54 @@ module.exports = () => {
         expect(result).to.have.ownProperty('id');
         expect(result.id).to.equal(1);
     });
+
+    it('should return an object that has the `id` property and includes tags and eorReasons', async () => {
+        const result = await new GetRunUseCase()
+            .execute(getRunDto);
+
+        expect(result).to.have.ownProperty('id');
+        expect(result.id).to.equal(1);
+        expect(result.tags.length).to.equal(0);
+        expect(result.eorReasons.length).to.equal(2);
+        expect(result.eorReasons[0].category).to.equal('DETECTORS');
+        expect(result.eorReasons[0].title).to.equal('CPV');
+        expect(result.lhcPeriod).to.equal('lhc22b');
+        expect(result.odcTopologyFullName).to.equal('hash');
+    });
+
+    it('should successfully return an object that contain a null duration if trigger-start is not defined', async () => {
+        getRunDto.params.runId = 103;
+        let result = await new GetRunUseCase().execute(getRunDto);
+
+        expect(result.timeTrgStart).to.equal(null);
+        expect(result.runDuration).to.equal(null);
+
+        getRunDto.params.runId = 104;
+        result = await new GetRunUseCase().execute(getRunDto);
+
+        expect(result.timeTrgStart).to.be.null;
+        expect(result.runDuration).to.be.null;
+    });
+
+    it(
+        'should successfully return an object that use the current timestamp as value if trigger-end is not defined to compute duration',
+        async () => {
+            getRunDto.params.runId = 105;
+            const now = new Date();
+            const result = await new GetRunUseCase().execute(getRunDto);
+
+            expect(result.timeTrgStart).to.be.not.null;
+            expect(result.timeTrgEnd).to.be.null;
+            expect(result.runDuration).to.be.approximately(now.getTime() - result.timeTrgStart, 100);
+        },
+    );
+
+    it('should successfully return an object that contain a duration coherent with its trigger start and end value', async () => {
+        getRunDto.params.runId = 106;
+        const result = await new GetRunUseCase().execute(getRunDto);
+
+        expect(result.timeTrgStart).to.be.not.null;
+        expect(result.timeTrgEnd).to.be.not.null;
+        expect(result.runDuration).to.equal(result.timeTrgEnd - result.timeTrgStart);
+    });
 };

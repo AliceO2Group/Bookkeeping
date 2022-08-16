@@ -48,6 +48,8 @@ type APIClient struct {
 
 	DefaultApi *DefaultApiService
 
+	EnvironmentApi *EnvironmentApiService
+
 	FlpApi *FlpApiService
 
 	LogApi *LogApiService
@@ -77,6 +79,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	// API Services
 	c.AttachmentApi = (*AttachmentApiService)(&c.common)
 	c.DefaultApi = (*DefaultApiService)(&c.common)
+	c.EnvironmentApi = (*EnvironmentApiService)(&c.common)
 	c.FlpApi = (*FlpApiService)(&c.common)
 	c.LogApi = (*LogApiService)(&c.common)
 	c.RunApi = (*RunApiService)(&c.common)
