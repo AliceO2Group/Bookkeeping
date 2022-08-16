@@ -99,7 +99,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
-                    expect(titleError.detail).to.equal('"body.text" length must be at least 3 characters long');
+                    expect(titleError.detail).to.equal('"body.text" length must be at least 2 characters long');
 
                     done();
                 });
