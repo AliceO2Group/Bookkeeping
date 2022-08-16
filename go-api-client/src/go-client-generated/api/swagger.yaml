@@ -1160,7 +1160,7 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1186,7 +1186,7 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1219,7 +1219,7 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1245,7 +1245,7 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1540,7 +1540,7 @@ components:
         data:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1566,7 +1566,7 @@ components:
           runNumber: 7
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1913,7 +1913,7 @@ components:
         runs:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1939,7 +1939,7 @@ components:
           runNumber: 7
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1990,7 +1990,7 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2016,7 +2016,7 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2829,7 +2829,7 @@ components:
       example:
         timeO2End: 853113599
         timeTrgEnd: 853113599
-        runType: physics
+        runType: runType
         triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
@@ -2912,7 +2912,7 @@ components:
         data:
           timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -2996,10 +2996,6 @@ components:
     RunType:
       type: string
       description: Specifies the type of run.
-      enum:
-      - physics
-      - cosmics
-      - technical
     SortOrder:
       type: string
       description: Specifies the sorting direction of a sorting option.

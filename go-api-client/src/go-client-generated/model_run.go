@@ -25,7 +25,7 @@ type Run struct {
 	PdpTopologyDescriptionLibraryFile string `json:"pdpTopologyDescriptionLibraryFile,omitempty"`
 	RunNumber int32 `json:"runNumber,omitempty"`
 	RunQuality *RunQuality `json:"runQuality,omitempty"`
-	RunType *RunType `json:"runType,omitempty"`
+	RunType string `json:"runType,omitempty"`
 	TfbDdMode string `json:"tfbDdMode,omitempty"`
 	TimeO2End int64 `json:"timeO2End,omitempty"`
 	TimeO2Start int64 `json:"timeO2Start,omitempty"`

@@ -19,14 +19,16 @@ const LhcFillSuite = require('./lhcFills.test');
 const SubsystemsSuite = require('./subsystems.test');
 const TagsSuite = require('./tags.test');
 const RunsSuite = require('./runs.test');
+const RunTypesSuite = require('./runTypes.test');
 
 module.exports = () => {
-    describe('Status', StatusSuite);
-    describe('LhcFills', LhcFillSuite);
-    describe('Logs', LogsSuite);
-    describe('Subsystems', SubsystemsSuite);
-    describe('Tags', TagsSuite);
-    describe('Attachments', AttachmentsSuite);
-    describe('Runs', RunsSuite);
-    describe('Environments', EnvironmentsSuite);
+    // describe('Status', StatusSuite);
+    // describe('LhcFills', LhcFillSuite);
+    // describe('Logs', LogsSuite);
+    // describe('Subsystems', SubsystemsSuite);
+    // describe('Tags', TagsSuite);
+    // describe('Attachments', AttachmentsSuite);
+    // describe('Runs', RunsSuite);
+    describe('RunTypes', RunTypesSuite);
+    // describe('Environments', EnvironmentsSuite);
 };
