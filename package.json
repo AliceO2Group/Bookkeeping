@@ -20,7 +20,7 @@
     "deepmerge": "4.2.2",
     "joi": "17.6.0",
     "mariadb": "3.0.0",
-    "multer": "1.4.3",
+    "multer": "1.4.5-lts.1",
     "sequelize": "6.21.0",
     "umzug": "3.1.1"
   },
@@ -45,7 +45,7 @@
     "eslint": "8.22.0",
     "js-yaml": "4.1.0",
     "mocha": "10.0.0",
-    "nodemon": "2.0.15",
+    "nodemon": "2.0.19",
     "nyc": "15.1.0",
     "puppeteer": "16.1.0",
     "puppeteer-to-istanbul": "1.4.0",
