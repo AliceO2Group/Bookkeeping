@@ -17,6 +17,7 @@ RUN apk add --no-cache \
 FROM base as developmentdependencies
 
 # Installs Git and packages required for Puppeteer
+# https://pkgs.alpinelinux.org/packages
 RUN apk add --no-cache \
     chromium=102.0.5005.173-r0 \
     freetype=2.12.1-r0 \
