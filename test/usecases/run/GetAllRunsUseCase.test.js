@@ -367,4 +367,14 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf.above(1);
     });
+    it('should successfully return an array only containing runs found with run type filter', async () => {
+        getAllRunsDto.query = {
+            filter: {
+                runTypes: [1, 2],
+            },
+        };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.above(1);
+    });
 };

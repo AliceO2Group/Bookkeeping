@@ -540,7 +540,7 @@ module.exports = () => {
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
             environmentId: '1234567890',
-            runType: 'technical',
+            runType: 'NONE',
             runQuality: 'good',
             nDetectors: 3,
             nFlps: 10,
@@ -566,6 +566,7 @@ module.exports = () => {
                     }
                     expect(res.body.data.triggerValue).to.equal('OFF');
                     expect(res.body.data).to.be.an('object');
+                    expect(res.body.data.runType).to.be.a('number');
                     expect(res.body.data.id).to.equal(109);
 
                     done();

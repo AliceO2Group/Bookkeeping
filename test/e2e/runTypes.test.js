@@ -58,7 +58,7 @@ module.exports = () => {
                 });
         });
     });
-    describe('GET /api/runTypes', () => {
+    describe('GET /api/runTypes/:runTypeId', () => {
         it('should return 200 in all other cases', (done) => {
             request(server)
                 .get('/api/runTypes/1')
@@ -92,9 +92,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
-                    console.log(errors)
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runTypeId');
-                    console.log(titleError)
+                    const titleError = errors.find((error) => error.source.pointer === '/data/attributes/params/runTypeId');
                     expect(titleError.detail).to.equal('"params.runTypeId" must be a positive number');
 
                     done();
