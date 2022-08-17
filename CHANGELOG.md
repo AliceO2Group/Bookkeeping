@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. See [standa
       * Amount of runs above/under 2 minutes of duration
       * Runs count grouped by quality
       * Runs count grouped by detectors
+  * Tags with a length of 2 characters are now allowed
 * Notable changes for developers:
   * Runs API:
     * `GET`
