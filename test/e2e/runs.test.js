@@ -228,7 +228,7 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(4);
+            expect(data).to.have.lengthOf(7);
         });
 
         it('should filter run on their quality', async () => {
@@ -240,7 +240,7 @@ module.exports = () => {
 
             const { data } = response.body;
             // 48 because one run is added in start run use case with default quality which is test, and one is updated to quality test
-            expect(data.length).to.equal(47);
+            expect(data.length).to.equal(45);
         });
         it('should filter run on their trigger value', async () => {
             const response = await request(server)
@@ -250,8 +250,19 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(12);
+            expect(data.length).to.equal(15);
         });
+        it('should filter runs on the odc topology value', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[odcTopologyFullName]=hash');
+            expect(response.status).to.equal(200);
+
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data.length).to.equal(4);
+        });
+
         it('should return 400 if "runQuality" is invalid', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=invalid');
@@ -284,7 +295,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(52);
+            expect(data).to.have.lengthOf(51);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -550,6 +561,7 @@ module.exports = () => {
             epn: true,
             epnTopology: 'normal',
             detectors: 'CPV',
+            odcTopologyFullName: 'synchronous-workflow',
         };
 
         it('should successfully return the stored run entity', (done) => {
@@ -565,6 +577,7 @@ module.exports = () => {
                         return;
                     }
                     expect(res.body.data.triggerValue).to.equal('OFF');
+                    expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType).to.be.a('number');
                     expect(res.body.data.id).to.equal(109);
@@ -815,6 +828,7 @@ module.exports = () => {
                     timeTrgEnd: dateValue,
                     runQuality: 'good',
                     lhcPeriod: 'lhc22b',
+                    odcTopologyFullName: 'hash',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -822,12 +836,15 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+
                     expect(res).to.satisfyApiSpec;
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
                     expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
+                    expect(res.body.data.odcTopologyFullName).to.equal('hash');
+
                     done();
                 });
         });
@@ -844,6 +861,7 @@ module.exports = () => {
                     tfbDdMode: 'processing',
                     lhcPeriod: 'lhc22b',
                     triggerValue: 'LTU',
+                    odcTopologyFullName: 'default',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
@@ -854,6 +872,7 @@ module.exports = () => {
             expect(body.data.tfbDdMode).to.equal('processing');
             expect(body.data.lhcPeriod).to.equal('lhc22b');
             expect(body.data.triggerValue).to.equal('LTU');
+            expect(body.data.odcTopologyFullName).to.equal('default');
         });
     });
 };

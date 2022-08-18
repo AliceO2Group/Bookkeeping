@@ -1161,6 +1161,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: runType
+            odcTopologyFullName: odcTopologyFullName
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1187,6 +1188,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: runType
+            odcTopologyFullName: odcTopologyFullName
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1220,6 +1222,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: runType
+            odcTopologyFullName: odcTopologyFullName
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1246,6 +1249,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: runType
+            odcTopologyFullName: odcTopologyFullName
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1541,6 +1545,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: runType
+          odcTopologyFullName: odcTopologyFullName
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1567,6 +1572,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: runType
+          odcTopologyFullName: odcTopologyFullName
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1914,7 +1920,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: runType
-          triggerValue: "OFF"
+          odcTopologyFullName: odcTopologyFullName
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1940,6 +1946,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: runType
+          odcTopologyFullName: odcTopologyFullName
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1991,7 +1998,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: runType
-            triggerValue: "OFF"
+            odcTopologyFullName: odcTopologyFullName
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2017,6 +2024,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             runType: runType
+            odcTopologyFullName: odcTopologyFullName
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2806,6 +2814,9 @@ components:
           - "OFF"
           - LTU
           - CTP
+        odcTopologyFullName:
+          type: string
+          description: The fullname or file location of the odcTopology
         dd_flp:
           $ref: '#/components/schemas/DD_FLP'
         dcs:
@@ -2830,6 +2841,7 @@ components:
         timeO2End: 853113599
         timeTrgEnd: 853113599
         runType: runType
+        odcTopologyFullName: odcTopologyFullName
         triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
@@ -2913,6 +2925,7 @@ components:
           timeO2End: 853113599
           timeTrgEnd: 853113599
           runType: runType
+          odcTopologyFullName: odcTopologyFullName
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0

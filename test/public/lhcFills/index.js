@@ -12,7 +12,9 @@
  */
 
 const OverviewSuite = require('./overview.test');
+const DetailsSuite = require('./detail.test.js');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
+    describe('Details Page', DetailsSuite);
 };

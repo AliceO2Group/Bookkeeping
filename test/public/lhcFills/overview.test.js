@@ -16,20 +16,19 @@ const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    getFirstRow,
     goToPage,
     checkColumnBalloon,
 } = require('../defaults');
 
 const { expect } = chai;
 
+const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
+const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
+
 module.exports = () => {
     let page;
     let browser;
     let url;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -45,7 +44,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=lhcFill-overview`, { waitUntil: 'networkidle0' });
+        const response = await page.goto(`${url}?page=lhc-fill-overview`, { waitUntil: 'networkidle0' });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -56,17 +55,24 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
-            id: (string) => typeof string == 'string',
+            fillNumber: (fill) => !isNaN(parseInt(fill, 10)),
+            // Seems to not exist anymore
             createdAt: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             updatedAt: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             toredownAt: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             status: (date) => !isNaN(Date.parse(date)),
+            // Seems to not exist anymore
             statusMessage: (string) => typeof string == 'string',
+            efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
+            durationBeforeFirstRun: (data) => data === '-'
+                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
+            meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
+            totalRunsDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
         };
 
@@ -82,9 +88,11 @@ module.exports = () => {
         }
 
         // We expect every value of a header matching a datatype key to actually be of that datatype
-        const firstRowCells = await page.$$(`#${firstRowId} td`);
+
+        // Use the third row because it is where statistics are present
+        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
         for (const [index, cell] of firstRowCells.entries()) {
-            if (Object.keys(headerIndices).includes(index)) {
+            if (index in headerIndices) {
                 const cellContent = await page.evaluate((element) => element.innerText, cell);
                 const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
                 expect(expectedDatatype).to.be.true;
@@ -93,10 +101,10 @@ module.exports = () => {
     });
 
     it('Should have balloon on runs column', async () => {
-        await goToPage(page, 'lhcFill-overview');
+        await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
 
-        await checkColumnBalloon(page, 1, 7);
+        await checkColumnBalloon(page, 1, 11);
     });
 
     it('can set how many lhcFills are available per page', async () => {
@@ -134,25 +142,45 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        await page.goto(`${url}?page=env-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'lhc-fill-overview');
 
-        // Override the amount of runs visible per page manually
+        // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.envs.envsPerPage = 1;
+            model.lhcFills.lhcFillsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
+        expect(pageFiveButton).to.be.not.null;
         const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+        expect(pageSixButton).to.be.null;
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
         await page.waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
-        expect(Boolean(pageOneButton)).to.be.false;
+        expect(pageOneButton).to.be.null;
+    });
+
+    it('should successfully navigate to the LHC fill details page', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await page.waitForTimeout(100);
+
+        // Use the third row to have a fill with statistics
+        const row = await page.$('tbody tr:nth-of-type(3)');
+        expect(row).to.be.not.null;
+        // Remove "row" prefix to get fill number
+        const fillNumber = await row.evaluate((element) => element.id.slice(3));
+
+        await row.$eval('td:first-of-type a', (link) => link.click());
+        await page.waitForNetworkIdle();
+        await page.waitForTimeout(100);
+        const redirectedUrl = await page.url();
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
 };

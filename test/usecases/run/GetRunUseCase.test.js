@@ -47,6 +47,7 @@ module.exports = () => {
         expect(result.eorReasons[0].category).to.equal('DETECTORS');
         expect(result.eorReasons[0].title).to.equal('CPV');
         expect(result.lhcPeriod).to.equal('lhc22b');
+        expect(result.odcTopologyFullName).to.equal('hash');
         expect(result.runType.id).to.equal(1);
     });
 

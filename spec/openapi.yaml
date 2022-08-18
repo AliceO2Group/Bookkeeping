@@ -749,13 +749,6 @@ components:
       schema:
         $ref: '#/components/schemas/FlpSortOptions'
       style: deepObject
-    LhcFillId:
-      name: lhcFillId
-      description: The id of the lhcFill to retrieve
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/EntityId'
     LogId:
       name: logId
       description: The id of the log to retrieve
@@ -2166,6 +2159,10 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        odcTopologyFullName:
+          description: The name or location of the odc topology
+          type: string
+          nullable: true
         pdpConfigOption:
           description: The config option of the pdp.
           type: string
