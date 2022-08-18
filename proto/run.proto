@@ -1,0 +1,64 @@
+syntax = 'proto3';
+
+package o2.bookkeeping;
+
+service RunService {
+  rpc Create(RunCreationRequest) returns (RunResponse);
+}
+
+message Run {
+  uint32 runNumber = 1;
+}
+
+message Error {
+  uint32 code = 1;
+  string title = 2;
+  string detail = 3;
+}
+
+enum RunType {
+  physics = 0;
+  cosmics = 1;
+  technical = 2;
+}
+
+enum Detector {
+  CPV = 0;
+  EMC = 1;
+  FDD = 2;
+  FT0 = 3;
+  FV0 = 4;
+  HMP = 5;
+  ITS = 6;
+  MCH = 7;
+  MFT = 8;
+  MID = 9;
+  PHS = 10;
+  TOF = 11;
+  TPC = 12;
+  TRD = 13;
+  TST = 14;
+  ZDC = 15;
+}
+
+message RunResponse {
+  bool success = 1;
+  oneof response {
+    Run run = 2;
+    Error error = 3;
+  }
+}
+
+message RunCreationRequest {
+  string environmentId = 1;
+  int32 nDetectors = 2;
+  int32 nEpns = 3;
+  int32 nFlps = 4;
+  int32 runNumber = 5;
+  RunType runType = 6;
+  bool dd_flp = 7;
+  bool dcs = 8;
+  bool epn = 9;
+  string epnTopology = 10;
+  repeated Detector detectors = 11;
+}
