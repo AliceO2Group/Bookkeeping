@@ -54,19 +54,19 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 	runNumber int32, runType string, dd_flp bool, dcs bool, epn bool, epnTopology string, odcTopologyFullName string, detectors sw.Detectors) (sw.RunResponse, *http.Response, error) {
 	var dets sw.Detectors = detectors
 	obj := sw.Run{
-		EnvironmentId: environmentId,
-		NDetectors:    nDetectors,
-		NEpns:         nEpns,
-		NFlps:         nFlps,
-		RunNumber:     runNumber,
-		RunType:       runType,
-		DdFlp:         dd_flp,
-		Dcs:           dcs,
-		Epn:           epn,
-		EpnTopology:   epnTopology,
-		Detectors:     &dets,
+		EnvironmentId:       environmentId,
+		NDetectors:          nDetectors,
+		NEpns:               nEpns,
+		NFlps:               nFlps,
+		RunNumber:           runNumber,
+		RunType:             runType,
+		DdFlp:               dd_flp,
+		Dcs:                 dcs,
+		Epn:                 epn,
+		EpnTopology:         epnTopology,
+		Detectors:           &dets,
 		OdcTopologyFullName: odcTopologyFullName,
-
+	}
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
 	fmt.Println(arrayResponse, response, err)
 	return arrayResponse, response, err

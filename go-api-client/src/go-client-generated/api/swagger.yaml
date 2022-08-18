@@ -1160,8 +1160,8 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: runType
             odcTopologyFullName: odcTopologyFullName
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1187,8 +1187,8 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: runType
             odcTopologyFullName: odcTopologyFullName
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1221,8 +1221,8 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: runType
             odcTopologyFullName: odcTopologyFullName
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1248,8 +1248,8 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: runType
             odcTopologyFullName: odcTopologyFullName
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1544,8 +1544,8 @@ components:
         data:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: runType
           odcTopologyFullName: odcTopologyFullName
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1571,8 +1571,8 @@ components:
           runNumber: 7
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: runType
           odcTopologyFullName: odcTopologyFullName
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1919,8 +1919,9 @@ components:
         runs:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: runType
           odcTopologyFullName: odcTopologyFullName
+          runType: runType
+          triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -1945,8 +1946,8 @@ components:
           runNumber: 7
         - timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: runType
           odcTopologyFullName: odcTopologyFullName
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1997,8 +1998,9 @@ components:
           runs:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: runType
             odcTopologyFullName: odcTopologyFullName
+            runType: runType
+            triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
@@ -2023,8 +2025,8 @@ components:
             runNumber: 7
           - timeO2End: 853113599
             timeTrgEnd: 853113599
-            runType: runType
             odcTopologyFullName: odcTopologyFullName
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2840,8 +2842,8 @@ components:
       example:
         timeO2End: 853113599
         timeTrgEnd: 853113599
-        runType: runType
         odcTopologyFullName: odcTopologyFullName
+        runType: runType
         triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
@@ -2924,8 +2926,8 @@ components:
         data:
           timeO2End: 853113599
           timeTrgEnd: 853113599
-          runType: runType
           odcTopologyFullName: odcTopologyFullName
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
