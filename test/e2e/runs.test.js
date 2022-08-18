@@ -579,7 +579,7 @@ module.exports = () => {
                     expect(res.body.data.triggerValue).to.equal('OFF');
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
-                    expect(res.body.data.runType).to.be.a('number');
+                    expect(res.body.data.runType.id).to.be.a('number');
                     expect(res.body.data.id).to.equal(109);
 
                     done();

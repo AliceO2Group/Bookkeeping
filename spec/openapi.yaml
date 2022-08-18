@@ -1,4 +1,4 @@
-# Generated on Mon, 15 Aug 2022 10:22:14 GMT
+# Generated on Thu, 18 Aug 2022 10:01:43 GMT
 
 openapi: 3.0.0
 info:
@@ -2178,7 +2178,10 @@ components:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
-          $ref: '#/components/schemas/RunType'
+          oneOf:
+            - $ref: '#/components/schemas/EntityId'
+            - $ref: '#/components/schemas/RunTypeString'
+            - $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
         tfbDdMode:
@@ -2365,6 +2368,11 @@ components:
           $ref: '#/components/schemas/SortOrder'
         name:
           $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    RunTypeString:
+      description: String type for runtype
+      type: string
+      nullable: true
       additionalProperties: false
     SortOrder:
       description: Specifies the sorting direction of a sorting option.
