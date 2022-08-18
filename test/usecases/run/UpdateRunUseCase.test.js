@@ -15,6 +15,7 @@
 const { run: { UpdateRunUseCase, GetRunUseCase } } = require('../../../lib/usecases');
 const { dtos: { UpdateRunDto, GetRunDto, UpdateRunByRunNumberDto } } = require('../../../lib/domain');
 const chai = require('chai');
+const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 
 const { expect } = chai;
 
@@ -75,6 +76,16 @@ module.exports = () => {
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
             expect(result.runQuality).to.equal('test');
+        });
+
+        it('should successfully create a log when run quality change', async () => {
+            const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
+            expect(logs).to.have.lengthOf(1);
+            const [log] = logs;
+            expect(log.title).to.equal('Run 106 quality has changed to test');
+            expect(log.text).to.equal('The run quality for run 106 has been changed from good to test');
+            expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
+            expect(log.tags.map(({ text }) => text)).to.eql(['PDP', 'RC']);
         });
 
         it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {
@@ -199,8 +210,10 @@ module.exports = () => {
         });
 
         it('should throw an error when the at least one of the given tag do not exists', async () => {
-            updateRunDto.params.runId = 1;
+            const runId = 1;
+            updateRunDto.params.runId = runId;
             updateRunDto.body.tags = ['FOOD', 'DO-NOT-EXIST', 'DO-NOT-EXIST-EITHER'];
+            const originalRun = await new GetRunUseCase().execute({ params: { runId: runId } });
 
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
 
@@ -208,6 +221,12 @@ module.exports = () => {
             expect(error).to.be.an('object');
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal('Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
+
+            // Expect run to have other fields unchanged
+            const run = await new GetRunUseCase().execute({ params: { runId: runId } });
+            for (const property in run) {
+                expect(run[property]).to.eql(originalRun[property]);
+            }
         });
     });
     describe('updates with run number', () => {

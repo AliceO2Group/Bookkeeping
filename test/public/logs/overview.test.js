@@ -174,7 +174,7 @@ module.exports = () => {
         // 6 logs are created before this test
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(6);
+        expect(secondFilteredNumberOfRows).to.equal(7);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
