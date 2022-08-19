@@ -276,6 +276,13 @@ html, body {
     align-items: baseline;
 }
 
+.header-panel {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(221, 221, 221);
+    font-weight: bold;
+}
+
 .border-danger {
     border: 1px solid var(--color-danger) !important;
 }
