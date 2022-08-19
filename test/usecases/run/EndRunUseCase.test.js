@@ -38,7 +38,7 @@ module.exports = () => {
                 triggerValue: 'CTP',
                 odcTopologyFullName: 'synchronous-workflow',
                 pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
-                pdpBeamTypes: 'cosmic',
+                pdpBeamType: 'cosmic',
                 readoutCfgUri: 'Repository hash',
             },
         });
@@ -63,7 +63,7 @@ module.exports = () => {
         expect(result.triggerValue).to.equal('CTP');
         expect(result.odcTopologyFullName).to.equal('synchronous-workflow');
         expect(result.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');
-        expect(result.pdpBeamTypes).to.equal('cosmic');
+        expect(result.pdpBeamType).to.equal('cosmic');
         expect(result.readoutCfgUri).to.equal('Repository hash');
     });
 

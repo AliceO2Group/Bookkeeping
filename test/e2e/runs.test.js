@@ -563,7 +563,7 @@ module.exports = () => {
             detectors: 'CPV',
             odcTopologyFullName: 'synchronous-workflow',
             pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
-            pdpBeamTypes: 'cosmic',
+            pdpBeamType: 'cosmic',
             readoutCfgUri: 'Repository hash',
         };
 
@@ -584,7 +584,7 @@ module.exports = () => {
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.id).to.equal(109);
                     expect(res.body.data.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');
-                    expect(res.body.data.pdpBeamTypes).to.equal('cosmic');
+                    expect(res.body.data.pdpBeamType).to.equal('cosmic');
                     expect(res.body.data.readoutCfgUri).to.equal('Repository hash');
 
                     done();
@@ -835,7 +835,7 @@ module.exports = () => {
                     lhcPeriod: 'lhc22b',
                     odcTopologyFullName: 'hash',
                     pdpWorkflowParameters: 'EVENT_DISPLAY',
-                    pdpBeamTypes: 'fill',
+                    pdpBeamType: 'fill',
                     readoutCfgUri: 'hash',
                 })
                 .expect(201)
@@ -853,7 +853,7 @@ module.exports = () => {
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
                     expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
-                    expect(res.body.data.pdpBeamTypes).to.equal('fill');
+                    expect(res.body.data.pdpBeamType).to.equal('fill');
                     expect(res.body.data.readoutCfgUri).to.equal('hash');
                     done();
                 });
