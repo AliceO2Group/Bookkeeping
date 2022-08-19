@@ -228,7 +228,7 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(9);
+            expect(data).to.have.lengthOf(12);
         });
 
         it('should filter run on their quality', async () => {
@@ -295,7 +295,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(52);
+            expect(data).to.have.lengthOf(50);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
