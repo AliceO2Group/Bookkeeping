@@ -50,7 +50,7 @@ module.exports = () => {
             const response = await request(server).get('/api/tags?filter[partialText]=-TAG-');
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('array');
-            expect(response.body.data.length).to.equal(43);
+            expect(response.body.data.length).to.equal(42);
         });
 
         it('should return 204 if no tags match partial search', async () => {
@@ -99,7 +99,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
-                    expect(titleError.detail).to.equal('"body.text" length must be at least 3 characters long');
+                    expect(titleError.detail).to.equal('"body.text" length must be at least 2 characters long');
 
                     done();
                 });

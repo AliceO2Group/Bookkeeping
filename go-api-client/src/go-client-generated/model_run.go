@@ -33,6 +33,8 @@ type Run struct {
 	TimeTrgStart int64 `json:"timeTrgStart,omitempty"`
 	// Trigger value
 	TriggerValue string `json:"triggerValue,omitempty"`
+	// The fullname or file location of the odcTopology
+	OdcTopologyFullName string `json:"odcTopologyFullName,omitempty"`
 	DdFlp bool `json:"dd_flp,omitempty"`
 	Dcs bool `json:"dcs,omitempty"`
 	Epn bool `json:"epn,omitempty"`

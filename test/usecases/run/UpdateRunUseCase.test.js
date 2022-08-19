@@ -41,7 +41,7 @@ module.exports = () => {
 
         updateRunByRunNumberDto = await UpdateRunByRunNumberDto.validateAsync({
             query: {
-                runNumber: 54,
+                runNumber: 58,
             },
             body: {
                 lhcBeamEnergy: 232.156,
@@ -215,7 +215,7 @@ module.exports = () => {
             const { result } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
 
-            expect(result.runNumber).to.equal(54);
+            expect(result.runNumber).to.equal(58);
             expect(result.lhcBeamEnergy).to.equal(232.156);
             expect(result.lhcBeamMode).to.equal('STABLE BEAMS');
             expect(result.lhcBetaStar).to.equal(123e-5);
