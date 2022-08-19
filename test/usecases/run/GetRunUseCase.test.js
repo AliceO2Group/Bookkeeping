@@ -50,7 +50,7 @@ module.exports = () => {
         expect(result.odcTopologyFullName).to.equal('hash');
     });
 
-    it('should successfully return an object that contain a null duration if trigger-start is not defined', async () => {
+    it('should successfully return an object that contains a null duration if trigger start and o2start is not defined', async () => {
         getRunDto.params.runId = 100;
         const result = await new GetRunUseCase().execute(getRunDto);
 

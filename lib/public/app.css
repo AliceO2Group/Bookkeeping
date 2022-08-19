@@ -327,14 +327,14 @@ html, body {
     align-items: flex-start;
 }
 
-/* textblock */
+/* popover */
 
-.textblock {
+.popover {
     visibility: hidden;
     position: absolute;
 }
 
-.textblock-text {
+.popover-text {
     min-width: 120px;
     background-color: rgba(191, 191, 191);
     color: rgb(0, 0, 0);
@@ -354,22 +354,22 @@ html, body {
     font-weight: normal;
 }
 
-.textblock-text.left {
+.popover-text.left {
     top: -5px;
     transform: translate(-105%,0);
 }
 
-.textblock-text.right {
+.popover-text.right {
     top: -5px;
     transform: translate(5%,0);
 }
 
-.textblock-text.bottom {
+.popover-text.bottom {
     top: calc(100% + 2rem);
     transform: translate(-50%,0);
 }
 
-.textblock-text.top {
+.popover-text.top {
     top: 0;
     transform: translate(-50%,-100%);
 }

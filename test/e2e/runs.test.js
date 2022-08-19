@@ -260,7 +260,7 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(4);
+            expect(data.length).to.equal(3);
         });
 
         it('should return 400 if "runQuality" is invalid', async () => {
@@ -295,7 +295,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(51);
+            expect(data).to.have.lengthOf(52);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -496,7 +496,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 200 in all other cases', (done) => {
+        it('should return 200 whenever there is only a trigger start', (done) => {
             request(server)
                 .get('/api/runs/104')
                 .expect(200)

@@ -3,13 +3,13 @@
     * table `runs - changed fields:
         * `run_duration`:
             * Is based on the trigger when it exists;
-            * Is based on o2 when trigger does not exist;
+            * Is based on o2 start/stop when trigger does not exist;
             * Is based on o2_stop - o2_trigger_end when there is a trigger start but there is no trigger_end;
-            
+
 ## [0.36.0]
 * Changes made to the database:
     * Table `runs` - added field:
-        * `odcTopologyFullname` - string ('default', 'hash')
+        * `odc_topology_fullname` - string ('default', 'hash')
 
 ## [0.35.0]
 * Changes made to the database:

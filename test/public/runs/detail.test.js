@@ -48,7 +48,7 @@ module.exports = () => {
         await expectInnerText(page, '#cancel-run', 'Revert');
     });
 
-    it('should how run information when overing over the value', async () =>{
+    it('should show run information when overing over the value', async () =>{
         await checkTooltip(page, '#runDurationValue');
     });
 

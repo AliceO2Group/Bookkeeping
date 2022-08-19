@@ -209,7 +209,7 @@ module.exports.checkTooltip = async (page, selector) => {
     await element.hover();
     // Const visibility = await tooltip.getProperty('visibility');
     const visibility = await element.$eval(
-        '.textblock',
+        '.popover',
         (e) => window.getComputedStyle(e).visibility,
     );
     expect(visibility).to.equal('visible');
