@@ -39,6 +39,9 @@ module.exports = () => {
                 epn: true,
                 epnTopology: 'normal',
                 detectors: 'CPV',
+                pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
+                pdpBeamTypes: 'cosmic',
+                readoutCfgUri: 'Repository hash',
             },
         });
     });

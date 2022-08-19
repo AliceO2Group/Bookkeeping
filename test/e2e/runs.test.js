@@ -562,6 +562,9 @@ module.exports = () => {
             epnTopology: 'normal',
             detectors: 'CPV',
             odcTopologyFullName: 'synchronous-workflow',
+            pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
+            pdpBeamTypes: 'cosmic',
+            readoutCfgUri: 'Repository hash',
         };
 
         it('should successfully return the stored run entity', (done) => {
@@ -580,6 +583,9 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.id).to.equal(109);
+                    expect(res.body.data.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');
+                    expect(res.body.data.pdpBeamTypes).to.equal('cosmic');
+                    expect(res.body.data.readoutCfgUri).to.equal('Repository hash');
 
                     done();
                 });
@@ -828,6 +834,9 @@ module.exports = () => {
                     runQuality: 'good',
                     lhcPeriod: 'lhc22b',
                     odcTopologyFullName: 'hash',
+                    pdpWorkflowParameters: 'EVENT_DISPLAY',
+                    pdpBeamTypes: 'fill',
+                    readoutCfgUri: 'hash',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -843,7 +852,9 @@ module.exports = () => {
                     expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
-
+                    expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
+                    expect(res.body.data.pdpBeamTypes).to.equal('fill');
+                    expect(res.body.data.readoutCfgUri).to.equal('hash');
                     done();
                 });
         });
