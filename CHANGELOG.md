@@ -2,18 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.37.0]()
+## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
 * Notable changes for users:
+  * Tags with a length of 2 characters are now allowed
+  * A notification is sent any time a log is created, not only when a log is created from the log creation page (for example auto-generated logs)
+  * Main links now have a complete link behavior, such as ctrl+click to open in a new tab
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
 * Notable changes for developers:
+  * Any log creation using `CreateLogUseCase` will send a notification, not only logs created from logs controller
   * Runs API:
-    * `GET`
-      * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
-    * `POST`
-      * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be created when creating/starting a run.
-    * `PATCH`
-      * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
-
+  * `GET`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
+  * `POST`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be created when creating/starting a run.
+  * `PATCH`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
 
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
 * Notable changes for users:
@@ -29,7 +32,6 @@ All notable changes to this project will be documented in this file. See [standa
       * Amount of runs above/under 2 minutes of duration
       * Runs count grouped by quality
       * Runs count grouped by detectors
-  * Tags with a length of 2 characters are now allowed
 * Notable changes for developers:
   * Runs API:
     * `GET`
