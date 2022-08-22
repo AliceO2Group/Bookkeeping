@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.38.0]()
+* Notable changes for users:
+  Run types are now added and can be filtered. The type for a run is shown in the details page.
+* Notable changes for developers:
+  * Runs API:
+  * `GET`
+    `runTypes` Run types can be fetched by id or overall
+    `runTypes` Run types are added to a run, this can be given by id or object
+  * `POST`
+    `runType` A run type in a string can now be given when starting a run or updating a run.
+  * `PATCH`
+    * `runType` A run type can be given to a run to update it. A new type will be generated if it does not exist.
+
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
 * Notable changes for users:
   * `odcTopologyFullname` field added to the runs detail page and can be exported.
