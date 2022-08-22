@@ -12,7 +12,6 @@
  */
 
 const { run: { GetAllRunTypesUseCase } } = require('../../../lib/usecases');
-const { dtos: { GetAllRunTypesDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
