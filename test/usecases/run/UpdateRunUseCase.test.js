@@ -85,7 +85,7 @@ module.exports = () => {
             expect(log.title).to.equal('Run 106 quality has changed to test');
             expect(log.text).to.equal('The run quality for run 106 has been changed from good to test');
             expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
-            expect(log.tags.map(({ text }) => text)).to.eql(['PDP', 'RC']);
+            expect(log.tags.map(({ text }) => text)).to.eql(['DPG', 'RC']);
         });
 
         it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {

@@ -196,8 +196,8 @@ module.exports = () => {
     it('can filter by tags', async () => {
         await page.waitForTimeout(300);
 
-        // Select the first available filter and wait for the changes to be processed
-        const firstCheckboxId = 'tagCheckbox1';
+        // Select the second available filter and wait for the changes to be processed
+        const firstCheckboxId = 'tagCheckbox2';
         await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(300);
 
@@ -214,8 +214,8 @@ module.exports = () => {
         const firstUnfilteredRows = await page.$$('table tr');
         expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
 
-        // Select the first available filter and the last one at once
-        const secondCheckboxId = 'tagCheckbox5';
+        // Select the first available filter and the second one at once
+        const secondCheckboxId = 'tagCheckbox1';
         await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(300);
         await pressElement(page, `#${secondCheckboxId}`);
