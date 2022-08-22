@@ -4,7 +4,7 @@
         * `run_duration`:
             * Is based on the trigger when it exists;
             * Is based on o2 start/stop when trigger does not exist;
-            * Is based on o2_stop - o2_trigger_end when there is a trigger start but there is no trigger_end;
+            * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
 
 ## [0.36.0]
 * Changes made to the database:
