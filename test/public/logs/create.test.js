@@ -41,10 +41,10 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the log creation screen to be shown correctly
-        const header = await page.$('h2');
+        const header = await page.$('h3');
         expect(Boolean(header)).to.be.true;
         const headerText = await page.evaluate((element) => element.innerText, header);
-        expect(headerText).to.equal('Create Log');
+        expect(headerText).to.equal('New log');
     });
 
     it('can create a log', async () => {
