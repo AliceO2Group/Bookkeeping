@@ -323,6 +323,78 @@ module.exports = () => {
         expect(await getBalloonDisplay()).to.be.equal('flex');
     });
 
+    it('should successfully filter on definition', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        const filterInputSelectorPrefix = '#runDefinitionCheckbox';
+        const physicsFilterSelector = `${filterInputSelectorPrefix}physics`;
+        const cosmicFilterSelector = `${filterInputSelectorPrefix}cosmic`;
+        const technicalFilterSelector = `${filterInputSelectorPrefix}technical`;
+        const syntheticFilterSelector = `${filterInputSelectorPrefix}synthetic`;
+
+        /**
+         * Checks that all the rows of the given table have a valid run definition
+         *
+         * @param {{evaluate: function}[]} rows the list of rows
+         * @param {string[]} authorizedRunDefinition  the list of valid run qualities
+         * @return {void}
+         */
+        const checkTableRunDefinitions = async (rows, authorizedRunDefinition) => {
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-definition-text`).innerText;
+                })).to.be.oneOf(authorizedRunDefinition);
+            }
+        };
+
+        // Open filter toggle
+        await pressElement(page, '#openRunFilterToggle');
+        await page.waitForTimeout(200);
+
+        await page.$eval(physicsFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(3);
+        await checkTableRunDefinitions(table, ['physics']);
+
+        await page.$eval(syntheticFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(4);
+        await checkTableRunDefinitions(table, ['physics', 'synthetic']);
+
+        await page.$eval(physicsFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+        await checkTableRunDefinitions(table, ['synthetic']);
+
+        await page.$eval(cosmicFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(4);
+        await checkTableRunDefinitions(table, ['synthetic', 'cosmic']);
+
+        await page.$eval(syntheticFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(3);
+        await checkTableRunDefinitions(table, ['cosmic']);
+
+        await page.$eval(technicalFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(4);
+        await checkTableRunDefinitions(table, ['cosmic', 'technical']);
+
+        await page.$eval(physicsFilterSelector, (element) => element.click());
+        await page.$eval(syntheticFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(8);
+        await checkTableRunDefinitions(table, ['cosmic', 'technical', 'physics', 'synthetic']);
+    });
+
     it('should update to current date when empty and time is set', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
@@ -545,7 +617,7 @@ module.exports = () => {
         await page.$eval(offFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        expect(table.length).to.equal(8);
         await checkTableRunQualities(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
@@ -556,7 +628,7 @@ module.exports = () => {
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        expect(table.length).to.equal(8);
         await checkTableRunQualities(table, ['OFF']);
     });
 
