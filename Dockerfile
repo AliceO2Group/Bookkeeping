@@ -1,6 +1,6 @@
 #
 # ---- Base ----
-FROM node:16.9.1-alpine3.12 as base
+FROM node:16.16.0-alpine3.16 as base
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 EXPOSE 4000
 
 RUN apk add --no-cache \
-    bash=5.0.17-r0
+    bash=5.1.16-r2
 
 
 #
@@ -17,14 +17,15 @@ RUN apk add --no-cache \
 FROM base as developmentdependencies
 
 # Installs Git and packages required for Puppeteer
+# https://pkgs.alpinelinux.org/packages
 RUN apk add --no-cache \
-    chromium=86.0.4240.111-r0 \
-    freetype=2.10.4-r2 \
-    freetype-dev=2.10.4-r2 \
-    git=2.26.3-r1 \
-    harfbuzz=2.6.6-r0 \
+    chromium=102.0.5005.173-r0 \
+    freetype=2.12.1-r0 \
+    freetype-dev=2.12.1-r0 \
+    git=2.36.2-r0 \
+    harfbuzz=4.3.0-r0 \
     ca-certificates=20220614-r0 \
-    ttf-freefont=20120503-r1
+    ttf-freefont=20120503-r2
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true

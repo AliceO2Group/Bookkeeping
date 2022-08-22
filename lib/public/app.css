@@ -95,6 +95,8 @@ html, body {
     background-color: rgba(0, 0, 0, 0.075);
 }
 
+/* alerts */
+
 .alert {
     position: relative;
     padding: 0.75rem 1.25rem;
@@ -116,6 +118,14 @@ html, body {
 .alert-danger .alert-link {
     color: #491217;
 }
+
+/* buttons */
+
+a.btn, a.btn:hover, a.btn.active {
+    text-decoration: none;
+}
+
+/* form */
 
 .form-group-header {
     margin-bottom: 0.25rem;

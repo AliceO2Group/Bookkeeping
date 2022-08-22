@@ -62,7 +62,7 @@ module.exports = () => {
         expect(tags).to.have.lengthOf(2);
         expect(tags[0].id).to.equal(1);
         expect(tags[0].text).to.equal('FOOD');
-        expect(tags[1].id).to.equal(6);
+        expect(tags[1].id).to.equal(8);
         expect(tags[1].text).to.equal('OTHER');
     });
     it('should successfully return an array with tags containing given text search', async () => {
@@ -104,7 +104,7 @@ module.exports = () => {
 
         expect(tags).to.be.an('array');
         expect(tags).to.have.lengthOf(1);
-        expect(tags[0].id).to.equal(6);
+        expect(tags[0].id).to.equal(8);
         expect(tags[0].text).to.equal('OTHER');
     });
     it('should successfully return an array with tags with specified mattermosts', async () => {
