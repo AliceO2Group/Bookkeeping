@@ -562,9 +562,6 @@ module.exports = () => {
             epnTopology: 'normal',
             detectors: 'CPV',
             odcTopologyFullName: 'synchronous-workflow',
-            pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
-            pdpBeamType: 'cosmic',
-            readoutCfgUri: 'Repository hash',
         };
 
         it('should successfully return the stored run entity', (done) => {
