@@ -580,9 +580,6 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.id).to.equal(109);
-                    expect(res.body.data.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');
-                    expect(res.body.data.pdpBeamType).to.equal('cosmic');
-                    expect(res.body.data.readoutCfgUri).to.equal('Repository hash');
 
                     done();
                 });
