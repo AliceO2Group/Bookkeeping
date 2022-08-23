@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.38.0]()
+## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:
   Run types are now added and can be filtered. The type for a run is shown in the details page.
 * Notable changes for developers:
@@ -14,6 +14,15 @@ All notable changes to this project will be documented in this file. See [standa
     `runType` A run type in a string can now be given when starting a run or updating a run.
   * `PATCH`
     * `runType` A run type can be given to a run to update it. A new type will be generated if it does not exist.
+
+## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
+* Notable changes for users:
+  * Tags with a length of 2 characters are now allowed
+  * A notification is sent any time a log is created, not only when a log is created from the log creation page (for example auto-generated logs)
+  * Main links now have a complete link behavior, such as ctrl+click to open in a new tab
+  * Changing run quality will automatically create a log with the following tags: `DPG` and `RC`
+* Notable changes for developers:
+  * Any log creation using `CreateLogUseCase` will send a notification, not only logs created from logs controller
 
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
 * Notable changes for users:
@@ -29,7 +38,6 @@ All notable changes to this project will be documented in this file. See [standa
       * Amount of runs above/under 2 minutes of duration
       * Runs count grouped by quality
       * Runs count grouped by detectors
-  * Tags with a length of 2 characters are now allowed
 * Notable changes for developers:
   * Runs API:
     * `GET`
