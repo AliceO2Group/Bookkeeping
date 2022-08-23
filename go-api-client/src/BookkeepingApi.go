@@ -51,8 +51,7 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
 func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
-	runNumber int32, runType sw.RunType, dd_flp bool, dcs bool, epn bool, epnTopology string, odcTopologyFullName string, detectors sw.Detectors,
-	pdpWorkflowParameters string, pdpBeamType string, readoutCfgUri string) (sw.RunResponse, *http.Response, error) {
+	runNumber int32, runType sw.RunType, dd_flp bool, dcs bool, epn bool, epnTopology string, odcTopologyFullName string, detectors sw.Detectors) (sw.RunResponse, *http.Response, error) {
 	var run sw.RunType = runType
 	var dets sw.Detectors = detectors
 	obj := sw.Run{
@@ -68,9 +67,6 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 		EpnTopology:           epnTopology,
 		Detectors:             &dets,
 		OdcTopologyFullName:   odcTopologyFullName,
-		PdpWorkflowParameters: pdpWorkflowParameters,
-		PdpBeamType:           pdpBeamType,
-		ReadoutCfgUri:         readoutCfgUri,
 	}
 
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
