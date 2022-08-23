@@ -250,7 +250,7 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(15);
+            expect(data.length).to.equal(16);
         });
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
@@ -331,7 +331,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             // 7 instead of 5 because 2 runs have been created with 10 as nFlps
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should return 400 if the EPN number filter is invalid', async () => {
@@ -355,7 +355,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             // 7 instead of 5 because 2 runs have been created with 10 as nEpns
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
     });
 
@@ -547,7 +547,7 @@ module.exports = () => {
 
     describe('POST /api/runs', () => {
         const testRun = {
-            runNumber: 109,
+            runNumber: 110,
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
             environmentId: '1234567890',
@@ -580,7 +580,7 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType.id).to.be.a('number');
-                    expect(res.body.data.id).to.equal(109);
+                    expect(res.body.data.id).to.equal(110);
 
                     done();
                 });
@@ -615,7 +615,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(409);
             expect(response.body.errors).to.be.an('array');
-            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 109');
+            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 110');
         });
     });
 
