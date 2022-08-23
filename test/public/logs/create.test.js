@@ -259,6 +259,7 @@ module.exports = () => {
 
         // Return to the creation page
         await goToPage(page, 'log-create');
+        await page.waitForTimeout(100);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);

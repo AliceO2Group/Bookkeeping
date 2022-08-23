@@ -7,14 +7,13 @@ All notable changes to this project will be documented in this file. See [standa
   * Tags with a length of 2 characters are now allowed
   * A notification is sent any time a log is created, not only when a log is created from the log creation page (for example auto-generated logs)
   * Main links now have a complete link behavior, such as ctrl+click to open in a new tab
+  * Changing run quality will automatically create a log with the following tags: `DPG` and `RC`
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
 * Notable changes for developers:
   * Any log creation using `CreateLogUseCase` will send a notification, not only logs created from logs controller
   * Runs API:
   * `GET`
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
-  * `POST`
-    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be created when creating/starting a run.
   * `PATCH`
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
 
