@@ -545,7 +545,7 @@ module.exports = () => {
         await page.$eval(offFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        expect(table.length).to.equal(7);
         await checkTableRunQualities(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
