@@ -75,11 +75,13 @@ module.exports = () => {
     });
 
     it('should successfully create a run with a non exsisting run type', async () => {
+        startRunDto.body.runNumber = 109;
         startRunDto.body.runType = 'NEW_FAKE_RUN_TYPE';
         const { result, error } = await new StartRunUseCase()
             .execute(startRunDto);
         expect(error).to.be.undefined;
+
         expect(result).to.be.an('object');
-        expect(result.runType.name).to.equal(startRunDto.body.runType);
+        expect(result.runType.name).to.equal('NEW_FAKE_RUN_TYPE');
     });
 };
