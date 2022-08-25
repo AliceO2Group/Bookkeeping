@@ -1,4 +1,4 @@
-# Generated on Wed, 24 Aug 2022 10:06:52 GMT
+# Generated on Thu, 25 Aug 2022 13:12:31 GMT
 
 openapi: 3.0.0
 info:
@@ -2165,12 +2165,6 @@ components:
     RunDefinition:
       description: Specifies the definition of run.
       type: string
-      enum:
-        - physics
-        - cosmic
-        - technical
-        - synthetic
-        - null
       nullable: true
     RunDetectors:
       description: The amount of detectors in a single run.

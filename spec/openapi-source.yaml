@@ -2163,12 +2163,6 @@ components:
     RunDefinition:
       description: Specifies the definition of run.
       type: string
-      enum:
-        - physics
-        - cosmic
-        - technical
-        - synthetic
-        - null
       nullable: true
     RunDetectors:
       description: The amount of detectors in a single run.
