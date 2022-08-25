@@ -158,7 +158,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
     });
 
     it('should return an array only containing runs with ddflp true', async () => {

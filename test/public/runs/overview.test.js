@@ -295,7 +295,7 @@ module.exports = () => {
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 17);
+        await checkColumnBalloon(page, 1, 18);
     });
 
     it('Should display balloon if the text overflows', async () => {
