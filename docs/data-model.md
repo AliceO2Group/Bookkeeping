@@ -73,6 +73,9 @@ Concerning the **Update mode** of the fields:
 | `tfb_dd_mode`                            | The mode of the TFB DD                        | `processing`                        |  | `run_number` | Update |
 | `lhc_period`                             | The period value of the lhc                   | `lhc22b`                            |  | `run_number` | Update |
 | `odc_topology_full_name`                 | File location or setting for odc topology     | `hash, some/location.desc`          |  | `run_number` | Update |
+| `pdp_workflow_parameters`                | Parameters for the pdp workflow               | `QC,GPU,CTF,EVENT_DISPLAY`          |  | `run_number` | Update |
+| `pdp_beam_type`                          | Beam type of the pdp                          | `cosmic`                            |  | `run_number` | Update |
+| `readout_cfg_uri`                        | Uri of the readout configuration              | `Repository hash`                   |  | `run_number` | Update |
 
 ### End of run reasons
 

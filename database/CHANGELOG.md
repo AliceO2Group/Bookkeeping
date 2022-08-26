@@ -1,7 +1,14 @@
+## [0.37.0]
+* Changes made to the database:
+    * Table `runs` - added fields:
+        * `pdp_workflow_parameters` - string('QC,GPU,CTF,EVENT_DISPLAY'),
+        * `pdp_beam_type` - string('cosmic'),
+        * `readout_cfg_uri` - string('Repository hash'),
+
 ## [0.36.0]
 * Changes made to the database:
     * Table `runs` - added field:
-        * `odcTopologyFullname` - string ('default', 'hash')
+        * `odc_topology_fullname` - string ('default', 'hash')
 
 ## [0.35.0]
 * Changes made to the database:
