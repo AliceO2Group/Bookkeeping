@@ -260,7 +260,7 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(3);
+            expect(data.length).to.equal(4);
         });
 
         it('should return 400 if "runQuality" is invalid', async () => {
