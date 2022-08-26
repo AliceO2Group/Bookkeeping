@@ -71,6 +71,8 @@ module.exports = () => {
             efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
             durationBeforeFirstRun: (data) => data === '-'
                 || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
+            durationAfterLastRun: (data) => data === '-'
+                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             totalRunsDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
