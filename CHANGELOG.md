@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
 * Notable changes for users:
   * Environment overview page now loads in a normal time
+* Notable changes for developers:
+  * Table system:
+    * Table systems now support profiles, which allows to:
+      * Display columns only under a specific profile or one of the listed specific profiles
+      * Override column configuration under a specific profile
+      * Apply one profile to a table
 
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:
