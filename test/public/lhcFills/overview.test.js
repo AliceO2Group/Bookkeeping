@@ -106,7 +106,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
 
-        await checkColumnBalloon(page, 1, 11);
+        await checkColumnBalloon(page, 1, 12);
     });
 
     it('can set how many lhcFills are available per page', async () => {
