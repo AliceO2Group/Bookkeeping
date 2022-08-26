@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
+* Notable changes for users:
+  * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
+* Notable changes for developers:
+  * Runs API:
+  * `GET`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
+  * `PATCH`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
+
+
 ## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
 * Notable changes for users:
   * `Runs`
@@ -15,6 +26,7 @@ All notable changes to this project will be documented in this file. See [standa
   * A notification is sent any time a log is created, not only when a log is created from the log creation page (for example auto-generated logs)
   * Main links now have a complete link behavior, such as ctrl+click to open in a new tab
   * Changing run quality will automatically create a log with the following tags: `DPG` and `RC`
+  * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
 * Notable changes for developers:
   * `GET` Runs API"
     * `runDuration` New logic to generating a time stamp:
@@ -22,6 +34,11 @@ All notable changes to this project will be documented in this file. See [standa
       * Is based on o2 start/stop when trigger does not exist;
       * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
   * Any log creation using `CreateLogUseCase` will send a notification, not only logs created from logs controller
+  * Runs API:
+  * `GET`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
+  * `PATCH`
+    * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
 
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
 * Notable changes for users:

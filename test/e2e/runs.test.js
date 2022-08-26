@@ -916,6 +916,9 @@ module.exports = () => {
                     runQuality: 'good',
                     lhcPeriod: 'lhc22b',
                     odcTopologyFullName: 'hash',
+                    pdpWorkflowParameters: 'EVENT_DISPLAY',
+                    pdpBeamType: 'fill',
+                    readoutCfgUri: 'hash',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -931,7 +934,9 @@ module.exports = () => {
                     expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
-
+                    expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
+                    expect(res.body.data.pdpBeamType).to.equal('fill');
+                    expect(res.body.data.readoutCfgUri).to.equal('hash');
                     done();
                 });
         });

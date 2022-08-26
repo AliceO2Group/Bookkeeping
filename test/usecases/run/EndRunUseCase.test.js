@@ -37,6 +37,9 @@ module.exports = () => {
                 lhcPeriod: 'lhc22b',
                 triggerValue: 'CTP',
                 odcTopologyFullName: 'synchronous-workflow',
+                pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
+                pdpBeamType: 'cosmic',
+                readoutCfgUri: 'Repository hash',
             },
         });
 
@@ -59,6 +62,9 @@ module.exports = () => {
         expect(result.lhcPeriod).to.equal('lhc22b');
         expect(result.triggerValue).to.equal('CTP');
         expect(result.odcTopologyFullName).to.equal('synchronous-workflow');
+        expect(result.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');
+        expect(result.pdpBeamType).to.equal('cosmic');
+        expect(result.readoutCfgUri).to.equal('Repository hash');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
