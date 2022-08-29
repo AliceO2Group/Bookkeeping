@@ -47,19 +47,45 @@ module.exports = () => {
     it('should display valid fill statistics', async () => {
         const efficiency = await page.$eval('#lhc-fill-efficiency', (element) => element.innerText);
         expect(efficiency.endsWith('41.67%')).to.be.true;
-        const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
+        const durationBeforeFirstRun = await page.$eval(
+            '#lhc-fill-durationBeforeFirstRun',
+            (element) => element.innerText,
+        );
         expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
         const durationAfterLastRun = await page.$eval('#lhc-fill-durationAfterLastRun', (element) => element.innerText);
         expect(durationAfterLastRun.endsWith('02:00:00 (16.67%)')).to.be.true;
         const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
         expect(meanRunDuration.endsWith('01:40:00')).to.be.true;
-        const totalRunsDuration = await page.$eval('#lhc-fill-totalRunsDuration', (element) => element.innerText);
-        expect(totalRunsDuration.endsWith('05:00:00')).to.be.true;
+        const runsCoverage = await page.$eval('#lhc-fill-runsCoverage', (element) => element.innerText);
+        expect(runsCoverage.endsWith('05:00:00')).to.be.true;
+        const timeBetweenRuns = await page.$eval(
+            '#lhc-fill-timeElapsedBetweenRuns div',
+            (element) => element.innerText,
+        );
+        expect(timeBetweenRuns.startsWith('02:00:00')).to.be.true;
+        const timeBetweenRunsWarning = await page.$eval(
+            '#lhc-fill-timeElapsedBetweenRuns .popover',
+            (element) => element.innerText,
+        );
+        expect(timeBetweenRunsWarning).to.equal('Some runs have missing start or end');
     });
 
     it('should successfully display runs related to the fill', async () => {
         const runsTable = await page.$$('#runs tbody tr');
-        expect(runsTable.length).to.be.greaterThan(0);
+
+        expect(runsTable.length).to.equal(4);
+    });
+
+    it('should successfully display time elapsed between runs', async () => {
+        // eslint-disable-next-line require-jsdoc
+        const getRunDuration = async (rowNumber) => page.$eval(
+            `#runs tbody tr:nth-of-type(${rowNumber})`,
+            (row) => document.querySelector(`#${row.id}-timeSincePreviousRun`).innerText,
+        );
+        expect(await getRunDuration(1)).to.equal('-');
+        expect(await getRunDuration(2)).to.equal('UNKNOWN');
+        expect(await getRunDuration(3)).to.equal('00:00:00');
+        expect(await getRunDuration(4)).to.equal('02:00:00');
     });
 
     it('should successfully navigate to run detail page', async () => {
