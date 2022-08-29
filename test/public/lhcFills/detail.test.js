@@ -49,6 +49,8 @@ module.exports = () => {
         expect(efficiency.endsWith('41.67%')).to.be.true;
         const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
         expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
+        const durationAfterLastRun = await page.$eval('#lhc-fill-durationAfterLastRun', (element) => element.innerText);
+        expect(durationAfterLastRun.endsWith('02:00:00 (16.67%)')).to.be.true;
         const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
         expect(meanRunDuration.endsWith('01:40:00')).to.be.true;
         const totalRunsDuration = await page.$eval('#lhc-fill-totalRunsDuration', (element) => element.innerText);

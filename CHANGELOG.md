@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
+  * Time after last run and corresponding loss has been added to fill statistics
 * Notable changes for developers:
   * Runs API:
   * `GET`
