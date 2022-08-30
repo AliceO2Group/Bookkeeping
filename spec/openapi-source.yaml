@@ -2145,16 +2145,6 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
-    RunSimplifiedObject:
-      description: A smaller run object
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/EntityId'
-        runNumber:
-          description: A inteber pointing to the run number
-          type: integer
-          minimum: 0
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
@@ -2237,6 +2227,17 @@ components:
           $ref: '#/components/schemas/Run'
       required:
         - data
+      additionalProperties: false
+    RunSimplifiedObject:
+      description: A smaller run object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        runNumber:
+          description: A inteber pointing to the run number
+          type: integer
+          minimum: 0
       additionalProperties: false
     RunSortOptions:
       description: Specifies the sorting requirements of a run request.
