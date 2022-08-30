@@ -1,4 +1,4 @@
-# Generated on Fri, 19 Aug 2022 12:07:40 GMT
+# Generated on Tue, 30 Aug 2022 09:36:04 GMT
 
 openapi: 3.0.0
 info:
@@ -1421,7 +1421,7 @@ components:
           description: Array of minified Run objects.
           type: array
           items:
-            $ref: '#/components/schemas/Run'
+            $ref: '#/components/schemas/RunSimplifiedObject'
         status:
           description: The status of the environment.
           type: string
@@ -2147,6 +2147,16 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
+    RunSimplifiedObject:
+      description: A smaller run object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        runNumber:
+          description: A inteber pointing to the run number
+          type: integer
+          minimum: 0
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer

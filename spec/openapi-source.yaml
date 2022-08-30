@@ -1440,7 +1440,7 @@ components:
           description: Array of minified Run objects.
           type: array
           items:
-            $ref: '#/components/schemas/Run'
+            $ref: '#/components/schemas/RunSimplifiedObject'
       required:
         - id
       additionalProperties: false
@@ -2145,6 +2145,16 @@ components:
         - timeTrgEnd
         - timeTrgStart
       additionalProperties: false
+    RunSimplifiedObject:
+      description: A smaller run object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        runNumber:
+          description: A inteber pointing to the run number
+          type: integer
+          minimum: 0
     RunBytesReadOut:
       description: Total data volume read out from the detectors by the O2 system in bytes.
       type: integer
