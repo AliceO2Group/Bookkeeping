@@ -2161,12 +2161,24 @@ components:
           description: The name or location of the odc topology
           type: string
           nullable: true
+        pdpBeamType:
+          description: Type of the pdp beam.
+          type: string
+          nullable: true
         pdpConfigOption:
           description: The config option of the pdp.
           type: string
           nullable: true
         pdpTopologyDescriptionLibraryFile:
           description: Pdp file location.
+          type: string
+          nullable: true
+        pdpWorkflowParameters:
+          description: Parameters of the pdp workflow.
+          type: string
+          nullable: true
+        readoutCfgUri:
+          description: Uri of the readout configuration
           type: string
           nullable: true
         runDuration:

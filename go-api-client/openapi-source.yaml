@@ -1646,11 +1646,20 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpBeamType:
+          description: Beam type of the pdp
+          type: string
         pdpConfigOption:
           description: Repository hash
           type: string
         pdpTopologyDescriptionLibraryFile:
           description: Library file location of the pdp topology descrption.
+          type: string
+        pdpWorkflowParameters:
+          description: Parameters given to the pdp workflow.
+          type: string
+        readoutCfgUri:
+          description: Config uri of readout.
           type: string
         runNumber:
           $ref: '#/components/schemas/RunNumber'
