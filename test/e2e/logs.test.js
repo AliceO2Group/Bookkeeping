@@ -153,9 +153,9 @@ module.exports = () => {
 
         it('should support filtering by creation time', (done) => {
             const fromTime = 946684800000;
-            const timeTo = 1577833200000;
+            const toTime = 1577833200000;
             request(server)
-                .get(`/api/logs?filter[created][from]=${fromTime}&filter[created][to]=${timeTo}`)
+                .get(`/api/logs?filter[created][from]=${fromTime}&filter[created][to]=${toTime}`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -169,7 +169,7 @@ module.exports = () => {
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(100);
                     expect(res.body.data[0].createdAt).to.be.gte(fromTime);
-                    expect(res.body.data[0].createdAt).to.be.lte(timeTo);
+                    expect(res.body.data[0].createdAt).to.be.lte(toTime);
 
                     done();
                 });
