@@ -1,4 +1,4 @@
-# Generated on Tue, 30 Aug 2022 12:02:12 GMT
+# Generated on Wed, 31 Aug 2022 07:19:58 GMT
 
 openapi: 3.0.0
 info:
@@ -2237,7 +2237,7 @@ components:
         id:
           $ref: '#/components/schemas/EntityId'
         runNumber:
-          description: A inteber pointing to the run number
+          description: A integer pointing to the run number
           type: integer
           minimum: 0
       additionalProperties: false

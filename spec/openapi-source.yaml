@@ -2235,7 +2235,7 @@ components:
         id:
           $ref: '#/components/schemas/EntityId'
         runNumber:
-          description: A inteber pointing to the run number
+          description: A integer pointing to the run number
           type: integer
           minimum: 0
       additionalProperties: false
