@@ -71,6 +71,8 @@ module.exports = () => {
             efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
             durationBeforeFirstRun: (data) => data === '-'
                 || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
+            durationAfterLastRun: (data) => data === '-'
+                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             totalRunsDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
@@ -104,7 +106,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
 
-        await checkColumnBalloon(page, 1, 11);
+        await checkColumnBalloon(page, 1, 12);
     });
 
     it('can set how many lhcFills are available per page', async () => {
