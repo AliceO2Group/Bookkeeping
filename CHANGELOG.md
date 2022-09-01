@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
   * Time after last run and corresponding loss has been added to fill statistics
+  * Fix bug where some LHC fills had a negative time before first run (and associated loss)
+  * Fix log notification not sent with logs created automatically
+  * Fix bug where hovering log columns reset page to 1
 * Notable changes for developers:
   * Runs API:
   * `GET`
