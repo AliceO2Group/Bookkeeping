@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
   * Time after last run and corresponding loss has been added to fill statistics
-  * `definition` is now available in un overview's table and filtering
+  * `definition` is now available in run overview's table and filtering
 * Notable changes for developers:
   * Runs API:
   * `GET`

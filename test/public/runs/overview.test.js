@@ -326,10 +326,10 @@ module.exports = () => {
     it('should successfully filter on definition', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
-        const physicsFilterSelector = `${filterInputSelectorPrefix}physics`;
-        const cosmicFilterSelector = `${filterInputSelectorPrefix}cosmic`;
-        const technicalFilterSelector = `${filterInputSelectorPrefix}technical`;
-        const syntheticFilterSelector = `${filterInputSelectorPrefix}synthetic`;
+        const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
+        const cosmicFilterSelector = `${filterInputSelectorPrefix}COSMIC`;
+        const technicalFilterSelector = `${filterInputSelectorPrefix}TECHNICAL`;
+        const syntheticFilterSelector = `${filterInputSelectorPrefix}SYNTHETIC`;
 
         /**
          * Checks that all the rows of the given table have a valid run definition
@@ -355,44 +355,44 @@ module.exports = () => {
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(3);
-        await checkTableRunDefinitions(table, ['physics']);
+        await checkTableRunDefinitions(table, ['PHYSICS']);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
-        await checkTableRunDefinitions(table, ['physics', 'synthetic']);
+        await checkTableRunDefinitions(table, ['PHYSICS', 'SYNTHETIC']);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
-        await checkTableRunDefinitions(table, ['synthetic']);
+        await checkTableRunDefinitions(table, ['SYNTHETIC']);
 
         await page.$eval(cosmicFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
-        await checkTableRunDefinitions(table, ['synthetic', 'cosmic']);
+        await checkTableRunDefinitions(table, ['SYNTHETIC', 'COSMIC']);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(3);
-        await checkTableRunDefinitions(table, ['cosmic']);
+        await checkTableRunDefinitions(table, ['COSMIC']);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
-        await checkTableRunDefinitions(table, ['cosmic', 'technical']);
+        await checkTableRunDefinitions(table, ['COSMIC', 'TECHNICAL']);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(8);
-        await checkTableRunDefinitions(table, ['cosmic', 'technical', 'physics', 'synthetic']);
+        await checkTableRunDefinitions(table, ['COSMIC', 'TECHNICAL', 'PHYSICS', 'SYNTHETIC']);
     });
 
     it('should update to current date when empty and time is set', async () => {

@@ -65,48 +65,48 @@ module.exports = () => {
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 1;
 
-        getAllRunsDto.query = { filter: { definitions: 'physics' } };
+        getAllRunsDto.query = { filter: { definitions: 'PHYSICS' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT);
-            expect(runs.every(({ definition }) => definition === 'physics')).to.be.true;
+            expect(runs.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'cosmic' } };
+        getAllRunsDto.query = { filter: { definitions: 'COSMIC' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(COSMIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'cosmic')).to.be.true;
+            expect(runs.every(({ definition }) => definition === 'COSMIC')).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'synthetic' } };
+        getAllRunsDto.query = { filter: { definitions: 'SYNTHETIC' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(SYNTHETIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'synthetic')).to.be.true;
+            expect(runs.every(({ definition }) => definition === 'SYNTHETIC')).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'technical' } };
+        getAllRunsDto.query = { filter: { definitions: 'TECHNICAL' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT);
-            expect(runs.every(({ definition }) => definition === 'technical')).to.be.true;
+            expect(runs.every(({ definition }) => definition === 'TECHNICAL')).to.be.true;
         }
 
-        getAllRunsDto.query = { filter: { definitions: 'physics, cosmic' } };
+        getAllRunsDto.query = { filter: { definitions: 'PHYSICS, COSMIC' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'physics' || definition === 'cosmic')).to.be.true;
+            expect(runs.every(({ definition }) => definition === 'PHYSICS' || definition === 'COSMIC')).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'technical, synthetic' } };
+        getAllRunsDto.query = { filter: { definitions: 'TECHNICAL, SYNTHETIC' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT + SYNTHETIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'technical' || definition === 'synthetic')).to.be.true;
+            expect(runs.every(({ definition }) => definition === 'TECHNICAL' || definition === 'SYNTHETIC')).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'physics, synthetic, cosmic, technical' } };
+        getAllRunsDto.query = { filter: { definitions: 'PHYSICS, SYNTHETIC, COSMIC, TECHNICAL' } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT + SYNTHETIC_COUNT + TECHNICAL_COUNT);
-            const any = ['physics', 'cosmic', 'synthetic', 'technical'];
+            const any = ['PHYSICS', 'COSMIC', 'SYNTHETIC', 'TECHNICAL'];
             expect(runs.every(({ definition }) => any.includes(definition))).to.be.true;
         }
     });

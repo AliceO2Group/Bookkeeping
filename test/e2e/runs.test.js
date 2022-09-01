@@ -154,7 +154,7 @@ module.exports = () => {
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [physics, cosmic, technical, synthetic]');
+            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC]');
         });
         it('should successfully filter on run definition', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=physics');
