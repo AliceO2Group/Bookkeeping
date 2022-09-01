@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Run types are now added and can be filtered. The type for a run is shown in the details page.
   * Filling filters for log overview will not automatically remove whitespaces on typing
   * Time between runs is displayed on LHC fill display
+  * Efficiency per detector is now displayed on LHC fill details
   * `Runs`
     * Run duration values:
       * Is based on the trigger when it exists
