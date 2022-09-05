@@ -282,6 +282,49 @@ module.exports = () => {
             expect(data.length).to.equal(4);
         });
 
+        it('should filter on attributes when fields are set', (done) => {
+            request(server)
+                .get('/api/runs?fields[run]=runNumber,timeO2Start')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const runs = res.body.data;
+                    expect(runs[0].id).not.to.exist;
+                    expect(runs[0].timeO2End).not.to.exist;
+                    expect(runs[0].timeO2Start).to.exist;
+                    expect(runs[0].runNumber).to.exist;
+                    expect(runs[1].id).not.to.exist;
+                    expect(runs[1].timeO2End).not.to.exist;
+                    expect(runs[1].timeO2Start).to.exist;
+                    expect(runs[1].runNumber).to.exist;
+                    done();
+                });
+        });
+        it('should not filter on attributes when fields are empty', (done) => {
+            request(server)
+                .get('/api/runs?fields[run]=')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const runs = res.body.data;
+                    expect(runs[0].id).to.exist;
+                    expect(runs[0].timeO2End).to.exist;
+                    expect(runs[0].runNumber).to.exist;
+                    expect(runs[1].id).to.exist;
+                    expect(runs[1].runNumber).to.exist;
+                    expect(runs[1].timeO2Start).to.exist;
+                    done();
+                });
+        });
+
         it('should return 400 if "runQuality" is invalid', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=invalid');
@@ -490,6 +533,42 @@ module.exports = () => {
 
                     expect(res.body.data.id).to.equal(1);
 
+                    done();
+                });
+        });
+
+        it('should filter on attributes when fields are set', (done) => {
+            request(server)
+                .get('/api/runs/1?fields[run]=runNumber,timeO2Start')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const run = res.body.data;
+                    expect(run.id).not.to.exist;
+                    expect(run.timeO2End).not.to.exist;
+                    expect(run.timeO2Start).to.exist;
+                    expect(run.runNumber).to.exist;
+                    done();
+                });
+        });
+        it('should not filter on attributes when fields are empty', (done) => {
+            request(server)
+                .get('/api/runs/1?fields[run]=')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const runs = res.body.data;
+                    expect(runs[0].id).to.exist;
+                    expect(runs[0].timeO2End).to.exist;
+                    expect(runs[0].timeO2Start).to.exist;
                     done();
                 });
         });

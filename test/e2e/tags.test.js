@@ -407,7 +407,7 @@ module.exports = () => {
 
         it('should filter on attributes when filter is set', (done) => {
             request(server)
-                .get('/api/tags/1?filter[tags]=text,email')
+                .get('/api/tags/1?fields[tag]=text,email')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -415,16 +415,30 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    // expect(res).to.satisfyApiSpec;
-
                     const tag = res.body.data;
-
                     expect(tag.id).not.to.exist;
                     expect(tag.mattermost).not.to.exist;
                     expect(tag.text).to.exist;
                     expect(tag.email).to.exist;
+                    done();
+                });
+        });
 
+        it('should not filter on attributes when filter is empty', (done) => {
+            request(server)
+                .get('/api/tags/1?fields[tag]=')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const tag = res.body.data;
+                    expect(tag.id).to.exist;
+                    expect(tag.mattermost).to.exist;
+                    expect(tag.text).to.exist;
+                    expect(tag.email).to.exist;
                     done();
                 });
         });
