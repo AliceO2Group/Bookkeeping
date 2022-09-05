@@ -286,7 +286,7 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
 
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         // Run 106 have data long enough to overflow
@@ -399,7 +399,7 @@ module.exports = () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
         // Open the filters
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
         let today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -427,7 +427,7 @@ module.exports = () => {
         const dateString = '03-21-2021';
         const validValue = '2021-03-21';
         // Open the filters
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
         // Set date
         for (const key in dateFilterSelectors) {
@@ -446,7 +446,7 @@ module.exports = () => {
         page.waitForTimeout(100);
         const dateString = '03-02-2021';
         // Open the filters
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
         for (const selector of Object.values(dateFilterSelectors)) {
@@ -479,7 +479,7 @@ module.exports = () => {
         const maxTime = '23:59';
         const minTime = '00:00';
         // Open the filters
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
         // Set date to an open day
         for (const selector of Object.values(dateFilterSelectors)) {
@@ -502,7 +502,7 @@ module.exports = () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
 
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         const runDurationOperatorSelector = '#duration-operator';
@@ -567,7 +567,7 @@ module.exports = () => {
         };
 
         // Open filter toggle
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         await page.$eval(badFilterSelector, (element) => element.click());
@@ -611,7 +611,7 @@ module.exports = () => {
         };
 
         // Open filter toggle
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         await page.$eval(offFilterSelector, (element) => element.click());
@@ -635,7 +635,7 @@ module.exports = () => {
     it('should successfully filter on a list of run ids and inform the user about it', async () => {
         await page.reload();
         await page.waitForTimeout(200);
-        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#runNumber';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
         await page.focus(filterInputSelector);
@@ -649,7 +649,7 @@ module.exports = () => {
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
         await page.reload();
         await page.waitForTimeout(200);
-        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#fillNumbers';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
         await page.focus(filterInputSelector);
@@ -662,7 +662,7 @@ module.exports = () => {
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
         await page.reload();
         await page.waitForTimeout(200);
-        await page.$eval('#openRunFilterToggle', (element) => element.click());
+        await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#environmentIds';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
         await page.focus(filterInputSelector);
@@ -676,7 +676,7 @@ module.exports = () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
 
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         const nDetectorOperatorSelector = '#nDetectors-operator';
@@ -703,14 +703,14 @@ module.exports = () => {
          * The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in
          * tests data
          */
-        expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= '3' || nDetectors === null)).to.be.true;
+        expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= 3 || nDetectors === null)).to.be.true;
     });
 
     it('should successfully filter on nFLPs', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
 
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         const nFlpsOperatorSelector = '#nFlps-operator';
@@ -732,14 +732,14 @@ module.exports = () => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
         }));
-        expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= '10')).to.be.true;
+        expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= 10)).to.be.true;
     });
 
     it('should successfully filter on nEPNs', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         page.waitForTimeout(100);
 
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         const nEpnsOperatorSelector = '#nEpns-operator';
@@ -761,7 +761,7 @@ module.exports = () => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
         }));
-        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= '10')).to.be.true;
+        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10)).to.be.true;
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
@@ -798,7 +798,7 @@ module.exports = () => {
         await page.reload();
         await page.waitForTimeout(200);
 
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         // Type a fake run number to have no runs
