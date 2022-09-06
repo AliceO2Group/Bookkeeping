@@ -1,4 +1,4 @@
-# Generated on Fri, 19 Aug 2022 12:07:40 GMT
+# Generated on Wed, 31 Aug 2022 07:19:58 GMT
 
 openapi: 3.0.0
 info:
@@ -1421,7 +1421,7 @@ components:
           description: Array of minified Run objects.
           type: array
           items:
-            $ref: '#/components/schemas/Run'
+            $ref: '#/components/schemas/RunSimplifiedObject'
         status:
           description: The status of the environment.
           type: string
@@ -2229,6 +2229,17 @@ components:
           $ref: '#/components/schemas/Run'
       required:
         - data
+      additionalProperties: false
+    RunSimplifiedObject:
+      description: A smaller run object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        runNumber:
+          description: A integer pointing to the run number
+          type: integer
+          minimum: 0
       additionalProperties: false
     RunSortOptions:
       description: Specifies the sorting requirements of a run request.
