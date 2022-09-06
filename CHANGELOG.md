@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
+* Notable changes for users:
+  * Environment overview page now loads in a normal time
+
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
