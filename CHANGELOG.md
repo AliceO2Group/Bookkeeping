@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
 * Notable changes for users:
   * Environment overview page now loads in a normal time
+  * Only administrators as defined in CERN Application portal can create and edit tags 
 
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:
