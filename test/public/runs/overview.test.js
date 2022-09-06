@@ -348,7 +348,7 @@ module.exports = () => {
         };
 
         // Open filter toggle
-        await pressElement(page, '#openRunFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
