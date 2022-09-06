@@ -210,12 +210,12 @@ Concerning the **Update mode** of the fields:
 
 ### RunTypes
 
-**Description:** The fill of    
-**DB main table**: `lhcFills`
+**Description:** This table is made to show the different types the runs can be.
+**DB main table**: `runTypes`
 
 | **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
 | ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
-| `id`                          | run type id                         | `1, 2, 3215`                        | AT COF | `fillNumber` | Insert |
-| `name`            |                |                                     |        | `fillNumber` | Update |
-| `created_at`                   | When the lhcFill is created         |                                     | AT COF | `fillNumber` | Insert |
-| `updated_at`                   | When the lhcFill is updated         |                                     |        | `fillNumber` | Update |
+| `id`                          | run type id                     | `1, 2, 3215`                        | AT COF | `fillNumber` | Insert |
+| `name`                        |                                 |                                     |        | `fillNumber` | Update |
+| `created_at`                  | When the lhcFill is created     |                                     | AT COF | `fillNumber` | Insert |
+| `updated_at`                  | When the lhcFill is updated     |                                     |        | `fillNumber` | Update |

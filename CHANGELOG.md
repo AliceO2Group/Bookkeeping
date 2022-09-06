@@ -10,8 +10,8 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for developers:
   * Runs API:
   * `GET`
-    `runTypes` Run types can be fetched by id or overall
-    `runTypes` Run types are added to a run, this can be given by id or object
+    `runTypes` Run types can be fetched by id or overall.
+    `runTypes` Run types are added to a run, this can be an id or object depending on how the endpoint is set.
   * `POST`
     `runType` A run type in a string can now be given when starting a run or updating a run.
   * `PATCH`
