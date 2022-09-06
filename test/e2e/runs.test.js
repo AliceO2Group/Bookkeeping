@@ -163,7 +163,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.lengthOf(3);
-            expect(data.every(({ definition }) => definition === 'physics')).to.be.true;
+            expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
         });
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
