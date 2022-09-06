@@ -74,29 +74,18 @@
 <script src="/assets/SmartEditor/HyperMD/powerpack/fold-emoji-with-emojione.js"></script>
 
 <body>
-
-    <!-- Load the session service, parses variables provided by server in the query -->
-    <script type="module">
-        import sessionService from '/js/src/sessionService.js';
-        sessionService.loadAndHideParameters();
-
-        // Expose sessionService to interact with it the browser's console
-        window.sessionService = sessionService;
-    </script>
-
-    <!-- Main application controller -->
-    <script type="module">
-        // Import MVC
-        import { mount } from '/js/src/index.js';
-        import view from './view.js';
-        import Model from './Model.js';
-
-        // Start application
-        const model = new Model(HyperMD, window, document, CompleteEmoji);
-        const debug = true; // shows when redraw is done
-        mount(document.body, view, model, debug);
-
-        // Expose model to interact with it the browser's console
-        window.model = model;
-    </script>
+    <!-- This loader will be replaced by the web app when is loaded and renders -->
+    <div class="absolute-fill flex-column items-center justify-center">
+        <div class="atom-spinner f1">
+        <div class="spinner-inner">
+            <div class="spinner-line"></div>
+            <div class="spinner-line"></div>
+            <div class="spinner-line"></div>
+            <div class="spinner-circle">●</div>
+        </div>
+        </div>
+        <div class="f5">Loading Bookkeeping...</div>
+    </div>
 </body>
+
+<script src="index.js" type="module"></script>
