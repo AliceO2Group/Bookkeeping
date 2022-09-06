@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
 * Notable changes for user:
   * Only administrators can create tags 
-  * Only admniistrators can edit tags
+  * Only administrators can edit tags
 
 
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
