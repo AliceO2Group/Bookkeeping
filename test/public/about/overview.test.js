@@ -54,6 +54,6 @@ module.exports = () => {
 
         // We expect to find a table
         await pressElement(page, `#${firstRowId}`);
-        expect(firstRowId).to.equal('rowundefined');
+        expect(firstRowId).to.equal('rowBookkeeping');
     });
 };
