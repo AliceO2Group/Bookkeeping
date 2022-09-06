@@ -39,7 +39,7 @@ module.exports = () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
             width: 1400,
-            height: 820,
+            height: 940,
             deviceScaleFactor: 1,
         });
     });
@@ -100,7 +100,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetLogsParams();
+            model.logs.reset();
         });
         await page.waitForTimeout(100);
 
@@ -138,7 +138,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetLogsParams();
+            model.logs.reset();
         });
         await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
@@ -189,7 +189,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetLogsParams();
+            model.logs.reset();
         });
     });
 
@@ -239,7 +239,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.resetLogsParams();
+            model.logs.reset();
         });
     });
 
