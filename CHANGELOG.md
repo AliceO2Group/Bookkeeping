@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Environment overview page now loads in a normal time
   * Only administrators as defined in CERN Application portal can create and edit tags 
 * Notable changes for developers:
+  * Remove the use of `unsafe-inline` from index file and upgrade to the latest web-ui server version
   * Table system:
     * Table systems now support profiles, which allows to:
       * Display columns only under a specific profile or one of the listed specific profiles
