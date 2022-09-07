@@ -31,7 +31,6 @@ module.exports = () => {
         const result = await new GetRunTypeUseCase()
             .execute(getRunTypeDto);
 
-        expect(result).to.have.ownProperty('id');
         expect(result.id).to.equal(1);
         expect(result.name).to.equal('NONE');
     });

@@ -38,12 +38,12 @@ module.exports = () => {
         };
     });
     it('should insert a new RunType', async () => {
-        const nEnvsBefore = await RunTypeRepository.count();
+        const nRunTypesBefore = await RunTypeRepository.count();
 
         await new CreateRunTypeUseCase()
             .execute(createRunTypeDto);
 
         const nEnvsAfter = await RunTypeRepository.count();
-        expect(nEnvsAfter).to.be.greaterThan(nEnvsBefore);
+        expect(nEnvsAfter).to.be.greaterThan(nRunTypesBefore);
     });
 };

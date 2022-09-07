@@ -22,5 +22,6 @@ module.exports = () => {
             .execute();
 
         expect(runs).to.be.an('array');
+        expect(runs.length).to.be.greaterThan(2);
     });
 };
