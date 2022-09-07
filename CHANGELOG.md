@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed table bug when row ids of multiple tables were the same and in the same order
   * Fixed log creation display bug when doing log creation => any page => log creation
   * LHC fills runs list are limited to physics runs only
+  * Fixed LHC fill detail page cleanup
 * Notable changes for developers:
   * Runs API:
     * `GET`
