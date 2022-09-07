@@ -102,12 +102,12 @@ module.exports = () => {
 
     it('can set how many environments are available per page', async () => {
         await page.waitForTimeout(300);
-        // Expect the amount selector to currently be set to Infinite (after the previous test)
+        // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
