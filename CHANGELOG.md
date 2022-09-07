@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
   * Environment overview page now loads in a normal time
   * Only administrators as defined in CERN Application portal can create and edit tags 
+  * `definition` is now available in run overview's table and filtering
+  * Fixed table bug when row ids of multiple tables were the same and in the same order
+  * Fixed log creation display bug when doing log creation => any page => log creation
+  * LHC fills runs list are limited to physics runs only
+  * Fixed LHC fill detail page cleanup
+* Notable changes for developers:
+  * Runs API:
+    * `GET`
+      * `definition` Can now be fetched in runs and a specific run.
+  * Table system:
+    * Table systems now support profiles, which allows to:
+      * Display columns only under a specific profile or one of the listed specific profiles
+      * Override column configuration under a specific profile
+      * Apply one profile to a table
 
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:

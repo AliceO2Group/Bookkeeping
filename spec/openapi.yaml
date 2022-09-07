@@ -2116,6 +2116,8 @@ components:
           $ref: '#/components/schemas/RunDcs'
         dd_flp:
           $ref: '#/components/schemas/RunDdFlp'
+        definition:
+          $ref: '#/components/schemas/RunDefinition'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
         envId:
@@ -2219,6 +2221,7 @@ components:
           example: 853113599
       required:
         - bytesReadOut
+        - definition
         - id
         - nDetectors
         - nEpns
@@ -2243,6 +2246,10 @@ components:
     RunDdFlp:
       description: Boolean if dd_flp is set.
       type: boolean
+      nullable: true
+    RunDefinition:
+      description: Specifies the definition of run.
+      type: string
       nullable: true
     RunDetectors:
       description: The amount of detectors in a single run.

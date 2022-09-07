@@ -78,7 +78,7 @@ module.exports = () => {
     describe('Validator', () => {
         // eslint-disable-next-line require-jsdoc
         function traverse(parent, path = []) {
-            const keys = typeof parent === 'object' ? Object.keys(parent) : [];
+            const keys = typeof parent === 'object' && parent !== null ? Object.keys(parent) : [];
             for (let i = 0; i < keys.length; i++) {
                 const element = keys[i];
                 describe(element, () => {

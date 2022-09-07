@@ -147,6 +147,24 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should successfully return 400 if the given definitions are not valid', async () => {
+            const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC]');
+        });
+        it('should successfully filter on run definition', async () => {
+            const response = await request(server).get('/api/runs?filter[definitions]=physics');
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.lengthOf(3);
+            expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+        });
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
@@ -250,7 +268,8 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(16);
+
+            expect(data.length).to.equal(21);
         });
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
@@ -295,7 +314,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(51);
+            expect(data).to.have.lengthOf(46);
         });
 
         it('should successfully filter on lhcPeriod', async () => {

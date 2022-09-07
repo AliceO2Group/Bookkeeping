@@ -80,6 +80,9 @@ html, body {
 .mbauto { margin-bottom: auto; }
 .pt0 { padding-top: 0; }
 
+/* flex */
+.flex-wrap.flex-row > .flex-grow { width: inherit; }
+
 /* z-index */
 .no-z-index {
     z-index: unset;
