@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Environment overview page now loads in a normal time
   * Only administrators as defined in CERN Application portal can create and edit tags 
   * `definition` is now available in run overview's table and filtering
+  * Fixed table bug when row ids of multiple tables were the same and in the same order
+  * Fixed log creation display bug when doing log creation => any page => log creation
 * Notable changes for developers:
   * Runs API:
     * `GET`
