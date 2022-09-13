@@ -15,4 +15,5 @@ const (
 	GOOD_RunQuality RunQuality = "good"
 	BAD_RunQuality RunQuality = "bad"
 	TEST_RunQuality RunQuality = "test"
+	NULL_RunQuality RunQuality = ""
 )
