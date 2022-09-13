@@ -105,6 +105,7 @@ Class | Method | HTTP request | Description
  - [RunQuality](docs/RunQuality.md)
  - [RunResponse](docs/RunResponse.md)
  - [RunSortOptions](docs/RunSortOptions.md)
+ - [RunType](docs/RunType.md)
  - [SortOrder](docs/SortOrder.md)
  - [Subsystem](docs/Subsystem.md)
  - [SubsystemResponse](docs/SubsystemResponse.md)
