@@ -1,4 +1,4 @@
-# Generated on Mon, 12 Sep 2022 11:27:33 GMT
+# Generated on Tue, 13 Sep 2022 10:02:28 GMT
 
 openapi: 3.0.0
 info:
@@ -2192,8 +2192,6 @@ components:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
-          type: string
-        runTypeObj:
           oneOf:
             - $ref: '#/components/schemas/EntityId'
             - $ref: '#/components/schemas/RunTypeString'

@@ -2190,8 +2190,6 @@ components:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
-          type: string
-        runTypeObj:
           oneOf:
             - $ref: '#/components/schemas/EntityId'
             - $ref: '#/components/schemas/RunTypeString'
