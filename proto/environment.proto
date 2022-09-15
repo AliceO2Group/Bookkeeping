@@ -1,0 +1,46 @@
+syntax = 'proto3';
+
+import 'proto/common.proto';
+
+package o2.bookkeeping;
+
+// Services
+
+service EnvironmentService {
+  rpc Create(EnvironmentCreationRequest) returns (Environment);
+  rpc Update(EnvironmentUpdateRequest) returns (Environment);
+}
+
+// High level messages
+
+message EnvironmentCreationRequest {
+  string envId = 1;
+  int64 createdAt = 2;
+  string status = 3;
+  string statusMessage = 4;
+}
+
+message EnvironmentUpdateRequest {
+  string envId = 1;
+  int64 toredownAt = 2;
+  string status = 3;
+  string statusMessage = 4;
+}
+
+// Low-level messages and enums
+
+message Environment {
+  string id = 1;
+  // Unix timestamp when this entity was created.
+  int32 createdAt = 2;
+  // Unix timestamp when this entity was last updated.
+  int32 updatedAt = 3;
+  // Unix timestamp when this entity was tore down.
+  int64 toredownAt = 4;
+  // The status of the environment.
+  string status = 5;
+  // A message explaining the status or the current state of the environment.
+  string statusMessage = 6;
+  // Array of minified Run objects.
+  repeated Run runs = 7;
+}
