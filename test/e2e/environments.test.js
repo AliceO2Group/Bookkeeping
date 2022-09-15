@@ -44,14 +44,12 @@ module.exports = () => {
         });
     });
     describe('POST /api/environments', () => {
-        const createdAtDate = new Date().setMilliseconds(0);
         it('should return 201 if valid data is provided', (done) => {
             request(server)
                 .post('/api/environments')
                 .expect(201)
                 .send({
                     envId: 'New original env',
-                    createdAt: createdAtDate,
                     status: 'STARTED',
                     statusMessage: 'This is going very good',
                 })
@@ -65,7 +63,6 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
                     const { data } = res.body;
                     expect(data.id).to.equal('New original env');
-                    expect(data.createdAt).to.equal(createdAtDate);
                     expect(data.status).to.equal('STARTED');
                     expect(data.statusMessage).to.equal('This is going very good');
                     done();
