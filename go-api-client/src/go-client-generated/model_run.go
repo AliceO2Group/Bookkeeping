@@ -19,14 +19,14 @@ type Run struct {
 	NEpns int32 `json:"nEpns,omitempty"`
 	NFlps int32 `json:"nFlps,omitempty"`
 	NSubtimeframes int32 `json:"nSubtimeframes,omitempty"`
+	// Beam type of the pdp
+	PdpBeamType string `json:"pdpBeamType,omitempty"`
 	// Repository hash
 	PdpConfigOption string `json:"pdpConfigOption,omitempty"`
 	// Library file location of the pdp topology descrption.
 	PdpTopologyDescriptionLibraryFile string `json:"pdpTopologyDescriptionLibraryFile,omitempty"`
 	// Parameters given to the pdp workflow.
 	PdpWorkflowParameters string `json:"pdpWorkflowParameters,omitempty"`
-	// Beam type of the pdp
-	PdpBeamType string `json:"pdpBeamType,omitempty"`
 	// Config uri of readout.
 	ReadoutCfgUri string `json:"readoutCfgUri,omitempty"`
 	RunNumber int32 `json:"runNumber,omitempty"`

@@ -2815,6 +2815,9 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpBeamType:
+          type: string
+          description: Beam type of the pdp
         pdpConfigOption:
           type: string
           description: Repository hash
@@ -2824,9 +2827,6 @@ components:
         pdpWorkflowParameters:
           type: string
           description: Parameters given to the pdp workflow.
-        pdpBeamType:
-          type: string
-          description: Beam type of the pdp
         readoutCfgUri:
           type: string
           description: Config uri of readout.
@@ -2951,10 +2951,12 @@ components:
     RunQuality:
       type: string
       description: Specifies the type of run.
+      nullable: true
       enum:
       - good
       - bad
       - test
+      - null
     RunResponse:
       required:
       - data
