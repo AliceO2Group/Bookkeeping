@@ -24,9 +24,10 @@ using o2::bookkeeping::UpdateCountersRequest;
 
 namespace o2::bkp::api::grpc::services
 {
-GrpcFlpServiceClient::GrpcFlpServiceClient(const std::shared_ptr<ChannelInterface>& channel)
+GrpcFlpServiceClient::GrpcFlpServiceClient(const std::shared_ptr<ChannelInterface>& channel, const std::shared_ptr<ClientContext>& clientContext)
 {
   mStub = o2::bookkeeping::FlpService::NewStub(channel);
+  mClientContext = clientContext;
 }
 
 void GrpcFlpServiceClient::updateReadoutCountersByFlpNameAndRunNumber(
@@ -38,7 +39,6 @@ void GrpcFlpServiceClient::updateReadoutCountersByFlpNameAndRunNumber(
   uint64_t nFairMQBytes)
 {
   o2::bookkeeping::Flp updatedFlp;
-  ClientContext context;
   UpdateCountersRequest request;
 
   request.set_flpname(flpName);
@@ -48,7 +48,7 @@ void GrpcFlpServiceClient::updateReadoutCountersByFlpNameAndRunNumber(
   request.set_nrecordingbytes(nRecordingBytes);
   request.set_nfairmqbytes(nFairMQBytes);
 
-  auto status = mStub->UpdateCounters(&context, request, &updatedFlp);
+  auto status = mStub->UpdateCounters(mClientContext.get(), request, &updatedFlp);
 
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());

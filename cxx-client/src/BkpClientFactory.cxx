@@ -23,8 +23,8 @@ using std::unique_ptr;
 
 namespace o2::bkp::api
 {
-unique_ptr<BkpClient> BkpClientFactory::create(const string& gRPCUri)
+unique_ptr<BkpClient> BkpClientFactory::create(const string& gRPCUri, const string& token)
 {
-  return make_unique<grpc::GrpcBkpClient>(gRPCUri);
+  return make_unique<grpc::GrpcBkpClient>(gRPCUri, token);
 }
 } // namespace o2::bkp::api
