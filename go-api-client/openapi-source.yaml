@@ -1753,6 +1753,8 @@ components:
         - good
         - bad
         - test
+        - null
+      nullable: true
     RunResponse:
       description: Response containing a single run.
       type: object

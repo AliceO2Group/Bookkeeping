@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed log creation display bug when doing log creation => any page => log creation
   * LHC fills runs list are limited to physics runs only
   * Fixed LHC fill detail page cleanup
+  * Fix the environment overview switch to infinite mode when changing page
+  * Fixed log detail page cleanup
 * Notable changes for developers:
   * Runs API:
     * `GET`

@@ -824,7 +824,6 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'good',
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -845,7 +844,6 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'good',
                     lhcPeriod: 'lhc22b',
                     odcTopologyFullName: 'hash',
                     pdpWorkflowParameters: 'EVENT_DISPLAY',
@@ -863,7 +861,6 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
                     expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
@@ -890,7 +887,6 @@ module.exports = () => {
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
             expect(body.data.timeO2Start).to.equal(dateValue); // Values not passed should remain the same
-            expect(body.data.runQuality).to.equal('good'); // Values not passed should remain the same
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
