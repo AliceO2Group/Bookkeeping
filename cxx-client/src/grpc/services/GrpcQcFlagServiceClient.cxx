@@ -20,9 +20,10 @@ using o2::bookkeeping::SynchronousQcFlagCreationRequest;
 
 namespace o2::bkp::api::grpc::services
 {
-GrpcQcFlagServiceClient::GrpcQcFlagServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
+GrpcQcFlagServiceClient::GrpcQcFlagServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory)
 {
   mStub = o2::bookkeeping::QcFlagService::NewStub(channel);
+  mClientContextFactory = clientContextFactory;
 }
 
 std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForDataPass(
@@ -31,7 +32,6 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForDataPass(
   const std::string& detectorName,
   const std::vector<QcFlag>& qcFlags)
 {
-  ClientContext context;
   DataPassQcFlagCreationRequest request;
   QcFlagCreationResponse response;
 
@@ -44,7 +44,7 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForDataPass(
     mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
   }
 
-  auto status = mStub->CreateForDataPass(&context, request, &response);
+  auto status = mStub->CreateForDataPass(mClientContextFactory().get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }
@@ -59,7 +59,6 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSimulationPas
   const std::string& detectorName,
   const std::vector<QcFlag>& qcFlags)
 {
-  ClientContext context;
   SimulationPassQcFlagCreationRequest request;
   QcFlagCreationResponse response;
 
@@ -72,7 +71,7 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSimulationPas
     mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
   }
 
-  auto status = mStub->CreateForSimulationPass(&context, request, &response);
+  auto status = mStub->CreateForSimulationPass(mClientContextFactory().get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }
@@ -86,7 +85,6 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSynchronous(
   const std::string& detectorName,
   const std::vector<QcFlag>& qcFlags)
 {
-  ClientContext context;
   SynchronousQcFlagCreationRequest request;
   QcFlagCreationResponse response;
 
@@ -98,7 +96,7 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSynchronous(
     mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
   }
 
-  auto status = mStub->CreateSynchronous(&context, request, &response);
+  auto status = mStub->CreateSynchronous(mClientContextFactory().get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }

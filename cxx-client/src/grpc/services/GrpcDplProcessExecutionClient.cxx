@@ -22,9 +22,10 @@ namespace o2::bkp
 
 namespace api::grpc::services
 {
-GrpcDplProcessExecutionClient::GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
+GrpcDplProcessExecutionClient::GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory)
 {
   mStub = DplProcessExecutionService::NewStub(channel);
+  mClientContextFactory = clientContextFactory;
 }
 
 void GrpcDplProcessExecutionClient::registerProcessExecution(
@@ -42,10 +43,9 @@ void GrpcDplProcessExecutionClient::registerProcessExecution(
   request->set_type(static_cast<o2::bookkeeping::DplProcessType>(type));
   request->set_hostname(hostname);
 
-  ClientContext context;
   auto response = std::make_shared<DplProcessExecution>();
 
-  auto status = mStub->Create(&context, *request, response.get());
+  auto status = mStub->Create(mClientContextFactory().get(), *request, response.get());
 
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());

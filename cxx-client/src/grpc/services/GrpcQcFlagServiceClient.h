@@ -25,7 +25,7 @@ namespace o2::bkp::api::grpc::services
 class GrpcQcFlagServiceClient : public QcFlagServiceClient
 {
  public:
-  explicit GrpcQcFlagServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  explicit GrpcQcFlagServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory);
   ~GrpcQcFlagServiceClient() override = default;
 
   std::vector<int> createForDataPass(uint32_t runNumber, const std::string& passName, const std::string& detectorName, const std::vector<QcFlag>& qcFlags) override;
@@ -42,6 +42,7 @@ class GrpcQcFlagServiceClient : public QcFlagServiceClient
   static void mirrorQcFlagOnGrpcQcFlag(const QcFlag& qcFlag, bookkeeping::QcFlag* grpcQcFlag);
 
   std::unique_ptr<o2::bookkeeping::QcFlagService::Stub> mStub;
+  std::function<std::unique_ptr<::grpc::ClientContext> ()> mClientContextFactory;
 };
 
 } // namespace o2::bkp::api::grpc::services
