@@ -25,7 +25,7 @@ namespace o2::bkp::api::grpc::services
 class GrpcFlpServiceClient : public ::o2::bkp::api::FlpServiceClient
 {
  public:
-  explicit GrpcFlpServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  explicit GrpcFlpServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::shared_ptr<::grpc::ClientContext>& clientContext);
 
   void updateReadoutCountersByFlpNameAndRunNumber(
     const std::string& flpName,
@@ -37,6 +37,7 @@ class GrpcFlpServiceClient : public ::o2::bkp::api::FlpServiceClient
 
  private:
   std::unique_ptr<o2::bookkeeping::FlpService::Stub> mStub;
+  std::shared_ptr<::grpc::ClientContext> mClientContext;
 };
 } // namespace o2::bkp::api::grpc::services
 

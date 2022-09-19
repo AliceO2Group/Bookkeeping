@@ -16,6 +16,7 @@
 
 using grpc::Channel;
 
+using grpc::ClientContext;
 using grpc::CreateChannel;
 using grpc::InsecureChannelCredentials;
 using o2::bkp::api::FlpServiceClient;
@@ -29,10 +30,16 @@ namespace o2::bkp::api::grpc
 {
 using services::GrpcFlpServiceClient;
 
-GrpcBkpClient::GrpcBkpClient(const string& uri)
+GrpcBkpClient::GrpcBkpClient(const string& uri, const string& token)
 {
-  auto channel = CreateChannel(uri, InsecureChannelCredentials());
-  mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
+  auto channel = CreateChannel(
+    uri,
+    InsecureChannelCredentials());
+
+  auto clientContext = std::make_shared<ClientContext>();
+  clientContext->AddMetadata("authorization", "Bearer " + token);
+
+  mFlpClient = make_unique<GrpcFlpServiceClient>(channel, clientContext);
 }
 
 const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
