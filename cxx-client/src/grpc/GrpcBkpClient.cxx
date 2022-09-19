@@ -20,6 +20,7 @@
 
 using grpc::Channel;
 
+using grpc::ClientContext;
 using grpc::CreateChannel;
 using grpc::InsecureChannelCredentials;
 using o2::bkp::api::FlpServiceClient;
@@ -37,14 +38,21 @@ using services::GrpcQcFlagServiceClient;
 using services::GrpcCtpTriggerCountersServiceClient;
 using services::GrpcRunServiceClient;
 
-GrpcBkpClient::GrpcBkpClient(const string& uri)
+GrpcBkpClient::GrpcBkpClient(const string& uri, const string& token)
 {
-  auto channel = CreateChannel(uri, InsecureChannelCredentials());
-  mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
-  mDplProcessExecutionClient = make_unique<GrpcDplProcessExecutionClient>(channel);
-  mQcFlagClient = make_unique<GrpcQcFlagServiceClient>(channel);
-  mCtpTriggerCountersClient = make_unique<GrpcCtpTriggerCountersServiceClient>(channel);
-  mRunClient = make_unique<GrpcRunServiceClient>(channel);
+  auto channel = CreateChannel(
+    uri,
+    InsecureChannelCredentials()
+  );
+
+  auto clientContext = std::make_shared<ClientContext>();
+  clientContext->AddMetadata("authorization", "Bearer " + token);
+
+  mFlpClient = make_unique<GrpcFlpServiceClient>(channel, clientContext);
+  mDplProcessExecutionClient = make_unique<GrpcDplProcessExecutionClient>(channel, clientContext);
+  mQcFlagClient = make_unique<GrpcQcFlagServiceClient>(channel, clientContext);
+  mCtpTriggerCountersClient = make_unique<GrpcCtpTriggerCountersServiceClient>(channel, clientContext);
+  mRunClient = make_unique<GrpcRunServiceClient>(channel, clientContext);
 }
 
 const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
