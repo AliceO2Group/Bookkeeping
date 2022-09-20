@@ -49,15 +49,18 @@ module.exports = () => {
         expect(runs[1].runNumber).to.equal(17);
     });
 
-    it('should return an array, only containing found runs from passed list (run numbers can be missing or non-numbers)', async () => {
-        getAllRunsDto.query = { filter: { runNumbers: '-2,17, ,400,18' } };
-        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+    it(
+        'should return an array, only containing found runs from passed list (run numbers can be missing or non-numbers)',
+        async () => {
+            getAllRunsDto.query = { filter: { runNumbers: '-2,17, ,400,18' } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
 
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(2);
-        expect(runs[0].runNumber).to.equal(18); // Default sorting order is dsc
-        expect(runs[1].runNumber).to.equal(17);
-    });
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(2);
+            expect(runs[0].runNumber).to.equal(18); // Default sorting order is dsc
+            expect(runs[1].runNumber).to.equal(17);
+        },
+    );
 
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 3;
@@ -282,6 +285,32 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(2);
         expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
+    });
+
+    it('should successfully filter on detectors', async () => {
+        getAllRunsDto.query = { filter: { detectors: 'ITS' } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(5);
+
+        getAllRunsDto.query = { filter: { detectors: 'ITS   ,   FT0' } };
+
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+
+        getAllRunsDto.query = { filter: { detectors: 'ITS,FT0' } };
+
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+
+        getAllRunsDto.query = { filter: { detectors: 'FT0,ITS' } };
+
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
     });
 
     it('should successfully filter on detectors number', async () => {
