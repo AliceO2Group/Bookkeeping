@@ -292,38 +292,19 @@ module.exports = () => {
                         return;
                     }
 
+                    // expect(res).to.satisfyApiSpec;
+
                     const runs = res.body.data;
-                    expect(runs[0].id).not.to.exist;
                     expect(runs[0].timeO2End).not.to.exist;
                     expect(runs[0].timeO2Start).to.exist;
                     expect(runs[0].runNumber).to.exist;
-                    expect(runs[1].id).not.to.exist;
                     expect(runs[1].timeO2End).not.to.exist;
                     expect(runs[1].timeO2Start).to.exist;
                     expect(runs[1].runNumber).to.exist;
                     done();
                 });
         });
-        it('should not filter on attributes when fields are empty', (done) => {
-            request(server)
-                .get('/api/runs?fields[run]=')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const runs = res.body.data;
-                    expect(runs[0].id).to.exist;
-                    expect(runs[0].timeO2End).to.exist;
-                    expect(runs[0].runNumber).to.exist;
-                    expect(runs[1].id).to.exist;
-                    expect(runs[1].runNumber).to.exist;
-                    expect(runs[1].timeO2Start).to.exist;
-                    done();
-                });
-        });
+       
 
         it('should return 400 if "runQuality" is invalid', async () => {
             const response = await request(server)
@@ -546,6 +527,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+                    // expect(res).to.satisfyApiSpec;
 
                     const run = res.body.data;
                     expect(run.id).not.to.exist;
@@ -564,6 +546,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+                    // expect(res).to.satisfyApiSpec;
 
                     const runs = res.body.data;
                     expect(runs[0].id).to.exist;
