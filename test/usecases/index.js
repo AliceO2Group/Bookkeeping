@@ -16,6 +16,7 @@ const StatusSuite = require('./status');
 const LhcFillSuite = require('./lhcFill');
 const LogSuite = require('./log');
 const RunSuite = require('./run');
+const RunTypeSuite = require('./runType');
 const FlpSuite = require('./flp');
 const ServerSuite = require('./server');
 const SubsystemSuite = require('./subsystem');
@@ -26,6 +27,7 @@ module.exports = () => {
     describe('Log', LogSuite);
     describe('LhcFill', LhcFillSuite);
     describe('Run', RunSuite);
+    describe('RunType', RunTypeSuite);
     describe('Flp', FlpSuite);
     describe('Server', ServerSuite);
     describe('Subsystem', SubsystemSuite);

@@ -1824,10 +1824,6 @@ components:
     RunType:
       description: Specifies the type of run.
       type: string
-      enum:
-        - "physics"
-        - "cosmics"
-        - "technical"
     SortOrder:
       description: Specifies the sorting direction of a sorting option.
       type: string

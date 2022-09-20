@@ -1161,7 +1161,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1191,7 +1191,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1228,7 +1228,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1258,7 +1258,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1557,7 +1557,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1587,7 +1587,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1938,7 +1938,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1968,7 +1968,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -2023,7 +2023,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2053,7 +2053,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2882,7 +2882,7 @@ components:
         timeO2End: 853113599
         timeTrgEnd: 853113599
         odcTopologyFullName: odcTopologyFullName
-        runType: physics
+        runType: runType
         triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
@@ -2971,7 +2971,7 @@ components:
           timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -3058,10 +3058,6 @@ components:
     RunType:
       type: string
       description: Specifies the type of run.
-      enum:
-      - physics
-      - cosmics
-      - technical
     SortOrder:
       type: string
       description: Specifies the sorting direction of a sorting option.
