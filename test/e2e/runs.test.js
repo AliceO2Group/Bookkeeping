@@ -291,8 +291,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Expect(res).to.satisfyApiSpec;
+                    // Fields are filtered so cannot satisfy api spec
 
                     const runs = res.body.data;
                     expect(runs[0].timeO2End).not.to.exist;
@@ -314,7 +313,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Expect(res).to.satisfyApiSpec;
+                    // Fields are filtered so cannot satisfy api spec
 
                     const runs = res.body.data;
                     expect(runs[0].id).to.exist;
@@ -545,7 +544,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Expect(res).to.satisfyApiSpec;
+                    // Fields are filtered so cannot satisfy api spec
 
                     const run = res.body.data;
                     expect(run.id).not.to.exist;
@@ -564,7 +563,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Expect(res).to.satisfyApiSpec;
+                    // Fields are filtered so cannot satisfy api spec
 
                     const run = res.body.data;
                     expect(run.id).to.exist;
