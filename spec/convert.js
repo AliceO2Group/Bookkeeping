@@ -46,7 +46,7 @@ const convert = (obj) => {
 
     // eslint-disable-next-line require-jsdoc
     const traverse = (obj, parent = []) => {
-        if (typeof obj === 'object') {
+        if (typeof obj === 'object' && obj !== null) {
             Object.keys(obj).forEach((item) => traverse(obj[item], [item, ...parent]));
         }
 

@@ -1161,7 +1161,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1191,7 +1191,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1228,7 +1228,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1258,7 +1258,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -1557,7 +1557,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1587,7 +1587,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1938,7 +1938,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -1968,7 +1968,7 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -2023,7 +2023,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2053,7 +2053,7 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
@@ -2815,6 +2815,9 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpBeamType:
+          type: string
+          description: Beam type of the pdp
         pdpConfigOption:
           type: string
           description: Repository hash
@@ -2824,9 +2827,6 @@ components:
         pdpWorkflowParameters:
           type: string
           description: Parameters given to the pdp workflow.
-        pdpBeamType:
-          type: string
-          description: Beam type of the pdp
         readoutCfgUri:
           type: string
           description: Config uri of readout.
@@ -2882,7 +2882,7 @@ components:
         timeO2End: 853113599
         timeTrgEnd: 853113599
         odcTopologyFullName: odcTopologyFullName
-        runType: physics
+        runType: runType
         triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
@@ -2951,10 +2951,12 @@ components:
     RunQuality:
       type: string
       description: Specifies the type of run.
+      nullable: true
       enum:
       - good
       - bad
       - test
+      - null
     RunResponse:
       required:
       - data
@@ -2969,7 +2971,7 @@ components:
           timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
@@ -3056,10 +3058,6 @@ components:
     RunType:
       type: string
       description: Specifies the type of run.
-      enum:
-      - physics
-      - cosmics
-      - technical
     SortOrder:
       type: string
       description: Specifies the sorting direction of a sorting option.

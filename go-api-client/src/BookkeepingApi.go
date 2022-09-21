@@ -51,24 +51,22 @@ func InitializeApi(baseUrl string, apiKey string) {
  * @param triggerStart Time (UTC) when Trigger subsystem was started
  */
 func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
-	runNumber int32, runType sw.RunType, dd_flp bool, dcs bool, epn bool, epnTopology string, odcTopologyFullName string, detectors sw.Detectors) (sw.RunResponse, *http.Response, error) {
-	var run sw.RunType = runType
+	runNumber int32, runType string, dd_flp bool, dcs bool, epn bool, epnTopology string, odcTopologyFullName string, detectors sw.Detectors) (sw.RunResponse, *http.Response, error) {
 	var dets sw.Detectors = detectors
 	obj := sw.Run{
-		EnvironmentId:         environmentId,
-		NDetectors:            nDetectors,
-		NEpns:                 nEpns,
-		NFlps:                 nFlps,
-		RunNumber:             runNumber,
-		RunType:               &run,
-		DdFlp:                 dd_flp,
-		Dcs:                   dcs,
-		Epn:                   epn,
-		EpnTopology:           epnTopology,
-		Detectors:             &dets,
-		OdcTopologyFullName:   odcTopologyFullName,
+		EnvironmentId:       environmentId,
+		NDetectors:          nDetectors,
+		NEpns:               nEpns,
+		NFlps:               nFlps,
+		RunNumber:           runNumber,
+		RunType:             runType,
+		DdFlp:               dd_flp,
+		Dcs:                 dcs,
+		Epn:                 epn,
+		EpnTopology:         epnTopology,
+		Detectors:           &dets,
+		OdcTopologyFullName: odcTopologyFullName,
 	}
-
 	arrayResponse, response, err := api.RunApi.CreateRun(auth, obj)
 	fmt.Println(arrayResponse, response, err)
 	return arrayResponse, response, err
@@ -85,9 +83,7 @@ func CreateRun(environmentId string, nDetectors int32, nEpns int32, nFlps int32,
 func UpdateRun(runNumber int32, runQuality sw.RunQuality, timeO2Start int64, timeO2End int64, timeTrgStart int64, timeTrgEnd int64,
 	triggerValue string, pdpConfigOption string, pdpTopologyDescriptionLibraryFile string, tfbDdMode string, lhcPeriod string, odcTopologyFullName string,
 	pdpWorkflowParameters string, pdpBeamType string, readoutCfgUri string) (sw.RunResponse, *http.Response, error) {
-	var runquality sw.RunQuality = runQuality
 	obj := sw.Run{
-		RunQuality:                        &runquality,
 		PdpConfigOption:                   pdpConfigOption,
 		PdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile,
 		TfbDdMode:                         tfbDdMode,

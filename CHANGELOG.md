@@ -2,16 +2,53 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
+## [0.40.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
+* Notable change for the user
+  * Fix synthetic run definition computation
+  * Fix fill efficiency on LHC fill overview
+
+## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
 * Notable changes for users:
-  * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
+  * Environment overview page now loads in a normal time
+  * Only administrators as defined in CERN Application portal can create and edit tags 
+  * `definition` is now available in run overview's table and filtering
+  * Fixed table bug when row ids of multiple tables were the same and in the same order
+  * Fixed log creation display bug when doing log creation => any page => log creation
+  * LHC fills runs list are limited to physics runs only
+  * Fixed LHC fill detail page cleanup
+  * Fix the environment overview switch to infinite mode when changing page
+  * Fixed log detail page cleanup
 * Notable changes for developers:
   * Runs API:
+    * `GET`
+      * `definition` Can now be fetched in runs and a specific run.
+  * Table system:
+    * Table systems now support profiles, which allows to:
+      * Display columns only under a specific profile or one of the listed specific profiles
+      * Override column configuration under a specific profile
+      * Apply one profile to a table
+
+## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
+* Notable changes for users:
+  * Run types are now added and can be filtered. The type for a run is shown in the details page. 
+  * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
+  * Time after last run and corresponding loss has been added to fill statistics
+  * Fix bug where some LHC fills had a negative time before first run (and associated loss)
+  * Fix log notification not sent with logs created automatically
+  * Fix bug where hovering log columns reset page to 1
+* Notable changes for developers:
+  * Runs API:
+  * `GET`
+    `runTypes` Run types can be fetched by id or overall.
+    `runTypes` Run types are added to a run, this can be an id or object depending on how the endpoint is set.
+  * `POST`
+    `runType` A run type in a string can now be given when starting a run or updating a run.
+  * `PATCH`
+    * `runType` A run type can be given to a run to update it. A new type will be generated if it does not exist.
   * `GET`
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
   * `PATCH`
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
-
 
 ## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
 * Notable changes for users:
