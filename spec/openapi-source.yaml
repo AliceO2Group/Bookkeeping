@@ -377,6 +377,36 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
+  /runTypes:
+    get:
+      operationId: listRunTypes
+      summary: List all runTypes
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfRunTypes'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - runType
+  /runTypes/{runTypeId}:
+    parameters:
+      - $ref: '#/components/parameters/RunTypeId'
+    get:
+      operationId: getRunTypeById
+      summary: Gets a runType by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/RunType'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - runType
   /runs:
     get:
       operationId: listRuns
@@ -768,6 +798,21 @@ components:
       schema:
         $ref: '#/components/schemas/RunSortOptions'
       style: deepObject
+    RunTypeId:
+      name: runTypeId
+      description: The id of the runType to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    RunTypeSorting:
+      in: query
+      name: sort
+      description: Specifies the runType sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/RunTypeSortOptions'
+      style: deepObject
     SubsystemId:
       name: subsystemId
       description: The id of the subsystem to retrieve
@@ -899,6 +944,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfRunTypes:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfRunTypesResponse'
     ArrayOfRuns:
       description: Expected response to a valid request.
       content:
@@ -989,6 +1040,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RunResponse'
+    RunType:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RunTypeResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
@@ -1150,6 +1207,31 @@ components:
       required:
         - page
       additionalProperties: false
+    ArrayOfRunTypes:
+      description: Response containing multiple run types
+      type: array
+      items:
+        $ref: '#/components/schemas/RunType'
+    ArrayOfRunTypesResponse:
+      description: Response containing multiple run types.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfRunTypes'
+        meta:
+          $ref: '#/components/schemas/ArrayOfRunTypesResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfRunTypesResponseMeta:
+      description: The metadata related to an array of runtypes response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
     ArrayOfRuns:
       description: A list of Run objects.
       type: array
@@ -1282,10 +1364,10 @@ components:
       description: Describes an environment
       type: object
       properties:
-        envId:
-          $ref: '#/components/schemas/EnvironmentId'
         createdAt:
           $ref: '#/components/schemas/EnvironmentAt'
+        envId:
+          $ref: '#/components/schemas/EnvironmentId'
         status:
           $ref: '#/components/schemas/EnvironmentStatus'
         statusMessage:
@@ -1297,22 +1379,24 @@ components:
       description: Describes an flp
       type: object
       properties:
-        name:
-          $ref: '#/components/schemas/FlpName'
         hostname:
           $ref: '#/components/schemas/FlpHostname'
+        name:
+          $ref: '#/components/schemas/FlpName'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
       required:
-        - name
         - hostname
+        - name
       additionalProperties: false
     CreateLhcFill:
       description: Describes an lhcfill
       properties:
-        stableBeamsDuration:
-          description: Float value of the time
-          type: integer
+        beamType:
+          $ref: '#/components/schemas/LhcFillBeamType'
+        fillingSchemeName:
+          description: Filling scheme name
+          type: string
           nullable: true
         stableBeamEnd:
           description: Unix timestamp when this entity was created.
@@ -1326,22 +1410,20 @@ components:
           minimum: 0
           example: 853113599
           nullable: true
-        beamType:
-          $ref: '#/components/schemas/LhcFillBeamType'
-        fillingSchemeName:
-          description: Filling scheme name
-          type: string
+        stableBeamsDuration:
+          description: Float value of the time
+          type: integer
           nullable: true
     CreateLog:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        runNumbers:
+          $ref: '#/components/schemas/RunNumbers'
         text:
           $ref: '#/components/schemas/LogText'
         title:
           $ref: '#/components/schemas/LogTitle'
-        runNumbers:
-          $ref: '#/components/schemas/RunNumbers'
       required:
         - text
         - title
@@ -1408,24 +1490,18 @@ components:
       description: The Environment object.
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/EnvironmentId'
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           minimum: 0
           example: 853113599
-        updatedAt:
-          description: Unix timestamp when this entity was last updated.
-          type: integer
-          minimum: 0
-          example: 853113599
-        toredownAt:
-          description: Unix timestamp when this entity was tore down.
-          type: integer
-          minimum: 0
-          example: 853113599
-          nullable: true
+        id:
+          $ref: '#/components/schemas/EnvironmentId'
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/RunSimplifiedObject'
         status:
           description: The status of the environment.
           type: string
@@ -1436,11 +1512,17 @@ components:
             environment.
           type: string
           nullable: true
-        runs:
-          description: Array of minified Run objects.
-          type: array
-          items:
-            $ref: '#/components/schemas/RunSimplifiedObject'
+        toredownAt:
+          description: Unix timestamp when this entity was tore down.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
       required:
         - id
       additionalProperties: false
@@ -1480,30 +1562,25 @@ components:
         ended.
       type: object
       properties:
+        category:
+          description: The category of the general reason for ending the run.
+          type: string
+          nullable: true
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
           minimum: 0
           example: 853113599
-        id:
-          $ref: '#/components/schemas/EntityId'
         description:
           description: The extra information if needed for an end of run. It can be empty.
           type: string
           nullable: true
-        title:
-          description: The title of the general reason for ending the run.
+        id:
+          $ref: '#/components/schemas/EntityId'
+        lastEditedName:
+          description: The last person that edited the end-of-run reason.
           type: string
           nullable: true
-        category:
-          description: The category of the general reason for ending the run.
-          type: string
-          nullable: true
-        updatedAt:
-          description: Unix timestamp when this entity was last updated.
-          type: integer
-          minimum: 0
-          example: 853113599
         reasonTypeId:
           description: Id for the general reason that was selected.
           type: integer
@@ -1514,10 +1591,15 @@ components:
           type: integer
           minimum: 0
           nullable: false
-        lastEditedName:
-          description: The last person that edited the end-of-run reason.
+        title:
+          description: The title of the general reason for ending the run.
           type: string
           nullable: true
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
       additionalProperties: false
     EorReasonList:
       description: A list of end of run reasons.
@@ -1731,8 +1813,20 @@ components:
       description: Describes the current situation of lhc
       type: object
       properties:
+        beamType:
+          $ref: '#/components/schemas/LhcFillBeamType'
         fillNumber:
           $ref: '#/components/schemas/EntityId'
+        fillingSchemeName:
+          description: Name of the filling schme
+          type: string
+          nullable: true
+        runs:
+          description: Array of minified Run objects.
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+          nullable: true
         stableBeamsDuration:
           description: Float value of the time
           type: integer
@@ -1748,18 +1842,6 @@ components:
           type: integer
           minimum: 0
           example: 853113599
-          nullable: true
-        beamType:
-          $ref: '#/components/schemas/LhcFillBeamType'
-        fillingSchemeName:
-          description: Name of the filling schme
-          type: string
-          nullable: true
-        runs:
-          description: Array of minified Run objects.
-          type: array
-          items:
-            $ref: '#/components/schemas/Run'
           nullable: true
       additionalProperties: false
     LhcFillBeamType:
@@ -2038,10 +2120,10 @@ components:
           $ref: '#/components/schemas/RunDefinition'
         envId:
           $ref: '#/components/schemas/EnvironmentId'
-        eorReasons:
-          $ref: '#/components/schemas/EorReasonList'
         environmentId:
           $ref: '#/components/schemas/RunEnvironmentId'
+        eorReasons:
+          $ref: '#/components/schemas/EorReasonList'
         epn:
           $ref: '#/components/schemas/RunEpn'
         epnTopology:
@@ -2101,12 +2183,17 @@ components:
           description: Uri of the readout configuration
           type: string
           nullable: true
+        runDuration:
+          $ref: '#/components/schemas/RunDuration'
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
-          $ref: '#/components/schemas/RunType'
+          oneOf:
+            - $ref: '#/components/schemas/EntityId'
+            - $ref: '#/components/schemas/RunTypeString'
+            - $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
         tfbDdMode:
@@ -2125,8 +2212,6 @@ components:
           description: Value of the current trigger can be OFF, LTU, CTP
           type: string
           nullable: true
-        runDuration:
-          $ref: '#/components/schemas/RunDuration'
         updatedAt:
           description: Unix timestamp when this entity was last updated.
           type: integer
@@ -2272,12 +2357,51 @@ components:
       example: 853113599
       nullable: true
     RunType:
-      description: Specifies the type of run.
+      description: Describes a type of run that occured.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        name:
+          description: The name of the run type
+          type: string
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      required:
+        - id
+        - name
+      additionalProperties: false
+    RunTypeResponse:
+      description: Response containing a single run.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RunType'
+      required:
+        - data
+      additionalProperties: false
+    RunTypeSortOptions:
+      description: Specifies the sorting requirements of a runtype request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+        name:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    RunTypeString:
+      description: String type for runtype
       type: string
-      enum:
-        - physics
-        - cosmics
-        - technical
+      nullable: true
+      additionalProperties: false
     SortOrder:
       description: Specifies the sorting direction of a sorting option.
       type: string
@@ -2325,8 +2449,20 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+        email:
+          description: The email for the tag.
+          type: string
+          nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
+        lastEditedName:
+          description: The last person that edited the email/mattermost fields
+          type: string
+          nullable: true
+        mattermost:
+          description: All the mattermost tags for updates
+          type: string
+          nullable: true
         text:
           description: The label value of the tag.
           type: string
@@ -2335,18 +2471,6 @@ components:
           type: integer
           minimum: 0
           example: 853113599
-        email:
-          description: The email for the tag.
-          type: string
-          nullable: true
-        mattermost:
-          description: All the mattermost tags for updates
-          type: string
-          nullable: true
-        lastEditedName:
-          description: The last person that edited the email/mattermost fields
-          type: string
-          nullable: true
       required:
         - id
         - text
@@ -2367,36 +2491,42 @@ components:
       description: Describes an update to an environment
       type: object
       properties:
-        toredownAt:
-          $ref: '#/components/schemas/EnvironmentAt'
+        run:
+          $ref: '#/components/schemas/EnvironmentRun'
         status:
           $ref: '#/components/schemas/EnvironmentStatus'
         statusMessage:
           $ref: '#/components/schemas/EnvironmentStatusMessage'
-        run:
-          $ref: '#/components/schemas/EnvironmentRun'
+        toredownAt:
+          $ref: '#/components/schemas/EnvironmentAt'
       additionalProperties: false
     UpdateFlp:
       description: Describes an update to an flp
       type: object
       properties:
-        nTimeframes:
-          $ref: '#/components/schemas/FlpTimeframes'
-        bytesProcessed:
-          $ref: '#/components/schemas/FlpBytesProcessed'
         bytesEquipmentReadOut:
           $ref: '#/components/schemas/FlpBytesEquipmentReadOut'
-        bytesRecordingReadOut:
-          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
         bytesFairMQReadOut:
           $ref: '#/components/schemas/FlpBytesFairMQReadOut'
+        bytesProcessed:
+          $ref: '#/components/schemas/FlpBytesProcessed'
+        bytesRecordingReadOut:
+          $ref: '#/components/schemas/FlpBytesRecordingReadOut'
+        nTimeframes:
+          $ref: '#/components/schemas/FlpTimeframes'
       additionalProperties: false
     UpdateRunByRunNumber:
       description: Updates Run by runNumber
       type: object
       properties:
-        runQuality:
-          $ref: '#/components/schemas/RunQuality'
+        aliceDipoleCurrent:
+          description: Current in Dipole magnet (Amperes) - signed
+          type: number
+          nullable: true
+        aliceL3Current:
+          description: Current in L3 magnet (Amperes) - signed
+          type: number
+          nullable: true
         lhcBeamEnergy:
           description: Energy of the beam (GeV)
           type: number
@@ -2409,14 +2539,8 @@ components:
           description: LHC Beta * in meters
           type: number
           nullable: true
-        aliceL3Current:
-          description: Current in L3 magnet (Amperes) - signed
-          type: number
-          nullable: true
-        aliceDipoleCurrent:
-          description: Current in Dipole magnet (Amperes) - signed
-          type: number
-          nullable: true
+        runQuality:
+          $ref: '#/components/schemas/RunQuality'
       additionalProperties: false
     UpdateRunQuality:
       description: Updates the run quality values
@@ -2428,6 +2552,12 @@ components:
       description: Describes an intervention or an event that happened.
       type: object
       properties:
+        access:
+          type: array
+          description: Array of roles
+          items:
+            type: string
+            description: Role name
         externalId:
           description: The unique CERN identifier of this user.
           type: integer
@@ -2441,12 +2571,6 @@ components:
         name:
           type: string
           description: Name of the user.
-        access:
-          type: array
-          description: Array of roles
-          items:
-            type: string
-            description: Role name
       required:
         - externalId
         - id

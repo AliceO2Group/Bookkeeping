@@ -245,14 +245,14 @@ module.exports = () => {
 
     it('can show and hide extra tags if available', async () => {
         const TAGS_LIMIT = 5;
-        const buttonId = '#toggleMoreTags';
+        const buttonId = '#tagToggleMore';
 
         await page.waitForTimeout(300);
 
         // Expect the page to have a button allowing for showing more tags
         const toggleFiltersButton = await page.$(buttonId);
         let buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('More tags');
+        expect(buttonText.trim()).to.equal('More');
 
         // Expect the button to show at least one extra tag when clicked
         await pressElement(page, buttonId);
@@ -262,7 +262,7 @@ module.exports = () => {
 
         // Expect the text to change to reflect the newly shown tags
         buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('Less tags');
+        expect(buttonText.trim()).to.equal('Less');
 
         // Expect the button to remove the extra tag when clicked again
         await pressElement(page, buttonId);

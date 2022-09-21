@@ -19,7 +19,7 @@ func main() {
 	apiClient.InitializeApi(baseUrl, apiToken)
 
 	// Create a run
-	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 130, sw.COSMICS_RunType, false, false, true, "normal", "hash",
+	apiClient.CreateRun("go-api-Timestamp", 5, 5, 1, 130, "COSMIC", false, false, true, "normal", "hash",
 		(sw.CPV_Detectors + "," + sw.ZDC_Detectors + "," + sw.EMC_Detectors))
 
 	// Update a run

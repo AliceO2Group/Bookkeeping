@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fix synthetic run definition computation
   * Fix fill efficiency on LHC fill overview
   * Detectors can be filled in any order in run overview filters
+  * Visual improvements to log creation page 
 
 ## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
 * Notable changes for users:
@@ -31,6 +32,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
 * Notable changes for users:
+  * Run types are now added and can be filtered. The type for a run is shown in the details page. 
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
   * Time after last run and corresponding loss has been added to fill statistics
   * Fix bug where some LHC fills had a negative time before first run (and associated loss)
@@ -39,10 +41,16 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for developers:
   * Runs API:
   * `GET`
+    `runTypes` Run types can be fetched by id or overall.
+    `runTypes` Run types are added to a run, this can be an id or object depending on how the endpoint is set.
+  * `POST`
+    `runType` A run type in a string can now be given when starting a run or updating a run.
+  * `PATCH`
+    * `runType` A run type can be given to a run to update it. A new type will be generated if it does not exist.
+  * `GET`
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be fetched in runs and a specific run.
   * `PATCH`
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
-
 
 ## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
 * Notable changes for users:

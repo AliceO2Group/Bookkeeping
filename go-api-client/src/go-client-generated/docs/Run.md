@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 **ReadoutCfgUri** | **string** | Config uri of readout. | [optional] [default to null]
 **RunNumber** | **int32** |  | [optional] [default to null]
 **RunQuality** | [***RunQuality**](RunQuality.md) |  | [optional] [default to null]
-**RunType** | [***RunType**](RunType.md) |  | [optional] [default to null]
+**RunType** | **string** |  | [optional] [default to null]
 **TfbDdMode** | **string** |  | [optional] [default to null]
 **TimeO2End** | **int64** |  | [optional] [default to null]
 **TimeO2Start** | **int64** |  | [optional] [default to null]
