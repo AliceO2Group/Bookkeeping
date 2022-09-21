@@ -1161,13 +1161,15 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
+            readoutCfgUri: readoutCfgUri
+            pdpWorkflowParameters: pdpWorkflowParameters
             timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
@@ -1178,6 +1180,7 @@ components:
             epn: false
             lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
+            pdpBeamType: pdpBeamType
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
@@ -1188,13 +1191,15 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
+            readoutCfgUri: readoutCfgUri
+            pdpWorkflowParameters: pdpWorkflowParameters
             timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
@@ -1205,6 +1210,7 @@ components:
             epn: false
             lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
+            pdpBeamType: pdpBeamType
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
@@ -1222,13 +1228,15 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
+            readoutCfgUri: readoutCfgUri
+            pdpWorkflowParameters: pdpWorkflowParameters
             timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
@@ -1239,6 +1247,7 @@ components:
             epn: false
             lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
+            pdpBeamType: pdpBeamType
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
@@ -1249,13 +1258,15 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
+            readoutCfgUri: readoutCfgUri
+            pdpWorkflowParameters: pdpWorkflowParameters
             timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
@@ -1266,6 +1277,7 @@ components:
             epn: false
             lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
+            pdpBeamType: pdpBeamType
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
@@ -1545,13 +1557,15 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
+          readoutCfgUri: readoutCfgUri
+          pdpWorkflowParameters: pdpWorkflowParameters
           timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
@@ -1562,6 +1576,7 @@ components:
           epn: false
           lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
+          pdpBeamType: pdpBeamType
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
@@ -1572,13 +1587,15 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
+          readoutCfgUri: readoutCfgUri
+          pdpWorkflowParameters: pdpWorkflowParameters
           timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
@@ -1589,6 +1606,7 @@ components:
           epn: false
           lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
+          pdpBeamType: pdpBeamType
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
@@ -1920,13 +1938,15 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
+          readoutCfgUri: readoutCfgUri
+          pdpWorkflowParameters: pdpWorkflowParameters
           timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
@@ -1937,6 +1957,7 @@ components:
           epn: false
           lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
+          pdpBeamType: pdpBeamType
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
@@ -1947,13 +1968,15 @@ components:
         - timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
+          readoutCfgUri: readoutCfgUri
+          pdpWorkflowParameters: pdpWorkflowParameters
           timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
@@ -1964,6 +1987,7 @@ components:
           epn: false
           lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
+          pdpBeamType: pdpBeamType
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
@@ -1999,13 +2023,15 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
+            readoutCfgUri: readoutCfgUri
+            pdpWorkflowParameters: pdpWorkflowParameters
             timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
@@ -2016,6 +2042,7 @@ components:
             epn: false
             lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
+            pdpBeamType: pdpBeamType
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
@@ -2026,13 +2053,15 @@ components:
           - timeO2End: 853113599
             timeTrgEnd: 853113599
             odcTopologyFullName: odcTopologyFullName
-            runType: physics
+            runType: runType
             triggerValue: "OFF"
             detectors: CPV
             bytesReadOut: 0
             pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
             createdAt: 853113599
             nEpns: 5
+            readoutCfgUri: readoutCfgUri
+            pdpWorkflowParameters: pdpWorkflowParameters
             timeO2Start: 853113599
             environmentId: environmentId
             dcs: false
@@ -2043,6 +2072,7 @@ components:
             epn: false
             lhcPeriod: lhcPeriod
             timeTrgStart: 853113599
+            pdpBeamType: pdpBeamType
             pdpConfigOption: pdpConfigOption
             nSubtimeframes: 2
             runQuality: good
@@ -2785,12 +2815,21 @@ components:
           $ref: '#/components/schemas/RunFlps'
         nSubtimeframes:
           $ref: '#/components/schemas/RunSubtimeframes'
+        pdpBeamType:
+          type: string
+          description: Beam type of the pdp
         pdpConfigOption:
           type: string
           description: Repository hash
         pdpTopologyDescriptionLibraryFile:
           type: string
           description: Library file location of the pdp topology descrption.
+        pdpWorkflowParameters:
+          type: string
+          description: Parameters given to the pdp workflow.
+        readoutCfgUri:
+          type: string
+          description: Config uri of readout.
         runNumber:
           $ref: '#/components/schemas/RunNumber'
         runQuality:
@@ -2843,13 +2882,15 @@ components:
         timeO2End: 853113599
         timeTrgEnd: 853113599
         odcTopologyFullName: odcTopologyFullName
-        runType: physics
+        runType: runType
         triggerValue: "OFF"
         detectors: CPV
         bytesReadOut: 0
         pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
         createdAt: 853113599
         nEpns: 5
+        readoutCfgUri: readoutCfgUri
+        pdpWorkflowParameters: pdpWorkflowParameters
         timeO2Start: 853113599
         environmentId: environmentId
         dcs: false
@@ -2860,6 +2901,7 @@ components:
         epn: false
         lhcPeriod: lhcPeriod
         timeTrgStart: 853113599
+        pdpBeamType: pdpBeamType
         pdpConfigOption: pdpConfigOption
         nSubtimeframes: 2
         runQuality: good
@@ -2909,10 +2951,12 @@ components:
     RunQuality:
       type: string
       description: Specifies the type of run.
+      nullable: true
       enum:
       - good
       - bad
       - test
+      - null
     RunResponse:
       required:
       - data
@@ -2927,13 +2971,15 @@ components:
           timeO2End: 853113599
           timeTrgEnd: 853113599
           odcTopologyFullName: odcTopologyFullName
-          runType: physics
+          runType: runType
           triggerValue: "OFF"
           detectors: CPV
           bytesReadOut: 0
           pdpTopologyDescriptionLibraryFile: pdpTopologyDescriptionLibraryFile
           createdAt: 853113599
           nEpns: 5
+          readoutCfgUri: readoutCfgUri
+          pdpWorkflowParameters: pdpWorkflowParameters
           timeO2Start: 853113599
           environmentId: environmentId
           dcs: false
@@ -2944,6 +2990,7 @@ components:
           epn: false
           lhcPeriod: lhcPeriod
           timeTrgStart: 853113599
+          pdpBeamType: pdpBeamType
           pdpConfigOption: pdpConfigOption
           nSubtimeframes: 2
           runQuality: good
@@ -3011,10 +3058,6 @@ components:
     RunType:
       type: string
       description: Specifies the type of run.
-      enum:
-      - physics
-      - cosmics
-      - technical
     SortOrder:
       type: string
       description: Specifies the sorting direction of a sorting option.

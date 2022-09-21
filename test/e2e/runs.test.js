@@ -147,6 +147,24 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should successfully return 400 if the given definitions are not valid', async () => {
+            const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC]');
+        });
+        it('should successfully filter on run definition', async () => {
+            const response = await request(server).get('/api/runs?filter[definitions]=physics');
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.lengthOf(3);
+            expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+        });
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
@@ -228,7 +246,7 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should filter run on their quality', async () => {
@@ -250,7 +268,8 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(15);
+
+            expect(data.length).to.equal(22);
         });
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
@@ -295,7 +314,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(51);
+            expect(data).to.have.lengthOf(46);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -331,7 +350,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             // 7 instead of 5 because 2 runs have been created with 10 as nFlps
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should return 400 if the EPN number filter is invalid', async () => {
@@ -355,7 +374,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             // 7 instead of 5 because 2 runs have been created with 10 as nEpns
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
     });
 
@@ -547,11 +566,11 @@ module.exports = () => {
 
     describe('POST /api/runs', () => {
         const testRun = {
-            runNumber: 109,
+            runNumber: 110,
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
             environmentId: '1234567890',
-            runType: 'technical',
+            runType: 'NONE',
             runQuality: 'good',
             nDetectors: 3,
             nFlps: 10,
@@ -579,7 +598,8 @@ module.exports = () => {
                     expect(res.body.data.triggerValue).to.equal('OFF');
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
-                    expect(res.body.data.id).to.equal(109);
+                    expect(res.body.data.runType.id).to.be.a('number');
+                    expect(res.body.data.id).to.equal(110);
 
                     done();
                 });
@@ -614,7 +634,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(409);
             expect(response.body.errors).to.be.an('array');
-            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 109');
+            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 110');
         });
     });
 
@@ -804,7 +824,6 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'good',
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -825,9 +844,11 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'good',
                     lhcPeriod: 'lhc22b',
                     odcTopologyFullName: 'hash',
+                    pdpWorkflowParameters: 'EVENT_DISPLAY',
+                    pdpBeamType: 'fill',
+                    readoutCfgUri: 'hash',
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -840,10 +861,11 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
-
+                    expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
+                    expect(res.body.data.pdpBeamType).to.equal('fill');
+                    expect(res.body.data.readoutCfgUri).to.equal('hash');
                     done();
                 });
         });
@@ -865,7 +887,6 @@ module.exports = () => {
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
             expect(body.data.timeO2Start).to.equal(dateValue); // Values not passed should remain the same
-            expect(body.data.runQuality).to.equal('good'); // Values not passed should remain the same
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');

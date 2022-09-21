@@ -62,10 +62,13 @@ module.exports = () => {
             .includes(text);
         expect(doesContentMatch).to.equal(true);
 
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await page.waitForNavigation();
 
         // Return the page to home
         await goToPage(page, 'log-overview');
@@ -272,7 +275,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await page.waitForNavigation();
         await goToPage(page, 'log-overview');
         await page.waitForTimeout(100);
 
@@ -287,11 +290,14 @@ module.exports = () => {
         // Go to the log detail page
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
         await goToPage(page, `log-detail&id=${rowId}`);
+        await page.waitForTimeout(100);
+
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(200);
         const runsField = await page.$(`#post${rowId}-runs`);
+
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
     }).timeout(10000);
@@ -313,9 +319,13 @@ module.exports = () => {
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
 
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation();
         await page.goto(`${url}/?page=log-overview`, { waitUntil: 'load' });
         await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
 

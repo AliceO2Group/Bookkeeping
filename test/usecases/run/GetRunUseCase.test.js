@@ -48,6 +48,7 @@ module.exports = () => {
         expect(result.eorReasons[0].title).to.equal('CPV');
         expect(result.lhcPeriod).to.equal('lhc22b');
         expect(result.odcTopologyFullName).to.equal('hash');
+        expect(result.runType.id).to.equal(14);
     });
 
     it('should successfully return an object that contain a null duration if trigger-start is not defined', async () => {

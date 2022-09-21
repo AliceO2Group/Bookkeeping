@@ -1,4 +1,4 @@
-# Generated on Tue, 09 Aug 2022 15:50:26 GMT
+# Generated on Tue, 13 Sep 2022 10:02:28 GMT
 
 openapi: 3.0.0
 info:
@@ -379,6 +379,36 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - log
+  /runTypes:
+    get:
+      operationId: listRunTypes
+      summary: List all runTypes
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfRunTypes'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - runType
+  /runTypes/{runTypeId}:
+    parameters:
+      - $ref: '#/components/parameters/RunTypeId'
+    get:
+      operationId: getRunTypeById
+      summary: Gets a runType by Id
+      responses:
+        '200':
+          $ref: '#/components/responses/RunType'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - runType
   /runs:
     get:
       operationId: listRuns
@@ -770,6 +800,21 @@ components:
       schema:
         $ref: '#/components/schemas/RunSortOptions'
       style: deepObject
+    RunTypeId:
+      name: runTypeId
+      description: The id of the runType to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    RunTypeSorting:
+      in: query
+      name: sort
+      description: Specifies the runType sorting requirements.
+      required: false
+      schema:
+        $ref: '#/components/schemas/RunTypeSortOptions'
+      style: deepObject
     SubsystemId:
       name: subsystemId
       description: The id of the subsystem to retrieve
@@ -901,6 +946,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfLogsResponse'
+    ArrayOfRunTypes:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfRunTypesResponse'
     ArrayOfRuns:
       description: Expected response to a valid request.
       content:
@@ -991,6 +1042,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RunResponse'
+    RunType:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RunTypeResponse'
     ServiceUnavailable:
       description: Service Unavailable
       content:
@@ -1145,6 +1202,31 @@ components:
       additionalProperties: false
     ArrayOfLogsResponseMeta:
       description: The metadata related to an array of logs response.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PaginationMeta'
+      required:
+        - page
+      additionalProperties: false
+    ArrayOfRunTypes:
+      description: Response containing multiple run types
+      type: array
+      items:
+        $ref: '#/components/schemas/RunType'
+    ArrayOfRunTypesResponse:
+      description: Response containing multiple run types.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfRunTypes'
+        meta:
+          $ref: '#/components/schemas/ArrayOfRunTypesResponseMeta'
+      required:
+        - data
+      additionalProperties: false
+    ArrayOfRunTypesResponseMeta:
+      description: The metadata related to an array of runtypes response.
       type: object
       properties:
         page:
@@ -1421,7 +1503,7 @@ components:
           description: Array of minified Run objects.
           type: array
           items:
-            $ref: '#/components/schemas/Run'
+            $ref: '#/components/schemas/RunSimplifiedObject'
         status:
           description: The status of the environment.
           type: string
@@ -2034,6 +2116,8 @@ components:
           $ref: '#/components/schemas/RunDcs'
         dd_flp:
           $ref: '#/components/schemas/RunDdFlp'
+        definition:
+          $ref: '#/components/schemas/RunDefinition'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
         envId:
@@ -2081,12 +2165,24 @@ components:
           description: The name or location of the odc topology
           type: string
           nullable: true
+        pdpBeamType:
+          description: Type of the pdp beam.
+          type: string
+          nullable: true
         pdpConfigOption:
           description: The config option of the pdp.
           type: string
           nullable: true
         pdpTopologyDescriptionLibraryFile:
           description: Pdp file location.
+          type: string
+          nullable: true
+        pdpWorkflowParameters:
+          description: Parameters of the pdp workflow.
+          type: string
+          nullable: true
+        readoutCfgUri:
+          description: Uri of the readout configuration
           type: string
           nullable: true
         runDuration:
@@ -2096,7 +2192,10 @@ components:
         runQuality:
           $ref: '#/components/schemas/RunQuality'
         runType:
-          $ref: '#/components/schemas/RunType'
+          oneOf:
+            - $ref: '#/components/schemas/EntityId'
+            - $ref: '#/components/schemas/RunTypeString'
+            - $ref: '#/components/schemas/RunType'
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
         tfbDdMode:
@@ -2122,6 +2221,7 @@ components:
           example: 853113599
       required:
         - bytesReadOut
+        - definition
         - id
         - nDetectors
         - nEpns
@@ -2146,6 +2246,10 @@ components:
     RunDdFlp:
       description: Boolean if dd_flp is set.
       type: boolean
+      nullable: true
+    RunDefinition:
+      description: Specifies the definition of run.
+      type: string
       nullable: true
     RunDetectors:
       description: The amount of detectors in a single run.
@@ -2218,6 +2322,17 @@ components:
       required:
         - data
       additionalProperties: false
+    RunSimplifiedObject:
+      description: A smaller run object
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        runNumber:
+          description: A integer pointing to the run number
+          type: integer
+          minimum: 0
+      additionalProperties: false
     RunSortOptions:
       description: Specifies the sorting requirements of a run request.
       type: object
@@ -2244,12 +2359,51 @@ components:
       example: 853113599
       nullable: true
     RunType:
-      description: Specifies the type of run.
+      description: Describes a type of run that occured.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        name:
+          description: The name of the run type
+          type: string
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      required:
+        - id
+        - name
+      additionalProperties: false
+    RunTypeResponse:
+      description: Response containing a single run.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RunType'
+      required:
+        - data
+      additionalProperties: false
+    RunTypeSortOptions:
+      description: Specifies the sorting requirements of a runtype request.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SortOrder'
+        name:
+          $ref: '#/components/schemas/SortOrder'
+      additionalProperties: false
+    RunTypeString:
+      description: String type for runtype
       type: string
-      enum:
-        - physics
-        - cosmics
-        - technical
+      nullable: true
+      additionalProperties: false
     SortOrder:
       description: Specifies the sorting direction of a sorting option.
       type: string

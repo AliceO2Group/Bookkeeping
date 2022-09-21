@@ -73,6 +73,9 @@ Concerning the **Update mode** of the fields:
 | `tfb_dd_mode`                            | The mode of the TFB DD                        | `processing`                        |  | `run_number` | Update |
 | `lhc_period`                             | The period value of the lhc                   | `lhc22b`                            |  | `run_number` | Update |
 | `odc_topology_full_name`                 | File location or setting for odc topology     | `hash, some/location.desc`          |  | `run_number` | Update |
+| `pdp_workflow_parameters`                | Parameters for the pdp workflow               | `QC,GPU,CTF,EVENT_DISPLAY`          |  | `run_number` | Update |
+| `pdp_beam_type`                          | Beam type of the pdp                          | `cosmic`                            |  | `run_number` | Update |
+| `readout_cfg_uri`                        | Uri of the readout configuration              | `Repository hash`                   |  | `run_number` | Update |
 
 ### End of run reasons
 
@@ -204,3 +207,15 @@ Concerning the **Update mode** of the fields:
 | `stableBeamsDuration`         | STABLE BEAMS duration in seconds    |                                     |        | `fillNumber` | Update |
 | `beamType`                    | Type of collisions                  | `PROTON-PROTON` `Pb-Pb` `Pb-PROTON` |        | `fillNumber` | Update |
 | `fillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
+
+### RunTypes
+
+**Description:** This table is made to show the different types the runs can be.
+**DB main table**: `runTypes`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | run type id                     | `1, 2, 3215`                        | AT COF | `fillNumber` | Insert |
+| `name`                        |                                 |                                     |        | `fillNumber` | Update |
+| `created_at`                  | When the lhcFill is created     |                                     | AT COF | `fillNumber` | Insert |
+| `updated_at`                  | When the lhcFill is updated     |                                     |        | `fillNumber` | Update |
