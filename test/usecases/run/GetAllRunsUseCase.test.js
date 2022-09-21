@@ -284,6 +284,32 @@ module.exports = () => {
         expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
     });
 
+    it('should successfully filter on detectors', async () => {
+        getAllRunsDto.query = { filter: { detectors: 'ITS' } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(5);
+
+        getAllRunsDto.query = { filter: { detectors: 'ITS   ,   FT0' } };
+
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+
+        getAllRunsDto.query = { filter: { detectors: 'ITS,FT0' } };
+
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+
+        getAllRunsDto.query = { filter: { detectors: 'FT0,ITS' } };
+
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+    });
+
     it('should successfully filter on detectors number', async () => {
         const nDetectors = {
             operator: '<',

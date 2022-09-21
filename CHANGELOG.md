@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Fix synthetic run definition computation
   * Fix fill efficiency on LHC fill overview
   * Run definition is now displayed on run details page
+  * Detectors can be filled in any order in run overview filters
+  * Visual improvements to log creation page
 
 ## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
 * Notable changes for users:
