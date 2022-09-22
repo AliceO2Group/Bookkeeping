@@ -347,53 +347,6 @@ a.btn, a.btn:hover, a.btn.active {
     align-items: flex-start;
 }
 
-/* popover */
-
-.popover {
-    visibility: hidden;
-    position: absolute;
-}
-
-.popover-text {
-    min-width: 120px;
-    background-color: rgba(191, 191, 191);
-    color: rgb(0, 0, 0);
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    position: absolute;
-    z-index: 10;
-    box-shadow: 0 8px 17px 2px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
-    top: calc(100% + 2rem);
-    font-size: 1rem;
-    background-color: #fff;
-    border: 1px solid rgba(0,0,0,.15);
-    border-radius: .25rem;
-    padding-left: 5px;
-    padding-right: 5px;
-    font-weight: normal;
-}
-
-.popover-text.left {
-    top: -5px;
-    transform: translate(-105%,0);
-}
-
-.popover-text.right {
-    top: -5px;
-    transform: translate(5%,0);
-}
-
-.popover-text.bottom {
-    top: calc(100% + 2rem);
-    transform: translate(-50%,0);
-}
-
-.popover-text.top {
-    top: 0;
-    transform: translate(-50%,-100%);
-}
-
 /* Modal */
 
 .modal-container {

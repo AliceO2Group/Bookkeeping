@@ -198,19 +198,3 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 
     expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
 };
-
-/**
- * Validates if the embedded tooltip works .
- * @param {{$: function}} page the puppeteer page
- * @param {string} selector the selector to query for.
- */
-
-module.exports.checkTooltip = async (page, selector) => {
-    const element = await page.$(selector);
-    await element.hover();
-    const visibility = await element.$eval(
-        '.popover',
-        (e) => window.getComputedStyle(e).visibility,
-    );
-    expect(visibility).to.equal('visible');
-};
