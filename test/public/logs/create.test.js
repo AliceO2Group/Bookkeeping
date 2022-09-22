@@ -56,12 +56,6 @@ module.exports = () => {
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
 
-        // Verify that the text from the first matches with the text posted and correct working of the redirect
-        // eslint-disable-next-line no-undef
-        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors['text'].getValue()))
-            .includes(text);
-        expect(doesContentMatch).to.equal(true);
-
         // Wait for the button to not be disabled
         await page.waitForTimeout(50);
 
@@ -97,12 +91,6 @@ module.exports = () => {
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.editor.setValue(text), text);
-
-        // Verify that the text from the first matches with the text posted and correct working of the redirect
-        // eslint-disable-next-line no-undef
-        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors['text'].getValue()))
-            .includes(text);
-        expect(doesContentMatch).to.equal(true);
 
         // Create check disabled button
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
