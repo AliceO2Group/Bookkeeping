@@ -9,7 +9,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Run definition is now displayed on run details page
   * Detectors can be filled in any order in run overview filters
   * Visual improvements to log creation page
-  * Run types are now added and can be filtered. The type for a run is shown in the details page. 
+  * Run types are now added and can be filtered. The type for a run is shown in the details page.
+  * Filling filters for log overview will not automatically remove whitespaces on typing
 * Notable changes for developers:
   * Runs API:
     * `GET`
