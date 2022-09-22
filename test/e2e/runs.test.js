@@ -316,8 +316,7 @@ module.exports = () => {
                     // Fields are filtered so cannot satisfy api spec
 
                     const runs = res.body.data;
-                    expect(runs[0].id).to.exist;
-                    expect(runs[0].timeO2End).to.exist;
+                    expect(runs[0].runNumber).to.exist;
                     expect(runs[0].timeO2Start).to.exist;
                     done();
                 });
