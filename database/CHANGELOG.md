@@ -1,4 +1,12 @@
-## [0.38.0]
+## [0.40.0]
+* Changes made to the database:
+  * Table `runs` updates:
+    * new column `run_type_id` 
+  * New Table `run_types`:
+    * `id` - NUMBER & primary key,
+    * `name` - CHAR(64),
+
+## [0.37.0]
 * Changes made to the database:
     * Table `runs` - added fields:
         * `run_duration`:

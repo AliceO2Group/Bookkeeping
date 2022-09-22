@@ -181,7 +181,8 @@ const getInnerHtml = async (elementHandler) => await elementHandler.evaluate((el
 module.exports.getInnerHtml = getInnerHtml;
 
 /**
- * Check that the fist cell of the given column contains a balloon and that the balloon's content is correct
+ * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
+ * content is correct
  *
  * @param {{$: function}} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
@@ -190,9 +191,9 @@ module.exports.getInnerHtml = getInnerHtml;
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
-    const balloon = await cell.$('.balloon');
+    const balloon = await cell.$('.popover');
     expect(balloon).to.not.be.null;
-    const actualContent = await cell.$('.balloon-actual-content');
+    const actualContent = await cell.$('.popover-actual-content');
     expect(actualContent).to.not.be.null;
 
     expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
