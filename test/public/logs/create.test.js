@@ -54,7 +54,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Wait for the button to not be disabled
         await page.waitForTimeout(50);
@@ -90,7 +90,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Create check disabled button
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
@@ -109,7 +109,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Find the selection options corresponding to the tag texts
         const tagOptions = await page.$$('.tag-option');
@@ -165,7 +165,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Add both the file attachments to the input field
         const attachmentsInput = await page.$('#attachments');
@@ -255,7 +255,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
@@ -302,7 +302,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
