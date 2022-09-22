@@ -19,7 +19,6 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
-    checkPopover,
 } = require('../defaults');
 const { checkColumnBalloon } = require('../defaults.js');
 
