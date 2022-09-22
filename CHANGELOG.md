@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Run types are now added and can be filtered. The type for a run is shown in the details page.
   * Filling filters for log overview will not automatically remove whitespaces on typing
 * Notable changes for developers:
+  * Balloon system is now a global popover system, not limited to content overflow
   * Runs API:
     * `GET`
       * `runTypes` Run types can be fetched by id or overall.
