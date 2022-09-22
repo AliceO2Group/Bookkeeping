@@ -208,7 +208,6 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 module.exports.checkTooltip = async (page, selector) => {
     const element = await page.$(selector);
     await element.hover();
-    // Const visibility = await tooltip.getProperty('visibility');
     const visibility = await element.$eval(
         '.popover',
         (e) => window.getComputedStyle(e).visibility,
