@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
+* Notable changes for users:
+  * A toggle in user actions is present to display timestamps as unix timestamps instead of local dates
+
 ## [0.40.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
 * Notable changes for users:
   * Fix synthetic run definition computation

@@ -122,6 +122,17 @@ module.exports = () => {
         }
     });
 
+    it('successfully switch to raw timestamp display', async () => {
+        const rawTimestampToggleSelector = '#preferences-raw-timestamps';
+        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(6)').innerText)).to.equal('08/08/2019\n11:00:00*');
+        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(7)').innerText)).to.equal('08/08/2019\n13:00:00');
+        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(6)').innerText)).to.equal('1565262000000*');
+        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(7)').innerText)).to.equal('1565269200000');
+        // Go back to normal
+        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+    });
+
     it('can switch to infinite mode in amountSelector', async () => {
         const amountSelectorButton = await page.$('#amountSelector button');
 
