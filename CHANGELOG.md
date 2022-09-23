@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file. See [standa
       * Is based on the trigger when it exists
       * Is based on o2 start/stop when trigger does not exist and is displayed with an Asterisk
       * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
+  * Accent are now handled in file names
 * Notable changes for developers:
   * Balloon system is now a global popover system, not limited to content overflow
   * Runs API:
