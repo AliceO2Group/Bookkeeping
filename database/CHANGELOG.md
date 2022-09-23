@@ -1,6 +1,10 @@
 ## [0.40.0]
 * Changes made to the database:
   * Table `runs` updates:
+    * `run_duration`:
+      * Is based on the trigger when it exists;
+      * Is based on o2 start/stop when trigger does not exist;
+      * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
     * new column `run_type_id` 
   * New Table `run_types`:
     * `id` - NUMBER & primary key,
@@ -9,10 +13,6 @@
 ## [0.37.0]
 * Changes made to the database:
     * Table `runs` - added fields:
-        * `run_duration`:
-            * Is based on the trigger when it exists;
-            * Is based on o2 start/stop when trigger does not exist;
-            * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
         * `pdp_workflow_parameters` - string('QC,GPU,CTF,EVENT_DISPLAY'),
         * `pdp_beam_type` - string('cosmic'),
         * `readout_cfg_uri` - string('Repository hash'),

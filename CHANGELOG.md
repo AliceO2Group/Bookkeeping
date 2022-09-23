@@ -12,10 +12,19 @@ All notable changes to this project will be documented in this file. See [standa
   * Run types are now added and can be filtered. The type for a run is shown in the details page.
   * Filling filters for log overview will not automatically remove whitespaces on typing
   * Time between runs is displayed on LHC fill display
+  * `Runs`
+    * Run duration values:
+      * Is based on the trigger when it exists
+      * Is based on o2 start/stop when trigger does not exist and is displayed with an Asterisk
+      * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
 * Notable changes for developers:
   * Balloon system is now a global popover system, not limited to content overflow
   * Runs API:
-    * `GET`
+    * `GET` Runs API
+      * `runDuration` New logic to generating a time stamp:
+        * Is based on the trigger when it exists;
+        * Is based on o2 start/stop when trigger does not exist;
+        * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
       * `runTypes` Run types can be fetched by id or overall.
       * `runTypes` Run types are added to a run, this can be an id or object depending on how the endpoint is set.
     * `POST`
@@ -60,24 +69,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
 * Notable changes for users:
-  * `Runs`
-    * Run duration values:
-      * Is based on the trigger when it exists
-      * Is based on o2 start/stop when trigger does not exist and is displayed with an Asterisk
-      * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
-  * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs
-    overview
   * Tags with a length of 2 characters are now allowed
   * A notification is sent any time a log is created, not only when a log is created from the log creation page (for example auto-generated logs)
   * Main links now have a complete link behavior, such as ctrl+click to open in a new tab
   * Changing run quality will automatically create a log with the following tags: `DPG` and `RC`
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
 * Notable changes for developers:
-  * `GET` Runs API"
-    * `runDuration` New logic to generating a time stamp:
-      * Is based on the trigger when it exists;
-      * Is based on o2 start/stop when trigger does not exist;
-      * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
   * Any log creation using `CreateLogUseCase` will send a notification, not only logs created from logs controller
   * Runs API:
   * `GET`
