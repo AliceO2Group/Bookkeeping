@@ -249,7 +249,7 @@ module.exports = () => {
              * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null
              * duration in StartRunUseCase
              */
-            expect(data).to.have.lengthOf(9);
+            expect(data).to.have.lengthOf(14);
         });
 
         it('should filter run on their quality', async () => {
