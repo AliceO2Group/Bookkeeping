@@ -13,10 +13,19 @@ All notable changes to this project will be documented in this file. See [standa
   * Filling filters for log overview will not automatically remove whitespaces on typing
   * Time between runs is displayed on LHC fill display
   * Replying to a log will automatically fill tags and run numbers from parent log and generate a title
+  * `Runs`
+    * Run duration values:
+      * Is based on the trigger when it exists
+      * Is based on o2 start/stop when trigger does not exist and is displayed with an Asterisk
+      * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
 * Notable changes for developers:
   * Balloon system is now a global popover system, not limited to content overflow
   * Runs API:
-    * `GET`
+    * `GET` Runs API
+      * `runDuration` New logic to generating a time stamp:
+        * Is based on the trigger when it exists;
+        * Is based on o2 start/stop when trigger does not exist;
+        * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
       * `runTypes` Run types can be fetched by id or overall.
       * `runTypes` Run types are added to a run, this can be an id or object depending on how the endpoint is set.
     * `POST`

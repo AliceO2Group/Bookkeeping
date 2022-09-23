@@ -526,7 +526,10 @@ module.exports = () => {
             return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
         }));
 
-        expect(runDurationList.every((runDuration) => parseInt(runDuration, 10) === 1500)).to.be.true;
+        expect(runDurationList.every((runDuration) => {
+            const time = runDuration.replace('*', '');
+            return time === '25:00:00';
+        })).to.be.true;
 
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('3000');

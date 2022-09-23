@@ -249,7 +249,7 @@ module.exports = () => {
              * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null
              * duration in StartRunUseCase
              */
-            expect(data).to.have.lengthOf(9);
+            expect(data).to.have.lengthOf(14);
         });
 
         it('should filter run on their quality', async () => {
@@ -496,8 +496,96 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 and duration when there are trigger times', (done) => {
+            request(server)
+                .get('/api/runs/106')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(data.runDuration).to.equal(90000000);
+                    expect(data.timeO2Start).to.not.equal(null);
+                    expect(data.timeO2End).to.not.equal(null);
+                    expect(data.timeTrgStart).to.not.equal(null);
+                    expect(data.timeTrgEnd).to.not.equal(null);
+                    done();
+                });
+        });
+        it('should return 200 whenever there is only a trigger start', (done) => {
+            request(server)
+                .get('/api/runs/104')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(data.timeO2Start).to.not.equal(null);
+                    expect(data.timeO2End).to.not.equal(null);
+                    expect(data.timeTrgStart).to.equal(null);
+                    expect(data.timeTrgEnd).to.not.equal(null);
+                    done();
+                });
+        });
     });
 
+    it('should return 200 and a duration with no trigger end', (done) => {
+        request(server)
+            .get('/api/runs/103')
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                const { data } = res.body;
+
+                // Response must satisfy the OpenAPI specification
+                expect(res).to.satisfyApiSpec;
+
+                expect(data.runDuration).to.equal(3600000);
+                expect(data.timeO2Start).to.not.equal(null);
+                expect(data.timeO2End).to.not.equal(null);
+                expect(data.timeTrgStart).to.not.equal(null);
+                expect(data.timeTrgEnd).to.equal(null);
+                done();
+            });
+    });
+    it('should return 200 and a time when only o2 times are given', (done) => {
+        request(server)
+            .get('/api/runs/102')
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                const { data } = res.body;
+
+                // Response must satisfy the OpenAPI specification
+                expect(res).to.satisfyApiSpec;
+
+                expect(data.runDuration).to.equal(3600000);
+                expect(data.timeO2Start).to.not.equal(null);
+                expect(data.timeO2End).to.not.equal(null);
+                expect(data.timeTrgStart).to.equal(null);
+                expect(data.timeTrgEnd).to.equal(null);
+
+                done();
+            });
+    });
     describe('GET /api/runs/:runId/logs', () => {
         it('should return 400 if the run id is not a number', (done) => {
             request(server)
