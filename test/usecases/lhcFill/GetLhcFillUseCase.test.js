@@ -51,7 +51,7 @@ module.exports = () => {
     it('should return physics only runs', async () => {
         getLhcFillDto.params.fillNumber = 6;
         const result = await new GetLhcFillUseCase().execute(getLhcFillDto);
-        expect(result.runs).to.lengthOf(3);
+        expect(result.runs).to.lengthOf(4);
         expect(result.runs.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
     });
 };

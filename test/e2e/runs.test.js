@@ -162,7 +162,7 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data).to.lengthOf(3);
+            expect(data).to.lengthOf(4);
             expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
         });
         it('should return 400 if "to" date is before "from" date', (done) => {
@@ -245,8 +245,11 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
 
-            // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(13);
+            /*
+             * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null
+             * duration in StartRunUseCase
+             */
+            expect(data).to.have.lengthOf(9);
         });
 
         it('should filter run on their quality', async () => {
@@ -708,7 +711,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                        ' defined, your custom type is missing the correct messages definition');
+                                                               ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });

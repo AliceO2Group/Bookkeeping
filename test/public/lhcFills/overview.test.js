@@ -74,7 +74,7 @@ module.exports = () => {
             durationAfterLastRun: (data) => data === '-'
                 || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
-            totalRunsDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
+            runsCoverage: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
         };
 

@@ -60,8 +60,8 @@ module.exports = () => {
     });
 
     it('should successfully filter on run definition', async () => {
-        const PHYSICS_COUNT = 3;
-        const COSMIC_COUNT = 3;
+        const PHYSICS_COUNT = 4;
+        const COSMIC_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 1;
 
@@ -273,7 +273,7 @@ module.exports = () => {
         runDuration.operator = '>=';
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        // 100 is the limit per page, true result must be 101
+
         expect(runs).to.have.lengthOf(4);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
@@ -295,19 +295,19 @@ module.exports = () => {
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
+        expect(runs).to.have.lengthOf(2);
 
         getAllRunsDto.query = { filter: { detectors: 'ITS,FT0' } };
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
+        expect(runs).to.have.lengthOf(2);
 
         getAllRunsDto.query = { filter: { detectors: 'FT0,ITS' } };
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
+        expect(runs).to.have.lengthOf(2);
     });
 
     it('should successfully filter on detectors number', async () => {

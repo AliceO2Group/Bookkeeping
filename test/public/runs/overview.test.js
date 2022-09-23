@@ -354,13 +354,13 @@ module.exports = () => {
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
+        expect(table.length).to.equal(4);
         await checkTableRunDefinitions(table, ['PHYSICS']);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(5);
         await checkTableRunDefinitions(table, ['PHYSICS', 'SYNTHETIC']);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
@@ -372,19 +372,19 @@ module.exports = () => {
         await page.$eval(cosmicFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(3);
         await checkTableRunDefinitions(table, ['SYNTHETIC', 'COSMIC']);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
+        expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, ['COSMIC']);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(3);
         await checkTableRunDefinitions(table, ['COSMIC', 'TECHNICAL']);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
