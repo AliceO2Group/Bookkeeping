@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
+* Notable changes for users:
+  * Accent are now handled in file names
+
 ## [0.40.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
 * Notable changes for users:
   * Fix synthetic run definition computation
@@ -18,7 +22,6 @@ All notable changes to this project will be documented in this file. See [standa
       * Is based on the trigger when it exists
       * Is based on o2 start/stop when trigger does not exist and is displayed with an Asterisk
       * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end; this is displayed with 2 Asterisks;
-  * Accent are now handled in file names
 * Notable changes for developers:
   * Balloon system is now a global popover system, not limited to content overflow
   * Runs API:
