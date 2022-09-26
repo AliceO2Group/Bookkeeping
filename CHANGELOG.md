@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
 * Notable changes for users:
-  * Efficiency per detector is now displayed on LHC fill details
+  * Efficiency per detector and Time between runs are now displayed on LHC fill details
+  * UX improvements on displaying and calculating `run_duration` based on `o2 time/date` values when `trigger time/date` values are missing
+  * Replying to a log will inherit the log's tags, run numbers and title
+  * Filling filters for log overview will not automatically remove whitespaces on typing
   * A toggle in user actions is present to display timestamps as unix timestamps instead of local dates
-  * Accent are now handled in file names
+  * Accents are now handled in file names
 
 ## [0.40.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
 * Notable changes for users:
@@ -16,9 +19,6 @@ All notable changes to this project will be documented in this file. See [standa
   * Detectors can be filled in any order in run overview filters
   * Visual improvements to log creation page
   * Run types are now added and can be filtered. The type for a run is shown in the details page.
-  * Filling filters for log overview will not automatically remove whitespaces on typing
-  * Time between runs is displayed on LHC fill display
-  * Replying to a log will automatically fill tags and run numbers from parent log and generate a title
   * `Runs`
     * Run duration values:
       * Is based on the trigger when it exists
