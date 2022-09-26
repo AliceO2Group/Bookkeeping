@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed Trigger Value displayed as active filter if any filter is active on run overview page
   * Run start/stop on the home screen is now consistent with the run overview page.
   * Add CALIBRATION run definition
+  * COSMIC run definition require COSMIC(S) type
 * Notable changes for developers:
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
 
