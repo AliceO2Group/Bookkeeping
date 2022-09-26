@@ -17,6 +17,7 @@ const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
 const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
+const { RunDefinition } = require('../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
 
@@ -154,7 +155,7 @@ module.exports = () => {
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC]');
+            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC, CALIBRATION]');
         });
         it('should successfully filter on run definition', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=physics');
@@ -163,7 +164,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.lengthOf(4);
-            expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+            expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)

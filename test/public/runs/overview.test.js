@@ -21,6 +21,7 @@ const {
     goToPage,
 } = require('../defaults');
 const { checkColumnBalloon } = require('../defaults.js');
+const { RunDefinition } = require('../../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
 
@@ -344,6 +345,7 @@ module.exports = () => {
         const cosmicFilterSelector = `${filterInputSelectorPrefix}COSMIC`;
         const technicalFilterSelector = `${filterInputSelectorPrefix}TECHNICAL`;
         const syntheticFilterSelector = `${filterInputSelectorPrefix}SYNTHETIC`;
+        const calibrationFilterSelector = `${filterInputSelectorPrefix}CALIBRATION`;
 
         /**
          * Checks that all the rows of the given table have a valid run definition
@@ -369,44 +371,64 @@ module.exports = () => {
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
-        await checkTableRunDefinitions(table, ['PHYSICS']);
+        await checkTableRunDefinitions(table, [RunDefinition.Physics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(5);
-        await checkTableRunDefinitions(table, ['PHYSICS', 'SYNTHETIC']);
+        await checkTableRunDefinitions(table, [RunDefinition.Physics, RunDefinition.Synthetic]);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
-        await checkTableRunDefinitions(table, ['SYNTHETIC']);
+        await checkTableRunDefinitions(table, [RunDefinition.Synthetic]);
 
         await page.$eval(cosmicFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(3);
-        await checkTableRunDefinitions(table, ['SYNTHETIC', 'COSMIC']);
+        await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmic]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
-        await checkTableRunDefinitions(table, ['COSMIC']);
+        await checkTableRunDefinitions(table, [RunDefinition.Cosmic]);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(3);
-        await checkTableRunDefinitions(table, ['COSMIC', 'TECHNICAL']);
+        await checkTableRunDefinitions(table, [RunDefinition.Cosmic, RunDefinition.Technical]);
 
-        await page.$eval(physicsFilterSelector, (element) => element.click());
-        await page.$eval(syntheticFilterSelector, (element) => element.click());
+        await page.$eval(cosmicFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(8);
-        await checkTableRunDefinitions(table, ['COSMIC', 'TECHNICAL', 'PHYSICS', 'SYNTHETIC']);
+        expect(table.length).to.equal(1);
+        await checkTableRunDefinitions(table, [RunDefinition.Technical]);
+
+        await page.$eval(calibrationFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+        await checkTableRunDefinitions(table, [RunDefinition.Technical, RunDefinition.Calibration]);
+
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.setRunsPerPage(20);
+        });
+        await page.$eval(physicsFilterSelector, (element) => element.click());
+        await page.$eval(syntheticFilterSelector, (element) => element.click());
+        await page.$eval(cosmicFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(9);
+        await checkTableRunDefinitions(
+            table,
+            [RunDefinition.Cosmic, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
+        );
     });
 
     it('should update to current date when empty and time is set', async () => {
