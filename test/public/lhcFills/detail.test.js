@@ -85,7 +85,7 @@ module.exports = () => {
             '#detector-statistics-ITS .detector-statistics-efficiency',
             (element) => element.innerText,
         );
-        expect(itsStatisticsEfficiency).to.equal('(25%)');
+        expect(itsStatisticsEfficiency).to.equal('(25.00%)');
     });
 
     it('should successfully display runs related to the fill', async () => {
