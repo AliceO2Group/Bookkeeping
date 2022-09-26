@@ -96,7 +96,7 @@ module.exports = () => {
 
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
         await page.waitForTimeout(250);
 
         // Create the new log
@@ -123,7 +123,7 @@ module.exports = () => {
         const text = 'Test the reply log creation with no title';
 
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
         await page.waitForTimeout(250);
 
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);

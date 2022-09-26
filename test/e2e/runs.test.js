@@ -641,7 +641,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(10);
+                    expect(res.body.data).to.have.lengthOf(12);
 
                     expect(res.body.data[0].id).to.equal(1);
                     expect(res.body.data[0].runs).to.deep.equal([
