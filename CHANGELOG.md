@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
 * Notable changes for users:
+  * Efficiency per detector is now displayed on LHC fill details
   * A toggle in user actions is present to display timestamps as unix timestamps instead of local dates
   * Accent are now handled in file names
 
