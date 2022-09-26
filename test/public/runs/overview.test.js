@@ -289,8 +289,11 @@ module.exports = () => {
         await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
-        // We expect the entry page to have the same id as the id from the run overview
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=${expectedRunId}`)).to.be.true;
+
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+
+        expect(urlParameters).to.contain('page=run-detail');
+        expect(urlParameters).to.contain(`id=${expectedRunId}`);
     });
 
     it('Should have balloon on detector, tags and topology column', async () => {
