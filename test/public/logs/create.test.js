@@ -157,7 +157,8 @@ module.exports = () => {
         const title = 'Shorter';
         const text = 'Sample Text';
         const file1 = '1200px-CERN_logo.png';
-        const file2 = 'hadron_collider.jpg';
+        // Use utf-characters to check that it is well handled, for example for French accents
+        const file2 = 'hadron_collider🚀.jpg';
 
         // Return to the creation page
         await goToPage(page, 'log-create');
