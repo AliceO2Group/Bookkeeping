@@ -2116,7 +2116,7 @@ components:
           nullable: true
         ctfFileSize:
           description: File size in binary bigint.
-          type: number
+          type: integer
           nullable: true
         dcs:
           $ref: '#/components/schemas/RunDcs'
@@ -2183,7 +2183,7 @@ components:
           nullable: true
         otherFileSize:
           description: File size in binary bigint.
-          type: number
+          type: integer
           nullable: true
         pdpBeamType:
           description: Type of the pdp beam.
@@ -2234,7 +2234,7 @@ components:
           nullable: true
         tfFileSize:
           description: File size in binary bigint.
-          type: number
+          type: integer
           nullable: true
         timeO2End:
           $ref: '#/components/schemas/RunO2End'

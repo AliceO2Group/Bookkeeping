@@ -877,7 +877,8 @@ module.exports = () => {
                 });
         });
         it('should return 200 in all other cases', (done) => {
-            const timestamp = 1664271988000;
+            const TIMESTAMP = 1664271988000;
+            const BIG_INT_NUMBER = 214920239535280;
             request(server)
                 .patch('/api/runs?runNumber=1')
                 .send({
@@ -888,14 +889,14 @@ module.exports = () => {
                     aliceL3Polarity: 'positive',
                     aliceDipoleCurrent: 45654.1,
                     aliceDipolePolarity: 'negative',
-                    startOfDataTransfer: timestamp,
-                    endOfDataTransfer: timestamp,
+                    startOfDataTransfer: TIMESTAMP,
+                    endOfDataTransfer: TIMESTAMP,
                     ctfFileCount: 30,
-                    ctfFileSize: 0b1010101001010101001111111111111111,
+                    ctfFileSize: 214920239535280,
                     tfFileCount: 1234,
-                    tfFileSize: 0b1010101001010101001111111111111111,
+                    tfFileSize: 214920239535280,
                     otherFileCount: 123156132,
-                    otherFileSize: 0b1010101001010101001111111111111111,
+                    otherFileSize: 214920239535280,
                 })
                 .expect(200)
                 .end((err, res) => {
@@ -913,14 +914,14 @@ module.exports = () => {
                     expect(data.aliceL3Polarity).to.equal('POSITIVE');
                     expect(data.aliceDipoleCurrent).to.equal(45654.1);
                     expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
-                    expect(data.startOfDataTransfer).to.equal(timestamp);
-                    expect(data.endOfDataTransfer).to.equal(timestamp);
+                    expect(data.startOfDataTransfer).to.equal(TIMESTAMP);
+                    expect(data.endOfDataTransfer).to.equal(TIMESTAMP);
                     expect(data.ctfFileCount).to.equal(30);
-                    expect(data.ctfFileSize).to.equal(0b1010101001010101001111111111111111);
+                    expect(data.ctfFileSize).to.equal(BIG_INT_NUMBER);
                     expect(data.tfFileCount).to.equal(1234);
-                    expect(data.tfFileSize).to.equal(0b1010101001010101001111111111111111);
+                    expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
                     expect(data.otherFileCount).to.equal(123156132);
-                    expect(data.otherFileSize).to.equal(0b1010101001010101001111111111111111);
+                    expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
                     done();
                 });
         });

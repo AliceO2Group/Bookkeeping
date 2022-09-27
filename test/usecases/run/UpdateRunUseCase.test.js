@@ -21,7 +21,8 @@ const { expect } = chai;
 
 module.exports = () => {
     const wrongId = 9999999999;
-    const timestamp = 1664271988000;
+    const TIMESTAMP = 1664271988000;
+    const BIG_INT_NUMBER = 214920239535280;
     let getRunDto;
     let updateRunDto;
     let updateRunByRunNumberDto;
@@ -53,14 +54,14 @@ module.exports = () => {
                 aliceDipoleCurrent: 45654.1,
                 aliceDipolePolarity: 'NEGATIVE',
                 fillNumber: 1,
-                startOfDataTransfer: timestamp,
-                endOfDataTransfer: timestamp,
+                startOfDataTransfer: TIMESTAMP,
+                endOfDataTransfer: TIMESTAMP,
                 ctfFileCount: 30,
-                ctfFileSize: 0b1010101001010101001111111111111111,
+                ctfFileSize: BIG_INT_NUMBER,
                 tfFileCount: 1234,
-                tfFileSize: 0b1010101001010101001111111111111111,
+                tfFileSize: BIG_INT_NUMBER,
                 otherFileCount: 123156132,
-                otherFileSize: 0b1010101001010101001111111111111111,
+                otherFileSize: BIG_INT_NUMBER,
             },
         });
     });
@@ -250,14 +251,14 @@ module.exports = () => {
             expect(result.aliceDipoleCurrent).to.equal(45654.1);
             expect(result.aliceDipolePolarity).to.equal('NEGATIVE');
             expect(result.fillNumber).to.equal(1);
-            expect(result.startOfDataTransfer).to.equal(timestamp);
-            expect(result.endOfDataTransfer).to.equal(timestamp);
+            expect(result.startOfDataTransfer).to.equal(TIMESTAMP);
+            expect(result.endOfDataTransfer).to.equal(TIMESTAMP);
             expect(result.ctfFileCount).to.equal(30);
-            expect(result.ctfFileSize).to.equal(0b1010101001010101001111111111111111);
+            expect(result.ctfFileSize).to.equal(BIG_INT_NUMBER);
             expect(result.tfFileCount).to.equal(1234);
-            expect(result.tfFileSize).to.equal(0b1010101001010101001111111111111111);
+            expect(result.tfFileSize).to.equal(BIG_INT_NUMBER);
             expect(result.otherFileCount).to.equal(123156132);
-            expect(result.otherFileSize).to.equal(0b1010101001010101001111111111111111);
+            expect(result.otherFileSize).to.equal(BIG_INT_NUMBER);
         });
 
         it('Should give an error when the id of the run can not be found', async () => {
