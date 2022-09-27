@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
+* Notable changes for users:
+  * Added exta run fields for ccdb in the run details
+* Notable changes for develops:
+  * Runs API:
+    * `GET`
+      * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to the run object.
+    * `PATCH`
+      * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to update run by run number.
 ## [0.40.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
 * Notable changes for users:
   * Fix synthetic run definition computation
