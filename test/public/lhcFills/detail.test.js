@@ -68,6 +68,24 @@ module.exports = () => {
             (element) => element.innerText,
         );
         expect(timeBetweenRunsWarning).to.equal('Some runs have missing start or end');
+
+        const itsStatisticsName = await page.$eval(
+            '#detector-statistics-ITS .detector-statistics-name',
+            (element) => element.innerText,
+        );
+        expect(itsStatisticsName.startsWith('ITS')).to.be.true;
+
+        const itsStatisticsCount = await page.$eval(
+            '#detector-statistics-ITS .detector-statistics-count',
+            (element) => element.innerText,
+        );
+        expect(itsStatisticsCount).to.equal('3');
+
+        const itsStatisticsEfficiency = await page.$eval(
+            '#detector-statistics-ITS .detector-statistics-efficiency',
+            (element) => element.innerText,
+        );
+        expect(itsStatisticsEfficiency).to.equal('(25.00%)');
     });
 
     it('should successfully display runs related to the fill', async () => {
