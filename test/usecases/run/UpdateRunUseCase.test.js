@@ -21,7 +21,7 @@ const { expect } = chai;
 
 module.exports = () => {
     const wrongId = 9999999999;
-
+    const timestamp = 1664271988000;
     let getRunDto;
     let updateRunDto;
     let updateRunByRunNumberDto;
@@ -53,6 +53,14 @@ module.exports = () => {
                 aliceDipoleCurrent: 45654.1,
                 aliceDipolePolarity: 'NEGATIVE',
                 fillNumber: 1,
+                startOfDataTransfer: timestamp,
+                endOfDataTransfer: timestamp,
+                ctfFileCount: 30,
+                ctfFileSize: 0b1010101001010101001111111111111111,
+                tfFileCount: 1234,
+                tfFileSize: 0b1010101001010101001111111111111111,
+                otherFileCount: 123156132,
+                otherFileSize: 0b1010101001010101001111111111111111,
             },
         });
     });
@@ -242,6 +250,14 @@ module.exports = () => {
             expect(result.aliceDipoleCurrent).to.equal(45654.1);
             expect(result.aliceDipolePolarity).to.equal('NEGATIVE');
             expect(result.fillNumber).to.equal(1);
+            expect(result.startOfDataTransfer).to.equal(timestamp);
+            expect(result.endOfDataTransfer).to.equal(timestamp);
+            expect(result.ctfFileCount).to.equal(30);
+            expect(result.ctfFileSize).to.equal(0b1010101001010101001111111111111111);
+            expect(result.tfFileCount).to.equal(1234);
+            expect(result.tfFileSize).to.equal(0b1010101001010101001111111111111111);
+            expect(result.otherFileCount).to.equal(123156132);
+            expect(result.otherFileSize).to.equal(0b1010101001010101001111111111111111);
         });
 
         it('Should give an error when the id of the run can not be found', async () => {

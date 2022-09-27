@@ -877,6 +877,7 @@ module.exports = () => {
                 });
         });
         it('should return 200 in all other cases', (done) => {
+            const timestamp = 1664271988000;
             request(server)
                 .patch('/api/runs?runNumber=1')
                 .send({
@@ -887,6 +888,14 @@ module.exports = () => {
                     aliceL3Polarity: 'positive',
                     aliceDipoleCurrent: 45654.1,
                     aliceDipolePolarity: 'negative',
+                    startOfDataTransfer: timestamp,
+                    endOfDataTransfer: timestamp,
+                    ctfFileCount: 30,
+                    ctfFileSize: 0b1010101001010101001111111111111111,
+                    tfFileCount: 1234,
+                    tfFileSize: 0b1010101001010101001111111111111111,
+                    otherFileCount: 123156132,
+                    otherFileSize: 0b1010101001010101001111111111111111,
                 })
                 .expect(200)
                 .end((err, res) => {
@@ -894,15 +903,24 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+                    const { data } = res.body;
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.data.runNumber).to.equal(1);
-                    expect(res.body.data.lhcBeamEnergy).to.equal(232.156);
-                    expect(res.body.data.lhcBeamMode).to.equal('STABLE BEAMS');
-                    expect(res.body.data.lhcBetaStar).to.equal(123e-5);
-                    expect(res.body.data.aliceL3Current).to.equal(561.2);
-                    expect(res.body.data.aliceL3Polarity).to.equal('POSITIVE');
-                    expect(res.body.data.aliceDipoleCurrent).to.equal(45654.1);
-                    expect(res.body.data.aliceDipolePolarity).to.equal('NEGATIVE');
+                    expect(data.runNumber).to.equal(1);
+                    expect(data.lhcBeamEnergy).to.equal(232.156);
+                    expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
+                    expect(data.lhcBetaStar).to.equal(123e-5);
+                    expect(data.aliceL3Current).to.equal(561.2);
+                    expect(data.aliceL3Polarity).to.equal('POSITIVE');
+                    expect(data.aliceDipoleCurrent).to.equal(45654.1);
+                    expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
+                    expect(data.startOfDataTransfer).to.equal(timestamp);
+                    expect(data.endOfDataTransfer).to.equal(timestamp);
+                    expect(data.ctfFileCount).to.equal(30);
+                    expect(data.ctfFileSize).to.equal(0b1010101001010101001111111111111111);
+                    expect(data.tfFileCount).to.equal(1234);
+                    expect(data.tfFileSize).to.equal(0b1010101001010101001111111111111111);
+                    expect(data.otherFileCount).to.equal(123156132);
+                    expect(data.otherFileSize).to.equal(0b1010101001010101001111111111111111);
                     done();
                 });
         });
