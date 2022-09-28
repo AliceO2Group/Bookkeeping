@@ -72,6 +72,6 @@ module.exports = () => {
         const { error } = await new EndRunUseCase()
             .execute(endRunDto);
         expect(error.status).to.equal('400');
-        expect(error.title).to.equal(`run with this id (${wrongId}) could not be found`);
+        expect(error.title).to.equal(`Run with this run number (${wrongId}) could not be found`);
     });
 };
