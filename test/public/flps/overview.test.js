@@ -167,7 +167,7 @@ module.exports = () => {
         // Override the amount of flps visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.flps.setFlpsPerPage(1);
+            model.flps.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -191,7 +191,7 @@ module.exports = () => {
          */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.flps.setFlpsPerPage(200);
+            model.flps.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
@@ -202,7 +202,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.flps.setFlpsPerPage(10);
+            model.flps.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
