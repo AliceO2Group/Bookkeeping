@@ -674,7 +674,7 @@ module.exports = () => {
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
         await page.focus(filterInputSelector);
         await page.keyboard.type('1, 3');
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(400);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(5);
     });
