@@ -147,6 +147,24 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should successfully return 400 if the given definitions are not valid', async () => {
+            const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC]');
+        });
+        it('should successfully filter on run definition', async () => {
+            const response = await request(server).get('/api/runs?filter[definitions]=physics');
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.lengthOf(4);
+            expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+        });
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
@@ -227,8 +245,11 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
 
-            // Run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null duration in StartRunUseCase
-            expect(data).to.have.lengthOf(7);
+            /*
+             * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null
+             * duration in StartRunUseCase
+             */
+            expect(data).to.have.lengthOf(14);
         });
 
         it('should filter run on their quality', async () => {
@@ -250,7 +271,8 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            expect(data.length).to.equal(15);
+
+            expect(data.length).to.equal(22);
         });
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
@@ -295,7 +317,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(51);
+            expect(data).to.have.lengthOf(46);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -331,7 +353,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             // 7 instead of 5 because 2 runs have been created with 10 as nFlps
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should return 400 if the EPN number filter is invalid', async () => {
@@ -355,7 +377,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             // 7 instead of 5 because 2 runs have been created with 10 as nEpns
-            expect(data).to.have.lengthOf(7);
+            expect(data).to.have.lengthOf(8);
         });
     });
 
@@ -474,8 +496,96 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 and duration when there are trigger times', (done) => {
+            request(server)
+                .get('/api/runs/106')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(data.runDuration).to.equal(90000000);
+                    expect(data.timeO2Start).to.not.equal(null);
+                    expect(data.timeO2End).to.not.equal(null);
+                    expect(data.timeTrgStart).to.not.equal(null);
+                    expect(data.timeTrgEnd).to.not.equal(null);
+                    done();
+                });
+        });
+        it('should return 200 whenever there is only a trigger start', (done) => {
+            request(server)
+                .get('/api/runs/104')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(data.timeO2Start).to.not.equal(null);
+                    expect(data.timeO2End).to.not.equal(null);
+                    expect(data.timeTrgStart).to.equal(null);
+                    expect(data.timeTrgEnd).to.not.equal(null);
+                    done();
+                });
+        });
     });
 
+    it('should return 200 and a duration with no trigger end', (done) => {
+        request(server)
+            .get('/api/runs/103')
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                const { data } = res.body;
+
+                // Response must satisfy the OpenAPI specification
+                expect(res).to.satisfyApiSpec;
+
+                expect(data.runDuration).to.equal(3600000);
+                expect(data.timeO2Start).to.not.equal(null);
+                expect(data.timeO2End).to.not.equal(null);
+                expect(data.timeTrgStart).to.not.equal(null);
+                expect(data.timeTrgEnd).to.equal(null);
+                done();
+            });
+    });
+    it('should return 200 and a time when only o2 times are given', (done) => {
+        request(server)
+            .get('/api/runs/102')
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                const { data } = res.body;
+
+                // Response must satisfy the OpenAPI specification
+                expect(res).to.satisfyApiSpec;
+
+                expect(data.runDuration).to.equal(3600000);
+                expect(data.timeO2Start).to.not.equal(null);
+                expect(data.timeO2End).to.not.equal(null);
+                expect(data.timeTrgStart).to.equal(null);
+                expect(data.timeTrgEnd).to.equal(null);
+
+                done();
+            });
+    });
     describe('GET /api/runs/:runId/logs', () => {
         it('should return 400 if the run id is not a number', (done) => {
             request(server)
@@ -531,7 +641,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(10);
+                    expect(res.body.data).to.have.lengthOf(12);
 
                     expect(res.body.data[0].id).to.equal(1);
                     expect(res.body.data[0].runs).to.deep.equal([
@@ -547,11 +657,11 @@ module.exports = () => {
 
     describe('POST /api/runs', () => {
         const testRun = {
-            runNumber: 109,
+            runNumber: 110,
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
             environmentId: '1234567890',
-            runType: 'technical',
+            runType: 'NONE',
             runQuality: 'good',
             nDetectors: 3,
             nFlps: 10,
@@ -579,7 +689,8 @@ module.exports = () => {
                     expect(res.body.data.triggerValue).to.equal('OFF');
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
-                    expect(res.body.data.id).to.equal(109);
+                    expect(res.body.data.runType.id).to.be.a('number');
+                    expect(res.body.data.id).to.equal(110);
 
                     done();
                 });
@@ -600,7 +711,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                        ' defined, your custom type is missing the correct messages definition');
+                                                               ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
@@ -614,7 +725,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(409);
             expect(response.body.errors).to.be.an('array');
-            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 109');
+            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 110');
         });
     });
 
@@ -804,7 +915,6 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'good',
                 })
                 .expect(400)
                 .end((err, res) => {
@@ -825,7 +935,6 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    runQuality: 'good',
                     lhcPeriod: 'lhc22b',
                     odcTopologyFullName: 'hash',
                     pdpWorkflowParameters: 'EVENT_DISPLAY',
@@ -843,7 +952,6 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.runQuality).to.equal('good');
                     expect(res.body.data.lhcPeriod).to.equal('lhc22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
                     expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
@@ -870,7 +978,6 @@ module.exports = () => {
             expect(body.data).to.be.an('object');
             expect(body.data.timeO2End).to.equal(dateValue); // Values not passed should remain the same
             expect(body.data.timeO2Start).to.equal(dateValue); // Values not passed should remain the same
-            expect(body.data.runQuality).to.equal('good'); // Values not passed should remain the same
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');

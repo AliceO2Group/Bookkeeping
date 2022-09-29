@@ -1,3 +1,15 @@
+## [0.40.0]
+* Changes made to the database:
+  * Table `runs` updates:
+    * `run_duration`:
+      * Is based on the trigger when it exists;
+      * Is based on o2 start/stop when trigger does not exist;
+      * Is based on o2_stop - o2_trigger_start when there is a trigger start but there is no trigger_end;
+    * new column `run_type_id` 
+  * New Table `run_types`:
+    * `id` - NUMBER & primary key,
+    * `name` - CHAR(64),
+
 ## [0.37.0]
 * Changes made to the database:
     * Table `runs` - added fields:
@@ -13,23 +25,23 @@
 ## [0.35.0]
 * Changes made to the database:
     * table `runs` - added fields:
-        * `lhcPeriod` - string ('lhc22b')
-        * `nEpns` - number
+        * `lhc_period` - string ('lhc22b')
+        * `n_epns` - number
         * `trigger_value` - enum (OFF, CTP, LTU)
 ## [0.32.0]
 * Changes made to the database:
     * table `runs` - added fields:
-        * `trgGlobalRunEnabled` - boolean ('true', 'false')
-        * `trgEnabled` - boolean ('true', 'false')
-        * `pdpConfigOption` - string ('Repository Hash')
-        * `pdpTopologyDescriptionLibraryFile` - string ('some/location.desc', 'production/production.desc')
-        * `tfbDdMode` - string ('processing')
+        * `trg_globalr_run_enabled` - boolean ('true', 'false')
+        * `trg_enabled` - boolean ('true', 'false')
+        * `pdp_config_option` - string ('Repository Hash')
+        * `pdp_topology_description_library_file` - string ('some/location.desc', 'production/production.desc')
+        * `tfb_dd_mode` - string ('processing')
 
 ## [0.31.0]
 * Changes made to the database:
   * table `runs`:
-    * `aliceL3Polarity` - string ('positive', 'negative')
-    * `aliceDipolePolarity` - string ('positive', 'negative')
+    * `alice_l3_polarity` - string ('positive', 'negative')
+    * `alice_dipole_polarity` - string ('positive', 'negative')
 
 ## [0.28.0]
 * Changes made to the database:

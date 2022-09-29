@@ -74,7 +74,7 @@ module.exports = () => {
             durationAfterLastRun: (data) => data === '-'
                 || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
-            totalRunsDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
+            runsCoverage: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
         };
 
@@ -111,12 +111,12 @@ module.exports = () => {
 
     it('can set how many lhcFills are available per page', async () => {
         await page.waitForTimeout(300);
-        // Expect the amount selector to currently be set to Infinite (after the previous test)
+        // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
@@ -149,7 +149,7 @@ module.exports = () => {
         // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.lhcFills.lhcFillsPerPage = 1;
+            model.lhcFills.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 

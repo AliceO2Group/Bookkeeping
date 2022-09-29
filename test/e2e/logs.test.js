@@ -130,9 +130,9 @@ module.exports = () => {
         });
 
         it('should support filtering by creation time', (done) => {
-            const timeFrom = 946684800000;
+            const fromTime = 946684800000;
             request(server)
-                .get(`/api/logs?filter[created][from]=${timeFrom}`)
+                .get(`/api/logs?filter[created][from]=${fromTime}`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -145,17 +145,17 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
-                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
+                    expect(res.body.data[0].createdAt).to.be.gte(fromTime);
 
                     done();
                 });
         });
 
         it('should support filtering by creation time', (done) => {
-            const timeFrom = 946684800000;
-            const timeTo = 1577833200000;
+            const fromTime = 946684800000;
+            const toTime = 1577833200000;
             request(server)
-                .get(`/api/logs?filter[created][from]=${timeFrom}&filter[created][to]=${timeTo}`)
+                .get(`/api/logs?filter[created][from]=${fromTime}&filter[created][to]=${toTime}`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -168,8 +168,8 @@ module.exports = () => {
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(100);
-                    expect(res.body.data[0].createdAt).to.be.gte(timeFrom);
-                    expect(res.body.data[0].createdAt).to.be.lte(timeTo);
+                    expect(res.body.data[0].createdAt).to.be.gte(fromTime);
+                    expect(res.body.data[0].createdAt).to.be.lte(toTime);
 
                     done();
                 });
@@ -1043,30 +1043,17 @@ module.exports = () => {
                 });
         });
 
-        it('should return 201 if a title is empty', (done) => {
-            request(server)
-                .post('/api/logs')
-                .send({
-                    title: '',
-                    text: 'Text of yet another run',
-                    parentLogId: 2,
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 400 if a title is empty even with parent log', async () => {
+            const response = await request(server).post('/api/logs').send({
+                title: '',
+                text: 'Text of yet another run',
+                parentLogId: 2,
+            });
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.data.title).to.equal('');
-                    expect(res.body.data.text).to.equal('Text of yet another run');
-                    expect(res.body.data.rootLogId).to.equal(1);
-                    expect(res.body.data.parentLogId).to.equal(2);
-
-                    done();
-                });
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
+            expect(titleError.detail).to.equal('"body.title" is not allowed to be empty');
         });
 
         // 'send' and 'attach' are incompatible so we use 'field' instead
@@ -1076,7 +1063,7 @@ module.exports = () => {
                 .field('title', 'Yet another run')
                 .field('text', 'Text of yet another run')
                 .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
-                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider.jpg'))
+                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider_(é_è)_🚀.jpg'))
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -1088,7 +1075,7 @@ module.exports = () => {
                     expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.attachments[0].originalName).to.equal('1200px-CERN_logo.png');
-                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider.jpg');
+                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider_(é_è)_🚀.jpg');
 
                     logWithAttachmentsId = res.body.data.id;
                     attachmentId = res.body.data.attachments[0].id;

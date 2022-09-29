@@ -207,3 +207,15 @@ Concerning the **Update mode** of the fields:
 | `stableBeamsDuration`         | STABLE BEAMS duration in seconds    |                                     |        | `fillNumber` | Update |
 | `beamType`                    | Type of collisions                  | `PROTON-PROTON` `Pb-Pb` `Pb-PROTON` |        | `fillNumber` | Update |
 | `fillingSchemeName`           | The name of the filling scheme used |                                     |        | `fillNumber` | Update |
+
+### RunTypes
+
+**Description:** This table is made to show the different types the runs can be.
+**DB main table**: `runTypes`
+
+| **Field**                     | **Description**  | **Example** | **Update time** | **Update Key** | **Update mode** |
+| ----------------------------- | ---------------- | ------------|-----------------|----------------|-----------------|
+| `id`                          | run type id                     | `1, 2, 3215`                        | AT COF | `fillNumber` | Insert |
+| `name`                        |                                 |                                     |        | `fillNumber` | Update |
+| `created_at`                  | When the lhcFill is created     |                                     | AT COF | `fillNumber` | Insert |
+| `updated_at`                  | When the lhcFill is updated     |                                     |        | `fillNumber` | Update |

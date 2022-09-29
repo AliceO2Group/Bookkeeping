@@ -80,6 +80,9 @@ html, body {
 .mbauto { margin-bottom: auto; }
 .pt0 { padding-top: 0; }
 
+/* flex */
+.flex-wrap.flex-row > .flex-grow { width: inherit; }
+
 /* z-index */
 .no-z-index {
     z-index: unset;
@@ -286,6 +289,11 @@ a.btn, a.btn:hover, a.btn.active {
     align-items: baseline;
 }
 
+.header-panel {
+    border: 1px solid rgb(221, 221, 221);
+    font-weight: bold;
+}
+
 .border-danger {
     border: 1px solid var(--color-danger) !important;
 }
@@ -294,21 +302,21 @@ a.btn, a.btn:hover, a.btn.active {
     vertical-align: top;
 }
 
-/* Balloon system */
+/* Popover system */
 
-.balloon-container {
+.popover-container {
     overflow: visible;
     display: flex;
 }
 
-.balloon-sizer {
+.popover-sizer {
     display: flex;
     flex: 0 0;
     max-width: 100%;
     position: relative;
 }
 
-.balloon-anchor {
+.popover-anchor {
     position: absolute;
     left: 50%;
     width: 0;
@@ -316,19 +324,19 @@ a.btn, a.btn:hover, a.btn.active {
     display: none;
 }
 
-.balloon-anchor.anchor-top {
+.popover-anchor.anchor-top {
     bottom: 100%;
 }
 
-.balloon-anchor:not(.anchor-top) {
+.popover-anchor:not(.anchor-top) {
     top: 100%;
 }
 
-.balloon-container.enabled > .balloon-sizer > .balloon-anchor {
+.popover-container.enabled > .popover-sizer > .popover-anchor {
     display: flex;
 }
 
-.balloon {
+.popover {
     display: flex;
     flex-shrink: 0;
     flex-wrap: wrap;

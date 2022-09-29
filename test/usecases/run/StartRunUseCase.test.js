@@ -27,7 +27,7 @@ module.exports = () => {
                 timeO2Start: '2022-03-21 13:00:00',
                 timeTrgStart: '2022-03-21 13:00:00',
                 environmentId: '1234567890',
-                runType: 'technical',
+                runType: 'NONE',
                 runQuality: 'good',
                 nDetectors: 3,
                 bytesReadOut: 1024,
@@ -69,7 +69,19 @@ module.exports = () => {
             .execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
+        expect(result.runType.name).to.equal('NONE');
         expect(result.id).to.equal(108);
         expect(result.detectors).to.equal(null);
+    });
+
+    it('should successfully create a run with a non exsisting run type', async () => {
+        startRunDto.body.runNumber = 109;
+        startRunDto.body.runType = 'NEW_FAKE_RUN_TYPE';
+        const { result, error } = await new StartRunUseCase()
+            .execute(startRunDto);
+        expect(error).to.be.undefined;
+
+        expect(result).to.be.an('object');
+        expect(result.runType.name).to.equal('NEW_FAKE_RUN_TYPE');
     });
 };

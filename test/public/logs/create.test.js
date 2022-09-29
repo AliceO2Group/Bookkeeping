@@ -41,10 +41,10 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the log creation screen to be shown correctly
-        const header = await page.$('h2');
+        const header = await page.$('h3');
         expect(Boolean(header)).to.be.true;
         const headerText = await page.evaluate((element) => element.innerText, header);
-        expect(headerText).to.equal('Create Log');
+        expect(headerText).to.equal('New log');
     });
 
     it('can create a log', async () => {
@@ -54,18 +54,15 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
-        // Verify that the text from the first matches with the text posted and correct working of the redirect
-        // eslint-disable-next-line no-undef
-        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors['text'].getValue()))
-            .includes(text);
-        expect(doesContentMatch).to.equal(true);
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
 
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await page.waitForNavigation();
 
         // Return the page to home
         await goToPage(page, 'log-overview');
@@ -80,7 +77,7 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
     });
@@ -93,13 +90,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
-
-        // Verify that the text from the first matches with the text posted and correct working of the redirect
-        // eslint-disable-next-line no-undef
-        const doesContentMatch = JSON.stringify(await page.evaluate(() => model.logs.editors['text'].getValue()))
-            .includes(text);
-        expect(doesContentMatch).to.equal(true);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Create check disabled button
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
@@ -118,7 +109,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Find the selection options corresponding to the tag texts
         const tagOptions = await page.$$('.tag-option');
@@ -145,7 +136,7 @@ module.exports = () => {
         // Get the latest post and verify that the selected tags correspond to the posted tags
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTags = await page.$(`#${firstRowId}-tags .balloon-actual-content`);
+        const firstRowTags = await page.$(`#${firstRowId}-tags .popover-actual-content`);
         const tagsText = await page.evaluate((element) => element.innerText, firstRowTags);
         expect(tagsText).to.equal(tags.join(', '));
     });
@@ -166,7 +157,8 @@ module.exports = () => {
         const title = 'Shorter';
         const text = 'Sample Text';
         const file1 = '1200px-CERN_logo.png';
-        const file2 = 'hadron_collider.jpg';
+        // Use utf-characters to check that it is well handled, for example for French accents
+        const file2 = 'hadron_collider_(é_è)_🚀.jpg';
 
         // Return to the creation page
         await goToPage(page, 'log-create');
@@ -174,7 +166,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Add both the file attachments to the input field
         const attachmentsInput = await page.$('#attachments');
@@ -200,7 +192,7 @@ module.exports = () => {
         // Get the latest post and verify the title of the log we posted
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
@@ -264,7 +256,7 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
@@ -272,7 +264,7 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await page.waitForNavigation();
         await goToPage(page, 'log-overview');
         await page.waitForTimeout(100);
 
@@ -280,18 +272,21 @@ module.exports = () => {
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
-        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 
         // Go to the log detail page
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
         await goToPage(page, `log-detail&id=${rowId}`);
+        await page.waitForTimeout(100);
+
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(200);
         const runsField = await page.$(`#post${rowId}-runs`);
+
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
     }).timeout(10000);
@@ -308,21 +303,25 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.editor.setValue(text), text);
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
 
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation();
         await page.goto(`${url}/?page=log-overview`, { waitUntil: 'load' });
         await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
 
         // Find the created log
         const table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .balloon-actual-content`);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
 

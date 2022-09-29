@@ -48,20 +48,17 @@ module.exports = () => {
         expect(result.eorReasons[0].title).to.equal('CPV');
         expect(result.lhcPeriod).to.equal('lhc22b');
         expect(result.odcTopologyFullName).to.equal('hash');
+        expect(result.runType.id).to.equal(14);
     });
 
-    it('should successfully return an object that contain a null duration if trigger-start is not defined', async () => {
-        getRunDto.params.runId = 103;
-        let result = await new GetRunUseCase().execute(getRunDto);
+    it('should successfully return an object that contains a null duration if trigger start and o2start is not defined', async () => {
+        getRunDto.params.runId = 100;
+        const result = await new GetRunUseCase().execute(getRunDto);
 
         expect(result.timeTrgStart).to.equal(null);
+        expect(result.timeO2Start).to.be.null;
+
         expect(result.runDuration).to.equal(null);
-
-        getRunDto.params.runId = 104;
-        result = await new GetRunUseCase().execute(getRunDto);
-
-        expect(result.timeTrgStart).to.be.null;
-        expect(result.runDuration).to.be.null;
     });
 
     it(
