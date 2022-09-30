@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Run start/stop on the home screen is now consistent with the run overview page.
   * Add CALIBRATION run definition
   * Pagination limits is now of 1000 items in GUI and 5k in the API and export
+  * Fix physics runs displayed as cosmic in run details
 * Notable changes for developers:
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
 
