@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file. See [standa
       * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to the run object.
     * `PATCH`
       * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to update run by run number.
+  * Added a loading icon when log overview is loading
+  * Fixed infinite requests when moving to homepage from logs/runs overview
+  * Fixed Trigger Value displayed as active filter if any filter is active on run overview page
+  * Run start/stop on the home screen is now consistent with the run overview page.
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
   
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
