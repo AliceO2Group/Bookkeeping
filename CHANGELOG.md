@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
 * Notable changes for users:
+  * Fixed Trigger Value displayed as active filter if any filter is active on run overview page
   * Run start/stop on the home screen is now consistent with the run overview page.
 * Notable changes for developers:
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
