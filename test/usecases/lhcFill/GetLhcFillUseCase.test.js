@@ -14,6 +14,7 @@
 const { lhcFill: { GetLhcFillUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetLhcFillDto } } = require('../../../lib/domain');
 const chai = require('chai');
+const { RunDefinition } = require('../../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
 
@@ -52,6 +53,6 @@ module.exports = () => {
         getLhcFillDto.params.fillNumber = 6;
         const result = await new GetLhcFillUseCase().execute(getLhcFillDto);
         expect(result.runs).to.lengthOf(4);
-        expect(result.runs.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+        expect(result.runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
     });
 };
