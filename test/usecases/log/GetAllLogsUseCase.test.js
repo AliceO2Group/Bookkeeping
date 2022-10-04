@@ -60,8 +60,7 @@ module.exports = () => {
         const rootLogId = 117;
         getAllLogsDto.query = { filter: { rootLog: rootLogId } };
 
-        const filteredResult = await new GetAllLogsUseCase()
-            .execute(getAllLogsDto);
+        const filteredResult = await new GetAllLogsUseCase().execute(getAllLogsDto);
         for (const log of filteredResult.logs) {
             expect(log).to.not.have.property('replies');
         }
