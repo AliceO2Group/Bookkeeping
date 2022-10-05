@@ -10,10 +10,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Run start/stop on the home screen is now consistent with the run overview page.
   * Add CALIBRATION run definition
   * Pagination limits is now of 1000 items in GUI and 5k in the API and export
-  * Log creation tag selection has been improved: it now displays all the tags and outline the already selected ones
 * Notable changes for developers:
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
-  * Picker (front component) has been improved to make it more configurable
 
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
 * Notable changes for users:
