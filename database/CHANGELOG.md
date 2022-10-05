@@ -1,3 +1,15 @@
+## [0.42.0]
+* Changes made to the database:
+  * Table `runs` - added fields:
+      * `startOfDataTransfer` - date('1664271988000'),
+      * `endOfDataTransfer` - date('1664271988000'),
+      * `ctfFileCount` -  integer('123', '111', '456'),
+      * `ctfFileSize` - bigInteger('0b1010101001010101001111111111111111'),
+      * `tfFileCount` - integer('123', '111', '456'),
+      * `tfFileSize` - bigInteger('0b1010101001010101001111111111111111'),
+      * `otherFileCount` - integer('123', '111', '456'),
+      * `otherFileSize` - bigInteger('0b1010101001010101001111111111111111'),
+
 ## [0.40.0]
 * Changes made to the database:
   * Table `runs` updates:

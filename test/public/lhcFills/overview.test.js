@@ -136,7 +136,7 @@ module.exports = () => {
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
         await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
-            el.value = '111';
+            el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
