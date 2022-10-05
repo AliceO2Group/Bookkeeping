@@ -22,7 +22,7 @@ const { expect } = chai;
 module.exports = () => {
     const wrongId = 9999999999;
     const TIMESTAMP = 1664271988000;
-    const BIG_INT_NUMBER = 214920239535280;
+    const BIG_INT_NUMBER = '99999999999999999';
     let getRunDto;
     let updateRunDto;
     let updateRunByRunNumberDto;

@@ -1,4 +1,4 @@
-# Generated on Tue, 27 Sep 2022 13:35:24 GMT
+# Generated on Wed, 05 Oct 2022 07:36:22 GMT
 
 openapi: 3.0.0
 info:
@@ -2118,7 +2118,7 @@ components:
           nullable: true
         ctfFileSize:
           description: File size in binary bigint.
-          type: integer
+          type: string
           nullable: true
         dcs:
           $ref: '#/components/schemas/RunDcs'
@@ -2185,7 +2185,7 @@ components:
           nullable: true
         otherFileSize:
           description: File size in binary bigint.
-          type: integer
+          type: string
           nullable: true
         pdpBeamType:
           description: Type of the pdp beam.
@@ -2231,8 +2231,8 @@ components:
           type: integer
           nullable: true
         tfFileSize:
-          description: File size in binary bigint.
-          type: integer
+          description: File size in bigint.
+          type: string
           nullable: true
         tfbDdMode:
           description: The mode of the tfb dd.

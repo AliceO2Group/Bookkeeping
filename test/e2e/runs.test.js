@@ -879,7 +879,7 @@ module.exports = () => {
         });
         it('should return 200 in all other cases', (done) => {
             const TIMESTAMP = 1664271988000;
-            const BIG_INT_NUMBER = 214920239535280;
+            const BIG_INT_NUMBER = '99999999999999999';
             request(server)
                 .patch('/api/runs?runNumber=1')
                 .send({
@@ -893,11 +893,11 @@ module.exports = () => {
                     startOfDataTransfer: TIMESTAMP,
                     endOfDataTransfer: TIMESTAMP,
                     ctfFileCount: 30,
-                    ctfFileSize: 214920239535280,
+                    ctfFileSize: BIG_INT_NUMBER,
                     tfFileCount: 1234,
-                    tfFileSize: 214920239535280,
+                    tfFileSize: BIG_INT_NUMBER,
                     otherFileCount: 123156132,
-                    otherFileSize: 214920239535280,
+                    otherFileSize: BIG_INT_NUMBER,
                 })
                 .expect(200)
                 .end((err, res) => {
