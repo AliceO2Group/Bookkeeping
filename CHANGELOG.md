@@ -19,7 +19,6 @@ All notable changes to this project will be documented in this file. See [standa
   * Pagination limits is now of 1000 items in GUI and 5k in the API and export
 * Notable changes for developers:
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
-  * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
 
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
 * Notable changes for users:
