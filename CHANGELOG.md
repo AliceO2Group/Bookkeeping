@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
 * Notable changes for users:
 
-* Notable changes for develops:
+* Notable changes for developers:
+
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
 * Notable changes for users:
   * Added extra run fields for ccdb in the run details
