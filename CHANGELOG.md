@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
+* Notable changes for users:
+
+* Notable changes for develops:
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
 * Notable changes for users:
-  * Added exta run fields for ccdb in the run details
+  * Added extra run fields for ccdb in the run details
 * Notable changes for develops:
   * Runs API:
     * `GET`
