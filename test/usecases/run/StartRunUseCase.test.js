@@ -14,6 +14,7 @@
 const { run: { StartRunUseCase } } = require('../../../lib/usecases');
 const { dtos: { StartRunDto } } = require('../../../lib/domain');
 const chai = require('chai');
+const { GetEnvironmentUseCase } = require('../../../lib/usecases/environment/index.js');
 
 const { expect } = chai;
 
@@ -83,5 +84,17 @@ module.exports = () => {
 
         expect(result).to.be.an('object');
         expect(result.runType.name).to.equal('NEW_FAKE_RUN_TYPE');
+    });
+
+    it('should successfully link the run to the given environment', async () => {
+        const environmentId = 'Dxi029djX';
+        const runNumber = 110;
+        startRunDto.body.runNumber = runNumber;
+        startRunDto.body.environmentId = environmentId;
+        const { error } = await new StartRunUseCase().execute(startRunDto);
+        expect(error).to.be.undefined;
+
+        const environment = await new GetEnvironmentUseCase().execute({ params: { envId: environmentId } });
+        expect(environment.runs.map(({ runNumber }) => runNumber).includes(runNumber)).to.be.true;
     });
 };
