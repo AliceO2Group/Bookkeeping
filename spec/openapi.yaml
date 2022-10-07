@@ -1,4 +1,4 @@
-# Generated on Tue, 13 Sep 2022 10:02:28 GMT
+# Generated on Wed, 05 Oct 2022 07:36:22 GMT
 
 openapi: 3.0.0
 info:
@@ -2112,6 +2112,14 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+        ctfFileCount:
+          description: Amount of ctf files
+          type: integer
+          nullable: true
+        ctfFileSize:
+          description: File size in binary bigint.
+          type: string
+          nullable: true
         dcs:
           $ref: '#/components/schemas/RunDcs'
         dd_flp:
@@ -2120,6 +2128,12 @@ components:
           $ref: '#/components/schemas/RunDefinition'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        endOfDataTransfer:
+          description: Unix timestamp when data transfer was ended
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
         envId:
           $ref: '#/components/schemas/EnvironmentId'
         environmentId:
@@ -2165,6 +2179,14 @@ components:
           description: The name or location of the odc topology
           type: string
           nullable: true
+        otherFileCount:
+          description: Amount of other files
+          type: integer
+          nullable: true
+        otherFileSize:
+          description: File size in binary bigint.
+          type: string
+          nullable: true
         pdpBeamType:
           description: Type of the pdp beam.
           type: string
@@ -2196,8 +2218,22 @@ components:
             - $ref: '#/components/schemas/EntityId'
             - $ref: '#/components/schemas/RunTypeString'
             - $ref: '#/components/schemas/RunType'
+        startOfDataTransfer:
+          description: Unix timestamp when data transfer was started.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        tfFileCount:
+          description: Amount of tf files
+          type: integer
+          nullable: true
+        tfFileSize:
+          description: File size in bigint.
+          type: string
+          nullable: true
         tfbDdMode:
           description: The mode of the tfb dd.
           type: string
