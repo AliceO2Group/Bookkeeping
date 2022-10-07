@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
 * Notable changes for users:
+  * Fixed the bug which did not link the run to an environment properly
+
 
 * Notable changes for developers:
 
