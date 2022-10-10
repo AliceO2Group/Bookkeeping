@@ -16,5 +16,12 @@ Remove checklist and/or items that do not apply.
 - [ ] issue has "Fix version" assigned
 - [ ] issue "Status" is set to "In review"
 - [ ] PR labels are selected
-- [ ] `CHANGELOG.md` and `database/CHANGELOG.md` files were updated
 
+Notable changes for users:
+-
+
+Notable changes for develops:
+-
+
+Changes made to the database:
+-

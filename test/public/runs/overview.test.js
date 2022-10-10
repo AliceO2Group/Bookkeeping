@@ -239,7 +239,7 @@ module.exports = () => {
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(1);
+            model.runs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -263,7 +263,7 @@ module.exports = () => {
          */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(200);
+            model.runs.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
@@ -274,7 +274,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(10);
+            model.runs.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -417,7 +417,7 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(20);
+            model.runs.pagination.itemsPerPage = 20;
         });
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
@@ -567,6 +567,9 @@ module.exports = () => {
             return time === '25:00:00';
         })).to.be.true;
 
+        await page.$eval(runDurationLimitSelector, (input) => {
+            input.value = '';
+        });
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('3000');
         await page.waitForTimeout(300);

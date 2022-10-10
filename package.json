@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.41.0",
+  "version": "0.42.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -21,7 +21,7 @@
     "joi": "17.6.0",
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
-    "sequelize": "6.23.1",
+    "sequelize": "6.24.0",
     "umzug": "3.2.1"
   },
   "files": [
