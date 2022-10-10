@@ -62,7 +62,7 @@ module.exports = () => {
 
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
-        const COSMIC_COUNT = 2;
+        const COSMIC_COUNT = 1;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 1;
         const CALIBRATION_COUNT = 1;
