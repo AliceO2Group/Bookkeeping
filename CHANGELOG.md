@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Picker (front component) has been improved to make it more configurable
   * Log creation tag selection has been improved: it now displays all the tags and outline the already selected ones
   * Overview pagination has been uniformized on every pages
+  * COSMIC run definition require COSMIC(S) type
 
 * Notable changes for developers:
 
