@@ -140,7 +140,7 @@ module.exports = () => {
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.envs.envsPerPage = 1;
+            model.envs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
