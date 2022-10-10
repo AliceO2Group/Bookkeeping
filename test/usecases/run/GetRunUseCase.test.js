@@ -80,6 +80,7 @@ module.exports = () => {
 
         expect(result.timeTrgStart).to.be.not.null;
         expect(result.timeTrgEnd).to.be.not.null;
+        expect(result.nDets.length).to.be.greaterThan(1);
         expect(result.runDuration).to.equal(result.timeTrgEnd - result.timeTrgStart);
     });
 };
