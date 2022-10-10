@@ -95,7 +95,8 @@ module.exports = () => {
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(0);
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
 
         // Clear the filters
         await page.evaluate(() => {
@@ -133,7 +134,8 @@ module.exports = () => {
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(0);
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
 
         // Clear the filters
         await page.evaluate(() => {
@@ -155,8 +157,8 @@ module.exports = () => {
         // 6 logs are created before this test
         const limitDate = new Date();
         const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
-            + String(limitDate.getDate()).padStart(2, '0')
-            + limitDate.getFullYear();
+                      + String(limitDate.getDate()).padStart(2, '0')
+                      + limitDate.getFullYear();
         await page.focus('#createdFilterFrom');
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
@@ -224,7 +226,8 @@ module.exports = () => {
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(0);
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
 
         // Set the filter operation to "OR"
         await pressElement(page, '#tagFilterOperationRadioButtonOR');
@@ -457,7 +460,7 @@ module.exports = () => {
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.setLogsPerPage(1);
+            model.logs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -478,7 +481,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.setLogsPerPage(10);
+            model.logs.pagination.itemsPerPage = 10;
         });
     });
 
@@ -501,7 +504,7 @@ module.exports = () => {
          */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.setLogsPerPage(200);
+            model.logs.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
@@ -512,7 +515,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.setLogsPerPage(10);
+            model.logs.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -540,7 +543,7 @@ module.exports = () => {
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.setLogsPerPage(1);
+            model.logs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -549,7 +552,7 @@ module.exports = () => {
         await secondPageButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
         // Expect the pagination to still be on page two
-        let currentPageSelected = await page.evaluate(() => window.model.logs.getSelectedPage());
+        let currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
 
         // Navigate to a log detail page via href
@@ -568,7 +571,7 @@ module.exports = () => {
         const currentLocation = await page.url();
         expect(currentLocation).to.equal(`${url}/?page=log-overview`);
         // Expect the pagination to still be on page two
-        currentPageSelected = await page.evaluate(() => window.model.logs.getSelectedPage());
+        currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
     });
 };

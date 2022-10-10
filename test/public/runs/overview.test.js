@@ -239,7 +239,7 @@ module.exports = () => {
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(1);
+            model.runs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -263,7 +263,7 @@ module.exports = () => {
          */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(200);
+            model.runs.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
@@ -274,7 +274,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(10);
+            model.runs.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -388,19 +388,19 @@ module.exports = () => {
         await page.$eval(cosmicFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
+        expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmic]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
+        expect(table.length).to.equal(1);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmic]);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
+        expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmic, RunDefinition.Technical]);
 
         await page.$eval(cosmicFilterSelector, (element) => element.click());
@@ -417,14 +417,14 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.setRunsPerPage(20);
+            model.runs.pagination.itemsPerPage = 20;
         });
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(9);
+        expect(table.length).to.equal(8);
         await checkTableRunDefinitions(
             table,
             [RunDefinition.Cosmic, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
@@ -567,6 +567,9 @@ module.exports = () => {
             return time === '25:00:00';
         })).to.be.true;
 
+        await page.$eval(runDurationLimitSelector, (input) => {
+            input.value = '';
+        });
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('3000');
         await page.waitForTimeout(300);
