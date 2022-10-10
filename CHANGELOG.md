@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed the bug which did not link the run to an environment properly
   * Picker (front component) has been improved to make it more configurable
   * Log creation tag selection has been improved: it now displays all the tags and outline the already selected ones
+  * Overview pagination has been uniformized on every pages
 
 * Notable changes for developers:
 
