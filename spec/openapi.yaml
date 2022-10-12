@@ -1,4 +1,4 @@
-# Generated on Mon, 10 Oct 2022 08:34:01 GMT
+# Generated on Tue, 11 Oct 2022 13:24:21 GMT
 
 openapi: 3.0.0
 info:
@@ -2198,8 +2198,6 @@ components:
           nullable: true
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
-        nDets:
-          $ref: '#/components/schemas/ArrayOfDetectors'
         nEpns:
           $ref: '#/components/schemas/RunEpns'
         nFlps:

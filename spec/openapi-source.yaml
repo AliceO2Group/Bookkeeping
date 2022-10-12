@@ -2194,8 +2194,6 @@ components:
           description: The period tag of an LHC
           type: string
           nullable: true
-        nDets:
-          $ref: '#/components/schemas/ArrayOfDetectors'
         nDetectors:
           $ref: '#/components/schemas/RunDetectors'
         nEpns:
