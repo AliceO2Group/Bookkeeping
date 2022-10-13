@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Overview pagination has been uniformized on every pages
   * COSMIC run definition require COSMIC(S) type
   * Fix physics runs displayed as cosmic in run details
+  * Fixed several bugs related to the infinite scroll
 
 * Notable changes for developers:
   * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
