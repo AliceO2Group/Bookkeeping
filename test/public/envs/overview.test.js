@@ -92,6 +92,15 @@ module.exports = () => {
         }
     });
 
+    it('Should display the correct items counter at the bottom of the page', async () => {
+        await goToPage(page, 'env-overview');
+        await page.waitForTimeout(100);
+
+        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(208);
+    });
+
     it('Should have balloon on status message and runs columns', async () => {
         await goToPage(page, 'env-overview');
         await page.waitForTimeout(100);
