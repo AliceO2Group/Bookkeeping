@@ -2163,6 +2163,11 @@ components:
           description: LHC Beta * in meters
           type: number
           nullable: true
+        lhcFill:
+          oneOf:
+            - $ref: '#/components/schemas/LhcFill'
+            - type: string
+              nullable: true
         lhcPeriod:
           description: The period tag of an LHC
           type: string
