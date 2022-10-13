@@ -155,7 +155,9 @@ module.exports = () => {
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC, CALIBRATION]');
+            expect(error.detail)
+                .to
+                .equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMICS, TECHNICAL, SYNTHETIC, CALIBRATION, COMMISSIONING]');
         });
         it('should successfully filter on run definition', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=physics');
@@ -731,7 +733,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                                                               ' defined, your custom type is missing the correct messages definition');
+                        ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
