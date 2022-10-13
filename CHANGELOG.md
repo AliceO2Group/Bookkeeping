@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
   * Added extra run fields for ccdb in the run details
 * Notable changes for develops:
+  * RUN Definitions criteria can be found [DEFINITIONS](./docs/RUN_DEFINITIONS.md)
   * Runs API:
     * `GET`
       * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to the run object.
