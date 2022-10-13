@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
 * Notable changes for users:
   * Fixed the bug which did not link the run to an environment properly
+  * Display run dates times in one line on home page table
   * Picker (front component) has been improved to make it more configurable
   * Log creation tag selection has been improved: it now displays all the tags and outline the already selected ones
   * Overview pagination has been uniformized on every pages
