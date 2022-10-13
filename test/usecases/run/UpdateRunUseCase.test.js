@@ -266,7 +266,7 @@ module.exports = () => {
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
             expect(error.status).to.equal(500);
-            expect(error.detail).to.equal(`Run with this runNumber (${wrongId}) could not be found`);
+            expect(error.detail).to.equal(`Run with this run number (${wrongId}) could not be found`);
         });
 
         it('Should give an error when the id of the lhcFill cannot be found', async () => {
