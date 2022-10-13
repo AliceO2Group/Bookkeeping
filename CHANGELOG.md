@@ -11,9 +11,11 @@ All notable changes to this project will be documented in this file. See [standa
   * Log creation tag selection has been improved: it now displays all the tags and outline the already selected ones
   * Overview pagination has been uniformized on every pages
   * COSMIC run definition require COSMIC(S) type
+  * Fix physics runs displayed as cosmic in run details
 
 * Notable changes for developers:
   * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
+  * Rework adapters to be class instances and not only static methods, thus making them able to depend the one on the other recursively
 
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
 * Notable changes for users:
