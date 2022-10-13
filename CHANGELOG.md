@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. See [standa
   * COSMIC run definition require COSMIC(S) type
 
 * Notable changes for developers:
+  * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
 
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
 * Notable changes for users:
