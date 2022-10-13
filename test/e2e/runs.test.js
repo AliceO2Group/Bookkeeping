@@ -519,6 +519,25 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 200 and values \'0\' for 0 file size values', (done) => {
+            request(server)
+                .get('/api/runs/3')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(data.tfFileSize).to.equal('0');
+                    expect(data.otherFileSize).to.equal('0');
+                    expect(data.ctfFileSize).to.equal('0');
+                    done();
+                });
+        });
         it('should return 200 whenever there is only a trigger start', (done) => {
             request(server)
                 .get('/api/runs/104')
