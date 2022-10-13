@@ -963,7 +963,7 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('run with this id (9999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Run with this run number (9999999999) could not be found');
 
                     done();
                 });
