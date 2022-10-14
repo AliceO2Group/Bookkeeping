@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed several bugs related to the infinite scroll
   * Log only run quality change from good to bad and the other way around
   * Add information to the log created when run quality change such as user and date
+  * Restrict physics runs to runs that overlap with a stable beam
 
 * Notable changes for developers:
   * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
