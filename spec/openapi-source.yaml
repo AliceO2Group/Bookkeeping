@@ -2249,6 +2249,16 @@ components:
           $ref: '#/components/schemas/RunTrgEnd'
         timeTrgStart:
           $ref: '#/components/schemas/RunTrgStart'
+        startTime:
+          description: read only value of the trigger start if it exists, else the o2 start
+          type: number
+          nullable: true
+        endTime:
+          description: >-
+            read only value of the trigger end if it exists, else the o2 end if
+            it exists, else the current timestamp
+          type: number
+          nullable: true
         triggerValue:
           description: Value of the current trigger can be OFF, LTU, CTP
           type: string
