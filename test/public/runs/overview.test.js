@@ -186,7 +186,7 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
+        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     /*

@@ -141,6 +141,13 @@ a.btn, a.btn:hover, a.btn.active {
     margin-bottom: 0.25rem;
 }
 
+.form-control.invalid, .form-control:invalid {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-danger);
+    box-shadow: inset 0 1px 2px rgba(35, 27, 27, 0.07), 0 0 0 0.2em rgba(214, 3, 3, 0.3);
+}
+
 .form-control.flex-column, .form-control.flex-row {
     display: flex;
 }
