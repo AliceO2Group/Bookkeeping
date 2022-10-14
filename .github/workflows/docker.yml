@@ -8,7 +8,7 @@ on:
 
 jobs:
   linter:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
@@ -19,7 +19,7 @@ jobs:
           dockerfile: "Dockerfile"
 
   validate:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
