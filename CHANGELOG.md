@@ -4,24 +4,26 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
 * Notable changes for users:
+  * Adds a new run definition `CALIBRATION` for runs that do not match any criteria
+  * Adds a new feature which allows the user to see how many entries in a table (runs, logs, etc.) match their filtering;
+  * Improves the display of run dates times on home page table in one line
+  * Improves Log creation tag selection: it now displays all the tags and outlines the already selected ones
+  * Improves run definition for `COSMIC` to:
+    * require COSMIC(S) `run_type` and renames it to `COSMICS`
+    * require `beam_mode` as `NO BEAM`
+  * Improves run definition for `PHYSICS` to check `stable beam` interval
+  * Improves run definition for `SYNTHETIC` to remove the restriction on `pdp_workflow_parameters`
+  * Improves run definition for `CALIBRATION` to include runs with `run_type` of one of `CALIBRATION_, PEDESTAL, LASER, PULSER`
+  * Improves notification for run quality change to:
+    * only notify on change from `good to bad` and the other way around
+    * add information on who and when the changes was made
   * Fixes a bug which did not link the run to an environment properly
   * Fixes a bug in which fields which contained value "0" would be displayed as null rather than "0"
-  * Display run dates times in one line on home page table
-  * Picker (front component) has been improved to make it more configurable
-  * Log creation tag selection has been improved: it now displays all the tags and outline the already selected ones
-  * Overview pagination has been uniformized on every pages
-  * COSMIC run definition require COSMIC(S) type
-  * Fix physics runs displayed as cosmic in run details
-  * Fixed several bugs related to the infinite scroll
-  * Log only run quality change from good to bad and the other way around
-  * Add information to the log created when run quality change such as user and date
-  * Restrict physics runs to runs that overlap with a stable beam
-  * Cosmic is now Cosmics and is restricted to runs with a beam mode of "NO BEAM"
-  * Synthetic runs has no restrictions on worflow parameter
-  * Calibration can have a type that start with CALIBRATION_, PEDESTAL, LASER, PULSER
-  * Runs which do not match any definition criteria has definition of COMMISSIONING
+  * Fixes infinite scrolling across all tables
 
 * Notable changes for developers:
+  * Picker (front component) has been improved to make it more configurable
+  * Overview pagination has been uniformized on every pages
   * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
   * Rework adapters to be class instances and not only static methods, thus making them able to depend the one on the other recursively
 
