@@ -2,10 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
+* Notable changes for users:
+  * Adds a new run definition `CALIBRATION` for runs that do not match any criteria
+  * Adds a new feature which allows the user to see how many entries in a table (runs, logs, etc.) match their filtering;
+  * Improves the display of run dates times on home page table in one line
+  * Improves Log creation tag selection: it now displays all the tags and outlines the already selected ones
+  * Improves run definition for `COSMIC` to:
+    * require COSMIC(S) `run_type` and renames it to `COSMICS`
+    * require `beam_mode` as `NO BEAM`
+  * Improves run definition for `PHYSICS` to check `stable beam` interval
+  * Improves run definition for `SYNTHETIC` to remove the restriction on `pdp_workflow_parameters`
+  * Improves run definition for `CALIBRATION` to include runs with `run_type` of one of `CALIBRATION_, PEDESTAL, LASER, PULSER`
+  * Improves notification for run quality change to:
+    * only notify on change from `good to bad` and the other way around
+    * add information on who and when the changes was made
+  * Fixes a bug which did not link the run to an environment properly
+  * Fixes a bug in which fields which contained value "0" would be displayed as null rather than "0"
+  * Fixes infinite scrolling across all tables
+
+* Notable changes for developers:
+  * Picker (front component) has been improved to make it more configurable
+  * Overview pagination has been uniformized on every pages
+  * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
+  * Rework adapters to be class instances and not only static methods, thus making them able to depend the one on the other recursively
+
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
 * Notable changes for users:
-  * Added exta run fields for ccdb in the run details
+  * Added extra run fields for ccdb in the run details
 * Notable changes for develops:
+  * RUN Definitions criteria can be found [DEFINITIONS](./docs/RUN_DEFINITIONS.md)
   * Runs API:
     * `GET`
       * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to the run object.
