@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file. See [standa
   * COSMIC run definition require COSMIC(S) type
   * Fix physics runs displayed as cosmic in run details
   * Fixed several bugs related to the infinite scroll
+  * Log only run quality change from good to bad and the other way around
+  * Add information to the log created when run quality change such as user and date
 
 * Notable changes for developers:
   * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
