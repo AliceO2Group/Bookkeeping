@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { goToPage } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -83,6 +84,15 @@ module.exports = () => {
                 expect(expectedDatatype).to.be.true;
             }
         }
+    });
+
+    it('Should display the correct items counter at the bottom of the page', async () => {
+        await goToPage(page, 'flp-overview');
+        await page.waitForTimeout(100);
+
+        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(106);
     });
 
     it('can switch to infinite mode in amountSelector', async () => {

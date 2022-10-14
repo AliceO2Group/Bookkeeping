@@ -123,6 +123,15 @@ module.exports = () => {
         }
     });
 
+    it('Should display the correct items counter at the bottom of the page', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+
+        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(110);
+    });
+
     it('successfully switch to raw timestamp display', async () => {
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
         expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(6)').innerText)).to.equal('08/08/2019\n11:00:00*');
