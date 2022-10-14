@@ -1,4 +1,4 @@
-# Generated on Tue, 11 Oct 2022 13:24:21 GMT
+# Generated on Fri, 14 Oct 2022 07:49:54 GMT
 
 openapi: 3.0.0
 info:
@@ -2163,6 +2163,12 @@ components:
           minimum: 0
           example: 853113599
           nullable: true
+        endTime:
+          description: >-
+            read only value of the trigger end if it exists, else the o2 end if
+            it exists, else the current timestamp
+          type: number
+          nullable: true
         envId:
           $ref: '#/components/schemas/EnvironmentId'
         environmentId:
@@ -2257,6 +2263,10 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+          nullable: true
+        startTime:
+          description: read only value of the trigger start if it exists, else the o2 start
+          type: number
           nullable: true
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
