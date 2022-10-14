@@ -16,6 +16,10 @@ All notable changes to this project will be documented in this file. See [standa
   * Log only run quality change from good to bad and the other way around
   * Add information to the log created when run quality change such as user and date
   * Restrict physics runs to runs that overlap with a stable beam
+  * Cosmic is now Cosmics and is restricted to runs with a beam mode of "NO BEAM"
+  * Synthetic runs has no restrictions on worflow parameter
+  * Calibration can have a type that start with CALIBRATION_, PEDESTAL, LASER, PULSER
+  * Runs which do not match any definition criteria has definition of COMMISSIONING
 
 * Notable changes for developers:
   * Some UseCases have been reworked to be more reusable and their implementation has been extracted into services (their signature did not changed)
