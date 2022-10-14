@@ -62,9 +62,9 @@ module.exports = () => {
 
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
-        const COSMIC_COUNT = 1;
+        const COSMICS_COUNT = 1;
         const TECHNICAL_COUNT = 1;
-        const SYNTHETIC_COUNT = 1;
+        const SYNTHETIC_COUNT = 2;
         const CALIBRATION_COUNT = 1;
 
         getAllRunsDto.query = { filter: { definitions: RunDefinition.Physics } };
@@ -73,11 +73,11 @@ module.exports = () => {
             expect(runs).to.have.lengthOf(PHYSICS_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Cosmic } };
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Cosmics } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-            expect(runs).to.have.lengthOf(COSMIC_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Cosmic)).to.be.true;
+            expect(runs).to.have.lengthOf(COSMICS_COUNT);
+            expect(runs.every(({ definition }) => definition === RunDefinition.Cosmics)).to.be.true;
         }
         getAllRunsDto.query = { filter: { definitions: RunDefinition.Synthetic } };
         {
@@ -98,11 +98,11 @@ module.exports = () => {
             expect(runs.every(({ definition }) => definition === RunDefinition.Calibration)).to.be.true;
         }
 
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics, RunDefinition.Cosmic].join(',') } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics, RunDefinition.Cosmics].join(',') } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-            expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Physics || definition === RunDefinition.Cosmic)).to.be.true;
+            expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMICS_COUNT);
+            expect(runs.every(({ definition }) => definition === RunDefinition.Physics || definition === RunDefinition.Cosmics)).to.be.true;
         }
         getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical, RunDefinition.Synthetic].join(',') } };
         {
@@ -110,12 +110,17 @@ module.exports = () => {
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT + SYNTHETIC_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Technical || definition === RunDefinition.Synthetic)).to.be.true;
         }
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Commissioning } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs.every(({ definition }) => definition === RunDefinition.Commissioning)).to.be.true;
+        }
         getAllRunsDto.query = {
             filter: {
                 definitions: [
                     RunDefinition.Physics,
                     RunDefinition.Synthetic,
-                    RunDefinition.Cosmic,
+                    RunDefinition.Cosmics,
                     RunDefinition.Technical,
                     RunDefinition.Calibration,
                 ].join(','),
@@ -123,10 +128,10 @@ module.exports = () => {
         };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-            expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT + SYNTHETIC_COUNT + TECHNICAL_COUNT + CALIBRATION_COUNT);
+            expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMICS_COUNT + SYNTHETIC_COUNT + TECHNICAL_COUNT + CALIBRATION_COUNT);
             const any = [
                 RunDefinition.Physics,
-                RunDefinition.Cosmic,
+                RunDefinition.Cosmics,
                 RunDefinition.Synthetic,
                 RunDefinition.Technical,
                 RunDefinition.Calibration,
