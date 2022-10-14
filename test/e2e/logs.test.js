@@ -965,7 +965,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    expect(res.body.errors[0].title).to.equal(`Run with run number '${runNumbers}' could not be found`);
+                    expect(res.body.errors[0].title).to.equal(`Run with this run number (${runNumbers}) could not be found`);
 
                     done();
                 });
@@ -990,7 +990,7 @@ module.exports = () => {
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
 
-                    const expectedErrorMsg = 'Run numbers should be comma-separated, and should only contain numbers';
+                    const expectedErrorMsg = 'Run numbers must contain only numbers';
                     expect(res.body.errors[0].title).to.equal(expectedErrorMsg);
 
                     done();

@@ -92,6 +92,15 @@ module.exports = () => {
         }
     });
 
+    it('Should display the correct items counter at the bottom of the page', async () => {
+        await goToPage(page, 'env-overview');
+        await page.waitForTimeout(100);
+
+        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(208);
+    });
+
     it('Should have balloon on status message and runs columns', async () => {
         await goToPage(page, 'env-overview');
         await page.waitForTimeout(100);
@@ -131,7 +140,7 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
+        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
@@ -140,7 +149,7 @@ module.exports = () => {
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.envs.envsPerPage = 1;
+            model.envs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 

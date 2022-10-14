@@ -21,7 +21,7 @@
     "joi": "17.6.0",
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
-    "sequelize": "6.23.1",
+    "sequelize": "6.24.0",
     "umzug": "3.2.1"
   },
   "files": [
@@ -42,7 +42,7 @@
     "@openapitools/openapi-generator-cli": "2.5.1",
     "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
-    "eslint": "8.24.0",
+    "eslint": "8.25.0",
     "js-yaml": "4.1.0",
     "mocha": "10.0.0",
     "nodemon": "2.0.19",

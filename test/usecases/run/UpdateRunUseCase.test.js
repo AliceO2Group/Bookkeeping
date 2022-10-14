@@ -43,7 +43,7 @@ module.exports = () => {
 
         updateRunByRunNumberDto = await UpdateRunByRunNumberDto.validateAsync({
             query: {
-                runNumber: 58,
+                runNumber: 72,
             },
             body: {
                 lhcBeamEnergy: 232.156,
@@ -79,20 +79,21 @@ module.exports = () => {
             expect(run.id).to.equal(106);
             expect(run.runQuality).to.equal('good');
 
+            updateRunDto.body.runQuality = 'bad';
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
 
             expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
-            expect(result.runQuality).to.equal('test');
+            expect(result.runQuality).to.equal('bad');
         });
 
         it('should successfully create a log when run quality change', async () => {
             const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
             expect(logs).to.have.lengthOf(1);
             const [log] = logs;
-            expect(log.title).to.equal('Run 106 quality has changed to test');
-            expect(log.text).to.equal('The run quality for run 106 has been changed from good to test');
+            expect(log.title).to.equal('Run 106 quality has changed to bad');
+            expect(log.text.startsWith('The run quality for run 106 has been changed from good to bad on ')).to.be.true;
             expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
             expect(log.tags.map(({ text }) => text)).to.eql(['DPG', 'RC']);
         });
@@ -243,7 +244,7 @@ module.exports = () => {
             const { result } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
 
-            expect(result.runNumber).to.equal(58);
+            expect(result.runNumber).to.equal(72);
             expect(result.lhcBeamEnergy).to.equal(232.156);
             expect(result.lhcBeamMode).to.equal('STABLE BEAMS');
             expect(result.lhcBetaStar).to.equal(123e-5);
@@ -266,7 +267,7 @@ module.exports = () => {
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
             expect(error.status).to.equal(500);
-            expect(error.detail).to.equal(`Run with this runNumber (${wrongId}) could not be found`);
+            expect(error.detail).to.equal(`Run with this run number (${wrongId}) could not be found`);
         });
 
         it('Should give an error when the id of the lhcFill cannot be found', async () => {

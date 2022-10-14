@@ -82,6 +82,13 @@ html, body {
 
 /* flex */
 .flex-wrap.flex-row > .flex-grow { width: inherit; }
+.flex-column > .flex-control-overflow, .flex-column > .scroll-y, .flex-column > .scroll-auto {
+    /*
+     * Because flex items will set min-height to auto, the content will never overflow because it will take its content
+     * height as a default
+     */
+    min-height: 0;
+}
 
 /* z-index */
 .no-z-index {
@@ -132,6 +139,17 @@ a.btn, a.btn:hover, a.btn.active {
 
 .form-group-header {
     margin-bottom: 0.25rem;
+}
+
+.form-control.invalid, .form-control:invalid {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-danger);
+    box-shadow: inset 0 1px 2px rgba(35, 27, 27, 0.07), 0 0 0 0.2em rgba(214, 3, 3, 0.3);
+}
+
+.form-control.flex-column, .form-control.flex-row {
+    display: flex;
 }
 
 .clickable {
@@ -289,8 +307,33 @@ a.btn, a.btn:hover, a.btn.active {
     align-items: baseline;
 }
 
-.header-panel {
-    border: 1px solid rgb(221, 221, 221);
+.panel {
+    --border-color: var(--color-gray-light);
+    --border-radius: .25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.panel > * {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+}
+
+.panel > *:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+.panel > *:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.panel-header {
+    background: var(--color-gray-light);
+    padding: var(--space-s);
     font-weight: bold;
 }
 
@@ -397,6 +440,15 @@ a.btn, a.btn:hover, a.btn.active {
 
 /* Page layout styles */
 
+#global-container {
+    /**
+    Height of the header is 1rem (font size) + 2 * --space-s (padding)
+    Remove the actual component's padding too
+     */
+    padding: var(--space-s);
+    min-height:  calc(100vh - 1rem - 4*var(--space-s));;
+}
+
 .details-container {
     display: flex;
     flex-direction: column;
@@ -417,3 +469,35 @@ a.btn, a.btn:hover, a.btn.active {
     }
 }
 
+/**
+ * Breakpoints :
+ * small :           x <  600 (default styles)
+ * medium :   600 <= x < 1200
+ * large :   1200 <= x < 1920
+ * x-large : 1920 <= x
+ */
+
+/* md */
+@media screen and (min-width: 600px) {
+    .columns-3, .columns-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* lg */
+@media screen and (min-width: 1200px) {
+    .columns-2-lg {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .columns-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* xl */
+@media screen and (min-width: 1920px) {
+    .columns-3-xl {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
