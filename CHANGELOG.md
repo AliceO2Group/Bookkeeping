@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
+* Notable changes for users:
+  * Added exta run fields for ccdb in the run details
+* Notable changes for develops:
+  * Runs API:
+    * `GET`
+      * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to the run object.
+    * `PATCH`
+      * `startOfDataTransfer`, `endOfDataTransfer`, `ctf, tf, other` file size/count are added to update run by run number.
+  * Added a loading icon when log overview is loading
+  * Fixed infinite requests when moving to homepage from logs/runs overview
+  * Fixed Trigger Value displayed as active filter if any filter is active on run overview page
+  * Run start/stop on the home screen is now consistent with the run overview page.
+  * Add CALIBRATION run definition
+  * Pagination limits is now of 1000 items in GUI and 5k in the API and export
+* Notable changes for developers:
+  * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
+
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
 * Notable changes for users:
   * Efficiency per detector and Time between runs are now displayed on LHC fill details

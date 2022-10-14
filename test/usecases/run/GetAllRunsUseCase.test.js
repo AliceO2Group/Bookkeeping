@@ -14,6 +14,7 @@
 const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
 const chai = require('chai');
+const { RunDefinition } = require('../../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
 
@@ -61,52 +62,75 @@ module.exports = () => {
 
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
-        const COSMIC_COUNT = 2;
+        const COSMIC_COUNT = 1;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 1;
+        const CALIBRATION_COUNT = 1;
 
-        getAllRunsDto.query = { filter: { definitions: 'PHYSICS' } };
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Physics } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT);
-            expect(runs.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'COSMIC' } };
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Cosmic } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(COSMIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'COSMIC')).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.Cosmic)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'SYNTHETIC' } };
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Synthetic } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(SYNTHETIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'SYNTHETIC')).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.Synthetic)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'TECHNICAL' } };
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Technical } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT);
-            expect(runs.every(({ definition }) => definition === 'TECHNICAL')).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.Technical)).to.be.true;
+        }
+        getAllRunsDto.query = { filter: { definitions: RunDefinition.Calibration } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(CALIBRATION_COUNT);
+            expect(runs.every(({ definition }) => definition === RunDefinition.Calibration)).to.be.true;
         }
 
-        getAllRunsDto.query = { filter: { definitions: 'PHYSICS, COSMIC' } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics, RunDefinition.Cosmic].join(',') } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'PHYSICS' || definition === 'COSMIC')).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.Physics || definition === RunDefinition.Cosmic)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'TECHNICAL, SYNTHETIC' } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical, RunDefinition.Synthetic].join(',') } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT + SYNTHETIC_COUNT);
-            expect(runs.every(({ definition }) => definition === 'TECHNICAL' || definition === 'SYNTHETIC')).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.Technical || definition === RunDefinition.Synthetic)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: 'PHYSICS, SYNTHETIC, COSMIC, TECHNICAL' } };
+        getAllRunsDto.query = {
+            filter: {
+                definitions: [
+                    RunDefinition.Physics,
+                    RunDefinition.Synthetic,
+                    RunDefinition.Cosmic,
+                    RunDefinition.Technical,
+                    RunDefinition.Calibration,
+                ].join(','),
+            },
+        };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-            expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT + SYNTHETIC_COUNT + TECHNICAL_COUNT);
-            const any = ['PHYSICS', 'COSMIC', 'SYNTHETIC', 'TECHNICAL'];
+            expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMIC_COUNT + SYNTHETIC_COUNT + TECHNICAL_COUNT + CALIBRATION_COUNT);
+            const any = [
+                RunDefinition.Physics,
+                RunDefinition.Cosmic,
+                RunDefinition.Synthetic,
+                RunDefinition.Technical,
+                RunDefinition.Calibration,
+            ];
             expect(runs.every(({ definition }) => any.includes(definition))).to.be.true;
         }
     });

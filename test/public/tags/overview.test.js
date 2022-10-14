@@ -103,8 +103,9 @@ module.exports = () => {
         expect(table.length).to.equal(42);
 
         await page.type(inputSelector, 'DO-NOT-EXIST');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(0);
+        expect(table.length).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
     });
 };

@@ -127,7 +127,7 @@ module.exports = () => {
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
         await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
-            el.value = '111';
+            el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
@@ -140,7 +140,7 @@ module.exports = () => {
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.envs.envsPerPage = 1;
+            model.envs.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 

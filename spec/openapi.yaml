@@ -1,4 +1,4 @@
-# Generated on Tue, 13 Sep 2022 10:02:28 GMT
+# Generated on Fri, 14 Oct 2022 07:49:54 GMT
 
 openapi: 3.0.0
 info:
@@ -2112,6 +2112,14 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+        ctfFileCount:
+          description: Amount of ctf files
+          type: integer
+          nullable: true
+        ctfFileSize:
+          description: File size in binary bigint.
+          type: string
+          nullable: true
         dcs:
           $ref: '#/components/schemas/RunDcs'
         dd_flp:
@@ -2120,6 +2128,18 @@ components:
           $ref: '#/components/schemas/RunDefinition'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        endOfDataTransfer:
+          description: Unix timestamp when data transfer was ended
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        endTime:
+          description: >-
+            read only value of the trigger end if it exists, else the o2 end if
+            it exists, else the current timestamp
+          type: number
+          nullable: true
         envId:
           $ref: '#/components/schemas/EnvironmentId'
         environmentId:
@@ -2149,6 +2169,11 @@ components:
           description: LHC Beta * in meters
           type: number
           nullable: true
+        lhcFill:
+          oneOf:
+            - $ref: '#/components/schemas/LhcFill'
+            - type: string
+              nullable: true
         lhcPeriod:
           description: The period tag of an LHC
           type: string
@@ -2163,6 +2188,14 @@ components:
           $ref: '#/components/schemas/RunSubtimeframes'
         odcTopologyFullName:
           description: The name or location of the odc topology
+          type: string
+          nullable: true
+        otherFileCount:
+          description: Amount of other files
+          type: integer
+          nullable: true
+        otherFileSize:
+          description: File size in binary bigint.
           type: string
           nullable: true
         pdpBeamType:
@@ -2196,8 +2229,26 @@ components:
             - $ref: '#/components/schemas/EntityId'
             - $ref: '#/components/schemas/RunTypeString'
             - $ref: '#/components/schemas/RunType'
+        startOfDataTransfer:
+          description: Unix timestamp when data transfer was started.
+          type: integer
+          minimum: 0
+          example: 853113599
+          nullable: true
+        startTime:
+          description: read only value of the trigger start if it exists, else the o2 start
+          type: number
+          nullable: true
         tags:
           $ref: '#/components/schemas/ArrayOfTags'
+        tfFileCount:
+          description: Amount of tf files
+          type: integer
+          nullable: true
+        tfFileSize:
+          description: File size in bigint.
+          type: string
+          nullable: true
         tfbDdMode:
           description: The mode of the tfb dd.
           type: string

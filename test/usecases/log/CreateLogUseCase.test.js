@@ -70,8 +70,7 @@ module.exports = () => {
         const expectedTagTexts = ['FOOD', 'MAINTENANCE'];
 
         createLogDto.body.tags = expectedTagTexts;
-        const { result } = await new CreateLogUseCase()
-            .execute(createLogDto);
+        const { result } = await new CreateLogUseCase().execute(createLogDto);
 
         expect(result.tags.map(({ text }) => text)).to.deep.equal(expectedTagTexts);
     });
@@ -94,7 +93,7 @@ module.exports = () => {
         expect(result.title).to.equal(expectedTitle);
         expect(result.parentLogId).to.equal(expectedParentLogId);
     });
-    it('should create a new Log with no duplicate run numbers', async () =>{
+    it('should create a new Log with no duplicate run numbers', async () => {
         const expectedResult = [
             { id: 1, runNumber: 1 },
             { id: 2, runNumber: 2 },

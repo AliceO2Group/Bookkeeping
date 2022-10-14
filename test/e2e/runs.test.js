@@ -17,6 +17,7 @@ const request = require('supertest');
 const chaiResponseValidator = require('chai-openapi-response-validator');
 const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
+const { RunDefinition } = require('../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
 
@@ -154,7 +155,7 @@ module.exports = () => {
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC]');
+            expect(error.detail).to.equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMIC, TECHNICAL, SYNTHETIC, CALIBRATION]');
         });
         it('should successfully filter on run definition', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=physics');
@@ -163,7 +164,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.lengthOf(4);
-            expect(data.every(({ definition }) => definition === 'PHYSICS')).to.be.true;
+            expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
@@ -246,10 +247,10 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             /*
-             * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and two runs are created with non-null
+             * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and three runs are created with non-null
              * duration in StartRunUseCase
              */
-            expect(data).to.have.lengthOf(14);
+            expect(data).to.have.lengthOf(15);
         });
 
         it('should filter run on their quality', async () => {
@@ -272,7 +273,7 @@ module.exports = () => {
 
             const { data } = response.body;
 
-            expect(data.length).to.equal(22);
+            expect(data.length).to.equal(23);
         });
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
@@ -352,8 +353,8 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            // 7 instead of 5 because 2 runs have been created with 10 as nFlps
-            expect(data).to.have.lengthOf(8);
+            // 9 instead of 5 because 4 runs have been created with 10 as nFlps
+            expect(data).to.have.lengthOf(9);
         });
 
         it('should return 400 if the EPN number filter is invalid', async () => {
@@ -376,8 +377,8 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            // 7 instead of 5 because 2 runs have been created with 10 as nEpns
-            expect(data).to.have.lengthOf(8);
+            // 9 instead of 5 because 4 runs have been created with 10 as nEpns
+            expect(data).to.have.lengthOf(9);
         });
     });
 
@@ -515,6 +516,25 @@ module.exports = () => {
                     expect(data.timeO2End).to.not.equal(null);
                     expect(data.timeTrgStart).to.not.equal(null);
                     expect(data.timeTrgEnd).to.not.equal(null);
+                    done();
+                });
+        });
+        it('should return 200 and values \'0\' for 0 file size values', (done) => {
+            request(server)
+                .get('/api/runs/3')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+                    // Response must satisfy the OpenAPI specification
+                    expect(res).to.satisfyApiSpec;
+
+                    expect(data.tfFileSize).to.equal('0');
+                    expect(data.otherFileSize).to.equal('0');
+                    expect(data.ctfFileSize).to.equal('0');
                     done();
                 });
         });
@@ -657,7 +677,7 @@ module.exports = () => {
 
     describe('POST /api/runs', () => {
         const testRun = {
-            runNumber: 110,
+            runNumber: 111,
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
             environmentId: '1234567890',
@@ -690,7 +710,7 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType.id).to.be.a('number');
-                    expect(res.body.data.id).to.equal(110);
+                    expect(res.body.data.id).to.equal(111);
 
                     done();
                 });
@@ -725,7 +745,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(409);
             expect(response.body.errors).to.be.an('array');
-            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 110');
+            expect(response.body.errors[0].detail).to.equal('A run already exists with run number 111');
         });
     });
 
@@ -877,6 +897,8 @@ module.exports = () => {
                 });
         });
         it('should return 200 in all other cases', (done) => {
+            const TIMESTAMP = 1664271988000;
+            const BIG_INT_NUMBER = '99999999999999999';
             request(server)
                 .patch('/api/runs?runNumber=1')
                 .send({
@@ -887,6 +909,14 @@ module.exports = () => {
                     aliceL3Polarity: 'positive',
                     aliceDipoleCurrent: 45654.1,
                     aliceDipolePolarity: 'negative',
+                    startOfDataTransfer: TIMESTAMP,
+                    endOfDataTransfer: TIMESTAMP,
+                    ctfFileCount: 30,
+                    ctfFileSize: BIG_INT_NUMBER,
+                    tfFileCount: 1234,
+                    tfFileSize: BIG_INT_NUMBER,
+                    otherFileCount: 123156132,
+                    otherFileSize: BIG_INT_NUMBER,
                 })
                 .expect(200)
                 .end((err, res) => {
@@ -894,15 +924,24 @@ module.exports = () => {
                         done(err);
                         return;
                     }
+                    const { data } = res.body;
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.data.runNumber).to.equal(1);
-                    expect(res.body.data.lhcBeamEnergy).to.equal(232.156);
-                    expect(res.body.data.lhcBeamMode).to.equal('STABLE BEAMS');
-                    expect(res.body.data.lhcBetaStar).to.equal(123e-5);
-                    expect(res.body.data.aliceL3Current).to.equal(561.2);
-                    expect(res.body.data.aliceL3Polarity).to.equal('POSITIVE');
-                    expect(res.body.data.aliceDipoleCurrent).to.equal(45654.1);
-                    expect(res.body.data.aliceDipolePolarity).to.equal('NEGATIVE');
+                    expect(data.runNumber).to.equal(1);
+                    expect(data.lhcBeamEnergy).to.equal(232.156);
+                    expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
+                    expect(data.lhcBetaStar).to.equal(123e-5);
+                    expect(data.aliceL3Current).to.equal(561.2);
+                    expect(data.aliceL3Polarity).to.equal('POSITIVE');
+                    expect(data.aliceDipoleCurrent).to.equal(45654.1);
+                    expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
+                    expect(data.startOfDataTransfer).to.equal(TIMESTAMP);
+                    expect(data.endOfDataTransfer).to.equal(TIMESTAMP);
+                    expect(data.ctfFileCount).to.equal(30);
+                    expect(data.ctfFileSize).to.equal(BIG_INT_NUMBER);
+                    expect(data.tfFileCount).to.equal(1234);
+                    expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
+                    expect(data.otherFileCount).to.equal(123156132);
+                    expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
                     done();
                 });
         });
@@ -924,7 +963,7 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('run with this id (9999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Run with this run number (9999999999) could not be found');
 
                     done();
                 });

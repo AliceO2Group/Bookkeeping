@@ -58,24 +58,33 @@ Concerning the **Update mode** of the fields:
 | `n_flps`                                 | Number of First Level Processor (FLP) nodes in the Run. | `150` | At SOR | `run_number` | Insert |
 | `n_epns`                                 | Number of Event Processing Node (EPN) nodes in the Run. | `200` | At SOR | `run_number` | Insert |
 | `epn_topology`                           | Path of the Global Processing topology deployed on the EPN nodes | `/home/epn/odc/dd-standalone-5.xml`  | At SOR | `run_number` | Insert |
-| `fill_number`                            | The fill connected to the run                 | `1, 2, 1651`                        |  | `run_number` | Update |
-| `lhc_beam_energy`                        | Energy of the beam (GeV)                      | `1.175494351 E - 38, 3.12`          |  | `run_number` | Update |
-| `lhc_beam_mode`                          | LHC Beam Mode                                 | `STABLE BEAMS,INJECTION PROBE BEAM` |  | `run_number` | Update |
-| `lhc_beta_star`                          | LHC Beta * in meters                          | `ITS,TPC,TOF`                       |  | `run_number` | Update |
-| `alice_l3_current`                       | Current in L3 magnet (Amperes)                | `3.14, 2`                           |  | `run_number` | Update |
-| `alice_l3_polarity`                      | The polarity of the L3 magnet                 | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
-| `alice_dipole_current`                   | Current in Dipole magnet (Amperes)            | `ITS,TPC,TOF`                       |  | `run_number` | Update |
-| `alice_dipole_polarity`                  | The polarity of the dipole magnet             | `POSITIVE, NEGATIVE`                |  | `run_number` | Update |
-| `trg_global_run_enabled`                 | If the global run trigger is enabled          | `true, false`                       |  | `run_number` | Update |
-| `trg_enabled`                            | If the trigger is enabled                     | `true, false`                       |  | `run_number` | Update |
-| `pdp_config_option`                      | Configuration option PDP                      | `Repository Hash`                   |  | `run_number` | Update |
-| `pdp_topology_description_library_file`  | File location of the pdp topology             | `some/location.desc`                |  | `run_number` | Update |
-| `tfb_dd_mode`                            | The mode of the TFB DD                        | `processing`                        |  | `run_number` | Update |
-| `lhc_period`                             | The period value of the lhc                   | `lhc22b`                            |  | `run_number` | Update |
-| `odc_topology_full_name`                 | File location or setting for odc topology     | `hash, some/location.desc`          |  | `run_number` | Update |
-| `pdp_workflow_parameters`                | Parameters for the pdp workflow               | `QC,GPU,CTF,EVENT_DISPLAY`          |  | `run_number` | Update |
-| `pdp_beam_type`                          | Beam type of the pdp                          | `cosmic`                            |  | `run_number` | Update |
-| `readout_cfg_uri`                        | Uri of the readout configuration              | `Repository hash`                   |  | `run_number` | Update |
+| `fill_number`                            | The fill connected to the run                 | `1, 2, 1651`                           |  | `run_number` | Update |
+| `lhc_beam_energy`                        | Energy of the beam (GeV)                      | `1.175494351 E - 38, 3.12`             |  | `run_number` | Update |
+| `lhc_beam_mode`                          | LHC Beam Mode                                 | `STABLE BEAMS,INJECTION PROBE BEAM`    |  | `run_number` | Update |
+| `lhc_beta_star`                          | LHC Beta * in meters                          | `ITS,TPC,TOF`                          |  | `run_number` | Update |
+| `alice_l3_current`                       | Current in L3 magnet (Amperes)                | `3.14, 2`                              |  | `run_number` | Update |
+| `alice_l3_polarity`                      | The polarity of the L3 magnet                 | `POSITIVE, NEGATIVE`                   |  | `run_number` | Update |
+| `alice_dipole_current`                   | Current in Dipole magnet (Amperes)            | `ITS,TPC,TOF`                          |  | `run_number` | Update |
+| `alice_dipole_polarity`                  | The polarity of the dipole magnet             | `POSITIVE, NEGATIVE`                   |  | `run_number` | Update |
+| `trg_global_run_enabled`                 | If the global run trigger is enabled          | `true, false`                          |  | `run_number` | Update |
+| `trg_enabled`                            | If the trigger is enabled                     | `true, false`                          |  | `run_number` | Update |
+| `pdp_config_option`                      | Configuration option PDP                      | `Repository Hash`                      |  | `run_number` | Update |
+| `pdp_topology_description_library_file`  | File location of the pdp topology             | `some/location.desc`                   |  | `run_number` | Update |
+| `tfb_dd_mode`                            | The mode of the TFB DD                        | `processing`                           |  | `run_number` | Update |
+| `lhc_period`                             | The period value of the lhc                   | `lhc22b`                               |  | `run_number` | Update |
+| `odc_topology_full_name`                 | File location or setting for odc topology     | `hash, some/location.desc`             |  | `run_number` | Update |
+| `pdp_workflow_parameters`                | Parameters for the pdp workflow               | `QC,GPU,CTF,EVENT_DISPLAY`             |  | `run_number` | Update |
+| `pdp_beam_type`                          | Beam type of the pdp                          | `cosmic`                               |  | `run_number` | Update |
+| `readout_cfg_uri`                        | Uri of the readout configuration              | `Repository hash`                      |  | `run_number` | Update |
+| `startOfDataTransfer`                    | The start of data transfer                    | `1664271988000`                        |  | `run_number` | Update |
+| `endOfDataTransfer`                      | The end of data transfer                      | `1664271988000`                        |  | `run_number` | Update |
+| `ctfFileCount`                           | The amount of ctf files                       | `315`,`111`,`615`                      |  | `run_number` | Update |
+| `ctfFileSize`                            | The size of the ctf files                     | `0b1010101001010101001111111111111111` |  | `run_number` | Update |
+| `tfFileCount`                            | The amount of tf files                        | `315`,`111`,`615`                      |  | `run_number` | Update |
+| `tfFileSize`                             | The size of the tf files                      | `0b1010101001010101001111111111111111` |  | `run_number` | Update |
+| `otherFileCount`                         | The amount of other files                     | `315`,`111`,`615`                      |  | `run_number` | Update |
+| `otherFileSize`                          | The size of other files                       | `0b1010101001010101001111111111111111` |  | `run_number` | Update |
+
 
 ### End of run reasons
 
