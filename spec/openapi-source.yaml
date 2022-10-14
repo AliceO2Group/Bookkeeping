@@ -2176,6 +2176,11 @@ components:
           type: integer
           minimum: 1
           nullable: true
+        lhcFill:
+          oneOf:
+            - $ref: '#/components/schemas/LhcFill'
+            - type: string
+              nullable: true
         id:
           $ref: '#/components/schemas/EntityId'
         lhcBeamEnergy:
