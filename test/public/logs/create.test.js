@@ -111,6 +111,9 @@ module.exports = () => {
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
 
+        // Expect no TEST-TAG-27 tag to be there, because it is archived, but expect tag TEST-TAG-31
+        let testTag27Found = false;
+        let testTag31Found = false;
         // Find the selection options corresponding to the tag texts
         const tagOptions = await page.$$('.tag-option');
         for (const option of tagOptions) {
@@ -119,7 +122,16 @@ module.exports = () => {
                 await option.evaluate((element) => element.querySelector('input').click());
                 await page.waitForTimeout(100);
             }
+            if (optionText === 'TEST-TAG-27') {
+                testTag27Found = true;
+            }
+            if (optionText === 'TEST-TAG-31') {
+                testTag31Found = true;
+            }
         }
+
+        expect(testTag27Found).to.be.false;
+        expect(testTag31Found).to.be.true;
 
         // Expect to have selected two options
         const tagSelectedOptions = await page.$$('.tag-option input:checked');

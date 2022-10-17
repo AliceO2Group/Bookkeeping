@@ -758,5 +758,13 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should successfully archive the given tag', async () => {
+            const now = Date.now();
+            const response = await request(server).put(`/api/tags/${createdTag.id}?token=admin`).send({ archivedAt: now });
+
+            expect(response.status).to.equal(201);
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.archived).to.be.true;
+        });
     });
 };

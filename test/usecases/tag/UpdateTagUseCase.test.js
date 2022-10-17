@@ -25,6 +25,7 @@ module.exports = () => {
             body: {
                 mattermost: 'tag,tag,tag',
                 email: 'cern@tag.ch,cern@othertag.ch',
+                archivedAt: Date.now(),
             },
             params: {
                 tagId: 3,
@@ -42,6 +43,7 @@ module.exports = () => {
         expect(result.mattermost).to.equal('tag,tag,tag');
         expect(result.lastEditedName).to.equal('John Doe');
         expect(result.email).to.equal('cern@tag.ch,cern@othertag.ch');
+        expect(result.archived).to.be.true;
     });
 
     it('should return an error when calues do not match', async () => {

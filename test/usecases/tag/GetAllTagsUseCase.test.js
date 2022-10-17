@@ -32,7 +32,13 @@ module.exports = () => {
         const { tags } = await new GetAllTagsUseCase().execute();
 
         const sorted = Array.from(tags);
-        sorted.sort((a, b) => a.text.localeCompare(b.text));
+        sorted.sort((a, b) => {
+            if (a.archived === b.archived) {
+                return a.text.localeCompare(b.text);
+            } else {
+                return a.archived - b.archived;
+            }
+        });
 
         expect(tags).to.eql(sorted);
     });

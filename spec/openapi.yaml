@@ -1,4 +1,4 @@
-# Generated on Fri, 14 Oct 2022 07:49:54 GMT
+# Generated on Thu, 27 Oct 2022 13:08:35 GMT
 
 openapi: 3.0.0
 info:
@@ -2526,6 +2526,16 @@ components:
       description: A label attached to something for the purpose of identification.
       type: object
       properties:
+        archived:
+          description: Flag set to true if the tag is archived
+          type: boolean
+          nullable: true
+        archivedAt:
+          description: >-
+            Unix timestamp at which one the tag has been archived (null if the
+            tag is not archived)
+          type: integer
+          nullable: true
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer
