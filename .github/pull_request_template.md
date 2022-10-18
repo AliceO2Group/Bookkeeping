@@ -20,7 +20,7 @@ Remove checklist and/or items that do not apply.
 Notable changes for users:
 -
 
-Notable changes for develops:
+Notable changes for developers:
 -
 
 Changes made to the database:

@@ -102,6 +102,15 @@ module.exports = () => {
         }
     });
 
+    it('Should display the correct items counter at the bottom of the page', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await page.waitForTimeout(100);
+
+        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(8);
+    });
+
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
         await page.waitForTimeout(100);
@@ -140,7 +149,7 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
+        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
