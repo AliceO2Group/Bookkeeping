@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Notable changes for developers:
   * updates new log create service to use the SequalizeUser parameter rather than the one from LogAdapter
+  * Docker tests may be run in parallel to docker run
 
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
 * Notable changes for users:
