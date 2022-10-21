@@ -10,13 +10,13 @@ service FlpService {
 
 // High level messages
 
-message ManyFlpsCreationRequest {
-  message FlpCreationRequest {
-    string name = 1;
-    string hostName = 2;
-    uint32 runNumber = 3;
-  }
+message FlpCreationRequest {
+  string name = 1;
+  string hostName = 2;
+  int32 runNumber = 3;
+}
 
+message ManyFlpsCreationRequest {
   repeated FlpCreationRequest flps = 1;
 }
 
