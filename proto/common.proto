@@ -68,7 +68,7 @@ message Run {
   string environmentId = 2;
   int32 bytesReadOut = 3;
   // Unix timestamp when this entity was created
-  int32 createdAt = 4;
+  int64 createdAt = 4;
   int32 Id = 5;
   int32 nDetectors = 6;
   int32 nEpns = 7;
@@ -101,7 +101,7 @@ message Run {
   string epnTopology = 27;
   repeated Detector detectors = 28;
   // Unix timestamp when this entity was last updated
-  int32 updatedAt = 30;
+  int64 updatedAt = 30;
   // A string that marks the period of the lhc
   string lhcPeriod = 31;
 }

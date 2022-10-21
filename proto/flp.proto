@@ -31,9 +31,9 @@ message Flp {
   string name = 2;
   string hostname = 3;
   // Unix timestamp when this entity was created.
-  int32 createdAt = 4;
+  int64 createdAt = 4;
   // Unix timestamp when this entity was last updated.
-  int32 updatedAt = 5;
+  int64 updatedAt = 5;
   int32 bytesEquipmentReadOut = 6;
   int32 bytesFairMQReadOut = 7;
   int32 bytesProcessed = 8;

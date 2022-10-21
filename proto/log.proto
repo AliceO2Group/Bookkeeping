@@ -23,7 +23,7 @@ message LogCreationRequest {
 
 message Attachment {
   // Unix timestamp when this entity was created.
-  int32 createdAt = 1;
+  int64 createdAt = 1;
   string encoding = 2;
   string fileName = 3;
   int32 id = 4;
@@ -33,14 +33,14 @@ message Attachment {
   string path = 8;
   int32 size = 9;
   // Unix timestamp when this entity was created.
-  int32 updatedAt = 10;
+  int64 updatedAt = 10;
 }
 
 message Log {
   repeated Attachment attachments = 1;
   User author = 2;
   // Unix timestamp when this entity was created.
-  int32 CreatedAt = 3;
+  int64 CreatedAt = 3;
   int32 id = 4;
   repeated LogOrigin origin = 5;
   int32 parentLogId = 6;
@@ -54,7 +54,7 @@ message Log {
   string text = 14;
   string title = 15;
   // Unix timestamp when this entity was last updated.
-  int32 updatedAt = 16;
+  int64 updatedAt = 16;
 }
 
 enum LogOrigin {
@@ -79,17 +79,17 @@ message MinimalRun {
 
 message Subsystem {
   // Unix timestamp when this entity was created.
-  int32 createdAt = 1;
+  int64 createdAt = 1;
   int32 id = 2;
   // The label value of the subsystem.
   string name = 3;
   // Unix timestamp when this entity was last updated.
-  int32 updatedAt = 5;
+  int64 updatedAt = 5;
 }
 
 message Tag {
   // Unix timestamp when this entity was created.
-  int32 createdAt = 1;
+  int64 createdAt = 1;
   int32 id = 2;
   // The label value of the tag.
   string text = 3;
@@ -98,7 +98,7 @@ message Tag {
   // All the mattermost tags for updates
   string mattermost = 5;
   // Unix timestamp when this entity was last updated.
-  int32 updatedAt = 6;
+  int64 updatedAt = 6;
   // The last person that edited the email/mattermost fields
   string lastEditedName = 7;
 

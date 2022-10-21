@@ -32,9 +32,9 @@ message EnvironmentUpdateRequest {
 message Environment {
   string id = 1;
   // Unix timestamp when this entity was created.
-  int32 createdAt = 2;
+  int64 createdAt = 2;
   // Unix timestamp when this entity was last updated.
-  int32 updatedAt = 3;
+  int64 updatedAt = 3;
   // Unix timestamp when this entity was tore down.
   int64 toredownAt = 4;
   // The status of the environment.
