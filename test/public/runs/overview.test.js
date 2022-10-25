@@ -123,6 +123,15 @@ module.exports = () => {
         }
     });
 
+    it('Should display the correct items counter at the bottom of the page', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+
+        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(110);
+    });
+
     it('successfully switch to raw timestamp display', async () => {
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
         expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(6)').innerText)).to.equal('08/08/2019\n11:00:00*');
@@ -186,7 +195,7 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} .danger`))).to.be.true;
+        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     /*
@@ -342,10 +351,11 @@ module.exports = () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
-        const cosmicFilterSelector = `${filterInputSelectorPrefix}COSMIC`;
+        const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
         const technicalFilterSelector = `${filterInputSelectorPrefix}TECHNICAL`;
         const syntheticFilterSelector = `${filterInputSelectorPrefix}SYNTHETIC`;
         const calibrationFilterSelector = `${filterInputSelectorPrefix}CALIBRATION`;
+        const commissioningFilterSelector = `${filterInputSelectorPrefix}COMMISSIONING`;
 
         /**
          * Checks that all the rows of the given table have a valid run definition
@@ -376,34 +386,34 @@ module.exports = () => {
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(5);
+        expect(table.length).to.equal(6);
         await checkTableRunDefinitions(table, [RunDefinition.Physics, RunDefinition.Synthetic]);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(1);
+        expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic]);
 
-        await page.$eval(cosmicFilterSelector, (element) => element.click());
+        await page.$eval(cosmicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
-        await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmic]);
+        expect(table.length).to.equal(3);
+        await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
-        await checkTableRunDefinitions(table, [RunDefinition.Cosmic]);
+        await checkTableRunDefinitions(table, [RunDefinition.Cosmics]);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
-        await checkTableRunDefinitions(table, [RunDefinition.Cosmic, RunDefinition.Technical]);
+        await checkTableRunDefinitions(table, [RunDefinition.Cosmics, RunDefinition.Technical]);
 
-        await page.$eval(cosmicFilterSelector, (element) => element.click());
+        await page.$eval(cosmicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
@@ -415,19 +425,26 @@ module.exports = () => {
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Technical, RunDefinition.Calibration]);
 
+        await page.$eval(commissioningFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+        table = await page.$$('tbody tr');
+        await checkTableRunDefinitions(table, [RunDefinition.Commissioning]);
+        await page.$eval(commissioningFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.pagination.itemsPerPage = 20;
         });
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await page.$eval(cosmicFilterSelector, (element) => element.click());
+        await page.$eval(cosmicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(8);
+        expect(table.length).to.equal(9);
         await checkTableRunDefinitions(
             table,
-            [RunDefinition.Cosmic, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
+            [RunDefinition.Cosmics, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
         );
     });
 
