@@ -14,14 +14,14 @@ service EnvironmentService {
 // High level messages
 
 message EnvironmentCreationRequest {
-  string envId = 1;
+  string id = 1;
   int64 createdAt = 2;
   string status = 3;
   string statusMessage = 4;
 }
 
 message EnvironmentUpdateRequest {
-  string envId = 1;
+  string id = 1;
   int64 toredownAt = 2;
   string status = 3;
   string statusMessage = 4;
