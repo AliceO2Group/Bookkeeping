@@ -11,20 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { DetectorsController } = require('../controllers');
+const UpdateRunDetectorUseCase = require('./UpdateRunDetectorUseCase.test');
 
-module.exports = {
-    path: '/runs/:runNumber/detectors',
-    args: { public: true },
-    children: [
-        {
-            path: ':detectorId',
-            children: [
-                {
-                    method: 'patch',
-                    controller: DetectorsController.updateDetectorById,
-                },
-            ],
-        },
-    ],
+module.exports = () => {
+    describe('UpdateRunDetectorUseCase', UpdateRunDetectorUseCase);
 };
