@@ -24,24 +24,23 @@ message RunCreationRequest {
   bool dcs = 8;
   bool epn = 9;
   string epnTopology = 10;
-  string odcTopologyFullName = 11;
+  optional string odcTopologyFullName = 11;
   repeated Detector detectors = 12;
 }
 
 message RunUpdateRequest {
   int32 runNumber = 1;
-  RunQuality runQuality = 2;
-  int64 timeO2Start = 3;
-  int64 timeO2End = 4;
-  int64 timeTrgStart = 5;
-  int64 timeTrgEnd = 6;
-  string triggerValue = 7;
-  string pdpConfigOption = 8;
-  string pdpTopologyDescriptionLibraryFile = 9;
-  string tfbDdMode = 10;
-  string lhcPeriod = 11;
-  string odcTopologyFullName = 12;
-  string pdpWorkflowParameters = 13;
-  string pdpBeamType = 14;
-  string readoutCfgUri = 15;
+  optional int64 timeO2Start = 3;
+  optional int64 timeO2End = 4;
+  optional int64 timeTrgStart = 5;
+  optional int64 timeTrgEnd = 6;
+  optional string triggerValue = 7;
+  optional string pdpConfigOption = 8;
+  optional string pdpTopologyDescriptionLibraryFile = 9;
+  optional string tfbDdMode = 10;
+  optional string lhcPeriod = 11;
+  optional string odcTopologyFullName = 12;
+  optional string pdpWorkflowParameters = 13;
+  optional string pdpBeamType = 14;
+  optional string readoutCfgUri = 15;
 }

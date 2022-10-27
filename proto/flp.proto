@@ -13,7 +13,7 @@ service FlpService {
 message FlpCreationRequest {
   string name = 1;
   string hostName = 2;
-  int32 runNumber = 3;
+  optional int32 runNumber = 3;
 }
 
 message ManyFlpsCreationRequest {

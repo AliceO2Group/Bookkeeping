@@ -16,7 +16,7 @@ message LogCreationRequest {
   string title = 1;
   string text = 2;
   repeated int32 runNumbers = 3;
-  int32 parentLogId = 4;
+  optional int32 parentLogId = 4;
 }
 
 // Low-level messages and enums
@@ -42,7 +42,7 @@ message Log {
   // Unix timestamp when this entity was created.
   int64 CreatedAt = 3;
   int32 id = 4;
-  repeated LogOrigin origin = 5;
+  optional LogOrigin origin = 5;
   int32 parentLogId = 6;
   int32 Replies = 7;
   int32 rootLogId = 8;
@@ -101,5 +101,4 @@ message Tag {
   int64 updatedAt = 6;
   // The last person that edited the email/mattermost fields
   string lastEditedName = 7;
-
 }
