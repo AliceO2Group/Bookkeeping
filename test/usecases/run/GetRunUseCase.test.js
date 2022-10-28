@@ -80,6 +80,7 @@ module.exports = () => {
 
         expect(result.timeTrgStart).to.be.not.null;
         expect(result.timeTrgEnd).to.be.not.null;
+        expect(result.detectors).to.equal('CPV,EMC,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC,ACO,CTP,FIT');
         expect(result.runDuration).to.equal(result.timeTrgEnd - result.timeTrgStart);
     });
 };

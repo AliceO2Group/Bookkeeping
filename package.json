@@ -12,7 +12,7 @@
     "start:prod": "node lib/main.js",
     "test": "mocha --exit --timeout 0",
     "docker-run": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "docker-test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit"
+    "docker-test": "docker-compose -p test -f docker-compose.yml -p test -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.24.1",
@@ -44,12 +44,12 @@
     "@openapitools/openapi-generator-cli": "2.5.1",
     "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
-    "eslint": "8.25.0",
+    "eslint": "8.26.0",
     "js-yaml": "4.1.0",
     "mocha": "10.1.0",
     "nodemon": "2.0.19",
     "nyc": "15.1.0",
-    "puppeteer": "16.2.0",
+    "puppeteer": "17.0.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sinon": "14.0.0",
     "supertest": "6.3.0"
