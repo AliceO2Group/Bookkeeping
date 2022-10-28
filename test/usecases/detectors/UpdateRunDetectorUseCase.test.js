@@ -11,14 +11,14 @@
  * or submit itself to any jurisdiction.
  */
 
-const { environment: { UpdateRunDetectorUseCase } } = require('../../../lib/usecases');
+const { runDetector: { UpdateRunDetectorUseCase } } = require('../../../lib/usecases');
 const { dtos: { UpdateRunDetectorDto } } = require('../../../lib/domain');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
-    const wrongId = '9999999999';
+    const wrongId = 9999999999;
 
     let updateRunDetectorDto;
 
@@ -43,14 +43,14 @@ module.exports = () => {
     it('Should be able to update the environment with correct values', async () => {
         const { result } = await new UpdateRunDetectorUseCase()
             .execute(updateRunDetectorDto);
-        expect(result.status).to.equal('STOPPED');
+        expect(result.quality).to.equal('good');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
-        updateRunDetectorDto.params.envId = wrongId;
+        updateRunDetectorDto.params.runNumber = wrongId;
         const { error } = await new UpdateRunDetectorUseCase()
             .execute(updateRunDetectorDto);
-        expect(error.status).to.equal('400');
+        expect(error.status).to.equal(400);
         expect(error.title).to.equal(`RunDetector with this id (${wrongId}) could not be found`);
     });
 };

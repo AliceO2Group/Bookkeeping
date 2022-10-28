@@ -1,4 +1,4 @@
-# Generated on Fri, 14 Oct 2022 07:49:54 GMT
+# Generated on Fri, 28 Oct 2022 13:32:13 GMT
 
 openapi: 3.0.0
 info:
@@ -528,6 +528,22 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+  /runs/{runNumber}/detector/{detectorId}:
+    parameters:
+      - $ref: '#/components/parameters/RunNumber'
+      - $ref: '#/components/parameters/RunDetector'
+    patch:
+      operationId: updateRunDetector
+      summary: Update a run detector quality
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdateRunDetector'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /status:
     get:
       operationId: getDeployInformation
@@ -909,6 +925,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunByRunNumber'
+    UpdateRunDetector:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunDetector'
     UpdateRunQuality:
       required: true
       content:
@@ -2623,6 +2645,17 @@ components:
           nullable: true
         runQuality:
           $ref: '#/components/schemas/RunQuality'
+      additionalProperties: false
+    UpdateRunDetector:
+      description: Updates the runs detector quality
+      type: object
+      properties:
+        quality:
+          type: string
+          enum:
+            - none
+            - good
+            - bad
       additionalProperties: false
     UpdateRunQuality:
       description: Updates the run quality values

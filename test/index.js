@@ -42,7 +42,7 @@ describe('Bookkeeping', () => {
     });
 
     describe('Integration Suite', () => {
-        describe('UI', PublicSuite);
+        // describe('UI', PublicSuite);
         describe('API', EndToEndSuite);
     });
 });
