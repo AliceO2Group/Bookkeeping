@@ -534,7 +534,7 @@ paths:
       operationId: updateRunDetector
       summary: Update a run detector quality
       requestBody:
-        $ref: '#/components/responses/UpdateRunDetector'
+        $ref: '#/components/requestBodies/UpdateRunDetector'
       responses:
         '200':
           $ref: '#/components/responses/RunDetector'
@@ -2368,18 +2368,21 @@ components:
       nullable: true
     RunDetector:
       description: Run detector object
-      detectorId:
-        type: integer
-        nullable: false
-      runNumber:
-        type: integer
-        nullable: false
-      quality:
-        type: string
-        enum:
-          - good
-          - bad
-          - none
+      type: object
+      properties:
+        detectorId:
+          type: integer
+          nullable: false
+        runNumber:
+          type: integer
+          nullable: false
+        quality:
+          type: string
+          enum:
+            - good
+            - bad
+            - none
+      additionalProperties: false
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
