@@ -529,13 +529,15 @@ paths:
   /runs/{runNumber}/detectors/{detectorId}:
     parameters:
       - $ref: '#/components/parameters/RunNumber'
-      - $ref: '#/components/parameters/RunDetector'
+      - $ref: '#/components/parameters/DetectorId'
     patch:
       operationId: updateRunDetector
       summary: Update a run detector quality
+      requestBody:
+        $ref: '#/components/responses/UpdateRunDetector'
       responses:
         '200':
-          $ref: '#/components/responses/UpdateRunDetector'
+          $ref: '#/components/responses/RunDetector'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -716,6 +718,13 @@ components:
     AttachmentId:
       name: attachmentId
       description: The id of the attached to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    DetectorId:
+      name: detectorId
+      description: The id of the detector
       in: path
       required: true
       schema:
@@ -1062,6 +1071,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RunResponse'
+    RunDetector:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RunDetectorResponse'
     RunType:
       description: Expected response to a valid request.
       content:
@@ -2351,6 +2366,20 @@ components:
       description: Specifies the definition of run.
       type: string
       nullable: true
+    RunDetector:
+      description: Run detector object
+      detectorId:
+        type: integer
+        nullable: false
+      runNumber:
+        type: integer
+        nullable: false
+      quality:
+        type: string
+        enum:
+          - good
+          - bad
+          - none
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
@@ -2422,6 +2451,12 @@ components:
       required:
         - data
       additionalProperties: false
+    RunDetectorResponse:
+      description: Response containing a run detector.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RunDetector'
     RunSimplifiedObject:
       description: A smaller run object
       type: object
