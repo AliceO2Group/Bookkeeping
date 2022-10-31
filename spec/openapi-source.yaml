@@ -2371,12 +2371,11 @@ components:
       type: object
       properties:
         detectorId:
-          type: integer
-          nullable: false
+          $ref: '#/components/schemas/EntityId'
         runNumber:
-          type: integer
-          nullable: false
+          $ref: '#/components/schemas/EntityId'
         quality:
+          description: The quality of the detector.
           type: string
           enum:
             - good
@@ -2687,6 +2686,7 @@ components:
       type: object
       properties:
         quality:
+          description: The run quality object
           type: string
           enum:
             - none

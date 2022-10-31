@@ -1,4 +1,4 @@
-# Generated on Mon, 31 Oct 2022 10:51:34 GMT
+# Generated on Mon, 31 Oct 2022 11:11:20 GMT
 
 openapi: 3.0.0
 info:
@@ -2373,17 +2373,16 @@ components:
       type: object
       properties:
         detectorId:
-          type: integer
-          nullable: false
+          $ref: '#/components/schemas/EntityId'
         quality:
+          description: The quality of the detector.
           type: string
           enum:
             - good
             - bad
             - none
         runNumber:
-          type: integer
-          nullable: false
+          $ref: '#/components/schemas/EntityId'
       additionalProperties: false
     RunDetectors:
       description: The amount of detectors in a single run.
@@ -2689,6 +2688,7 @@ components:
       type: object
       properties:
         quality:
+          description: The run quality object
           type: string
           enum:
             - none
