@@ -1104,6 +1104,12 @@ components:
       required:
         - data
       additionalProperties: false
+    ArrayOfDetectors:
+      description: Response containing a list of detector objects.
+      type: array
+      items:
+        $ref: '#/components/schemas/Detector'
+      additionalProperties: false
     ArrayOfEnvironments:
       description: A list of Environment objects.
       type: array
@@ -1463,6 +1469,29 @@ components:
       required:
         - age
         - start
+      additionalProperties: false
+    Detector:
+      description: The general detector object.
+      type: object
+      properties:
+        createdAt:
+          description: Unix timestamp when this entity was created.
+          type: integer
+          minimum: 0
+          example: 853113599
+        id:
+          $ref: '#/components/schemas/EntityId'
+        name:
+          description: The name of the detector.
+          type: string
+          nullable: false
+        updatedAt:
+          description: Unix timestamp when this entity was last updated.
+          type: integer
+          minimum: 0
+          example: 853113599
+      required:
+        - id
       additionalProperties: false
     Entity:
       description: Base entity.
