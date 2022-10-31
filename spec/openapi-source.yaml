@@ -2382,6 +2382,13 @@ components:
             - bad
             - none
       additionalProperties: false
+    RunDetectorResponse:
+      description: Response containing a run detector.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RunDetector'
+      additionalProperties: false
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
@@ -2444,13 +2451,6 @@ components:
         - good
         - bad
         - test
-    RunDetectorResponse:
-      description: Response containing a run detector.
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/RunDetector'
-      additionalProperties: false
     RunResponse:
       description: Response containing a single run.
       type: object
