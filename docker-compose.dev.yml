@@ -7,9 +7,12 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_LOGGING: "${DATABASE_LOGGING-True}"
+      GRPC_ORIGIN: '[::]:4001'
     ports:
       - target: 4000
         published: 4000
+      - target: 4001
+        published: 4001
     restart: "no"
     volumes:
       - type: bind
@@ -20,6 +23,10 @@ services:
         read_only: true
         source: ./spec
         target: /usr/src/app/spec
+      - type: bind
+        read_only: true
+        source: ./proto
+        target: /usr/src/app/proto
 
   database:
     ports:

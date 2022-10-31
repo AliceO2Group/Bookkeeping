@@ -3,6 +3,7 @@
 
 # Project
 !lib/
+!proto/
 !test/
 !spec/
 !.sequelizerc
