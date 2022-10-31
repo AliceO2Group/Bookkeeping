@@ -526,7 +526,7 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
-  /runs/{runNumber}/detector/{detectorId}:
+  /runs/{runNumber}/detectors/{detectorId}:
     parameters:
       - $ref: '#/components/parameters/RunNumber'
       - $ref: '#/components/parameters/RunDetector'

@@ -51,6 +51,8 @@ module.exports = () => {
         const { error } = await new UpdateRunDetectorUseCase()
             .execute(updateRunDetectorDto);
         expect(error.status).to.equal(400);
-        expect(error.title).to.equal(`RunDetector with this id (${wrongId}) could not be found`);
+        expect(error.detail).to
+            // eslint-disable-next-line max-len
+            .equal(`This run's detector with runNumber: (${wrongId}) and with detector Id: (${updateRunDetectorDto.params.detectorId}) could not be found`);
     });
 };

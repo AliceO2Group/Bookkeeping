@@ -23,27 +23,6 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 
 module.exports = () => {
     describe('PATCH /api/runs/:runNumber/detector/:detectorId ', () => {
-        const dateValue = new Date('1-1-2021').setHours(0, 0, 0, 0);
-        it('should return 400 when runNumber is wrong', (done) => {
-            request(server)
-                .patch('/api/runs/9999999999')
-                .send({
-                    timeO2End: dateValue,
-                    timeTrgEnd: dateValue,
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('Run with this run number (9999999999) could not be found');
-
-                    done();
-                });
-        });
         it('should return 400 when detectorId is wrong', (done) => {
             request(server)
                 .patch('/api/runs/106/detectors/9999999')
@@ -58,8 +37,9 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].title).to.equal('Run with this run number (9999999999) could not be found');
-
+                    expect(res.body.errors[0].detail)
+                        .to
+                        .equal('This run\'s detector with runNumber: (106) and with detector Id: (9999999) could not be found');
                     done();
                 });
         });
@@ -69,7 +49,7 @@ module.exports = () => {
                 .send({
                     quality: 'wrong',
                 })
-                .expect(409)
+                .expect(400)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -77,30 +57,24 @@ module.exports = () => {
                     }
                     // Response must satisfy the OpenAPI specification
                     expect(res).to.satisfyApiSpec;
-                    const { body } = res;
-                    expect(body.data.lhcPeriod).to.equal(106);
-                    expect(body.data.triggerValue).to.equal(1);
-                    expect(body.data.odcTopologyFullName).to.equal('default');
+                    expect(res.body.errors[0].detail).to.equal('"body.quality" must be one of [good, bad, none]');
+                    done();
                 });
         });
         it('should return 200 when the right quality is given', (done) => {
             request(server)
                 .patch('/api/runs/106/detectors/1')
                 .send({
-                    quality: 'wrong',
+                    quality: 'bad',
                 })
-                .expect(422)
+                .expect(201)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    const { body } = res;
-                    expect(body.data.lhcPeriod).to.equal(106);
-                    expect(body.data.triggerValue).to.equal(1);
-                    expect(body.data.odcTopologyFullName).to.equal('default');
+                    expect(res.body.data.quality).to.equal('bad');
+                    done();
                 });
         });
     });
