@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const UtilitiesSuite = require('./utilities');
-const ServicesSuite = require('./services');
+const DetectorSuite = require('./detector');
 
 module.exports = () => {
-    describe('Utilities', UtilitiesSuite);
-    describe('Services', ServicesSuite);
+    describe('Detector', DetectorSuite);
 };
