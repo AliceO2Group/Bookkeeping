@@ -148,6 +148,31 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 400 if the detectors filter is invalid', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[detectors][operator]=invalid&filter[detectors][values]=ITS');
+
+            expect(response.status).to.equal(400);
+            expect(response).to.satisfyApiSpec;
+
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal('"query.filter.detectors.operator" must be one of [or, and, none]');
+        });
+
+        it('should successfully filter on detectors', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[detectors][operator]=or&filter[detectors][values]=ITS,FT0');
+
+            expect(response.status).to.equal(200);
+            expect(response).to.satisfyApiSpec;
+
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+            expect(data).to.have.lengthOf(6);
+        });
+
         it('should successfully return 400 if the given definitions are not valid', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
             expect(response.status).to.equal(400);
