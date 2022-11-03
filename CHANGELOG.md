@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.45.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.45.0)
+* Notable changes for users:
+
+* Notable changes for developers:
+
 ## [0.44.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.44.0)
 * Notable changes for users:
   * Synthetic run definition is less restrictive on readout_cfg_uri, it simply needs to contain replay and one of pp or pbpb
