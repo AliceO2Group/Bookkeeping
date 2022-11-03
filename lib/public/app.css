@@ -95,6 +95,11 @@ html, body {
     z-index: unset;
 }
 
+/* Overflow */
+.break-all {
+    word-break: break-all;
+}
+
 /* table */
 .table {
     margin-bottom: 0;

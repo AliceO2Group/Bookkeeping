@@ -1,0 +1,79 @@
+syntax = 'proto3';
+
+package test;
+
+service Service {
+  rpc Method(ServiceMessage) returns (ServiceMessage);
+}
+
+message ServiceMessage {
+  message D {
+    enum EnumD {
+      ENUMD_0 = 0;
+      ENUMD_1 = 1;
+    }
+
+    EnumD d = 1;
+  }
+
+  A a = 1;
+  B b = 2;
+  B.B1 b1 = 3;
+  B.B1.B11 b11 = 4;
+  C c = 5;
+  D d = 6;
+
+  EnumA ea = 7;
+  B.B1.EnumB1 eb1 = 8;
+  B.B1.B11.EnumB11 eb11 = 9;
+  D.EnumD ed = 10;
+}
+
+enum EnumA {
+  ENUMA_0 = 0;
+  ENUMA_1 = 1;
+}
+
+message A {
+  EnumA a = 1;
+}
+
+message B {
+  message B1 {
+    enum EnumB1 {
+      ENUMB1_0 = 0;
+      ENUMB1_1 = 1;
+    }
+
+    message B11 {
+      enum EnumB11 {
+        ENUMB11_0 = 0;
+        ENUMB11_1 = 1;
+      }
+
+      EnumB1 b1 = 1;
+      EnumB11 b11 = 2;
+    }
+
+    EnumB1 b1 = 1;
+  }
+
+  B1 b1 = 1;
+}
+
+message C {
+  B b = 1;
+  B.B1 b1 = 2;
+  B.B1.B11 b11 = 3;
+
+  B.B1.EnumB1 eb1 = 4;
+}
+
+message D {
+  enum EnumD {
+    ENUMD_0 = 0;
+    ENUMD_1 = 1;
+  }
+
+  int32 d = 1;
+}
