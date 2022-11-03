@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.44.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.44.0)
+* Notable changes for users:
+  * Synthetic run definition is less restrictive on readout_cfg_uri, it simply needs to contain replay and one of pp or pbpb
+  * There is no more links that refresh completely the page and discard user configuration
+
+* Notable changes for developers:
+  * updates new log create service to use the SequalizeUser parameter rather than the one from LogAdapter
+  * Docker tests may be run in parallel to docker run
+  * gRPC API has been created (see docs to know how it works and how endpoints can be added)
+  * All links are now frontLink, which are handled by the frontend router
+
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
 * Notable changes for users:
   * Adds a new run definition `CALIBRATION` for runs that do not match any criteria
