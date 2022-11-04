@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -47,10 +47,7 @@ module.exports = () => {
     it('should display valid fill statistics', async () => {
         const efficiency = await page.$eval('#lhc-fill-efficiency', (element) => element.innerText);
         expect(efficiency.endsWith('41.67%')).to.be.true;
-        const durationBeforeFirstRun = await page.$eval(
-            '#lhc-fill-durationBeforeFirstRun',
-            (element) => element.innerText,
-        );
+        const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
         expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
         const durationAfterLastRun = await page.$eval('#lhc-fill-durationAfterLastRun', (element) => element.innerText);
         expect(durationAfterLastRun.endsWith('02:00:00 (16.67%)')).to.be.true;
@@ -86,6 +83,46 @@ module.exports = () => {
             (element) => element.innerText,
         );
         expect(itsStatisticsEfficiency).to.equal('(25.00%)');
+    });
+
+    it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
+        await pressElement(page, '#all-runs-tab');
+        await page.waitForTimeout(50);
+
+        {
+            const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
+            expect(durationBeforeFirstRun.endsWith('02:00:00 (16.67%)')).to.be.true;
+        }
+
+        const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
+        expect(meanRunDuration.endsWith('01:15:00')).to.be.true;
+
+        const cpvStatisticsName = await page.$eval(
+            '#detector-statistics-CPV .detector-statistics-name',
+            (element) => element.innerText,
+        );
+        expect(cpvStatisticsName.startsWith('CPV')).to.be.true;
+
+        const cpvStatisticsCount = await page.$eval(
+            '#detector-statistics-CPV .detector-statistics-count',
+            (element) => element.innerText,
+        );
+        expect(cpvStatisticsCount).to.equal('1');
+
+        const cpvStatisticsEfficiency = await page.$eval(
+            '#detector-statistics-CPV .detector-statistics-efficiency',
+            (element) => element.innerText,
+        );
+        expect(cpvStatisticsEfficiency).to.equal('(0.00%)');
+
+        // Test the switch back to physics only
+        await pressElement(page, '#physics-runs-tab');
+        await page.waitForTimeout(50);
+
+        {
+            const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
+            expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
+        }
     });
 
     it('should successfully display runs related to the fill', async () => {

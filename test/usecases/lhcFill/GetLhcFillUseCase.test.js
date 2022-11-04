@@ -49,10 +49,10 @@ module.exports = () => {
         expect(result).to.equal(null);
     });
 
-    it('should return physics only runs', async () => {
+    it('should successfully include all the fill\'s runs and their definition', async () => {
         getLhcFillDto.params.fillNumber = 6;
         const result = await new GetLhcFillUseCase().execute(getLhcFillDto);
-        expect(result.runs).to.lengthOf(4);
-        expect(result.runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
+        expect(result.runs).to.lengthOf(5);
+        expect(result.runs.filter(({ definition }) => definition === RunDefinition.Physics)).to.lengthOf(4);
     });
 };
