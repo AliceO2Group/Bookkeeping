@@ -23,59 +23,38 @@ chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'open
 
 module.exports = () => {
     describe('PATCH /api/runs/:runNumber/detector/:detectorId ', () => {
-        it('should return 400 when detectorId is wrong', (done) => {
-            request(server)
+        it('should return 400 when detectorId is wrong', async () => {
+            const res = await request(server)
                 .patch('/api/runs/106/detectors/9999999')
+                .expect(400)
                 .send({
                     quality: 'none',
-                })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].detail)
-                        .to
-                        .equal('This run\'s detector with runNumber: (106) and with detector Id: (9999999) could not be found');
-                    done();
                 });
+                // Response must satisfy the OpenAPI specification
+            expect(res).to.satisfyApiSpec;
+            expect(res.body.errors[0].detail)
+                .to
+                .equal('This run\'s detector with runNumber: (106) and with detector Id: (9999999) could not be found');
         });
-        it('should return 200 when the right quality is given', (done) => {
-            request(server)
+        it('should return 200 when the right quality is given', async () => {
+            const res = await request(server)
                 .patch('/api/runs/106/detectors/1')
                 .send({
                     quality: 'wrong',
                 })
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-                    expect(res.body.errors[0].detail).to.equal('"body.quality" must be one of [good, bad, none]');
-                    done();
-                });
+                .expect(400);
+            // Response must satisfy the OpenAPI specification
+            expect(res).to.satisfyApiSpec;
+            expect(res.body.errors[0].detail).to.equal('"body.quality" must be one of [good, bad, none]');
         });
-        it('should return 200 when the right quality is given', (done) => {
-            request(server)
+        it('should return 200 when the right quality is given', async () => {
+            const res = await request(server)
                 .patch('/api/runs/106/detectors/1')
                 .send({
                     quality: 'bad',
                 })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    expect(res.body.data.quality).to.equal('bad');
-                    done();
-                });
+                .expect(201);
+            expect(res.body.data.quality).to.equal('bad');
         });
     });
 };
