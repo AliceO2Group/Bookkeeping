@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.24.1",
+    "@grpc/grpc-js": "1.7.3",
+    "@grpc/proto-loader": "0.7.0",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
     "joi": "17.6.0",
