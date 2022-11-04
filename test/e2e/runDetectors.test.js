@@ -28,7 +28,7 @@ module.exports = () => {
                 .patch('/api/runs/106/detectors/9999999')
                 .expect(400)
                 .send({
-                    quality: 'none',
+                    quality: 'good',
                 });
                 // Response must satisfy the OpenAPI specification
             expect(res).to.satisfyApiSpec;
@@ -36,7 +36,7 @@ module.exports = () => {
                 .to
                 .equal('This run\'s detector with runNumber: (106) and with detector Id: (9999999) could not be found');
         });
-        it('should return 200 when the right quality is given', async () => {
+        it('should return 400 when the wrong quality is given.', async () => {
             const res = await request(server)
                 .patch('/api/runs/106/detectors/1')
                 .send({
@@ -45,7 +45,7 @@ module.exports = () => {
                 .expect(400);
             // Response must satisfy the OpenAPI specification
             expect(res).to.satisfyApiSpec;
-            expect(res.body.errors[0].detail).to.equal('"body.quality" must be one of [good, bad, none]');
+            expect(res.body.errors[0].detail).to.equal('"body.quality" must be one of [bad, good]');
         });
         it('should return 200 when the right quality is given', async () => {
             const res = await request(server)
