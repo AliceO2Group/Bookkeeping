@@ -28,7 +28,8 @@
   },
   "files": [
     "lib/",
-    "docs/"
+    "docs/",
+    "proto/"
   ],
   "bundledDependencies": [
     "@aliceo2/web-ui",
