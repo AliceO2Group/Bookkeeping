@@ -1,0 +1,112 @@
+syntax = 'proto3';
+
+package o2.bookkeeping;
+
+enum Detector {
+  DETECTOR_NULL = 0;
+
+  reserved 1, 2;
+  DETECTOR_TPC = 3;
+  DETECTOR_TRD = 4;
+  DETECTOR_TOF = 5;
+  DETECTOR_HMP = 6;
+  DETECTOR_PHS = 7;
+  DETECTOR_CPV = 8;
+  reserved 9;
+
+  DETECTOR_MCH = 10;
+  reserved 11 to 14;
+
+  DETECTOR_ZDC = 15;
+  reserved 16, 17;
+
+  DETECTOR_EMC = 18;
+  DETECTOR_TST = 19;
+  reserved 20 to 31;
+
+  DETECTOR_ITS = 32;
+  DETECTOR_FDD = 33;
+  DETECTOR_FT0 = 34;
+  DETECTOR_FV0 = 35;
+  DETECTOR_MFT = 36;
+  DETECTOR_MID = 37;
+}
+
+enum RunQuality {
+  RUN_QUALITY_NULL = 0;
+  RUN_QUALITY_BAD = 1;
+  RUN_QUALITY_GOOD = 2;
+  RUN_QUALITY_TEST = 3;
+}
+
+enum RunType {
+  RUN_TYPE_NULL = 0;
+  RUN_TYPE_PHYSICS = 1;
+  RUN_TYPE_TECHNICAL = 2;
+  RUN_TYPE_PEDESTAL = 3;
+  RUN_TYPE_PULSER = 4;
+  RUN_TYPE_LASER = 5;
+  RUN_TYPE_CALIBRATION_ITHR_TUNING = 6;
+  RUN_TYPE_CALIBRATION_VCASN_TUNING = 7;
+  RUN_TYPE_CALIBRATION_THR_SCAN = 8;
+  RUN_TYPE_CALIBRATION_DIGITAL_SCAN = 9;
+  RUN_TYPE_CALIBRATION_ANALOG_SCAN = 10;
+  RUN_TYPE_CALIBRATION_FHR = 11;
+  RUN_TYPE_CALIBRATION_ALPIDE_SCAN = 12;
+  RUN_TYPE_CALIBRATION = 13;
+  RUN_TYPE_COSMICS = 14;
+  RUN_TYPE_SYNTHETIC = 15;
+  RUN_TYPE_NOISE = 16;
+}
+
+message Run {
+  int32 runNumber = 1;
+  string environmentId = 2;
+  int32 bytesReadOut = 3;
+  // Unix timestamp when this entity was created
+  int64 createdAt = 4;
+  int32 Id = 5;
+  int32 nDetectors = 6;
+  int32 nEpns = 7;
+  int32 nFlps = 8;
+  int32 nSubtimeframes = 9;
+  // Repository hash
+  string pdpConfigOption = 10;
+  // Library file location of the pdp topology description
+  string pdpTopologyDescriptionLibraryFile = 11;
+  // Parameters given to the pdp workflow
+  string pdpWorkflowParameters = 12;
+  // Beam type of the pdp
+  string pdpBeamType = 13;
+  // Config uri of readout.
+  string readoutCfgUri = 14;
+  RunQuality runQuality = 15;
+  RunType runType = 16;
+  string tfbDdMode = 17;
+  int64 timeO2End = 18;
+  int64 timeO2Start = 19;
+  int64 timeTrgEnd = 20;
+  int64 timeTrgStart = 21;
+  // Trigger value
+  string triggerValue = 22;
+  // The full name or file location of the odcTopology
+  string odcTopologyFullName = 23;
+  bool ddFlp = 24;
+  bool dcs = 25;
+  bool epn = 26;
+  string epnTopology = 27;
+  repeated Detector detectors = 28;
+  // Unix timestamp when this entity was last updated
+  int64 updatedAt = 30;
+  // A string that marks the period of the lhc
+  string lhcPeriod = 31;
+}
+
+message User {
+  // The unique CERN identifier of this user.
+  int32 externalId = 1;
+  // The unique identifier of this entity.
+  int32 id = 2;
+  // Name of the user.
+  string name = 3;
+}
