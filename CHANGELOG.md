@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
 
 * Notable changes for developers:
+  * GRPC endpoints have been added in parallel of the endpoints available through the Go API (the GO plugin will be removed in a future release)
 
 ## [0.44.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.44.0)
 * Notable changes for users:
