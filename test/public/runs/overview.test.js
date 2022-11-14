@@ -632,7 +632,7 @@ module.exports = () => {
         await page.$eval(badFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(1);
+        expect(table.length).to.equal(2);
         await checkTableRunQualities(table, ['bad']);
 
         await page.$eval(testFilterSelector, (element) => element.click());
@@ -643,7 +643,7 @@ module.exports = () => {
         await page.$eval(testFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(1);
+        expect(table.length).to.equal(2);
         await checkTableRunQualities(table, ['bad']);
     });
 

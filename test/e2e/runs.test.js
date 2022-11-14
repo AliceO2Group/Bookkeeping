@@ -263,8 +263,8 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            // 44 + 5 because 4 run are added in start run use case with default quality which is test, and one is updated to quality test
-            expect(data.length).to.equal(49);
+            // 45 + 5 because 4 run are added in start run use case with default quality which is test, and one is updated to quality test
+            expect(data.length).to.equal(50);
         });
 
         it('should filter run on their trigger value', async () => {
