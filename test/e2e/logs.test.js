@@ -900,7 +900,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if at least one non-existent or archived tag tag was provided', (done) => {
+        it('should return 400 if at least one non-existent or archived tag was provided', (done) => {
             request(server)
                 .post('/api/logs')
                 .send({
