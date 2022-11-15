@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.44.0",
+  "version": "0.44.1",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -45,7 +45,7 @@
     "@openapitools/openapi-generator-cli": "2.5.1",
     "chai": "4.3.4",
     "chai-openapi-response-validator": "0.13.0",
-    "eslint": "8.26.0",
+    "eslint": "8.27.0",
     "js-yaml": "4.1.0",
     "mocha": "10.1.0",
     "nodemon": "2.0.19",

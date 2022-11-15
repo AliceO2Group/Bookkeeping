@@ -1,0 +1,104 @@
+syntax = 'proto3';
+
+import 'common.proto';
+
+package o2.bookkeeping;
+
+// Services
+
+service LogService {
+  rpc Create(LogCreationRequest) returns (Log);
+}
+
+// High level messages
+
+message LogCreationRequest {
+  string title = 1;
+  string text = 2;
+  repeated int32 runNumbers = 3;
+  optional int32 parentLogId = 4;
+}
+
+// Low-level messages and enums
+
+message Attachment {
+  // Unix timestamp when this entity was created.
+  int64 createdAt = 1;
+  string encoding = 2;
+  string fileName = 3;
+  int32 id = 4;
+  int32 logId = 5;
+  string mimeType = 6;
+  string originalName = 7;
+  string path = 8;
+  int32 size = 9;
+  // Unix timestamp when this entity was created.
+  int64 updatedAt = 10;
+}
+
+message Log {
+  repeated Attachment attachments = 1;
+  User author = 2;
+  // Unix timestamp when this entity was created.
+  int64 CreatedAt = 3;
+  int32 id = 4;
+  optional LogOrigin origin = 5;
+  int32 parentLogId = 6;
+  int32 Replies = 7;
+  int32 rootLogId = 8;
+  // Array of minified Run objects.
+  repeated MinimalRun runs = 9;
+  repeated Subsystem subsystems = 10;
+  LogSubtype subtype = 11;
+  repeated Tag tags = 12;
+  string text = 14;
+  string title = 15;
+  // Unix timestamp when this entity was last updated.
+  int64 updatedAt = 16;
+}
+
+enum LogOrigin {
+  LOG_ORIGIN_NULL = 0;
+  LOG_ORIGIN_HUMAN = 1;
+  LOG_ORIGIN_PROCESS = 2;
+}
+
+enum LogSubtype {
+  LOG_SUBTYPE_NULL = 0;
+  LOG_SUBTYPE_RUN = 1;
+  LOG_SUBTYPE_SUBSYSTEM = 2;
+  LOG_SUBTYPE_ANNOUNCEMENT = 3;
+  LOG_SUBTYPE_INTERVENTION = 4;
+  LOG_SUBTYPE_COMMENT = 5;
+}
+
+message MinimalRun {
+  int32 runNumber = 1;
+  int32 id = 2;
+}
+
+message Subsystem {
+  // Unix timestamp when this entity was created.
+  int64 createdAt = 1;
+  int32 id = 2;
+  // The label value of the subsystem.
+  string name = 3;
+  // Unix timestamp when this entity was last updated.
+  int64 updatedAt = 5;
+}
+
+message Tag {
+  // Unix timestamp when this entity was created.
+  int64 createdAt = 1;
+  int32 id = 2;
+  // The label value of the tag.
+  string text = 3;
+  // The email for the tag.
+  string email = 4;
+  // All the mattermost tags for updates
+  string mattermost = 5;
+  // Unix timestamp when this entity was last updated.
+  int64 updatedAt = 6;
+  // The last person that edited the email/mattermost fields
+  string lastEditedName = 7;
+}
