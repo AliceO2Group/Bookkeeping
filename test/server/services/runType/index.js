@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const DetectorServiceTest = require('./DetectorService.test');
 const lowLevelTest = require('./lowLevel.test.js');
 
 module.exports = () => {
     describe('low level services', lowLevelTest);
-    describe('DetectorService', DetectorServiceTest);
 };

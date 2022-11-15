@@ -11,8 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const RunSuite = require('./run');
 const DetectorSuite = require('./detector');
+const RunTypeSuite = require('./runType');
 
 module.exports = () => {
     describe('Detector', DetectorSuite);
+    describe('RunType', RunTypeSuite);
+    describe('Run', RunSuite);
 };
