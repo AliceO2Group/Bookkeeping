@@ -19,6 +19,7 @@ const LhcFillSuite = require('./lhcFills.test');
 const SubsystemsSuite = require('./subsystems.test');
 const TagsSuite = require('./tags.test');
 const RunsSuite = require('./runs.test');
+const RunDetectorSuite = require('./runDetectors.test');
 const RunTypesSuite = require('./runTypes.test');
 
 module.exports = () => {
@@ -29,6 +30,7 @@ module.exports = () => {
     describe('Tags', TagsSuite);
     describe('Attachments', AttachmentsSuite);
     describe('Runs', RunsSuite);
+    describe('RunsDetectors', RunDetectorSuite);
     describe('RunTypes', RunTypesSuite);
     describe('Environments', EnvironmentsSuite);
 };

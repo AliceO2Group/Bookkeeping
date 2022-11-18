@@ -2,52 +2,16 @@ syntax = 'proto3';
 
 package o2.bookkeeping;
 
+import 'common.proto';
+
+// Services
+
 service RunService {
-  rpc Create(RunCreationRequest) returns (RunResponse);
+  rpc Create(RunCreationRequest) returns (Run);
+  rpc Update(RunUpdateRequest) returns (Run);
 }
 
-message Run {
-  uint32 runNumber = 1;
-}
-
-message Error {
-  uint32 code = 1;
-  string title = 2;
-  string detail = 3;
-}
-
-enum RunType {
-  physics = 0;
-  cosmics = 1;
-  technical = 2;
-}
-
-enum Detector {
-  CPV = 0;
-  EMC = 1;
-  FDD = 2;
-  FT0 = 3;
-  FV0 = 4;
-  HMP = 5;
-  ITS = 6;
-  MCH = 7;
-  MFT = 8;
-  MID = 9;
-  PHS = 10;
-  TOF = 11;
-  TPC = 12;
-  TRD = 13;
-  TST = 14;
-  ZDC = 15;
-}
-
-message RunResponse {
-  bool success = 1;
-  oneof response {
-    Run run = 2;
-    Error error = 3;
-  }
-}
+// High level messages
 
 message RunCreationRequest {
   string environmentId = 1;
@@ -60,5 +24,23 @@ message RunCreationRequest {
   bool dcs = 8;
   bool epn = 9;
   string epnTopology = 10;
-  repeated Detector detectors = 11;
+  optional string odcTopologyFullName = 11;
+  repeated Detector detectors = 12;
+}
+
+message RunUpdateRequest {
+  int32 runNumber = 1;
+  optional int64 timeO2Start = 3;
+  optional int64 timeO2End = 4;
+  optional int64 timeTrgStart = 5;
+  optional int64 timeTrgEnd = 6;
+  optional string triggerValue = 7;
+  optional string pdpConfigOption = 8;
+  optional string pdpTopologyDescriptionLibraryFile = 9;
+  optional string tfbDdMode = 10;
+  optional string lhcPeriod = 11;
+  optional string odcTopologyFullName = 12;
+  optional string pdpWorkflowParameters = 13;
+  optional string pdpBeamType = 14;
+  optional string readoutCfgUri = 15;
 }

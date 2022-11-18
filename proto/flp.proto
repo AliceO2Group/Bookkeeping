@@ -1,0 +1,42 @@
+syntax = 'proto3';
+
+package o2.bookkeeping;
+
+// Services
+
+service FlpService {
+  rpc CreateMany(ManyFlpsCreationRequest) returns (FlpList);
+}
+
+// High level messages
+
+message FlpCreationRequest {
+  string name = 1;
+  string hostName = 2;
+  optional int32 runNumber = 3;
+}
+
+message ManyFlpsCreationRequest {
+  repeated FlpCreationRequest flps = 1;
+}
+
+message FlpList {
+  repeated Flp flps = 1;
+}
+
+// Low-level messages and enums
+
+message Flp {
+  int32 id = 1;
+  string name = 2;
+  string hostname = 3;
+  // Unix timestamp when this entity was created.
+  int64 createdAt = 4;
+  // Unix timestamp when this entity was last updated.
+  int64 updatedAt = 5;
+  int32 bytesEquipmentReadOut = 6;
+  int32 bytesFairMQReadOut = 7;
+  int32 bytesProcessed = 8;
+  int32 bytesRecordingReadOut = 9;
+  int32 nTimeframes = 10;
+}
