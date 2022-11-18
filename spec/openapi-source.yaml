@@ -2190,6 +2190,8 @@ components:
           $ref: '#/components/schemas/RunDdFlp'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        detectorsQualities:
+          $ref: '#/components/schemas/RunDetectorsQualitiesList'
         definition:
           $ref: '#/components/schemas/RunDefinition'
         endOfDataTransfer:
@@ -2397,6 +2399,20 @@ components:
       description: A comma seperated string for the detectors used
       type: string
       nullable: true
+    RunDetectorsQualitiesList:
+      description: A list of qualities to update for the runDetectors
+      type: array
+      items:
+        type: object
+        properties:
+          detectorId:
+            $ref: '#/components/schemas/EntityId'
+          quality:
+            type: string
+            enum:
+              - good
+              - bad
+        additionalProperties: false
     RunDuration:
       description: The duration of the run between trigger start and trigger end in ms
       type: integer

@@ -1,4 +1,4 @@
-# Generated on Mon, 31 Oct 2022 11:35:32 GMT
+# Generated on Fri, 18 Nov 2022 10:09:27 GMT
 
 openapi: 3.0.0
 info:
@@ -2194,6 +2194,8 @@ components:
           $ref: '#/components/schemas/RunDefinition'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        detectorsQualities:
+          $ref: '#/components/schemas/RunDetectorsQualitiesList'
         endOfDataTransfer:
           description: Unix timestamp when data transfer was ended
           type: integer
@@ -2399,6 +2401,20 @@ components:
       description: A comma seperated string for the detectors used
       type: string
       nullable: true
+    RunDetectorsQualitiesList:
+      description: A list of qualities to update for the runDetectors
+      type: array
+      items:
+        type: object
+        properties:
+          detectorId:
+            $ref: '#/components/schemas/EntityId'
+          quality:
+            type: string
+            enum:
+              - good
+              - bad
+        additionalProperties: false
     RunDuration:
       description: The duration of the run between trigger start and trigger end in ms
       type: integer
