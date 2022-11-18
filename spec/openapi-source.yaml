@@ -2408,6 +2408,7 @@ components:
           detectorId:
             $ref: '#/components/schemas/EntityId'
           quality:
+            description: The quality of the detector of the specific run
             type: string
             enum:
               - good

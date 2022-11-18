@@ -1,4 +1,4 @@
-# Generated on Fri, 18 Nov 2022 10:09:27 GMT
+# Generated on Fri, 18 Nov 2022 11:13:29 GMT
 
 openapi: 3.0.0
 info:
@@ -2410,6 +2410,7 @@ components:
           detectorId:
             $ref: '#/components/schemas/EntityId'
           quality:
+            description: The quality of the detector of the specific run
             type: string
             enum:
               - good
