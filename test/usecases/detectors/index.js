@@ -11,23 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-module.exports = (sequelize) => {
-    const Sequelize = require('sequelize');
+const UpdateRunDetectorUseCase = require('./UpdateRunDetectorUseCase.test');
 
-    const RunDetectors = sequelize.define('RunDetectors', {
-        runNumber: {
-            type: Sequelize.INTEGER,
-        },
-        detectorId: {
-            type: Sequelize.INTEGER,
-        },
-        quality: {
-            type: Sequelize.ENUM('good', 'bad'),
-            default: 'good',
-        },
-    });
-
-    RunDetectors.removeAttribute('id');
-
-    return RunDetectors;
+module.exports = () => {
+    describe('UpdateRunDetectorUseCase', UpdateRunDetectorUseCase);
 };
