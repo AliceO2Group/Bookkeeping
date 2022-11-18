@@ -1,4 +1,4 @@
-# Generated on Wed, 02 Nov 2022 06:17:19 GMT
+# Generated on Fri, 18 Nov 2022 11:13:29 GMT
 
 openapi: 3.0.0
 info:
@@ -543,6 +543,24 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - run
+  /runs/{runNumber}/detectors/{detectorId}:
+    parameters:
+      - $ref: '#/components/parameters/RunNumber'
+      - $ref: '#/components/parameters/DetectorId'
+    patch:
+      operationId: updateRunDetector
+      summary: Update a run detector quality
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateRunDetector'
+      responses:
+        '200':
+          $ref: '#/components/responses/RunDetector'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
   /status:
     get:
       operationId: getDeployInformation
@@ -717,6 +735,13 @@ components:
     AttachmentId:
       name: attachmentId
       description: The id of the attached to retrieve
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+    DetectorId:
+      name: detectorId
+      description: The id of the detector
       in: path
       required: true
       schema:
@@ -924,6 +949,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateRunByRunNumber'
+    UpdateRunDetector:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRunDetector'
     UpdateRunQuality:
       required: true
       content:
@@ -1063,6 +1094,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RunResponse'
+    RunDetector:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RunDetectorResponse'
     RunType:
       description: Expected response to a valid request.
       content:
@@ -2186,6 +2223,8 @@ components:
           $ref: '#/components/schemas/RunDefinition'
         detectors:
           $ref: '#/components/schemas/RunDetectorsList'
+        detectorsQualities:
+          $ref: '#/components/schemas/RunDetectorsQualitiesList'
         endOfDataTransfer:
           description: Unix timestamp when data transfer was ended
           type: integer
@@ -2360,6 +2399,29 @@ components:
       description: Specifies the definition of run.
       type: string
       nullable: true
+    RunDetector:
+      description: Run detector object
+      type: object
+      properties:
+        detectorId:
+          $ref: '#/components/schemas/EntityId'
+        quality:
+          description: The quality of the detector.
+          type: string
+          enum:
+            - good
+            - bad
+            - none
+        runNumber:
+          $ref: '#/components/schemas/EntityId'
+      additionalProperties: false
+    RunDetectorResponse:
+      description: Response containing a run detector.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RunDetector'
+      additionalProperties: false
     RunDetectors:
       description: The amount of detectors in a single run.
       type: integer
@@ -2368,6 +2430,21 @@ components:
       description: A comma seperated string for the detectors used
       type: string
       nullable: true
+    RunDetectorsQualitiesList:
+      description: A list of qualities to update for the runDetectors
+      type: array
+      items:
+        type: object
+        properties:
+          detectorId:
+            $ref: '#/components/schemas/EntityId'
+          quality:
+            description: The quality of the detector of the specific run
+            type: string
+            enum:
+              - good
+              - bad
+        additionalProperties: false
     RunDuration:
       description: The duration of the run between trigger start and trigger end in ms
       type: integer
@@ -2652,6 +2729,18 @@ components:
           nullable: true
         runQuality:
           $ref: '#/components/schemas/RunQuality'
+      additionalProperties: false
+    UpdateRunDetector:
+      description: Updates the runs detector quality
+      type: object
+      properties:
+        quality:
+          description: The run quality object
+          type: string
+          enum:
+            - none
+            - good
+            - bad
       additionalProperties: false
     UpdateRunQuality:
       description: Updates the run quality values
