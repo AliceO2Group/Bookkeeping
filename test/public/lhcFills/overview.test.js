@@ -177,7 +177,7 @@ module.exports = () => {
 
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
         // Use the third row to have a fill with statistics
         const row = await page.$('tbody tr:nth-of-type(3)');
@@ -187,7 +187,7 @@ module.exports = () => {
 
         await row.$eval('td:first-of-type a', (link) => link.click());
         await page.waitForNetworkIdle();
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 

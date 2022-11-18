@@ -30,6 +30,16 @@ module.exports = () => {
         updateRunDto = await UpdateRunDto.validateAsync({
             body: {
                 runQuality: 'test',
+                detectorsQualities: [
+                    {
+                        detectorId: 14,
+                        quality: 'bad',
+                    },
+                    {
+                        detectorId: 16,
+                        quality: 'good',
+                    },
+                ],
             },
             params: {
                 runId: 106,

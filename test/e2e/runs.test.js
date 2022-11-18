@@ -836,6 +836,12 @@ module.exports = () => {
                 .expect(201)
                 .send({
                     runQuality: 'good',
+                    detectorsQualities: [
+                        {
+                            detectorId: 1,
+                            quality: 'bad',
+                        },
+                    ],
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(106);
@@ -869,6 +875,25 @@ module.exports = () => {
             expect(body.data.eorReasons).to.have.lengthOf(1);
             expect(body.data.eorReasons[0].description).to.equal('Some');
             expect(body.data.runQuality).to.equal('good');
+        });
+
+        it('should give a proper error when a detectorId does not exists', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(500)
+                .send({
+                    detectorsQualities: [
+                        {
+                            detectorId: 1,
+                            quality: 'good',
+                        },
+                        {
+                            detectorId: 32,
+                            quality: 'bad',
+                        },
+                    ],
+                });
+            expect(body.errors[0].detail).to.equal("This run's detector with runNumber: (1) and with detector Id: (32) could not be found");
         });
     });
 
