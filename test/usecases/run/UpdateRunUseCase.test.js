@@ -99,7 +99,7 @@ module.exports = () => {
             expect(result.runQuality).to.equal('bad');
         });
 
-        it('should successfully retrieve run via ID, store and return the new run with runQuality passed as to update fields', async () => {
+        it('should return error as run quality cannot be changed for ongoing runs', async () => {
             getRunDto.params.runId = 105;
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
