@@ -239,7 +239,7 @@ module.exports = () => {
         expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
 
         // Set the filter operation to "OR"
-        await pressElement(page, '#tagFilterOperationRadioButtonOR');
+        await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await page.waitForTimeout(300);
 
         // Expect there now to be more rows than both the previous table and the table with only one filter
