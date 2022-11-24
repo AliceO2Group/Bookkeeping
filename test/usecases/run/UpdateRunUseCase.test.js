@@ -83,6 +83,7 @@ module.exports = () => {
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal(`Run with this id (${wrongId}) could not be found`);
         });
+
         it('should successfully retrieve run via ID, store and return the new run with runQuality passed as to update fields', async () => {
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
@@ -96,6 +97,21 @@ module.exports = () => {
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
             expect(result.runQuality).to.equal('bad');
+        });
+
+        it('should return error as run quality cannot be changed for ongoing runs', async () => {
+            getRunDto.params.runId = 105;
+            const run = await new GetRunUseCase().execute(getRunDto);
+            expect(run).to.be.an('object');
+            expect(run.id).to.equal(105);
+            expect(run.runQuality).to.equal('test');
+
+            updateRunDto.params.runId = 105;
+            updateRunDto.body.runQuality = 'bad';
+            const { error } = await new UpdateRunUseCase().execute(updateRunDto);
+
+            expect(error).to.be.an('object');
+            expect(error.detail).to.equal('Run quality can not be updated on a run that has not ended yet');
         });
 
         it('should successfully create a log when run quality change', async () => {
