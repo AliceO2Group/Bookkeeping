@@ -263,9 +263,10 @@ module.exports = () => {
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
-            // 48 because one run is added in start run use case with default quality which is test, and one is updated to quality test
-            expect(data.length).to.equal(45);
+            // 44 + 5 because 4 run are added in start run use case with default quality which is test, and one is updated to quality test
+            expect(data.length).to.equal(49);
         });
+
         it('should filter run on their trigger value', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[triggerValues]=OFF,CTP');
@@ -684,7 +685,6 @@ module.exports = () => {
             timeTrgStart: '2022-03-21 13:00:00',
             environmentId: '1234567890',
             runType: 'NONE',
-            runQuality: 'good',
             nDetectors: 3,
             nFlps: 10,
             nEpns: 10,
@@ -733,7 +733,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                        ' defined, your custom type is missing the correct messages definition');
+                                                               ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });

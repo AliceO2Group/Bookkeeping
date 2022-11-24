@@ -55,7 +55,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
-        expect(await page.$eval('#tags-selection #tagCheckbox1', (elem)=>elem.checked)).to.be.true;
+        expect(await page.$eval('#tags-selection #tagCheckbox1', (elem) => elem.checked)).to.be.true;
     });
 
     it('should show lhc data in edit mode', async () => {
@@ -75,14 +75,20 @@ module.exports = () => {
         await pressElement(page, '#flps-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=flps`)).to.be.true;
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+        expect(urlParameters).to.contain('page=run-detail');
+        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('panel=flps');
     });
 
     it('can navigate to the logs panel', async () => {
         await pressElement(page, '#logs-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=run-detail&id=1&panel=logs`)).to.be.true;
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+        expect(urlParameters).to.contain('page=run-detail');
+        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('panel=logs');
     });
     it('should show lhc data in normal mode', async () => {
         await page.waitForTimeout(100);
@@ -98,7 +104,17 @@ module.exports = () => {
         await pressElement(page, `#${firstRowId}`);
         await page.waitForTimeout(300);
         const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
+        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
+        expect(urlParameters).to.contain('page=log-detail');
+        expect(urlParameters).to.contain('id=1');
+    });
+
+    it('successfully prevent from editing run quality of not ended runs', async () => {
+        await page.goto(`${url}/?page=run-detail&id=105`, { waitUntil: 'networkidle0' });
+
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        expect(await page.$('#runQualitySelect')).to.be.null;
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {

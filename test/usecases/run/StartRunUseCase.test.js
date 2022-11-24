@@ -29,7 +29,6 @@ module.exports = () => {
                 timeTrgStart: '2022-03-21 13:00:00',
                 environmentId: '1234567890',
                 runType: 'NONE',
-                runQuality: 'good',
                 nDetectors: 3,
                 bytesReadOut: 1024,
                 nSubtimeframes: 10,
@@ -75,7 +74,7 @@ module.exports = () => {
         expect(result.detectors).to.equal(null);
     });
 
-    it('should successfully create a run with a non exsisting run type', async () => {
+    it('should successfully create a run with a non-existing run type', async () => {
         startRunDto.body.runNumber = 109;
         startRunDto.body.runType = 'NEW_FAKE_RUN_TYPE';
         const { result, error } = await new StartRunUseCase()
