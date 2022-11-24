@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixes an issue in which clicking on an attachement link would not open/download the file
   * Introduces run quality per detector which allows users to modify the run and specify the quality for each detector on top of the current general run quality;
   * Adds restriction to not allow general run quality to be changed unless the run has ended;
+  * Improves filtering by detector in RunsOverview page by adding checkboxes instead of free input box
 * Notable changes for developers: none
 
 ## [0.45.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.45.0)
