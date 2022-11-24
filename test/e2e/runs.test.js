@@ -35,8 +35,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.data).to.be.an('array');
 
                     done();
@@ -52,9 +50,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(1);
@@ -73,9 +68,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(2);
 
@@ -87,7 +79,6 @@ module.exports = () => {
             const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=0');
             expect(response.status).to.equal(400);
 
-            // Response must satisfy the OpenAPI specification
             expect(response).to.satisfyApiSpec;
 
             const { errors } = response.body;
@@ -99,7 +90,6 @@ module.exports = () => {
             const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=2');
             expect(response.status).to.equal(200);
 
-            // Response must satisfy the OpenAPI specification
             expect(response).to.satisfyApiSpec;
 
             const totalNumber = await RunRepository.count();
@@ -119,9 +109,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect(data[0].runNumber).to.be.greaterThan(data[1].runNumber);
 
@@ -138,9 +125,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
                     expect(data[1].id).to.be.above(data[0].id);
@@ -203,9 +187,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail).to
                         .equal('Creation date "to" cannot be before the "from" date');
@@ -223,9 +204,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail).to
                         .equal('Creation date "to" cannot be before the "from" date');
@@ -242,9 +220,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     expect(errors.length).to.equal(3);
@@ -284,7 +259,6 @@ module.exports = () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=bad,test');
             expect(response.status).to.equal(200);
-            // Response must satisfy the OpenAPI specification
             expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
@@ -318,7 +292,6 @@ module.exports = () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=invalid');
             expect(response.status).to.equal(400);
-            // Response must satisfy the OpenAPI specification
             expect(response).to.satisfyApiSpec;
 
             const { errors } = response.body;
@@ -435,9 +408,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
                     expect(titleError.detail).to.equal('"params.runId" must be a number');
@@ -455,9 +425,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
@@ -477,9 +444,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
                     expect(titleError.detail).to.equal('"params.runId" must be an integer');
@@ -498,9 +462,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Run with this id (999999999) could not be found');
 
                     done();
@@ -516,9 +477,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(1);
 
@@ -536,8 +494,6 @@ module.exports = () => {
                         return;
                     }
                     const { data } = res.body;
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(data.runDuration).to.equal(90000000);
                     expect(data.timeO2Start).to.not.equal(null);
@@ -557,8 +513,6 @@ module.exports = () => {
                         return;
                     }
                     const { data } = res.body;
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(data.tfFileSize).to.equal('0');
                     expect(data.otherFileSize).to.equal('0');
@@ -576,9 +530,6 @@ module.exports = () => {
                         return;
                     }
                     const { data } = res.body;
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(data.timeO2Start).to.not.equal(null);
                     expect(data.timeO2End).to.not.equal(null);
@@ -600,9 +551,6 @@ module.exports = () => {
                 }
                 const { data } = res.body;
 
-                // Response must satisfy the OpenAPI specification
-                expect(res).to.satisfyApiSpec;
-
                 expect(data.runDuration).to.equal(3600000);
                 expect(data.timeO2Start).to.not.equal(null);
                 expect(data.timeO2End).to.not.equal(null);
@@ -621,9 +569,6 @@ module.exports = () => {
                     return;
                 }
                 const { data } = res.body;
-
-                // Response must satisfy the OpenAPI specification
-                expect(res).to.satisfyApiSpec;
 
                 expect(data.runDuration).to.equal(3600000);
                 expect(data.timeO2Start).to.not.equal(null);
@@ -645,9 +590,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
                     expect(titleError.detail).to.equal('"params.runId" must be a number');
@@ -666,9 +608,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Run with this id (999999999) could not be found');
 
                     done();
@@ -684,9 +623,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data).to.have.lengthOf(12);
@@ -789,8 +725,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.errors[0].detail).to.equal('Run with this id (9999999999) could not be found');
 
                     done();
@@ -808,7 +742,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.data.runQuality).to.equal('bad');
                     done();
                 });
@@ -941,8 +874,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.errors[0].title).to.equal('ServiceUnavailable');
 
                     done();
@@ -977,7 +908,6 @@ module.exports = () => {
                         return;
                     }
                     const { data } = res.body;
-                    expect(res).to.satisfyApiSpec;
                     expect(data.runNumber).to.equal(1);
                     expect(data.lhcBeamEnergy).to.equal(232.156);
                     expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
@@ -1013,8 +943,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.errors[0].title).to.equal('Run with this run number (9999999999) could not be found');
 
                     done();
@@ -1039,7 +967,6 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
