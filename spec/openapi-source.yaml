@@ -55,6 +55,21 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
       tags:
         - attachment
+  /detectors:
+    get:
+      operationId: listDetectors
+      summary: Get the list of all the existing detectors
+      responses:
+        '200':
+          $ref: '#/components/responses/ArrayOfDetectors'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - detector
   /environments:
     get:
       operationId: listEnvironments
@@ -951,6 +966,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfAttachmentsResponse'
+    ArrayOfDetectors:
+      description: Expected response to a valid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfDetectorsResponse'
     ArrayOfEnvironments:
       description: Expected response to a valid request.
       content:
@@ -1142,10 +1163,18 @@ components:
         - data
       additionalProperties: false
     ArrayOfDetectors:
-      description: Response containing a list of detector objects.
+      description: A list of Detectors objects.
       type: array
       items:
         $ref: '#/components/schemas/Detector'
+    ArrayOfDetectorsResponse:
+      description: Response containing multiple environments.
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArrayOfDetectors'
+      required:
+        - data
       additionalProperties: false
     ArrayOfEnvironments:
       description: A list of Environment objects.
