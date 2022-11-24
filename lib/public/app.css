@@ -12,6 +12,10 @@ html, body {
 .cell-f { width: 40%; }
 .cell-fm { width: 20%; }
 
+.b1 { border-style: solid; border-width: 1px; }
+.b-danger { border-color: var(--color-danger); }
+.b-success { border-color: var(--color-success); }
+
 .overflow {
     height: 1.5rem;
     overflow: hidden;
@@ -56,6 +60,9 @@ html, body {
 .w-95  { width:  95%; }
 .w-100 { width: 100%; }
 .w-30rem { width: 30rem; }
+.w-inherit {
+    width: inherit !important;
+}
 
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }
@@ -78,6 +85,8 @@ html, body {
 .mrauto { margin-right: auto; }
 .mtauto { margin-top: auto; }
 .mbauto { margin-bottom: auto; }
+.pl2 { padding-left: var(--space-s); }
+.pr2 { padding-right: var(--space-s); }
 .pt0 { padding-top: 0; }
 
 /* flex */
@@ -88,6 +97,10 @@ html, body {
      * height as a default
      */
     min-height: 0;
+}
+
+.justify-end {
+    justify-content: end;
 }
 
 /* z-index */
