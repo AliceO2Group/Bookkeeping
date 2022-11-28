@@ -12,6 +12,7 @@
  */
 
 const AttachmentsSuite = require('./attachments.test');
+const DetectorsSuite = require('./detectors.test.js');
 const EnvironmentsSuite = require('./environments.test');
 const StatusSuite = require('./status.test');
 const LogsSuite = require('./logs.test');
@@ -33,4 +34,5 @@ module.exports = () => {
     describe('RunsDetectors', RunDetectorSuite);
     describe('RunTypes', RunTypesSuite);
     describe('Environments', EnvironmentsSuite);
+    describe('Detectors', DetectorsSuite);
 };
