@@ -115,13 +115,43 @@ module.exports = () => {
         });
 
         it('should successfully create a log when run quality change', async () => {
-            const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
-            expect(logs).to.have.lengthOf(1);
-            const [log] = logs;
-            expect(log.title).to.equal('Run 106 quality has changed to bad');
-            expect(log.text.startsWith('The run quality for run 106 has been changed from good to bad on ')).to.be.true;
-            expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
-            expect(log.tags.map(({ text }) => text)).to.eql(['DPG', 'RC']);
+            // eslint-disable-next-line require-jsdoc
+            const expectLastLogToBeForQualityChange = async (previousQuality, newQuality, expectedTags) => {
+                const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
+                expect(logs).to.have.lengthOf(1);
+                const [log] = logs;
+                expect(log.title).to.equal(`Run 106 quality has changed to ${newQuality}`);
+                expect(log.text.startsWith(`The run quality for run 106 has been changed from ${previousQuality} to ${newQuality} on `))
+                    .to.be.true;
+                expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
+                expect(log.tags.map(({ text }) => text)).to.eql(expectedTags);
+            };
+
+            // Log for update test
+            await expectLastLogToBeForQualityChange('good', 'bad', ['DPG', 'RC']);
+
+            updateRunDto.body.runQuality = 'test';
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange('bad', 'test', []);
+
+            updateRunDto.body.runQuality = 'bad';
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange('test', 'bad', []);
+
+            updateRunDto.body.runQuality = 'good';
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange('bad', 'good', ['DPG', 'RC']);
+
+            updateRunDto.body.runQuality = 'test';
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange('good', 'test', []);
+
+            updateRunDto.body.runQuality = 'good';
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange('test', 'good', []);
+
+            updateRunDto.body.runQuality = 'bad';
+            await new UpdateRunUseCase().execute(updateRunDto);
         });
 
         it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {
