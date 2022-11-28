@@ -12,7 +12,9 @@
  */
 
 const UtilitiesSuite = require('./utilities');
+const ServicesSuite = require('./services');
 
 module.exports = () => {
     describe('Utilities', UtilitiesSuite);
+    describe('Services', ServicesSuite);
 };

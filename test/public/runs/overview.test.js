@@ -347,6 +347,34 @@ module.exports = () => {
         expect(await getPopoverDisplay()).to.be.equal('flex');
     });
 
+    it('should successfully filter on detectors', async () => {
+        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+
+        // Open filter toggle
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        await page.$eval('.detector-filter-dropdown-container', (element) => element.click());
+        await page.$eval('#detector-filter-dropdown-option-ITS', (element) => element.click());
+        await page.$eval('#detector-filter-dropdown-option-FT0', (element) => element.click());
+        await page.waitForTimeout(300);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+
+        await page.$eval('#detector-filter-combination-operator-radio-button-or', (element) => element.click());
+        await page.waitForTimeout(300);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(6);
+
+        await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
+        await page.waitForTimeout(300);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(3);
+    });
+
     it('should successfully filter on definition', async () => {
         await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
