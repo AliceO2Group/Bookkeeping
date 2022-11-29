@@ -694,7 +694,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                                                               ' defined, your custom type is missing the correct messages definition');
+                        ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
@@ -851,7 +851,20 @@ module.exports = () => {
                         },
                     ],
                 });
-            expect(body.errors[0].detail).to.equal("This run's detector with runNumber: (1) and with detector Id: (32) could not be found");
+            expect(body.errors[0].detail).to.equal('This run\'s detector with runNumber: (1) and with detector Id: (32) could not be found');
+        });
+
+        it('should successfully return the updated run entity with new detector\'s run quality', async () => {
+            const { body, status } = await request(server).put('/api/runs/1')
+                .send({
+                    detectorsQualities: [{ detectorId: 1, quality: 'good' }],
+                });
+            expect(status).to.equal(201);
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(1);
+            expect(body.data.detectorsQualities).to.lengthOf(1);
+            expect(body.data.detectorsQualities[0].id).to.equal(1);
+            expect(body.data.detectorsQualities[0].quality).to.equal('good');
         });
     });
 
