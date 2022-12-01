@@ -22,7 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -297,6 +297,52 @@ module.exports = () => {
         await page.waitForTimeout(300);
         extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
         expect(Boolean(extraTagFilter)).to.be.false;
+    });
+
+    it('can filter by run number', async () => {
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        await page.waitForTimeout(200);
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await page.type('#runsFilterText', '1,2');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.equal(3);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a not existing run number
+        await page.type('#runsFilterText', '1234567890');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
