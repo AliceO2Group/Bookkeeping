@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { reloadPage, takeScreenshot } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -48,7 +49,16 @@ module.exports = () => {
         await expectInnerText(page, '#cancel-run', 'Revert');
     });
 
+    it('successfully exited EDIT mode of a run', async () => {
+        await pressElement(page, '#cancel-run');
+        await page.waitForTimeout(100);
+        await expectInnerText(page, '#edit-run', 'Edit Run');
+    });
+
     it('successfully changed run tags in EDIT mode', async () => {
+        await reloadPage(page);
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
         await pressElement(page, '#tags-selection #tagCheckbox1');
         await page.waitForTimeout(100);
         await pressElement(page, '#save-run');
@@ -58,17 +68,51 @@ module.exports = () => {
         expect(await page.$eval('#tags-selection #tagCheckbox1', (elem) => elem.checked)).to.be.true;
     });
 
+    it('successfully display detectors qualities', async () => {
+        await reloadPage(page);
+        const detectorBadgeSelector = '#Run-detectors small';
+        const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
+        expect(detectorBadgeClass).to.contain('b-success');
+        expect(detectorBadgeClass).to.contain('success');
+        expect(await page.$eval(detectorBadgeSelector, (element) => element.innerText)).to.equal('CPV');
+    });
+
+    it('successfully update detectors qualities in EDIT mode', async () => {
+        await reloadPage(page);
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        await pressElement(page, '#Run-detectors .toggle-container');
+        await page.waitForTimeout(100);
+        const goodQualityRadioSelector = '#detector-quality-1-good';
+        const badQualityRadioSelector = '#detector-quality-1-bad';
+        await takeScreenshot(page);
+        expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.true;
+        expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.false;
+        await pressElement(page, badQualityRadioSelector);
+        await pressElement(page, '#save-run');
+        await page.waitForTimeout(100);
+
+        const detectorBadgeSelector = '#Run-detectors small';
+        const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
+        expect(detectorBadgeClass).to.contain('b-danger');
+        expect(detectorBadgeClass).to.contain('danger');
+        expect(await page.$eval(detectorBadgeSelector, (element) => element.innerText)).to.equal('CPV');
+
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        await pressElement(page, '#Run-detectors .toggle-container');
+        await page.waitForTimeout(100);
+        expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.false;
+        expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
+    });
+
     it('should show lhc data in edit mode', async () => {
+        await reloadPage(page);
+        await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
         const element = await page.$('#lhc-fill-fillNumber>strong');
         const value = await element.evaluate((el) => el.textContent);
         expect(value).to.equal('Fill number:');
-    });
-
-    it('successfully exited EDIT mode of a run', async () => {
-        await pressElement(page, '#cancel-run');
-        await page.waitForTimeout(100);
-        await expectInnerText(page, '#edit-run', 'Edit Run');
     });
 
     it('can navigate to the flp panel', async () => {
