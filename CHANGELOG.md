@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.47.0)
+* Notable changes for users:
+* Notable changes for developers: none
+
 ## [0.46.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.46.0)
 * Notable changes for users:
   * Fixes an issue in which clicking on an attachement link would not open/download the file
