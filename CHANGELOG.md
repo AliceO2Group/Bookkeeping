@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.47.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.47.0)
 * Notable changes for users:
-* Notable changes for developers: none
+* Notable changes for developers:
+  * Tests were added for the run detectors quality edition
 
 ## [0.46.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.46.0)
 * Notable changes for users:
