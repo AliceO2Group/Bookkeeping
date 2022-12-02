@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * A log is created when run quality change, and DPG and RC tags are added for good<->bad quality change only
   * Run's detectors are sorted alphabetically
   * No more errors when ECS creates logs through gRPC
+  * Fixed bug where text selection was canceled on mouse up after page switch
 * Notable changes for developers:
   * Tests were added for the run detectors quality edition
 
