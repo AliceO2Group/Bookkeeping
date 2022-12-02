@@ -55,6 +55,14 @@ module.exports = () => {
         expect(result.detectorsQualities[0].quality).to.equal('good');
     });
 
+    it('should successfully return detectors qualities sorted alphabetically', async () => {
+        const result = await new GetRunUseCase().execute({ params: { runId: 106 } });
+        expect(result.detectorsQualities.length).to.be.greaterThan(1);
+        const qualities = [...result.detectorsQualities];
+        qualities.sort(({ name: name1 }, { name: name2 }) => name1.localeCompare(name2));
+        expect(result.detectorsQualities).to.be.eql(qualities);
+    });
+
     it('should successfully return an object that contains a null duration if trigger start and o2start is not defined', async () => {
         getRunDto.params.runId = 100;
         const result = await new GetRunUseCase().execute(getRunDto);
