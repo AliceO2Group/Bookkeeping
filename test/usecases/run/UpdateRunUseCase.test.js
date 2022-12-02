@@ -294,7 +294,37 @@ module.exports = () => {
                 expect(run[property]).to.eql(originalRun[property]);
             }
         });
+
+        it('should successfully update the run detector\'s quality', async () => {
+            const { result, error } = await new UpdateRunUseCase().execute({
+                params: { runId: 1 },
+                body: { detectorsQualities: [{ detectorId: 1, quality: 'bad' }] },
+            });
+            expect(error).to.be.undefined;
+            expect(result).to.be.an('object');
+            expect(result.detectorsQualities).to.lengthOf(1);
+            expect(result.detectorsQualities[0].id).to.equal(1);
+            expect(result.detectorsQualities[0].name).to.equal('CPV');
+            expect(result.detectorsQualities[0].quality).to.equal('bad');
+
+            // Put back detector quality for furthers tests
+            await new UpdateRunUseCase().execute({
+                params: { runId: 1 },
+                body: { detectorsQualities: [{ detectorId: 1, quality: 'good' }] },
+            });
+        });
+
+        it('should throw an error when trying to update the quality of a non-existing detector', async () => {
+            const { result, error } = await new UpdateRunUseCase().execute({
+                params: { runId: 1 },
+                body: { detectorsQualities: [{ detectorId: 2, quality: 'bad' }] },
+            });
+            expect(result).to.be.undefined;
+            expect(error).to.be.an('object');
+            expect(error.detail).to.equal('This run\'s detector with runNumber: (1) and with detector Id: (2) could not be found');
+        });
     });
+
     describe('updates with run number', () => {
         it('Should be able to update the environment with correct values', async () => {
             const { result } = await new UpdateRunUseCase()
