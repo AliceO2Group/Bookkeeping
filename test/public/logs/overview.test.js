@@ -22,6 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
+const { reloadPage } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -65,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(126);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(133);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -161,13 +162,24 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
+        // Increase the amount of items displayed to see logs count difference above 10
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.pagination.itemsPerPage = 20;
+        });
+        await page.waitForTimeout(500);
+
+        // Update original number of rows with the new limit
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+
         // Insert a minimum date into the filter
         await page.waitForTimeout(100);
-        // 6 logs are created before this test
+        // 13 logs are created before this test
         const limitDate = new Date();
         const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
-                      + String(limitDate.getDate()).padStart(2, '0')
-                      + limitDate.getFullYear();
+            + String(limitDate.getDate()).padStart(2, '0')
+            + limitDate.getFullYear();
         await page.focus('#createdFilterFrom');
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
@@ -185,7 +197,7 @@ module.exports = () => {
         // 6 logs are created before this test
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(7);
+        expect(secondFilteredNumberOfRows).to.equal(14);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -206,6 +218,10 @@ module.exports = () => {
 
     it('can filter by tags', async () => {
         await page.waitForTimeout(300);
+
+        // Update original number of rows with the new limit
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tagCheckbox2';
@@ -380,6 +396,7 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
+        await reloadPage(page);
         const amountSelectorButton = await page.$('#amountSelector button');
 
         // Expect the dropdown options to be visible when it is selected
@@ -430,7 +447,7 @@ module.exports = () => {
 
     it('can switch between pages of logs', async () => {
         // Expect the page selector to be available with two pages
-        await page.waitForTimeout(300);
+        await reloadPage(page);
         const pageSelectorId = '#amountSelector';
         const pageSelector = await page.$(pageSelectorId);
         await page.waitForTimeout(300);
@@ -440,10 +457,11 @@ module.exports = () => {
         expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
+        table = await page.$$('tr');
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(300);
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);

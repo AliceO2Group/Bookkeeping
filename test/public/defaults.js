@@ -87,6 +87,13 @@ module.exports.pressElement = async (page, selector) => {
 };
 
 /**
+ * Reload the current page and wait for it to be loaded
+ * @param {Object} page the Puppeteer page object
+ * @return {Promise} resolves when the page has loaded
+ */
+module.exports.reloadPage = (page) => page.reload({ waitUntil: 'networkidle0' });
+
+/**
  * Goes to a specific page and waits until everything is loaded.
  * @param {Object} page Puppeteer page object.
  * @param {String} pageText Value of pageText in: URL/?page={pageText}&...
