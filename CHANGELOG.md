@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
   * A log is created when run quality change, and DPG and RC tags are added for good<->bad quality change only
   * Run's detectors are sorted alphabetically
+  * No more errors when ECS creates logs through gRPC
 * Notable changes for developers:
   * Tests were added for the run detectors quality edition
 
