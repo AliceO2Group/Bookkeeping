@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.47.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.47.0)
 * Notable changes for users:
+  * A log is created when run quality change, and DPG and RC tags are added for good<->bad quality change only
 * Notable changes for developers:
   * Tests were added for the run detectors quality edition
 
