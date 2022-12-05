@@ -11,17 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 const { tag: { CreateTagUseCase } } = require('../../lib/usecases');
 const { dtos: { CreateTagDto } } = require('../../lib/domain');
 const { beforeEach } = require('mocha');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     const { server } = require('../../lib/application');
@@ -36,9 +32,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
 
@@ -70,9 +63,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
                     expect(titleError.detail).to.equal('"body.text" is required');
@@ -94,9 +84,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
                     expect(titleError.detail).to.equal('"body.text" length must be at least 2 characters long');
@@ -117,9 +104,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
                     expect(titleError.detail).to.equal('"body.text" Text can only include words, digits and "-+"');
@@ -139,9 +123,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
@@ -166,9 +147,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data.text).to.equal(expectedText);
 
                     done();
@@ -187,9 +165,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.errors[0].detail).to.equal('The provided entity already exists');
 
@@ -211,9 +186,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data.text).to.equal('test123123');
                     expect(res.body.data.mattermost).to.equal('test-test');
                     expect(res.body.data.email).to.equal('cake@cern.ch,test@cern.ch');
@@ -228,14 +200,11 @@ module.exports = () => {
                     text: 'guestTest',
                 })
                 .expect(201)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
@@ -249,14 +218,11 @@ module.exports = () => {
                     email: 'cake@cern.ch,test@cern.ch',
                 })
                 .expect(403)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
@@ -269,14 +235,11 @@ module.exports = () => {
                     mattermost: 'test-test',
                 })
                 .expect(403)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
@@ -289,14 +252,11 @@ module.exports = () => {
                     email: 'cake@cern.ch,test@cern.ch',
                 })
                 .expect(403)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
@@ -313,9 +273,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
@@ -335,9 +292,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
                     expect(titleError.detail).to.equal('"params.tagId" must be a positive number');
@@ -355,9 +309,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
@@ -377,9 +328,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Tag with this id (999999999) could not be found');
 
                     done();
@@ -395,9 +343,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(1);
 
@@ -430,9 +375,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
                     expect(titleError.detail).to.equal('"params.tagId" must be a number');
@@ -450,9 +392,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
@@ -472,9 +411,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
                     expect(titleError.detail).to.equal('"params.tagId" must be an integer');
@@ -493,9 +429,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Tag with this id (999999999) could not be found');
 
                     done();
@@ -511,9 +444,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(createdTag.id);
                     expect(res.body.data.text).to.equal(createdTag.text);
@@ -534,9 +464,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/tagId');
                     expect(titleError.detail).to.equal('"params.tagId" must be a number');
@@ -555,9 +482,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Tag with this id (999999999) could not be found');
 
                     done();
@@ -573,9 +497,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data
@@ -596,8 +517,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.data.text).to.equal('FOOD');
 
                     done();
@@ -613,9 +532,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.text).to.equal('TEST/TAG 0');
                     expect(res.body.data.email).to.equal('cake@cern.ch');
@@ -633,9 +549,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Tag with this name (1234) could not be found');
 
                     done();
@@ -650,9 +563,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.errors[0].title).to.equal('Invalid Attribute');
 

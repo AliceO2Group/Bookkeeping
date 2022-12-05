@@ -11,14 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     const { server } = require('../../lib/application');
@@ -33,9 +29,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
 
@@ -59,8 +52,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     const { data } = res.body;
                     expect(data.id).to.equal('New original env');
                     expect(data.status).to.equal('STARTED');
@@ -77,9 +68,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/envId');
@@ -102,9 +90,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/createdAt');
                     expect(titleError.detail).to.equal('"body.createdAt" must be a valid date');
@@ -119,14 +104,12 @@ module.exports = () => {
                     envId: 'Dxi029djX',
                 })
                 .expect(409)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     done();
                 });
         });
@@ -137,14 +120,11 @@ module.exports = () => {
             request(server)
                 .put('/api/environments/99999')
                 .expect(400)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     done();
                 });
@@ -163,8 +143,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.data.status).to.equal('STOPPED');
                     expect(res.body.data.toredownAt).to.equal(toredownDate);
                     expect(res.body.data.statusMessage).to.equal('This is a good environment.');

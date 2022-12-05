@@ -18,7 +18,6 @@ const PublicSuite = require('./public');
 const ServerSuite = require('./server');
 const UseCasesSuite = require('./usecases');
 const UtilitiesSuite = require('./utilities');
-const OpenApiSuite = require('./openapi.test');
 
 describe('Bookkeeping', () => {
     const application = require('../lib/application');
@@ -38,7 +37,6 @@ describe('Bookkeeping', () => {
         describe('Server', ServerSuite);
         describe('Use Cases', UseCasesSuite);
         describe('Utilities', UtilitiesSuite);
-        describe('OpenAPI Specification', OpenApiSuite);
     });
 
     describe('Integration Suite', () => {

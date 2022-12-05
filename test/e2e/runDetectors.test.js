@@ -11,15 +11,11 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 const { server } = require('../../lib/application');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     describe('PATCH /api/runs/:runNumber/detector/:detectorId ', () => {
@@ -30,8 +26,6 @@ module.exports = () => {
                 .send({
                     quality: 'good',
                 });
-                // Response must satisfy the OpenAPI specification
-            expect(res).to.satisfyApiSpec;
             expect(res.body.errors[0].detail)
                 .to
                 .equal('This run\'s detector with runNumber: (106) and with detector Id: (9999999) could not be found');
@@ -43,8 +37,6 @@ module.exports = () => {
                     quality: 'wrong',
                 })
                 .expect(400);
-            // Response must satisfy the OpenAPI specification
-            expect(res).to.satisfyApiSpec;
             expect(res.body.errors[0].detail).to.equal('"body.quality" must be one of [bad, good]');
         });
         it('should return 200 when the right quality is given', async () => {
