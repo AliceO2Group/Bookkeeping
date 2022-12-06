@@ -102,6 +102,21 @@ module.exports.reloadPage = (page) => page.reload({ waitUntil: 'networkidle0' })
 module.exports.goToPage = (page, pageText) => page.goto(`${getUrl()}/?page=${pageText}`, { waitUntil: 'networkidle0' });
 
 /**
+ * Wait for page network idle and add a small timeout to let the page redraw
+ *
+ * @param {Object} page the puppeteer page object
+ * @param {Object} [options] eventual options
+ * @param {number} [options.redrawDuration] duration of the page redraw (in ms)
+ * @return {Promise<void>} resolves once the page is fully redraw
+ */
+module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
+    const { redrawDuration = 20 } = options ?? {};
+
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(redrawDuration);
+};
+
+/**
  * Validates if selector is present and returns the element.
  * @param {Object} page Puppeteer page object.
  * @param {String} selector Css selector.

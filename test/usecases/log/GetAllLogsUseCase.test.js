@@ -71,6 +71,31 @@ module.exports = () => {
         expect(filteredResult.count).to.equal(rootLog.replies);
     });
 
+    it('should successfully filter on run numbers', async () => {
+        const runNumbers = [1, 2];
+        getAllLogsDto.query = { filter: { run: { operation: 'and', values: runNumbers } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(3);
+            for (const log of filteredResult) {
+                const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
+                expect(runNumbers.every((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
+            }
+        }
+
+        getAllLogsDto.query = { filter: { run: { operation: 'or', values: runNumbers } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(6);
+            for (const log of filteredResult) {
+                const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
+                expect(runNumbers.some((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
+            }
+        }
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 

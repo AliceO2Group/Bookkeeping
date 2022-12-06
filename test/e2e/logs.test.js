@@ -94,6 +94,19 @@ module.exports = () => {
                 });
         });
 
+        it('should successfully filter by run number', async () => {
+            const response = await request(server).get('/api/logs?filter[run][values]=1,2&filter[run][operation]=and');
+            expect(response.status).to.equal(200);
+
+            expect(response.body.data).to.be.an('array');
+            // 3 logs created in public tests
+            expect(response.body.data).to.lengthOf(6);
+            for (const log of response.body.data) {
+                const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
+                expect([1, 2].every((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
+            }
+        });
+
         it('should return 400 if the author filter is left empty', (done) => {
             request(server)
                 .get('/api/logs?filter[author]= ')

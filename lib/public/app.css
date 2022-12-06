@@ -89,6 +89,8 @@ html, body {
 .pr2 { padding-right: var(--space-s); }
 .pt0 { padding-top: 0; }
 
+.lh1 { line-height: 1em; }
+
 /* flex */
 .flex-wrap.flex-row > .flex-grow { width: inherit; }
 .flex-column > .flex-control-overflow, .flex-column > .scroll-y, .flex-column > .scroll-auto {
