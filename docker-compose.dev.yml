@@ -21,10 +21,6 @@ services:
         target: /usr/src/app/lib
       - type: bind
         read_only: true
-        source: ./spec
-        target: /usr/src/app/spec
-      - type: bind
-        read_only: true
         source: ./proto
         target: /usr/src/app/proto
 
