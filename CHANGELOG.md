@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.48.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.48.0)
 * Notable changes for users:
-  * 
+  * Log runs filter applies on run number and not on run ID anymore
 * Notable changes for developers:
   * 
 
