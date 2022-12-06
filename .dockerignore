@@ -5,7 +5,6 @@
 !lib/
 !proto/
 !test/
-!spec/
 !.sequelizerc
 !.nycrc
 !package*.json
