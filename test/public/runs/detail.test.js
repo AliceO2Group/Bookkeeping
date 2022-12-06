@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, takeScreenshot } = require('../defaults.js');
+const { reloadPage } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -85,7 +85,6 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';
-        await takeScreenshot(page);
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.true;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.false;
         await pressElement(page, badQualityRadioSelector);
