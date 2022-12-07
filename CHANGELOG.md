@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.47.0)
+* Notable changes for users:
+  * A log is created when run quality change, and DPG and RC tags are added for good<->bad quality change only
+  * Run's detectors are sorted alphabetically in run details
+  * No more errors when ECS creates logs through gRPC
+  * Fixed bug where text selection was canceled on mouse up after page switch
+* Notable changes for developers:
+  * Tests were added for the run detectors quality edition
+
 ## [0.46.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.46.0)
 * Notable changes for users:
   * Fixes an issue in which clicking on an attachement link would not open/download the file
