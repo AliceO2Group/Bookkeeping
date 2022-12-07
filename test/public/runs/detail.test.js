@@ -170,6 +170,14 @@ module.exports = () => {
         expect(await page.$('#runQualitySelect')).to.be.null;
     });
 
+    it('successfully prevent from editing detector\'s quality of not ended runs', async () => {
+        await reloadPage(page);
+
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        expect(await page.$('#Run-detectors .toggle-container')).to.be.null;
+    });
+
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
         await page.waitForTimeout(100);

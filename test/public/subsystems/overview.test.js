@@ -12,8 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
-const { waitForNetworkIdleAndRedraw } = require('../defaults.js');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow, waitForNetworkIdleAndRedraw, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
