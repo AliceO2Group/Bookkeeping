@@ -11,17 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
 const { RunDefinition } = require('../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     describe('GET /api/runs', () => {
@@ -79,8 +75,6 @@ module.exports = () => {
             const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=0');
             expect(response.status).to.equal(400);
 
-            expect(response).to.satisfyApiSpec;
-
             const { errors } = response.body;
             const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
             expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
@@ -89,8 +83,6 @@ module.exports = () => {
         it('should return the correct number of pages', async () => {
             const response = await request(server).get('/api/runs?page[offset]=0&page[limit]=2');
             expect(response.status).to.equal(200);
-
-            expect(response).to.satisfyApiSpec;
 
             const totalNumber = await RunRepository.count();
 
@@ -138,7 +130,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[detectors][operator]=invalid&filter[detectors][values]=ITS');
 
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
@@ -150,7 +141,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[detectors][operator]=or&filter[detectors][values]=ITS,FT0');
 
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.be.an('array');
@@ -160,7 +150,6 @@ module.exports = () => {
         it('should successfully return 400 if the given definitions are not valid', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
@@ -171,7 +160,6 @@ module.exports = () => {
         it('should successfully filter on run definition', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=physics');
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.lengthOf(4);
@@ -231,7 +219,6 @@ module.exports = () => {
             const response = await request(server).get('/api/runs?filter[runDuration][operator]=invalid&filter[runDuration][limit]=10');
 
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
@@ -243,7 +230,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[runDuration][operator]=>&filter[runDuration][limit]=0');
 
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.be.an('array');
@@ -259,7 +245,6 @@ module.exports = () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=bad,test');
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             // 44 + 5 because 4 run are added in start run use case with default quality which is test, and one is updated to quality test
@@ -271,8 +256,6 @@ module.exports = () => {
                 .get('/api/runs?filter[triggerValues]=OFF,CTP');
             expect(response.status).to.equal(200);
 
-            expect(response).to.satisfyApiSpec;
-
             const { data } = response.body;
 
             expect(data.length).to.equal(23);
@@ -282,8 +265,6 @@ module.exports = () => {
                 .get('/api/runs?filter[odcTopologyFullName]=hash');
             expect(response.status).to.equal(200);
 
-            expect(response).to.satisfyApiSpec;
-
             const { data } = response.body;
             expect(data.length).to.equal(4);
         });
@@ -292,7 +273,6 @@ module.exports = () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=invalid');
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors } = response.body;
             expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test]');
@@ -303,7 +283,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[nDetectors][operator]=invalid&filter[nDetectors][limit]=3');
 
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
@@ -315,7 +294,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[nDetectors][operator]=>=&filter[nDetectors][limit]=6');
 
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.be.an('array');
@@ -327,7 +305,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[lhcPeriods]=lhc22b');
 
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.be.an('array');
@@ -338,7 +315,6 @@ module.exports = () => {
             const response = await request(server).get('/api/runs?filter[nFlps][operator]=invalid&filter[nFlps][limit]=10');
 
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
@@ -350,7 +326,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[nFlps][operator]=<=&filter[nFlps][limit]=10');
 
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.be.an('array');
@@ -362,7 +337,6 @@ module.exports = () => {
             const response = await request(server).get('/api/runs?filter[nEpns][operator]=invalid&filter[nEpns][limit]=10');
 
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
@@ -374,7 +348,6 @@ module.exports = () => {
                 await request(server).get('/api/runs?filter[nEpns][operator]=<=&filter[nEpns][limit]=10');
 
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const { data } = response.body;
             expect(data).to.be.an('array');
@@ -694,7 +667,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                                                               ' defined, your custom type is missing the correct messages definition');
+                        ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
@@ -851,7 +824,20 @@ module.exports = () => {
                         },
                     ],
                 });
-            expect(body.errors[0].detail).to.equal("This run's detector with runNumber: (1) and with detector Id: (32) could not be found");
+            expect(body.errors[0].detail).to.equal('This run\'s detector with runNumber: (1) and with detector Id: (32) could not be found');
+        });
+
+        it('should successfully return the updated run entity with new detector\'s run quality', async () => {
+            const { body, status } = await request(server).put('/api/runs/1')
+                .send({
+                    detectorsQualities: [{ detectorId: 1, quality: 'good' }],
+                });
+            expect(status).to.equal(201);
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(1);
+            expect(body.data.detectorsQualities).to.lengthOf(1);
+            expect(body.data.detectorsQualities[0].id).to.equal(1);
+            expect(body.data.detectorsQualities[0].quality).to.equal('good');
         });
     });
 

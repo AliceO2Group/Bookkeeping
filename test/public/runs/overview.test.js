@@ -20,7 +20,7 @@ const {
     getFirstRow,
     goToPage,
 } = require('../defaults');
-const { checkColumnBalloon } = require('../defaults.js');
+const { checkColumnBalloon, reloadPage } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/services/getRunDefinition.js');
 
 const { expect } = chai;
@@ -723,14 +723,13 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of run ids and inform the user about it', async () => {
-        await page.reload();
-        await page.waitForTimeout(200);
+        await reloadPage(page);
         await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#runNumber';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
         await page.focus(filterInputSelector);
         await page.keyboard.type('1, 2');
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);

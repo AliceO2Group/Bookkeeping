@@ -11,29 +11,26 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 const { server } = require('../../lib/application');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     describe('GET /api/detectors', () => {
         it('should return 200 with the list of detectors', async () => {
             const response = await request(server).get('/api/detectors');
 
-            expect(response).to.satisfyApiSpec;
-
             expect(response.status).to.equal(200);
             expect(response.body).to.be.an('object');
             expect(response.body.data.map(({ id, name }) => ({ id, name }))).to.deep.eq([
+                { id: 17, name: 'ACO' },
                 { id: 1, name: 'CPV' },
+                { id: 18, name: 'CTP' },
                 { id: 2, name: 'EMC' },
                 { id: 3, name: 'FDD' },
+                { id: 19, name: 'FIT' },
                 { id: 4, name: 'FT0' },
                 { id: 5, name: 'FV0' },
                 { id: 6, name: 'HMP' },
@@ -47,9 +44,6 @@ module.exports = () => {
                 { id: 14, name: 'TRD' },
                 { id: 15, name: 'TST' },
                 { id: 16, name: 'ZDC' },
-                { id: 17, name: 'ACO' },
-                { id: 18, name: 'CTP' },
-                { id: 19, name: 'FIT' },
             ]);
         });
     });

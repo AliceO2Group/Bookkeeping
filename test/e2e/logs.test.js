@@ -14,12 +14,9 @@
 const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 const { repositories: { LogRepository } } = require('../../lib/database');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     const { server } = require('../../lib/application');
@@ -38,9 +35,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
 
                     done();
@@ -56,9 +50,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(1);
@@ -78,9 +69,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail).to.equal('"query.filter.title" is not allowed to be empty');
 
@@ -98,15 +86,25 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
                     expect(res.body.data[0].author.name).to.include('John');
 
                     done();
                 });
+        });
+
+        it('should successfully filter by run number', async () => {
+            const response = await request(server).get('/api/logs?filter[run][values]=1,2&filter[run][operation]=and');
+            expect(response.status).to.equal(200);
+
+            expect(response.body.data).to.be.an('array');
+            // 3 logs created in public tests
+            expect(response.body.data).to.lengthOf(6);
+            for (const log of response.body.data) {
+                const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
+                expect([1, 2].every((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
+            }
         });
 
         it('should return 400 if the author filter is left empty', (done) => {
@@ -118,9 +116,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to.equal('"query.filter.author" is not allowed to be empty');
@@ -139,9 +134,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.be.greaterThan(1);
@@ -163,9 +155,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data.length).to.equal(100);
                     expect(res.body.data[0].createdAt).to.be.gte(fromTime);
@@ -185,9 +174,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail).to
                         .equal('Creation date must be a real date and in format YYYY-MM-DD or YYYY/MM/DD');
@@ -205,9 +191,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     let today = new Date();
                     today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -231,9 +214,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail).to
                         .equal('Creation date "to" cannot be before the "from" date');
@@ -251,9 +231,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data
@@ -274,13 +251,10 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data
                         .every((log) => log.tags.length > 0 && log.tags.some((tag) => tag.id === 2)
-                            && log.tags.some((tag) => tag.id === 5)))
+                                        && log.tags.some((tag) => tag.id === 5)))
                         .to.be.true;
 
                     done();
@@ -296,9 +270,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data
@@ -319,9 +290,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data).to.have.lengthOf(3);
 
@@ -338,9 +306,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to.equal('"query.filter.parentLog" must be a positive number');
@@ -359,9 +324,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
                     expect(res.body.data).to.have.lengthOf(6);
 
@@ -379,9 +341,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail).to.equal('"query.filter.rootLog" must be a positive number');
 
@@ -398,9 +357,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
                     for (const log of res.body.data) {
@@ -421,9 +377,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.be.an('array');
                     for (const log of res.body.data) {
                         expect(log.origin).to.equal('human');
@@ -443,9 +396,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const [titleError] = res.body.errors;
                     expect(titleError.detail).to.equal('"query.filter.origin" must be one of [human, process]');
 
@@ -462,9 +412,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(1);
@@ -483,9 +430,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(2);
 
@@ -496,7 +440,6 @@ module.exports = () => {
         it('should return 400 if the limit is below 1', async () => {
             const response = await request(server).get('/api/logs?page[offset]=0&page[limit]=0');
             expect(response.status).to.equal(400);
-            expect(response).to.satisfyApiSpec;
 
             const { errors } = response.body;
             const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
@@ -506,7 +449,6 @@ module.exports = () => {
         it('should return the correct number of pages', async () => {
             const response = await request(server).get('/api/logs?page[offset]=0&page[limit]=2');
             expect(response.status).to.equal(200);
-            expect(response).to.satisfyApiSpec;
 
             const totalNumber = await LogRepository.count();
 
@@ -525,9 +467,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect(data[0].id).to.be.greaterThan(data[1].id);
 
@@ -545,9 +484,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect(data[1].id).to.be.greaterThan(data[0].id);
 
@@ -564,9 +500,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
                     expect([data[0].title, data[1].title])
@@ -586,9 +519,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect([data[0].title, data[1].title])
                         .to.deep.equal([data[0].title, data[1].title].sort());
@@ -606,9 +536,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
                     expect([data[0].author.name, data[1].author.name])
@@ -628,9 +555,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect([data[0].author.name, data[1].author.name])
                         .to.deep.equal([data[0].author.name, data[1].author.name].sort());
@@ -649,9 +573,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect(data[0].createdAt).to.be.greaterThan(data[1].createdAt);
 
@@ -669,9 +590,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect(data[1].createdAt).to.be.greaterThan(data[0].createdAt);
 
@@ -688,9 +606,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
                     const dataWithTags = data.filter(({ tags }) => tags.length > 0);
@@ -713,9 +628,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     const dataWithTags = data.filter(({ tags }) => tags.length > 0);
                     const firstAndLastTags =
@@ -737,9 +649,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     expect(errors[0].detail
                         .startsWith('"query.sort" contains a conflict between exclusive peers')).to.be.true;
@@ -759,9 +668,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
@@ -783,9 +689,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
@@ -815,9 +718,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/title');
                     expect(titleError.detail)
@@ -840,9 +740,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const textError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
                     expect(textError.detail).to.equal('"body.text" is required');
@@ -864,9 +761,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const textError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
@@ -891,9 +785,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Parent log with this id (999) could not be found');
 
                     done();
@@ -914,9 +805,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.errors[0].title).to.equal('Tags MAINTENANCE, DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
 
@@ -940,9 +828,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal(`Run with this run number (${runNumbers}) could not be found`);
 
                     done();
@@ -964,9 +849,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const expectedErrorMsg = 'Run numbers must contain only numbers';
                     expect(res.body.errors[0].title).to.equal(expectedErrorMsg);
@@ -990,9 +872,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.title).to.equal('Yet another run');
                     expect(res.body.data.text).to.equal('Text of yet another run');
@@ -1053,9 +932,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data.attachments[0].originalName).to.equal('1200px-CERN_logo.png');
                     expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider_(é_è).jpg');
 
@@ -1079,9 +955,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
 
                     done();
@@ -1100,9 +973,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
                     expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
@@ -1123,8 +993,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
                     expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
@@ -1145,9 +1013,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
                     expect(titleError.detail).to.equal('"params.logId" must be a number');
@@ -1165,9 +1030,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
@@ -1187,9 +1049,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
                     expect(titleError.detail).to.equal('"params.logId" must be an integer');
@@ -1208,9 +1067,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
 
                     done();
@@ -1226,9 +1082,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(1);
 
@@ -1248,9 +1101,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
                     expect(titleError.detail).to.equal('"params.logId" must be a number');
@@ -1269,9 +1119,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
 
                     done();
@@ -1287,9 +1134,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
 
@@ -1309,9 +1153,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
                     expect(titleError.detail).to.equal('"params.logId" must be a number');
@@ -1330,9 +1171,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
 
                     done();
@@ -1350,9 +1188,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     tree = res.body.data;
 
                     done();
@@ -1368,9 +1203,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.deep.equal(tree);
 
@@ -1440,11 +1272,6 @@ module.exports = () => {
                         return;
                     }
 
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
-
                     expect(res.body.errors[0].title).to.equal('Log with this id (999) could not be found');
 
                     done();
@@ -1460,11 +1287,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
 
                     done();
                 });
@@ -1482,10 +1304,6 @@ module.exports = () => {
                         return;
                     }
 
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
                     done();
                 });
         });
@@ -1499,11 +1317,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
 
                     const { errors } = res.body;
                     expect(errors[0].title).to
@@ -1522,11 +1335,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    /*
-                     * Response must satisfy the OpenAPI specification
-                     * expect(res).to.satisfyApiSpec;
-                     */
 
                     const { errors } = res.body;
                     expect(errors[0].title).to

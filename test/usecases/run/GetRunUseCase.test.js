@@ -36,7 +36,7 @@ module.exports = () => {
         expect(result.id).to.equal(1);
     });
 
-    it('should return an object that has the `id` property and includes tags and eorReasons', async () => {
+    it('should return an object that has the `id` property and includes tags, eorReasons and detectors qualities', async () => {
         const result = await new GetRunUseCase()
             .execute(getRunDto);
 
@@ -49,6 +49,18 @@ module.exports = () => {
         expect(result.lhcPeriod).to.equal('lhc22b');
         expect(result.odcTopologyFullName).to.equal('hash');
         expect(result.runType.id).to.equal(14);
+        expect(result.detectorsQualities.length).to.equal(1);
+        expect(result.detectorsQualities[0].id).to.equal(1);
+        expect(result.detectorsQualities[0].name).to.equal('CPV');
+        expect(result.detectorsQualities[0].quality).to.equal('good');
+    });
+
+    it('should successfully return detectors qualities sorted alphabetically', async () => {
+        const result = await new GetRunUseCase().execute({ params: { runId: 106 } });
+        expect(result.detectorsQualities.length).to.be.greaterThan(1);
+        const qualities = [...result.detectorsQualities];
+        qualities.sort(({ name: name1 }, { name: name2 }) => name1.localeCompare(name2));
+        expect(result.detectorsQualities).to.be.eql(qualities);
     });
 
     it('should successfully return an object that contains a null duration if trigger start and o2start is not defined', async () => {

@@ -10,14 +10,10 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     const { server } = require('../../lib/application');
@@ -32,9 +28,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
 
@@ -60,9 +53,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     const { data } = res.body;
                     expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
                     expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
@@ -89,9 +79,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.errors[0].detail).to.equal('The provided fillNumber already exists');
 
                     done();
@@ -108,9 +95,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     expect(res.body.errors[0].title).to.equal(`LhcFill with this id (${99999}) could not be found`);
 
                     done();
@@ -132,8 +116,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
                     const { data } = res.body;
                     expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
                     expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
@@ -156,9 +138,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { data } = res.body;
                     expect(data.runNumber).to.equal(50);
                     done();
@@ -175,9 +154,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal(`The lhcFill (${1}) does not contain the run with run number (${2})`);
                     done();
                 });
@@ -193,9 +169,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { data } = res.body;
                     expect(data.stableBeamsStart).to.equal(1647961200000);
@@ -218,9 +191,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('LhcFill with this id (99999) could not be found');
                     done();
                 });
@@ -236,9 +206,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
 
