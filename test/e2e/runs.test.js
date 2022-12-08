@@ -235,10 +235,10 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             /*
-             * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, and three runs are created with non-null
-             * duration in StartRunUseCase
+             * 6 runs from seeders, plus run 1 trigger start and stop are override in EndRunUseCase, three runs are created with non-null
+             * duration in StartRunUseCase, and 2 runs created in RunService test
              */
-            expect(data).to.have.lengthOf(15);
+            expect(data).to.have.lengthOf(17);
         });
 
         it('should filter run on their quality', async () => {
@@ -247,8 +247,12 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            // 45 + 5 because 4 run are added in start run use case with default quality which is test, and one is updated to quality test
-            expect(data.length).to.equal(50);
+
+            /*
+             * 45 + 7 because 4 run are added in start run use case with default quality which is test, one is updated to quality test, and 2
+             * created in RunService test
+             */
+            expect(data.length).to.equal(52);
         });
 
         it('should filter run on their trigger value', async () => {
@@ -329,8 +333,8 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            // 9 instead of 5 because 4 runs have been created with 10 as nFlps
-            expect(data).to.have.lengthOf(9);
+            // 11 instead of 5 because 6 runs have been created with 10 as nFlps
+            expect(data).to.have.lengthOf(11);
         });
 
         it('should return 400 if the EPN number filter is invalid', async () => {
@@ -351,8 +355,8 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            // 9 instead of 5 because 4 runs have been created with 10 as nEpns
-            expect(data).to.have.lengthOf(9);
+            // 11 instead of 5 because 6 runs have been created with 10 as nEpns
+            expect(data).to.have.lengthOf(11);
         });
     });
 
@@ -646,7 +650,7 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType.id).to.be.a('number');
-                    expect(res.body.data.id).to.equal(111);
+                    expect(res.body.data.id).to.equal(113);
 
                     done();
                 });
@@ -667,7 +671,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                        ' defined, your custom type is missing the correct messages definition');
+                                                               ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });

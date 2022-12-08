@@ -19,7 +19,7 @@ module.exports = () => {
     const baseRun = {
         timeO2Start: '2022-03-21 13:00:00',
         timeTrgStart: '2022-03-21 13:00:00',
-        environmentId: '1234567890',
+        environmentId: 'RYnWCcgd',
         runType: 'NONE',
         runQuality: 'test',
         nDetectors: 3,

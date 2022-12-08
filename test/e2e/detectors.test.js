@@ -25,9 +25,13 @@ module.exports = () => {
             expect(response.status).to.equal(200);
             expect(response.body).to.be.an('object');
             expect(response.body.data.map(({ id, name }) => ({ id, name }))).to.deep.eq([
+                { id: 20, name: 'A-NEW-DETECTOR' },
+                { id: 21, name: 'A-NEW-ONE' },
                 { id: 17, name: 'ACO' },
                 { id: 1, name: 'CPV' },
                 { id: 18, name: 'CTP' },
+                { id: 22, name: 'DONOTEXISTS' },
+                { id: 23, name: 'DONOTEXISTSEITHER' },
                 { id: 2, name: 'EMC' },
                 { id: 3, name: 'FDD' },
                 { id: 19, name: 'FIT' },

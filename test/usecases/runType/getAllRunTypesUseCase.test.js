@@ -11,17 +11,16 @@
  * or submit itself to any jurisdiction.
  */
 
-const { run: { GetAllRunTypesUseCase } } = require('../../../lib/usecases');
+const { runType: { GetAllRunTypesUseCase } } = require('../../../lib/usecases');
 const chai = require('chai');
 
 const { expect } = chai;
 
 module.exports = () => {
     it('should return an array', async () => {
-        const { runs } = await new GetAllRunTypesUseCase()
-            .execute();
+        const { runTypes } = await new GetAllRunTypesUseCase().execute();
 
-        expect(runs).to.be.an('array');
-        expect(runs.length).to.be.greaterThan(2);
+        expect(runTypes).to.be.an('array');
+        expect(runTypes.length).to.be.greaterThan(2);
     });
 };
