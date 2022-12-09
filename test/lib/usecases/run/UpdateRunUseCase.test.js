@@ -30,16 +30,6 @@ module.exports = () => {
         updateRunDto = await UpdateRunDto.validateAsync({
             body: {
                 runQuality: 'test',
-                detectorsQualities: [
-                    {
-                        detectorId: 14,
-                        quality: 'bad',
-                    },
-                    {
-                        detectorId: 16,
-                        quality: 'good',
-                    },
-                ],
             },
             params: {
                 runId: 106,
@@ -78,8 +68,7 @@ module.exports = () => {
     describe('updates with runId parameter.', () => {
         it('Should give an error when the id of the environment can not be found', async () => {
             updateRunDto.params.runId = wrongId;
-            const { error } = await new UpdateRunUseCase()
-                .execute(updateRunDto);
+            const { error } = await new UpdateRunUseCase().execute(updateRunDto);
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal(`Run with this id (${wrongId}) could not be found`);
         });
@@ -295,7 +284,19 @@ module.exports = () => {
             }
         });
 
-        it('should successfully update the run detector\'s quality', async () => {
+        it('should successfully update the run detector\'s quality and create a log accordingly', async () => {
+            // eslint-disable-next-line require-jsdoc
+            const expectLastLogToBeForDetectorQualityChange = async (newQuality) => {
+                const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
+                expect(logs).to.have.lengthOf(1);
+                const [log] = logs;
+                expect(log.title).to.equal('Detector\'s quality for run 1 has been changed');
+                expect(log.text.startsWith('Here are the updated detector\'s qualities for run 1')).to.be.true;
+                expect(log.text.endsWith(`- CPV: ${newQuality}`)).to.be.true;
+                expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([1]);
+                expect(log.tags.map(({ text }) => text)).to.eql(['CPV']);
+            };
+
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
                 body: { detectorsQualities: [{ detectorId: 1, quality: 'bad' }] },
@@ -306,12 +307,13 @@ module.exports = () => {
             expect(result.detectorsQualities[0].id).to.equal(1);
             expect(result.detectorsQualities[0].name).to.equal('CPV');
             expect(result.detectorsQualities[0].quality).to.equal('bad');
+            await expectLastLogToBeForDetectorQualityChange('bad');
 
-            // Put back detector quality for furthers tests
             await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
                 body: { detectorsQualities: [{ detectorId: 1, quality: 'good' }] },
             });
+            await expectLastLogToBeForDetectorQualityChange('good');
         });
 
         it('should throw an error when trying to update the quality of a non-existing detector', async () => {
