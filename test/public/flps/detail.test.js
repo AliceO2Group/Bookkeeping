@@ -97,12 +97,12 @@ module.exports = () => {
         await goToPage(page, 'flp-detail', { queryParameters: { id: flpRoleId } });
 
         // We expect the correct associated runs to be shown
-        const runField = await page.$('#Flp-runs');
+        const runField = await page.$('#Flp-run');
         const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Runs:\n${runId}`);
+        expect(runText).to.equal(`Run:\n${runId}`);
 
-        // We expect the associated runs to be clickable with a valid link
-        const runLink = await page.$('#Flp-runs a');
+        // We expect the associated run to be clickable with a valid link
+        const runLink = await page.$('#Flp-run a');
         await runLink.click();
         await page.waitForTimeout(1000);
 
