@@ -43,12 +43,12 @@
   ],
   "devDependencies": {
     "chai": "4.3.4",
-    "eslint": "8.29.0",
+    "eslint": "8.30.0",
     "js-yaml": "4.1.0",
-    "mocha": "10.1.0",
+    "mocha": "10.2.0",
     "nodemon": "2.0.19",
     "nyc": "15.1.0",
-    "puppeteer": "19.3.0",
+    "puppeteer": "19.4.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sinon": "15.0.0",
     "supertest": "6.3.0"
