@@ -43,14 +43,74 @@ add_custom_command(
     VERBATIM
 )
 
-set(application client.cxx)
-get_filename_component(application_name ${application} NAME)
-string(REGEX REPLACE ".cxx" "" application_name ${application_name})
-add_executable(${application_name} ${application} ${PROTO_CPP_OUTPUT} ${GRPC_CPP_OUTPUT})
+### LIBRARY
+
+set(library_name BookkeepingApi)
+
+add_library(${library_name}
+  src/BookkeepingImpl.cxx
+  src/BookkeepingFactory.cxx
+  ${PROTO_CPP_OUTPUT}
+  ${GRPC_CPP_OUTPUT}
+)
+
+target_include_directories(${library_name}
+  PUBLIC $<INSTALL_INTERFACE:include>    # public header once installed
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> # to build it
+  PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> # because of the proto generated files
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # private headers
+)
+
 target_link_libraries(
-    ${application_name} PRIVATE
+  ${library_name}
+  PRIVATE
     gRPC::grpc++
     protobuf::libprotobuf
 )
-target_include_directories(${application_name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-install(TARGETS ${application_name})
+
+### EXECUTABLE
+
+add_executable(runner src/runner.cxx)
+
+target_link_libraries(runner
+  PUBLIC
+  ${library_name}
+  )
+
+
+# PACKAGE INFO
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(${CMAKE_PROJECT_NAME}ConfigVersion.cmake
+  VERSION ${${CMAKE_PROJECT_NAME}_VERSION}
+  COMPATIBILITY SameMajorVersion)
+configure_package_config_file(cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake"
+  INSTALL_DESTINATION
+  "${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}")
+
+
+### INSTALL
+
+install(TARGETS ${library_name} runner
+  EXPORT ${library_name}Targets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#  PUBLIC_HEADER DESTINATION include
+)
+
+# Install headers
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/BookkeepingApi
+  DESTINATION "include")
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+
+# Export targets
+install(EXPORT ${library_name}Targets
+  FILE ${library_name}Targets.cmake
+  NAMESPACE ${library_name}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${library_name}
+  )

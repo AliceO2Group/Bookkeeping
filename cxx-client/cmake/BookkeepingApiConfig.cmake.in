@@ -1,0 +1,11 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro) 
+get_filename_component(BookkeepingApi_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+find_dependency(Boost 1.56 REQUIRED COMPONENTS unit_test_framework program_options filesystem)
+find_dependency(Threads REQUIRED)
+
+if(NOT TARGET AliceO2::BookkeepingApi)
+  include("${BookkeepingApi_CMAKE_DIR}/BookkeepingApiTargets.cmake")
+endif()
+
+message(STATUS "BookkeepingApi-O2 ${BookkeepingApi_VERSION} found")
