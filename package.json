@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@aliceo2/web-ui": "1.24.1",
-    "@grpc/grpc-js": "1.7.3",
+    "@grpc/grpc-js": "1.8.3",
     "@grpc/proto-loader": "0.7.0",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.2.2",
