@@ -2,6 +2,7 @@
 #define CXX_CLIENT_BOOKKEEPINGCLIENT_H
 
 #include <memory>
+#include "BookkeepingApi/flp.pb.h"
 
 class BookkeepingInterface {
  public:
@@ -13,6 +14,8 @@ class BookkeepingInterface {
     int64_t nRecordingBytes,
     int64_t nFairMQBytes
   ) = 0;
+
+  virtual void updateCountersRequest(const o2::bookkeeping::UpdateCountersRequest &request) = 0;
 };
 
 #endif

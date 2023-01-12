@@ -2,7 +2,7 @@
 #define CXX_CLIENT_BOOKKEEPINGIMPL_H
 
 #include <memory>
-#include "flp.grpc.pb.h"
+#include "BookkeepingApi/flp.grpc.pb.h"
 #include "BookkeepingApi/BookkeepingInterface.h"
 
 class BookkeepingImpl : public BookkeepingInterface {
@@ -18,6 +18,8 @@ class BookkeepingImpl : public BookkeepingInterface {
     int64_t nRecordingBytes,
     int64_t nFairMQBytes
   );
+
+  void updateCountersRequest(const o2::bookkeeping::UpdateCountersRequest &request);
 
  private:
   std::unique_ptr<o2::bookkeeping::FlpService::Stub> mStub;

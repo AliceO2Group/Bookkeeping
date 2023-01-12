@@ -17,14 +17,16 @@ set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 set(PROTO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../proto/flp.proto)
 get_filename_component(PROTO_OUTPUT_NAME ${PROTO_FILE} NAME_WE)
 get_filename_component(PROTO_FILE_PREFIX ${PROTO_FILE} PATH)
-set(PROTO_CPP_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PROTO_OUTPUT_NAME}.pb.cc)
-set(GRPC_CPP_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PROTO_OUTPUT_NAME}.grpc.pb.cc)
+set(PROTO_CPP_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingApi/${PROTO_OUTPUT_NAME}.pb.cc)
+set(GRPC_CPP_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingApi/${PROTO_OUTPUT_NAME}.grpc.pb.cc)
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingApi)
 
 add_custom_command(
     OUTPUT "${PROTO_CPP_OUTPUT}"
     COMMAND protobuf::protoc
     ARGS --proto_path ${PROTO_FILE_PREFIX}
-         --cpp_out ${CMAKE_CURRENT_BINARY_DIR}
+         --cpp_out ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingApi
          ${PROTO_OUTPUT_NAME}.proto
     DEPENDS ${PROTO_FILE}
     COMMENT "Running protoc on ${PROTO_FILE}"
@@ -35,7 +37,7 @@ add_custom_command(
     OUTPUT "${GRPC_CPP_OUTPUT}"
     COMMAND protobuf::protoc
     ARGS --proto_path ${PROTO_FILE_PREFIX}
-         --grpc_out=${CMAKE_CURRENT_BINARY_DIR}
+         --grpc_out ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingApi
          --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
          ${PROTO_OUTPUT_NAME}.proto
     DEPENDS ${PROTO_FILE}
@@ -57,15 +59,14 @@ add_library(${library_name}
 target_include_directories(${library_name}
   PUBLIC $<INSTALL_INTERFACE:include>    # public header once installed
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> # to build it
-  PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> # because of the proto generated files
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> # because of the proto generated files
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # private headers
 )
 
 target_link_libraries(
   ${library_name}
-  PRIVATE
-    gRPC::grpc++
-    protobuf::libprotobuf
+  PUBLIC protobuf::libprotobuf
+  PRIVATE gRPC::grpc++
 )
 
 ### EXECUTABLE
@@ -101,6 +102,8 @@ install(TARGETS ${library_name} runner
 )
 
 # Install headers
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingApi/${PROTO_OUTPUT_NAME}.pb.h DESTINATION "include/BookkeepingApi")
+
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/BookkeepingApi
   DESTINATION "include")
 
