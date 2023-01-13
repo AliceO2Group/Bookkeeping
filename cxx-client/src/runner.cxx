@@ -1,21 +1,28 @@
-#include "BookkeepingApi/BookkeepingFactory.h"
-#include "BookkeepingApi/flp.pb.h"
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include "BookkeepingApi/BookkeepingClientFactory.h"
 
-int main() {
-    auto client = BookkeepingFactory::createClient("127.0.0.1:4001");
+using namespace o2::bookkeeping::api;
 
-//    client->updateCounters("FLP-TPC-1", 1, 100, 100, 100, 100);
+int main(int argc, char** argv)
+{
+  if (argc < 2) {
+    std::cerr << "You need to provide path to the configuration as first argument" << std::endl << std::endl;
+    exit(1);
+  }
 
-    o2::bookkeeping::UpdateCountersRequest counterUpdateRequest;
+  try {
+    // Let Configuration check for file validity which goes out of this example
+    // Configuration file must provide the bookkeeping gRPC endpoint's URL in the key `o2.bookkeeping.grpc-url`
+    std::stringstream ss;
+    ss << "json://" << argv[1];
+    auto client = BookkeepingClientFactory::fromConfiguration(ss.str());
+    client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 2, 2, 2, 2);
+  } catch (std::runtime_error& error) {
+    std::cout << "An error occurred: " << error.what() << std::endl;
+    exit(2);
+  }
 
-    counterUpdateRequest.set_flpname("FLP-TPC-1");
-    counterUpdateRequest.set_runnumber(1);
-    counterUpdateRequest.set_nsubtimeframes(2);
-    counterUpdateRequest.set_nequipmentbytes(2);
-    counterUpdateRequest.set_nrecordingbytes(2);
-    counterUpdateRequest.set_nfairmqbytes(2);
-
-    client->updateCountersRequest(counterUpdateRequest);
-
-    return 0;
+  return 0;
 }
