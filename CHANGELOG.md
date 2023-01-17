@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Detectors are now sorted in the run's detector filter
   * FLP proto creation request expect a hostname instead of hostName
 * Notable changes for developers:
-  * 
+  * A general architecture documentation has been added
 
 ## [0.47.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.47.0)
 * Notable changes for users:
