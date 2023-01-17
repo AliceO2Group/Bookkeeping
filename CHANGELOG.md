@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file. See [standa
   * FLP proto creation request expect a hostname instead of hostName
   * LHC fill GET endpoint returns the fill with all its runs, and not only the physics ones 
   * LHC fill display page now have tabs to display all the runs or physics ones ony
+  * Tags can now be marked as archived by administrators, and those tags can not be linked to new runs or logs
 
 * Notable changes for developers:
   * A general architecture documentation has been added
