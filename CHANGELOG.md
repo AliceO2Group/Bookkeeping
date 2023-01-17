@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file. See [standa
   * OpenAPI has been removed, and with it all the auto-generated Go and c++ plugins
   * Detectors are now sorted in the run's detector filter
   * FLP proto creation request expect a hostname instead of hostName
+  * LHC fill GET endpoint returns the fill with all its runs, and not only the physics ones 
+  * LHC fill display page now have tabs to display all the runs or physics ones ony
+
 * Notable changes for developers:
   * A general architecture documentation has been added
 
