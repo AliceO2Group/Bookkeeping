@@ -437,42 +437,24 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if the limit is below 1', (done) => {
-            request(server)
-                .get('/api/logs?page[offset]=0&page[limit]=0')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 400 if the limit is below 1', async () => {
+            const response = await request(server).get('/api/logs?page[offset]=0&page[limit]=0');
+            expect(response.status).to.equal(400);
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
-
-                    done();
-                });
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
         });
 
-        it('should return the correct number of pages', (done) => {
-            request(server)
-                .get('/api/logs?page[offset]=0&page[limit]=2')
-                .expect(200)
-                .end(async (err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return the correct number of pages', async () => {
+            const response = await request(server).get('/api/logs?page[offset]=0&page[limit]=2');
+            expect(response.status).to.equal(200);
 
-                    const totalNumber = await LogRepository.count();
+            const totalNumber = await LogRepository.count();
 
-                    expect(res.body.data).to.have.lengthOf(2);
-                    expect(res.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
-                    expect(res.body.meta.page.totalCount).to.equal(totalNumber);
-
-                    done();
-                });
+            expect(response.body.data).to.have.lengthOf(2);
+            expect(response.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
+            expect(response.body.meta.page.totalCount).to.equal(totalNumber);
         });
 
         it('should support sorting, id DESC', (done) => {
@@ -809,7 +791,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 if at least one non-existent tag was provided', (done) => {
+        it('should return 400 if at least one non-existent or archived tag was provided', (done) => {
             request(server)
                 .post('/api/logs')
                 .send({
@@ -824,7 +806,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
+                    expect(res.body.errors[0].title).to.equal('Tags MAINTENANCE, DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found'
+                                                              + ' (they may have been archived)');
 
                     done();
                 });
@@ -903,12 +886,16 @@ module.exports = () => {
                             text: 'FOOD',
                             email: 'food-group@cern.ch',
                             mattermost: 'food',
+                            archived: false,
+                            archivedAt: null,
                         },
                         {
                             id: 2,
                             text: 'RUN',
                             email: 'marathon-group@cern.ch',
                             mattermost: 'marathon',
+                            archived: false,
+                            archivedAt: null,
                         },
                     ]);
                     expect(res.body.data.rootLogId).to.equal(1);
