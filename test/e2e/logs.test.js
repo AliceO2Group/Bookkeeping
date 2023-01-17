@@ -806,7 +806,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Tags MAINTENANCE, DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
+                    expect(res.body.errors[0].title).to.equal('Tags MAINTENANCE, DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found'
+                                                              + ' (they may have been archived)');
 
                     done();
                 });
