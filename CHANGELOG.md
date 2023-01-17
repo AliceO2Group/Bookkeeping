@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
   * An icon has been added to outline the detector's quality
   * OpenAPI has been removed, and with it all the auto-generated Go and c++ plugins
   * Detectors are now sorted in the run's detector filter
+  * FLP proto creation request expect a hostname instead of hostName
 * Notable changes for developers:
   * 
 
