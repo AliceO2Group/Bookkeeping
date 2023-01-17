@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Log runs filter applies on run number and not on run ID anymore
   * An icon has been added to outline the detector's quality
   * OpenAPI has been removed, and with it all the auto-generated Go and c++ plugins
+  * Detectors are now sorted in the run's detector filter
 * Notable changes for developers:
   * 
 
