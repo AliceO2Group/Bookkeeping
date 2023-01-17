@@ -63,4 +63,23 @@ module.exports = () => {
         // Because this tag does not exist, we expect an error message to appear
         await expectInnerText(page, '.alert', 'Tag with this id (999) could not be found');
     });
+
+    // Skipped because for now frontend send requests that are not authenticated as admin, hence this can't work
+    it.skip('can update a tag', async () => {
+        await page.goto(`${url}/?page=tag-detail&id=23&panel=logs`, { waitUntil: 'networkidle0' });
+        await pressElement(page, '#edit-tag');
+        await pressElement(page, '#tag-archive-toggle');
+        await pressElement(page, '#confirm-tag-edit');
+
+        await page.waitForNetworkIdle(50);
+        expect(await page.$eval('h2', (title) => title.parentNode.innerText.includes('Archived'))).to.be.true;
+
+        // Do the same again to un-archive
+        await pressElement(page, '#edit-tag');
+        await pressElement(page, '#tag-archive-toggle');
+        await pressElement(page, '#confirm-tag-edit');
+
+        await page.waitForNetworkIdle(50);
+        expect(await page.$eval('h2', (title) => title.parentNode.innerText.includes('Archived'))).to.be.false;
+    });
 };

@@ -13,9 +13,15 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, takeScreenshot } = require('../defaults.js');
+const { reloadPage } = require('../defaults.js');
 
 const { expect } = chai;
+
+const checkIconPath =
+    'M6.406 1l-.719.688-2.781 2.781-.781-.781-.719-.688-1.406 1.406.688.719 1.5 1.5.719.688.719-.688 3.5-3.5.688-.719-1.406-1.406z';
+const xIconPath =
+    'M1.406 0l-1.406 1.406.688.719 1.781 1.781-1.781 1.781-.688.719 1.406 1.406.719-.688 1.781-1.781 1.781 1.781.719.688'
+    + ' 1.406-1.406-.688-.719-1.781-1.781 1.781-1.781.688-.719-1.406-1.406-.719.688-1.781 1.781-1.781-1.781-.719-.688z';
 
 module.exports = () => {
     let page;
@@ -68,13 +74,15 @@ module.exports = () => {
         expect(await page.$eval('#tags-selection #tagCheckbox1', (elem) => elem.checked)).to.be.true;
     });
 
-    it('successfully display detectors qualities', async () => {
+    it('successfully display detectors qualities with colors and icon', async () => {
         await reloadPage(page);
-        const detectorBadgeSelector = '#Run-detectors small';
+        const detectorBadgeSelector = '#Run-detectors .detector-badge';
         const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
         expect(detectorBadgeClass).to.contain('b-success');
         expect(detectorBadgeClass).to.contain('success');
         expect(await page.$eval(detectorBadgeSelector, (element) => element.innerText)).to.equal('CPV');
+        expect(await page.$eval('#Run-detectors .detector-quality-icon svg path', (element) => element.getAttribute('d')))
+            .to.equal(checkIconPath);
     });
 
     it('successfully update detectors qualities in EDIT mode', async () => {
@@ -85,18 +93,19 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';
-        await takeScreenshot(page);
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.true;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.false;
         await pressElement(page, badQualityRadioSelector);
         await pressElement(page, '#save-run');
         await page.waitForTimeout(100);
 
-        const detectorBadgeSelector = '#Run-detectors small';
+        const detectorBadgeSelector = '#Run-detectors .detector-badge';
         const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
         expect(detectorBadgeClass).to.contain('b-danger');
         expect(detectorBadgeClass).to.contain('danger');
         expect(await page.$eval(detectorBadgeSelector, (element) => element.innerText)).to.equal('CPV');
+        expect(await page.$eval('#Run-detectors .detector-quality-icon svg path', (element) => element.getAttribute('d')))
+            .to.equal(xIconPath);
 
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);

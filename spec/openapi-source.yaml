@@ -2657,6 +2657,16 @@ components:
           type: integer
           minimum: 0
           example: 853113599
+        archivedAt:
+          description: >-
+            Unix timestamp at which one the tag has been archived (null if the
+            tag is not archived)
+          type: integer
+          nullable: true
+        archived:
+          description: Flag set to true if the tag is archived
+          type: boolean
+          nullable: true
       required:
         - id
         - text

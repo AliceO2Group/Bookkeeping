@@ -2632,6 +2632,16 @@ components:
       description: A label attached to something for the purpose of identification.
       type: object
       properties:
+        archived:
+          description: Flag set to true if the tag is archived
+          type: boolean
+          nullable: true
+        archivedAt:
+          description: >-
+            Unix timestamp at which one the tag has been archived (null if the
+            tag is not archived)
+          type: integer
+          nullable: true
         createdAt:
           description: Unix timestamp when this entity was created.
           type: integer

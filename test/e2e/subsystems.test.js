@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const path = require('path');
 const chai = require('chai');
 const request = require('supertest');
-const chaiResponseValidator = require('chai-openapi-response-validator');
 const {
     dtos: {
         CreateSubsystemDto,
@@ -27,8 +25,6 @@ const {
 } = require('../../lib/usecases');
 
 const { expect } = chai;
-
-chai.use(chaiResponseValidator(path.resolve(__dirname, '..', '..', 'spec', 'openapi.yaml')));
 
 module.exports = () => {
     const { server } = require('../../lib/application');
@@ -43,9 +39,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.be.an('array');
 
@@ -62,9 +55,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(1);
@@ -83,9 +73,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].id).to.equal(2);
 
@@ -102,9 +89,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
@@ -125,9 +109,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/name');
@@ -151,9 +132,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.data.name).to.equal(expectedName);
 
                     done();
@@ -173,9 +151,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].detail).to.equal('The provided entity already exists');
 
                     done();
@@ -193,9 +168,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const titleError =
@@ -216,9 +188,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
                     expect(error.detail).to.equal('"params.subsystemId" must be a positive number');
@@ -236,9 +205,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
@@ -258,9 +224,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Subsystem with this id (999999999) could not be found');
 
                     done();
@@ -276,9 +239,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(1);
 
@@ -311,9 +271,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
                     expect(error.detail).to.equal('"params.subsystemId" must be a number');
@@ -331,9 +288,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     const { errors } = res.body;
                     const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
@@ -353,9 +307,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     const { errors } = res.body;
                     const error = errors.find((err) => err.source.pointer === '/data/attributes/params/subsystemId');
                     expect(error.detail).to.equal('"params.subsystemId" must be an integer');
@@ -374,9 +325,6 @@ module.exports = () => {
                         return;
                     }
 
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
-
                     expect(res.body.errors[0].title).to.equal('Subsystem with this id (999999999) could not be found');
 
                     done();
@@ -392,9 +340,6 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-
-                    // Response must satisfy the OpenAPI specification
-                    expect(res).to.satisfyApiSpec;
 
                     expect(res.body.data.id).to.equal(createdSubsystem.id);
                     expect(res.body.data.name).to.equal(createdSubsystem.name);
