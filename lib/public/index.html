@@ -11,10 +11,9 @@
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/css/src/bootstrap.css">
     <link rel="stylesheet" href="/app.css">
-
-    <script src="/js/src/compatibility.js"></script>
 </head>
 
+<script src="index.js" type="module"></script>
 <!-- ----------------------------------------------------------------------------------- -->
 <!-- CodeMirror -->
 
@@ -74,31 +73,4 @@
 <script src="/assets/SmartEditor/HyperMD/powerpack/fold-emoji-with-emojione.js"></script>
 
 <body>
-    <!-- Load the session service, parses variables provided by server in the query -->
-    <script type="module">
-        import sessionService from '/js/src/sessionService.js';
-        sessionService.loadAndHideParameters();
-
-        // Expose sessionService to interact with it the browser's console
-        window.sessionService = sessionService;
-    </script>
-
-    <!-- Main application controller -->
-    <script type="module">
-        // Import MVC
-        import { mount } from '/js/src/index.js';
-        import view from './view.js';
-        import Model from './Model.js';
-        import { markdownEngine } from './components/common/markdown/markdownEngine.js';
-
-        // Start application
-        const model = new Model(window, document);
-        markdownEngine.useHyperMd(HyperMD);
-        markdownEngine.useCompleteEmoji(CompleteEmoji);
-        const debug = true; // shows when redraw is done
-        mount(document.body, view, model, debug);
-
-        // Expose model to interact with it the browser's console
-        window.model = model;
-    </script>
 </body>
