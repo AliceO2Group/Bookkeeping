@@ -6,7 +6,7 @@ services:
       target: test
     environment:
       NODE_ENV: test
-      DATABASE_LOGGING: "True"
+      DATABASE_LOGGING: "False"
       JWT_SECRET: BOOKKEEPING-TEST-SUITE
       PAGE_ITEMS_LIMIT: 100
     restart: "no"
