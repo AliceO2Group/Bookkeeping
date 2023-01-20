@@ -15,7 +15,7 @@ const chai = require('chai');
 const request = require('supertest');
 const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
-const { RunDefinition } = require('../../lib/services/getRunDefinition.js');
+const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 
 const { expect } = chai;
 
