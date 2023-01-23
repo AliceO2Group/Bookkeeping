@@ -97,7 +97,7 @@ module.exports.reloadPage = (page) => page.reload({ waitUntil: 'networkidle0' })
  * Goes to a specific page and waits until everything is loaded.
  * @param {Object} page Puppeteer page object.
  * @param {String} pageText Value of pageText in: URL/?page={pageText}&...
- * @returns {String} Switches the user to the correct page.
+ * @returns {Promise<String>} Switches the user to the correct page.
  */
 module.exports.goToPage = (page, pageText) => page.goto(`${getUrl()}/?page=${pageText}`, { waitUntil: 'networkidle0' });
 

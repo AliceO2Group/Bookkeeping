@@ -29,12 +29,26 @@ module.exports = () => {
     });
 
     it('should successfully emphasize the fills that have a stable beams', async () => {
-        // Fill #1 has a stable beam
-        const stableBeamBadge = await page.$('#stable-beam-badge');
-        expect(stableBeamBadge).to.be.not.null;
+        // Fill #6 has a stable beam
+        {
+            const stableBeamBadge = await page.$('#stable-beam-badge');
+            expect(stableBeamBadge).to.be.not.null;
+            expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-primary'))).to.be.true;
+            expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM');
+        }
+
+        // Fill #5 has an ongoing stable beam
+        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=5`, { waitUntil: 'networkidle0' });
+        {
+            const stableBeamBadge = await page.$('#stable-beam-badge');
+            expect(stableBeamBadge).to.be.not.null;
+            expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
+            expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM - ONGOING');
+        }
     });
 
     it('should successfully display runs statistics', async () => {
+        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=6`, { waitUntil: 'networkidle0' });
         const statistics = await page.$('#statistics');
         expect(statistics).to.be.not.null;
         const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);
