@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     auto client = BookkeepingClientFactory::fromConfiguration(ss.str());
     client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 2, 2, 2, 2);
   } catch (std::runtime_error& error) {
-    std::cout << "An error occurred: " << error.what() << std::endl;
+    std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);
   }
 

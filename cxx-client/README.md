@@ -6,7 +6,8 @@
 
 Follow [this](https://alice-doc.github.io/alice-analysis-tutorial/building/) tutorial to install `aliBuild`.
 
-Install `BookkeepingApi` module:
+First of all, you need to add a dependency on `bookkeeping-api` in alidist.
+Then, install `BookkeepingApi` module in your working directory:
 
 ```
 aliBuild build bookkeeping-api
@@ -21,9 +22,10 @@ If you want to make changes to the source code initialise the development packag
 aliBuild init bookkeeping-api@master
 ```
 
-and then use `make` to recompile
+and then load the environment using `alienv` and use `make` to recompile
 
 ```
+alienv enter bookkeeping-api/latest
 cd sw/BUILD/bookkeeping-api-latest/bookkeeping-api
 make -j install
 ```
@@ -51,13 +53,13 @@ auto client = BookkeepingClientFactory::fromConfiguration("consul://[host][:port
 
 Then the client provide access to services which group API calls by context, for example `flp`, `run` and so on.
 
-For example to update readout FLP's counters you can use
+For example to update readout FLP's counters using a local JSON file you can use
 
 ```cpp
 #include "<BookkeepingApi/BookkeepingClientFactory.h>"
 using namespace o2::bookkeeping:api;
 
-auto client = BookkeepingClientFactory::fromConfiguration("consul://[host][:port]");
+auto client = BookkeepingClientFactory::fromConfiguration("json://[path-to-configuration-file]");
 client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-NAME", runNumber, nSubtimeframes, nEquipmentBytes, nRecordingBytes, nFairMQBytes);
 ```
 

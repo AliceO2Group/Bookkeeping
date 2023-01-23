@@ -72,9 +72,9 @@ target_link_libraries(
 
 ### EXECUTABLE
 
-add_executable(runner src/runner.cxx)
+add_executable(example example/main.cxx)
 
-target_link_libraries(runner
+target_link_libraries(example
     PUBLIC
     ${library_name}
 )
@@ -94,7 +94,7 @@ configure_package_config_file(cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
 
 ### INSTALL
 
-install(TARGETS ${library_name} runner
+install(TARGETS ${library_name} example
   EXPORT ${library_name}Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
