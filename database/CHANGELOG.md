@@ -1,3 +1,6 @@
+## [0.49.0]
+* Changes made to the database:
+
 ## [0.42.0]
 * Changes made to the database:
   * Table `runs` - added fields:
