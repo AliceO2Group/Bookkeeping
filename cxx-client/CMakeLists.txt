@@ -8,6 +8,7 @@ project(BookkeepingApi
 find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC REQUIRED)
 find_package(Configuration REQUIRED)
+find_package(InfoLogger REQUIRED)
 
 set(CMAKE_INSTALL_LIBDIR lib)
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
@@ -77,6 +78,7 @@ add_executable(example example/main.cxx)
 target_link_libraries(example
     PUBLIC
     ${library_name}
+    AliceO2::InfoLogger
 )
 
 
