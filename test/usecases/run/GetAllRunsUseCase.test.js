@@ -14,7 +14,7 @@
 const { run: { GetAllRunsUseCase } } = require('../../../lib/usecases');
 const { dtos: { GetAllRunsDto } } = require('../../../lib/domain');
 const chai = require('chai');
-const { RunDefinition } = require('../../../lib/services/getRunDefinition.js');
+const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 
 const { expect } = chai;
 
