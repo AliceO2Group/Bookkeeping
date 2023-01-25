@@ -11,17 +11,17 @@
  * or submit itself to any jurisdiction.
  */
 
-const DatabaseSuite = require('./database');
-const EndToEndSuite = require('./e2e');
+const DatabaseSuite = require('./lib/database');
+const APISuite = require('./api');
 const PresentationSuite = require('./presentation');
 const PublicSuite = require('./public');
-const ServerSuite = require('./server');
-const UseCasesSuite = require('./usecases');
-const UtilitiesSuite = require('./utilities');
+const ServerSuite = require('./lib/server');
+const UseCasesSuite = require('./lib/usecases');
+const UtilitiesSuite = require('./lib/utilities');
+
+const application = require('../lib/application');
 
 describe('Bookkeeping', () => {
-    const application = require('../lib/application');
-
     before(async () => {
         await application.run();
         await application.connectDatabase();
@@ -41,6 +41,6 @@ describe('Bookkeeping', () => {
 
     describe('Integration Suite', () => {
         describe('UI', PublicSuite);
-        describe('API', EndToEndSuite);
+        describe('API', APISuite);
     });
 });
