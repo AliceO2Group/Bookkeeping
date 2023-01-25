@@ -9,27 +9,27 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#ifndef CXX_CLIENT_GRPC_GRPCBOOKKEEPINGCLIENT_H_
-#define CXX_CLIENT_GRPC_GRPCBOOKKEEPINGCLIENT_H_
+#ifndef CXX_CLIENT_GRPC_GRPCBKPCLIENT_H_
+#define CXX_CLIENT_GRPC_GRPCBKPCLIENT_H_
 
 #include "flp.grpc.pb.h"
-#include "BookkeepingApi/BookkeepingClient.h"
+#include "BookkeepingApi/BkpClient.h"
 #include "grpc/services/GrpcFlpServiceClient.h"
 
-namespace o2::bookkeeping::api::grpc
+namespace o2::bkp::api::grpc
 {
 /// gRPC based implementation of BookkeepingClient
-class GrpcBookkeepingClient : public o2::bookkeeping::api::BookkeepingClient
+class GrpcBkpClient : public o2::bkp::api::BkpClient
 {
  public:
-  explicit GrpcBookkeepingClient(const std::string& url);
-  ~GrpcBookkeepingClient() = default;
+  explicit GrpcBkpClient(const std::string& uri);
+  ~GrpcBkpClient() = default;
 
   const std::shared_ptr<FlpServiceClient> flp() const override;
 
  private:
   std::shared_ptr<services::GrpcFlpServiceClient> mFlpClient;
 };
-} // namespace o2::bookkeeping::api::grpc
+} // namespace o2::bkp::api::grpc
 
-#endif // CXX_CLIENT_GRPC_GRPCBOOKKEEPINGCLIENT_H_
+#endif // CXX_CLIENT_GRPC_GRPCBKPCLIENT_H_

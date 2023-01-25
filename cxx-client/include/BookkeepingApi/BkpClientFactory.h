@@ -13,18 +13,22 @@
 // Created by Barthélémy von Haller on 10.01.23.
 //
 
-#include <iostream>
-#include "BookkeepingApi/BookkeepingClientFactory.h"
-#include "grpc/GrpcBookkeepingClient.h"
-#include "Configuration/ConfigurationFactory.h"
+#ifndef CXX_CLIENT_BOOKKEEPINGAPI_BKPCLIENTFACTORY_H
+#define CXX_CLIENT_BOOKKEEPINGAPI_BKPCLIENTFACTORY_H
 
-using o2::configuration::ConfigurationFactory;
+#include "BookkeepingApi/BkpClient.h"
 
-namespace o2::bookkeeping::api
+namespace o2::bkp::api
 {
-std::shared_ptr<BookkeepingClient> BookkeepingClientFactory::fromConfiguration(const std::string& uri)
+/// Abstract factory for bookkeeping API clients
+class BkpClientFactory
 {
-  auto configuration = ConfigurationFactory::getConfiguration(uri);
-  return std::make_shared<grpc::GrpcBookkeepingClient>(configuration->get<std::string>("o2.bookkeeping.grpc-url"));
-}
-} // namespace o2::bookkeeping::api
+ public:
+  BkpClientFactory() = delete;
+
+  /// Provides a Bookkeeping API client configured from a given configuration URI
+  static std::shared_ptr<BkpClient> fromConfiguration(const std::string& uri);
+};
+} // namespace o2::bkp::api
+
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_BKPCLIENTFACTORY_H

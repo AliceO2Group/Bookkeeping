@@ -50,9 +50,9 @@ add_custom_command(
 set(library_name BookkeepingApi)
 
 add_library(${library_name}
-    src/grpc/GrpcBookkeepingClient.cxx
+    src/grpc/GrpcBkpClient.cxx
     src/grpc/services/GrpcFlpServiceClient.cxx
-    src/BookkeepingClientFactory.cxx
+    src/BkpClientFactory.cxx
     ${PROTO_CPP_OUTPUT}
     ${GRPC_CPP_OUTPUT}
 )

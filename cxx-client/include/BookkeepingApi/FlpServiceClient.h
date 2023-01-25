@@ -18,7 +18,7 @@
 
 #include <string>
 
-namespace o2::bookkeeping::api
+namespace o2::bkp::api
 {
 class FlpServiceClient
 {
@@ -32,6 +32,6 @@ class FlpServiceClient
     int64_t nRecordingBytes,
     int64_t nFairMQBytes) = 0;
 };
-} // namespace o2::bookkeeping::api
+} // namespace o2::bkp::api
 
 #endif // CXX_CLIENT_BOOKKEEPINGAPI_FLPSERVICECLIENT_H_

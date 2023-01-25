@@ -9,21 +9,21 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#ifndef CXX_CLIENT_BOOKKEEPINGAPI_BOOKKEEPINGCLIENT_H_
-#define CXX_CLIENT_BOOKKEEPINGAPI_BOOKKEEPINGCLIENT_H_
+#ifndef CXX_CLIENT_BOOKKEEPINGAPI_BKPCLIENT_H_
+#define CXX_CLIENT_BOOKKEEPINGAPI_BKPCLIENT_H_
 
 #include <memory>
 #include "FlpServiceClient.h"
 
-namespace o2::bookkeeping::api
+namespace o2::bkp::api
 {
 /// Interface for bookkeeping API clients
-class BookkeepingClient
+class BkpClient
 {
  public:
   /// Return client for FLP service
   virtual const std::shared_ptr<FlpServiceClient> flp() const = 0;
 };
-} // namespace o2::bookkeeping::api
+} // namespace o2::bkp::api
 
-#endif // CXX_CLIENT_BOOKKEEPINGAPI_BOOKKEEPINGCLIENT_H_
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_BKPCLIENT_H_

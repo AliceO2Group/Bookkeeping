@@ -19,13 +19,13 @@
 #include "BookkeepingApi/FlpServiceClient.h"
 #include "flp.grpc.pb.h"
 
-namespace o2::bookkeeping::api::grpc::services
+namespace o2::bkp::api::grpc::services
 {
 /// gRPC based implementation of FlpServiceClient
 class GrpcFlpServiceClient : public FlpServiceClient
 {
  public:
-  explicit GrpcFlpServiceClient(const std::shared_ptr<::grpc::ChannelInterface> channel);
+  explicit GrpcFlpServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
 
   void updateReadoutCountersByFlpNameAndRunNumber(
     const std::string& flpName,

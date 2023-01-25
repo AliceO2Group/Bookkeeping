@@ -9,7 +9,7 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#include "GrpcBookkeepingClient.h"
+#include "GrpcBkpClient.h"
 #include <iostream>
 #include <grpc++/grpc++.h>
 #include "flp.grpc.pb.h"
@@ -21,18 +21,18 @@ using grpc::InsecureChannelCredentials;
 using o2::bookkeeping::Flp;
 using o2::bookkeeping::FlpService;
 
-namespace o2::bookkeeping::api::grpc
+namespace o2::bkp::api::grpc
 {
 using services::GrpcFlpServiceClient;
 
-GrpcBookkeepingClient::GrpcBookkeepingClient(const std::string& url)
+GrpcBkpClient::GrpcBkpClient(const std::string& uri)
 {
-  auto channel = CreateChannel(url, InsecureChannelCredentials());
+  auto channel = CreateChannel(uri, InsecureChannelCredentials());
   mFlpClient = std::make_shared<GrpcFlpServiceClient>(channel);
 }
 
-const std::shared_ptr<FlpServiceClient> GrpcBookkeepingClient::flp() const
+const std::shared_ptr<FlpServiceClient> GrpcBkpClient::flp() const
 {
   return mFlpClient;
 }
-} // namespace o2::bookkeeping::api::grpc
+} // namespace o2::bkp::api::grpc

@@ -11,10 +11,10 @@
 
 #include <stdexcept>
 #include <sstream>
-#include "BookkeepingApi/BookkeepingClientFactory.h"
+#include "BookkeepingApi/BkpClientFactory.h"
 #include "InfoLogger/InfoLogger.hxx"
 
-using namespace o2::bookkeeping::api;
+using namespace o2::bkp::api;
 using namespace AliceO2::InfoLogger;
 
 int main(int argc, char** argv)
@@ -28,10 +28,10 @@ int main(int argc, char** argv)
 
   try {
     // Let Configuration check for file validity which goes out of this example
-    // Configuration file must provide the bookkeeping gRPC endpoint's URL in the key `o2.bookkeeping.grpc-url`
+    // Configuration file must provide the bookkeeping gRPC endpoint's URI in the key `o2.bkp.grpc-uri`
     std::stringstream uriStream;
     uriStream << "json://" << argv[1];
-    auto client = BookkeepingClientFactory::fromConfiguration(uriStream.str());
+    auto client = BkpClientFactory::fromConfiguration(uriStream.str());
     client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 2, 2, 2, 2);
     logger.log(InfoLogger::Severity::Info, "FLP counters have been successfully updated");
   } catch (std::runtime_error& error) {

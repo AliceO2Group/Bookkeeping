@@ -22,9 +22,9 @@ using grpc::Status;
 using grpc::ChannelInterface;
 using o2::bookkeeping::UpdateCountersRequest;
 
-namespace o2::bookkeeping::api::grpc::services
+namespace o2::bkp::api::grpc::services
 {
-GrpcFlpServiceClient::GrpcFlpServiceClient(const std::shared_ptr<ChannelInterface> channel)
+GrpcFlpServiceClient::GrpcFlpServiceClient(const std::shared_ptr<ChannelInterface>& channel)
 {
   mStub = o2::bookkeeping::FlpService::NewStub(channel);
 }
@@ -54,4 +54,4 @@ void GrpcFlpServiceClient::updateReadoutCountersByFlpNameAndRunNumber(
     throw std::runtime_error(status.error_message());
   }
 }
-} // namespace o2::bookkeeping::api::grpc::services
+} // namespace o2::bkp::api::grpc::services

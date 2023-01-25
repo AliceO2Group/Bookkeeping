@@ -45,21 +45,25 @@ target_link_libraries(${EXECUTABLE_NAME} PRIVATE BookkeepingApi::BookkeepingApi)
 The bookkeeping API's client can be requested form the factory based on a configuration URI:
 
 ```cpp
-#include "<BookkeepingApi/BookkeepingClientFactory.h>"
-using namespace o2::bookkeeping:api;
+#include "<BookkeepingApi/BkpClientFactory.h>"
+using namespace o2::bkp:api;
 
-auto client = BookkeepingClientFactory::fromConfiguration("consul://[host][:port]");
+auto client = BkpClientFactory::fromConfiguration("consul://[host][:port]");
 ```
+
+In the configuration, the bookkeeping gRPC endpoint's URI is expected to be provided under the key `o2.bkp.grpc-uri`. If you
+have a local bookkeeping running, the URI should be `127.0.0.1:4001` (note the **absence** of protocol such
+as `https://`).
 
 Then the client provide access to services which group API calls by context, for example `flp`, `run` and so on.
 
 For example to update readout FLP's counters using a local JSON file you can use
 
 ```cpp
-#include "<BookkeepingApi/BookkeepingClientFactory.h>"
-using namespace o2::bookkeeping:api;
+#include "<BookkeepingApi/BkpClientFactory.h>"
+using namespace o2::bkp:api;
 
-auto client = BookkeepingClientFactory::fromConfiguration("json://[path-to-configuration-file]");
+auto client = BkpClientFactory::fromConfiguration("json://[path-to-configuration-file]");
 client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-NAME", runNumber, nSubtimeframes, nEquipmentBytes, nRecordingBytes, nFairMQBytes);
 ```
 
