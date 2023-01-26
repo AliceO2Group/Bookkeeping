@@ -30,6 +30,7 @@ module.exports = () => {
 
     it('should successfully identify runs as COMMISIONING', () => {
         expect(getRunDefinition(COMMISSIONING.standalone)).to.equal(RunDefinition.Commissioning);
+        expect(getRunDefinition(COMMISSIONING.noStableBeamOverlap)).to.equal(RunDefinition.Commissioning);
     });
 
     it('should successfully identify runs as TECHNICAL', () => {

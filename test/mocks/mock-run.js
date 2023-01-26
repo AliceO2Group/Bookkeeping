@@ -132,6 +132,21 @@ module.exports = {
                 name: 'STANDALONE',
             },
         },
+        noStableBeamOverlap: {
+            dcs: true,
+            dd_flp: true,
+            epn: true,
+            triggerValue: 'CTP',
+            tfbDdMode: 'processing',
+            pdpWorkflowParameters: 'QC,CTF',
+            lhcFill: {
+                stableBeamsStart: '2022-10-03T10:00:00',
+                stableBeamsEnd: '2022-10-04T10:00:00',
+            },
+            startTime: 1664618400000, // 2022-10-01T12:00:00
+            endTime: 1664625600000, // 2022-10-01T14:00:00
+            concatenatedDetectors: 'ITS, TST',
+        },
     },
     TECHNICAL: {
         standalone: {
