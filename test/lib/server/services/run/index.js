@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const DetectorServicesSuite = require('./detector/index.js');
-const RunServicesSuite = require('./run/index.js');
+const getRunDefinition = require('./getRunDefinition.test.js');
 
 module.exports = () => {
-    describe('Detector Services Suite', DetectorServicesSuite);
-    describe('Run Services Suite', RunServicesSuite);
+    describe('getRunDefinition', getRunDefinition);
 };
