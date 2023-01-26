@@ -7,8 +7,6 @@ project(BookkeepingApi
 
 find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC REQUIRED)
-find_package(Configuration REQUIRED)
-find_package(InfoLogger REQUIRED)
 
 set(CMAKE_INSTALL_LIBDIR lib)
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
@@ -47,9 +45,7 @@ add_custom_command(
 
 ### LIBRARY
 
-set(library_name BookkeepingApi)
-
-add_library(${library_name}
+add_library(BookkeepingApi
     src/grpc/GrpcBkpClient.cxx
     src/grpc/services/GrpcFlpServiceClient.cxx
     src/BkpClientFactory.cxx
@@ -57,7 +53,7 @@ add_library(${library_name}
     ${GRPC_CPP_OUTPUT}
 )
 
-target_include_directories(${library_name}
+target_include_directories(BookkeepingApi
     PUBLIC $<INSTALL_INTERFACE:include>    # public header once installed
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> # to build it
     PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> # because of the proto generated files
@@ -65,11 +61,12 @@ target_include_directories(${library_name}
 )
 
 target_link_libraries(
-    ${library_name}
+    BookkeepingApi
     PRIVATE protobuf::libprotobuf
             gRPC::grpc++
-            AliceO2::Configuration
 )
+
+target_compile_features(BookkeepingApi PUBLIC cxx_std_17)
 
 ### EXECUTABLE
 
@@ -77,10 +74,8 @@ add_executable(example example/main.cxx)
 
 target_link_libraries(example
     PUBLIC
-    ${library_name}
-    AliceO2::InfoLogger
+    BookkeepingApi
 )
-
 
 # PACKAGE INFO
 
@@ -96,8 +91,8 @@ configure_package_config_file(cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
 
 ### INSTALL
 
-install(TARGETS ${library_name} example
-  EXPORT ${library_name}Targets
+install(TARGETS BookkeepingApi example
+  EXPORT BookkeepingApiTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -112,8 +107,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
 
 # Export targets
-install(EXPORT ${library_name}Targets
-  FILE ${library_name}Targets.cmake
-  NAMESPACE ${library_name}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${library_name}
+install(EXPORT BookkeepingApiTargets
+  FILE BookkeepingApiTargets.cmake
+  NAMESPACE AliceO2::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BookkeepingApi
   )

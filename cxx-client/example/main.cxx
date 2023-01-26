@@ -10,34 +10,24 @@
 //  or submit itself to any jurisdiction.
 
 #include <stdexcept>
-#include <sstream>
+#include <iostream>
 #include "BookkeepingApi/BkpClientFactory.h"
-#include "InfoLogger/InfoLogger.hxx"
 
 using namespace o2::bkp::api;
-using namespace AliceO2::InfoLogger;
 
 int main(int argc, char** argv)
 {
-  InfoLogger logger;
-
   if (argc < 2) {
-    logger.logError("You need to provide path to the configuration as first argument");
+    std::cerr << "You need to provide the gRPC URI as first argument" << std::endl;
     exit(1);
   }
 
   try {
-    // Let Configuration check for file validity which goes out of this example
-    // Configuration file must provide the bookkeeping gRPC endpoint's URI in the key `o2.bkp.grpc-uri`
-    std::stringstream uriStream;
-    uriStream << "json://" << argv[1];
-    auto client = BkpClientFactory::fromConfiguration(uriStream.str());
+    auto client = BkpClientFactory::create(argv[1]);
     client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 2, 2, 2, 2);
-    logger.log(InfoLogger::Severity::Info, "FLP counters have been successfully updated");
+    std::cout << "FLP counters have been successfully updated" << std::endl;
   } catch (std::runtime_error& error) {
-    std::stringstream errorMessageStream;
-    errorMessageStream << "An error occurred: " << error.what();
-    logger.log(InfoLogger::Severity::Error, "An error occurred: %s", error.what());
+    std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);
   }
 

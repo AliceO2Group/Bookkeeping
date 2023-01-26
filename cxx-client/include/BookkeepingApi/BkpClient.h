@@ -21,8 +21,10 @@ namespace o2::bkp::api
 class BkpClient
 {
  public:
+  virtual ~BkpClient() = default;
+
   /// Return client for FLP service
-  virtual const std::shared_ptr<FlpServiceClient> flp() const = 0;
+  virtual const std::unique_ptr<FlpServiceClient>& flp() const = 0;
 };
 } // namespace o2::bkp::api
 

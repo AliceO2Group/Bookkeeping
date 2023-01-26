@@ -23,6 +23,8 @@ namespace o2::bkp::api
 class FlpServiceClient
 {
  public:
+  virtual ~FlpServiceClient() = default;
+
   /// Update counters for a given flp, identified by its name and its run number
   virtual void updateReadoutCountersByFlpNameAndRunNumber(
     const std::string& flpName,

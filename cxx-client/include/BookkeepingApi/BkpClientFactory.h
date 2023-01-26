@@ -27,7 +27,7 @@ class BkpClientFactory
   BkpClientFactory() = delete;
 
   /// Provides a Bookkeeping API client configured from a given configuration URI
-  static std::shared_ptr<BkpClient> fromConfiguration(const std::string& uri);
+  static std::unique_ptr<BkpClient> create(const std::string& gRPCUri);
 };
 } // namespace o2::bkp::api
 

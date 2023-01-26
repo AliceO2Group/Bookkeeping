@@ -10,28 +10,32 @@
 //  or submit itself to any jurisdiction.
 
 #include "GrpcBkpClient.h"
-#include <iostream>
+#include <memory>
 #include <grpc++/grpc++.h>
 #include "flp.grpc.pb.h"
 
 using grpc::Channel;
 
+using std::string;
+using std::unique_ptr;
+using std::make_unique;
 using grpc::CreateChannel;
 using grpc::InsecureChannelCredentials;
 using o2::bookkeeping::Flp;
 using o2::bookkeeping::FlpService;
+using o2::bkp::api::FlpServiceClient;
 
 namespace o2::bkp::api::grpc
 {
 using services::GrpcFlpServiceClient;
 
-GrpcBkpClient::GrpcBkpClient(const std::string& uri)
+GrpcBkpClient::GrpcBkpClient(const string& uri)
 {
   auto channel = CreateChannel(uri, InsecureChannelCredentials());
-  mFlpClient = std::make_shared<GrpcFlpServiceClient>(channel);
+  mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
 }
 
-const std::shared_ptr<FlpServiceClient> GrpcBkpClient::flp() const
+const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
 {
   return mFlpClient;
 }

@@ -22,7 +22,7 @@
 namespace o2::bkp::api::grpc::services
 {
 /// gRPC based implementation of FlpServiceClient
-class GrpcFlpServiceClient : public FlpServiceClient
+class GrpcFlpServiceClient : public ::o2::bkp::api::FlpServiceClient
 {
  public:
   explicit GrpcFlpServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);

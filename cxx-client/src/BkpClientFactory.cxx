@@ -14,16 +14,17 @@
 //
 
 #include "BookkeepingApi/BkpClientFactory.h"
+#include <memory>
 #include "grpc/GrpcBkpClient.h"
-#include "Configuration/ConfigurationFactory.h"
 
-using o2::configuration::ConfigurationFactory;
+using std::make_unique;
+using std::string;
+using std::unique_ptr;
 
 namespace o2::bkp::api
 {
-std::shared_ptr<BkpClient> BkpClientFactory::fromConfiguration(const std::string& uri)
+unique_ptr<BkpClient> BkpClientFactory::create(const string& gRPCUri)
 {
-  auto configuration = ConfigurationFactory::getConfiguration(uri);
-  return std::make_shared<grpc::GrpcBkpClient>(configuration->get<std::string>("o2.bkp.grpc-uri"));
+  return make_unique<grpc::GrpcBkpClient>(gRPCUri);
 }
 } // namespace o2::bkp::api

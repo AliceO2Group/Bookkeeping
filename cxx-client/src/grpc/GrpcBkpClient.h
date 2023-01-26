@@ -23,12 +23,12 @@ class GrpcBkpClient : public o2::bkp::api::BkpClient
 {
  public:
   explicit GrpcBkpClient(const std::string& uri);
-  ~GrpcBkpClient() = default;
+  ~GrpcBkpClient() override = default;
 
-  const std::shared_ptr<FlpServiceClient> flp() const override;
+  const std::unique_ptr<FlpServiceClient>& flp() const override;
 
  private:
-  std::shared_ptr<services::GrpcFlpServiceClient> mFlpClient;
+  std::unique_ptr<::o2::bkp::api::FlpServiceClient> mFlpClient;
 };
 } // namespace o2::bkp::api::grpc
 
