@@ -20,7 +20,7 @@ const {
     getFirstRow,
     goToPage,
 } = require('../defaults');
-const { checkColumnBalloon, reloadPage } = require('../defaults.js');
+const { checkColumnBalloon, reloadPage, waitForNetworkIdleAndRedraw } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 
 const { expect } = chai;
