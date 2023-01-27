@@ -303,13 +303,13 @@ module.exports = () => {
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
 
-        expect(runs).to.have.lengthOf(5);
+        expect(runs).to.have.lengthOf(6);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
         runDuration.operator = '>';
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(5);
         expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
     });
 
@@ -453,7 +453,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(44);
+        expect(runs).to.have.lengthOf(46);
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
