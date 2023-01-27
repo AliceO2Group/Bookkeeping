@@ -158,6 +158,7 @@ module.exports = () => {
                 .to
                 .equal('"query.filter.definitions[0]" must be one of [PHYSICS, COSMICS, TECHNICAL, SYNTHETIC, CALIBRATION, COMMISSIONING]');
         });
+
         it('should successfully filter on run definition', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=physics');
             expect(response.status).to.equal(200);
@@ -166,6 +167,7 @@ module.exports = () => {
             expect(data).to.lengthOf(4);
             expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
+
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
@@ -183,6 +185,7 @@ module.exports = () => {
                     done();
                 });
         });
+
         it('should return 400 if "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2end][from]=946771200000&filter[o2end][to]=946684800000')
@@ -200,6 +203,7 @@ module.exports = () => {
                     done();
                 });
         });
+
         it('should return 400 with 3 errors when all the wrong data is given', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=1896130800000&filter[o2start][to]=1893452400000')
@@ -505,47 +509,48 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 and a duration with no trigger end', (done) => {
+            request(server)
+                .get('/api/runs/103')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+
+                    expect(data.runDuration).to.equal(3600000);
+                    expect(data.timeO2Start).to.not.equal(null);
+                    expect(data.timeO2End).to.not.equal(null);
+                    expect(data.timeTrgStart).to.not.equal(null);
+                    expect(data.timeTrgEnd).to.equal(null);
+                    done();
+                });
+        });
+        it('should return 200 and a time when only o2 times are given', (done) => {
+            request(server)
+                .get('/api/runs/102')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    const { data } = res.body;
+
+                    expect(data.runDuration).to.equal(3600000);
+                    expect(data.timeO2Start).to.not.equal(null);
+                    expect(data.timeO2End).to.not.equal(null);
+                    expect(data.timeTrgStart).to.equal(null);
+                    expect(data.timeTrgEnd).to.equal(null);
+
+                    done();
+                });
+        });
     });
 
-    it('should return 200 and a duration with no trigger end', (done) => {
-        request(server)
-            .get('/api/runs/103')
-            .expect(200)
-            .end((err, res) => {
-                if (err) {
-                    done(err);
-                    return;
-                }
-                const { data } = res.body;
-
-                expect(data.runDuration).to.equal(3600000);
-                expect(data.timeO2Start).to.not.equal(null);
-                expect(data.timeO2End).to.not.equal(null);
-                expect(data.timeTrgStart).to.not.equal(null);
-                expect(data.timeTrgEnd).to.equal(null);
-                done();
-            });
-    });
-    it('should return 200 and a time when only o2 times are given', (done) => {
-        request(server)
-            .get('/api/runs/102')
-            .expect(200)
-            .end((err, res) => {
-                if (err) {
-                    done(err);
-                    return;
-                }
-                const { data } = res.body;
-
-                expect(data.runDuration).to.equal(3600000);
-                expect(data.timeO2Start).to.not.equal(null);
-                expect(data.timeO2End).to.not.equal(null);
-                expect(data.timeTrgStart).to.equal(null);
-                expect(data.timeTrgEnd).to.equal(null);
-
-                done();
-            });
-    });
     describe('GET /api/runs/:runId/logs', () => {
         it('should return 400 if the run id is not a number', (done) => {
             request(server)
@@ -908,6 +913,7 @@ module.exports = () => {
                 });
         });
     });
+
     describe('PATCH api/runs/:runNumber', () => {
         const dateValue = new Date('1-1-2021').setHours(0, 0, 0, 0);
         it('should return 400 when runNumber is wrong', (done) => {
