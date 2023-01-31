@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -29,7 +29,7 @@ module.exports = () => {
     });
 
     it('flp detail loads correctly', async () => {
-        await page.goto(`${url}/?page=flp-detail&id=1`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'flp-detail', { queryParameters: { id: 1 } });
         await expectInnerText(page, 'h2', 'Flp #FLP-TPC-1');
     });
 
@@ -75,7 +75,7 @@ module.exports = () => {
 
     it('notifies if a specified flp id is invalid', async () => {
         // Navigate to a flp detail view with an id that cannot exist
-        await page.goto(`${url}/?page=flp-detail&id=abc`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'flp-detail', { queryParameters: { id: 'abc' } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.flpId" must be a number');
@@ -83,7 +83,7 @@ module.exports = () => {
 
     it('notifies if a specified flp id is not found', async () => {
         // Navigate to a flp detail view with an id that cannot exist
-        await page.goto(`${url}/?page=flp-detail&id=999`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'flp-detail', { queryParameters: { id: 999 } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Flp with this id (999) could not be found');
@@ -94,7 +94,8 @@ module.exports = () => {
         const runId = 1;
 
         // Navigate to a flp detail view
-        await page.goto(`${url}/?page=flp-detail&id=${flpRoleId}`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'flp-detail', { queryParameters: { id: flpRoleId } });
+
         // We expect the correct associated runs to be shown
         const runField = await page.$('#Flp-runs');
         const runText = await page.evaluate((element) => element.innerText, runField);
@@ -109,19 +110,4 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}&panel=logs`);
     });
-
-    /*
-     * It('can return to the overview page if an error occurred', async () => {
-     *     await page.goto(`${url}/?page=flp-detail&id=1`, { waitUntil: 'networkidle0' });
-     *     // We expect there to be a button to return to the overview page
-     *     await expectInnerText(page, '.btn-primary', 'Return to Overview');
-     */
-
-    /*
-     *     // We expect the button to return the user to the overview page when pressed
-     *     await pressElement(page, '.btn-primary');
-     *     await page.waitForTimeout(100);
-     *     expect(page.url()).to.equal(`${url}/?page=flp-overview`);
-     * });
-     */
 };

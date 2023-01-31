@@ -38,7 +38,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=tag-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'tag-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);

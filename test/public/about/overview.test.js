@@ -12,20 +12,19 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     let table;
     let firstRowId;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
             width: 700,
             height: 720,
@@ -38,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=about-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'about-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);

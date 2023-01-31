@@ -11,20 +11,19 @@
  * or submit itself to any jurisdiction.
  */
 
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults.js');
 const { expect } = require('chai');
 
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore();
+        [page, browser] = await defaultBefore();
     });
 
     it('should successfully display lhc fills details page', async () => {
-        await page.goto(`${url}/?page=lhc-fill-details&fillNumber=6`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
         await expectInnerText(page, 'h2', 'Fill No. 6');
     });
 

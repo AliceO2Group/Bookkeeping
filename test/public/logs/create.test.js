@@ -327,7 +327,7 @@ module.exports = () => {
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation();
-        await page.goto(`${url}/?page=log-overview`, { waitUntil: 'load' });
+        await goToPage(page, 'log-overview');
         await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
 
         // Find the created log
@@ -339,7 +339,8 @@ module.exports = () => {
 
         // Go to the log detail page
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
-        await page.goto(`${url}/?page=log-detail&id=${rowId}`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
+
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
