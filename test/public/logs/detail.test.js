@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -29,7 +29,7 @@ module.exports = () => {
     });
 
     it('log detail loads correctly and is opened as does not have children', async () => {
-        await page.goto(`${url}/?page=log-detail&id=5`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: 5 } });
 
         // We expect to be the only log on page and opened
         const postExists = await page.$('#post5');
@@ -40,7 +40,7 @@ module.exports = () => {
     });
 
     it('log detail loads correctly', async () => {
-        await page.goto(`${url}/?page=log-detail&id=1`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one post in this log entry
         const postExists = await page.$('#post1');
@@ -49,7 +49,7 @@ module.exports = () => {
 
     it('notifies if a specified log id is invalid', async () => {
         // Navigate to a log detail view with an id that cannot exist
-        await page.goto(`${url}/?page=log-detail&id=99999999`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: 99999999 } });
 
         // We expect there to be an error message
         const expectedMessage = 'Log with this id (99999999) could not be found';
@@ -61,7 +61,7 @@ module.exports = () => {
         const runId = 1;
 
         // Navigate to a log detail view
-        await page.goto(`${url}/?page=log-detail&id=${logId}`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(1000);
@@ -82,7 +82,7 @@ module.exports = () => {
 
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
-        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one post in this log entry
         await pressElement(page, `#reply-to-${parentLogId}`);
@@ -111,7 +111,7 @@ module.exports = () => {
 
     it('should successfully inherit parent log title if user does not provide one to a reply', async () => {
         const parentLogId = 2;
-        await page.goto(`${url}/?page=log-detail&id=${parentLogId}`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one post in this log entry
         await pressElement(page, `#reply-to-${parentLogId}`);

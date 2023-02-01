@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const { goToPage } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -33,7 +34,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=subsystem-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'subsystem-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);

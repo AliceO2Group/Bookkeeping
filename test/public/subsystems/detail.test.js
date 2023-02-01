@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -32,7 +32,7 @@ module.exports = () => {
     });
 
     it('subsystem detail loads correctly', async () => {
-        await page.goto(`${url}/?page=subsystem-detail&id=1`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'subsystem-detail', { queryParameters: { id: 1 } });
         await expectInnerText(page, 'h2', 'Subsystem: Subsystem Plant #1');
     });
 
@@ -70,7 +70,7 @@ module.exports = () => {
 
     it('notifies if a specified subsystem id is invalid', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem-detail&id=abc`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'subsystem-detail', { queryParameters: { id: 'abc' } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.subsystemId" must be a number');
@@ -78,7 +78,7 @@ module.exports = () => {
 
     it('notifies if a specified subsystem id is not found', async () => {
         // Navigate to a subsystem detail view with an id that cannot exist
-        await page.goto(`${url}/?page=subsystem-detail&id=999`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'subsystem-detail', { queryParameters: { id: 999 } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Subsystem with this id (999) could not be found:');
