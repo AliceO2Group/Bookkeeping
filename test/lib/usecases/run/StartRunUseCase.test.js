@@ -47,7 +47,7 @@ module.exports = () => {
             .execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
-        expect(result.id).to.equal(107);
+        expect(result.id).to.equal(109);
     });
 
     it('should fail to save a run with an already existing run number', async () => {
@@ -70,7 +70,7 @@ module.exports = () => {
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.runType.name).to.equal('NONE');
-        expect(result.id).to.equal(108);
+        expect(result.id).to.equal(110);
         expect(result.detectors).to.equal(null);
     });
 

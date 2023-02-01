@@ -11,12 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const RunSuite = require('./run/index.js');
-const DetectorSuite = require('./detector/index.js');
-const RunTypeSuite = require('./runType/index.js');
+const RunServiceTest = require('./RunService.test.js');
 
 module.exports = () => {
-    describe('Detector', DetectorSuite);
-    describe('RunType', RunTypeSuite);
-    describe('Run', RunSuite);
+    describe('RunService', RunServiceTest);
 };

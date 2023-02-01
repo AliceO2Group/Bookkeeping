@@ -21,6 +21,7 @@ const {
     goToPage,
     checkColumnBalloon,
     reloadPage,
+    waitForNetworkIdleAndRedraw,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 
@@ -129,16 +130,16 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(110);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(112);
     });
 
     it('successfully switch to raw timestamp display', async () => {
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(6)').innerText)).to.equal('08/08/2019\n11:00:00*');
-        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(7)').innerText)).to.equal('08/08/2019\n13:00:00');
+        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(6)').innerText)).to.equal('08/08/2019\n13:00:00');
+        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(7)').innerText)).to.equal('09/08/2019\n14:00:00');
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(6)').innerText)).to.equal('1565262000000*');
-        expect(await page.evaluate(() => document.querySelector('#row104 td:nth-child(7)').innerText)).to.equal('1565269200000');
+        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(6)').innerText)).to.equal('1565269200000');
+        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(7)').innerText)).to.equal('1565359200000');
         // Go back to normal
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
     });
@@ -372,7 +373,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
+        expect(table.length).to.equal(4);
     });
 
     it('should successfully filter on definition', async () => {
@@ -743,7 +744,7 @@ module.exports = () => {
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
         await page.focus(filterInputSelector);
         await page.keyboard.type('1, 3');
-        await page.waitForTimeout(400);
+        await waitForNetworkIdleAndRedraw(page);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(5);
     });

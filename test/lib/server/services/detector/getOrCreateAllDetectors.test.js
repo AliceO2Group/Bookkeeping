@@ -11,12 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
-const RunSuite = require('./run/index.js');
-const DetectorSuite = require('./detector/index.js');
-const RunTypeSuite = require('./runType/index.js');
+const { expect } = require('chai');
+const { getOrCreateAllDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
 
 module.exports = () => {
-    describe('Detector', DetectorSuite);
-    describe('RunType', RunTypeSuite);
-    describe('Run', RunSuite);
+    it('should successfully retrieve a list of detectors and create the missing ones', async () => {
+        const detectors = await getOrCreateAllDetectorsByName(['CPV', 'A-NEW-ONE']);
+        expect(detectors).to.length(2);
+        expect(detectors.map(({ name }) => name)).to.eql(['CPV', 'A-NEW-ONE']);
+    });
 };

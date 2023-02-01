@@ -11,12 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const RunSuite = require('./run/index.js');
-const DetectorSuite = require('./detector/index.js');
-const RunTypeSuite = require('./runType/index.js');
+const { expect } = require('chai');
+const { getOrCreateRunType: getOrCreateRunTypeTest } = require('../../../../../lib/server/services/runType/getOrCreateRunType.js');
 
 module.exports = () => {
-    describe('Detector', DetectorSuite);
-    describe('RunType', RunTypeSuite);
-    describe('Run', RunSuite);
+    it('should successfully retrieve a given run type and create it if it does not exist', async () => {
+        const runType = await getOrCreateRunTypeTest({ name: 'A-NEW-ONE' });
+        expect(runType.name).to.equal('A-NEW-ONE');
+    });
 };

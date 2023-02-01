@@ -12,8 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
-const { goToPage } = require('../defaults.js');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow, waitForNetworkIdleAndRedraw, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -51,7 +50,7 @@ module.exports = () => {
 
         // We expect the entry page to have the same id as the id from the subsystem overview
         await pressElement(page, `#${firstRowId}`);
-        await page.waitForTimeout(100);
+        await waitForNetworkIdleAndRedraw(page);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
