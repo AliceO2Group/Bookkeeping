@@ -13,11 +13,20 @@
 
 const { expect } = require('chai');
 const { getRunType } = require('../../../../../lib/server/services/runType/getRunType.js');
-const { createRunType: createRunTypeTest } = require('../../../../../lib/server/services/runType/createRunType.js');
+const { createRunType } = require('../../../../../lib/server/services/runType/createRunType.js');
+const assert = require('assert');
+const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
 
 module.exports = () => {
     it('should successfully create a run type and return the corresponding ID', async () => {
-        const id = await createRunTypeTest({ name: 'A-NEW-RUN-TYPE' });
+        const id = await createRunType({ name: 'A-NEW-RUN-TYPE' });
         expect((await getRunType({ id })).name).to.equal('A-NEW-RUN-TYPE');
+    });
+
+    it('should throw an error when trying to create a run type with an already existing name', async () => {
+        assert(
+            () => createRunType({ name: 'A-NEW-RUN-TYPE' }),
+            new ConflictError('A run type already exists with name A-NEW-RUN-TYPE'),
+        );
     });
 };
