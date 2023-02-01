@@ -19,8 +19,10 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
+    checkColumnBalloon,
+    reloadPage,
+    waitForNetworkIdleAndRedraw,
 } = require('../defaults');
-const { checkColumnBalloon, reloadPage, waitForNetworkIdleAndRedraw } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 
 const { expect } = chai;
@@ -28,7 +30,6 @@ const { expect } = chai;
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     let table;
     let firstRowId;
@@ -47,7 +48,7 @@ module.exports = () => {
     };
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
             width: 1200,
             height: 720,
@@ -60,7 +61,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'run-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -348,7 +349,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on detectors', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
@@ -376,7 +377,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on definition', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
         const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
@@ -477,7 +478,7 @@ module.exports = () => {
     });
 
     it('should update to current date when empty and time is set', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
         // Open the filters
         await pressElement(page, '#openFilterToggle');
@@ -503,7 +504,7 @@ module.exports = () => {
         expect(String(secondTill)).to.equal(now);
     });
     it('Validates date will not be set again', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
         const dateString = '03-21-2021';
         const validValue = '2021-03-21';
@@ -523,7 +524,7 @@ module.exports = () => {
         }
     });
     it('The max/min should be the right value when date is set to same day', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
         const dateString = '03-02-2021';
         // Open the filters
@@ -554,7 +555,7 @@ module.exports = () => {
     });
 
     it('The max should be the maximum value when having different dates', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
         const dateString = '03-20-2021';
         const maxTime = '23:59';
@@ -580,7 +581,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on duration', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
@@ -632,7 +633,7 @@ module.exports = () => {
     });
 
     it('Should successfully filter runs by their run quality', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runQualityCheckbox';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
         const testFilterSelector = `${filterInputSelectorPrefix}test`;
@@ -676,7 +677,7 @@ module.exports = () => {
     });
 
     it('Should successfully filter runs by their trigger value', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#triggerValueCheckbox';
         const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
         const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
@@ -736,7 +737,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
-        await page.reload();
+        await reloadPage(page);
         await page.waitForTimeout(200);
         await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#fillNumbers';
@@ -749,7 +750,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
-        await page.reload();
+        await reloadPage(page);
         await page.waitForTimeout(200);
         await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#environmentIds';
@@ -762,7 +763,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on nDetectors', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
@@ -796,7 +797,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on nFLPs', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
@@ -825,7 +826,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on nEPNs', async () => {
-        await page.goto(`${url}?page=run-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
@@ -871,7 +872,7 @@ module.exports = () => {
     });
 
     it('should successfully display information when export will be truncated', async () => {
-        await page.reload();
+        await reloadPage(page);
         await page.waitForTimeout(200);
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
@@ -884,7 +885,7 @@ module.exports = () => {
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
-        await page.reload();
+        await reloadPage(page);
         await page.waitForTimeout(200);
 
         await pressElement(page, '#openFilterToggle');
@@ -899,7 +900,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await page.reload();
+        await reloadPage(page);
         await page.waitForTimeout(100);
 
         // Run 106 has a fill attached

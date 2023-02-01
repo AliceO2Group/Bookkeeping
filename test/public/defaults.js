@@ -15,6 +15,7 @@ const chai = require('chai');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
+const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 
 const { expect } = chai;
 
@@ -88,18 +89,60 @@ module.exports.pressElement = async (page, selector) => {
 
 /**
  * Reload the current page and wait for it to be loaded
- * @param {Object} page the Puppeteer page object
+ * @param {Page} puppeteerPage Puppeteer page object.
  * @return {Promise} resolves when the page has loaded
  */
-module.exports.reloadPage = (page) => page.reload({ waitUntil: 'networkidle0' });
+module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage.url());
+
+/**
+ * Navigates to a specific URL and waits until everything is loaded.
+ *
+ * @param {Page} puppeteerPage puppeteer page object
+ * @param {string} url the URL to navigate to
+ * @param {object} [options] navigation options
+ * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
+ * @param {number} [options.redrawDuration] the estimated time to wait for the page to redraw
+ * @returns {Promise} resolves with the navigation response
+ */
+const goTo = async (puppeteerPage, url, options) => {
+    const { authenticate = true, redrawDuration = 20 } = options ?? {};
+
+    const queryParameters = {};
+    if (authenticate) {
+        queryParameters.personid = 0;
+        queryParameters.username = 'anonymous';
+        queryParameters.name = 'Anonymous';
+        queryParameters.access = 'admin';
+        queryParameters.token = server.http.o2TokenService.generateToken(
+            queryParameters.personid,
+            queryParameters.username,
+            queryParameters.name,
+            queryParameters.access,
+        );
+    }
+
+    const response = await puppeteerPage.goto(buildUrl(url, queryParameters), { waitUntil: 'networkidle0' });
+    await puppeteerPage.waitForTimeout(redrawDuration);
+    return response;
+};
 
 /**
  * Goes to a specific page and waits until everything is loaded.
- * @param {Object} page Puppeteer page object.
- * @param {String} pageText Value of pageText in: URL/?page={pageText}&...
- * @returns {String} Switches the user to the correct page.
+ * @param {Page} puppeteerPage Puppeteer page object.
+ * @param {string} pageKey Value of pageKey in: URL/?page={pageKey}&...
+ * @param {object} [options] navigation options
+ * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
+ * @param {object} [options.queryParameters] query parameters to add to the page's URL
+ * @returns {Promise} Switches the user to the correct page.
  */
-module.exports.goToPage = (page, pageText) => page.goto(`${getUrl()}/?page=${pageText}`, { waitUntil: 'networkidle0' });
+module.exports.goToPage = (puppeteerPage, pageKey, options) => {
+    const { queryParameters = {} } = options || {};
+    const url = buildUrl(getUrl(), {
+        page: pageKey,
+        ...queryParameters,
+    });
+    return goTo(puppeteerPage, url);
+};
 
 /**
  * Wait for page network idle and add a small timeout to let the page redraw
