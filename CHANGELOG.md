@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Notable changes for developers:
   * Reset database at the beginning of each API test files
+  * The Flp naming has been uniformized to FlpRole, and the relation is a one to many between Run (1) <--> (n) FlpRole
 
 ## [0.48.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.48.0)
 * Notable changes for users:
