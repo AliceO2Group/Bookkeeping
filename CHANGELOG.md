@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
   * When creating or updating a run, if related detectors and run type do not exists, create them
   * Detectors quality can not be updated for not ended runs
   * Add a gRPC endpoint to update FLP readout counters
+  * COSMICS run definition condition on `beam_mode` updated to also allow for missing values
 
 * Notable changes for developers:
   * Reset database at the beginning of each API test files
