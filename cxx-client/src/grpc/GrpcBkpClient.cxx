@@ -16,14 +16,14 @@
 
 using grpc::Channel;
 
-using std::string;
-using std::unique_ptr;
-using std::make_unique;
 using grpc::CreateChannel;
 using grpc::InsecureChannelCredentials;
+using o2::bkp::api::FlpServiceClient;
 using o2::bookkeeping::Flp;
 using o2::bookkeeping::FlpService;
-using o2::bkp::api::FlpServiceClient;
+using std::make_unique;
+using std::string;
+using std::unique_ptr;
 
 namespace o2::bkp::api::grpc
 {

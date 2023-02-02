@@ -38,6 +38,6 @@ class GrpcFlpServiceClient : public ::o2::bkp::api::FlpServiceClient
  private:
   std::unique_ptr<o2::bookkeeping::FlpService::Stub> mStub;
 };
-} // namespace o2::bookkeeping::api::grpc::services
+} // namespace o2::bkp::api::grpc::services
 
 #endif // BOOKKEEPINGAPI_GRPC_SERVICES_GRPCFLPSERVICECLIENT_H_

@@ -17,9 +17,9 @@
 #include "flp.grpc.pb.h"
 
 using grpc::Channel;
+using grpc::ChannelInterface;
 using grpc::ClientContext;
 using grpc::Status;
-using grpc::ChannelInterface;
 using o2::bookkeeping::UpdateCountersRequest;
 
 namespace o2::bkp::api::grpc::services
