@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.49.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.0)
+* Notable changes for users:
+  * Physics runs automatically have a 'good' quality when they ends
+  * When creating or updating a run, if related detectors and run type do not exists, create them
+  * Detectors quality can not be updated for not ended runs
+  * Add a gRPC endpoint to update FLP readout counters
+  * COSMICS run definition condition on `beam_mode` updated to also allow for missing values
+  * Add run types CALIBRATION_PULSE_LENGTH and CALIBRATION_VRESETD
+  * Fixed linking to runs in FLP creation
+
+* Notable changes for developers:
+  * Reset database at the beginning of each API test files
+  * The Flp naming has been uniformized to FlpRole, and the relation is a one to many between Run (1) <--> (n) FlpRole
+
 ## [0.48.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.48.0)
 * Notable changes for users:
   * Log runs filter applies on run number and not on run ID anymore
