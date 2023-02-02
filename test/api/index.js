@@ -21,7 +21,6 @@ const LhcFillSuite = require('./lhcFills.test.js');
 const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
 const RunsSuite = require('./runs.test.js');
-const RunDetectorSuite = require('./runDetectors.test.js');
 const RunTypesSuite = require('./runTypes.test.js');
 
 module.exports = () => {
@@ -32,7 +31,6 @@ module.exports = () => {
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
     describe('Runs API', RunsSuite);
-    describe('RunsDetectors API', RunDetectorSuite);
     describe('RunTypes API', RunTypesSuite);
     describe('Status API', StatusSuite);
     describe('Subsystems API', SubsystemsSuite);

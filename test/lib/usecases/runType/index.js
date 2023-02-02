@@ -11,12 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const getRunTypeUseCase = require('./getRunTypeUseCase.test.js');
-const getAllRunTypesUseCase = require('./getAllRunTypesUseCase.test.js');
-const createRunTypeUseCase = require('./createRunTypeUseCase.test.js');
+const GetRunTypeUseCase = require('./getRunTypeUseCase.test');
+const GetAllRunTypesUseCase = require('./getAllRunTypesUseCase.test');
 
-module.exports = {
-    getRunTypeUseCase,
-    getAllRunTypesUseCase,
-    createRunTypeUseCase,
+module.exports = () => {
+    describe('GetRunTypeUseCase', GetRunTypeUseCase);
+    describe('GetAllRunTypesUseCase', GetAllRunTypesUseCase);
 };

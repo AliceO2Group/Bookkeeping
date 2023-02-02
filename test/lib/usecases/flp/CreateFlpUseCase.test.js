@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { FlpRepository } } = require('../../../../lib/database/index.js');
+const { repositories: { FlpRoleRepository } } = require('../../../../lib/database/index.js');
 const { flp: { CreateFlpUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { CreateFlpDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
@@ -36,12 +36,12 @@ module.exports = () => {
     });
 
     it('should insert a new Flp', async () => {
-        const nFlpsBefore = await FlpRepository.count();
+        const nFlpsBefore = await FlpRoleRepository.count();
 
         await new CreateFlpUseCase()
             .execute(createFlpDto);
 
-        const nFlpsAfter = await FlpRepository.count();
+        const nFlpsAfter = await FlpRoleRepository.count();
         expect(nFlpsAfter).to.be.greaterThan(nFlpsBefore);
     });
 

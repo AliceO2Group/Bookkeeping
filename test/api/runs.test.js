@@ -666,7 +666,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                        ' defined, your custom type is missing the correct messages definition');
+                                                               ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
@@ -827,16 +827,23 @@ module.exports = () => {
         });
 
         it('should successfully return the updated run entity with new detector\'s run quality', async () => {
-            const { body, status } = await request(server).put('/api/runs/1')
-                .send({
-                    detectorsQualities: [{ detectorId: 1, quality: 'good' }],
-                });
+            const { body, status } = await request(server)
+                .put('/api/runs/1')
+                .send({ detectorsQualities: [{ detectorId: 1, quality: 'good' }] });
             expect(status).to.equal(201);
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(1);
             expect(body.data.detectorsQualities).to.lengthOf(1);
             expect(body.data.detectorsQualities[0].id).to.equal(1);
             expect(body.data.detectorsQualities[0].quality).to.equal('good');
+        });
+
+        it('should return 500 when trying to update the detector\'s quality of a run that has not ended yet', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/105')
+                .send({ detectorsQualities: [{ detectorId: 1, quality: 'good' }] });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
         });
     });
 

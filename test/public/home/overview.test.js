@@ -12,11 +12,7 @@
  */
 
 const chai = require('chai');
-const {
-    defaultBefore,
-    defaultAfter,
-    getFirstRow,
-} = require('../defaults');
+const { defaultBefore, defaultAfter, getFirstRow, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -36,7 +32,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=home`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'home');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);

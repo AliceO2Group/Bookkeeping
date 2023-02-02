@@ -19,10 +19,9 @@ const { expect } = chai;
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -30,7 +29,7 @@ module.exports = () => {
 
     it('can create a tag', async () => {
         const text = 'EXAMPLE';
-        await page.goto(`${url}/?page=tag-create`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'tag-create');
 
         // Enter the text value
         await page.waitForSelector('#text');
@@ -43,7 +42,7 @@ module.exports = () => {
         await expectInnerText(page, '.mv2', `Tag: ${text}`);
 
         // Return the page to the tag overview
-        await page.goto(`${url}/?page=tag-overview`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'tag-overview');
     });
 
     it('shows an error message if tag creation failed', async () => {
