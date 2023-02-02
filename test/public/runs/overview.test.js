@@ -901,7 +901,6 @@ module.exports = () => {
 
     it('should successfully navigate to the LHC fill details page', async () => {
         await reloadPage(page);
-        await page.waitForTimeout(100);
 
         // Run 106 has a fill attached
         const runId = 106;
@@ -910,8 +909,7 @@ module.exports = () => {
         const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);
 
         await page.$eval(`${fillNumberCellSelector} a`, (link) => link.click());
-        await page.waitForNetworkIdle();
-        await page.waitForTimeout(100);
+        await waitForNetworkIdleAndRedraw(page);
 
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
