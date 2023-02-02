@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Add a gRPC endpoint to update FLP readout counters
   * COSMICS run definition condition on `beam_mode` updated to also allow for missing values
   * Add run types CALIBRATION_PULSE_LENGTH and CALIBRATION_VRESETD
+  * Fixed linking to runs in FLP creation
 
 * Notable changes for developers:
   * Reset database at the beginning of each API test files
