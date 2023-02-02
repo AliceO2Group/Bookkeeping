@@ -26,6 +26,7 @@ module.exports = () => {
             body: {
                 name: 'FlpTest',
                 hostname: 'TestFlp',
+                runNumber: 36,
             },
         });
         createFlpDto.session = {
@@ -44,20 +45,4 @@ module.exports = () => {
         const nFlpsAfter = await FlpRoleRepository.count();
         expect(nFlpsAfter).to.be.greaterThan(nFlpsBefore);
     });
-
-    /*
-     * It('should insert a new Flp with the same hostname as provided', async () => {
-     *     const expectedName = 'FlpTest';
-     */
-
-    /*
-     *     CreateFlpDto.body.name = expectedName;
-     *     const { result } = await new CreateFlpUseCase()
-     *         .execute(createFlpDto);
-     */
-
-    /*
-     *     Expect(result.name).to.equal(expectedName);
-     * });
-     */
 };

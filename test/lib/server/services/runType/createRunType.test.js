@@ -24,7 +24,7 @@ module.exports = () => {
     });
 
     it('should throw an error when trying to create a run type with an already existing name', async () => {
-        assert(
+        await assert.rejects(
             () => createRunType({ name: 'A-NEW-RUN-TYPE' }),
             new ConflictError('A run type already exists with name A-NEW-RUN-TYPE'),
         );
