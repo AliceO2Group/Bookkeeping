@@ -323,6 +323,16 @@ module.exports = () => {
             expect(error).to.be.an('object');
             expect(error.detail).to.equal('This run\'s detector with runNumber: (1) and with detector Id: (2) could not be found');
         });
+
+        it('should throw an error when trying to update the quality of a run not ended yet', async () => {
+            const { result, error } = await new UpdateRunUseCase().execute({
+                params: { runId: 105 },
+                body: { detectorsQualities: [{ detectorId: 1, quality: 'bad' }] },
+            });
+            expect(result).to.be.undefined;
+            expect(error).to.be.an('object');
+            expect(error.detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
+        });
     });
 
     describe('updates with run number', () => {
