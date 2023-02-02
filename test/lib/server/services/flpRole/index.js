@@ -11,19 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-module.exports = (sequelize) => {
-    const Sequelize = require('sequelize');
+const updateFlpRoleTest = require('./updateFlpRole.test.js');
 
-    const FlpRuns = sequelize.define('FlpRuns', {
-        flpRoleId: {
-            type: Sequelize.INTEGER,
-        },
-        runId: {
-            type: Sequelize.INTEGER,
-        },
-    });
-
-    FlpRuns.removeAttribute('id');
-
-    return FlpRuns;
+module.exports = () => {
+    describe('updateFlpRole', updateFlpRoleTest);
 };

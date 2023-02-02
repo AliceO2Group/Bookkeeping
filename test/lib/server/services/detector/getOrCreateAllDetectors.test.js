@@ -11,8 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
-const UpdateRunDetectorUseCase = require('./UpdateRunDetectorUseCase.test.js');
+const { expect } = require('chai');
+const { getOrCreateAllDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
 
 module.exports = () => {
-    describe('UpdateRunDetectorUseCase', UpdateRunDetectorUseCase);
+    it('should successfully retrieve a list of detectors and create the missing ones', async () => {
+        const detectors = await getOrCreateAllDetectorsByName(['CPV', 'A-NEW-ONE']);
+        expect(detectors).to.length(2);
+        expect(detectors.map(({ name }) => name)).to.eql(['CPV', 'A-NEW-ONE']);
+    });
 };

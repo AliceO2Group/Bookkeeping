@@ -6,6 +6,7 @@ package o2.bookkeeping;
 
 service FlpService {
   rpc CreateMany(ManyFlpsCreationRequest) returns (FlpList);
+  rpc UpdateCounters(UpdateCountersRequest) returns (Flp);
 }
 
 // High level messages
@@ -18,6 +19,15 @@ message FlpCreationRequest {
 
 message ManyFlpsCreationRequest {
   repeated FlpCreationRequest flps = 1;
+}
+
+message UpdateCountersRequest  {
+  string flpName = 1;
+  int32 runNumber = 2;
+  int64 nSubTimeframes = 3;
+  int64 nEquipmentBytes = 4;
+  int64 nRecordingBytes = 5;
+  int64 nFairMQBytes = 6;
 }
 
 message FlpList {

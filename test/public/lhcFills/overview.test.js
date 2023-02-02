@@ -28,10 +28,9 @@ const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
             width: 700,
             height: 720,
@@ -44,7 +43,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=lhc-fill-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'lhc-fill-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);

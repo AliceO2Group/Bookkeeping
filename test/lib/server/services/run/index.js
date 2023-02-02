@@ -12,7 +12,9 @@
  */
 
 const getRunDefinition = require('./getRunDefinition.test.js');
+const RunServiceTest = require('./RunService.test.js');
 
 module.exports = () => {
     describe('getRunDefinition', getRunDefinition);
+    describe('RunService', RunServiceTest);
 };

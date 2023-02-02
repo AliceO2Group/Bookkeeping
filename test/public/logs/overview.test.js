@@ -50,7 +50,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=log-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'log-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(133);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(134);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -194,10 +194,10 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
 
-        // 6 logs are created before this test
+        // 7 logs are created before this test
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(14);
+        expect(secondFilteredNumberOfRows).to.equal(15);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
