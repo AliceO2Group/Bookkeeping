@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for users:
   * Physics runs automatically have a 'good' quality when they ends
   * When creating or updating a run, if related detectors and run type do not exists, create them
+  * Detectors quality can not be updated for not ended runs
 
 * Notable changes for developers:
   * Reset database at the beginning of each API test files
