@@ -16,7 +16,6 @@ const { getFlpRole } = require('../../../../../lib/server/services/flp/getFlpRol
 const { expect } = require('chai');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
-const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
 
 module.exports = () => {
     it('should successfully create an FLP role', async () => {
