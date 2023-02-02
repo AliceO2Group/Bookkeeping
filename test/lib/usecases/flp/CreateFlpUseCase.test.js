@@ -39,8 +39,7 @@ module.exports = () => {
     it('should insert a new Flp', async () => {
         const nFlpsBefore = await FlpRoleRepository.count();
 
-        await new CreateFlpUseCase()
-            .execute(createFlpDto);
+        await new CreateFlpUseCase().execute(createFlpDto);
 
         const nFlpsAfter = await FlpRoleRepository.count();
         expect(nFlpsAfter).to.be.greaterThan(nFlpsBefore);
