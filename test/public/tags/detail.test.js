@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -32,7 +32,7 @@ module.exports = () => {
     });
 
     it('tag detail loads correctly', async () => {
-        await page.goto(`${url}/?page=tag-detail&id=1&panel=logs`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 1, panel: 'logs' } });
         await expectInnerText(page, 'h2', 'Tag: FOOD');
     });
 
@@ -50,7 +50,7 @@ module.exports = () => {
 
     it('notifies if a specified tag id is invalid', async () => {
         // Navigate to a tag detail view with an id that cannot exist
-        await page.goto(`${url}/?page=tag-detail&id=abc`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 'abc' } });
 
         // Because this tag id is invalid, we expect an error message to appear
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.tagId" must be a number');
@@ -58,7 +58,7 @@ module.exports = () => {
 
     it('notifies if a specified tag id is not found', async () => {
         // Navigate to a tag detail view with an id that cannot exist
-        await page.goto(`${url}/?page=tag-detail&id=999`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 999 } });
 
         // Because this tag does not exist, we expect an error message to appear
         await expectInnerText(page, '.alert', 'Tag with this id (999) could not be found');
@@ -66,7 +66,7 @@ module.exports = () => {
 
     // Skipped because for now frontend send requests that are not authenticated as admin, hence this can't work
     it.skip('can update a tag', async () => {
-        await page.goto(`${url}/?page=tag-detail&id=23&panel=logs`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 23, panel: 'logs' } });
         await pressElement(page, '#edit-tag');
         await pressElement(page, '#tag-archive-toggle');
         await pressElement(page, '#confirm-tag-edit');

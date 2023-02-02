@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage } = require('../defaults.js');
+const { reloadPage, goToPage } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -44,7 +44,7 @@ module.exports = () => {
     });
 
     it('run detail loads correctly', async () => {
-        await page.goto(`${url}/?page=run-detail&id=1`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 1 } });
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
@@ -163,15 +163,23 @@ module.exports = () => {
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
-        await page.goto(`${url}/?page=run-detail&id=105`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 105 } });
 
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
         expect(await page.$('#runQualitySelect')).to.be.null;
     });
 
+    it('successfully prevent from editing detector\'s quality of not ended runs', async () => {
+        await reloadPage(page);
+
+        await pressElement(page, '#edit-run');
+        await page.waitForTimeout(100);
+        expect(await page.$('#Run-detectors .toggle-container')).to.be.null;
+    });
+
     it('should successfully navigate to the LHC fill details page', async () => {
-        await page.goto(`${url}/?page=run-detail&id=106`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
         await page.waitForTimeout(100);
 
         const fillNumberSelector = '#lhc-fill-fillNumber a';
@@ -191,7 +199,7 @@ module.exports = () => {
 
     it('notifies if a specified run id is invalid', async () => {
         // Navigate to a run detail view with an id that cannot exist
-        await page.goto(`${url}/?page=run-detail&id=abc`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 'abc' } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runId" must be a number');
@@ -199,7 +207,7 @@ module.exports = () => {
 
     it('notifies if a specified run id is not found', async () => {
         // Navigate to a run detail view with an id that cannot exist
-        await page.goto(`${url}/?page=run-detail&id=999`, { waitUntil: 'networkidle0' });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 999 } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Run with this id (999) could not be found');

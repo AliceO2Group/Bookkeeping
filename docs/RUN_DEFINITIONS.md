@@ -25,7 +25,7 @@ Bookkeeping receives updates about RUNs from multiple sources and based on them,
 
 ### COSMICS:
 - `run_type` set to `COSMICS` or `COSMIC`
-- `beam_mode` = `NO BEAM`
+- `beam_mode` = `NO BEAM` or missing `beam_mode`
 - have all the following components enabled:
     - `dcs` = `true`
     - `dd_flp` = `true`

@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, getFirstRow, waitForNetworkIdleAndRedraw, goToPage } = require('../defaults');
 
 const { expect } = chai;
 
@@ -33,7 +33,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await page.goto(`${url}?page=subsystem-overview`, { waitUntil: 'networkidle0' });
+        const response = await goToPage(page, 'subsystem-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -50,7 +50,7 @@ module.exports = () => {
 
         // We expect the entry page to have the same id as the id from the subsystem overview
         await pressElement(page, `#${firstRowId}`);
-        await page.waitForTimeout(100);
+        await waitForNetworkIdleAndRedraw(page);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=${parsedFirstRowId}`)).to.be.true;
     });

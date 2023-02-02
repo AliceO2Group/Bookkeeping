@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+get_filename_component(BookkeepingApi_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+find_dependency(Protobuf CONFIG REQUIRED)
+find_dependency(gRPC REQUIRED)
+
+if(NOT TARGET AliceO2::BookkeepingApi)
+  include("${BookkeepingApi_CMAKE_DIR}/BookkeepingApiTargets.cmake")
+endif()
+
+message(STATUS "BookkeepingApi-O2 ${BookkeepingApi_VERSION} found")
