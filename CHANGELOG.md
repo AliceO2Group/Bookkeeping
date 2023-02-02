@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.49.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.0)
 * Notable changes for users:
   * Physics runs automatically have a 'good' quality when they ends
+  * When creating or updating a run, if related detectors and run type do not exists, create them
 
 * Notable changes for developers:
   * Reset database at the beginning of each API test files
