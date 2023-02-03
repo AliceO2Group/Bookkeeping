@@ -11,8 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const createFlpRoleTest = require('./createFlpRole.test.js');
 const updateFlpRoleTest = require('./updateFlpRole.test.js');
+const FlpRoleServiceTest = require('./FlpRoleService.test.js');
 
 module.exports = () => {
+    describe('createFlpRole', createFlpRoleTest);
     describe('updateFlpRole', updateFlpRoleTest);
+    describe('FlpRoleService', FlpRoleServiceTest);
 };

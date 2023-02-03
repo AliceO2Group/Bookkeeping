@@ -193,4 +193,11 @@ module.exports = () => {
         expect(urlParameters).to.contain('page=lhc-fill-details');
         expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
+
+    it('should successfully display ONGOING information', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        const stableBeamsDurationText = await page.$('#row5-stableBeamsDuration-text');
+        expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success')));
+        expect(await stableBeamsDurationText.evaluate((element) => element.innerText)).to.equal('ONGOING');
+    });
 };

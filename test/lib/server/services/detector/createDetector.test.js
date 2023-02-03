@@ -24,7 +24,7 @@ module.exports = () => {
     });
 
     it('should throw when trying to create a detector with an already existing name', async () => {
-        assert.rejects(
+        await assert.rejects(
             () => createDetector({ name: 'A-NEW-DETECTOR' }),
             new ConflictError('A detector already exists with name A-NEW-DETECTOR'),
         );

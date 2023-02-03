@@ -1,3 +1,7 @@
+## [0.49.0]
+* Changes made to the database:
+  * table flp_runs has been deleted, relation is owned by `flp_roles` on the new `run_number` column
+
 ## [0.42.0]
 * Changes made to the database:
   * Table `runs` - added fields:
