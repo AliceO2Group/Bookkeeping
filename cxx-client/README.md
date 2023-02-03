@@ -39,7 +39,7 @@ have only one executable you can add:
 
 ```cmake
 find_package(BookkeepingApi)
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE BookkeepingApi::BookkeepingApi)
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE AliceO2::BookkeepingApi)
 ```
 
 The bookkeeping API's client can be requested form the factory by providing it the gRPC endpoint's URI:
