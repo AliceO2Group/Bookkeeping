@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  application:
+    build:
+      target: coverage
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+    restart: "no"
+
+  database:
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: "no"
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data
+        target: /var/lib/mysql
+volumes:
+  database-data:
