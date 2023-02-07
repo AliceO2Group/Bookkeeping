@@ -618,7 +618,7 @@ module.exports = () => {
             runNumber: 111,
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
-            environmentId: '1234567890',
+            environmentId: '2JIdys2N',
             runType: 'NONE',
             nDetectors: 3,
             nFlps: 10,

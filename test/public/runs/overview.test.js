@@ -131,7 +131,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(112);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(106);
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -199,52 +199,6 @@ module.exports = () => {
         await page.waitForTimeout(100);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
-
-    /*
-     * Todo: implement without waitForTimeout (tip: use screenshot function to see where it's going wrong).
-     * it('can switch between pages of runs', async () => {
-     *     await page.waitForTimeout(300);
-     *     // Expect the page selector to be available with two pages
-     *     const pageSelectorId = '#amountSelector';
-     *     const pageSelector = await page.$(pageSelectorId);
-     *     await page.waitForTimeout(300);
-     *     expect(Boolean(pageSelector)).to.be.true;
-     *     await page.waitForTimeout(300);
-     *     const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-     *     expect(pageSelectorButtons.length).to.equal(5);
-     */
-
-    /*
-     *     Const oldFirstRowId = await getFirstRow(table, page);
-     *     // Works correctly if this line is uncommented
-     *     // takeScreenshot(page);
-     *     pressElement(page, '#page2');
-     *     await page.waitForFunction('document.querySelector("#page2").classList.contains("selected")');
-     *     table = await page.$$('tr');
-     *     const newFirstRowId = await getFirstRow(table, page);
-     *     expect(oldFirstRowId).to.not.equal(newFirstRowId);
-     */
-
-    /*
-     *     // Expect us to be able to do the same with the page arrows
-     *     const prevPage = await page.$('#pageMoveLeft');
-     *     await prevPage.evaluate((button) => button.click());
-     *     await page.waitForTimeout(100);
-     *     const oldFirstPageButton = await page.$('#page1');
-     *     const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
-     *     expect(oldFirstPageButtonClass).to.include('selected');
-     */
-
-    /*
-     *     // The same, but for the other (right) arrow
-     *     const nextPage = await page.$('#pageMoveRight');
-     *     await nextPage.evaluate((button) => button.click());
-     *     await page.waitForTimeout(100);
-     *     const newFirstPageButton = await page.$('#page1');
-     *     const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
-     *     expect(newFirstPageButtonClass).to.not.include('selected');
-     * }).timeout(15000);
-     */
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
@@ -374,7 +328,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(2);
     });
 
     it('should successfully filter on definition', async () => {
@@ -747,7 +701,7 @@ module.exports = () => {
         await page.keyboard.type('1, 3');
         await waitForNetworkIdleAndRedraw(page);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(5);
+        expect(table.length).to.equal(4);
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
@@ -757,10 +711,10 @@ module.exports = () => {
         const filterInputSelector = '#environmentIds';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
         await page.focus(filterInputSelector);
-        await page.keyboard.type('ABCDEFGHIJ, 0987654321');
+        await page.keyboard.type('Dxi029djX, TDI59So3d');
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(7);
+        expect(table.length).to.equal(6);
     });
 
     it('should successfully filter on nDetectors', async () => {
