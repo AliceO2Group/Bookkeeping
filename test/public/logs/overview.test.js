@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(134);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(136);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -194,10 +194,10 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
 
-        // 7 logs are created before this test
+        // 9 logs are created before this test
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(15);
+        expect(secondFilteredNumberOfRows).to.equal(17);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
