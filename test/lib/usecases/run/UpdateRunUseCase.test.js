@@ -290,7 +290,7 @@ module.exports = () => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
                 expect(logs).to.have.lengthOf(1);
                 const [log] = logs;
-                expect(log.title).to.equal('Detector\'s quality for run 1 has been changed');
+                expect(log.title).to.equal('Detector(s) quality for run 1 has been changed');
                 expect(log.text.startsWith('Here are the updated detector\'s qualities for run 1')).to.be.true;
                 expect(log.text.endsWith(`- CPV: ${newQuality}`)).to.be.true;
                 expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([1]);
