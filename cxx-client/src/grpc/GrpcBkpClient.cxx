@@ -17,7 +17,9 @@
 using grpc::Channel;
 
 using grpc::CreateChannel;
+using grpc::AccessTokenCredentials;
 using grpc::InsecureChannelCredentials;
+using grpc::CompositeChannelCredentials;
 using o2::bkp::api::FlpServiceClient;
 using o2::bookkeeping::Flp;
 using o2::bookkeeping::FlpService;
@@ -29,9 +31,12 @@ namespace o2::bkp::api::grpc
 {
 using services::GrpcFlpServiceClient;
 
-GrpcBkpClient::GrpcBkpClient(const string& uri)
+GrpcBkpClient::GrpcBkpClient(const string& uri, const string& token)
 {
-  auto channel = CreateChannel(uri, InsecureChannelCredentials());
+  auto channel = CreateChannel(
+    uri,
+    CompositeChannelCredentials(InsecureChannelCredentials(), AccessTokenCredentials(token))
+  );
   mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
 }
 
