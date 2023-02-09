@@ -29,7 +29,7 @@ module.exports = () => {
             },
             body: {
                 toredownAt: new Date(),
-                status: 'STOPPED',
+                status: 'DESTROYED',
                 statusMessage: 'Completely new message',
             },
         });

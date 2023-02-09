@@ -11,14 +11,16 @@
  * or submit itself to any jurisdiction.
  */
 
+const assert = require('assert');
 const { environmentService } = require('../../../../../lib/server/services/environment/EnvironmentService.js');
 const { expect } = require('chai');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 
 module.exports = () => {
     const environmentId = 'A-NEW-ENVIRONMENT';
 
     it('should successfully create a new environment with an initial state', async () => {
-        const status = 'CREATED';
+        const status = 'STANDBY';
         const statusMessage = 'Environment has been created';
 
         const environment = await environmentService.create(
@@ -35,6 +37,18 @@ module.exports = () => {
 
         expect(firstHistoryItem.status).to.equal(status);
         expect(firstHistoryItem.statusMessage).to.equal(statusMessage);
+    });
+
+    it('should throw when trying to create an environment with an invalid initial state', async () => {
+        await assert.rejects(
+            () => environmentService.create({ id: 'A-NEW-NEW-ENVIRONMENT' }, { status: 'DO-NOT-EXIST' }),
+            new BadParameterError('"status" must be one of [STANDBY, DEPLOYED, CONFIGURED, RUNNING, ERROR, MIXED, DESTROYED, PENDING]'),
+        );
+
+        await assert.rejects(
+            () => environmentService.create({ id: 'A-NEW-NEW-ENVIRONMENT' }, { statusMessage: 'I forgot the actual status' }),
+            new BadParameterError('"status" is required'),
+        );
     });
 
     it('should successfully update the environment\'s history when updating the environment\'s state', async () => {
