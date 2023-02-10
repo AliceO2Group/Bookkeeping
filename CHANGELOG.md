@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.50.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.50.0)
 * Notable changes for users:
+  * cxx API's documentation has been fixed
 
 * Notable changes for developers:
   * Packages used by the local docker stack has been upgraded to comply with alpine linux 3.17
