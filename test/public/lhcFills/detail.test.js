@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, takeScreenshot } = require('../defaults.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -59,6 +59,7 @@ module.exports = () => {
 
     it('should display valid fill statistics', async () => {
         const efficiency = await page.$eval('#lhc-fill-efficiency', (element) => element.innerText);
+        await takeScreenshot(page);
         expect(efficiency.endsWith('41.67%')).to.be.true;
         const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
         expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
