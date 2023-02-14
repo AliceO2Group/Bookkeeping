@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Packages used by the local docker stack has been upgraded to comply with alpine linux 3.17
   * Local stack node has been upgraded to new LTS 18
   * Tests runs locally do not have the coverage report displayed anymore
+  * Database connection is retried every 5 seconds on failing (before running migrations)
 
 ## [0.49.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.1)
 * Notable changes for developers:
