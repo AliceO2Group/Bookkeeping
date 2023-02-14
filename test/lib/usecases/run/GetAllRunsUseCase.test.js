@@ -15,6 +15,7 @@ const { run: { GetAllRunsUseCase } } = require('../../../../lib/usecases/index.j
 const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
+const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 
@@ -303,13 +304,13 @@ module.exports = () => {
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
 
-        expect(runs).to.have.lengthOf(8);
+        expect(runs).to.have.lengthOf(7);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
         runDuration.operator = '>';
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(6);
         expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
     });
 
@@ -447,13 +448,13 @@ module.exports = () => {
     });
 
     it('should successfully return an array containing only runs with specified run qualities', async () => {
-        const requiredQualities = ['bad', 'test'];
+        const requiredQualities = [RunQualities.BAD, RunQualities.TEST];
         getAllRunsDto.query = { filter: { runQualities: requiredQualities }, page: { limit: 100 } };
         const { runs } = await new GetAllRunsUseCase()
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(48);
+        expect(runs).to.have.lengthOf(46);
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
