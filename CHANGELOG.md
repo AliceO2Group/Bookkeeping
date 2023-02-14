@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
   * cxx API's documentation has been fixed
   * Log detector's quality change
   * A new run quality `none` has been added
+  * Emails formatting has been improved in tag display page
 
 * Notable changes for developers:
   * Packages used by the local docker stack has been upgraded to comply with alpine linux 3.17
