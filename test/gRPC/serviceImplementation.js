@@ -21,6 +21,7 @@ const { extractEnumsPaths } = require('../../lib/server/gRPC/services/protoParsi
 const { toGRPCEnum, fromGRPCEnum } = require('../../lib/server/gRPC/services/enumConverter/gRPCEnumValueConverter.js');
 const sinon = require('sinon');
 const { bindGRPCController } = require('../../lib/server/gRPC/bindGRPCController.js');
+const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 
 const PROTO_DIR = `${__dirname}/proto`;
 
@@ -42,8 +43,8 @@ describe('gRPC services implementation', () => {
         expect(() => fromGRPCEnum('MyEnum', 'INVALID_VALUE')).to.throw('Invalid enum value INVALID_VALUE for enum MyEnum');
 
         // Specific case for run quality
-        expect(toGRPCEnum('RunQuality', 'good')).to.equal('RUN_QUALITY_GOOD');
-        expect(fromGRPCEnum('RunQuality', 'RUN_QUALITY_GOOD')).to.equal('good');
+        expect(toGRPCEnum('RunQuality', RunQualities.GOOD)).to.equal('RUN_QUALITY_GOOD');
+        expect(fromGRPCEnum('RunQuality', 'RUN_QUALITY_GOOD')).to.equal(RunQualities.GOOD);
     });
 
     it('should successfully extract messages definitions map', () => {

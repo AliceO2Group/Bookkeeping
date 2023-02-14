@@ -14,6 +14,7 @@
 const { expect } = require('chai');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
+const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
 
 module.exports = () => {
     const baseRun = {
@@ -21,7 +22,7 @@ module.exports = () => {
         timeTrgStart: '2022-03-21 13:00:00',
         environmentId: 'RYnWCcgd',
         runType: 'NONE',
-        runQuality: 'test',
+        runQuality: RunQualities.TEST,
         nDetectors: 3,
         bytesReadOut: 1024,
         nSubtimeframes: 10,
