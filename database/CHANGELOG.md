@@ -1,3 +1,7 @@
+## [0.50.0]
+* Changes made to the database:
+  * `run.run_quality` is not nullable anymore, and `unknown` value has been replaced by `none`
+
 ## [0.49.0]
 * Changes made to the database:
   * table flp_runs has been deleted, relation is owned by `flp_roles` on the new `run_number` column
