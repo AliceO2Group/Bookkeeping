@@ -263,7 +263,6 @@ module.exports = () => {
 
         // Return to the creation page
         await goToPage(page, 'log-create');
-        await page.waitForTimeout(100);
 
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
@@ -276,9 +275,9 @@ module.exports = () => {
         // Create the new log
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
-        await page.waitForNavigation();
+        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+
         await goToPage(page, 'log-overview');
-        await page.waitForTimeout(100);
 
         // Find the created log
         const table = await page.$$('tr');
@@ -290,18 +289,18 @@ module.exports = () => {
 
         // Go to the log detail page
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
-        await goToPage(page, `log-detail&id=${rowId}`);
-        await page.waitForTimeout(100);
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
 
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(20);
         const runsField = await page.$(`#post${rowId}-runs`);
 
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
-    }).timeout(10000);
+    });
 
     it('can create a log with multiple run numbers', async () => {
         const title = 'Multiple run numbers test';
@@ -344,11 +343,11 @@ module.exports = () => {
         // Click on "Show all" button
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(20);
         const runsField = await page.$(`#post${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         for (const runNumber of runNumbers) {
             expect(runsText).to.include(runNumber);
         }
-    }).timeout(10000);
+    });
 };

@@ -24,6 +24,7 @@ const {
     waitForNetworkIdleAndRedraw,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
+const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 
@@ -89,7 +90,7 @@ module.exports = () => {
             },
             environmentId: (number) => typeof number == 'number',
             runType: (string) => typeof string == 'string',
-            runQuality: (string) => typeof string == 'string',
+            runQuality: (string) => RUN_QUALITIES.includes(string),
             nDetectors: (number) => typeof number == 'number',
             nFlps: (number) => typeof number == 'number',
             nEpns: (number) => typeof number == 'number',
@@ -662,18 +663,18 @@ module.exports = () => {
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
-        await checkTableRunQualities(table, ['bad']);
+        await checkTableRunQualities(table, [RunQualities.BAD]);
 
         await page.$eval(testFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        await checkTableRunQualities(table, ['bad', 'test']);
+        await checkTableRunQualities(table, [RunQualities.BAD, RunQualities.TEST]);
 
         await page.$eval(testFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
-        await checkTableRunQualities(table, ['bad']);
+        await checkTableRunQualities(table, [RunQualities.BAD]);
     });
 
     it('Should successfully filter runs by their trigger value', async () => {
