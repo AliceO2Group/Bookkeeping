@@ -15,6 +15,7 @@ const { run: { StartRunUseCase } } = require('../../../../lib/usecases/index.js'
 const { dtos: { StartRunDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { GetEnvironmentUseCase } = require('../../../../lib/usecases/environment/index.js');
+const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 
@@ -43,8 +44,7 @@ module.exports = () => {
         });
     });
     it('should successfully store and return the saved entity', async () => {
-        const { result, error } = await new StartRunUseCase()
-            .execute(startRunDto);
+        const { result, error } = await new StartRunUseCase().execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.id).to.equal(109);
@@ -62,16 +62,16 @@ module.exports = () => {
         });
     });
 
-    it('should successfully store and return the saved entity with default values if not provided', async () => {
+    it('should successfully store and return the saved run with default values if not provided', async () => {
         delete startRunDto.body.detectors;
         startRunDto.body.runNumber = 108;
-        const { result, error } = await new StartRunUseCase()
-            .execute(startRunDto);
+        const { result, error } = await new StartRunUseCase().execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.runType.name).to.equal('NONE');
         expect(result.id).to.equal(110);
-        expect(result.detectors).to.equal(null);
+        expect(result.detectors).to.be.null;
+        expect(result.runQuality).to.equal(RunQualities.NONE);
     });
 
     it('should successfully create a run with a non-existing run type', async () => {
