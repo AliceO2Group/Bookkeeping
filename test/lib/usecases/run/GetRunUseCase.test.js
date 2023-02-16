@@ -14,6 +14,7 @@
 const { run: { GetRunUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetRunDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
+const { RunDetectorQualities } = require('../../../../lib/domain/enums/RunDetectorQualities.js');
 
 const { expect } = chai;
 
@@ -52,7 +53,7 @@ module.exports = () => {
         expect(result.detectorsQualities.length).to.equal(1);
         expect(result.detectorsQualities[0].id).to.equal(1);
         expect(result.detectorsQualities[0].name).to.equal('CPV');
-        expect(result.detectorsQualities[0].quality).to.equal('good');
+        expect(result.detectorsQualities[0].quality).to.equal(RunDetectorQualities.GOOD);
     });
 
     it('should successfully return detectors qualities sorted alphabetically', async () => {

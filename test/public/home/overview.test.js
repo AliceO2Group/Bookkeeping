@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, getFirstRow, goToPage } = require('../defaults');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -26,6 +27,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -47,7 +49,7 @@ module.exports = () => {
         firstRowId = await getFirstRow(table, page);
 
         // We expect to find a table
-        expect(firstRowId).to.equal('row141');
+        expect(firstRowId).to.equal('row119');
     });
 
     it('shows correct datatypes in respective columns', async () => {

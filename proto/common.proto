@@ -37,6 +37,7 @@ enum RunQuality {
   RUN_QUALITY_BAD = 1;
   RUN_QUALITY_GOOD = 2;
   RUN_QUALITY_TEST = 3;
+  RUN_QUALITY_NONE = 4;
 }
 
 enum RunType {

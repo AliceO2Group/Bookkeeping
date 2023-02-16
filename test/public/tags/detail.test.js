@@ -48,6 +48,14 @@ module.exports = () => {
         expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
 
+    it('should successfully display tag\'s related emails', async () => {
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 1, panel: 'logs' } });
+        const emails = await page.$$('#tag-email a');
+        expect(emails).to.lengthOf(1);
+        expect(await emails[0].evaluate((element) => element.href)).to.equal('mailto:food-group@cern.ch');
+        expect(await emails[0].evaluate((element) => element.innerText)).to.equal('food-group@cern.ch');
+    });
+
     it('notifies if a specified tag id is invalid', async () => {
         // Navigate to a tag detail view with an id that cannot exist
         await goToPage(page, 'tag-detail', { queryParameters: { id: 'abc' } });

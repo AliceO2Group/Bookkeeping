@@ -43,7 +43,7 @@ module.exports = () => {
                 .expect(201)
                 .send({
                     envId: 'New original env',
-                    status: 'STARTED',
+                    status: 'STANDBY',
                     statusMessage: 'This is going very good',
                 })
                 .end((err, res) => {
@@ -54,7 +54,7 @@ module.exports = () => {
 
                     const { data } = res.body;
                     expect(data.id).to.equal('New original env');
-                    expect(data.status).to.equal('STARTED');
+                    expect(data.status).to.equal('STANDBY');
                     expect(data.statusMessage).to.equal('This is going very good');
                     done();
                 });
@@ -134,7 +134,7 @@ module.exports = () => {
                 .put('/api/environments/KGIS12DS')
                 .send({
                     toredownAt: toredownDate,
-                    status: 'STOPPED',
+                    status: 'DESTROYED',
                     statusMessage: 'This is a good environment.',
                 })
                 .expect(201)
@@ -143,7 +143,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    expect(res.body.data.status).to.equal('STOPPED');
+                    expect(res.body.data.status).to.equal('DESTROYED');
                     expect(res.body.data.toredownAt).to.equal(toredownDate);
                     expect(res.body.data.statusMessage).to.equal('This is a good environment.');
                     done();

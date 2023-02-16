@@ -29,7 +29,7 @@ module.exports = () => {
             },
             body: {
                 toredownAt: new Date(),
-                status: 'STOPPED',
+                status: 'DESTROYED',
                 statusMessage: 'Completely new message',
             },
         });
@@ -44,7 +44,7 @@ module.exports = () => {
     it('Should be able to update the environment with correct values', async () => {
         const { result } = await new UpdateEnvironmentUseCase()
             .execute(updateEnvironmentDto);
-        expect(result.status).to.equal('STOPPED');
+        expect(result.status).to.equal('DESTROYED');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {

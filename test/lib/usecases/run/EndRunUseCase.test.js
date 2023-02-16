@@ -14,7 +14,7 @@
 const { run: { EndRunUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { EndRunDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
-const { runService } = require('../../../../lib/server/services/run/RunService.js');
+const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 
@@ -54,7 +54,7 @@ module.exports = () => {
         const { result } = await new EndRunUseCase()
             .execute(endRunDto);
         // Expect run quality not to change
-        expect(result.runQuality).to.equal('bad');
+        expect(result.runQuality).to.equal(RunQualities.BAD);
         expect(result.timeO2Start).to.equal(dateValue);
         expect(result.timeO2End).to.equal(dateValue);
         expect(result.timeTrgStart).to.equal(dateValue);
@@ -76,26 +76,5 @@ module.exports = () => {
             .execute(endRunDto);
         expect(error.status).to.equal('400');
         expect(error.title).to.equal(`Run with this run number (${wrongId}) could not be found`);
-    });
-
-    it('should successfully set quality to good when ending a physics run', async () => {
-        const { runQuality: originalRunQuality } = await runService.get({ runNumber: 54 });
-        expect(originalRunQuality).to.equal('test');
-
-        const { result } = await new EndRunUseCase().execute({
-            params: {
-                runId: '54',
-            },
-            body: {
-                timeO2End: '2019-08-08 17:00:00',
-                timeTrgEnd: '2019-08-08 16:00:00',
-            },
-            session: {
-                personid: 1,
-                id: 1,
-                name: 'John Doe',
-            },
-        });
-        expect(result.runQuality).to.equal('good');
     });
 };

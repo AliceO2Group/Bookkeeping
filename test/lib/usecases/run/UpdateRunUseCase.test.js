@@ -16,6 +16,8 @@ const { run: { UpdateRunUseCase, GetRunUseCase } } = require('../../../../lib/us
 const { dtos: { UpdateRunDto, GetRunDto, UpdateRunByRunNumberDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { GetAllLogsUseCase } = require('../../../../lib/usecases/log/index.js');
+const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { RunDetectorQualities } = require('../../../../lib/domain/enums/RunDetectorQualities.js');
 
 const { expect } = chai;
 
@@ -29,17 +31,7 @@ module.exports = () => {
     beforeEach(async () => {
         updateRunDto = await UpdateRunDto.validateAsync({
             body: {
-                runQuality: 'test',
-                detectorsQualities: [
-                    {
-                        detectorId: 14,
-                        quality: 'bad',
-                    },
-                    {
-                        detectorId: 16,
-                        quality: 'good',
-                    },
-                ],
+                runQuality: RunQualities.TEST,
             },
             params: {
                 runId: 106,
@@ -78,8 +70,7 @@ module.exports = () => {
     describe('updates with runId parameter.', () => {
         it('Should give an error when the id of the environment can not be found', async () => {
             updateRunDto.params.runId = wrongId;
-            const { error } = await new UpdateRunUseCase()
-                .execute(updateRunDto);
+            const { error } = await new UpdateRunUseCase().execute(updateRunDto);
             expect(error.status).to.equal(500);
             expect(error.detail).to.equal(`Run with this id (${wrongId}) could not be found`);
         });
@@ -88,15 +79,15 @@ module.exports = () => {
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
             expect(run.id).to.equal(106);
-            expect(run.runQuality).to.equal('good');
+            expect(run.runQuality).to.equal(RunQualities.GOOD);
 
-            updateRunDto.body.runQuality = 'bad';
+            updateRunDto.body.runQuality = RunQualities.BAD;
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
 
             expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
-            expect(result.runQuality).to.equal('bad');
+            expect(result.runQuality).to.equal(RunQualities.BAD);
         });
 
         it('should return error as run quality cannot be changed for ongoing runs', async () => {
@@ -104,10 +95,10 @@ module.exports = () => {
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
             expect(run.id).to.equal(105);
-            expect(run.runQuality).to.equal('test');
+            expect(run.runQuality).to.equal(RunQualities.TEST);
 
             updateRunDto.params.runId = 105;
-            updateRunDto.body.runQuality = 'bad';
+            updateRunDto.body.runQuality = RunQualities.BAD;
             const { error } = await new UpdateRunUseCase().execute(updateRunDto);
 
             expect(error).to.be.an('object');
@@ -128,30 +119,43 @@ module.exports = () => {
             };
 
             // Log for update test
-            await expectLastLogToBeForQualityChange('good', 'bad', ['DPG', 'RC']);
+            await expectLastLogToBeForQualityChange(RunQualities.GOOD, RunQualities.BAD, ['DPG', 'RC']);
 
-            updateRunDto.body.runQuality = 'test';
+            updateRunDto.body.runQuality = RunQualities.TEST;
             await new UpdateRunUseCase().execute(updateRunDto);
-            await expectLastLogToBeForQualityChange('bad', 'test', []);
+            await expectLastLogToBeForQualityChange(RunQualities.BAD, RunQualities.TEST, []);
 
-            updateRunDto.body.runQuality = 'bad';
+            updateRunDto.body.runQuality = RunQualities.BAD;
             await new UpdateRunUseCase().execute(updateRunDto);
-            await expectLastLogToBeForQualityChange('test', 'bad', []);
+            await expectLastLogToBeForQualityChange(RunQualities.TEST, RunQualities.BAD, []);
 
-            updateRunDto.body.runQuality = 'good';
+            updateRunDto.body.runQuality = RunQualities.GOOD;
             await new UpdateRunUseCase().execute(updateRunDto);
-            await expectLastLogToBeForQualityChange('bad', 'good', ['DPG', 'RC']);
+            await expectLastLogToBeForQualityChange(RunQualities.BAD, RunQualities.GOOD, ['DPG', 'RC']);
 
-            updateRunDto.body.runQuality = 'test';
+            updateRunDto.body.runQuality = RunQualities.TEST;
             await new UpdateRunUseCase().execute(updateRunDto);
-            await expectLastLogToBeForQualityChange('good', 'test', []);
+            await expectLastLogToBeForQualityChange(RunQualities.GOOD, RunQualities.TEST, []);
 
-            updateRunDto.body.runQuality = 'good';
+            updateRunDto.body.runQuality = RunQualities.GOOD;
             await new UpdateRunUseCase().execute(updateRunDto);
-            await expectLastLogToBeForQualityChange('test', 'good', []);
+            await expectLastLogToBeForQualityChange(RunQualities.TEST, RunQualities.GOOD, []);
 
-            updateRunDto.body.runQuality = 'bad';
+            updateRunDto.body.runQuality = RunQualities.NONE;
             await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange(RunQualities.GOOD, RunQualities.NONE, []);
+
+            updateRunDto.body.runQuality = RunQualities.TEST;
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange(RunQualities.NONE, RunQualities.TEST, []);
+
+            updateRunDto.body.runQuality = RunQualities.NONE;
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange(RunQualities.TEST, RunQualities.NONE, []);
+
+            updateRunDto.body.runQuality = RunQualities.BAD;
+            await new UpdateRunUseCase().execute(updateRunDto);
+            await expectLastLogToBeForQualityChange(RunQualities.NONE, RunQualities.BAD, []);
         });
 
         it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {
@@ -295,29 +299,42 @@ module.exports = () => {
             }
         });
 
-        it('should successfully update the run detector\'s quality', async () => {
+        it('should successfully update the run detector\'s quality and create a log accordingly', async () => {
+            // eslint-disable-next-line require-jsdoc
+            const expectLastLogToBeForDetectorQualityChange = async (newQuality) => {
+                const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
+                expect(logs).to.have.lengthOf(1);
+                const [log] = logs;
+                expect(log.title).to.equal('Detector(s) quality for run 1 has been changed');
+                expect(log.text.startsWith('Here are the updated detector\'s qualities for run 1')).to.be.true;
+                expect(log.text.endsWith(`- CPV: ${newQuality}`)).to.be.true;
+                expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([1]);
+                expect(log.tags.map(({ text }) => text)).to.eql(['CPV']);
+            };
+
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
-                body: { detectorsQualities: [{ detectorId: 1, quality: 'bad' }] },
+                body: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] },
             });
             expect(error).to.be.undefined;
             expect(result).to.be.an('object');
             expect(result.detectorsQualities).to.lengthOf(1);
             expect(result.detectorsQualities[0].id).to.equal(1);
             expect(result.detectorsQualities[0].name).to.equal('CPV');
-            expect(result.detectorsQualities[0].quality).to.equal('bad');
+            expect(result.detectorsQualities[0].quality).to.equal(RunDetectorQualities.BAD);
+            await expectLastLogToBeForDetectorQualityChange(RunDetectorQualities.BAD);
 
-            // Put back detector quality for furthers tests
             await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
-                body: { detectorsQualities: [{ detectorId: 1, quality: 'good' }] },
+                body: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] },
             });
+            await expectLastLogToBeForDetectorQualityChange(RunDetectorQualities.GOOD);
         });
 
         it('should throw an error when trying to update the quality of a non-existing detector', async () => {
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
-                body: { detectorsQualities: [{ detectorId: 2, quality: 'bad' }] },
+                body: { detectorsQualities: [{ detectorId: 2, quality: RunDetectorQualities.BAD }] },
             });
             expect(result).to.be.undefined;
             expect(error).to.be.an('object');
@@ -327,7 +344,7 @@ module.exports = () => {
         it('should throw an error when trying to update the quality of a run not ended yet', async () => {
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 105 },
-                body: { detectorsQualities: [{ detectorId: 1, quality: 'bad' }] },
+                body: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] },
             });
             expect(result).to.be.undefined;
             expect(error).to.be.an('object');

@@ -17,6 +17,8 @@ const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
 const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
+const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -248,7 +250,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(46);
+            expect(data.length).to.equal(44);
         });
 
         it('should filter run on their trigger value', async () => {
@@ -275,7 +277,7 @@ module.exports = () => {
             expect(response.status).to.equal(400);
 
             const { errors } = response.body;
-            expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test]');
+            expect(errors[0].detail).to.equal('"query.filter.runQualities[0]" must be one of [good, bad, test, none]');
         });
 
         it('should return 400 if the detectors number filter is invalid', async () => {
@@ -616,7 +618,7 @@ module.exports = () => {
             runNumber: 111,
             timeO2Start: '2022-03-21 13:00:00',
             timeTrgStart: '2022-03-21 13:00:00',
-            environmentId: '1234567890',
+            environmentId: '2JIdys2N',
             runType: 'NONE',
             nDetectors: 3,
             nFlps: 10,
@@ -689,7 +691,7 @@ module.exports = () => {
             request(server)
                 .put('/api/runs/9999999999')
                 .send({
-                    runQuality: 'bad',
+                    runQuality: RunQualities.BAD,
                 })
                 .expect(500)
                 .end((err, res) => {
@@ -706,7 +708,7 @@ module.exports = () => {
             request(server)
                 .put('/api/runs/1')
                 .send({
-                    runQuality: 'bad',
+                    runQuality: RunQualities.BAD,
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -714,7 +716,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    expect(res.body.data.runQuality).to.equal('bad');
+                    expect(res.body.data.runQuality).to.equal(RunQualities.BAD);
                     done();
                 });
         });
@@ -723,12 +725,10 @@ module.exports = () => {
             const { body } = await request(server)
                 .put('/api/runs/1')
                 .expect(201)
-                .send({
-                    runQuality: 'good',
-                });
+                .send({ runQuality: RunQualities.GOOD });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(1);
-            expect(body.data.runQuality).to.equal('good');
+            expect(body.data.runQuality).to.equal(RunQualities.GOOD);
         });
 
         it('should return an error due to invalid runQuality value', async () => {
@@ -739,7 +739,7 @@ module.exports = () => {
                     runQuality: 'wrong',
                 });
             expect(body.errors).to.be.an('array');
-            expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test]');
+            expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test, none]');
         });
 
         it('should return an error due to invalid eorReasons list', async () => {
@@ -765,17 +765,17 @@ module.exports = () => {
                 .put('/api/runs/106')
                 .expect(201)
                 .send({
-                    runQuality: 'good',
+                    runQuality: RunQualities.GOOD,
                     detectorsQualities: [
                         {
                             detectorId: 1,
-                            quality: 'bad',
+                            quality: RunDetectorQualities.BAD,
                         },
                     ],
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(106);
-            expect(body.data.runQuality).to.equal('good');
+            expect(body.data.runQuality).to.equal(RunQualities.GOOD);
         });
 
         it('should successfully add eorReasons to run and check runQuality did not change', async () => {
@@ -784,7 +784,7 @@ module.exports = () => {
                 .expect(200);
             expect(currentRun.body.data).to.be.an('object');
             expect(currentRun.body.data.id).to.equal(106);
-            expect(currentRun.body.data.runQuality).to.equal('good');
+            expect(currentRun.body.data.runQuality).to.equal(RunQualities.GOOD);
             expect(currentRun.body.data.eorReasons).to.have.lengthOf(0);
 
             const { body } = await request(server)
@@ -804,7 +804,7 @@ module.exports = () => {
             expect(body.data.id).to.equal(106);
             expect(body.data.eorReasons).to.have.lengthOf(1);
             expect(body.data.eorReasons[0].description).to.equal('Some');
-            expect(body.data.runQuality).to.equal('good');
+            expect(body.data.runQuality).to.equal(RunQualities.GOOD);
         });
 
         it('should give a proper error when a detectorId does not exists', async () => {
@@ -815,11 +815,11 @@ module.exports = () => {
                     detectorsQualities: [
                         {
                             detectorId: 1,
-                            quality: 'good',
+                            quality: RunDetectorQualities.GOOD,
                         },
                         {
                             detectorId: 32,
-                            quality: 'bad',
+                            quality: RunDetectorQualities.BAD,
                         },
                     ],
                 });
@@ -829,19 +829,19 @@ module.exports = () => {
         it('should successfully return the updated run entity with new detector\'s run quality', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/1')
-                .send({ detectorsQualities: [{ detectorId: 1, quality: 'good' }] });
+                .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
             expect(status).to.equal(201);
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(1);
             expect(body.data.detectorsQualities).to.lengthOf(1);
             expect(body.data.detectorsQualities[0].id).to.equal(1);
-            expect(body.data.detectorsQualities[0].quality).to.equal('good');
+            expect(body.data.detectorsQualities[0].quality).to.equal(RunDetectorQualities.GOOD);
         });
 
         it('should return 500 when trying to update the detector\'s quality of a run that has not ended yet', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/105')
-                .send({ detectorsQualities: [{ detectorId: 1, quality: 'good' }] });
+                .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
             expect(status).to.equal(500);
             expect(body.errors[0].detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
         });
