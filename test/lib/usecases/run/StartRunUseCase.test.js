@@ -14,7 +14,7 @@
 const { run: { StartRunUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { StartRunDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
-const { GetEnvironmentUseCase } = require('../../../../lib/usecases/environment/index.js');
+const { environmentService } = require('../../../../lib/server/services/environment/EnvironmentService.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 
 const { expect } = chai;
@@ -93,7 +93,7 @@ module.exports = () => {
         const { error } = await new StartRunUseCase().execute(startRunDto);
         expect(error).to.be.undefined;
 
-        const environment = await new GetEnvironmentUseCase().execute({ params: { envId: environmentId } });
+        const environment = await environmentService.get(environmentId);
         expect(environment.runs.map(({ runNumber }) => runNumber).includes(runNumber)).to.be.true;
     });
 };

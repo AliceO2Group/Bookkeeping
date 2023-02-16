@@ -11,8 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
+const getEnvironmentOrFailTest = require('./getEnvironmentOrFail.test.js');
 const EnvironmentServiceTest = require('./EnvironmentService.test.js');
 
 module.exports = () => {
+    describe('getEnvironmentOrFail', getEnvironmentOrFailTest);
     describe('EnvironmentService', EnvironmentServiceTest);
 };
