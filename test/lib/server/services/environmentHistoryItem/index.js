@@ -11,10 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const appendPathTest = require('./appendPath.test.js');
-const isAnEmptyShellTest = require('./isAnEmptyShell.test.js');
+const getEnvironmentHistoryItemTest = require('./getEnvironmentHistoryItem.test.js');
+const createEnvironmentHistoryItemTest = require('./createEnvironmentHistoryItem.test.js');
 
 module.exports = () => {
-    describe('appendPath', appendPathTest);
-    describe('isAnEmptyShell', isAnEmptyShellTest);
+    describe('getEnvironmentHistoryItem', getEnvironmentHistoryItemTest);
+    describe('createEnvironmentHistoryItem', createEnvironmentHistoryItemTest);
 };

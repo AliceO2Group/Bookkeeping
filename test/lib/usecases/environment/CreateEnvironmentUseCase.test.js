@@ -25,7 +25,7 @@ module.exports = () => {
             body: {
                 envId: 'SomeId',
                 createdAt: new Date().setHours(0, 0, 0, 0),
-                status: 'FAILED',
+                status: 'ERROR',
                 statusMessage: 'Some very important message why this actually fails',
             },
         });
@@ -51,7 +51,7 @@ module.exports = () => {
             .execute(createEnvDto);
         expect(result.id).to.equal(newId);
 
-        expect(result.status).to.equal('FAILED');
+        expect(result.status).to.equal('ERROR');
         expect(result.statusMessage).to.equal(createEnvDto.body.statusMessage);
     });
 

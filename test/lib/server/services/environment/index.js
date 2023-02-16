@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const appendPathTest = require('./appendPath.test.js');
-const isAnEmptyShellTest = require('./isAnEmptyShell.test.js');
+const EnvironmentServiceTest = require('./EnvironmentService.test.js');
 
 module.exports = () => {
-    describe('appendPath', appendPathTest);
-    describe('isAnEmptyShell', isAnEmptyShellTest);
+    describe('EnvironmentService', EnvironmentServiceTest);
 };
