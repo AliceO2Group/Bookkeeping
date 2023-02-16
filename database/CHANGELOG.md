@@ -1,6 +1,7 @@
 ## [0.50.0]
 * Changes made to the database:
   * `run.run_quality` is not nullable anymore, and `unknown` value has been replaced by `none`
+  * `environment.status` and `environment.statusMessage` has been moved to a separate table to store the history of its changes, `environment_history_items`
 
 ## [0.49.0]
 * Changes made to the database:
