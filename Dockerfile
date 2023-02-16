@@ -22,7 +22,7 @@ RUN apk add --no-cache \
     chromium=109.0.5414.74-r0 \
     freetype=2.12.1-r0 \
     freetype-dev=2.12.1-r0 \
-    git=2.38.3-r1 \
+    git=2.38.4-r0 \
     harfbuzz=5.3.1-r1 \
     ca-certificates=20220614-r4 \
     ttf-freefont=20120503-r3
