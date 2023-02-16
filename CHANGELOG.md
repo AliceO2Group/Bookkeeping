@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.50.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.50.0)
+* Notable changes for users:
+  * cxx API's documentation has been fixed
+  * A log is created when detector quality changes, and tags depend on which detector is concerned
+  * A new run quality `none` has been added
+  * Emails formatting has been improved in tag display page
+  * Physics runs quality is not set to good automatically when ending runs anymore (revert [O2B-777])
+  * An environment details page has been added
+
+* Notable changes for developers:
+  * Packages used by the local docker stack has been upgraded to comply with alpine linux 3.17
+  * Local stack node has been upgraded to new LTS 18
+  * Tests runs locally do not have the coverage report displayed anymore
+  * Database connection is retried every 5 seconds on failing (before running migrations)
+  * Environment states are now stored in an history table
+  * NotificationService now passes logIdand parentLogId as well
+
 ## [0.49.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.1)
 * Notable changes for developers:
   * Timeout for connection to the database has been temporarily removed
