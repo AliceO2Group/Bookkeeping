@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file. See [standa
   * Tests runs locally do not have the coverage report displayed anymore
   * Database connection is retried every 5 seconds on failing (before running migrations)
   * Environment states are now stored in an history table
+  * NotifcationService send method, now expects a general message without project specific fields. The message is built on BKP side
+  * Existing message field criteria was taken from: https://github.com/AliceO2Group/WebUi/pull/1796/files#diff-c025c39557c4ea200883fe9f312aff9ebc69528d9c724c71a452fc6e7c8bf826L77
 
 ## [0.49.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.1)
 * Notable changes for developers:
