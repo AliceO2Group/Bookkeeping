@@ -33,13 +33,28 @@ module.exports = () => {
 
         // We expect to be the only log on page and opened
         const postExists = await page.$('#post5');
-        const openedLogs = await page.evaluate(() => window.model.logs.getDetailedPosts());
+        const openedLogs = await page.evaluate(() => window.model.logs.detailedPostsIds);
         expect(openedLogs).to.have.lengthOf(1);
         expect(openedLogs[0]).to.equal(5);
         expect(Boolean(postExists)).to.be.true;
     });
 
-    it('log detail loads correctly', async () => {
+    it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        // Expect other runs to be closed
+        const closedLog1 = await page.$$('#post117 table tbody tr');
+        expect(closedLog1).to.have.lengthOf(2);
+
+        const closedLog2 = await page.$$('#post118 table tbody tr');
+        expect(closedLog2).to.have.lengthOf(2);
+
+        // Expect targeted run to be opened
+        const openedLog = await page.$$('#post119 table tbody tr');
+        expect(openedLog).to.have.lengthOf(9);
+    });
+
+    it('should successfuly expand opened log when displaying a log tree', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one post in this log entry
