@@ -33,7 +33,7 @@ module.exports = () => {
 
         // We expect to be the only log on page and opened
         const postExists = await page.$('#log-5');
-        const openedLogs = await page.evaluate(() => window.model.logs.detailedPostsIds);
+        const openedLogs = await page.evaluate(() => window.model.logs.treeViewModel.detailedPostsIds);
         expect(openedLogs).to.have.lengthOf(1);
         expect(openedLogs[0]).to.equal(5);
         expect(Boolean(postExists)).to.be.true;
