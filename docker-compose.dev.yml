@@ -25,6 +25,8 @@ services:
         target: /usr/src/app/proto
 
   database:
+    environment:
+      MYSQL_ROOT_PASSWORD: cern
     ports:
       - target: 3306
         published: 3306

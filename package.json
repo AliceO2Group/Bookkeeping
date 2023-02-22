@@ -31,16 +31,6 @@
     "docs/",
     "proto/"
   ],
-  "bundledDependencies": [
-    "@aliceo2/web-ui",
-    "cls-hooked",
-    "deepmerge",
-    "joi",
-    "mariadb",
-    "multer",
-    "sequelize",
-    "umzug"
-  ],
   "devDependencies": {
     "chai": "4.3.4",
     "eslint": "8.34.0",
@@ -50,7 +40,18 @@
     "nyc": "15.1.0",
     "puppeteer": "19.7.0",
     "puppeteer-to-istanbul": "1.4.0",
+    "sequelize-cli": "6.6.0",
     "sinon": "15.0.0",
     "supertest": "6.3.0"
-  }
+  },
+  "bundleDependencies": [
+    "@aliceo2/web-ui",
+    "cls-hooked",
+    "deepmerge",
+    "joi",
+    "mariadb",
+    "multer",
+    "sequelize",
+    "umzug"
+  ]
 }

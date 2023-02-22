@@ -28,6 +28,8 @@ Execute `npm run docker-run` to launch the application. Once it is running, go t
 
 ## Sequlize (CLI)
 
+In order to run those commands locally, you can either install `sequelize-cli` globally or simply run `npm i`.
+
 ### Usage
 ```sh
 $ npx sequelize-cli [command]
@@ -56,26 +58,4 @@ $ npx sequelize-cli seed:generate --name <SEEDER_FILE_NAME>
 ### Run every seeder
 ```sh
 $ npx sequelize-cli db:seed:all
-```
-
-## Versioning
-
-example: ```R.Arsenic.sp1.v0.0.1```
-
-Format:
-- ```R.``` (release)
-- ```Arsenic.``` (team name)
-- ```sp1.``` (sprint 1)
-- ```v0.0.1``` (version major, minor, patch)
-
-## Creating a new release
-Executing the following command will update the package(-lock).json, update the CHANGELOG.md and create a Git tag.
-```sh
-$ npx standard-version --release-as X.Y.Z
-```
-
-## Updating (transitive) dependencies
-```sh
-rm node_modules/ -rf && npm update && git add package-lock.json && git commit -m "chore(deps): bump transitive dependency versions"
-rm node_modules/ -rf && npm update -D && git add package-lock.json && git commit -m "chore(deps-dev): bump transitive dependency versions"
 ```
