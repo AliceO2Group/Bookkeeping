@@ -241,14 +241,14 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 104 } });
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 start because of missing trigger information');
+            .to.equal('Duration based on o2 start because of missing trigger start information');
     });
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 103 } });
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 stop because of missing trigger information');
+            .to.equal('Duration based on o2 stop because of missing trigger end information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
