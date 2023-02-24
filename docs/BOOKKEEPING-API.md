@@ -36,7 +36,7 @@ Given the about structures, one can send information via the HTTP API by using t
 #### Simple log entry
 Creating a log entry with only the mandatory fields `title` and `text`
 ``` 
-curl <hostname>:[port]/api/logs?token=<token> \
+curl '<hostname>:[port]/api/logs?token=<token>' \
 --request POST \
 --header 'Content-Type: application/json' \
 --data-raw '{"title": "Log created via cURL command", "text": "Using curl to add a log an entry"}'
@@ -45,7 +45,7 @@ curl <hostname>:[port]/api/logs?token=<token> \
 #### Log entry with optional parameters
 Creating a log entry with multiple mandatory and optional parameters
 ``` 
-curl <hostname>:[port]/api/logs?token=<token> \
+curl '<hostname>:[port]/api/logs?token=<token>' \
 --request POST \
 --header 'Content-Type: application/json' \
 --data-raw '{"title": "Log created via cURL command", "text": "Using curl to add a log an entry", "runNumbers": "529476,529475",  "tags": ["ABC"]}'
