@@ -1,14 +1,14 @@
+# Introduction
+
+
 - [Introduction](#introduction)
   - [HTTP API](#http-api)
     - [Log Entries](#log-entries)
       - [Simple log entry](#simple-log-entry)
       - [Log entry with optional parameters](#log-entry-with-optional-parameters)
+  - [gRPC API](#grpc-api)
 
-# Introduction
-
-The ALICE detector is being run in multiple shifts by hundreds of users remotely and in person. To ensure a proper history view and transparency, we make use of Bookkeeping which helps users keep track of the state of the system. It not only allows users to create entries about the state of the system but it is also capable of receiving and analysing notifications from other components when events are triggered. From an operation point of view, it is expected to be amongst the most used applications and it currently offers 2 APIs to communicate:
-1. [HTTP API](#http-api)
-2. [gRPC API](grpc.md)
+The ALICE detector is being run in multiple shifts by hundreds of users remotely and in person. To ensure a proper history view and transparency, we make use of Bookkeeping which helps users keep track of the state of the system. It not only allows users to create entries about the state of the system but it is also capable of receiving and analysing notifications from other components when events are triggered. From an operation point of view, it is expected to be amongst the most used applications and it currently offers 2 APIs to communicate: HTTP and gRPC.
 
 ## HTTP API
 
@@ -50,3 +50,5 @@ curl <hostname>:[port]/api/logs?token=<token> \
 --header 'Content-Type: application/json' \
 --data-raw '{"title": "Log created via cURL command", "text": "Using curl to add a log an entry", "runNumbers": "529476,529475",  "tags": ["ABC"]}'
 ```
+
+## [gRPC API](grpc.md)
