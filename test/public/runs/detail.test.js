@@ -115,6 +115,58 @@ module.exports = () => {
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
     });
 
+    it('should successfully update end of run reasons', async () => {
+        await reloadPage(page);
+        await pressElement(page, '#edit-run');
+
+        await page.waitForSelector('#Run-eorReasons select');
+        await page.select('#Run-eorReasons select', 'DETECTORS');
+        await page.waitForTimeout(20);
+
+        await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
+        await page.type('#Run-eorReasons input', 'A new EOR reason');
+        await page.click('#add-eor-reason');
+        // Remove the first EOR reason
+        await page.click('.remove-eor-reason');
+        await page.click('#save-run');
+
+        await page.waitForNetworkIdle();
+
+        const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+        expect(eorReasons).to.lengthOf(2);
+        expect(await eorReasons[0].evaluate((element) => element.innerText))
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
+
+        expect(await eorReasons[1].evaluate((element) => element.innerText))
+            .to.equal('DETECTORS - CPV - A new EOR reason');
+    });
+
+    it('should successfully revert the update end of run reasons', async () => {
+        await reloadPage(page);
+        await pressElement(page, '#edit-run');
+
+        await page.waitForSelector('#Run-eorReasons select');
+        await page.select('#Run-eorReasons select', 'OTHER');
+        await page.waitForTimeout(20);
+
+        await page.select('#Run-eorReasons select:nth-child(2)', 'Some-other');
+        await page.type('#Run-eorReasons input', 'A new new EOR reason');
+        await page.click('#add-eor-reason');
+        // Remove the first EOR reason
+        await page.click('.remove-eor-reason');
+        await page.click('#cancel-run');
+
+        await page.waitForNetworkIdle();
+
+        const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+        expect(eorReasons).to.lengthOf(2);
+        expect(await eorReasons[0].evaluate((element) => element.innerText))
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
+
+        expect(await eorReasons[1].evaluate((element) => element.innerText))
+            .to.equal('DETECTORS - CPV - A new EOR reason');
+    });
+
     it('should show lhc data in edit mode', async () => {
         await reloadPage(page);
         await pressElement(page, '#edit-run');

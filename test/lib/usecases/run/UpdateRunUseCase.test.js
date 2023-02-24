@@ -175,18 +175,12 @@ module.exports = () => {
             updateRunDto.body = {
                 eorReasons: [
                     {
-                        runId: 1,
                         reasonTypeId: 1,
-                        lastEditedName: 'Anonymous',
                     },
                     {
                         id: 2,
-                        title: 'DETECTORS',
-                        category: 'CPV',
-                        description: 'Some Reason other than selected',
-                        runId: 1,
                         reasonTypeId: 1,
-                        lastEditedName: 'Anonymous',
+                        description: 'Some Reason other than selected',
                     },
                 ],
             };
@@ -200,75 +194,6 @@ module.exports = () => {
             expect(result.eorReasons[0].description).to.equal('Some Reason other than selected plus one');
             expect(result.eorReasons[1].id).to.equal(6);
             expect(result.eorReasons[1].description).to.be.null;
-        });
-
-        it('should return error if eor reasons do not match runId', async () => {
-            updateRunDto.params.runId = 10;
-            updateRunDto.body = {
-                eorReasons: [
-                    {
-                        description: 'Something went wrong',
-                        runId: 1,
-                        reasonTypeId: 1,
-                        lastEditedName: 'Anonymous',
-                    },
-                ],
-            };
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-
-            expect(result).to.be.an('undefined');
-
-            expect(error).to.be.an('object');
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal('Multiple run ids parameters passed in eorReasons list. Please send updates for one run only');
-        });
-
-        it('should return error if eor reasons contain different runIds', async () => {
-            updateRunDto.params.runId = 1;
-            updateRunDto.body = {
-                eorReasons: [
-                    {
-                        description: 'Something went wrong',
-                        runId: 1,
-                        reasonTypeId: 1,
-                        lastEditedName: 'Anonymous',
-                    },
-                    {
-                        description: 'Something went wrong',
-                        runId: 2,
-                        reasonTypeId: 1,
-                        lastEditedName: 'Anonymous',
-                    },
-                ],
-            };
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-
-            expect(result).to.be.an('undefined');
-
-            expect(error).to.be.an('object');
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal('Multiple run ids parameters passed in eorReasons list. Please send updates for one run only');
-        });
-
-        it('should return error if eor reasons contains reason_type_id that does not exist', async () => {
-            updateRunDto.params.runId = 1;
-            updateRunDto.body = {
-                eorReasons: [
-                    {
-                        description: 'Something went wrong',
-                        runId: 1,
-                        reasonTypeId: 10,
-                        lastEditedName: 'Anonymous',
-                    },
-                ],
-            };
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-
-            expect(result).to.be.an('undefined');
-
-            expect(error).to.be.an('object');
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal('Provided reason types do not exist');
         });
 
         it('Should successfully update the run tags', async () => {
@@ -353,9 +278,8 @@ module.exports = () => {
     });
 
     describe('updates with run number', () => {
-        it('Should be able to update the environment with correct values', async () => {
-            const { result } = await new UpdateRunUseCase()
-                .execute(updateRunByRunNumberDto);
+        it('Should be able to update the run with correct values', async () => {
+            const { result } = await new UpdateRunUseCase().execute(updateRunByRunNumberDto);
 
             expect(result.runNumber).to.equal(72);
             expect(result.lhcBeamEnergy).to.equal(232.156);

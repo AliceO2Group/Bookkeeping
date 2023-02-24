@@ -668,7 +668,7 @@ module.exports = () => {
                     expect(res.body.errors).to.be.an('array');
                     // eslint-disable-next-line max-len
                     expect(res.body.errors[0].detail).to.equal('Error code "Provide detector list contains invalid elements" is not' +
-                                                               ' defined, your custom type is missing the correct messages definition');
+                        ' defined, your custom type is missing the correct messages definition');
 
                     done();
                 });
@@ -735,29 +735,9 @@ module.exports = () => {
             const { body } = await request(server)
                 .put('/api/runs/1')
                 .expect(400)
-                .send({
-                    runQuality: 'wrong',
-                });
+                .send({ runQuality: 'wrong' });
             expect(body.errors).to.be.an('array');
             expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test, none]');
-        });
-
-        it('should return an error due to invalid eorReasons list', async () => {
-            const { body } = await request(server)
-                .put('/api/runs/1')
-                .expect(400)
-                .send({
-                    eorReasons: [
-                        {
-                            description: 'Some',
-                            runId: '1a',
-                            reasonTypeId: 1,
-                            lastEditedName: 'Anonymous',
-                        },
-                    ],
-                });
-            expect(body.errors).to.be.an('array');
-            expect(body.errors[0].detail).to.equal('"body.eorReasons[0].runId" must be a number');
         });
 
         it('should successfully return the updated run entity with new runQuality value', async () => {
@@ -793,10 +773,8 @@ module.exports = () => {
                 .send({
                     eorReasons: [
                         {
-                            description: 'Some',
-                            runId: 106,
                             reasonTypeId: 1,
-                            lastEditedName: 'Anonymous',
+                            description: 'Some',
                         },
                     ],
                 });
