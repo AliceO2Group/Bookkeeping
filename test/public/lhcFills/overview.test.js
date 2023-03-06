@@ -19,6 +19,7 @@ const {
     goToPage,
     checkColumnBalloon,
 } = require('../defaults');
+const { waitForNetworkIdleAndRedraw } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -199,5 +200,14 @@ module.exports = () => {
         const stableBeamsDurationText = await page.$('#row5-stableBeamsDuration-text');
         expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success')));
         expect(await stableBeamsDurationText.evaluate((element) => element.innerText)).to.equal('ONGOING');
+    });
+
+    it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await pressElement(page, '#row6-runs a');
+        await waitForNetworkIdleAndRedraw(page);
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=run-detail');
     });
 };

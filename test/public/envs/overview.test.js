@@ -20,6 +20,7 @@ const {
     goToPage,
     checkColumnBalloon,
 } = require('../defaults');
+const { waitForNetworkIdleAndRedraw } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -163,5 +164,14 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
+    });
+
+    it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        await goToPage(page, 'env-overview');
+        await pressElement(page, '#rowTDI59So3d-runs a');
+        await waitForNetworkIdleAndRedraw(page);
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=run-detail');
     });
 };

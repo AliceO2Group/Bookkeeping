@@ -647,4 +647,14 @@ module.exports = () => {
         currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
     });
+
+    it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        await goToPage(page, 'log-overview');
+        await pressElement(page, '#row138-runs a');
+        await waitForNetworkIdleAndRedraw(page);
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=run-detail');
+        expect(urlParameters).to.contain('id=1');
+    });
 };

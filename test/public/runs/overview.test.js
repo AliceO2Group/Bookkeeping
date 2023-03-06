@@ -872,4 +872,35 @@ module.exports = () => {
         expect(urlParameters).to.contain('page=lhc-fill-details');
         expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
+
+    it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
+        await goToPage(page, 'run-overview');
+        const runDurationCell = await page.$('#row106-runDuration');
+        expect(await runDurationCell.$('.popover-container')).to.be.null;
+        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+    });
+
+    it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
+        const runDurationCell = await page.$('#row105-runDuration');
+        expect(await runDurationCell.$('.popover-container')).to.be.null;
+        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
+    });
+
+    it('should successfully display popover warning when run is missing trigger start', async () => {
+        const runDurationCell = await page.$('#row104-runDuration');
+        expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
+            .to.equal('Duration based on o2 start because of missing trigger start information');
+    });
+
+    it('should successfully display popover warning when run is missing trigger stop', async () => {
+        const runDurationCell = await page.$('#row103-runDuration');
+        expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
+            .to.equal('Duration based on o2 stop because of missing trigger end information');
+    });
+
+    it('should successfully display popover warning when run is missing trigger start and stop', async () => {
+        const runDurationCell = await page.$('#row102-runDuration');
+        expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
+            .to.equal('Duration based on o2 start AND stop because of missing trigger information');
+    });
 };

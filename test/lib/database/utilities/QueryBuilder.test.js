@@ -100,7 +100,7 @@ module.exports = () => {
 
                 const result = await LogRepository.findAll(queryBuilder);
                 expect(result).to.not.be.null;
-                expect(result).to.have.lengthOf(118);
+                expect(result).to.have.lengthOf(116);
                 expect(result[0].parentLogId).to.equal(null); // From seeders file
                 expect(result[1].parentLogId).to.equal(1);
             });

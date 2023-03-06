@@ -224,7 +224,7 @@ module.exports = () => {
         await page.waitForTimeout(500);
         // Verify that the attachment names match the ones we uploaded
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-        const attachmentsField = await page.$(`#post${parsedFirstRowId}-attachments`);
+        const attachmentsField = await page.$(`#log-${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
         expect(attachmentsText).to.equal(`Attachments:\t\n${file1},\n${file2}`);
     }).timeout(12000);
@@ -296,7 +296,7 @@ module.exports = () => {
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(20);
-        const runsField = await page.$(`#post${rowId}-runs`);
+        const runsField = await page.$(`#log-${rowId}-runs`);
 
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
@@ -344,7 +344,7 @@ module.exports = () => {
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(20);
-        const runsField = await page.$(`#post${rowId}-runs`);
+        const runsField = await page.$(`#log-${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         for (const runNumber of runNumbers) {
             expect(runsText).to.include(runNumber);
