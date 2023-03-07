@@ -63,7 +63,7 @@ The bookkeeping API's client can be requested from one of the two available fact
 #### Use-case specific services
 
 ```cpp
-#include "<BookkeepingApi/BkpClientFactory.h>"
+#include <BookkeepingApi/BkpClientFactory.h>
 using namespace o2::bkp::api;
 
 auto client = BkpClientFactory::create("[host][:port]");
@@ -78,8 +78,8 @@ Then the clients provides access to services which group API calls by context, f
 For example to update readout FLP's counters using a local JSON file you can use
 
 ```cpp
-#include "<BookkeepingApi/BkpClientFactory.h>"
-using o2::bkp::api;
+#include <BookkeepingApi/BkpClientFactory.h>
+using namespace o2::bkp::api;
 
 auto client = BkpClientFactory::create("[grpc-endpoint-url]");
 client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-NAME", runNumber, nSubtimeframes, nEquipmentBytes, nRecordingBytes, nFairMQBytes);
@@ -88,8 +88,8 @@ client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-NAME", runNumber,
 #### Proto services implementations
 
 ```cpp
-#include "<BookkeepingApi/BkpProtoClientFactory.h>"
-using namespace o2::bkp:api::proto;
+#include <BookkeepingApi/BkpProtoClientFactory.h>
+using namespace o2::bkp::api::proto;
 
 auto client = BkpProtoClientFactory::create("[host][:port]");
 ```
@@ -102,8 +102,8 @@ Then the clients provides services implementations by the service name. For exam
 For example to fetch a run by its id one can use:
 
 ```cpp
-#include "<BookkeepingApi/BkpClientFactory.h>"
-using o2::bkp::api::proto;
+#include <BookkeepingApi/BkpProtoClientFactory.h>
+using namespace o2::bkp::api::proto;
 
 auto client = BkpProtoClientFactory::create("[grpc-endpoint-url]");
 
