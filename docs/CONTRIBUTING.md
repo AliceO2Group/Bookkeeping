@@ -28,16 +28,14 @@ POST  /orders/1/lines  <---> orders[1].lines.push(data)
 ```
 
 ## Commit Message Guidelines
-We have very precise rules over how our git commit messages can be formatted. This leads to **more readable messages** that are easy to follow when looking through the **project history**. But also, we use the git commit messages to **generate the change log**.
+We have very precise rules over how our git commit messages can be formatted. This leads to **more readable messages** that are easy to follow when looking through the **project history**.
 
 ### Format
-Each commit message consists of a **header**, a **body** and a **footer**. The header has a special format that includes a type, a scope and a subject:
+Each commit message consists of a **header** and a **body**. The header has a special format that includes the jira ticket number and a quick description of it
 ```
-<type>[(optional scope)]: <description>
+[<tiket-number>] <description>
 
 [optional body]
-
-[optional footer(s)]
 ```
 
 ### Examples

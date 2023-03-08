@@ -46,5 +46,6 @@ module.exports = () => {
         expect(getRunDefinition(CALIBRATION.PEDESTAL)).to.equal(RunDefinition.Calibration);
         expect(getRunDefinition(CALIBRATION.LASER)).to.equal(RunDefinition.Calibration);
         expect(getRunDefinition(CALIBRATION.PULSER)).to.equal(RunDefinition.Calibration);
+        expect(getRunDefinition(CALIBRATION.NOISE)).to.equal(RunDefinition.Calibration);
     });
 };

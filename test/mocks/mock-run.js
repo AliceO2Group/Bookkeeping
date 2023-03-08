@@ -267,5 +267,24 @@ module.exports = {
                 name: 'PULSER',
             },
         },
+        NOISE: {
+            dcs: false,
+            dd_flp: true,
+            epn: true,
+            triggerValue: 'OFF',
+            tfbDdMode: 'processing',
+            pdpWorkflowParameters: 'QC,CTF',
+            readoutCfgUri: 'reply/pbpb',
+            lhcFill: {
+                stableBeamsStart: '2022-10-01T10:00:00',
+                stableBeamsEnd: '2022-10-02T10:00:00',
+            },
+            startTime: 1664618400000, // 2022-10-01T12:00:00
+            endTime: 1664625600000, // 2022-10-01T14:00:00
+            concatenatedDetectors: 'TPC, TST',
+            runType: {
+                name: 'NOISE',
+            },
+        },
     },
 };
