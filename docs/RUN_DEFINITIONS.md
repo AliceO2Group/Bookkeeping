@@ -46,7 +46,7 @@ During synthetic runs, the processes are at the level of readout and emulate rea
 - `trigger_value` = `OFF`
 
 ### CALIBRATION:
-- `run_type` should be prefixed with `CALIBRATION_`, `PEDESTAL`, `LASER`, `PULSER`
+- `run_type` should be prefixed with `CALIBRATION_`, `PEDESTAL`, `LASER`, `PULSER`, `NOISE`
 
 ### COMMISIONING:
 - any run that does not fit any of the prior definitions;
