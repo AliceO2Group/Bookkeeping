@@ -20,3 +20,10 @@ You can deploy Bookkeeping on your own setup by following our [SETUP](/docs/setu
 ### C. :hammer_and_wrench: I want to contribute to Bookkeeping software
 
 You are more than welcomed to contribute to Bookkeeping. Please fellow our [CONTRIBUTING](./docs/CONTRIBUTING.md) guide where you can find out more about how to set up a dev environment and how to follow our coding standards.
+
+## Bookkeeping Requests
+
+If you would like to see a new feature in Bookkeeping, please raise a JIRA ticket and explain the use-case you envisage and why the feature is needed. [JIRA Board](https://alice.its.cern.ch/jira/secure/RapidBoard.jspa?projectKey=O2B)
+
+## Bookkeeping Status
+GitHub Actions: ![Status](https://github.com/AliceO2Group/Bookkeeping/actions/workflows/bookkeeping.yml/badge.svg)
