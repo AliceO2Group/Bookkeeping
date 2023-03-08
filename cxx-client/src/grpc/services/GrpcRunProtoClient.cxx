@@ -17,6 +17,17 @@ GrpcRunProtoClient::GrpcRunProtoClient(const std::shared_ptr<::grpc::ChannelInte
   mStub = RunService::NewStub(channel);
 }
 
+std::shared_ptr<RunWithRelations> GrpcRunProtoClient::Get(const int runNumber, const std::vector<o2::bookkeeping::RunRelations>& relations)
+{
+  auto request = std::make_shared<RunFetchRequest>();
+  request->set_runnumber(runNumber);
+  for (auto relation: relations) {
+    request->add_relations(relation);
+  }
+
+  return Get(request);
+}
+
 std::shared_ptr<RunWithRelations> GrpcRunProtoClient::Get(std::shared_ptr<RunFetchRequest> request)
 {
   ClientContext context;

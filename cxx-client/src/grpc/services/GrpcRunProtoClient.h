@@ -15,6 +15,7 @@ class GrpcRunProtoClient : public ::o2::bkp::api::proto::RunProtoClient
  public:
   explicit GrpcRunProtoClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
 
+  std::shared_ptr<o2::bookkeeping::RunWithRelations> Get(const int runNumber, const std::vector<o2::bookkeeping::RunRelations>& relations) override;
   std::shared_ptr<o2::bookkeeping::RunWithRelations> Get(std::shared_ptr<o2::bookkeeping::RunFetchRequest> request) override;
 
  private:

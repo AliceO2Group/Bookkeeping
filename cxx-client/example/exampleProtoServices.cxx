@@ -28,16 +28,26 @@ int main(int argc, char** argv)
   try {
     auto client = BkpProtoClientFactory::create(argv[1]);
 
+    // First option: direct implementation, using constructed request
     auto request = std::make_shared<RunFetchRequest>();
     request->set_runnumber(106);
     request->add_relations(RUN_RELATIONS_LHC_FILL);
     std::shared_ptr<RunWithRelations> run106WithRelations = client->run()->Get(request);
-    std::ostringstream messageStream;
-    messageStream << "Retrieved run 106 info, such as time o2 start <" << run106WithRelations->run().timeo2start() << ">";
+    std::ostringstream messageStreamRun106;
+    messageStreamRun106 << "Retrieved run 106 info, such as time o2 start <" << run106WithRelations->run().timeo2start() << ">";
     if (run106WithRelations->has_lhcfill()) {
-      messageStream << " and related fill info such as fill beam type <" << run106WithRelations->lhcfill().beamtype() << ">";
+      messageStreamRun106 << " and related fill info such as fill beam type <" << run106WithRelations->lhcfill().beamtype() << ">";
     }
-    std::cout << messageStream.str() << std::endl;
+    std::cout << messageStreamRun106.str() << std::endl;
+
+    // Second option: use shortcut method
+    std::shared_ptr<RunWithRelations> run105WithRelations = client->run()->Get(105, { RUN_RELATIONS_LHC_FILL });
+    std::ostringstream messageStreamRun105;
+    messageStreamRun105 << "Retrieved run 105 info, such as time o2 start <" << run106WithRelations->run().timeo2start() << ">";
+    if (run106WithRelations->has_lhcfill()) {
+      messageStreamRun105 << " and related fill info such as fill beam type <" << run106WithRelations->lhcfill().beamtype() << ">";
+    }
+    std::cout << messageStreamRun105.str() << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);
