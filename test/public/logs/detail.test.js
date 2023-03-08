@@ -32,18 +32,33 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 5 } });
 
         // We expect to be the only log on page and opened
-        const postExists = await page.$('#post5');
-        const openedLogs = await page.evaluate(() => window.model.logs.getDetailedPosts());
+        const postExists = await page.$('#log-5');
+        const openedLogs = await page.evaluate(() => window.model.logs.treeViewModel.detailedPostsIds);
         expect(openedLogs).to.have.lengthOf(1);
         expect(openedLogs[0]).to.equal(5);
         expect(Boolean(postExists)).to.be.true;
     });
 
-    it('log detail loads correctly', async () => {
+    it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        // Expect other runs to be closed
+        const closedLog1 = await page.$$('#log-117 table tbody tr');
+        expect(closedLog1).to.have.lengthOf(2);
+
+        const closedLog2 = await page.$$('#log-118 table tbody tr');
+        expect(closedLog2).to.have.lengthOf(2);
+
+        // Expect targeted run to be opened
+        const openedLog = await page.$$('#log-119 table tbody tr');
+        expect(openedLog).to.have.lengthOf(9);
+    });
+
+    it('should successfuly expand opened log when displaying a log tree', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
-        // We expect there to be at least one post in this log entry
-        const postExists = await page.$('#post1');
+        // We expect there to be at least one log in this log entry
+        const postExists = await page.$('#log-1');
         expect(Boolean(postExists)).to.be.true;
     });
 
@@ -66,12 +81,12 @@ module.exports = () => {
         await showAllButton.click();
         await page.waitForTimeout(1000);
         // We expect the correct associated runs to be shown
-        const runField = await page.$(`#post${logId}-runs`);
+        const runField = await page.$(`#log-${logId}-runs`);
         const runText = await page.evaluate((element) => element.innerText, runField);
         expect(runText).to.equal(`Runs:\t\n${runId}`);
 
         // We expect the associated runs to be clickable with a valid link
-        const runLink = await page.$(`#post${logId}-runs a`);
+        const runLink = await page.$(`#log-${logId}-runs a`);
         await runLink.click();
         await page.waitForTimeout(1000);
 
@@ -84,7 +99,7 @@ module.exports = () => {
         const parentLogId = 2;
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
-        // We expect there to be at least one post in this log entry
+        // We expect there to be at least one log in this log entry
         await pressElement(page, `#reply-to-${parentLogId}`);
         await page.waitForTimeout(1000);
 
@@ -139,8 +154,8 @@ module.exports = () => {
 
         // Expect new log to inherit title of the parent
         const newLogId = await page.evaluate(() => window.model.router.params.id);
-        const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#post${newLogId}title`).innerText, newLogId);
-        const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#post${parentLogId}title`).innerText, parentLogId);
+        const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
+        const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
         expect(newLogTitle).to.equal(`Re: ${parentLogTitle}`);
     });
 };

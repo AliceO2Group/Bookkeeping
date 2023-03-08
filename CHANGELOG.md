@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.51.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.51.0)
+* Notable changes for users:
+  * A popover is displayed in place of * and ** for run start/stop/duration with missing triggers
+  * When displaying a log tree, the log selected in the URL is expanded by default
+  * Runs are now clickable in environments overview and logs overview
+  * Fixed the date of log creation for detectors/runs quality change
+
 ## [0.50.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.50.0)
 * Notable changes for users:
   * cxx API's documentation has been fixed
