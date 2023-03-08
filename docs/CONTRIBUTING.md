@@ -1,9 +1,16 @@
 # Contributing to AliceO2 Bookkeeping
 We would love for you to contribute to *AliceO2 Bookkeeping* and help make it even better than it is today! As a contributor, here are the guidelines we would like you to follow:
-- [Coding conventions](#coding-conventions)
-- [Endpoint conventions](#endpoint-conventions)
-- [Commit Message Guidelines](#commit-message-guidelines)
-- [Trunk based development guidelines](#trunk-based-development)
+
+- [Contributing to AliceO2 Bookkeeping](#contributing-to-aliceo2-bookkeeping)
+  - [Coding conventions](#coding-conventions)
+  - [Endpoint conventions](#endpoint-conventions)
+    - [Example](#example)
+  - [Commit Message Guidelines](#commit-message-guidelines)
+    - [Format](#format)
+    - [Examples](#examples)
+  - [Local Development setup](#local-development-setup)
+  - [gRPC](#grpc)
+  - [Trunk based development](#trunk-based-development)
 
 ## Coding conventions
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
@@ -12,19 +19,19 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 - All code must be formatted. An automated formatter is available (`npm run lint:fix`).
 
 ## Endpoint conventions
-A **resource can be a singleton or a collection**. For example, "`customers`" is a collection resource and "`customer`" is a singleton resource (in a banking domain). We can identify "`customers`" collection resource using the URI "`customers`". We can identify a single "`customer`" resource using the URI "`/customers/{customerId}`".
+A **resource can be a singleton or a collection**. For example, "`logs`" is a collection resource and "`log`" is a singleton resource. We can identify "`logs`" collection resource using the URI "`logs`". We can identify a single "`log`" resource using the URI "`/logs/{logId}`".
 
-A **resource may contain sub-collection resources** also. For example, sub-collection resource "`accounts`" of a particular "`customer`" can be identified using the URI "`/customers/{customerId}/accounts`" (in a banking domain). Similarly, a singleton resource "`account`" inside the sub-collection resource "`accounts"` can be identified as follows: "`/customers/{customerId}/accounts/{accountId}`".
+A **resource may contain sub-collection resources** also. For example, sub-collection resource "`attachments`" of a particular "`log`" can be identified using the URI "`/logs/{logId}/attachments`". Similarly, a singleton resource "`attachment`" inside the sub-collection resource "`logs"` can be identified as follows: "`/logs/{logId}/attachments/{attachmentId}`".
 
 ### Example
 ```
-GET   /orders          <---> orders
-POST  /orders          <---> orders.push(data)
-GET   /orders/1        <---> orders[1]
-PUT   /orders/1        <---> orders[1] = data
-PATCH /orders/1        <---> orders[1] = { ...orders[1], ...data }
-GET   /orders/1/lines  <---> orders[1].lines
-POST  /orders/1/lines  <---> orders[1].lines.push(data)
+GET   /logs          <---> logs
+POST  /logs          <---> logs.push(data)
+GET   /logs/1        <---> logs[1]
+PUT   /logs/1        <---> logs[1] = data
+PATCH /logs/1        <---> logs[1] = { ...logs[1], ...data }
+GET   /logs/1/attachments  <---> logs[1].attachments
+POST  /logs/1/attachments  <---> logs[1].attachments.push(data)
 ```
 
 ## Commit Message Guidelines
@@ -40,13 +47,17 @@ Each commit message consists of a **header** and a **body**. The header has a sp
 
 ### Examples
 ```
-docs(changelog): update changelog to beta.5
+[O2B-111] Update changelog to beta.5
 ```
 ```
-fix(release): need to depend on latest rxjs and zone.js
+[O2B-123] Adds new environment details page
 
-The version in our package.json gets copied to the one we publish, and users need the latest of these.
 ```
+
+## Local Development setup
+In order to setup Bookkeeping for local development, please follow our guide in which we have step by step instructions: [DEVELOPMENT](/docs/DEVELOPMENT.md)
+
+## [gRPC](/docs/grpc.md)
 
 ## Trunk based development
 

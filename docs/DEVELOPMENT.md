@@ -1,61 +1,49 @@
 # Development
 
-## Getting started
-### Configuration
-The following `.env` configuration is the bare minimum required for development. It must be placed in the top dir. 
-```ini
-; Database
-MYSQL_ROOT_PASSWORD=cern
-OPENID_ID=
-OPENID_SECRET=
-OPENID_REDIRECT=
+## Prerequisite
 
-JWT_SECRET=
+Local development requires the following programs to run:
+- docker ([documentation](https://docs.docker.com/engine/install/)) and [Docker](./docs/DOCKER.md)
+- npm, which is bundled with nodejs ([download](https://nodejs.org/en/download/))
 
-ATTACHMENT_PATH=/var/storage
+For recent versions of docker, `docker-compose` utility is now part of docker (in `docker compose`). 
+For compatibility reasons, create an alias or a script that aliases `docker-compose` to `docker compose`.
 
-NOTIFICATION_BROKER=
-```
+## Installation
 
-On mac, the file database/configuration/my.cnf must be modified to set this variable to 1 : 
-```
-lower_case_table_names=1
-```
+Clone the Bookkeeping project
 
-### Running
-
-Execute `npm run docker-run` to launch the application. Once it is running, go to [localhost:4000](localhost:4000).
-
-## Sequlize (CLI)
-
-In order to run those commands locally, you can either install `sequelize-cli` globally or simply run `npm i`.
-
-### Usage
 ```sh
-$ npx sequelize-cli [command]
+git clone git@github.com:AliceO2Group/Bookkeeping.git
+cd Bookkeeping
 ```
 
-### Show help
+## Run the docker stack
+
+Use the npm script (the `docker-compose` command must be available to npm)
+
 ```sh
-$ npx sequelize-cli --help
+npm run docker-run
 ```
 
-### Generates a new migration file
-```sh
-$ npx sequelize-cli migration:generate --name <MIGRATION_FILE_NAME>
+You will then see in this tabs the server's log
+
+### Run seeders
+
+For the first time, database can be feed with fake data. To do so:
+
+Wait until you see the log
+
+```
+[DATABASE] info: Executed pending migrations
 ```
 
-### Run pending migrations
+Then you can run seeders in a different terminal window to populate your database
+
 ```sh
-$ npx sequelize-cli db:migrate
+docker-compose exec application npm run sequelize -- db:seed:all
 ```
 
-### Generates a new seed file
-```sh
-$ npx sequelize-cli seed:generate --name <SEEDER_FILE_NAME>
-```
+### You are ready
 
-### Run every seeder
-```sh
-$ npx sequelize-cli db:seed:all
-```
+You can now open the app at [http://localhost:4000](http://localhost:4000)
