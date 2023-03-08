@@ -1,7 +1,7 @@
-# Contributing to AliceO2 Bookkeeping
+# C. 🛠️ I want to contribute to Bookkeeping software
 We would love for you to contribute to *AliceO2 Bookkeeping* and help make it even better than it is today! As a contributor, here are the guidelines we would like you to follow:
 
-- [Contributing to AliceO2 Bookkeeping](#contributing-to-aliceo2-bookkeeping)
+- [C. 🛠️ I want to contribute to Bookkeeping software](#c-️-i-want-to-contribute-to-bookkeeping-software)
   - [Coding conventions](#coding-conventions)
   - [Endpoint conventions](#endpoint-conventions)
     - [Example](#example)
