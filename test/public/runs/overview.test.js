@@ -153,6 +153,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
         const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
+        const initialTableRows = (await page.$$('table tr')).length;
 
         const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
         await menuItems[menuItems.length - 1].evaluate((button) => button.click());
@@ -161,9 +162,10 @@ module.exports = () => {
         await page.evaluate(() => {
             window.scrollBy(0, window.innerHeight);
         });
+
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length).to.be.greaterThan(20);
+        expect(tableRows.length).to.be.greaterThan(initialTableRows);
     });
 
     it('can set how many runs are available per page', async () => {
