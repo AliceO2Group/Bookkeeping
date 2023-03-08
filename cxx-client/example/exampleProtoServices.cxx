@@ -11,11 +11,12 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
 #include "BookkeepingApi/BkpProtoClientFactory.h"
 #include "run.pb.h"
 
-using o2::bkp::api::proto::BkpProtoClientFactory;
-using o2::bookkeeping::RunFetchRequest;
+using namespace o2::bkp::api::proto;
+using namespace o2::bookkeeping;
 
 int main(int argc, char** argv)
 {
@@ -27,14 +28,16 @@ int main(int argc, char** argv)
   try {
     auto client = BkpProtoClientFactory::create(argv[1]);
 
-    // First option: direct implementation, using constructed request
     auto request = std::make_shared<RunFetchRequest>();
     request->set_runnumber(106);
-    std::shared_ptr<o2::bookkeeping::Run> run106 = client->run()->Get(request);
-    std::cout << "Retrieved run 106 info, such as time o2 start" << run106->timeo2start() << std::endl;
-
-    std::shared_ptr<o2::bookkeeping::Run> run105 = client->run()->Get(105);
-    std::cout << "Retrieved run 105 info, such as time o2 start" << run105->timeo2start() << std::endl;
+    request->add_relations(RUN_RELATIONS_LHC_FILL);
+    std::shared_ptr<RunWithRelations> run106WithRelations = client->run()->Get(request);
+    std::ostringstream messageStream;
+    messageStream << "Retrieved run 106 info, such as time o2 start <" << run106WithRelations->run().timeo2start() << ">";
+    if (run106WithRelations->has_lhcfill()) {
+      messageStream << " and related fill info such as fill beam type <" << run106WithRelations->lhcfill().beamtype() << ">";
+    }
+    std::cout << messageStream.str() << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);

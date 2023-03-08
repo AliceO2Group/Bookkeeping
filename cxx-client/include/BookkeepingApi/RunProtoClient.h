@@ -13,8 +13,8 @@ namespace o2::bkp::api::proto
 class RunProtoClient
 {
  public:
-  virtual std::shared_ptr<o2::bookkeeping::Run> Get(const int runNumber) = 0;
-  virtual std::shared_ptr<o2::bookkeeping::Run> Get(std::shared_ptr<o2::bookkeeping::RunFetchRequest> request) = 0;
+  /// Returns the run and the asked relations defined in the given request
+  virtual std::shared_ptr<o2::bookkeeping::RunWithRelations> Get(std::shared_ptr<o2::bookkeeping::RunFetchRequest> request) = 0;
 };
 } // namespace o2::bkp::api::proto
 

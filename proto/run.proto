@@ -7,7 +7,7 @@ import 'common.proto';
 // Services
 
 service RunService {
-  rpc Get(RunFetchRequest) returns (Run);
+  rpc Get(RunFetchRequest) returns (RunWithRelations);
   rpc Create(RunCreationRequest) returns (Run);
   rpc Update(RunUpdateRequest) returns (Run);
 }
@@ -16,6 +16,15 @@ service RunService {
 
 message RunFetchRequest {
   int32 runNumber = 1;
+  // Specify the list of relations to fetch alongside the run
+  // For example if this contains RUN_RELATIONS_LHC_FILL then the returned RunWithRelation will have a populated
+  // lhcFill, else it will not be defined
+  repeated RunRelations relations = 2;
+}
+
+message RunWithRelations {
+  Run run = 1;
+  optional LHCFill lhcFill = 2;
 }
 
 message RunCreationRequest {
@@ -48,4 +57,13 @@ message RunUpdateRequest {
   optional string pdpWorkflowParameters = 13;
   optional string pdpBeamType = 14;
   optional string readoutCfgUri = 15;
+}
+
+// Enums
+
+enum RunRelations {
+  // IGNORED - Here to comply with proto specification
+  RUN_RELATIONS_NULL = 0;
+  // Include the LHC fill related to the run
+  RUN_RELATIONS_LHC_FILL = 1;
 }

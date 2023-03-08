@@ -99,24 +99,25 @@ as `https://`).
 
 Then the clients provides services implementations by the service name. For example, the implementation of the service `RunService` is available through `run()`.
 
-For example to fetch a run by its id one can use:
+For example to fetch a run and its related fill one can use:
 
 ```cpp
 #include <BookkeepingApi/BkpProtoClientFactory.h>
 using namespace o2::bkp::api::proto;
+using namespace o2::bookkeeping;
 
 auto client = BkpProtoClientFactory::create("[grpc-endpoint-url]");
 
-// First option: direct implementation, using constructed request
 auto request = std::make_shared<RunFetchRequest>();
 request->set_runnumber(106);
-std::shared_ptr<o2::bookkeeping::Run> run106 = client->run()->Get(request);
-std::cout << "Retrieved run 106 info, such as time o2 start" << run106->timeo2start() << std::endl;
-
-// Second option: use shortcut when a request can be reduced to a single builtin type argument
-std::shared_ptr<o2::bookkeeping::Run> run105 = client->run()->Get(105);
-std::cout << "Retrieved run 105 info, such as time o2 start" << run105->timeo2start() << std::endl;
-
+request->add_relations(RUN_RELATIONS_LHC_FILL);
+std::shared_ptr<RunWithRelations> run106WithRelations = client->run()->Get(request);
+std::ostringstream messageStream;
+messageStream << "Retrieved run 106 info, such as time o2 start <" << run106WithRelations->run().timeo2start() << ">";
+if (run106WithRelations->has_lhcfill()) {
+  messageStream << " and related fill info such as fill beam type <" << run106WithRelations->lhcfill().beamtype() << ">";
+}
+std::cout << messageStream.str() << std::endl;
 ```
 
 **Both the client creation and service calls may throw `std::runtime_error` that should be caught**
