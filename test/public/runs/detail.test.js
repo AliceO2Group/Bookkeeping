@@ -206,7 +206,7 @@ module.exports = () => {
         firstRowId = await getFirstRow(table, page);
 
         // We expect the entry page to have the same id as the id from the run overview
-        await pressElement(page, `#${firstRowId}`);
+        await pressElement(page, `#${firstRowId} .btn-redirect`);
         await page.waitForTimeout(300);
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');

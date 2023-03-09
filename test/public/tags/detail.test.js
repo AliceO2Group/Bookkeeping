@@ -19,13 +19,12 @@ const { expect } = chai;
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     let table;
     let firstRowId;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -42,10 +41,13 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
-        await pressElement(page, `#${firstRowId}`);
+        await pressElement(page, `#${firstRowId} .btn-redirect`, true);
         await page.waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=${parsedFirstRowId}`)).to.be.true;
+
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=log-detail');
+        expect(urlParameters).to.contain(`id=${parsedFirstRowId}`);
     });
 
     it('should successfully display tag\'s related emails', async () => {
