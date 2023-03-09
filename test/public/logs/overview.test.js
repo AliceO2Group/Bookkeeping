@@ -223,8 +223,10 @@ module.exports = () => {
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
 
+        await page.$eval('.tag-dropdown-container', (element) => element.click());
+
         // Select the second available filter and wait for the changes to be processed
-        const firstCheckboxId = 'tagCheckbox2';
+        const firstCheckboxId = 'tag-dropdown-option-DPG';
         await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(300);
 
@@ -242,7 +244,7 @@ module.exports = () => {
         expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
 
         // Select the first available filter and the second one at once
-        const secondCheckboxId = 'tagCheckbox1';
+        const secondCheckboxId = 'tag-dropdown-option-FOOD';
         await pressElement(page, `#${firstCheckboxId}`);
         await page.waitForTimeout(300);
         await pressElement(page, `#${secondCheckboxId}`);
@@ -271,39 +273,14 @@ module.exports = () => {
         });
     });
 
-    it('can show and hide extra tags if available', async () => {
-        const TAGS_LIMIT = 5;
-        const buttonId = '#tagToggleMore';
-
-        await page.waitForTimeout(300);
-
-        // Expect the page to have a button allowing for showing more tags
-        const toggleFiltersButton = await page.$(buttonId);
-        let buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('More');
-
-        // Expect the button to show at least one extra tag when clicked
-        await pressElement(page, buttonId);
-        await page.waitForTimeout(300);
-        let extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
-        expect(Boolean(extraTagFilter)).to.be.true;
-
-        // Expect the text to change to reflect the newly shown tags
-        buttonText = await page.evaluate((element) => element.innerText, toggleFiltersButton);
-        expect(buttonText.trim()).to.equal('Less');
-
-        // Expect the button to remove the extra tag when clicked again
-        await pressElement(page, buttonId);
-        await page.waitForTimeout(300);
-        extraTagFilter = await page.$(`#tagCheckbox${TAGS_LIMIT + 1}`);
-        expect(Boolean(extraTagFilter)).to.be.false;
-    });
-
     it('can filter by run number', async () => {
+        await reloadPage(page);
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
-        await page.waitForTimeout(200);
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter

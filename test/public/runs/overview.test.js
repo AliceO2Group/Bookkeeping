@@ -313,8 +313,8 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         await page.$eval('.detector-filter-dropdown-container', (element) => element.click());
-        await page.$eval('#detector-filter-dropdown-option-ITS', (element) => element.click());
-        await page.$eval('#detector-filter-dropdown-option-FT0', (element) => element.click());
+        await pressElement(page, '#detector-filter-dropdown-option-ITS');
+        await pressElement(page, '#detector-filter-dropdown-option-FT0');
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
