@@ -51,7 +51,7 @@ add_custom_command(
 
 ### LIBRARY
 
-add_library(BookkeepingApi
+add_library(BookkeepingApi SHARED
     src/grpc/GrpcBkpClient.cxx
     src/grpc/services/GrpcFlpServiceClient.cxx
     src/BkpClientFactory.cxx
@@ -74,7 +74,7 @@ target_link_libraries(BookkeepingApi
 
 target_compile_features(BookkeepingApi PUBLIC cxx_std_17)
 
-add_library(BookkeepingProtoApi
+add_library(BookkeepingProtoApi SHARED
     src/BkpProtoClientFactory.cxx
     src/grpc/GrpcBkpProtoClient.cxx
     src/grpc/services/GrpcRunProtoClient.cxx
