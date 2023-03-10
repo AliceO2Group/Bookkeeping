@@ -5,7 +5,7 @@ get_filename_component(BookkeepingApi_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PAT
 find_dependency(Protobuf CONFIG REQUIRED)
 find_dependency(gRPC REQUIRED)
 
-if(NOT TARGET AliceO2::BookkeepingApi)
+if(NOT TARGET AliceO2::BookkeepingApi OR NOT TARGET AliceO2::BookkeepingProtoApi)
   include("${BookkeepingApi_CMAKE_DIR}/BookkeepingApiTargets.cmake")
 endif()
 
