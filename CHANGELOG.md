@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.52.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.52.0)
+* Notable changes for users:
+  * EOR reason is now reverted when reverting the operation of editing details of a run
+  * Runs overview columns do not overlap anymore on small screens
+  * When editing a TAG, logs displayed in the tag table are not visually disappearing anymore
+  * Filtering on tags is now done using a dropdown tag picker
+  * `CALIBRATION` definition will now look for `NOISE` as runType as well
+  * A new endpoint has been added to gRPC API (with its c++ implementation) to fetch a run details by its runNumber
+
+* Notable changes for developers:
+  * Cleaned run detail models (edition)
+  * Refactored run edition
+  * Tag model has been refactored, extracting details-related code has been moved to a separated sub-model
+  * Tags used in picker and dropdown now comes from a separate provider, not from model
+
 ## [0.51.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.51.0)
 * Notable changes for users:
   * A popover is displayed in place of * and ** for run start/stop/duration with missing triggers
