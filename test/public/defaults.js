@@ -80,11 +80,18 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {String} selector Css selector.
+ * @param {boolean} [jsClick=false] if true, use js native click on the element instead of page's click method (useful if element is not visible)
  * @returns {Promise} Whether the element was clickable or not.
  */
-module.exports.pressElement = async (page, selector) => {
+module.exports.pressElement = async (page, selector, jsClick = false) => {
     await page.waitForSelector(selector);
-    await page.click(selector);
+    if (jsClick) {
+        await page.$eval(selector, (element) => {
+            element.click();
+        });
+    } else {
+        await page.click(selector);
+    }
 };
 
 /**
