@@ -13,8 +13,10 @@
 
 const UtilitiesSuite = require('./utilities/index.js');
 const ServicesSuite = require('./services/index.js');
+const MiddlewareSuite = require('./middleware/index.js');
 
 module.exports = () => {
     describe('Utilities', UtilitiesSuite);
     describe('Services', ServicesSuite);
+    describe('Middlewares', MiddlewareSuite);
 };
