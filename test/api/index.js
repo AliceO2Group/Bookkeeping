@@ -14,6 +14,7 @@
 const AttachmentsSuite = require('./attachments.test.js');
 const DetectorsSuite = require('./detectors.test.js');
 const EnvironmentsSuite = require('./environments.test.js');
+const EosReportSuite = require('./eosReport.test.js');
 // TODO [O2B-805] const FlpSuite = require('./flps.test.js');
 const StatusSuite = require('./status.test.js');
 const LogsSuite = require('./logs.test.js');
@@ -27,6 +28,7 @@ module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
     describe('Detectors API', DetectorsSuite);
     describe('Environments API', EnvironmentsSuite);
+    describe('EOS report API', EosReportSuite);
     // TODO [O2B-805] describe('FLP API', FlpSuite);
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
