@@ -12,12 +12,14 @@
  */
 
 const DatabaseSuite = require('./lib/database');
-const APISuite = require('./api');
 const PresentationSuite = require('./presentation');
-const PublicSuite = require('./public');
+const PublicSuite = require('./lib/public');
 const ServerSuite = require('./lib/server');
 const UseCasesSuite = require('./lib/usecases');
 const UtilitiesSuite = require('./lib/utilities');
+
+const APISuite = require('./api');
+const FrontendSuite = require('./public');
 
 const application = require('../lib/application');
 
@@ -34,13 +36,14 @@ describe('Bookkeeping', () => {
     describe('Unit Suite', () => {
         describe('Database', DatabaseSuite);
         describe('Presentation', PresentationSuite);
+        describe('Public', PublicSuite);
         describe('Server', ServerSuite);
         describe('Use Cases', UseCasesSuite);
         describe('Utilities', UtilitiesSuite);
     });
 
     describe('Integration Suite', () => {
-        describe('UI', PublicSuite);
+        describe('UI', FrontendSuite);
         describe('API', APISuite);
     });
 });
