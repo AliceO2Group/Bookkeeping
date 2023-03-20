@@ -14,6 +14,8 @@
 // 2023-03-17 07:00:00 geneva time
 const MORNING_SHIFT_START = 1679032800000;
 
+exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
+
 const customizedEorReport = {
     type: 'ECS',
     typeSpecific: null,

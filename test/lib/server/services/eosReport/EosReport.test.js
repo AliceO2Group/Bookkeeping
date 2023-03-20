@@ -17,7 +17,7 @@ const {
     formattedEmptyEorReport,
     emptyEorReportRequest,
     customizedEorReportRequest,
-    formattedCustomizedEorReport, customizedEorReport,
+    formattedCustomizedEorReport, customizedEorReport, eosReportTitle,
 } = require('../../../../mocks/mock-eos-report.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
@@ -39,6 +39,7 @@ module.exports = () => {
 
         const log = await eosReportService.createLogEntry('ECS', customizedEorReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedCustomizedEorReport);
+        expect(log.title).to.equal(eosReportTitle);
     });
 
     it('should successfully create a log containing EOS report with default values', async () => {
@@ -46,5 +47,6 @@ module.exports = () => {
 
         const log = await eosReportService.createLogEntry('ECS', emptyEorReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedEmptyEorReport);
+        expect(log.title).to.equal(eosReportTitle);
     });
 };
