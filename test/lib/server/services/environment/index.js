@@ -13,8 +13,10 @@
 
 const getEnvironmentOrFailTest = require('./getEnvironmentOrFail.test.js');
 const EnvironmentServiceTest = require('./EnvironmentService.test.js');
+const getEnvironmentsInPeriodTest = require('./getEnvironmentsInPeriod.test.js');
 
 module.exports = () => {
     describe('getEnvironmentOrFail', getEnvironmentOrFailTest);
     describe('EnvironmentService', EnvironmentServiceTest);
+    describe('getEnvironmentInPeriod', getEnvironmentsInPeriodTest);
 };
