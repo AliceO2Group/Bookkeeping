@@ -25,7 +25,7 @@ const customizedEorReport = {
     traineeName: 'Trainee',
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
-    issues: 'A\nlist\nof issues',
+    issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
             title: 'First issue log',
@@ -50,7 +50,7 @@ exports.customizedEorReportRequest = {
     traineeName: customizedEorReport.traineeName,
     shiftStart: customizedEorReport.shiftStart,
     shiftFlow: customizedEorReport.shiftFlow,
-    issues: customizedEorReport.issues,
+    issuesBlock: customizedEorReport.issuesBlock,
     infoFromPreviousShifter: customizedEorReport.infoFromPreviousShifter,
     infoForNextShifter: customizedEorReport.infoForNextShifter,
     infoForRmRc: customizedEorReport.infoForRmRc,
