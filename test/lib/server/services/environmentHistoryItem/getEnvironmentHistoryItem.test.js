@@ -15,11 +15,11 @@ const { getEnvironmentHistoryItem } = require('../../../../../lib/server/service
 const { expect } = require('chai');
 
 module.exports = () => {
-    it('should successfully returns the environement\'s history item corresponding to the given id', async () => {
+    it('should successfully returns the environment\'s history item corresponding to the given id', async () => {
         const environmentHistoryItem = await getEnvironmentHistoryItem(1);
-        expect(environmentHistoryItem.status).to.equal('RUNNING');
-        expect(environmentHistoryItem.statusMessage).to.equal('Running fine...');
-        expect(environmentHistoryItem.environmentId).to.equal('Dxi029djX');
+        expect(environmentHistoryItem.status).to.equal('DEPLOYED');
+        expect(environmentHistoryItem.statusMessage).to.equal('Environment has been deployed');
+        expect(environmentHistoryItem.environmentId).to.equal('CmCvjNbg');
     });
 
     it('should return null when trying to fetch a non-existing environment\'s history item', async () => {

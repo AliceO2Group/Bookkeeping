@@ -49,7 +49,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the creation date of the environment', async () => {
-        await expectInnerText(page, '#environment-creation-date', 'Created at 09/08/2019, 00:00:00');
+        await expectInnerText(page, '#environment-creation-date', 'Created at 09/08/2019, 16:05:00');
     });
 
     it('Should successfully display the history of the environment', async () => {
