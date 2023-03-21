@@ -14,7 +14,9 @@
 const DetectorSuite = require('./detector/index.js');
 const Environment = require('./environment/index.js');
 const EnvironmentHistoryItemSuite = require('./environmentHistoryItem/index.js');
+const EosReportSuite = require('./eosReport/index.js');
 const FlpRoleSuite = require('./flpRole');
+const LogSuite = require('./log');
 const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
 
@@ -22,7 +24,9 @@ module.exports = () => {
     describe('Detector', DetectorSuite);
     describe('Environment', Environment);
     describe('Environment history item', EnvironmentHistoryItemSuite);
+    describe('EOS report', EosReportSuite);
+    describe('Flp role', FlpRoleSuite);
+    describe('Logs', LogSuite);
     describe('RunType', RunTypeSuite);
     describe('Run', RunSuite);
-    describe('Flp role', FlpRoleSuite);
 };
