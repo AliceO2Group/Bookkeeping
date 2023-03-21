@@ -105,6 +105,10 @@ html, body {
     justify-content: end;
 }
 
+.flex-grow.grow2 {
+    flex-grow: 2;
+}
+
 /* z-index */
 .no-z-index {
     z-index: unset;
@@ -422,6 +426,7 @@ a.btn, a.btn:hover, a.btn.active {
 .panel-header {
     background: var(--color-gray-light);
     padding: var(--space-s);
+    margin: 0;
     font-weight: bold;
 }
 
