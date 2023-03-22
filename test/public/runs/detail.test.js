@@ -300,7 +300,7 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 103 } });
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 stop because of missing trigger end information');
+            .to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
