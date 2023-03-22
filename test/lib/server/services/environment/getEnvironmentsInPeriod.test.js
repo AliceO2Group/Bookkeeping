@@ -11,8 +11,10 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { getEnvironmentsInPeriod, ENVIRONMENT_CONSIDERED_LOST_AFTER } = require(
-    '../../../../../lib/server/services/environment/getEnvironmentsInPeriod.js');
+const {
+    getEnvironmentsInPeriod,
+    ENVIRONMENT_CONSIDERED_LOST_AFTER,
+} = require('../../../../../lib/server/services/environment/getEnvironmentsInPeriod.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -28,19 +30,10 @@ module.exports = () => {
         );
 
         expect(environments.map(({ id }) => id)).to.eql(['CmCvjNbg', 'TDI59So3d', 'EIDO13i3D', 'KGIS12DS', 'Dxi029djX']);
-        expect(environments.every((environment) => {
-            console.log(
-                environment.createdAt.getTime() < period.to,
-                environment.updatedAt.getTime() >= period.from,
-                environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR'].includes(status)),
-                environment.updatedAt.getTime() > period.from - ENVIRONMENT_CONSIDERED_LOST_AFTER,
-            );
-            return environment.createdAt.getTime() < period.to
-                && (
-                    environment.updatedAt.getTime() >= period.from
-                    || environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR'].includes(status))
-                    && environment.updatedAt.getTime() > period.from - ENVIRONMENT_CONSIDERED_LOST_AFTER
-                );
-        })).to.be.true;
+        expect(environments.every((environment) => environment.createdAt.getTime() < period.to && (
+            environment.updatedAt.getTime() >= period.from
+            || environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR'].includes(status))
+            && environment.updatedAt.getTime() > period.from - ENVIRONMENT_CONSIDERED_LOST_AFTER
+        ))).to.be.true;
     });
 };
