@@ -25,6 +25,7 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
+const { fillInput } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -694,27 +695,34 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
-        await reloadPage(page);
-        await page.waitForTimeout(200);
+        await goToPage(page, 'run-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
         await page.$eval('#openFilterToggle', (element) => element.click());
+
         const filterInputSelector = '#fillNumbers';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
-        await page.focus(filterInputSelector);
-        await page.keyboard.type('1, 3');
+
+        await fillInput(page, filterInputSelector, '1, 3');
         await waitForNetworkIdleAndRedraw(page);
+
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
         await reloadPage(page);
-        await page.waitForTimeout(200);
+        await page.evaluate(() => window.model.disableInputDebounce());
+
         await page.$eval('#openFilterToggle', (element) => element.click());
+
         const filterInputSelector = '#environmentIds';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
+
         await page.focus(filterInputSelector);
         await page.keyboard.type('Dxi029djX, TDI59So3d');
-        await page.waitForTimeout(300);
+        await waitForNetworkIdleAndRedraw(page);
+
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(6);
     });
@@ -746,10 +754,7 @@ module.exports = () => {
             return document.querySelector(`#${rowId}-detectors .nDetectors-badge`)?.innerText;
         }));
 
-        /*
-         * The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in
-         * tests data
-         */
+        // The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in tests data
         expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= 3 || nDetectors === null)).to.be.true;
     });
 
