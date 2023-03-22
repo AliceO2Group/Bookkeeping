@@ -902,7 +902,7 @@ module.exports = () => {
     it('should successfully display popover warning when run is missing trigger stop', async () => {
         const runDurationCell = await page.$('#row103-runDuration');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 stop because of missing trigger end information');
+            .to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
