@@ -22,7 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw, fillInput } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -274,7 +274,9 @@ module.exports = () => {
     });
 
     it('can filter by run number', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
         // Open the filters
         await pressElement(page, '#openFilterToggle');
 
@@ -284,7 +286,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter
-        await page.type('#runsFilterText', '1,2');
+        await fillInput(page, '#runsFilterText', '1, 2');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the (new) total number of rows to be less than the original number of rows
