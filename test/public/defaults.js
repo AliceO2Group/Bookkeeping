@@ -270,3 +270,23 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 
     expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
 };
+
+/**
+ * Fill the input at the given selector and triggers the given events on it
+ *
+ * @param {{evaluate: function, waitForSelector: function}} page the puppeteer's page object
+ * @param {string} inputSelector the selector of the input to fill
+ * @param {string} value the value to type in the input
+ * @param {string[]} [events=['input']] the list of events to trigger on the input after typing
+ * @return {Promise} resolves once the value has been typed
+ */
+module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
+    await page.waitForSelector(inputSelector);
+    await page.evaluate((inputSelector, value, events) => {
+        const element = document.querySelector(inputSelector);
+        element.value = value;
+        for (const eventKey of events) {
+            element.dispatchEvent(new Event(eventKey, { bubbles: true }));
+        }
+    }, inputSelector, value, events);
+};
