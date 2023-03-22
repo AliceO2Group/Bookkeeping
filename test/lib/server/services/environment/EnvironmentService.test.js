@@ -31,7 +31,7 @@ module.exports = () => {
             expect(environment).to.have.ownProperty('id');
             expect(environment.id).to.equal('Dxi029djX');
             expect(environment.historyItems).to.lengthOf(1);
-            expect(environment.historyItems[0].id).to.equal(1);
+            expect(environment.historyItems[0].id).to.equal(19);
         }
 
         {
@@ -39,7 +39,7 @@ module.exports = () => {
             expect(environment).to.have.ownProperty('id');
             expect(environment.id).to.equal('Dxi029djX');
             expect(environment.historyItems).to.lengthOf(1);
-            expect(environment.historyItems[0].id).to.equal(1);
+            expect(environment.historyItems[0].id).to.equal(19);
         }
     });
 
