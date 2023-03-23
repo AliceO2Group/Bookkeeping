@@ -28,6 +28,18 @@ const customizedEorReport = {
     issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
+            title: 'Third issue log',
+            text: 'This is not important for test',
+            tags: [{ text: 'FOOD' }],
+            user: { id: 1 },
+        },
+        {
+            title: 'Fourth issue log',
+            text: 'This is not important for test',
+            tags: [{ text: 'TEST-TAG-1' }],
+            user: { id: 1 },
+        },
+        {
             title: 'First issue log',
             text: 'This is not important for test',
             tags: [{ text: 'FOOD' }, { text: 'TEST' }],
@@ -69,6 +81,8 @@ list
 of issues
 
 ### Issues entries
+- \\[FOOD\\] - [Third issue log](#)
+- \\[TEST-TAG-1\\] - [Fourth issue log](#)
 - \\[FOOD, TEST\\] - [First issue log](#)
 - \\[OTHER\\] - [Second issue log](#)
 

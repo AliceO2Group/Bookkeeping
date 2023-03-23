@@ -20,28 +20,28 @@ module.exports = () => {
     const limit3 = new Date('2020-02-02 12:00:00').getTime();
     const limit4 = new Date('2020-02-02 13:00:00').getTime();
 
-    it('should successfully retrieve the logs with the given time created between specific dates', async () => {
+    it('should successfully retrieve the logs with the given tags created between specific dates', async () => {
         {
-            const logs = await getLogsByTagsInPeriod(['FOOD'], limit1, limit2);
+            const logs = await getLogsByTagsInPeriod(['FOOD'], { from: limit1, to: limit2 });
             expect(logs).to.lengthOf(2);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'FOOD'))).to.be.true;
         }
 
         {
-            const logs = await getLogsByTagsInPeriod(['RUN'], limit1, limit4);
+            const logs = await getLogsByTagsInPeriod(['RUN'], { from: limit1, to: limit4 });
             expect(logs).to.lengthOf(2);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN'))).to.be.true;
         }
 
         {
-            const logs = await getLogsByTagsInPeriod(['FOOD', 'RUN'], limit1, limit4);
+            const logs = await getLogsByTagsInPeriod(['FOOD', 'RUN'], { from: limit1, to: limit4 });
             expect(logs).to.lengthOf(4);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN' || text === 'FOOD'))).to.be.true;
         }
     });
 
-    it('should successfully include logs at the lower limit but exclude logs at the upper limit', async () => {
-        const logs = await getLogsByTagsInPeriod(['RUN'], limit1, limit3);
+    it('should successfully include logs at the lower limit but exclude logs at the upper limit for given tags', async () => {
+        const logs = await getLogsByTagsInPeriod(['RUN'], { from: limit1, to: limit3 });
         expect(logs).to.lengthOf(1);
     });
 };
