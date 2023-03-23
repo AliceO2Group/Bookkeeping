@@ -290,3 +290,28 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
         }
     }, inputSelector, value, events);
 };
+
+/**
+ * Check the differences between the provided expected parameters and the parameters actually received
+ *
+ * For now only handle scalar parameters
+ *
+ * @param {url} page the puppeteer page
+ * @param {Object} expectedUrlParameters the expected parameters as an object of key values
+ * @return {Promise<Object>} the differences between the expected parameters
+ */
+module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) => {
+    const [, parametersExpr] = await page.url().split('?');
+    const urlParameters = parametersExpr.split('&');
+    const ret = {};
+    for (const urlParameter of urlParameters) {
+        const [key, value] = urlParameter.split('=');
+        if (expectedUrlParameters[key] !== value) {
+            ret[key] = {
+                expected: expectedUrlParameters[key],
+                actual: value,
+            };
+        }
+    }
+    return ret;
+};

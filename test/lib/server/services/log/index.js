@@ -12,9 +12,11 @@
  */
 
 const getLogsByTagsInPeriodTest = require('./getLogsByTagsInPeriod.test.js');
+const getLogsByUserInPeriodTest = require('./getLogsByUserInPeriod.test.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
     describe('getLogsByTagsInPeriodTest', getLogsByTagsInPeriodTest);
+    describe('getLogsByUserInPeriodTest', getLogsByUserInPeriodTest);
 };

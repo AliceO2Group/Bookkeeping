@@ -11,12 +11,8 @@
  *  or submit itself to any jurisdiction.
  */
 
-const getShiftFromTimestampTest = require('./getShiftFromTimestamp.test.js');
-const formatEosReportTest = require('./formatEosReport.test.js');
-const EosReportServiceTest = require('./EosReportService.test.js');
+const CreationSuite = require('./creation.test.js');
 
 module.exports = () => {
-    describe('getShiftFromTimestamp', getShiftFromTimestampTest);
-    describe('formatEosReport', formatEosReportTest);
-    describe('EosService', EosReportServiceTest);
+    describe('Creation Page', CreationSuite);
 };

@@ -28,6 +28,18 @@ const customizedEorReport = {
     issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
+            title: 'Third issue log',
+            text: 'This is not important for test',
+            tags: [{ text: 'FOOD' }],
+            user: { id: 1 },
+        },
+        {
+            title: 'Fourth issue log',
+            text: 'This is not important for test',
+            tags: [{ text: 'TEST-TAG-1' }],
+            user: { id: 1 },
+        },
+        {
             title: 'First issue log',
             text: 'This is not important for test',
             tags: [{ text: 'FOOD' }, { text: 'TEST' }],
@@ -58,8 +70,8 @@ exports.customizedEorReportRequest = {
 
 exports.formattedCustomizedEorReport = `\
 # End of shift report - ECS - 3/17/2023 Morning
-- shifter:  John Doe
-- trainee:  Trainee
+- shifter: John Doe
+- trainee: Trainee
 
 ## Issues during the shift
 
@@ -69,6 +81,8 @@ list
 of issues
 
 ### Issues entries
+- \\[FOOD\\] - [Third issue log](#)
+- \\[TEST-TAG-1\\] - [Fourth issue log](#)
 - \\[FOOD, TEST\\] - [First issue log](#)
 - \\[OTHER\\] - [Second issue log](#)
 
@@ -91,7 +105,7 @@ previous shifter
 Info for
 next shifter
 
-### For RM/RC: 
+### For RM/RC
 Info for
 RM and RC\
 `;
@@ -110,8 +124,8 @@ exports.emptyEorReport = emptyEorReport;
 
 exports.formattedEmptyEorReport = `\
 # End of shift report - ECS - 3/17/2023 Morning
-- shifter:  John Doe
-- trainee:  -
+- shifter: John Doe
+- trainee: -
 
 ## Issues during the shift
 
@@ -137,7 +151,7 @@ exports.formattedEmptyEorReport = `\
 ### For next shifter
 -
 
-### For RM/RC: 
+### For RM/RC
 -\
 `;
 
