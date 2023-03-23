@@ -28,13 +28,17 @@ module.exports = () => {
 
         // Create the expected logs
         for (const log of customizedEorReport.issuesLogEntries) {
-            await createLog({
+            const logCreationRequest = {
                 title: log.title,
                 text: log.text,
                 createdAt: customizedEorReport.shiftStart,
                 subtype: 'comment',
                 origin: 'human',
-            }, [], log.tags.map(({ text }) => text), []);
+            };
+            if (log.user) {
+                logCreationRequest.userId = log.user.id;
+            }
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
         }
 
         const log = await eosReportService.createLogEntry('ECS', customizedEorReportRequest, { userId: 1 });
