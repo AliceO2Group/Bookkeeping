@@ -13,10 +13,10 @@
 
 const getShiftFromTimestampTest = require('./getShiftFromTimestamp.test.js');
 const formatEosReportTest = require('./formatEosReport.test.js');
-const EosReportTest = require('./EosReport.test.js');
+const EosReportServiceTest = require('./EosReportService.test.js');
 
 module.exports = () => {
     describe('getShiftFromTimestamp', getShiftFromTimestampTest);
     describe('formatEosReport', formatEosReportTest);
-    describe('EosService', EosReportTest);
+    describe('EosService', EosReportServiceTest);
 };
