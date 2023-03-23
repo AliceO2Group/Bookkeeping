@@ -19,6 +19,7 @@ const EosReportSuite = require('./eosReport.test.js');
 const StatusSuite = require('./status.test.js');
 const LogsSuite = require('./logs.test.js');
 const LhcFillSuite = require('./lhcFills.test.js');
+const ShiftSuite = require('./shift.test.js');
 const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
 const RunsSuite = require('./runs.test.js');
@@ -34,6 +35,7 @@ module.exports = () => {
     describe('Logs API', LogsSuite);
     describe('Runs API', RunsSuite);
     describe('RunTypes API', RunTypesSuite);
+    describe('Shift API', ShiftSuite);
     describe('Status API', StatusSuite);
     describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);

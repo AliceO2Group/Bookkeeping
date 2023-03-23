@@ -10,6 +10,7 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
+const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
 
 // 2023-03-17 07:00:00 geneva time
 const MORNING_SHIFT_START = 1679032800000;
@@ -17,7 +18,7 @@ const MORNING_SHIFT_START = 1679032800000;
 exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
 
 const customizedEorReport = {
-    type: 'ECS',
+    type: ShiftTypes.ECS,
     typeSpecific: null,
     shifter: {
         name: 'John Doe',
@@ -111,7 +112,7 @@ RM and RC\
 `;
 
 const emptyEorReport = {
-    type: 'ECS',
+    type: ShiftTypes.ECS,
     shifter: {
         name: 'John Doe',
     },
