@@ -14,10 +14,12 @@
 const { eosReportService } = require('../../../../../lib/server/services/eosReport/EosReportService.js');
 const { expect } = require('chai');
 const {
-    formattedEmptyEorReport,
-    emptyEorReportRequest,
-    customizedEorReportRequest,
-    formattedCustomizedEorReport, customizedEorReport, eosReportTitle,
+    emptyECSEorReportRequest,
+    formattedCustomizedEorReport,
+    customizedECSEorReport,
+    eosReportTitle,
+    customizedECSEorReportRequest,
+    formattedEmptyECSEorReport,
 } = require('../../../../mocks/mock-eos-report.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
@@ -26,11 +28,11 @@ const { ShiftTypes } = require('../../../../../lib/domain/enums/ShiftTypes.js');
 module.exports = () => {
     it('should successfully create a log containing EOS report', async () => {
         // Create the expected logs
-        for (const log of customizedEorReport.issuesLogEntries) {
+        for (const log of customizedECSEorReport.issuesLogEntries) {
             const logCreationRequest = {
                 title: log.title,
                 text: 'This is not important for test',
-                createdAt: customizedEorReport.shiftStart,
+                createdAt: customizedECSEorReport.shiftStart,
                 subtype: 'comment',
                 origin: 'human',
             };
@@ -40,7 +42,7 @@ module.exports = () => {
             await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
         }
 
-        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, customizedEorReportRequest, { userId: 1 });
+        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, customizedECSEorReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedCustomizedEorReport);
         expect(log.title).to.equal(eosReportTitle);
     });
@@ -48,8 +50,8 @@ module.exports = () => {
     it('should successfully create a log containing EOS report with default values', async () => {
         await resetDatabaseContent();
 
-        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, emptyEorReportRequest, { userId: 1 });
-        expect(log.text).to.equal(formattedEmptyEorReport);
+        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, emptyECSEorReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedEmptyECSEorReport);
         expect(log.title).to.equal(eosReportTitle);
     });
 };

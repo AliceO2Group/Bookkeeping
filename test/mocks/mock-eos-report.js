@@ -17,9 +17,11 @@ const MORNING_SHIFT_START = 1679032800000;
 
 exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
 
-const customizedEorReport = {
+const customizedECSEorReport = {
     type: ShiftTypes.ECS,
-    typeSpecific: null,
+    typeSpecific: {
+        environments: [],
+    },
     shifter: {
         name: 'John Doe',
     },
@@ -52,17 +54,17 @@ const customizedEorReport = {
     infoForRmRc: 'Info for\nRM and RC',
 };
 
-exports.customizedEorReport = customizedEorReport;
+exports.customizedECSEorReport = customizedECSEorReport;
 
-exports.customizedEorReportRequest = {
-    typeSpecific: customizedEorReport.typeSpecific,
-    traineeName: customizedEorReport.traineeName,
-    shiftStart: customizedEorReport.shiftStart,
-    shiftFlow: customizedEorReport.shiftFlow,
-    issuesBlock: customizedEorReport.issuesBlock,
-    infoFromPreviousShifter: customizedEorReport.infoFromPreviousShifter,
-    infoForNextShifter: customizedEorReport.infoForNextShifter,
-    infoForRmRc: customizedEorReport.infoForRmRc,
+exports.customizedECSEorReportRequest = {
+    typeSpecific: null,
+    traineeName: customizedECSEorReport.traineeName,
+    shiftStart: customizedECSEorReport.shiftStart,
+    shiftFlow: customizedECSEorReport.shiftFlow,
+    issuesBlock: customizedECSEorReport.issuesBlock,
+    infoFromPreviousShifter: customizedECSEorReport.infoFromPreviousShifter,
+    infoForNextShifter: customizedECSEorReport.infoForNextShifter,
+    infoForRmRc: customizedECSEorReport.infoForRmRc,
 };
 
 exports.formattedCustomizedEorReport = `\
@@ -92,6 +94,9 @@ of issues
 The
 shift flow
 
+## Environments and runs
+-
+
 ## Shift to shift transfer of information
 
 ### From previous shifter
@@ -107,19 +112,21 @@ Info for
 RM and RC\
 `;
 
-const emptyEorReport = {
+const emptyECSEorReport = {
     type: ShiftTypes.ECS,
     shifter: {
         name: 'John Doe',
     },
     shiftStart: MORNING_SHIFT_START,
     issuesLogEntries: [],
-    typeSpecific: null,
+    typeSpecific: {
+        environments: [],
+    },
 };
 
-exports.emptyEorReport = emptyEorReport;
+exports.emptyECSEorReport = emptyECSEorReport;
 
-exports.formattedEmptyEorReport = `\
+exports.formattedEmptyECSEorReport = `\
 # End of shift report - ECS - 3/17/2023 Morning
 - shifter: John Doe
 - trainee: -
@@ -140,6 +147,9 @@ exports.formattedEmptyEorReport = `\
 ## Shift flow
 -
 
+## Environments and runs
+-
+
 ## Shift to shift transfer of information
 
 ### From previous shifter
@@ -152,7 +162,7 @@ exports.formattedEmptyEorReport = `\
 -\
 `;
 
-exports.emptyEorReportRequest = {
-    typeSpecific: emptyEorReport.typeSpecific,
-    shiftStart: emptyEorReport.shiftStart,
+exports.emptyECSEorReportRequest = {
+    typeSpecific: null,
+    shiftStart: emptyECSEorReport.shiftStart,
 };

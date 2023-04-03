@@ -29,7 +29,7 @@ module.exports = () => {
             { historyItems: true },
         );
 
-        expect(environments.map(({ id }) => id)).to.eql(['CmCvjNbg', 'TDI59So3d', 'EIDO13i3D', 'KGIS12DS', 'Dxi029djX']);
+        expect(environments.map(({ id }) => id)).to.eql(['Dxi029djX', 'KGIS12DS', 'EIDO13i3D', 'TDI59So3d', 'CmCvjNbg']);
         expect(environments.every((environment) => environment.createdAt.getTime() < period.to && (
             environment.updatedAt.getTime() >= period.from
             || environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR'].includes(status))

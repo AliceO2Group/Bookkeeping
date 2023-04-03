@@ -14,22 +14,22 @@
 const { formatEosReport } = require('../../../../../lib/server/services/eosReport/formatEosReport.js');
 const { expect } = require('chai');
 const {
-    customizedEorReport,
+    customizedECSEorReport,
     formattedCustomizedEorReport,
-    emptyEorReport,
-    formattedEmptyEorReport,
+    emptyECSEorReport,
+    formattedEmptyECSEorReport,
 } = require('../../../../mocks/mock-eos-report.js');
 
 module.exports = () => {
     it('should successfully format an end of shift report with provided data', async () => {
-        const report = await formatEosReport(customizedEorReport);
+        const report = await formatEosReport(customizedECSEorReport);
 
         expect(report).to.equal(formattedCustomizedEorReport);
     });
 
     it('should successfully format an end of shift report with missing optional data', async () => {
-        const report = await formatEosReport(emptyEorReport);
+        const report = await formatEosReport(emptyECSEorReport);
 
-        expect(report).to.equal(formattedEmptyEorReport);
+        expect(report).to.equal(formattedEmptyECSEorReport);
     });
 };
