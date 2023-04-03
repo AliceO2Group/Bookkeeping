@@ -18,7 +18,7 @@ const {
 const { expect } = require('chai');
 
 module.exports = () => {
-    it('should successfully return the list of actives in the given period', async () => {
+    it('should successfully return the list of environments in the given period', async () => {
         const period = {
             from: new Date('2019-08-09T15:00:00Z').getTime(),
             to: new Date('2019-08-09T23:00:00Z').getTime(),
