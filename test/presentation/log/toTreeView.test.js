@@ -79,7 +79,7 @@ module.exports = () => {
                     },
                     {
                         id: 6,
-                        text: 'OTHER',
+                        text: 'SL',
                     },
                 ],
                 text: 'Cake at the particle accelerator!',
@@ -195,7 +195,7 @@ module.exports = () => {
                         },
                         {
                             id: 6,
-                            text: 'OTHER',
+                            text: 'SL',
                         },
                     ],
                     text: 'Cake at the particle accelerator!',

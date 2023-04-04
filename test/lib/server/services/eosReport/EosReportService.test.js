@@ -26,13 +26,11 @@ const { shiftService } = require('../../../../../lib/server/services/shift/Shift
 
 module.exports = () => {
     it('should successfully create a log containing EOS report', async () => {
-        shiftService.issuesLogEntriesTags = ['FOOD', 'TEST', 'OTHER'];
-
         // Create the expected logs
         for (const log of customizedEorReport.issuesLogEntries) {
             const logCreationRequest = {
                 title: log.title,
-                text: log.text,
+                text: 'This is not important for test',
                 createdAt: customizedEorReport.shiftStart,
                 subtype: 'comment',
                 origin: 'human',

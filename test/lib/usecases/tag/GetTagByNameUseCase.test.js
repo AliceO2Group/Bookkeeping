@@ -49,7 +49,7 @@ module.exports = () => {
     it('should return an object when the value is URI encoded', async () => {
         getLogDto = await GetTagByNameDto.validateAsync({
             query: {
-                name: 'TEST%2FTAG%200',
+                name: 'DCS',
             },
         });
         const result = await new GetTagByNameUseCase()

@@ -61,7 +61,7 @@ module.exports = () => {
         expect(tags).to.have.lengthOf(0);
     });
     it('should successfully return an array with tags with specified texts', async () => {
-        getAllTagsDto.query = { filter: { texts: 'FOOD,OTHER' } };
+        getAllTagsDto.query = { filter: { texts: 'FOOD,SL' } };
         const { tags } = await new GetAllTagsUseCase().execute(getAllTagsDto);
 
         expect(tags).to.be.an('array');
@@ -69,7 +69,7 @@ module.exports = () => {
         expect(tags[0].id).to.equal(1);
         expect(tags[0].text).to.equal('FOOD');
         expect(tags[1].id).to.equal(8);
-        expect(tags[1].text).to.equal('OTHER');
+        expect(tags[1].text).to.equal('SL');
     });
     it('should successfully return an array with tags containing given text search', async () => {
         getAllTagsDto.query = { filter: { partialText: 'MAI' } };
@@ -94,7 +94,7 @@ module.exports = () => {
         ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
 
         expect(tags).to.be.an('array');
-        expect(tags).to.have.lengthOf(42);
+        expect(tags).to.have.lengthOf(40);
         expect(tags.every((tag) => tag.text.includes('-TAG-'))).to.be.true;
 
         getAllTagsDto.query = { filter: { partialText: 'DO-NOT-EXISTS' } };
@@ -111,7 +111,7 @@ module.exports = () => {
         expect(tags).to.be.an('array');
         expect(tags).to.have.lengthOf(1);
         expect(tags[0].id).to.equal(8);
-        expect(tags[0].text).to.equal('OTHER');
+        expect(tags[0].text).to.equal('SL');
     });
     it('should successfully return an array with tags with specified mattermosts', async () => {
         getAllTagsDto.query = { filter: { mattermosts: 'marathon,,food' } };
