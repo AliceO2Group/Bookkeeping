@@ -719,8 +719,7 @@ module.exports = () => {
         const filterInputSelector = '#environmentIds';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
-        await page.focus(filterInputSelector);
-        await page.keyboard.type('Dxi029djX, TDI59So3d');
+        await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d');
         await waitForNetworkIdleAndRedraw(page);
 
         table = await page.$$('tbody tr');
