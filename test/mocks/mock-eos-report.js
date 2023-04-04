@@ -19,24 +19,29 @@ exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
 
 const customizedEcsEorReportLogs = [
     {
+        id: 120,
         title: 'Third issue log',
         tags: [{ text: 'ECS' }],
         user: { id: 1 },
     },
     {
+        id: 121,
         title: 'Fourth issue log',
         tags: [{ text: 'TEST-TAG-26' }],
         user: { id: 1 },
     },
     {
+        id: 122,
         title: 'First issue log',
         tags: [{ text: 'TEST' }, { text: 'DCS' }],
     },
     {
+        id: 123,
         title: 'Second issue log',
         tags: [{ text: 'SL' }],
     },
     {
+        id: 124,
         title: 'Fifth issue log',
         tags: [{ text: 'ECS Shifter' }],
     },
@@ -54,6 +59,7 @@ const customizedECSEorReport = {
                 updatedAt: new Date('2023-03-17T08:13:03Z'),
                 runs: [
                     {
+                        id: 108,
                         timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                         envId: 'ENV1',
                         runNumber: 200,
@@ -91,20 +97,24 @@ const customizedECSEorReport = {
     issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
+            id: 120,
             title: 'Third issue log',
             tags: [{ text: 'ECS' }],
             user: { id: 1 },
         },
         {
+            id: 121,
             title: 'Fourth issue log',
             tags: [{ text: 'TEST-TAG-26' }],
             user: { id: 1 },
         },
         {
+            id: 122,
             title: 'First issue log',
             tags: [{ text: 'TEST' }, { text: 'DCS' }],
         },
         {
+            id: 123,
             title: 'Second issue log',
             tags: [{ text: 'SL' }],
         },
@@ -140,10 +150,10 @@ list
 of issues
 
 ### Issues entries
-- \\[ECS\\] - [Third issue log](#)
-- \\[TEST-TAG-26\\] - [Fourth issue log](#)
-- \\[TEST, DCS\\] - [First issue log](#)
-- \\[SL\\] - [Second issue log](#)
+- \\[ECS\\] - [Third issue log](http://localhost?page=log-detail&id=120)
+- \\[TEST-TAG-26\\] - [Fourth issue log](http://localhost?page=log-detail&id=121)
+- \\[TEST, DCS\\] - [First issue log](http://localhost?page=log-detail&id=122)
+- \\[SL\\] - [Second issue log](http://localhost?page=log-detail&id=123)
 
 ## LHC
 * LHC (list all machine transitions) (in the future this section will be automatically filled)
@@ -155,16 +165,16 @@ The
 shift flow
 
 ## Environments and runs
-- (1679040783000) [ENV1](#)
-    * (1679040843000) [200](#) - COMMISSIONING - good
+- (1679040783000) [ENV1](http://localhost?page=env-details&environmentId=ENV1)
+    * (1679040843000) [200](http://localhost?page=run-detail&id=108) - COMMISSIONING - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
         - Logs:
-            * \\[ECS\\] [Third issue log](#)
-            * \\[ECS Shifter\\] [Fifth issue log](#)
+            * \\[ECS\\] [Third issue log](http://localhost?page=log-detail&id=120)
+            * \\[ECS Shifter\\] [Fifth issue log](http://localhost?page=log-detail&id=124)
 
-- (1679040963000) [ENV2](#)
+- (1679040963000) [ENV2](http://localhost?page=env-details&environmentId=ENV2)
 
 ## Shift to shift transfer of information
 
