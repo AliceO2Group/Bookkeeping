@@ -17,10 +17,70 @@ const MORNING_SHIFT_START = 1679032800000;
 
 exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
 
+const customizedEcsEorReportLogs = [
+    {
+        title: 'Third issue log',
+        tags: [{ text: 'ECS' }],
+        user: { id: 1 },
+    },
+    {
+        title: 'Fourth issue log',
+        tags: [{ text: 'TEST-TAG-26' }],
+        user: { id: 1 },
+    },
+    {
+        title: 'First issue log',
+        tags: [{ text: 'TEST' }, { text: 'DCS' }],
+    },
+    {
+        title: 'Second issue log',
+        tags: [{ text: 'SL' }],
+    },
+    {
+        title: 'Fifth issue log',
+        tags: [{ text: 'ECS Shifter' }],
+    },
+];
+
+exports.customizedEcsEorReportLogs = customizedEcsEorReportLogs;
+
 const customizedECSEorReport = {
     type: ShiftTypes.ECS,
     typeSpecific: {
-        environments: [],
+        environments: [
+            {
+                id: 'ENV1',
+                createdAt: new Date('2023-03-17T08:13:03Z'),
+                updatedAt: new Date('2023-03-17T08:13:03Z'),
+                runs: [
+                    {
+                        timeTrgStart: new Date('2023-03-17T08:14:03Z'),
+                        envId: 'ENV1',
+                        runNumber: 200,
+                        runQuality: 'good',
+                        eorReasons: [
+                            {
+                                reasonTypeId: 1,
+                                reasonType: { category: 'DETECTORS', title: 'CPV' },
+                                description: 'EOR description',
+                            },
+                            {
+                                reasonTypeId: 2,
+                                reasonType: { category: 'DETECTORS', title: 'TPC' },
+                                description: '2nd EOR description',
+                            },
+                        ],
+                        logs: customizedEcsEorReportLogs,
+                    },
+                ],
+            },
+            {
+                id: 'ENV2',
+                createdAt: new Date('2023-03-17T08:16:03Z'),
+                updatedAt: new Date('2023-03-17T08:16:03Z'),
+                runs: [],
+            },
+        ],
     },
     shifter: {
         name: 'John Doe',
@@ -95,7 +155,16 @@ The
 shift flow
 
 ## Environments and runs
--
+- (1679040783000) [ENV1](#)
+    * (1679040843000) [200](#) - COMMISSIONING - good
+        - EOR:
+            * DETECTORS - CPV - EOR description
+            * DETECTORS - TPC - 2nd EOR description
+        - Logs:
+            * \\[ECS\\] [Third issue log](#)
+            * \\[ECS Shifter\\] [Fifth issue log](#)
+
+- (1679040963000) [ENV2](#)
 
 ## Shift to shift transfer of information
 
