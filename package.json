@@ -23,7 +23,7 @@
     "joi": "17.8.1",
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
-    "sequelize": "6.29.0",
+    "sequelize": "6.30.0",
     "umzug": "3.2.1"
   },
   "files": [
@@ -33,12 +33,12 @@
   ],
   "devDependencies": {
     "chai": "4.3.4",
-    "eslint": "8.36.0",
+    "eslint": "8.37.0",
     "js-yaml": "4.1.0",
     "mocha": "10.2.0",
     "nodemon": "2.0.19",
     "nyc": "15.1.0",
-    "puppeteer": "19.7.0",
+    "puppeteer": "19.8.3",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "15.0.0",
