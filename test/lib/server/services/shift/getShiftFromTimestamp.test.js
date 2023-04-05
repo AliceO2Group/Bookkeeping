@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getShiftFromTimestamp } = require('../../../../../lib/server/services/eosReport/getShiftFromTimestamp.js');
+const { getShiftFromTimestamp } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     const nightStart1 = new Date('2023-03-15T22:00:00Z').getTime();
