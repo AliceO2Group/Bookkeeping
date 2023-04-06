@@ -76,7 +76,19 @@ const customizedECSEorReport = {
                                 description: '2nd EOR description',
                             },
                         ],
-                        logs: customizedEcsEorReportLogs,
+                        logs: [
+                            {
+                                id: 120,
+                                title: 'Third issue log',
+                                tags: [{ text: 'ECS' }],
+                                user: { id: 1 },
+                            },
+                            {
+                                id: 124,
+                                title: 'Fifth issue log',
+                                tags: [{ text: 'ECS Shifter' }],
+                            },
+                        ],
                     },
                 ],
             },
