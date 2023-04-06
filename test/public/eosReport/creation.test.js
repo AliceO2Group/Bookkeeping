@@ -55,6 +55,10 @@ module.exports = () => {
         await page.focus('#issues-block .CodeMirror textarea');
         await page.keyboard.type('Issues block\nOn multiple lines');
 
+        await page.waitForSelector('#lhc-transitions .CodeMirror textarea');
+        await page.focus('#lhc-transitions .CodeMirror textarea');
+        await page.keyboard.type('LHC machines\ntransitions');
+
         await page.waitForSelector('#shift-flow .CodeMirror textarea');
         await page.focus('#shift-flow .CodeMirror textarea');
         await page.keyboard.type('Shift flow\nOn multiple lines');
@@ -82,6 +86,7 @@ module.exports = () => {
         expect(text.includes('- trainee: Trainee name')).to.be.true;
         expect(text.includes('### Summary\nIssues block\nOn multiple lines')).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
+        expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;

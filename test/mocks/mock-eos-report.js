@@ -106,6 +106,7 @@ const customizedECSEorReport = {
     traineeName: 'Trainee',
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
+    lhcTransitions: 'The\nLHC machine transitions',
     issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
@@ -168,9 +169,8 @@ of issues
 - \\[SL\\] - [Second issue log](http://localhost:4000?page=log-detail&id=123)
 
 ## LHC
-* LHC (list all machine transitions) (in the future this section will be automatically filled)
-   * TIME STAMP - MACHINE MODE : BEAM MODE
-   * TIME STAMP - Fill numbers 
+The
+LHC machine transitions
 
 ## Shift flow
 The
