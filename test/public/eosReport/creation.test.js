@@ -17,10 +17,17 @@ const {
     defaultAfter,
     checkMismatchingUrlParam,
     waitForNetworkIdleAndRedraw,
+    reloadPage,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { getLog } = require('../../../lib/server/services/log/getLog.js');
+const { createEnvironment } = require('../../../lib/server/services/environment/createEnvironment.js');
+const { customizedECSEorReport } = require('../../mocks/mock-eos-report.js');
+const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
+const { createRun } = require('../../../lib/server/services/run/createRun.js');
+const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
+const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 
 module.exports = () => {
     let page;
@@ -47,6 +54,37 @@ module.exports = () => {
     });
 
     it('Should successfully create an EOS report when submitting the form and redirect to the corresponding log', async () => {
+        for (const environment of customizedECSEorReport.typeSpecific.environments) {
+            await createEnvironment({
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                ...environment,
+            });
+            await createEnvironmentHistoryItem({
+                status: 'DESTROYED',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                environmentId: environment.id,
+            });
+            for (const run of environment.runs) {
+                const runId = await createRun(
+                    run,
+                    await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '').split(',').map((value) => value.trim())),
+                );
+
+                // Create the expected EOR
+                const eorReasons = [];
+                for (const eorReason of run.eorReasons) {
+                    eorReasons.push({ reasonTypeId: eorReason.reasonTypeId, description: eorReason.description, runId });
+                }
+                if (eorReasons.length > 0) {
+                    await EorReasonRepository.addMany(eorReasons);
+                }
+            }
+        }
+
+        await reloadPage(page);
+
         await page.waitForSelector('#trainee-name input');
         await page.focus('#trainee-name input');
         await page.keyboard.type('Trainee name');
@@ -58,6 +96,10 @@ module.exports = () => {
         await page.waitForSelector('#lhc-transitions .CodeMirror textarea');
         await page.focus('#lhc-transitions .CodeMirror textarea');
         await page.keyboard.type('LHC machines\ntransitions');
+        
+        await page.waitForSelector('#type-specific div:nth-child(2) ul li textarea');
+        await page.focus('#type-specific div:nth-child(2) ul li textarea');
+        await page.keyboard.type('Comment\non run');
 
         await page.waitForSelector('#shift-flow .CodeMirror textarea');
         await page.focus('#shift-flow .CodeMirror textarea');
@@ -85,6 +127,15 @@ module.exports = () => {
         const { text } = await getLog(120);
         expect(text.includes('- trainee: Trainee name')).to.be.true;
         expect(text.includes('### Summary\nIssues block\nOn multiple lines')).to.be.true;
+        expect(text.includes(`## Environments and runs
+- (1679040783000) [ENV1](http://localhost?page=env-details&environmentId=ENV1)
+    * (1679040843000) [200](http://localhost?page=run-detail&id=108) - COMMISSIONING - good
+        - EOR:
+            * DETECTORS - CPV - EOR description
+            * DETECTORS - TPC - 2nd EOR description
+        - Comment:
+          Comment
+          on run`)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
