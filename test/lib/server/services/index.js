@@ -19,6 +19,7 @@ const FlpRoleSuite = require('./flpRole');
 const LogSuite = require('./log');
 const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
+const ShiftSuite = require('./shift/index.js');
 
 module.exports = () => {
     describe('Detector', DetectorSuite);
@@ -29,4 +30,5 @@ module.exports = () => {
     describe('Logs', LogSuite);
     describe('RunType', RunTypeSuite);
     describe('Run', RunSuite);
+    describe('Shift', ShiftSuite);
 };

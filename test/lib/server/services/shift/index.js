@@ -11,10 +11,10 @@
  *  or submit itself to any jurisdiction.
  */
 
-const formatEosReportTest = require('./formatEosReport.test.js');
-const EosReportServiceTest = require('./EosReportService.test.js');
+const getShiftFromTimestampTest = require('./getShiftFromTimestamp.test.js');
+const shiftServiceTest = require('./ShiftService.test.js');
 
 module.exports = () => {
-    describe('formatEosReport', formatEosReportTest);
-    describe('EosService', EosReportServiceTest);
+    describe('getShiftFromTimestamp', getShiftFromTimestampTest);
+    describe('ShiftService', shiftServiceTest);
 };

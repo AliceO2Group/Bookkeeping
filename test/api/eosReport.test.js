@@ -20,7 +20,7 @@ const { emptyEorReportRequest } = require('../mocks/mock-eos-report.js');
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/flps', () => {
+    describe('GET /api/eos-report', () => {
         it('should successfully generate an ECS EOS report log and return its id', async () => {
             const reportRequest = { ...emptyEorReportRequest };
             delete reportRequest.shiftStart;
