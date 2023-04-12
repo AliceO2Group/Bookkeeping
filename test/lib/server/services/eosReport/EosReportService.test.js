@@ -22,7 +22,6 @@ const {
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
 const { ShiftTypes } = require('../../../../../lib/domain/enums/ShiftTypes.js');
-const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
 
 module.exports = () => {
     it('should successfully create a log containing EOS report', async () => {
