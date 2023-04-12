@@ -15,7 +15,7 @@
     "docker-test": "docker-compose -p test -f docker-compose.yml -p test -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.2.0",
+    "@aliceo2/web-ui": "2.3.0",
     "@grpc/grpc-js": "1.8.3",
     "@grpc/proto-loader": "0.7.0",
     "cls-hooked": "4.2.2",
