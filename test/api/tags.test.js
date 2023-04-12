@@ -134,24 +134,14 @@ module.exports = () => {
                 });
         });
 
-        it('should return 201 if a proper body was sent', (done) => {
+        it('should return 201 if a proper body was sent', async () => {
             const expectedText = `UNIX:${new Date().getTime()}`;
-            request(server)
-                .post('/api/tags')
-                .send({
-                    text: expectedText,
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+            const response = await request(server).post('/api/tags').send({
+                text: expectedText,
+            });
 
-                    expect(res.body.data.text).to.equal(expectedText);
-
-                    done();
-                });
+            expect(response.status).to.equal(201);
+            expect(response.body.data.text).to.equal(expectedText);
         });
 
         it('should return 409 if we are creating the same tag again', (done) => {
@@ -261,6 +251,16 @@ module.exports = () => {
 
                     done();
                 });
+        });
+        it('should successfully create a tag with a description', async () => {
+            const response = await request(server).post('/api/tags?token=admin').send({
+                text: 'test-with-desc',
+                description: 'The tag\'s description!',
+            });
+
+            expect(response.status).to.equal(201);
+            expect(response.body.data.text).to.equal('test-with-desc');
+            expect(response.body.data.description).to.equal('The tag\'s description!');
         });
     });
 
@@ -676,6 +676,16 @@ module.exports = () => {
             expect(response.status).to.equal(201);
             expect(response.body.data).to.be.an('object');
             expect(response.body.data.archived).to.be.true;
+        });
+
+        it('should sucessfully update the given tag description', async () => {
+            const response = await request(server)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
+                .send({ description: 'A whole new description' });
+
+            expect(response.status).to.equal(201);
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.description).to.equal('A whole new description');
         });
     });
 };

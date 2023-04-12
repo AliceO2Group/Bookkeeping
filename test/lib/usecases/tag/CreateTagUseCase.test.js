@@ -64,4 +64,11 @@ module.exports = () => {
         expect(result).to.be.null;
         expect(await TagRepository.count()).to.equal(nTagsAfter);
     });
+
+    it('should successfully create a new tag with a description', async () => {
+        createTagDto.body.description = 'A description';
+        const tag = await new CreateTagUseCase().execute(createTagDto);
+        expect(tag).to.be.an('object');
+        expect(tag.description).to.equal('A description');
+    });
 };
