@@ -17,8 +17,7 @@ const { getLogsByTagsInPeriod } = require('../../../../../lib/server/services/lo
 module.exports = () => {
     const limit1 = new Date('2019-11-11 12:00:00').getTime();
     const limit2 = new Date('2019-11-11 14:00:00').getTime();
-    const limit3 = new Date('2020-02-02 12:00:00').getTime();
-    const limit4 = new Date('2020-02-02 13:00:00').getTime();
+    const limit3 = new Date('2020-02-02 13:00:00').getTime();
 
     it('should successfully retrieve the logs with the given tags created between specific dates', async () => {
         {
@@ -28,20 +27,23 @@ module.exports = () => {
         }
 
         {
-            const logs = await getLogsByTagsInPeriod(['RUN'], { from: limit1, to: limit4 });
+            const logs = await getLogsByTagsInPeriod(['RUN'], { from: limit1, to: limit3 });
             expect(logs).to.lengthOf(2);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN'))).to.be.true;
         }
 
         {
-            const logs = await getLogsByTagsInPeriod(['FOOD', 'RUN'], { from: limit1, to: limit4 });
+            const logs = await getLogsByTagsInPeriod(['FOOD', 'RUN'], { from: limit1, to: limit3 });
             expect(logs).to.lengthOf(4);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN' || text === 'FOOD'))).to.be.true;
         }
     });
 
     it('should successfully include logs at the lower limit but exclude logs at the upper limit for given tags', async () => {
-        const logs = await getLogsByTagsInPeriod(['RUN'], { from: limit1, to: limit3 });
-        expect(logs).to.lengthOf(1);
+        const limit4 = new Date('2020-01-01 12:00:00').getTime();
+        const limit5 = new Date('2021-11-11 12:00:00').getTime();
+
+        const [log] = await getLogsByTagsInPeriod(['RUN'], { from: limit4, to: limit5 });
+        expect(log.tags?.map(({ text }) => text)).to.eql(['RUN', 'DPG']);
     });
 };
