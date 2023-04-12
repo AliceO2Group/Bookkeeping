@@ -19,7 +19,7 @@ FROM base as developmentdependencies
 # Installs Git and packages required for Puppeteer
 # https://pkgs.alpinelinux.org/packages
 RUN apk add --no-cache \
-    chromium=111.0.5563.146-r1 \
+    chromium=112.0.5615.49-r0 \
     freetype=2.12.1-r0 \
     freetype-dev=2.12.1-r0 \
     git=2.38.4-r1 \
