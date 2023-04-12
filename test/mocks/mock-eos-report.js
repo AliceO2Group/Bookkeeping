@@ -30,25 +30,21 @@ const customizedEorReport = {
     issuesLogEntries: [
         {
             title: 'Third issue log',
-            text: 'This is not important for test',
-            tags: [{ text: 'FOOD' }],
+            tags: [{ text: 'ECS' }],
             user: { id: 1 },
         },
         {
             title: 'Fourth issue log',
-            text: 'This is not important for test',
-            tags: [{ text: 'TEST-TAG-1' }],
+            tags: [{ text: 'TEST-TAG-26' }],
             user: { id: 1 },
         },
         {
             title: 'First issue log',
-            text: 'This is not important for test',
-            tags: [{ text: 'FOOD' }, { text: 'TEST' }],
+            tags: [{ text: 'TEST' }, { text: 'DCS' }],
         },
         {
             title: 'Second issue log',
-            text: 'This is not important for test',
-            tags: [{ text: 'OTHER' }],
+            tags: [{ text: 'SL' }],
         },
     ],
     infoFromPreviousShifter: 'Info from\nprevious shifter',
@@ -82,10 +78,10 @@ list
 of issues
 
 ### Issues entries
-- \\[FOOD\\] - [Third issue log](#)
-- \\[TEST-TAG-1\\] - [Fourth issue log](#)
-- \\[FOOD, TEST\\] - [First issue log](#)
-- \\[OTHER\\] - [Second issue log](#)
+- \\[ECS\\] - [Third issue log](#)
+- \\[TEST-TAG-26\\] - [Fourth issue log](#)
+- \\[TEST, DCS\\] - [First issue log](#)
+- \\[SL\\] - [Second issue log](#)
 
 ## LHC
 * LHC (list all machine transitions) (in the future this section will be automatically filled)

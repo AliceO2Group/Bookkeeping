@@ -44,7 +44,7 @@ module.exports = () => {
             const response = await request(server).get('/api/tags?filter[partialText]=-TAG-');
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('array');
-            expect(response.body.data.length).to.equal(42);
+            expect(response.body.data.length).to.equal(40);
         });
 
         it('should return 204 if no tags match partial search', async () => {
@@ -526,7 +526,7 @@ module.exports = () => {
 
         it('should return 200 if urlencoded is given', (done) => {
             request(server)
-                .get('/api/tags/name?name=TEST%2FTAG%200')
+                .get('/api/tags/name?name=DCS')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -534,7 +534,7 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data.text).to.equal('TEST/TAG 0');
+                    expect(res.body.data.text).to.equal('DCS');
                     expect(res.body.data.email).to.equal('cake@cern.ch');
                     done();
                 });

@@ -22,17 +22,14 @@ const {
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
 const { ShiftTypes } = require('../../../../../lib/domain/enums/ShiftTypes.js');
-const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
 
 module.exports = () => {
     it('should successfully create a log containing EOS report', async () => {
-        shiftService.issuesLogEntriesTags = ['FOOD', 'TEST', 'OTHER'];
-
         // Create the expected logs
         for (const log of customizedEorReport.issuesLogEntries) {
             const logCreationRequest = {
                 title: log.title,
-                text: log.text,
+                text: 'This is not important for test',
                 createdAt: customizedEorReport.shiftStart,
                 subtype: 'comment',
                 origin: 'human',
