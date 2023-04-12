@@ -18,7 +18,7 @@ const {
 const { expect } = require('chai');
 
 module.exports = () => {
-    it('should successfully return the list of actives in the given period', async () => {
+    it('should successfully return the list of environments in the given period', async () => {
         const period = {
             from: new Date('2019-08-09T15:00:00Z').getTime(),
             to: new Date('2019-08-09T23:00:00Z').getTime(),
@@ -29,7 +29,7 @@ module.exports = () => {
             { historyItems: true },
         );
 
-        expect(environments.map(({ id }) => id)).to.eql(['CmCvjNbg', 'TDI59So3d', 'EIDO13i3D', 'KGIS12DS', 'Dxi029djX']);
+        expect(environments.map(({ id }) => id)).to.eql(['Dxi029djX', 'KGIS12DS', 'EIDO13i3D', 'TDI59So3d', 'CmCvjNbg']);
         expect(environments.every((environment) => environment.createdAt.getTime() < period.to && (
             environment.updatedAt.getTime() >= period.from
             || environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR'].includes(status))
