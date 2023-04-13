@@ -180,6 +180,10 @@ a.btn, a.btn:hover, a.btn.active {
     display: flex;
 }
 
+.v-resize {
+    resize: vertical;
+}
+
 .dropdown-container {
     position: relative;
     line-height: inherit;
