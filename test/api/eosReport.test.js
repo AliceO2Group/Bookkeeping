@@ -15,14 +15,14 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const request = require('supertest');
 const { server } = require('../../lib/application.js');
 const { expect } = require('chai');
-const { emptyEorReportRequest } = require('../mocks/mock-eos-report.js');
+const { emptyECSEorReportRequest } = require('../mocks/mock-eos-report.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/eos-report', () => {
         it('should successfully generate an ECS EOS report log and return its id', async () => {
-            const reportRequest = { ...emptyEorReportRequest };
+            const reportRequest = { ...emptyECSEorReportRequest };
             delete reportRequest.shiftStart;
             const response = await request(server).post('/api/eos-report?reportType=ECS').send(reportRequest);
 

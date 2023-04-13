@@ -45,13 +45,16 @@ module.exports = () => {
     });
 
     it('should successfully include the expected relations', async () => {
+        const limit5 = new Date('2020-01-01 12:00:00').getTime();
+        const limit6 = new Date('2021-11-11 12:00:00').getTime();
+
         {
-            const [log] = await getLogsByUserInPeriod({ id: 1 }, { from: limit1, to: limit3 }, { tags: true });
-            expect(log.tags?.map(({ text }) => text)).to.eql(['MAINTENANCE']);
+            const [log] = await getLogsByUserInPeriod({ id: 1 }, { from: limit5, to: limit6 }, { tags: true });
+            expect(log.tags?.map(({ text }) => text)).to.eql(['RUN', 'DPG']);
         }
 
         {
-            const [log] = await getLogsByUserInPeriod({ id: 1 }, { from: limit1, to: limit3 });
+            const [log] = await getLogsByUserInPeriod({ id: 1 }, { from: limit5, to: limit6 });
             expect(log.tags).to.be.undefined;
         }
     });

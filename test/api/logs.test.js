@@ -275,7 +275,7 @@ module.exports = () => {
 
         it('should support filtering by tag', (done) => {
             request(server)
-                .get('/api/logs?filter[tags][values]=TEST,OTHER&filter[tags][operation]=or')
+                .get('/api/logs?filter[tags][values]=TEST,SL&filter[tags][operation]=or')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
