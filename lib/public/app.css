@@ -119,6 +119,10 @@ html, body {
     word-break: break-all;
 }
 
+.break-word {
+    word-break: break-word;
+}
+
 /* table */
 .table {
     margin-bottom: 0;
