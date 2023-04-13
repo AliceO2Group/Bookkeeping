@@ -150,10 +150,10 @@ list
 of issues
 
 ### Issues entries
-- \\[ECS\\] - [Third issue log](http://localhost?page=log-detail&id=120)
-- \\[TEST-TAG-26\\] - [Fourth issue log](http://localhost?page=log-detail&id=121)
-- \\[TEST, DCS\\] - [First issue log](http://localhost?page=log-detail&id=122)
-- \\[SL\\] - [Second issue log](http://localhost?page=log-detail&id=123)
+- \\[ECS\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+- \\[TEST-TAG-26\\] - [Fourth issue log](http://localhost:4000?page=log-detail&id=121)
+- \\[TEST, DCS\\] - [First issue log](http://localhost:4000?page=log-detail&id=122)
+- \\[SL\\] - [Second issue log](http://localhost:4000?page=log-detail&id=123)
 
 ## LHC
 * LHC (list all machine transitions) (in the future this section will be automatically filled)
@@ -165,16 +165,16 @@ The
 shift flow
 
 ## Environments and runs
-- (1679040783000) [ENV1](http://localhost?page=env-details&environmentId=ENV1)
-    * (1679040843000) [200](http://localhost?page=run-detail&id=108) - COMMISSIONING - good
+- (1679040783000) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
+    * (1679040843000) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
         - Logs:
-            * \\[ECS\\] [Third issue log](http://localhost?page=log-detail&id=120)
-            * \\[ECS Shifter\\] [Fifth issue log](http://localhost?page=log-detail&id=124)
+            * \\[ECS\\] [Third issue log](http://localhost:4000?page=log-detail&id=120)
+            * \\[ECS Shifter\\] [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
 
-- (1679040963000) [ENV2](http://localhost?page=env-details&environmentId=ENV2)
+- (1679040963000) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
 
 ## Shift to shift transfer of information
 
