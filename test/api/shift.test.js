@@ -15,28 +15,36 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { expect } = require('chai');
-const { logService } = require('../../lib/server/services/log/LogService.js');
 const { shiftService } = require('../../lib/server/services/shift/ShiftService.js');
+const { createLog } = require('../../lib/server/services/log/createLog.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/shift-data', () => {
-        it.skip('should successfully return the data related to the current user\'s shift', async () => {
+        it('should successfully return the data related to the current user\'s shift', async () => {
             shiftService.issuesLogEntriesTags = ['RUN'];
 
             // Create some logs for the shift
 
             const logIds = [];
-            const defaultLogData = { title: 'Title', text: 'Text', subtype: 'comment', origin: 'process', userId: 2 };
+            const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+            const defaultLogData = {
+                title: 'Title',
+                text: 'Text',
+                subtype: 'comment',
+                origin: 'process',
+                userId: 2,
+                createdAt: currentShift.start,
+            };
             // Not kept : not the good tags and user
-            await logService.create(defaultLogData, [], ['FOOD']);
+            await createLog(defaultLogData, [], ['FOOD'], []);
             // Keep the 3 log ids
-            logIds.push((await logService.create(defaultLogData, [], ['RUN'])).id);
-            logIds.push((await logService.create({ ...defaultLogData, userId: 1 }, [], ['RUN'])).id);
-            logIds.push((await logService.create({ ...defaultLogData, userId: 1 })).id);
+            logIds.push(await createLog(defaultLogData, [], ['RUN'], []));
+            logIds.push(await createLog({ ...defaultLogData, userId: 1 }, [], ['RUN'], []));
+            logIds.push(await createLog({ ...defaultLogData, userId: 1 }, [], [], []));
             // Not kept : not the good tags and user
-            await logService.create(defaultLogData);
+            await createLog(defaultLogData, [], [], []);
 
             const response = await request(server).get('/api/shift-data?shiftType=ECS');
 
