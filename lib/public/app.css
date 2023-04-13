@@ -119,6 +119,10 @@ html, body {
     word-break: break-all;
 }
 
+.break-word {
+    word-break: break-word;
+}
+
 /* table */
 .table {
     margin-bottom: 0;
@@ -178,6 +182,10 @@ a.btn, a.btn:hover, a.btn.active {
 
 .form-control.flex-column, .form-control.flex-row {
     display: flex;
+}
+
+.v-resize {
+    resize: vertical;
 }
 
 .dropdown-container {

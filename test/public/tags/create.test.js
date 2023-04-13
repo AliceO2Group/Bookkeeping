@@ -36,7 +36,7 @@ module.exports = () => {
         await page.type('#text', text);
 
         // Create the new tag
-        await pressElement(page, 'button#send');
+        await pressElement(page, 'button#submit');
 
         // Verify the title of the page
         await expectInnerText(page, '.mv2', `Tag: ${text}`);
@@ -56,7 +56,7 @@ module.exports = () => {
         await page.type('#text', text);
 
         // Create the new tag
-        await pressElement(page, 'button#send');
+        await pressElement(page, 'button#submit');
 
         // Because this tag already exists, we expect an error message to appear
         await expectInnerText(page, '.alert', 'Conflict: The provided entity already exists');
