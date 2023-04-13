@@ -25,6 +25,7 @@ module.exports = () => {
             body: {
                 mattermost: 'tag,tag,tag',
                 email: 'cern@tag.ch,cern@othertag.ch',
+                description: 'The new tag\'s description',
                 archivedAt: Date.now(),
             },
             params: {
@@ -43,10 +44,11 @@ module.exports = () => {
         expect(result.mattermost).to.equal('tag,tag,tag');
         expect(result.lastEditedName).to.equal('John Doe');
         expect(result.email).to.equal('cern@tag.ch,cern@othertag.ch');
+        expect(result.description).to.equal('The new tag\'s description');
         expect(result.archived).to.be.true;
     });
 
-    it('should return an error when calues do not match', async () => {
+    it('should return an error when values do not match', async () => {
         const newTagDto = await UpdateTagDto.validateAsync({
             body: {
                 mattermost: 'tag,tag,tag',

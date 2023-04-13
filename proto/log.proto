@@ -101,4 +101,6 @@ message Tag {
   int64 updatedAt = 6;
   // The last person that edited the email/mattermost fields
   string lastEditedName = 7;
+  // The description of the tag
+  optional string description = 8;
 }

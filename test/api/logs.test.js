@@ -878,6 +878,7 @@ module.exports = () => {
                 {
                     id: 1,
                     text: 'FOOD',
+                    description: 'The food\'s related tag',
                     email: 'food-group@cern.ch',
                     mattermost: 'food',
                     archived: false,
@@ -886,6 +887,7 @@ module.exports = () => {
                 {
                     id: 2,
                     text: 'RUN',
+                    description: 'Description for the run tag',
                     email: 'marathon-group@cern.ch',
                     mattermost: 'marathon',
                     archived: false,

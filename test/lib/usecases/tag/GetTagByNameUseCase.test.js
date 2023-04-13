@@ -34,6 +34,7 @@ module.exports = () => {
 
         expect(result.mattermost).to.equal('food');
         expect(result.email).to.equal('food-group@cern.ch');
+        expect(result.description).to.equal('The food\'s related tag');
     });
     it('should return null when invalid data is given', async () => {
         getLogDto = await GetTagByNameDto.validateAsync({
@@ -57,5 +58,6 @@ module.exports = () => {
 
         expect(result.mattermost).to.equal('cake');
         expect(result.email).to.equal('cake@cern.ch');
+        expect(result.description).to.equal('The first test tag');
     });
 };
