@@ -197,11 +197,11 @@ module.exports = () => {
         });
 
         it('Should successfully update the run tags', async () => {
-            updateRunDto.body.tags = ['TEST-TAG-1', 'TEST-TAG-2'];
+            updateRunDto.body.tags = ['ECS', 'ECS Shifter'];
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
 
             expect(error).to.be.undefined;
-            expect(result.tags.map((tag) => tag.text)).to.be.eql(['TEST-TAG-1', 'TEST-TAG-2']);
+            expect(result.tags.map((tag) => tag.text)).to.be.eql(['ECS', 'ECS Shifter']);
         });
 
         it('should throw an error when the at least one of the given tag do not exists', async () => {
