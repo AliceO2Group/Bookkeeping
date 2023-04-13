@@ -20,7 +20,7 @@
     "@grpc/proto-loader": "0.7.0",
     "cls-hooked": "4.2.2",
     "deepmerge": "4.3.0",
-    "joi": "17.8.1",
+    "joi": "17.9.1",
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
     "sequelize": "6.31.0",
