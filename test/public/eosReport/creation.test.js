@@ -96,7 +96,7 @@ module.exports = () => {
         await page.waitForSelector('#lhc-transitions .CodeMirror textarea');
         await page.focus('#lhc-transitions .CodeMirror textarea');
         await page.keyboard.type('LHC machines\ntransitions');
-        
+
         await page.waitForSelector('#type-specific div:nth-child(2) ul li textarea');
         await page.focus('#type-specific div:nth-child(2) ul li textarea');
         await page.keyboard.type('Comment\non run');
