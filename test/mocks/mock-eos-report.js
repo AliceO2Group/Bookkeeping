@@ -15,7 +15,7 @@ const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
 // 2023-03-17 07:00:00 geneva time
 const MORNING_SHIFT_START = 1679032800000;
 
-exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
+exports.eosReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
 const customizedEcsEorReportLogs = [
     {
@@ -152,7 +152,7 @@ exports.customizedECSEorReportRequest = {
 };
 
 exports.formattedCustomizedEorReport = `\
-# End of shift report - ECS - 3/17/2023 Morning
+# End of shift report - ECS - 17/03/2023 Morning
 - shifter: John Doe
 - trainee: Trainee
 
@@ -219,7 +219,7 @@ const emptyECSEorReport = {
 exports.emptyECSEorReport = emptyECSEorReport;
 
 exports.formattedEmptyECSEorReport = `\
-# End of shift report - ECS - 3/17/2023 Morning
+# End of shift report - ECS - 17/03/2023 Morning
 - shifter: John Doe
 - trainee: -
 
