@@ -11,24 +11,31 @@
  *  or submit itself to any jurisdiction.
  */
 
+const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
 const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
 const { expect } = require('chai');
 
 module.exports = () => {
     const shift1 = new Date('2020-02-02 12:00:00').getTime();
-    const shift2 = new Date('2019-11-11 12:00:00').getTime();
 
     it('Should successfully return the logs related to a given shift', async () => {
-        shiftService.issuesLogEntriesTags = ['RUN'];
-        {
-            const logs = await shiftService.getShiftIssues(shift1, { userId: 1 });
-            expect(logs).to.lengthOf(1);
-            expect(logs[0].id).to.equal(2);
-        }
-        {
-            const logs = await shiftService.getShiftIssues(shift2, { userId: 1 });
-            expect(logs).to.lengthOf(4);
-            expect(logs.every((log) => log.tags.some(({ text }) => text === 'RUN') || log.author?.id === 1)).to.be.true;
-        }
+        const defaultLogData = {
+            title: 'Title',
+            text: 'Text',
+            subtype: 'comment',
+            origin: 'process',
+            userId: 2,
+            createdAt: new Date(shift1 + 5000),
+        };
+            // Not kept : not the good tags
+        await createLog(defaultLogData, [], ['EoS'], []);
+        await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], []);
+        // Not kept : not the good tags
+        await createLog(defaultLogData, [], ['ECS Shifter'], []);
+
+        const logs = await shiftService.getShiftIssues(shift1, 'ECS');
+        expect(logs).to.lengthOf(1);
+        expect(logs[0].tags.every(({ text }) => text !== 'EoS')).to.be.true;
+        expect(logs[0].tags.some(({ text }) => text === 'ECS Shifter')).to.be.true;
     });
 };

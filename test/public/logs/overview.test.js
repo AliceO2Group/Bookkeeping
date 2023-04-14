@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(138);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(141);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -672,7 +672,7 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row138-runs a');
+        await pressElement(page, '#row141-runs a');
         await waitForNetworkIdleAndRedraw(page);
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');

@@ -21,13 +21,13 @@ const customizedEcsEorReportLogs = [
     {
         id: 120,
         title: 'Third issue log',
-        tags: [{ text: 'ECS' }],
+        tags: [{ text: 'ECS Shifter' }],
         user: { id: 1 },
     },
     {
         id: 121,
         title: 'Fourth issue log',
-        tags: [{ text: 'TEST-TAG-26' }],
+        tags: [{ text: 'TEST-TAG-26' }, { text: 'ECS Shifter' }, { text: 'EoS' }],
         user: { id: 1 },
     },
     {
@@ -43,7 +43,7 @@ const customizedEcsEorReportLogs = [
     {
         id: 124,
         title: 'Fifth issue log',
-        tags: [{ text: 'ECS Shifter' }],
+        tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
     },
 ];
 
@@ -80,13 +80,13 @@ const customizedECSEorReport = {
                             {
                                 id: 120,
                                 title: 'Third issue log',
-                                tags: [{ text: 'ECS' }],
+                                tags: [{ text: 'ECS Shifter' }],
                                 user: { id: 1 },
                             },
                             {
                                 id: 124,
                                 title: 'Fifth issue log',
-                                tags: [{ text: 'ECS Shifter' }],
+                                tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
                             },
                         ],
                     },
@@ -118,24 +118,13 @@ const customizedECSEorReport = {
         {
             id: 120,
             title: 'Third issue log',
-            tags: [{ text: 'ECS' }],
+            tags: [{ text: 'ECS Shifter' }],
             user: { id: 1 },
         },
         {
-            id: 121,
-            title: 'Fourth issue log',
-            tags: [{ text: 'TEST-TAG-26' }],
-            user: { id: 1 },
-        },
-        {
-            id: 122,
-            title: 'First issue log',
-            tags: [{ text: 'TEST' }, { text: 'DCS' }],
-        },
-        {
-            id: 123,
-            title: 'Second issue log',
-            tags: [{ text: 'SL' }],
+            id: 124,
+            title: 'Fifth issue log',
+            tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
         },
     ],
     infoFromPreviousShifter: 'Info from\nprevious shifter',
@@ -173,10 +162,8 @@ list
 of issues
 
 ### Issues entries
-- \\[ECS\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
-- \\[TEST-TAG-26\\] - [Fourth issue log](http://localhost:4000?page=log-detail&id=121)
-- \\[TEST, DCS\\] - [First issue log](http://localhost:4000?page=log-detail&id=122)
-- \\[SL\\] - [Second issue log](http://localhost:4000?page=log-detail&id=123)
+- \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+- \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
 
 ## LHC
 The
@@ -193,8 +180,8 @@ shift flow
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
         - Logs:
-            * \\[ECS\\] [Third issue log](http://localhost:4000?page=log-detail&id=120)
-            * \\[ECS Shifter\\] [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+            * \\[ECS Shifter\\] [Third issue log](http://localhost:4000?page=log-detail&id=120)
+            * \\[ECS Shifter, FLP\\] [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
         - Comment:
           A run
           comment
