@@ -128,8 +128,8 @@ module.exports = () => {
         expect(text.includes('- trainee: Trainee name')).to.be.true;
         expect(text.includes('### Summary\nIssues block\nOn multiple lines')).to.be.true;
         expect(text.includes(`## Environments and runs
-- (1679040783000) [ENV1](http://localhost?page=env-details&environmentId=ENV1)
-    * (1679040843000) [200](http://localhost?page=run-detail&id=108) - COMMISSIONING - good
+- (1679040783000) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
+    * (1679040843000) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
