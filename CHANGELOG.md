@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.53.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.53.0)
+* Notable changes for users:
+  * Adds a new page for End-of-Shift(EOS) report generation which retrieves and build a report and allows users to modify before saving it
+  * Allows users to search by content of a log
+  * Allows admins to add tag description which is displayed then in tag-details
+
 ## [0.52.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.52.0)
 * Notable changes for users:
   * EOR reason is now reverted when reverting the operation of editing details of a run
