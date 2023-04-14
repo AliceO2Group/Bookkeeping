@@ -30,7 +30,7 @@ const { createEnvironmentHistoryItem } = require('../../../../../lib/server/serv
 const { createRun } = require('../../../../../lib/server/services/run/createRun.js');
 const { getOrCreateAllDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
 const EorReasonRepository = require('../../../../../lib/database/repositories/EorReasonRepository.js');
-const { getTagsByReportType } = require('../../../../../lib/server/services/eosReport/eosTypeSpecificFormatter/getTypeSpecificTags.js');
+const { getEosReportTagsByType } = require('../../../../../lib/server/services/eosReport/eosTypeSpecificFormatter/getEosReportTagsByType.js');
 
 module.exports = () => {
     it('should successfully create a log containing EOS report', async () => {
@@ -82,7 +82,7 @@ module.exports = () => {
         const log = await eosReportService.createLogEntry(ShiftTypes.ECS, customizedECSEorReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedCustomizedEorReport);
         expect(log.title).to.equal(eosReportTitle);
-        expect(log.tags.map(({ text }) => text)).to.have.members(getTagsByReportType(ShiftTypes.ECS));
+        expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.ECS));
     });
 
     it('should successfully create a log containing EOS report with default values', async () => {
