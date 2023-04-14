@@ -123,7 +123,7 @@ const customizedECSEorReport = {
         },
         {
             id: 124,
-            title: 'Second issue log',
+            title: 'Fifth issue log',
             tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
         },
     ],
@@ -163,7 +163,7 @@ of issues
 
 ### Issues entries
 - \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
-- \\[ECS Shifter, FLP\\] - [Second issue log](http://localhost:4000?page=log-detail&id=124)
+- \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
 
 ## LHC
 The
