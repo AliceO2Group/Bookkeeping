@@ -23,8 +23,6 @@ module.exports = () => {
 
     describe('GET /api/shift-data', () => {
         it('should successfully return the data related to the current user\'s shift', async () => {
-            shiftService.issuesLogEntriesTags = ['RUN'];
-
             // Create some logs for the shift
 
             const logIds = [];
@@ -37,20 +35,17 @@ module.exports = () => {
                 userId: 2,
                 createdAt: currentShift.start,
             };
-            // Not kept : not the good tags and user
-            await createLog(defaultLogData, [], ['FOOD'], []);
-            // Keep the 3 log ids
-            logIds.push(await createLog(defaultLogData, [], ['RUN'], []));
-            logIds.push(await createLog({ ...defaultLogData, userId: 1 }, [], ['RUN'], []));
-            logIds.push(await createLog({ ...defaultLogData, userId: 1 }, [], [], []));
-            // Not kept : not the good tags and user
-            await createLog(defaultLogData, [], [], []);
+            // Not kept : not the good tags
+            await createLog(defaultLogData, [], ['EoS'], []);
+            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], []));
+            // Keep the 3 log ids as it has good tags for ECS
+            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter'], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=ECS');
 
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('object');
-            expect(response.body.data.issuesLogs).to.lengthOf(3);
+            expect(response.body.data.issuesLogs).to.lengthOf(1);
             expect(response.body.data.issuesLogs.every(({ id }) => logIds.includes(id))).to.be.true;
         });
     });

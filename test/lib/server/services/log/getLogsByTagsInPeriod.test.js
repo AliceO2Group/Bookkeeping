@@ -21,19 +21,19 @@ module.exports = () => {
 
     it('should successfully retrieve the logs with the given tags created between specific dates', async () => {
         {
-            const logs = await getLogsByTagsInPeriod(['FOOD'], { from: limit1, to: limit2 });
+            const logs = await getLogsByTagsInPeriod({ include: ['FOOD'] }, { from: limit1, to: limit2 });
             expect(logs).to.lengthOf(2);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'FOOD'))).to.be.true;
         }
 
         {
-            const logs = await getLogsByTagsInPeriod(['RUN'], { from: limit1, to: limit3 });
+            const logs = await getLogsByTagsInPeriod({ include: ['RUN'] }, { from: limit1, to: limit3 });
             expect(logs).to.lengthOf(2);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN'))).to.be.true;
         }
 
         {
-            const logs = await getLogsByTagsInPeriod(['FOOD', 'RUN'], { from: limit1, to: limit3 });
+            const logs = await getLogsByTagsInPeriod({ include: ['FOOD', 'RUN'] }, { from: limit1, to: limit3 });
             expect(logs).to.lengthOf(4);
             expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN' || text === 'FOOD'))).to.be.true;
         }
@@ -43,7 +43,7 @@ module.exports = () => {
         const limit4 = new Date('2020-01-01 12:00:00').getTime();
         const limit5 = new Date('2021-11-11 12:00:00').getTime();
 
-        const [log] = await getLogsByTagsInPeriod(['RUN'], { from: limit4, to: limit5 });
+        const [log] = await getLogsByTagsInPeriod({ include: ['RUN'] }, { from: limit4, to: limit5 });
         expect(log.tags?.map(({ text }) => text)).to.eql(['RUN', 'DPG']);
     });
 };
