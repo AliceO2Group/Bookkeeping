@@ -187,8 +187,8 @@ The
 shift flow
 
 ## Environments and runs
-- (1679040783000) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
-    * (1679040843000) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - good
+- (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
+    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
@@ -199,7 +199,7 @@ shift flow
           A run
           comment
 
-- (1679040963000) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
+- (17/03/2023, 09:16:03) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
     * Comments:
       An environment
       comment
