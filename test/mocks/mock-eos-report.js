@@ -144,6 +144,7 @@ exports.customizedECSEorReportRequest = {
     traineeName: customizedECSEorReport.traineeName,
     shiftStart: customizedECSEorReport.shiftStart,
     shiftFlow: customizedECSEorReport.shiftFlow,
+    lhcTransitions: customizedECSEorReport.lhcTransitions,
     issuesBlock: customizedECSEorReport.issuesBlock,
     infoFromPreviousShifter: customizedECSEorReport.infoFromPreviousShifter,
     infoForNextShifter: customizedECSEorReport.infoForNextShifter,
@@ -231,9 +232,7 @@ exports.formattedEmptyECSEorReport = `\
 -
 
 ## LHC
-* LHC (list all machine transitions) (in the future this section will be automatically filled)
-   * TIME STAMP - MACHINE MODE : BEAM MODE
-   * TIME STAMP - Fill numbers 
+-
 
 ## Shift flow
 -
