@@ -20,6 +20,7 @@ const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
 const AboutSuite = require('./about');
 const EnvsSuite = require('./envs');
+const EosReportSuite = require('./eosReport');
 
 module.exports = () => {
     describe('LhcFills', LhcFillsSuite);
@@ -31,4 +32,5 @@ module.exports = () => {
     describe('Flps', FlpsSuite);
     describe('Home', HomeSuite);
     describe('About', AboutSuite);
+    describe('EosReport', EosReportSuite);
 };

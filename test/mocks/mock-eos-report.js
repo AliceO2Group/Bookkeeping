@@ -15,28 +15,33 @@ const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
 // 2023-03-17 07:00:00 geneva time
 const MORNING_SHIFT_START = 1679032800000;
 
-exports.eosReportTitle = 'End of shift report - ECS - 3/17/2023 Morning';
+exports.eosReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
 const customizedEcsEorReportLogs = [
     {
+        id: 120,
         title: 'Third issue log',
         tags: [{ text: 'ECS' }],
         user: { id: 1 },
     },
     {
+        id: 121,
         title: 'Fourth issue log',
         tags: [{ text: 'TEST-TAG-26' }],
         user: { id: 1 },
     },
     {
+        id: 122,
         title: 'First issue log',
         tags: [{ text: 'TEST' }, { text: 'DCS' }],
     },
     {
+        id: 123,
         title: 'Second issue log',
         tags: [{ text: 'SL' }],
     },
     {
+        id: 124,
         title: 'Fifth issue log',
         tags: [{ text: 'ECS Shifter' }],
     },
@@ -54,6 +59,7 @@ const customizedECSEorReport = {
                 updatedAt: new Date('2023-03-17T08:13:03Z'),
                 runs: [
                     {
+                        id: 108,
                         timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                         envId: 'ENV1',
                         runNumber: 200,
@@ -70,7 +76,19 @@ const customizedECSEorReport = {
                                 description: '2nd EOR description',
                             },
                         ],
-                        logs: customizedEcsEorReportLogs,
+                        logs: [
+                            {
+                                id: 120,
+                                title: 'Third issue log',
+                                tags: [{ text: 'ECS' }],
+                                user: { id: 1 },
+                            },
+                            {
+                                id: 124,
+                                title: 'Fifth issue log',
+                                tags: [{ text: 'ECS Shifter' }],
+                            },
+                        ],
                     },
                 ],
             },
@@ -81,6 +99,12 @@ const customizedECSEorReport = {
                 runs: [],
             },
         ],
+        runComments: {
+            200: 'A run\ncomment',
+        },
+        environmentComments: {
+            ENV2: 'An environment\ncomment',
+        },
     },
     shifter: {
         name: 'John Doe',
@@ -88,23 +112,28 @@ const customizedECSEorReport = {
     traineeName: 'Trainee',
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
+    lhcTransitions: 'The\nLHC machine transitions',
     issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
+            id: 120,
             title: 'Third issue log',
             tags: [{ text: 'ECS' }],
             user: { id: 1 },
         },
         {
+            id: 121,
             title: 'Fourth issue log',
             tags: [{ text: 'TEST-TAG-26' }],
             user: { id: 1 },
         },
         {
+            id: 122,
             title: 'First issue log',
             tags: [{ text: 'TEST' }, { text: 'DCS' }],
         },
         {
+            id: 123,
             title: 'Second issue log',
             tags: [{ text: 'SL' }],
         },
@@ -117,10 +146,14 @@ const customizedECSEorReport = {
 exports.customizedECSEorReport = customizedECSEorReport;
 
 exports.customizedECSEorReportRequest = {
-    typeSpecific: null,
+    typeSpecific: {
+        environmentComments: customizedECSEorReport.typeSpecific.environmentComments,
+        runComments: customizedECSEorReport.typeSpecific.runComments,
+    },
     traineeName: customizedECSEorReport.traineeName,
     shiftStart: customizedECSEorReport.shiftStart,
     shiftFlow: customizedECSEorReport.shiftFlow,
+    lhcTransitions: customizedECSEorReport.lhcTransitions,
     issuesBlock: customizedECSEorReport.issuesBlock,
     infoFromPreviousShifter: customizedECSEorReport.infoFromPreviousShifter,
     infoForNextShifter: customizedECSEorReport.infoForNextShifter,
@@ -128,7 +161,7 @@ exports.customizedECSEorReportRequest = {
 };
 
 exports.formattedCustomizedEorReport = `\
-# End of shift report - ECS - 3/17/2023 Morning
+# End of shift report - ECS - 17/03/2023 Morning
 - shifter: John Doe
 - trainee: Trainee
 
@@ -140,31 +173,36 @@ list
 of issues
 
 ### Issues entries
-- \\[ECS\\] - [Third issue log](#)
-- \\[TEST-TAG-26\\] - [Fourth issue log](#)
-- \\[TEST, DCS\\] - [First issue log](#)
-- \\[SL\\] - [Second issue log](#)
+- \\[ECS\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+- \\[TEST-TAG-26\\] - [Fourth issue log](http://localhost:4000?page=log-detail&id=121)
+- \\[TEST, DCS\\] - [First issue log](http://localhost:4000?page=log-detail&id=122)
+- \\[SL\\] - [Second issue log](http://localhost:4000?page=log-detail&id=123)
 
 ## LHC
-* LHC (list all machine transitions) (in the future this section will be automatically filled)
-   * TIME STAMP - MACHINE MODE : BEAM MODE
-   * TIME STAMP - Fill numbers 
+The
+LHC machine transitions
 
 ## Shift flow
 The
 shift flow
 
 ## Environments and runs
-- (1679040783000) [ENV1](#)
-    * (1679040843000) [200](#) - COMMISSIONING - good
+- (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
+    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
         - Logs:
-            * \\[ECS\\] [Third issue log](#)
-            * \\[ECS Shifter\\] [Fifth issue log](#)
+            * \\[ECS\\] [Third issue log](http://localhost:4000?page=log-detail&id=120)
+            * \\[ECS Shifter\\] [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+        - Comment:
+          A run
+          comment
 
-- (1679040963000) [ENV2](#)
+- (17/03/2023, 09:16:03) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
+    * Comments:
+      An environment
+      comment
 
 ## Shift to shift transfer of information
 
@@ -190,13 +228,15 @@ const emptyECSEorReport = {
     issuesLogEntries: [],
     typeSpecific: {
         environments: [],
+        environmentComments: {},
+        runComments: {},
     },
 };
 
 exports.emptyECSEorReport = emptyECSEorReport;
 
 exports.formattedEmptyECSEorReport = `\
-# End of shift report - ECS - 3/17/2023 Morning
+# End of shift report - ECS - 17/03/2023 Morning
 - shifter: John Doe
 - trainee: -
 
@@ -209,9 +249,7 @@ exports.formattedEmptyECSEorReport = `\
 -
 
 ## LHC
-* LHC (list all machine transitions) (in the future this section will be automatically filled)
-   * TIME STAMP - MACHINE MODE : BEAM MODE
-   * TIME STAMP - Fill numbers 
+-
 
 ## Shift flow
 -
@@ -232,6 +270,9 @@ exports.formattedEmptyECSEorReport = `\
 `;
 
 exports.emptyECSEorReportRequest = {
-    typeSpecific: null,
+    typeSpecific: {
+        environmentComments: {},
+        runComments: {},
+    },
     shiftStart: emptyECSEorReport.shiftStart,
 };
