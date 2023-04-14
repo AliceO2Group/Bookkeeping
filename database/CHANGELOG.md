@@ -1,3 +1,8 @@
+## [0.53.0]
+* Changes made to the database:
+  * `tags.description` is a new property of tags which is limited to 100 characters
+  * `logs.content` is now indexed to help with searching within the property
+
 ## [0.50.0]
 * Changes made to the database:
   * `run.run_quality` is not nullable anymore, and `unknown` value has been replaced by `none`
