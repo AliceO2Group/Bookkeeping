@@ -38,7 +38,7 @@ module.exports = () => {
             // Not kept : not the good tags
             await createLog(defaultLogData, [], ['EoS'], []);
             logIds.push(await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], []));
-            // Keep the 3 log ids as it has good tags for ECS
+            // Keep the 1 log ids as it has good tags for 'ECS Shifter'
             logIds.push(await createLog(defaultLogData, [], ['ECS Shifter'], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=ECS');
