@@ -102,6 +102,9 @@ const customizedECSEorReport = {
         runComments: {
             200: 'A run\ncomment',
         },
+        environmentComments: {
+            ENV2: 'An environment\ncomment',
+        },
     },
     shifter: {
         name: 'John Doe',
@@ -144,6 +147,7 @@ exports.customizedECSEorReport = customizedECSEorReport;
 
 exports.customizedECSEorReportRequest = {
     typeSpecific: {
+        environmentComments: customizedECSEorReport.typeSpecific.environmentComments,
         runComments: customizedECSEorReport.typeSpecific.runComments,
     },
     traineeName: customizedECSEorReport.traineeName,
@@ -196,6 +200,9 @@ shift flow
           comment
 
 - (1679040963000) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
+    * Comments:
+      An environment
+      comment
 
 ## Shift to shift transfer of information
 
@@ -221,6 +228,7 @@ const emptyECSEorReport = {
     issuesLogEntries: [],
     typeSpecific: {
         environments: [],
+        environmentComments: {},
         runComments: {},
     },
 };
@@ -263,6 +271,7 @@ exports.formattedEmptyECSEorReport = `\
 
 exports.emptyECSEorReportRequest = {
     typeSpecific: {
+        environmentComments: {},
         runComments: {},
     },
     shiftStart: emptyECSEorReport.shiftStart,
