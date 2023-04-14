@@ -99,6 +99,9 @@ const customizedECSEorReport = {
                 runs: [],
             },
         ],
+        runComments: {
+            200: 'A run\ncomment',
+        },
     },
     shifter: {
         name: 'John Doe',
@@ -140,7 +143,9 @@ const customizedECSEorReport = {
 exports.customizedECSEorReport = customizedECSEorReport;
 
 exports.customizedECSEorReportRequest = {
-    typeSpecific: null,
+    typeSpecific: {
+        runComments: customizedECSEorReport.typeSpecific.runComments,
+    },
     traineeName: customizedECSEorReport.traineeName,
     shiftStart: customizedECSEorReport.shiftStart,
     shiftFlow: customizedECSEorReport.shiftFlow,
@@ -186,6 +191,9 @@ shift flow
         - Logs:
             * \\[ECS\\] [Third issue log](http://localhost:4000?page=log-detail&id=120)
             * \\[ECS Shifter\\] [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+        - Comment:
+          A run
+          comment
 
 - (1679040963000) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
 
@@ -213,6 +221,7 @@ const emptyECSEorReport = {
     issuesLogEntries: [],
     typeSpecific: {
         environments: [],
+        runComments: {},
     },
 };
 
@@ -253,6 +262,8 @@ exports.formattedEmptyECSEorReport = `\
 `;
 
 exports.emptyECSEorReportRequest = {
-    typeSpecific: null,
+    typeSpecific: {
+        runComments: {},
+    },
     shiftStart: emptyECSEorReport.shiftStart,
 };
