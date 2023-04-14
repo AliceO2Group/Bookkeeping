@@ -82,7 +82,6 @@ module.exports = () => {
         // Expect the page to have loaded enough rows to be able to test the filtering
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
-        await page.waitForTimeout(200);
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Open the filters
@@ -100,6 +99,50 @@ module.exports = () => {
 
         // Insert some other text into the filter
         await page.type('#titleFilterText', ' bogusbogusbogus');
+        await page.waitForTimeout(300);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await page.waitForTimeout(100);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+    });
+
+    it('should successfully provide an input to filter on log content', async () => {
+        await reloadPage(page);
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(20);
+
+        // Insert some text into the filter
+        await page.type('#contentFilterText', 'particle');
+        await page.waitForTimeout(300);
+
+        // Expect the new total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Insert some other text into the filter
+        await page.type('#titleFilterText', 'this-content-do-not-exists-anywhere');
         await page.waitForTimeout(300);
 
         // Expect the table to be empty

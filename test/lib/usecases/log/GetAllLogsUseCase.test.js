@@ -96,6 +96,26 @@ module.exports = () => {
         }
     });
 
+    it('should sucessfully filter on log content', async () => {
+        const content = 'particle';
+        getAllLogsDto.query = { filter: { content } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(2);
+            for (const log of filteredResult) {
+                expect(log.text.includes(content)).to.be.true;
+            }
+        }
+
+        getAllLogsDto.query = { filter: { content: 'this-content-do-not-exists-anywhere' } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(0);
+        }
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 

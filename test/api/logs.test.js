@@ -107,6 +107,18 @@ module.exports = () => {
             }
         });
 
+        it('should successfully filter by content', async () => {
+            const response = await request(server).get('/api/logs?filter[content]=particle');
+            expect(response.status).to.equal(200);
+
+            expect(response.body.data).to.be.an('array');
+            // 3 logs created in public tests
+            expect(response.body.data).to.lengthOf(2);
+            for (const log of response.body.data) {
+                expect(log.text.includes('particle')).to.be.true;
+            }
+        });
+
         it('should return 400 if the author filter is left empty', (done) => {
             request(server)
                 .get('/api/logs?filter[author]= ')
