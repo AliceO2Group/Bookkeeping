@@ -87,6 +87,7 @@ module.exports = () => {
         expect(log.title).to.equal(eosReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.ECS));
         expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.author.id).to.equal(1);
     });
 
     it('should successfully create a log containing EOS report with default values', async () => {
@@ -96,5 +97,6 @@ module.exports = () => {
         expect(log.text).to.equal(formattedEmptyECSEorReport);
         expect(log.title).to.equal(eosReportTitle);
         expect(log.runs.length).to.equal(0);
+        expect(log.author.id).to.equal(1);
     });
 };
