@@ -6,7 +6,7 @@ jobs:
   deploy-npm-module:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
         node-version: '16.x'
@@ -35,7 +35,7 @@ jobs:
     outputs:
       ASSET_URL: ${{ steps.upload.outputs.asset_url }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
         node-version: '16.x'
