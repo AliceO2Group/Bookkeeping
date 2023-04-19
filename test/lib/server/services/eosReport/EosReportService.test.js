@@ -34,6 +34,8 @@ const { getEosReportTagsByType } = require('../../../../../lib/server/services/e
 
 module.exports = () => {
     it('should successfully create a log containing EOS report', async () => {
+        const expectedRunNumbers = [];
+
         // Create the expected logs and runs
         for (const environment of customizedECSEorReport.typeSpecific.environments) {
             await createEnvironment(environment);
@@ -48,6 +50,7 @@ module.exports = () => {
                     run,
                     await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '').split(',').map((value) => value.trim())),
                 );
+                expectedRunNumbers.push(run.runNumber);
 
                 // Create the expected EOR
                 const eorReasons = [];
@@ -83,6 +86,8 @@ module.exports = () => {
         expect(log.text).to.equal(formattedCustomizedEorReport);
         expect(log.title).to.equal(eosReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.ECS));
+        expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.author.id).to.equal(1);
     });
 
     it('should successfully create a log containing EOS report with default values', async () => {
@@ -91,5 +96,7 @@ module.exports = () => {
         const log = await eosReportService.createLogEntry(ShiftTypes.ECS, emptyECSEorReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedEmptyECSEorReport);
         expect(log.title).to.equal(eosReportTitle);
+        expect(log.runs.length).to.equal(0);
+        expect(log.author.id).to.equal(1);
     });
 };
