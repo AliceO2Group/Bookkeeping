@@ -113,7 +113,6 @@ const customizedECSEorReport = {
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
     lhcTransitions: 'The\nLHC machine transitions',
-    issuesBlock: 'A\nlist\nof issues',
     issuesLogEntries: [
         {
             id: 120,
@@ -144,7 +143,6 @@ exports.customizedECSEorReportRequest = {
     shiftStart: customizedECSEorReport.shiftStart,
     shiftFlow: customizedECSEorReport.shiftFlow,
     lhcTransitions: customizedECSEorReport.lhcTransitions,
-    issuesBlock: customizedECSEorReport.issuesBlock,
     infoFromPreviousShifter: customizedECSEorReport.infoFromPreviousShifter,
     infoForNextShifter: customizedECSEorReport.infoForNextShifter,
     infoForRmRc: customizedECSEorReport.infoForRmRc,
@@ -156,13 +154,6 @@ exports.formattedCustomizedEorReport = `\
 - trainee: Trainee
 
 ## Issues during the shift
-
-### Summary
-A
-list
-of issues
-
-### Issues entries
 - \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
 - \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
 
@@ -227,11 +218,6 @@ exports.formattedEmptyECSEorReport = `\
 - trainee: -
 
 ## Issues during the shift
-
-### Summary
--
-
-### Issues entries
 -
 
 ## LHC
