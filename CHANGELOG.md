@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.53.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.53.1)
+* Notable changes for users:
+  * EoS report now have the related runs linked to it
+  * The current user is used as author of EoS report log
+  * Search inside dropdown selection is now case-insensitive
+  * Run duration is now displayed in EoS report
+  * Shifter name can be modified in EoS report form
+  * The issues summary block has been removed from the EoS report
+  * The time to fill EoS report after the end of shift is now 30min (previously 2h)
+
+* Notable changes for developers:
+  * Adds dependabot configuration so that it can check monthly for new versions of plugins that Bookkeeping uses with GH actions
+  * Chromium has been updated to 112.0.5615.165-r0 in Dockerfile
+
 ## [0.53.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.53.0)
 * Notable changes for users:
   * Adds a new page for End-of-Shift(EOS) report generation which retrieves and build a report and allows users to modify before saving it
