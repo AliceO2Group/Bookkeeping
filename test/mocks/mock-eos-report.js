@@ -61,6 +61,8 @@ const customizedECSEorReport = {
                     {
                         id: 108,
                         timeTrgStart: new Date('2023-03-17T08:14:03Z'),
+                        timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
+                        runDuration: (3600 + 2 * 60 + 3) * 1000,
                         envId: 'ENV1',
                         runNumber: 200,
                         runQuality: 'good',
@@ -175,7 +177,7 @@ shift flow
 
 ## Environments and runs
 - (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
-    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - good
+    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
