@@ -2,6 +2,7 @@ name: release
 on:
   release:
     types: [created]
+  workflow_dispatch:
 jobs:
   deploy-npm-module:
     runs-on: ubuntu-latest
