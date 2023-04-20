@@ -17,7 +17,7 @@ const {
     defaultAfter,
     checkMismatchingUrlParam,
     waitForNetworkIdleAndRedraw,
-    reloadPage,
+    reloadPage, fillInput,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -85,6 +85,11 @@ module.exports = () => {
 
         await reloadPage(page);
 
+        await page.waitForSelector('#shifter-name input');
+        expect(await page.$eval('#shifter-name input', (input) => input.value)).to.equal('Anonymous');
+        await page.focus('#shifter-name input');
+        await fillInput(page, '#shifter-name input', 'Shifter name', ['change']);
+
         await page.waitForSelector('#trainee-name input');
         await page.focus('#trainee-name input');
         await page.keyboard.type('Trainee name');
@@ -125,6 +130,7 @@ module.exports = () => {
 
         // Fetch log manually, because it's hard to parse codemirror display
         const { text } = await getLog(120);
+        expect(text.includes('- shifter: Shifter name')).to.be.true;
         expect(text.includes('- trainee: Trainee name')).to.be.true;
         expect(text.includes('### Summary\nIssues block\nOn multiple lines')).to.be.true;
         expect(text.includes(`## Environments and runs

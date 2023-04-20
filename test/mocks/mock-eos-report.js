@@ -108,9 +108,7 @@ const customizedECSEorReport = {
             ENV2: 'An environment\ncomment',
         },
     },
-    shifter: {
-        name: 'John Doe',
-    },
+    shifterName: 'John Doe',
     traineeName: 'Trainee',
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
@@ -141,6 +139,7 @@ exports.customizedECSEorReportRequest = {
         environmentComments: customizedECSEorReport.typeSpecific.environmentComments,
         runComments: customizedECSEorReport.typeSpecific.runComments,
     },
+    shifterName: customizedECSEorReport.shifterName,
     traineeName: customizedECSEorReport.traineeName,
     shiftStart: customizedECSEorReport.shiftStart,
     shiftFlow: customizedECSEorReport.shiftFlow,
@@ -210,9 +209,7 @@ RM and RC\
 
 const emptyECSEorReport = {
     type: ShiftTypes.ECS,
-    shifter: {
-        name: 'John Doe',
-    },
+    shifterName: 'John Doe',
     shiftStart: MORNING_SHIFT_START,
     issuesLogEntries: [],
     typeSpecific: {
@@ -264,4 +261,5 @@ exports.emptyECSEorReportRequest = {
         runComments: {},
     },
     shiftStart: emptyECSEorReport.shiftStart,
+    shifterName: emptyECSEorReport.shifterName,
 };
