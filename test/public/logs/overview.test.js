@@ -308,12 +308,34 @@ module.exports = () => {
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
+    });
 
-        // Clear the filters
+    it('can search for tag in the dropdown', async () => {
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.logs.reset();
         });
+        await page.waitForTimeout(20);
+
+        // Open the filters
+        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.waitForTimeout(20);
+        {
+            await fillInput(page, '#tag-dropdown-search-input', 'food');
+            await page.waitForTimeout(20);
+            const options = await page.$$('.dropdown-option');
+            await page.waitForTimeout(40);
+            expect(options).to.lengthOf(1);
+            expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
+        }
+        {
+            await fillInput(page, '#tag-dropdown-search-input', 'fOoD');
+            await page.waitForTimeout(20);
+            const options = await page.$$('.dropdown-option');
+            await page.waitForTimeout(40);
+            expect(options).to.lengthOf(1);
+            expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
+        }
     });
 
     it('can filter by run number', async () => {
