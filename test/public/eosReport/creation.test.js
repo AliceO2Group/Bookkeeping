@@ -94,10 +94,6 @@ module.exports = () => {
         await page.focus('#trainee-name input');
         await page.keyboard.type('Trainee name');
 
-        await page.waitForSelector('#issues-block .CodeMirror textarea');
-        await page.focus('#issues-block .CodeMirror textarea');
-        await page.keyboard.type('Issues block\nOn multiple lines');
-
         await page.waitForSelector('#lhc-transitions .CodeMirror textarea');
         await page.focus('#lhc-transitions .CodeMirror textarea');
         await page.keyboard.type('LHC machines\ntransitions');
@@ -132,7 +128,7 @@ module.exports = () => {
         const { text } = await getLog(120);
         expect(text.includes('- shifter: Shifter name')).to.be.true;
         expect(text.includes('- trainee: Trainee name')).to.be.true;
-        expect(text.includes('### Summary\nIssues block\nOn multiple lines')).to.be.true;
+        expect(text.includes('## Issues during the shift\n')).to.be.true;
         expect(text.includes(`## Environments and runs
 - (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
     * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
