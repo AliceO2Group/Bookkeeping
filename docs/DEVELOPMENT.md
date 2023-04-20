@@ -59,3 +59,14 @@ $ npx sequelize-cli seed:generate --name <SEEDER_FILE_NAME>
 ```sh
 $ npx sequelize-cli db:seed:all
 ```
+
+## Continuous Integration Workflows
+### [proto-sync.yml](../.github/workflows/proto-sync.yml)
+* Every week the workflow will be checking if there are any updates on the 5 proto files from [Control](https://github.com/AliceO2Group/Control) that are being used in Bookkeeping GUI:
+  * [common](./../proto//common.proto)
+  * [environment](./../proto//environment.proto)
+  * [flp](./../proto//flp.proto)
+  * [log](./../proto//log.proto)
+  * [run](./../proto//run.proto)
+
+* If there are any changes, the workflow will automatically raise a PR with the file(s) updates.

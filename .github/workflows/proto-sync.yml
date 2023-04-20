@@ -1,0 +1,29 @@
+name: Sync proto file from Control core
+
+on:
+  schedule:
+    - cron: '0 7 * * 1-5'
+
+jobs:
+  check-proto-changes:
+    name: Create a PR in Bookkeeping repo with updated proto file(s) if there are any changes
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Clone Control repository and copy proto file(s)
+      run: |
+        git clone https://github.com/AliceO2Group/Control.git aliecs
+        cp aliecs/core/integration/bookkeeping/protos/common.proto Bookkeeping/proto
+        cp aliecs/core/integration/bookkeeping/protos/environment.proto Bookkeeping/proto
+        cp aliecs/core/integration/bookkeeping/protos/flp.proto Bookkeeping/proto
+        cp aliecs/core/integration/bookkeeping/protos/log.proto Bookkeeping/proto
+        cp aliecs/core/integration/bookkeeping/protos/run.proto Bookkeeping/proto
+        rm -rf aliecs
+    - name: Check if there are any differences and create PR
+      run: |
+        is_different="$(git diff --name-only)"
+        if [ ! -z "$is_different" ]; then
+          git add .
+          git commit -m "Update PROTO file(s) from AliECS"
+          gh pr create --head --fill -r graduta -l "backend"
+        fi
