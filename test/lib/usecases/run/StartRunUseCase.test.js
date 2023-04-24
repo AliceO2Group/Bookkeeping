@@ -70,7 +70,7 @@ module.exports = () => {
         expect(result).to.be.an('object');
         expect(result.runType.name).to.equal('NONE');
         expect(result.id).to.equal(110);
-        expect(result.detectors).to.be.null;
+        expect(result.detectors).to.equal('');
         expect(result.runQuality).to.equal(RunQualities.NONE);
     });
 
