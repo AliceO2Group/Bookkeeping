@@ -17,7 +17,13 @@ const { rbacMiddleware } = require('../../../../lib/server/middleware/rbac.middl
 
 const { expect } = chai;
 
-const request = {
+const stringRequest = {
+    session: {
+        access: 'role1, role2',
+    },
+};
+
+const arrayRequest = {
     session: {
         access: ['role1', 'role2'],
     },
@@ -39,19 +45,38 @@ module.exports = () => {
         {
             const next = sinon.fake();
 
-            rbacMiddleware(['role1', 'role3'])(request, null, next);
+            rbacMiddleware(['role1', 'role3'])(arrayRequest, null, next);
             expect(next.calledOnce).to.be.true;
         }
         {
             const next = sinon.fake();
 
-            rbacMiddleware(['role1', 'role2'])(request, null, next);
+            rbacMiddleware(['role1', 'role2'])(arrayRequest, null, next);
             expect(next.calledOnce).to.be.true;
         }
         {
             const next = sinon.fake();
 
-            rbacMiddleware(['role0', 'role1', 'role3'])(request, null, next);
+            rbacMiddleware(['role0', 'role1', 'role3'])(arrayRequest, null, next);
+            expect(next.calledOnce).to.be.true;
+        }
+
+        {
+            const next = sinon.fake();
+
+            rbacMiddleware(['role1', 'role3'])(stringRequest, null, next);
+            expect(next.calledOnce).to.be.true;
+        }
+        {
+            const next = sinon.fake();
+
+            rbacMiddleware(['role1', 'role2'])(stringRequest, null, next);
+            expect(next.calledOnce).to.be.true;
+        }
+        {
+            const next = sinon.fake();
+
+            rbacMiddleware(['role0', 'role1', 'role3'])(stringRequest, null, next);
             expect(next.calledOnce).to.be.true;
         }
     });
@@ -62,5 +87,8 @@ module.exports = () => {
     });
     it('Should successfully configure response to be a 403 if the request\'s principal do not have any of the specified roles', async () => {
         expectRequestToReturn403({ session: { access: ['role0'] } });
+        expectRequestToReturn403({ session: { access: ['role0', 'role4'] } });
+        expectRequestToReturn403({ session: { access: 'role0' } });
+        expectRequestToReturn403({ session: { access: 'role0, role4' } });
     });
 };
