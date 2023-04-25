@@ -138,10 +138,12 @@ module.exports = () => {
         }
     });
 
-    it('should successfully display runs related to the fill', async () => {
+    it('should successfully display runs related to the fill, with their detectors sorted alphabetically', async () => {
         const runsTable = await page.$$('#runs tbody tr');
 
         expect(runsTable.length).to.equal(4);
+
+        expect(await page.$eval('#runs tbody tr:nth-child(1) td:nth-child(2)', (element) => element.innerText)).to.equal('2FT0,ITS');
     });
 
     it('should successfully display time elapsed between runs', async () => {

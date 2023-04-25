@@ -61,6 +61,16 @@ module.exports = () => {
         expect(runs[1].runNumber).to.equal(17);
     });
 
+    it('should successfully return a list of runs with their detectors, sorted alphabetically', async () => {
+        getAllRunsDto.query = { filter: { runNumbers: '106' } };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        const [{ detectors }] = runs;
+        expect(detectors).to.equal('ACO,CPV,CTP,EMC,FIT,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC');
+    });
+
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
         const COSMICS_COUNT = 1;
