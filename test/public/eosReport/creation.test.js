@@ -88,7 +88,7 @@ module.exports = () => {
         await page.waitForSelector('#shifter-name input');
         expect(await page.$eval('#shifter-name input', (input) => input.value)).to.equal('Anonymous');
         await page.focus('#shifter-name input');
-        await fillInput(page, '#shifter-name input', 'Shifter name', ['change']);
+        await fillInput(page, '#shifter-name input', 'Shifter name');
 
         await page.waitForSelector('#trainee-name input');
         await page.focus('#trainee-name input');
