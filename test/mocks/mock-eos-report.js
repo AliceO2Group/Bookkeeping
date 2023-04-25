@@ -45,6 +45,13 @@ const customizedEcsEorReportLogs = [
         title: 'Fifth issue log',
         tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
     },
+    {
+        id: 125,
+        title: 'Sixth issue log',
+        tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
+        rootLogId: 124,
+        parentLogId: 124,
+    },
 ];
 
 exports.customizedEcsEorReportLogs = customizedEcsEorReportLogs;
