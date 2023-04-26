@@ -39,6 +39,37 @@ module.exports = () => {
         }
     });
 
+    it('should successfully retrieve the root logs with the given tags created between specific dates', async () => {
+        {
+            // All logs in the criteria has a parent
+            const logs = await getLogsByTagsInPeriod({ include: ['FOOD'] }, { from: limit1, to: limit2 }, { rootOnly: true });
+            expect(logs).to.lengthOf(0);
+            expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'FOOD'))).to.be.true;
+        }
+
+        {
+            // Only log with id 5 will be kept, the other have a parent
+            const logs = await getLogsByTagsInPeriod(
+                { include: ['RUN'] },
+                { from: limit1, to: limit3 },
+                { rootOnly: true },
+            );
+            expect(logs).to.lengthOf(1);
+            expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN'))).to.be.true;
+        }
+
+        {
+            // Only log with id 5 will be kept, the 3 other have a parent
+            const logs = await getLogsByTagsInPeriod(
+                { include: ['FOOD', 'RUN'] },
+                { from: limit1, to: limit3 },
+                { rootOnly: true },
+            );
+            expect(logs).to.lengthOf(1);
+            expect(logs.every(({ tags }) => tags.some(({ text }) => text === 'RUN' || text === 'FOOD'))).to.be.true;
+        }
+    });
+
     it('should successfully include logs at the lower limit but exclude logs at the upper limit for given tags', async () => {
         const limit4 = new Date('2020-01-01 12:00:00').getTime();
         const limit5 = new Date('2021-11-11 12:00:00').getTime();

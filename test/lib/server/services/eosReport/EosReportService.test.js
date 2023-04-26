@@ -76,6 +76,9 @@ module.exports = () => {
             if (log.user) {
                 logCreationRequest.userId = log.user.id;
             }
+            if (log.parentLogId) {
+                logCreationRequest.parentLogId = log.parentLogId;
+            }
             const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), []);
             logRuns.push({ logId, runId: 1 });
         }
