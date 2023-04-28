@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.54.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.54.0)
+* Notable changes for users:
+  * Reply logs do not appear in EoS report anymore
+  * Bug of LHC fill overview infinite scroll missing data has been fixed
+  * The tag update access has been reestablished
+  * Detectors are now sorted alphabetically in run overview & details and lhc fill details in runs tab
+  * Fixed bug which reseted the input data of EoS report's shifter name when clicking in it while it is focused
+
+* Notable changes for developers:
+  * Dockerfile git version has been updated
+  * The rbac middleware now split the list of user roles if it is a string considering it as being a coma separated list
+  * In seeders, tag ids for ITS and FT0 has been swapped so that id sort is in the reverse way of alphabetical sort
+  * Adds the GH option to allow for manual triggers on release job
+
 ## [0.53.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.53.1)
 * Notable changes for users:
   * EoS report now have the related runs linked to it
