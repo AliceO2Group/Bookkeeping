@@ -18,7 +18,7 @@ const { expect } = require('chai');
 module.exports = () => {
     const shift1 = new Date('2020-02-02 12:00:00').getTime();
 
-    it('Should successfully return the logs related to a given shift', async () => {
+    it('Should successfully return the logs related to a given ECS shift', async () => {
         const defaultLogData = {
             title: 'Title',
             text: 'Text',

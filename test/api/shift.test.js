@@ -22,7 +22,7 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/shift-data', () => {
-        it('should successfully return the data related to the current user\'s shift', async () => {
+        it('should successfully return the data related to the current user\'s ECS shift', async () => {
             // Create some logs for the shift
 
             const logIds = [];

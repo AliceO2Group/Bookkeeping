@@ -23,7 +23,7 @@ const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { getLog } = require('../../../lib/server/services/log/getLog.js');
 const { createEnvironment } = require('../../../lib/server/services/environment/createEnvironment.js');
-const { customizedECSEorReport } = require('../../mocks/mock-eos-report.js');
+const { customizedECSEosReport } = require('../../mocks/mock-ecs-eos-report.js');
 const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { createRun } = require('../../../lib/server/services/run/createRun.js');
 const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
@@ -47,14 +47,14 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
-    it('Should successfully display the eos report creation page', async () => {
+    it('Should successfully display the ECS eos report creation page', async () => {
         const response = await goToPage(page, 'eos-report-create');
         expect(response.status()).to.equal(200);
         expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create' })).to.eql({});
     });
 
-    it('Should successfully create an EOS report when submitting the form and redirect to the corresponding log', async () => {
-        for (const environment of customizedECSEorReport.typeSpecific.environments) {
+    it('Should successfully create an ECS EoS report when submitting the form and redirect to the corresponding log', async () => {
+        for (const environment of customizedECSEosReport.typeSpecific.environments) {
             await createEnvironment({
                 createdAt: new Date(),
                 updatedAt: new Date(),
