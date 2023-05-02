@@ -228,3 +228,55 @@ Concerning the **Update mode** of the fields:
 | `name`       |                             |              |                 | `fillNumber`   | Update          |
 | `created_at` | When the lhcFill is created |              | AT COF          | `fillNumber`   | Insert          |
 | `updated_at` | When the lhcFill is updated |              |                 | `fillNumber`   | Update          |
+
+### Host
+
+**Description:** Store the list of existing hosts, which are machines (or VMs) on which processes may run.
+**DB main table**: `hosts`
+
+| **Field**  | **Description**                       | **Example** | **Update time** | **Update Key** | **Update mode** |
+|------------|---------------------------------------|-------------|-----------------|----------------|-----------------|
+| `hostname` | Unique textual identifier of the host |             |                 | `id`           | Update          |
+
+### DplDetector
+
+**Description:** DPL may have its own list of detectors, that may contain for example combination of actual detectors.
+This table store the list of all the detectors that exists in the DPL context
+**DB main table**: `dpl_detectors`
+
+| **Field** | **Description**      | **Example**      | **Update time** | **Update Key** | **Update mode** |
+|-----------|----------------------|------------------|-----------------|----------------|-----------------|
+| `name`    | Name of the detector | `ITS`, `TPC&ITS` |                 | `id`           | Update          |
+
+### DplProcessType
+
+**Description:** DPL processes have a given type, which define their category of process. This table store the list of
+all the existing processes types.
+**DB main table**: `dpl_processes_types`
+
+| **Field** | **Description**          | **Example**            | **Update time** | **Update Key** | **Update mode** |
+|-----------|--------------------------|------------------------|-----------------|----------------|-----------------|
+| `label`   | Name of the process type | `QcTask`, `Dispatcher` |                 | `id`           | Update          |
+
+### DplProcess
+
+**Description:** Dpl have pre-defined list of processes that may be run (they are called `devices` in DPL naming). This
+table store the list of existing processes.
+**DB main table**: `dpl_processes`
+
+| **Field** | **Description**               | **Example** | **Update time** | **Update Key** | **Update mode** |
+|-----------|-------------------------------|-------------|-----------------|----------------|-----------------|
+| `name`    | Name of the DPL processe      |             |                 | `id`           | Update          |
+| `type_id` | FK to the type of the process |             |                 | `id`           | Update          |
+
+### DplProcessExecution
+
+**Description:** This table store the list of all DPL processes execution.
+**DB main table**: `dpl_processes_executions`
+
+| **Field**     | **Description**                                             | **Example** | **Update time** | **Update Key** | **Update mode** |
+|---------------|-------------------------------------------------------------|-------------|-----------------|----------------|-----------------|
+| `detector_id` | FK to the detector for which this process has been executed |             |                 | `id`           | Update          |
+| `host_id`     | FK to the host on which the process has been executed       |             |                 | `id`           | Update          |
+| `process_id`  | FK to the process that has been executed                    |             |                 | `id`           | Update          |
+| `run_number`  | FK to the run for which this process has been executed      |             |                 | `id`           | Update          |
