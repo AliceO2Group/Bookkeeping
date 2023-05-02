@@ -32,7 +32,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
 module.exports.defaultBefore = async (page, browser) => {
-    browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+    browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     page = await browser.newPage();
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
