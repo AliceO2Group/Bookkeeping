@@ -74,9 +74,6 @@ module.exports = () => {
                 subtype: 'comment',
                 origin: 'human',
             };
-            if (log.user) {
-                logCreationRequest.userId = log.user.id;
-            }
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
