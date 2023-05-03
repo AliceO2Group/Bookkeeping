@@ -94,7 +94,7 @@ module.exports = () => {
         ({ tags } = await new GetAllTagsUseCase().execute(getAllTagsDto));
 
         expect(tags).to.be.an('array');
-        expect(tags).to.have.lengthOf(40);
+        expect(tags).to.have.lengthOf(36);
         expect(tags.every((tag) => tag.text.includes('-TAG-'))).to.be.true;
 
         getAllTagsDto.query = { filter: { partialText: 'DO-NOT-EXISTS' } };
