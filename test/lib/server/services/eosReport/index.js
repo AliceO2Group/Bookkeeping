@@ -11,10 +11,12 @@
  *  or submit itself to any jurisdiction.
  */
 
+const formattersTest = require('./formatters.test.js');
 const formatEosReportTest = require('./formatEosReport.test.js');
 const EosReportServiceTest = require('./EosReportService.test.js');
 
 module.exports = () => {
+    describe('formatters', formattersTest);
     describe('formatEosReport', formatEosReportTest);
     describe('EosService', EosReportServiceTest);
 };
