@@ -22,13 +22,11 @@ const {
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { getLog } = require('../../../lib/server/services/log/getLog.js');
-const { createEnvironment } = require('../../../lib/server/services/environment/createEnvironment.js');
-const { customizedECSEosReport } = require('../../mocks/mock-ecs-eos-report.js');
-const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
+const { customizedQcPdpEosReport } = require('../../mocks/mock-qc-pdp-eos-report.js');
+const { updateRunDetector } = require('../../../lib/server/services/runDetector/updateRunDetector.js');
 
 module.exports = () => {
     let page;
@@ -48,32 +46,34 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
-    it('Should successfully display the ECS eos report creation page', async () => {
-        const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.ECS } });
+    it('Should successfully display the QC/PDP eos report creation page', async () => {
+        const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.QC_PDP } });
         expect(response.status()).to.equal(200);
-        expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create', shiftType: ShiftTypes.ECS })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create', shiftType: encodeURIComponent(ShiftTypes.QC_PDP) })).to.eql({});
     });
 
-    it('Should successfully create an ECS EoS report when submitting the form and redirect to the corresponding log', async () => {
-        for (const environment of customizedECSEosReport.typeSpecific.environments) {
-            await createEnvironment({
-                ...environment,
-            });
-            await createEnvironmentHistoryItem({
-                status: 'DESTROYED',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                environmentId: environment.id,
-            });
-            for (const run of environment.runs) {
+    it('Should successfully create a QC/PDP EoS report when submitting the form and redirect to the corresponding log', async () => {
+        for (const runs of Object.values(customizedQcPdpEosReport.typeSpecific.runs)) {
+            for (const run of runs) {
                 const runId = await createRun(
-                    run,
-                    await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '').split(',').map((value) => value.trim())),
+                    {
+                        ...run,
+                        timeTrgStart: new Date(),
+                        timeTrgEnd: new Date(),
+                    },
+                    run.detectors,
                 );
+                for (const detector of run.detectors) {
+                    await updateRunDetector(
+                        run.runNumber,
+                        detector.RunDetectors.detectorId,
+                        { quality: detector.RunDetectors.quality },
+                    );
+                }
 
                 // Create the expected EOR
                 const eorReasons = [];
-                for (const eorReason of run.eorReasons) {
+                for (const eorReason of run.eorReasons ?? []) {
                     eorReasons.push({ reasonTypeId: eorReason.reasonTypeId, description: eorReason.description, runId });
                 }
                 if (eorReasons.length > 0) {
@@ -128,15 +128,26 @@ module.exports = () => {
         expect(text.includes('- shifter: Shifter name')).to.be.true;
         expect(text.includes('- trainee: Trainee name')).to.be.true;
         expect(text.includes('## Issues during the shift\n')).to.be.true;
-        expect(text.includes(`## Environments and runs
-- (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
-    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
-        - EOR:
-            * DETECTORS - CPV - EOR description
-            * DETECTORS - TPC - 2nd EOR description
-        - Comment:
-          Comment
-          on run`)).to.be.true;
+        expect(text.includes(`## Runs
+
+### COMMISSIONING
+- [200](http://localhost:4000?page=run-detail&id=108) - 00:00:00 - good
+    * Detectors: -
+    * Detectors QC bad: -
+    * EOR:
+        * DETECTORS - CPV - EOR description
+        * DETECTORS - TPC - 2nd EOR description
+    * Comment:
+      Comment
+      on run
+
+### TECHNICAL
+- [201](http://localhost:4000?page=run-detail&id=109) - 00:00:00 - good
+    * Detectors: \`ITS\`, \`TST\`
+    * Detectors QC bad: \`TST\`
+- [202](http://localhost:4000?page=run-detail&id=110) - 00:00:00 - bad
+    * Detectors: \`FT0\`, \`TST\`
+    * Detectors QC bad: \`FT0\`, \`TST\``)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
