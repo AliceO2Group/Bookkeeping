@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.55.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.0)
+* Notable changes for users:
+  * Shift endpoint can now provide QC data
+  * The EoS report generation API endpoint now support QC EoS report generation
+  * The semi-automated QC/PDP EoS report has been added
+  * LHC fill display now include total CTF size for good physics runs
+  * File size are now displayed in GB in run details and LHC fill details
+
+* Notable changes for developers:
+  * Use new headless chrome for pupeteer tests
+  * Updated Docker ca-certificates dependency
+
 ## [0.54.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.54.0)
 * Notable changes for users:
   * Reply logs do not appear in EoS report anymore
