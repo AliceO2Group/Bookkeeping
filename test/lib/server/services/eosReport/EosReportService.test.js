@@ -14,13 +14,14 @@
 const { eosReportService } = require('../../../../../lib/server/services/eosReport/EosReportService.js');
 const { expect } = require('chai');
 const {
-    emptyECSEorReportRequest,
-    formattedCustomizedEorReport,
-    customizedECSEorReport,
+    emptyECSEosReportRequest,
+    formattedCustomizedECSEosReport,
+    customizedECSEosReport,
     eosReportTitle,
-    customizedECSEorReportRequest,
-    formattedEmptyECSEorReport, customizedEcsEorReportLogs,
-} = require('../../../../mocks/mock-eos-report.js');
+    customizedECSEosReportRequest,
+    formattedEmptyECSEosReport,
+    customizedECSEosReportLogs,
+} = require('../../../../mocks/mock-ecs-eos-report.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
 const { ShiftTypes } = require('../../../../../lib/domain/enums/ShiftTypes.js');
@@ -33,11 +34,11 @@ const EorReasonRepository = require('../../../../../lib/database/repositories/Eo
 const { getEosReportTagsByType } = require('../../../../../lib/server/services/eosReport/eosTypeSpecificFormatter/getEosReportTagsByType.js');
 
 module.exports = () => {
-    it('should successfully create a log containing EOS report', async () => {
+    it('should successfully create a log containing ECS EoS report', async () => {
         const expectedRunNumbers = [];
 
         // Create the expected logs and runs
-        for (const environment of customizedECSEorReport.typeSpecific.environments) {
+        for (const environment of customizedECSEosReport.typeSpecific.environments) {
             await createEnvironment(environment);
             await createEnvironmentHistoryItem({
                 status: 'DESTROYED',
@@ -65,17 +66,14 @@ module.exports = () => {
 
         // Create the expected logs
         const logRuns = [];
-        for (const log of customizedEcsEorReportLogs) {
+        for (const log of customizedECSEosReportLogs) {
             const logCreationRequest = {
                 title: log.title,
                 text: 'This is not important for test',
-                createdAt: customizedECSEorReport.shiftStart,
+                createdAt: customizedECSEosReport.shiftStart,
                 subtype: 'comment',
                 origin: 'human',
             };
-            if (log.user) {
-                logCreationRequest.userId = log.user.id;
-            }
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
@@ -85,19 +83,19 @@ module.exports = () => {
 
         LogRunsRepository.bulkInsert(logRuns);
 
-        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, customizedECSEorReportRequest, { userId: 1 });
-        expect(log.text).to.equal(formattedCustomizedEorReport);
+        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, customizedECSEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedCustomizedECSEosReport);
         expect(log.title).to.equal(eosReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.ECS));
         expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
         expect(log.author.id).to.equal(1);
     });
 
-    it('should successfully create a log containing EOS report with default values', async () => {
+    it('should successfully create a log containing ECS EoS report with default values', async () => {
         await resetDatabaseContent();
 
-        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, emptyECSEorReportRequest, { userId: 1 });
-        expect(log.text).to.equal(formattedEmptyECSEorReport);
+        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, emptyECSEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedEmptyECSEosReport);
         expect(log.title).to.equal(eosReportTitle);
         expect(log.runs.length).to.equal(0);
         expect(log.author.id).to.equal(1);

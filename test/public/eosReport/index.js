@@ -11,8 +11,8 @@
  *  or submit itself to any jurisdiction.
  */
 
-const CreationSuite = require('./creation.test.js');
+const ECSCreationSuite = require('./ecs-creation.test.js');
 
 module.exports = () => {
-    describe('Creation Page', CreationSuite);
+    describe('ECS Creation Page', ECSCreationSuite);
 };

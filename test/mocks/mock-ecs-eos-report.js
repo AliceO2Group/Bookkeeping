@@ -10,25 +10,28 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
+const {
+    genericCustomizedEosReport,
+    genericEmptyEosReport,
+    genericCustomizedEosReportRequest,
+    genericFormattedEmptyEosReport,
+    genericEmptyEosReportRequest,
+} = require('./base-mock-eos-report.js');
+const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
-
-// 2023-03-17 07:00:00 geneva time
-const MORNING_SHIFT_START = 1679032800000;
 
 exports.eosReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
-const customizedEcsEorReportLogs = [
+const customizedECSEosReportLogs = [
     {
         id: 120,
         title: 'Third issue log',
         tags: [{ text: 'ECS Shifter' }],
-        user: { id: 1 },
     },
     {
         id: 121,
         title: 'Fourth issue log',
         tags: [{ text: 'TEST-TAG-26' }, { text: 'ECS Shifter' }, { text: 'EoS' }],
-        user: { id: 1 },
     },
     {
         id: 122,
@@ -54,9 +57,10 @@ const customizedEcsEorReportLogs = [
     },
 ];
 
-exports.customizedEcsEorReportLogs = customizedEcsEorReportLogs;
+exports.customizedECSEosReportLogs = customizedECSEosReportLogs;
 
-const customizedECSEorReport = {
+const customizedECSEosReport = {
+    ...genericCustomizedEosReport,
     type: ShiftTypes.ECS,
     typeSpecific: {
         environments: [
@@ -115,63 +119,19 @@ const customizedECSEorReport = {
             ENV2: 'An environment\ncomment',
         },
     },
-    shifterName: 'John Doe',
-    traineeName: 'Trainee',
-    shiftStart: MORNING_SHIFT_START,
-    shiftFlow: 'The\nshift flow',
-    lhcTransitions: 'The\nLHC machine transitions',
-    issuesLogEntries: [
-        {
-            id: 120,
-            title: 'Third issue log',
-            tags: [{ text: 'ECS Shifter' }],
-            user: { id: 1 },
-        },
-        {
-            id: 124,
-            title: 'Fifth issue log',
-            tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
-        },
-    ],
-    infoFromPreviousShifter: 'Info from\nprevious shifter',
-    infoForNextShifter: 'Info for\nnext shifter',
-    infoForRmRc: 'Info for\nRM and RC',
 };
 
-exports.customizedECSEorReport = customizedECSEorReport;
+exports.customizedECSEosReport = customizedECSEosReport;
 
-exports.customizedECSEorReportRequest = {
+exports.customizedECSEosReportRequest = {
+    ...genericCustomizedEosReportRequest,
     typeSpecific: {
-        environmentComments: customizedECSEorReport.typeSpecific.environmentComments,
-        runComments: customizedECSEorReport.typeSpecific.runComments,
+        environmentComments: customizedECSEosReport.typeSpecific.environmentComments,
+        runComments: customizedECSEosReport.typeSpecific.runComments,
     },
-    shifterName: customizedECSEorReport.shifterName,
-    traineeName: customizedECSEorReport.traineeName,
-    shiftStart: customizedECSEorReport.shiftStart,
-    shiftFlow: customizedECSEorReport.shiftFlow,
-    lhcTransitions: customizedECSEorReport.lhcTransitions,
-    infoFromPreviousShifter: customizedECSEorReport.infoFromPreviousShifter,
-    infoForNextShifter: customizedECSEorReport.infoForNextShifter,
-    infoForRmRc: customizedECSEorReport.infoForRmRc,
 };
 
-exports.formattedCustomizedEorReport = `\
-# End of shift report - ECS - 17/03/2023 Morning
-- shifter: John Doe
-- trainee: Trainee
-
-## Issues during the shift
-- \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
-- \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
-
-## LHC
-The
-LHC machine transitions
-
-## Shift flow
-The
-shift flow
-
+const formattedCustomizedECSEosReportTypeSpecific = `\
 ## Environments and runs
 - (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
     * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
@@ -188,28 +148,18 @@ shift flow
 - (17/03/2023, 09:16:03) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
     * Comments:
       An environment
-      comment
-
-## Shift to shift transfer of information
-
-### From previous shifter
-Info from
-previous shifter
-
-### For next shifter
-Info for
-next shifter
-
-### For RM/RC
-Info for
-RM and RC\
+      comment\
 `;
 
-const emptyECSEorReport = {
+exports.formattedCustomizedECSEosReport = genericFormattedCustomizedEosReport(
+    // eslint-disable-next-line max-len
+    '- \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
+    formattedCustomizedECSEosReportTypeSpecific,
+);
+
+const emptyECSEosReport = {
+    ...genericEmptyEosReport,
     type: ShiftTypes.ECS,
-    shifterName: 'John Doe',
-    shiftStart: MORNING_SHIFT_START,
-    issuesLogEntries: [],
     typeSpecific: {
         environments: [],
         environmentComments: {},
@@ -217,42 +167,14 @@ const emptyECSEorReport = {
     },
 };
 
-exports.emptyECSEorReport = emptyECSEorReport;
+exports.emptyECSEosReport = emptyECSEosReport;
 
-exports.formattedEmptyECSEorReport = `\
-# End of shift report - ECS - 17/03/2023 Morning
-- shifter: John Doe
-- trainee: -
+exports.formattedEmptyECSEosReport = genericFormattedEmptyEosReport('## Environments and runs\n-');
 
-## Issues during the shift
--
-
-## LHC
--
-
-## Shift flow
--
-
-## Environments and runs
--
-
-## Shift to shift transfer of information
-
-### From previous shifter
--
-
-### For next shifter
--
-
-### For RM/RC
--\
-`;
-
-exports.emptyECSEorReportRequest = {
+exports.emptyECSEosReportRequest = {
+    ...genericEmptyEosReportRequest,
     typeSpecific: {
         environmentComments: {},
         runComments: {},
     },
-    shiftStart: emptyECSEorReport.shiftStart,
-    shifterName: emptyECSEorReport.shifterName,
 };

@@ -100,7 +100,7 @@ module.exports = () => {
         await page.type(inputSelector, '-TAG-');
         await page.waitForTimeout(300);
         let table = await page.$$('tbody tr');
-        expect(table.length).to.equal(40);
+        expect(table.length).to.equal(36);
 
         await page.type(inputSelector, 'DO-NOT-EXIST');
         await page.waitForTimeout(300);
