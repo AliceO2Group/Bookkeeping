@@ -60,6 +60,8 @@ module.exports = () => {
     it('should display valid fill statistics', async () => {
         const efficiency = await page.$eval('#lhc-fill-efficiency', (element) => element.innerText);
         expect(efficiency.endsWith('41.67%')).to.be.true;
+        const totalCtf = await page.$eval('#lhc-fill-totalCtfFileSize', (element) => element.innerText);
+        expect(totalCtf.endsWith('67956862061 byte(s)')).to.be.true;
         const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
         expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
         const durationAfterLastRun = await page.$eval('#lhc-fill-durationAfterLastRun', (element) => element.innerText);
