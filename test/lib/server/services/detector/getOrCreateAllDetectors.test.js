@@ -20,4 +20,9 @@ module.exports = () => {
         expect(detectors).to.length(2);
         expect(detectors.map(({ name }) => name)).to.eql(['CPV', 'A-NEW-ONE']);
     });
+
+    it('should successfully do nothing with an empty list of detectors', async () => {
+        const detectors = await getOrCreateAllDetectorsByName([]);
+        expect(detectors).to.length(0);
+    });
 };

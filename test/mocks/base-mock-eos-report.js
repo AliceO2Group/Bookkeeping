@@ -20,19 +20,6 @@ const genericCustomizedEosReport = {
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
     lhcTransitions: 'The\nLHC machine transitions',
-    issuesLogEntries: [
-        {
-            id: 120,
-            title: 'Third issue log',
-            tags: [{ text: 'ECS Shifter' }],
-            user: { id: 1 },
-        },
-        {
-            id: 124,
-            title: 'Fifth issue log',
-            tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
-        },
-    ],
     infoFromPreviousShifter: 'Info from\nprevious shifter',
     infoForNextShifter: 'Info for\nnext shifter',
     infoForRmRc: 'Info for\nRM and RC',
@@ -40,8 +27,8 @@ const genericCustomizedEosReport = {
 
 exports.genericCustomizedEosReport = genericCustomizedEosReport;
 
-exports.genericFormattedCustomizedEosReport = (formattedLogs, formattedTypeSpecific) => `\
-# End of shift report - ECS - 17/03/2023 Morning
+exports.genericFormattedCustomizedEosReport = (reportType, formattedLogs, formattedTypeSpecific) => `\
+# End of shift report - ${reportType} - 17/03/2023 Morning
 - shifter: John Doe
 - trainee: Trainee
 
@@ -92,8 +79,8 @@ const genericEmptyEosReport = {
 
 exports.genericEmptyEosReport = genericEmptyEosReport;
 
-exports.genericFormattedEmptyEosReport = (formattedTypeSpecific) => `\
-# End of shift report - ECS - 17/03/2023 Morning
+exports.genericFormattedEmptyEosReport = (reportType, formattedTypeSpecific) => `\
+# End of shift report - ${reportType} - 17/03/2023 Morning
 - shifter: John Doe
 - trainee: -
 
