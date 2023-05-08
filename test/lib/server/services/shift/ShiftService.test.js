@@ -39,4 +39,25 @@ module.exports = () => {
         expect(logs[0].tags.every(({ text }) => text !== 'EoS')).to.be.true;
         expect(logs[0].tags.some(({ text }) => text === 'ECS Shifter')).to.be.true;
     });
+
+    it('Should successfully return the logs related to a given QC shift', async () => {
+        const defaultLogData = {
+            title: 'Title',
+            text: 'Text',
+            subtype: 'comment',
+            origin: 'process',
+            userId: 2,
+            createdAt: new Date(shift1 + 5000),
+        };
+        // Not kept : not the good tags
+        await createLog(defaultLogData, [], ['EoS'], []);
+        await createLog(defaultLogData, [], ['QC/PDP Shifter', 'EoS'], []);
+        // Not kept : not the good tags
+        await createLog(defaultLogData, [], ['QC/PDP Shifter'], []);
+
+        const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.QC_PDP);
+        expect(logs).to.lengthOf(1);
+        expect(logs[0].tags.every(({ text }) => text !== 'EoS')).to.be.true;
+        expect(logs[0].tags.some(({ text }) => text === 'QC/PDP Shifter')).to.be.true;
+    });
 };

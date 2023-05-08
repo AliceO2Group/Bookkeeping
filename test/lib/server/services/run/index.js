@@ -11,10 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const getRunDefinition = require('./getRunDefinition.test.js');
+const getRunDefinitionTest = require('./getRunDefinition.test.js');
+const getRunsInPeriodTest = require('./getRunsInPeriod.test.js');
 const RunServiceTest = require('./RunService.test.js');
 
 module.exports = () => {
-    describe('getRunDefinition', getRunDefinition);
+    describe('getRunDefinition', getRunDefinitionTest);
+    describe('getRunsInPeriod', getRunsInPeriodTest);
     describe('RunService', RunServiceTest);
 };
