@@ -20,7 +20,7 @@ const {
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
 
-exports.eosReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
+exports.eosEcsReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
 const customizedECSEosReportLogs = [
     {
@@ -62,6 +62,19 @@ exports.customizedECSEosReportLogs = customizedECSEosReportLogs;
 const customizedECSEosReport = {
     ...genericCustomizedEosReport,
     type: ShiftTypes.ECS,
+    issuesLogEntries: [
+        {
+            id: 120,
+            title: 'Third issue log',
+            tags: [{ text: 'ECS Shifter' }],
+            user: { id: 1 },
+        },
+        {
+            id: 124,
+            title: 'Fifth issue log',
+            tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
+        },
+    ],
     typeSpecific: {
         environments: [
             {
@@ -139,8 +152,8 @@ const formattedCustomizedECSEosReportTypeSpecific = `\
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
         - Logs:
-            * \\[ECS Shifter\\] [Third issue log](http://localhost:4000?page=log-detail&id=120)
-            * \\[ECS Shifter, FLP\\] [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+            * \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+            * \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
         - Comment:
           A run
           comment
@@ -152,6 +165,7 @@ const formattedCustomizedECSEosReportTypeSpecific = `\
 `;
 
 exports.formattedCustomizedECSEosReport = genericFormattedCustomizedEosReport(
+    ShiftTypes.ECS,
     // eslint-disable-next-line max-len
     '- \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
     formattedCustomizedECSEosReportTypeSpecific,
@@ -169,7 +183,7 @@ const emptyECSEosReport = {
 
 exports.emptyECSEosReport = emptyECSEosReport;
 
-exports.formattedEmptyECSEosReport = genericFormattedEmptyEosReport('## Environments and runs\n-');
+exports.formattedEmptyECSEosReport = genericFormattedEmptyEosReport(ShiftTypes.ECS, '## Environments and runs\n-');
 
 exports.emptyECSEosReportRequest = {
     ...genericEmptyEosReportRequest,

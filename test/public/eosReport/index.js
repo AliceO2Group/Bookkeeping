@@ -11,8 +11,10 @@
  *  or submit itself to any jurisdiction.
  */
 
-const ECSCreationSuite = require('./ecs-creation.test.js');
+const EcsCreationSuite = require('./ecs-creation.test.js');
+const QcPdpCreationSuite = require('./qc-pdp-creation.test.js');
 
 module.exports = () => {
-    describe('ECS Creation Page', ECSCreationSuite);
+    describe('ECS Creation Page', EcsCreationSuite);
+    describe('QC/PDP Creation Page', QcPdpCreationSuite);
 };
