@@ -49,4 +49,101 @@ module.exports = () => {
             expect(response.body.errors[0].detail).to.equal('"query.runNumber" is required');
         });
     });
+
+    describe('GET /api/dpl-process/processes', async () => {
+        it('Should successfully return the list of processes executed at least once for the given run and detector', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        runNumber: 106,
+                        detectorId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.be.an('array');
+            expect(response.body.data.map(({ id }) => parseInt(id, 10))).to.eql([1, 2, 3]);
+        });
+
+        it('Should successfully return a 404 when trying to get processes with a non-existing run number', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        runNumber: 999,
+                        detectorId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(404);
+        });
+
+        it('Should successfully return a 400 when trying to get processes with an invalid run number', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        runNumber: 'not-a-number',
+                        detectorId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.runNumber" must be a number');
+        });
+
+        it('Should successfully return a 400 when trying to get processes without run number', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        detectorId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.runNumber" is required');
+        });
+
+        it('Should successfully return a 404 when trying to get processes with a non-existing detector id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        runNumber: 106,
+                        detectorId: 999,
+                    },
+                ));
+
+            expect(response.status).to.equal(404);
+        });
+
+        it('Should successfully return a 400 when trying to get processes with an invalid detector id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        runNumber: 106,
+                        detectorId: 'not-a-number',
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.detectorId" must be a number');
+        });
+
+        it('Should successfully return a 400 when trying to get processes without detector id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/processes',
+                    {
+                        runNumber: 106,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.detectorId" is required');
+        });
+    });
 };
