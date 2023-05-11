@@ -77,4 +77,37 @@ module.exports = () => {
             new NotFoundError('DPL process with this id could not be found'),
         );
     });
+
+    it('should successfully return the list of execution of a given process on a given host for a given run and a given detector', async () => {
+        const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 1, 1, 1);
+        expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+    });
+
+    it('should throw an error if trying to fetch process executions for a run that does not exist', async () => {
+        await assert.rejects(
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 999 }, 1, 1, 1),
+            new NotFoundError('Run with this run number (999) could not be found'),
+        );
+    });
+
+    it('should throw an error if trying to fetch process executions for a DPL detector that does not exist', async () => {
+        await assert.rejects(
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 999, 1, 1),
+            new NotFoundError('DPL detector with this id could not be found'),
+        );
+    });
+
+    it('should throw an error if trying to fetch process executions for a DPL process that does not exist', async () => {
+        await assert.rejects(
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 1, 999, 1),
+            new NotFoundError('DPL process with this id could not be found'),
+        );
+    });
+
+    it('should throw an error if trying to fetch process executions for a host that does not exist', async () => {
+        await assert.rejects(
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 1, 1, 999),
+            new NotFoundError('Host with this id could not be found'),
+        );
+    });
 };
