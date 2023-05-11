@@ -1,0 +1,30 @@
+syntax = 'proto3';
+
+package o2.bookkeeping;
+
+service DplProcessExecutionService {
+  rpc Create(DplProcessExecutionCreationRequest) returns (DplProcessExecution);
+}
+
+message DplProcessExecution {
+  int32 id = 1;
+}
+
+message DplProcessExecutionCreationRequest {
+  int32 runNumber = 2;
+  string detectorName = 6;
+  string processName = 5;
+  DplProcessType type = 3;
+  string hostname = 4;
+  string args = 7;
+}
+
+enum DplProcessType {
+  DPL_PROCESS_TYPE_NULL = 0;
+  DPL_PROCESS_TYPE_QC_TASK = 1;
+  DPL_PROCESS_TYPE_QC_CHECKER = 2;
+  DPL_PROCESS_TYPE_QC_AGGREGATOR = 3;
+  DPL_PROCESS_TYPE_QC_POSTPROCESSING = 4;
+  DPL_PROCESS_TYPE_DISPATCHER = 5;
+  DPL_PROCESS_TYPE_MERGER = 6;
+}
