@@ -32,82 +32,132 @@ module.exports = () => {
     });
 
     it('should successfully return the list of processes that have an executed process for a given run and a given detector', async () => {
-        const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector({ runNumber: 106 }, 1);
+        const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
+            { runNumber: 106 },
+            { dplDetectorId: 1 },
+        );
         expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
         expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
     });
 
     it('should throw an error if trying to fetch processes for a run that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllExecutedProcessesByRunAndDetector({ runNumber: 999 }, 1),
+            () => dplProcessService.getAllExecutedProcessesByRunAndDetector(
+                { runNumber: 999 },
+                { dplDetectorId: 1 },
+            ),
             new NotFoundError('Run with this run number (999) could not be found'),
         );
     });
 
     it('should throw an error if trying to fetch processes for a DPL detector that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllExecutedProcessesByRunAndDetector({ runNumber: 106 }, 999),
-            new NotFoundError('DPL detector with this id could not be found'),
+            () => dplProcessService.getAllExecutedProcessesByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorId: 999 },
+            ),
+            new NotFoundError('DPL detector with this id (999) could not be found'),
         );
     });
 
     it('should successfully return the list of hosts that have a given process executed for a given run and a given detector', async () => {
-        const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector({ runNumber: 106 }, 1, 1);
+        const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+            { runNumber: 106 },
+            { dplDetectorId: 1 },
+            { dplProcessId: 1 },
+        );
         expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
         expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
     });
 
     it('should throw an error if trying to fetch hosts for a run that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector({ runNumber: 999 }, 1, 1),
+            () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runNumber: 999 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+            ),
             new NotFoundError('Run with this run number (999) could not be found'),
         );
     });
 
     it('should throw an error if trying to fetch hosts for a DPL detector that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector({ runNumber: 106 }, 999, 1),
-            new NotFoundError('DPL detector with this id could not be found'),
+            () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorId: 999 },
+                { dplProcessId: 1 },
+            ),
+            new NotFoundError('DPL detector with this id (999) could not be found'),
         );
     });
 
     it('should throw an error if trying to fetch hosts for a DPL process that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector({ runNumber: 106 }, 1, 999),
-            new NotFoundError('DPL process with this id could not be found'),
+            () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 999 },
+            ),
+            new NotFoundError('DPL process with this id (999) could not be found'),
         );
     });
 
     it('should successfully return the list of execution of a given process on a given host for a given run and a given detector', async () => {
-        const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 1, 1, 1);
+        const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+            { runNumber: 106 },
+            { dplDetectorId: 1 },
+            { dplProcessId: 1 },
+            { hostId: 1 },
+        );
         expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
     });
 
     it('should throw an error if trying to fetch process executions for a run that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 999 }, 1, 1, 1),
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 999 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+                { hostId: 1 },
+            ),
             new NotFoundError('Run with this run number (999) could not be found'),
         );
     });
 
     it('should throw an error if trying to fetch process executions for a DPL detector that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 999, 1, 1),
-            new NotFoundError('DPL detector with this id could not be found'),
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorId: 999 },
+                { dplProcessId: 1 },
+                { hostId: 1 },
+            ),
+            new NotFoundError('DPL detector with this id (999) could not be found'),
         );
     });
 
     it('should throw an error if trying to fetch process executions for a DPL process that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 1, 999, 1),
-            new NotFoundError('DPL process with this id could not be found'),
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 999 },
+                { hostId: 1 },
+            ),
+            new NotFoundError('DPL process with this id (999) could not be found'),
         );
     });
 
     it('should throw an error if trying to fetch process executions for a host that does not exist', async () => {
         await assert.rejects(
-            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost({ runNumber: 106 }, 1, 1, 999),
-            new NotFoundError('Host with this id could not be found'),
+            () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+                { hostId: 999 },
+            ),
+            new NotFoundError('Host with this id (999) could not be found'),
         );
     });
 };
