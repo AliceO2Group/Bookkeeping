@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.55.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.1)
+* Notable changes for users:
+  * QC/PDP EoS report now includes the following tags: QC-PDP shifter, QC, PDP, EoS
+
 ## [0.55.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.0)
 * Notable changes for users:
   * Shift endpoint can now provide QC data
