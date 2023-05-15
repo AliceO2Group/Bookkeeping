@@ -17,8 +17,11 @@ class GrpcBkpProtoClient : public BkpProtoClient
 
   const std::unique_ptr<RunProtoClient>& run() const override;
 
+  const std::unique_ptr<DplProcessExecutionProtoClient>& dplProcessExecution() const override;
+
  private:
   std::unique_ptr<::o2::bkp::api::proto::RunProtoClient> mRunClient;
+  std::unique_ptr<::o2::bkp::api::proto::DplProcessExecutionProtoClient> mDplProcessExecutionClient;
 };
 } // namespace o2::bkp::api::proto
 

@@ -7,6 +7,7 @@
 
 #include <memory>
 #include "RunProtoClient.h"
+#include "DplProcessExecutionProtoClient.h"
 
 namespace o2::bkp::api::proto {
 class BkpProtoClient {
@@ -15,6 +16,9 @@ class BkpProtoClient {
 
   /// Returns the implementation of the Run service defined in run.proto
   virtual const std::unique_ptr<RunProtoClient>& run() const = 0;
+
+  /// Returns the implementation of the DPL process execution service defined in dpl-process-execution.proto
+  virtual const std::unique_ptr<DplProcessExecutionProtoClient>& dplProcessExecution() const = 0;
 };
 }
 

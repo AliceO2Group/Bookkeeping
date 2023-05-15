@@ -25,7 +25,7 @@ set(GRPC_CPP_OUTPUT "")
 set(PROTO_GENERATED_HEADERS_SRC "")
 set(PROTO_GENERATED_HEADERS_DEST "")
 
-foreach(PROTO_NAME common flp run)
+foreach(PROTO_NAME common flp run dplProcessExecution)
     set(PROTO_FILE ${PROTO_DIRECTORY}/${PROTO_NAME}.proto)
     get_filename_component(PROTO_OUTPUT_NAME ${PROTO_FILE} NAME_WE)
     list(APPEND PROTO_FILES ${PROTO_FILE})
@@ -78,6 +78,7 @@ add_library(BookkeepingProtoApi SHARED
     src/BkpProtoClientFactory.cxx
     src/grpc/GrpcBkpProtoClient.cxx
     src/grpc/services/GrpcRunProtoClient.cxx
+    src/grpc/services/GrpcDplProcessExecutionProtoClient.cxx
 
     ${PROTO_CPP_OUTPUT}
     ${GRPC_CPP_OUTPUT}
