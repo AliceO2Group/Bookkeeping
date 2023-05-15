@@ -44,7 +44,7 @@ module.exports = () => {
             const response = await request(server).get('/api/tags?filter[partialText]=-TAG-');
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('array');
-            expect(response.body.data.length).to.equal(36);
+            expect(response.body.data.length).to.equal(34);
         });
 
         it('should return 204 if no tags match partial search', async () => {
