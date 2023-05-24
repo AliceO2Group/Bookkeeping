@@ -272,6 +272,32 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 };
 
 /**
+ * Check that the fourth cell of the given column displays the correct color depending on the status
+ *
+ * @param {{$: function}} page the puppeteer page
+ * @param {number} rowIndex the index of the row to look for status color
+ * @param {number} columnIndex the index of the column to look for status color
+ * @returns {Promise<Chai.Assertion>} void promise
+ */
+module.exports.checkStatusColor = async (page, rowIndex, columnIndex) => {
+    const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
+    const green = await cell.$('.green-status');
+    const red = await cell.$('.red-status');
+    const orange = await cell.$('.orange-status');
+
+    expect(await getInnerHtml(cell)).to.not.be.equal(await getInnerHtml(green));
+
+    switch (cell) {
+        case 'RUNNING':
+            return expect(await getInnerHtml(cell)).to.not.be.equal(await getInnerHtml(green));
+        case 'ERROR':
+            return expect(await getInnerHtml(cell)).to.be.equal(await getInnerHtml(red));
+        case 'CONFIGURED':
+            return expect(await getInnerHtml(cell)).to.be.equal(await getInnerHtml(orange));
+    }
+};
+
+/**
  * Fill the input at the given selector and triggers the given events on it
  *
  * @param {{evaluate: function, waitForSelector: function}} page the puppeteer's page object
