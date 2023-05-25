@@ -319,7 +319,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
+        expect(table.length).to.equal(4);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-or', (element) => element.click());
         await page.waitForTimeout(300);

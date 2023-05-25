@@ -17,10 +17,10 @@ const { PHYSICS, COSMICS, COMMISSIONING, TECHNICAL, SYNTHETIC, CALIBRATION } = r
 
 module.exports = () => {
     it('should successfully identify runs as PHYSICS', () => {
-        expect(getRunDefinition(PHYSICS.processingAndFT0)).to.equal(RunDefinition.Physics);
-        expect(getRunDefinition(PHYSICS.processingAndITS)).to.equal(RunDefinition.Physics);
-        expect(getRunDefinition(PHYSICS.processingDiskAndFT0)).to.equal(RunDefinition.Physics);
-        expect(getRunDefinition(PHYSICS.processingDiskAndITS)).to.equal(RunDefinition.Physics);
+        expect(getRunDefinition(PHYSICS.processingAndITSAndFT0)).to.equal(RunDefinition.Physics);
+        expect(getRunDefinition(PHYSICS.processingAndFT0AndITS)).to.equal(RunDefinition.Physics);
+        expect(getRunDefinition(PHYSICS.processingDiskAndFT0AndITS)).to.equal(RunDefinition.Physics);
+        expect(getRunDefinition(PHYSICS.processingDiskAndITSAndFT0)).to.equal(RunDefinition.Physics);
     });
 
     it('should successfully identify runs as COSMICS', () => {
