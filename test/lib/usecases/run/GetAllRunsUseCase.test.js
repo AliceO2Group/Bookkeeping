@@ -329,25 +329,25 @@ module.exports = () => {
 
         let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(5);
+        expect(runs).to.have.lengthOf(6);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS   ,   FT0';
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(2);
+        expect(runs).to.have.lengthOf(4);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS,FT0';
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(2);
+        expect(runs).to.have.lengthOf(4);
 
         getAllRunsDto.query.filter.detectors.values = 'FT0,ITS';
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(2);
+        expect(runs).to.have.lengthOf(4);
 
         getAllRunsDto.query.filter.detectors.operator = 'or';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
