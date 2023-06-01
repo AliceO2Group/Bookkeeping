@@ -6,6 +6,8 @@ on:
 jobs:
   deploy-npm-module:
     runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.set-project.outputs.version }}
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
@@ -26,6 +28,7 @@ jobs:
         VERSION=$( echo "${GITHUB_REF/refs\/tags\/@aliceo2\/}" | cut -f2 -d"@")
         PROJECT="Bookkeeping"
         echo "Identified project: $PROJECT with version: $VERSION"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "PROJECT=$PROJECT" >> $GITHUB_ENV
     - run: npm publish
       env:
@@ -44,18 +47,13 @@ jobs:
     - name: Install production dependencies
       run: npm install --only=production
     - name: Create package tarball
-      run:  echo ::set-output name=tgz_name::$(npm pack)
+      run: echo "tgz_name=$(npm pack)" >> $GITHUB_OUTPUT
       id: tgz
-    - name: Upload tarball to GH release assets
-      uses: actions/upload-release-asset@v1
-      id: upload
+    - name: Upload tarball to release assets via GH CLI
+      working-directory: ./Bookkeeping
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_content_type: application/tar+gzip
-        asset_path: ./${{ steps.tgz.outputs.tgz_name }}
-        asset_name: ${{ steps.tgz.outputs.tgz_name }}
+      run: gh release upload @aliceo2/bookkeeping@${{ needs.deploy-npm-module.outputs.VERSION }} ${{ steps.tgz.outputs.tgz_name }}
     - name: Upload TARball to S3
       uses: awegrzyn/s3-put-action@v1
       with:
