@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.56.0",
+  "version": "0.56.1",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
