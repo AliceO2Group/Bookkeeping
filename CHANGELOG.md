@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.56.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.0)
+* Notable changes for users:
+  * Every 30 seconds, bookkeeping check on AliECS GUI the active environments and their runs, and transition to error lost environments and set timeO2End of lost runs
+
 ## [0.55.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.2)
 * Notable changes for users:
   *  Runs will be definied as Definition `PHYSICS` only if they include both detectors `FT0` and `ITS`. This change will also apply to previous runs
