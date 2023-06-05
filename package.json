@@ -21,7 +21,7 @@
     "cls-hooked": "4.2.2",
     "deepmerge": "4.3.0",
     "joi": "17.9.1",
-    "mariadb": "3.0.0",
+    "mariadb": "3.1.2",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
     "sequelize": "6.31.0",
