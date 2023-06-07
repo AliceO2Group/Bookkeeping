@@ -279,21 +279,24 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
  * @param {number} columnIndex the index of the column to look for status color
  * @returns {Promise<Chai.Assertion>} void promise
  */
-module.exports.checkStatusColor = async (page, rowIndex, columnIndex) => {
-    const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
-    const green = await cell.$('.green-status');
-    const red = await cell.$('.red-status');
-    const orange = await cell.$('.orange-status');
+module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex) => {
+    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cellContent = await getInnerHtml(cell);
 
-    expect(await getInnerHtml(cell)).to.not.be.equal(await getInnerHtml(green));
-
-    switch (cell) {
+    switch (cellContent) {
         case 'RUNNING':
-            return expect(await getInnerHtml(cell)).to.not.be.equal(await getInnerHtml(green));
+            expect(await cell.$('.success')).to.not.be.null;
+            break;
         case 'ERROR':
-            return expect(await getInnerHtml(cell)).to.be.equal(await getInnerHtml(red));
+            expect(await cell.$('.danger')).to.not.be.null;
+            break;
         case 'CONFIGURED':
-            return expect(await getInnerHtml(cell)).to.be.equal(await getInnerHtml(orange));
+            expect(await cell.$('.warning')).to.not.be.null;
+            break;
+        default:
+            expect(await cell.$('.warning')).to.be.null;
+            expect(await cell.$('.danger')).to.be.null;
+            expect(await cell.$('.success')).to.be.null;
     }
 };
 
