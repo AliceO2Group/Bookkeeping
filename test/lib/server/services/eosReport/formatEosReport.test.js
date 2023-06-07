@@ -25,6 +25,12 @@ const {
     emptyQcPdpEosReport,
     formattedEmptyQcPdpEosReport,
 } = require('../../../../mocks/mock-qc-pdp-eos-report.js');
+const {
+    customizedSlimosEosReport,
+    emptySlimosEosReport,
+    formattedEmptySlimosEosReport,
+    formattedCustomizedSlimosEosReport,
+} = require('../../../../mocks/mock-slimos-eos-report.js');
 
 module.exports = () => {
     it('should successfully format ECS EoS report with provided data', async () => {
@@ -49,5 +55,17 @@ module.exports = () => {
         const report = await formatEosReport(emptyQcPdpEosReport);
 
         expect(report).to.equal(formattedEmptyQcPdpEosReport);
+    });
+
+    it('should successfully format SLIMOS EoS report with provided data', async () => {
+        const report = await formatEosReport(customizedSlimosEosReport);
+
+        expect(report).to.equal(formattedCustomizedSlimosEosReport);
+    });
+
+    it('should successfully format a SLIMOS EoS report with missing optional data', async () => {
+        const report = await formatEosReport(emptySlimosEosReport);
+
+        expect(report).to.equal(formattedEmptySlimosEosReport);
     });
 };

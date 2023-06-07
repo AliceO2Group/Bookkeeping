@@ -36,6 +36,10 @@ const {
     customizedQcPdpEosReportRequest, formattedCustomizedQcPdpEosReport,
 } = require('../../../../mocks/mock-qc-pdp-eos-report.js');
 const { updateRunDetector } = require('../../../../../lib/server/services/runDetector/updateRunDetector.js');
+const {
+    customizedSlimosEosReportLogs, customizedSlimosEosReport, customizedSlimosEosReportRequest, formattedCustomizedSlimosEosReport,
+    eosSlimosReportTitle, emptySlimosEosReportRequest, formattedEmptySlimosEosReport,
+} = require('../../../../mocks/mock-slimos-eos-report.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {
@@ -169,6 +173,43 @@ module.exports = () => {
         const log = await eosReportService.createLogEntry(ShiftTypes.QC_PDP, emptyQcPdpEosReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedEmptyQcPdpEosReport);
         expect(log.title).to.equal(eosQcPdpReportTitle);
+        expect(log.runs.length).to.equal(0);
+        expect(log.author.id).to.equal(1);
+    });
+
+    it('should successfully create a log containing SLIMOS EoS report', async () => {
+        await resetDatabaseContent();
+        const expectedRunNumbers = [];
+
+        // Create the expected logs
+        for (const log of customizedSlimosEosReportLogs) {
+            const logCreationRequest = {
+                title: log.title,
+                text: 'This is not important for test',
+                createdAt: customizedSlimosEosReport.shiftStart,
+                subtype: 'comment',
+                origin: 'human',
+            };
+            if (log.parentLogId) {
+                logCreationRequest.parentLogId = log.parentLogId;
+            }
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
+        }
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.SLIMOS, customizedSlimosEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedCustomizedSlimosEosReport);
+        expect(log.title).to.equal(eosSlimosReportTitle);
+        expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.SLIMOS));
+        expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.author.id).to.equal(1);
+    });
+
+    it('should successfully create a log containing SLIMOS EoS report with default values', async () => {
+        await resetDatabaseContent();
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.SLIMOS, emptySlimosEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedEmptySlimosEosReport);
+        expect(log.title).to.equal(eosSlimosReportTitle);
         expect(log.runs.length).to.equal(0);
         expect(log.author.id).to.equal(1);
     });
