@@ -82,6 +82,14 @@ module.exports = () => {
         expect(titleText).to.equal(title);
     });
 
+    it('correctly loads a reply log', async () => {
+        await goToPage(page, 'log-create&parentLogId=1');
+
+        const header = await page.$eval('h3', (element) => element.innerText);
+        const title = await page.$eval('#titlefield', (element) => element.value);
+        expect(header).to.equal(`Reply to log: ${title}`);
+    });
+
     it('can disable submit with invalid data', async () => {
         const title = 'A';
         const text = 'Sample Text';
