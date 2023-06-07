@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.56.0",
+  "version": "0.56.1",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -39,7 +39,7 @@
     "mocha": "10.2.0",
     "nodemon": "2.0.19",
     "nyc": "15.1.0",
-    "puppeteer": "19.11.1",
+    "puppeteer": "20.5.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "15.1.0",

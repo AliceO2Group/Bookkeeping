@@ -13,6 +13,7 @@
 
 const AttachmentsSuite = require('./attachments.test.js');
 const DetectorsSuite = require('./detectors.test.js');
+const DPLProcessSuite = require('./dplProcess.test.js');
 const EnvironmentsSuite = require('./environments.test.js');
 const EosReportSuite = require('./eosReport.test.js');
 // TODO [O2B-805] const FlpSuite = require('./flps.test.js');
@@ -28,6 +29,7 @@ const RunTypesSuite = require('./runTypes.test.js');
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
     describe('Detectors API', DetectorsSuite);
+    describe('DPL Process API', DPLProcessSuite);
     describe('Environments API', EnvironmentsSuite);
     describe('EOS report API', EosReportSuite);
     // TODO [O2B-805] describe('FLP API', FlpSuite);
