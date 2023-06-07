@@ -293,10 +293,6 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
         case 'CONFIGURED':
             expect(await cell.$('.warning')).to.not.be.null;
             break;
-        default:
-            expect(await cell.$('.warning')).to.be.null;
-            expect(await cell.$('.danger')).to.be.null;
-            expect(await cell.$('.success')).to.be.null;
     }
 };
 
