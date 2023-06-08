@@ -297,6 +297,26 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
 };
 
 /**
+ * Check that the fourth cell of the given column displays the correct color depending on the status
+ *
+ * @param {{$: function}} page the puppeteer page
+ * @param {number} rowIndex the index of the row to look for status color
+ * @param {number} columnIndex the index of the column to look for status color
+ * @returns {Promise<Chai.Assertion>} void promise
+ */
+module.exports.checkEnvironmentRowColor = async (page, rowIndex, columnIndex) => {
+    const cellStatus = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex})`);
+    const cellStatusContent = await getInnerHtml(cellStatus);
+
+    switch (cellStatusContent) {
+        case 'ERROR':
+            expect(await cell.$('.danger')).to.not.be.null;
+            break;
+    }
+};
+
+/**
  * Fill the input at the given selector and triggers the given events on it
  *
  * @param {{evaluate: function, waitForSelector: function}} page the puppeteer's page object
