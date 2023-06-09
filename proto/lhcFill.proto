@@ -1,0 +1,22 @@
+syntax = 'proto3';
+
+package o2.bookkeeping;
+
+import 'common.proto';
+
+// Services
+
+service LhcFillService {
+  rpc Get(LhcFillFetchRequest) returns (LhcFillWithRelations);
+}
+
+// High level messages
+
+message LhcFillFetchRequest {
+  int32 fillNumber = 1;
+}
+
+message LhcFillWithRelations {
+  LHCFill lhcFill = 1;
+  // For now we do not include relations to LHC fill
+}
