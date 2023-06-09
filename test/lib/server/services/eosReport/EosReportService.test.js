@@ -40,6 +40,10 @@ const {
     customizedSlimosEosReportLogs, customizedSlimosEosReport, customizedSlimosEosReportRequest, formattedCustomizedSlimosEosReport,
     eosSlimosReportTitle, emptySlimosEosReportRequest, formattedEmptySlimosEosReport,
 } = require('../../../../mocks/mock-slimos-eos-report.js');
+const {
+    customizedShiftLeaderEosReport, customizedShiftLeaderEosReportLogs, customizedShiftLeaderEosReportRequest,
+    formattedCustomizedShiftLeaderEosReport, eosShiftLeaderReportTitle, emptyShiftLeaderEosReportRequest, formattedEmptyShiftLeaderEosReport,
+} = require('../../../../mocks/mock-shift-leader-eos-report.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {
@@ -210,6 +214,65 @@ module.exports = () => {
         const log = await eosReportService.createLogEntry(ShiftTypes.SLIMOS, emptySlimosEosReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedEmptySlimosEosReport);
         expect(log.title).to.equal(eosSlimosReportTitle);
+        expect(log.runs.length).to.equal(0);
+        expect(log.author.id).to.equal(1);
+    });
+
+    it('should successfully create a log containing SL EoS report', async () => {
+        await resetDatabaseContent();
+        const expectedRunNumbers = [];
+
+        // Create the expected logs and runs
+        for (const runs of Object.values(customizedShiftLeaderEosReport.typeSpecific.runs)) {
+            for (const run of runs) {
+                await createRun(
+                    run,
+                    run.detectors,
+                );
+                for (const detector of run.detectors) {
+                    await updateRunDetector(
+                        run.runNumber,
+                        detector.RunDetectors.detectorId,
+                        { quality: detector.RunDetectors.quality },
+                    );
+                }
+                expectedRunNumbers.push(run.runNumber);
+            }
+        }
+
+        // Create the expected logs
+        const logRuns = [];
+        for (const log of customizedShiftLeaderEosReportLogs) {
+            const logCreationRequest = {
+                title: log.title,
+                text: 'This is not important for test',
+                createdAt: customizedShiftLeaderEosReport.shiftStart,
+                subtype: 'comment',
+                origin: 'human',
+            };
+            if (log.parentLogId) {
+                logCreationRequest.parentLogId = log.parentLogId;
+            }
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), []);
+            logRuns.push({ logId, runId: 1 });
+        }
+
+        LogRunsRepository.bulkInsert(logRuns);
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.SL, customizedShiftLeaderEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedCustomizedShiftLeaderEosReport);
+        expect(log.title).to.equal(eosShiftLeaderReportTitle);
+        expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.SL));
+        expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.author.id).to.equal(1);
+    });
+
+    it('should successfully create a log containing Shift Leader EoS report with default values', async () => {
+        await resetDatabaseContent();
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.SL, emptyShiftLeaderEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedEmptyShiftLeaderEosReport);
+        expect(log.title).to.equal(eosShiftLeaderReportTitle);
         expect(log.runs.length).to.equal(0);
         expect(log.author.id).to.equal(1);
     });
