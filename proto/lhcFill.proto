@@ -7,13 +7,13 @@ import 'common.proto';
 // Services
 
 service LhcFillService {
-  rpc Get(LhcFillFetchRequest) returns (LhcFillWithRelations);
+  rpc GetLast(LastLhcFillFetchRequest) returns (LhcFillWithRelations);
 }
 
 // High level messages
 
-message LhcFillFetchRequest {
-  int32 fillNumber = 1;
+message LastLhcFillFetchRequest {
+  // For now, request is empty
 }
 
 message LhcFillWithRelations {

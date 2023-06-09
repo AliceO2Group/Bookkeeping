@@ -16,7 +16,7 @@ const { lhcFillService } = require('../../../../../lib/server/services/lhcFill/L
 const { expect } = require('chai');
 
 module.exports = () => {
-    it('should successfuuly return an LHC fill for a given fill number', async () => {
+    it('should successfully return an LHC fill for a given fill number', async () => {
         const lhcFill = await lhcFillService.get(1);
         expect(lhcFill).to.have.ownProperty('fillNumber');
         expect(lhcFill.fillNumber).to.equal(1);
@@ -30,5 +30,11 @@ module.exports = () => {
         const lhcFill = await lhcFillService.get(6, { runs: true });
         expect(lhcFill.runs).to.lengthOf(5);
         expect(lhcFill.runs.filter(({ definition }) => definition === RunDefinition.Physics)).to.lengthOf(4);
+    });
+
+    it('should successfully return the last LHC fill', async () => {
+        const lhcFill = await lhcFillService.getLast();
+        expect(lhcFill).to.have.ownProperty('fillNumber');
+        expect(lhcFill.fillNumber).to.equal(6);
     });
 };
