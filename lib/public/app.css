@@ -63,6 +63,9 @@ html, body {
 .w-inherit {
     width: inherit !important;
 }
+.w-unset {
+    width: unset;
+}
 
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }

@@ -31,7 +31,7 @@ module.exports = () => {
         // Not kept : not the good tags
         await createLog(defaultLogData, [], ['EoS'], []);
         await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], []);
-        // Not kept : not the good tags
+        // Kept
         await createLog(defaultLogData, [], ['ECS Shifter'], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.ECS);
@@ -52,7 +52,7 @@ module.exports = () => {
         // Not kept : not the good tags
         await createLog(defaultLogData, [], ['EoS'], []);
         await createLog(defaultLogData, [], ['QC/PDP Shifter', 'EoS'], []);
-        // Not kept : not the good tags
+        // Kept
         await createLog(defaultLogData, [], ['QC/PDP Shifter'], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.QC_PDP);
@@ -73,12 +73,33 @@ module.exports = () => {
         // Not kept : not the good tags
         await createLog(defaultLogData, [], ['EoS'], []);
         await createLog(defaultLogData, [], ['SLIMOS', 'EoS'], []);
-        // Not kept : not the good tags
+        // Kept
         await createLog(defaultLogData, [], ['SLIMOS'], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.SLIMOS);
         expect(logs).to.lengthOf(1);
         expect(logs[0].tags.every(({ text }) => text !== 'EoS')).to.be.true;
         expect(logs[0].tags.some(({ text }) => text === 'SLIMOS')).to.be.true;
+    });
+
+    it('Should successfully return the logs related to a given Shift Leader shift', async () => {
+        const defaultLogData = {
+            title: 'Title',
+            text: 'Text',
+            subtype: 'comment',
+            origin: 'process',
+            userId: 2,
+            createdAt: new Date(shift1 + 5000),
+        };
+        // Not kept : not the good tags
+        await createLog(defaultLogData, [], ['EoS'], []);
+        await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], []);
+        // Kept
+        await createLog(defaultLogData, [], ['Shift Leader'], []);
+
+        const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.SL);
+        expect(logs).to.lengthOf(1);
+        expect(logs[0].tags.every(({ text }) => text !== 'EoS')).to.be.true;
+        expect(logs[0].tags.some(({ text }) => text === 'Shift Leader')).to.be.true;
     });
 };
