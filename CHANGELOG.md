@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.57.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.57.0)
+* Notable changes for users:
+  * The SLIMOS automatic EoS report has been added
+  * A firt version of the Shift Leader automatic EoS report has been added
+
 ## [0.56.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.1)
 * Notable changes for developers:
   * The model to store DPL processes has been created
