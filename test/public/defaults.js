@@ -272,7 +272,7 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 };
 
 /**
- * Check that the fourth cell of the given column displays the correct color depending on the status
+ * Check that a given cell of the given column displays the correct color depending on the status
  *
  * @param {{$: function}} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for status color
