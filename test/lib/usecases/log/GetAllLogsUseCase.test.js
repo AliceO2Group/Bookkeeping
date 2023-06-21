@@ -71,12 +71,27 @@ module.exports = () => {
         expect(filteredResult.count).to.equal(rootLog.replies);
     });
 
+    it('should return reply logs if applicable', async () => {
+        const rootLogId = 117;
+        getAllLogsDto.query = { filter: { rootLog: rootLogId } };
+
+        const filteredResult = await new GetAllLogsUseCase().execute(getAllLogsDto);
+        for (const log of filteredResult.logs) {
+            expect(log).to.not.have.property('replyLogs');
+        }
+
+        const unfilteredResult = await new GetAllLogsUseCase()
+            .execute();
+        const rootLog = unfilteredResult.logs.find((log) => log.id === rootLogId);
+        expect(filteredResult.count).to.equal(rootLog.replies);
+    });
+
     it('should successfully filter on run numbers', async () => {
         const runNumbers = [1, 2];
         getAllLogsDto.query = { filter: { run: { operation: 'and', values: runNumbers } } };
 
         {
-            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto, true);
             expect(filteredResult).to.lengthOf(3);
             for (const log of filteredResult) {
                 const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
@@ -87,7 +102,7 @@ module.exports = () => {
         getAllLogsDto.query = { filter: { run: { operation: 'or', values: runNumbers } } };
 
         {
-            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto, true);
             expect(filteredResult).to.lengthOf(6);
             for (const log of filteredResult) {
                 const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
@@ -101,7 +116,7 @@ module.exports = () => {
         getAllLogsDto.query = { filter: { content } };
 
         {
-            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto, true);
             expect(filteredResult).to.lengthOf(2);
             for (const log of filteredResult) {
                 expect(log.text.includes(content)).to.be.true;
@@ -111,7 +126,7 @@ module.exports = () => {
         getAllLogsDto.query = { filter: { content: 'this-content-do-not-exists-anywhere' } };
 
         {
-            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto, true);
             expect(filteredResult).to.lengthOf(0);
         }
     });
@@ -120,7 +135,7 @@ module.exports = () => {
         const expectedCount = await LogRepository.count();
 
         const { count } = await new GetAllLogsUseCase()
-            .execute(getAllLogsDto);
+            .execute(getAllLogsDto, true);
 
         expect(count).to.equal(expectedCount);
     });
