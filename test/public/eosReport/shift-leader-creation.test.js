@@ -27,6 +27,8 @@ const { createRun } = require('../../../lib/server/services/run/createRun.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { customizedQcPdpEosReport } = require('../../mocks/mock-qc-pdp-eos-report.js');
 const { updateRunDetector } = require('../../../lib/server/services/runDetector/updateRunDetector.js');
+const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
+const { formatShiftDate } = require('../../../lib/server/services/shift/formatShiftDate.js');
 
 module.exports = () => {
     let page;
@@ -75,6 +77,12 @@ module.exports = () => {
 
         await reloadPage(page);
 
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const magnetStart = formatShiftDate(currentShift.start, { time: true });
+        const magnet1 = formatShiftDate(currentShift.start + 3600 * 4 * 1000, { time: true });
+        const magnet2 = formatShiftDate(currentShift.start + 3600 * 2 * 1000, { time: true });
+        const magnetEnd = formatShiftDate(currentShift.end, { time: true });
+
         await page.waitForSelector('#shifter-name input');
         expect(await page.$eval('#shifter-name input', (input) => input.value)).to.equal('Anonymous');
         await page.focus('#shifter-name input');
@@ -104,13 +112,13 @@ module.exports = () => {
         await page.waitForSelector('#type-specific #magnets-0 .btn-danger');
         await page.click('#type-specific #magnets-0 .btn-danger');
 
-        await fillInput(page, '#type-specific #magnets-1 input:nth-of-type(1)', '10:00:00');
+        await fillInput(page, '#type-specific #magnets-1 input:nth-of-type(1)', magnet1);
         await page.focus('#type-specific #magnets-1 input:nth-of-type(2)');
         await page.keyboard.type('solenoid-1');
         await page.focus('#type-specific #magnets-1 input:nth-of-type(3)');
         await page.keyboard.type('dipole-1');
 
-        await fillInput(page, '#type-specific #magnets-2 input:nth-of-type(1)', '08:00:00');
+        await fillInput(page, '#type-specific #magnets-2 input:nth-of-type(1)', magnet2);
         await page.focus('#type-specific #magnets-2 input:nth-of-type(2)');
         await page.keyboard.type('solenoid-2');
         await page.focus('#type-specific #magnets-2 input:nth-of-type(3)');
@@ -137,6 +145,7 @@ module.exports = () => {
         await page.click('#submit');
 
         await waitForNetworkIdleAndRedraw(page);
+
         expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '120' })).to.eql({});
 
         // Fetch log manually, because it's hard to parse codemirror display
@@ -155,10 +164,10 @@ module.exports = () => {
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes(`## Magnets
-- 07:00:00 - Solenoid solenoid-start - Dipole dipole-start
-- 08:00:00 - Solenoid solenoid-2 - Dipole dipole-2
-- 10:00:00 - Solenoid solenoid-1 - Dipole dipole-1
-- 15:00:00 - Solenoid solenoid-end - Dipole dipole-end`)).to.be.true;
+- ${magnetStart} - Solenoid solenoid-start - Dipole dipole-start
+- ${magnet2} - Solenoid solenoid-2 - Dipole dipole-2
+- ${magnet1} - Solenoid solenoid-1 - Dipole dipole-1
+- ${magnetEnd} - Solenoid solenoid-end - Dipole dipole-end`)).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
