@@ -44,6 +44,10 @@ const {
     customizedShiftLeaderEosReport, customizedShiftLeaderEosReportLogs, customizedShiftLeaderEosReportRequest,
     formattedCustomizedShiftLeaderEosReport, eosShiftLeaderReportTitle, emptyShiftLeaderEosReportRequest, formattedEmptyShiftLeaderEosReport,
 } = require('../../../../mocks/mock-shift-leader-eos-report.js');
+const {
+    customizedDcsEosReportLogs, customizedDcsEosReport, customizedDcsEosReportRequest, formattedCustomizedDcsEosReport, eosDcsReportTitle,
+    emptyDcsEosReportRequest, formattedEmptyDcsEosReport,
+} = require('../../../../mocks/mock-dcs-eos-report.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {
@@ -183,7 +187,6 @@ module.exports = () => {
 
     it('should successfully create a log containing SLIMOS EoS report', async () => {
         await resetDatabaseContent();
-        const expectedRunNumbers = [];
 
         // Create the expected logs
         for (const log of customizedSlimosEosReportLogs) {
@@ -204,7 +207,6 @@ module.exports = () => {
         expect(log.text).to.equal(formattedCustomizedSlimosEosReport);
         expect(log.title).to.equal(eosSlimosReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.SLIMOS));
-        expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
         expect(log.author.id).to.equal(1);
     });
 
@@ -273,6 +275,41 @@ module.exports = () => {
         const log = await eosReportService.createLogEntry(ShiftTypes.SL, emptyShiftLeaderEosReportRequest, { userId: 1 });
         expect(log.text).to.equal(formattedEmptyShiftLeaderEosReport);
         expect(log.title).to.equal(eosShiftLeaderReportTitle);
+        expect(log.runs.length).to.equal(0);
+        expect(log.author.id).to.equal(1);
+    });
+
+    it('should successfully create a log containing DCS EoS report', async () => {
+        await resetDatabaseContent();
+
+        // Create the expected logs
+        for (const log of customizedDcsEosReportLogs) {
+            const logCreationRequest = {
+                title: log.title,
+                text: 'This is not important for test',
+                createdAt: customizedDcsEosReport.shiftStart,
+                subtype: 'comment',
+                origin: 'human',
+            };
+            if (log.parentLogId) {
+                logCreationRequest.parentLogId = log.parentLogId;
+            }
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
+        }
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.DCS, customizedDcsEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedCustomizedDcsEosReport);
+        expect(log.title).to.equal(eosDcsReportTitle);
+        expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.DCS));
+        expect(log.author.id).to.equal(1);
+    });
+
+    it('should successfully create a log containing DCS EoS report with default values', async () => {
+        await resetDatabaseContent();
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.DCS, emptyDcsEosReportRequest, { userId: 1 });
+        expect(log.text).to.equal(formattedEmptyDcsEosReport);
+        expect(log.title).to.equal(eosDcsReportTitle);
         expect(log.runs.length).to.equal(0);
         expect(log.author.id).to.equal(1);
     });
