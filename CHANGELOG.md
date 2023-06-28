@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.57.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.57.0)
+* Notable changes for users:
+  * The SLIMOS automatic EoS report has been added
+  * A firt version of the Shift Leader automatic EoS report has been added
+
+## [0.56.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.1)
+* Notable changes for developers:
+  * The model to store DPL processes has been created
+  * A flag has been added to enable housekeeping, which for now consists in cleaning lost runs & environments
+  * Logs ended and environments transitionned to error by housekeeping script are now logged
+
+## [0.56.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.0)
+* Notable changes for users:
+  * Every 30 seconds, bookkeeping check on AliECS GUI the active environments and their runs, and transition to error lost environments and set timeO2End of lost runs
+
+## [0.55.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.2)
+* Notable changes for users:
+  *  Runs will be definied as Definition `PHYSICS` only if they include both detectors `FT0` and `ITS`. This change will also apply to previous runs
+
 ## [0.55.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.1)
 * Notable changes for users:
   * QC/PDP EoS report now includes the following tags: QC-PDP shifter, QC, PDP, EoS

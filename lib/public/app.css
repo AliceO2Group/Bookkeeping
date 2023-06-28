@@ -63,6 +63,9 @@ html, body {
 .w-inherit {
     width: inherit !important;
 }
+.w-unset {
+    width: unset;
+}
 
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }
@@ -533,6 +536,14 @@ a.btn, a.btn:hover, a.btn.active {
     position: absolute;
     top: 0.25em; right: 0.25em;
     display: block;
+}
+
+/* Contextual messages */
+.contextual-message-icon {
+    width: 1.7em;
+    height: 1.7em;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 /* Page layout styles */

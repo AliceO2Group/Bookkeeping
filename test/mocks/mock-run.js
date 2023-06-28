@@ -13,7 +13,7 @@
 
 module.exports = {
     PHYSICS: {
-        processingAndITS: {
+        processingAndITSAndFT0: {
             dcs: true,
             dd_flp: true,
             epn: true,
@@ -26,9 +26,9 @@ module.exports = {
             },
             startTime: 1664618400000, // 2022-10-01T12:00:00
             endTime: 1664625600000, // 2022-10-01T14:00:00
-            concatenatedDetectors: 'ITS, TST',
+            concatenatedDetectors: 'ITS, TST, FT0',
         },
-        processingAndFT0: {
+        processingAndFT0AndITS: {
             dcs: true,
             dd_flp: true,
             epn: true,
@@ -41,9 +41,9 @@ module.exports = {
             },
             startTime: 1664618400000, // 2022-10-01T12:00:00
             endTime: 1664625600000, // 2022-10-01T14:00:00
-            concatenatedDetectors: 'FT0, TST',
+            concatenatedDetectors: 'FT0, TST, ITS',
         },
-        processingDiskAndITS: {
+        processingDiskAndITSAndFT0: {
             dcs: true,
             dd_flp: true,
             epn: true,
@@ -56,9 +56,9 @@ module.exports = {
             },
             startTime: 1664618400000, // 2022-10-01T12:00:00
             endTime: 1664625600000, // 2022-10-01T14:00:00
-            concatenatedDetectors: 'ITS, TST',
+            concatenatedDetectors: 'ITS, TST, FT0',
         },
-        processingDiskAndFT0: {
+        processingDiskAndFT0AndITS: {
             dcs: true,
             dd_flp: true,
             epn: true,
@@ -71,7 +71,7 @@ module.exports = {
             },
             startTime: 1664618400000, // 2022-10-01T12:00:00
             endTime: 1664625600000, // 2022-10-01T14:00:00
-            concatenatedDetectors: 'FT0, TST',
+            concatenatedDetectors: 'FT0, TST, ITS',
         },
     },
     COSMICS: {

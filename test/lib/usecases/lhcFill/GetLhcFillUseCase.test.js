@@ -49,7 +49,7 @@ module.exports = () => {
         expect(result).to.equal(null);
     });
 
-    it('should successfully include all the fill\'s runs and their definition', async () => {
+    it('should successfully include all the fill runs and their definition', async () => {
         getLhcFillDto.params.fillNumber = 6;
         const result = await new GetLhcFillUseCase().execute(getLhcFillDto);
         expect(result.runs).to.lengthOf(5);

@@ -15,8 +15,10 @@
   - [LhcFills](#lhcfills)
 
 ## Introduction
+
 This document describes the data model of the ALICE O2 Bookkeeping system.   
-For simplicity, the following info is not described in this document: 
+For simplicity, the following info is not described in this document:
+
 - internal AUTO_INCREMENT fields
 - creation and update timestamp fields
 - n-m junction tables
@@ -24,17 +26,19 @@ For simplicity, the following info is not described in this document:
 ## Further explanations of fields tables
 
 Concerning the **Update time** of the fields:
+
 - At COF: synchronously at LhcFill creation
 - At COE: synchronously at Environment creation
 - At EOE: synchronously at End of environment
-- At SOR: synchronously at Start of Run 
-- At EOR: synchronously at End of Run 
+- At SOR: synchronously at Start of Run
+- At EOR: synchronously at End of Run
 - During Run: periodically during the run, normally to update/overwrite counters
 - After EOR: asynchronously after the run finishes, normally by humans
 
-Concerning the **Update key** of the fields, it indicates which key will be provided to know which database record to update. 
+Concerning the **Update key** of the fields, it indicates which key will be provided to know which database record to update.
 
-Concerning the **Update mode** of the fields: 
+Concerning the **Update mode** of the fields:
+
 - Insert: direct insert via the API
 - Update: direct insert via the API, new value replaces existing one
 
@@ -42,7 +46,7 @@ Concerning the **Update mode** of the fields:
 
 **Description:** A Run is a synchronous data taking time period, performed in the O2 computing farm with a specific and well-defined configuration. It normally ranges from a few minutes to tens of hours and can include one or many ALICE detectors. It provides a unique identifier for the data set generated during the run.   
 **Relation:** `run` hasMany `eor_reasons`
-**DB main table**: `runs`   
+**DB main table**: `runs`
 
 | **Field**                               | **Description**                                                                          | **Example**                            | **Update time** | **Update Key** | **Update mode** |
 |-----------------------------------------|------------------------------------------------------------------------------------------|----------------------------------------|-----------------|----------------|-----------------|
@@ -85,7 +89,6 @@ Concerning the **Update mode** of the fields:
 | `otherFileCount`                        | The amount of other files                                                                | `315`,`111`,`615`                      |                 | `run_number`   | Update          |
 | `otherFileSize`                         | The size of other files                                                                  | `0b1010101001010101001111111111111111` |                 | `run_number`   | Update          |
 
-
 ### End of run reasons
 
 **Description:** EOR Reasons for which runs have ended. They contain a general reason_type and extra information with regards to user selecting it and other information
@@ -118,7 +121,7 @@ Concerning the **Update mode** of the fields:
 ## FLPs
 
 **Description:** First Level Processor (FLP) nodes are connected to the Front End Electronics of the detectors via P2P optical fibers. They provide the main function of detector readout while also running some local data processing and quality control.   
-**DB main table**: `flp_roles`   
+**DB main table**: `flp_roles`
 
 | **Field**                  | **Description** | **Example** | **Update time** | **Update Key** | **Update mode** |
 |----------------------------|-----------------|-------------|-----------------|----------------|-----------------|
@@ -129,7 +132,6 @@ Concerning the **Update mode** of the fields:
 | `bytes_equipment_read_out` | TBD             |             | At EOR          |                | Update          |
 | `bytes_recording_read_out` | TBD             |             | At SOR          |                | Update          |
 | `bytes_fair_m_q_read_out`  | TBD             |             | At SOR          |                | Update          |
-
 
 ## Log Entries
 
@@ -162,7 +164,6 @@ Concerning the **Update mode** of the fields:
 | `encoding`      | File Content-Transfer-Encoding value.               | `7bit`                                     | At Log Entry creation | `id`           | Insert          |
 | `log_id`        | ID of Log Entry to which the attachment belongs to. | `123`                                      | At Log Entry creation | `id`           | Insert          |
 
-
 ## Users
 
 **Description:** Bookkeeping user. Used to identify the author of a Log Entry.   
@@ -172,7 +173,6 @@ Concerning the **Update mode** of the fields:
 |---------------|---------------------------------------------------------------------------|-------------|-----------------|----------------|-----------------|
 | `external_id` | User ID on the external Authentication system (e.g. CERN Authentication). | `568223`    | At first login  | `id`           | Insert          |
 | `name`        | User full name..                                                          |             | At first login  | `id`           | Insert          |
-
 
 ## Tags
 
@@ -186,7 +186,6 @@ Concerning the **Update mode** of the fields:
 | `email`            | Email groups                                                   | `food@cern.ch`, `Bookkeeping-updates@cern.ch` |                                 | `id`           | Update          |
 | `last_edited_name` | Name of the person who last edited the email/mattermost fields | `Anonymous`, `Jan Janssen`                    | When email/mattermost is edited | `id`           | Update          |
 
-
 ## Environments
 
 **Description:** The overall environment the runs are performed in.    
@@ -199,7 +198,6 @@ Concerning the **Update mode** of the fields:
 | `toredownAt`    | When the environment is stopped                       |                                                                                   | AT EOE          | `id`           | Update          |
 | `status`        | Actual status of the envrionment                      | `STOPPED`, `STARTED`                                                              |                 | `id`           | Update          |
 | `statusMessage` | A bigger message to show more detail about the status | `Environment sucessfully closed`, `Error creating envrionment: bad configuration` |                 | `id`           | Update          |
-
 
 ### LhcFills
 
@@ -228,3 +226,55 @@ Concerning the **Update mode** of the fields:
 | `name`       |                             |              |                 | `fillNumber`   | Update          |
 | `created_at` | When the lhcFill is created |              | AT COF          | `fillNumber`   | Insert          |
 | `updated_at` | When the lhcFill is updated |              |                 | `fillNumber`   | Update          |
+
+### Host
+
+**Description:** Store the list of existing hosts, which are machines (or VMs) on which processes may run.
+**DB main table**: `hosts`
+
+| **Field**  | **Description**                       | **Example** | **Update time** | **Update Key** | **Update mode** |
+|------------|---------------------------------------|-------------|-----------------|----------------|-----------------|
+| `hostname` | Unique textual identifier of the host |             |                 | `id`           | Update          |
+
+### DplDetector
+
+**Description:** DPL may have its own list of detectors, that may contain for example combination of actual detectors.
+This table store the list of all the detectors that exists in the DPL context
+**DB main table**: `dpl_detectors`
+
+| **Field** | **Description**      | **Example**      | **Update time** | **Update Key** | **Update mode** |
+|-----------|----------------------|------------------|-----------------|----------------|-----------------|
+| `name`    | Name of the detector | `ITS`, `TPC&ITS` |                 | `id`           | Update          |
+
+### DplProcessType
+
+**Description:** DPL processes have a given type, which define their category of process. This table store the list of
+all the existing processes types.
+**DB main table**: `dpl_processes_types`
+
+| **Field** | **Description**          | **Example**            | **Update time** | **Update Key** | **Update mode** |
+|-----------|--------------------------|------------------------|-----------------|----------------|-----------------|
+| `label`   | Name of the process type | `QcTask`, `Dispatcher` |                 | `id`           | Update          |
+
+### DplProcess
+
+**Description:** Dpl have pre-defined list of processes that may be run (they are called `devices` in DPL naming). This
+table store the list of existing processes.
+**DB main table**: `dpl_processes`
+
+| **Field** | **Description**                                       | **Example** | **Update time** | **Update Key** | **Update mode** |
+|-----------|-------------------------------------------------------|-------------|-----------------|----------------|-----------------|
+| `name`    | Name of the DPL processe                              |             |                 | `id`           | Update          |
+| `type_id` | FK (`dpl_processes_types`) to the type of the process |             |                 | `id`           | Update          |
+
+### DplProcessExecution
+
+**Description:** This table store the list of all DPL processes execution.
+**DB main table**: `dpl_processes_executions`
+
+| **Field**     | **Description**                                                                   | **Example** | **Update time** | **Update Key** | **Update mode** |
+|---------------|-----------------------------------------------------------------------------------|-------------|-----------------|----------------|-----------------|
+| `detector_id` | FK (`dpl_detectors`) to the DPL detector for which this process has been executed |             |                 | `id`           | Update          |
+| `host_id`     | FK (`hosts`) to the host on which the process has been executed                   |             |                 | `id`           | Update          |
+| `process_id`  | FK (`dpl_processes`) to the process that has been executed                        |             |                 | `id`           | Update          |
+| `run_number`  | FK (`runs`) to the run for which this process has been executed                   |             |                 | `id`           | Update          |

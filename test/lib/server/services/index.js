@@ -12,6 +12,7 @@
  */
 
 const DetectorSuite = require('./detector/index.js');
+const DplSuite = require('./dpl/index.js');
 const Environment = require('./environment/index.js');
 const EnvironmentHistoryItemSuite = require('./environmentHistoryItem/index.js');
 const EosReportSuite = require('./eosReport/index.js');
@@ -23,6 +24,7 @@ const ShiftSuite = require('./shift/index.js');
 
 module.exports = () => {
     describe('Detector', DetectorSuite);
+    describe('DPL', DplSuite);
     describe('Environment', Environment);
     describe('Environment history item', EnvironmentHistoryItemSuite);
     describe('EOS report', EosReportSuite);

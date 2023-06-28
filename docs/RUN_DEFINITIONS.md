@@ -12,7 +12,7 @@ Bookkeeping receives updates about RUNs from multiple sources and based on them,
 
 ### PHYSICS:
 - be created and successully started during stable beams;
-- use as detectors at least:
+- use as detectors BOTH:
     - `FT0` (for luminiosity)
     - `ITS` (for vertex)
 - have all the following components enabled:
