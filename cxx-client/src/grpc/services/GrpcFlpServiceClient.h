@@ -30,10 +30,10 @@ class GrpcFlpServiceClient : public ::o2::bkp::api::FlpServiceClient
   void updateReadoutCountersByFlpNameAndRunNumber(
     const std::string& flpName,
     int32_t runNumber,
-    int64_t nSubtimeframes,
-    int64_t nEquipmentBytes,
-    int64_t nRecordingBytes,
-    int64_t nFairMQBytes) override;
+    uint64_t nSubtimeframes,
+    uint64_t nEquipmentBytes,
+    uint64_t nRecordingBytes,
+    uint64_t nFairMQBytes) override;
 
  private:
   std::unique_ptr<o2::bookkeeping::FlpService::Stub> mStub;

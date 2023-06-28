@@ -32,10 +32,10 @@ GrpcFlpServiceClient::GrpcFlpServiceClient(const std::shared_ptr<ChannelInterfac
 void GrpcFlpServiceClient::updateReadoutCountersByFlpNameAndRunNumber(
   const std::string& flpName,
   int32_t runNumber,
-  int64_t nSubtimeframes,
-  int64_t nEquipmentBytes,
-  int64_t nRecordingBytes,
-  int64_t nFairMQBytes)
+  uint64_t nSubtimeframes,
+  uint64_t nEquipmentBytes,
+  uint64_t nRecordingBytes,
+  uint64_t nFairMQBytes)
 {
   o2::bookkeeping::Flp updatedFlp;
   ClientContext context;
