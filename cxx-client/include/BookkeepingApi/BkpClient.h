@@ -25,9 +25,6 @@ class BkpClient
 
   /// Return the client for FLP service
   virtual const std::unique_ptr<FlpServiceClient>& flp() const = 0;
-
-  /// Return the client for DPL process execution service
-  virtual const std::unique_ptr<>& dplProcessService() const = 0;
 };
 } // namespace o2::bkp::api
 
