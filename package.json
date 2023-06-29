@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.56.1",
+  "version": "0.57.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -24,7 +24,7 @@
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
-    "sequelize": "6.31.0",
+    "sequelize": "6.32.1",
     "umzug": "3.2.1"
   },
   "files": [
@@ -34,7 +34,7 @@
   ],
   "devDependencies": {
     "chai": "4.3.4",
-    "eslint": "8.41.0",
+    "eslint": "8.43.0",
     "js-yaml": "4.1.0",
     "mocha": "10.2.0",
     "nodemon": "2.0.19",
@@ -42,7 +42,7 @@
     "puppeteer": "20.5.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
-    "sinon": "15.1.0",
+    "sinon": "15.2.0",
     "supertest": "6.3.0"
   },
   "bundleDependencies": [
