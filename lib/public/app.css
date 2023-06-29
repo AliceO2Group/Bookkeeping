@@ -571,6 +571,13 @@ a.btn, a.btn:hover, a.btn.active {
     gap: var(--space-s)
 }
 
+.danger a:visited,
+.danger a:active,
+.danger a:link,
+.danger a:hover {
+    color: var(--color-danger);
+}
+
 @media screen and (max-width: 900px) {
     .w-20 {
         width: 40vh;
