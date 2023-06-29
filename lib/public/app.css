@@ -15,6 +15,7 @@ html, body {
 .b1 { border-style: solid; border-width: 1px; }
 .b-danger { border-color: var(--color-danger); }
 .b-success { border-color: var(--color-success); }
+.b-primary { border-color: var(--color-primary); }
 
 .overflow {
     height: 1.5rem;
@@ -544,6 +545,11 @@ a.btn, a.btn:hover, a.btn.active {
     height: 1.7em;
     text-align: center;
     flex-shrink: 0;
+    border-style: solid;
+    border-width: 0px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    color: var(--color-primary);
 }
 
 /* Page layout styles */
