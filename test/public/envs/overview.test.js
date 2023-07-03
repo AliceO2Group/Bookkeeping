@@ -20,7 +20,6 @@ const {
     goToPage,
     checkColumnBalloon,
     checkEnvironmentStatusColor,
-    checkEnvironmentRowColor,
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw } = require('../defaults.js');
 
@@ -118,16 +117,7 @@ module.exports = () => {
         await checkEnvironmentStatusColor(page, 1, 4);
         await checkEnvironmentStatusColor(page, 2, 4);
         await checkEnvironmentStatusColor(page, 3, 4);
-    });
-
-    it('Should have correct row color in the overview page', async () => {
-        await goToPage(page, 'env-overview');
-        await page.waitForTimeout(100);
-
-        await checkEnvironmentRowColor(page, 1, 4);
-        await checkEnvironmentRowColor(page, 2, 4);
-        await checkEnvironmentRowColor(page, 3, 4);
-        await checkEnvironmentRowColor(page, 4, 4);
+        await checkEnvironmentStatusColor(page, 4, 4);
     });
 
     it('can set how many environments are available per page', async () => {
