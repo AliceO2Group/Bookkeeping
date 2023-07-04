@@ -146,4 +146,151 @@ module.exports = () => {
             expect(response.body.errors[0].detail).to.equal('"query.detectorId" is required');
         });
     });
+
+    describe('GET /api/dpl-process/hosts', async () => {
+        it('Should successfully return the list of hosts on which a given process has been executed for a given run and detector', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        detectorId: 1,
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.be.an('array');
+            expect(response.body.data.map(({ id }) => parseInt(id, 10))).to.eql([1, 2]);
+        });
+
+        it('Should successfully return a 404 when trying to get hosts for non-existing run', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 999,
+                        detectorId: 1,
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(404);
+        });
+
+        it('Should successfully return a 400 when trying to get hosts with an invalid run number', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 'not-a-number',
+                        detectorId: 1,
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.runNumber" must be a number');
+        });
+
+        it('Should successfully return a 400 when trying to get hosts without run number', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        detectorId: 1,
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.runNumber" is required');
+        });
+
+        it('Should successfully return a 404 when trying to get hosts for non-existing detector', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        detectorId: 999,
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(404);
+        });
+
+        it('Should successfully return a 400 when trying to get hosts with an invalid detector id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        detectorId: 'not-a-number',
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.detectorId" must be a number');
+        });
+
+        it('Should successfully return a 400 when trying to get hosts without detector id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        processId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.detectorId" is required');
+        });
+
+        it('Should successfully return a 404 when trying to get hosts for non-existing process', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        detectorId: 1,
+                        processId: 999,
+                    },
+                ));
+
+            expect(response.status).to.equal(404);
+        });
+
+        it('Should successfully return a 400 when trying to get hosts with an invalid process id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        detectorId: 1,
+                        processId: 'not-a-number',
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.processId" must be a number');
+        });
+
+        it('Should successfully return a 400 when trying to get hosts without process id', async () => {
+            const response = await request(server)
+                .get(buildUrl(
+                    '/api/dpl-process/hosts',
+                    {
+                        runNumber: 106,
+                        detectorId: 1,
+                    },
+                ));
+
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.processId" is required');
+        });
+    });
 };
