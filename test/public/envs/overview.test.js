@@ -117,6 +117,7 @@ module.exports = () => {
         await checkEnvironmentStatusColor(page, 1, 4);
         await checkEnvironmentStatusColor(page, 2, 4);
         await checkEnvironmentStatusColor(page, 3, 4);
+        await checkEnvironmentStatusColor(page, 4, 4);
     });
 
     it('can set how many environments are available per page', async () => {

@@ -280,10 +280,11 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
  * @returns {Promise<Chai.Assertion>} void promise
  */
 module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex) => {
-    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
-    const cellContent = await getInnerHtml(cell);
+    const cellStatus = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex})`);
+    const cellStatusContent = await getInnerHtml(cellStatus);
 
-    switch (cellContent) {
+    switch (cellStatusContent) {
         case 'RUNNING':
             expect(await cell.$('.success')).to.not.be.null;
             break;
