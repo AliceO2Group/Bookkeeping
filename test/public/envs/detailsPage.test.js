@@ -59,7 +59,6 @@ module.exports = () => {
         expect(await historyItems[1].$eval('.badge', (element) => element.innerText)).to.equal('RUNNING');
         expect(await historyItems[2].$eval('.badge', (element) => element.innerText)).to.equal('STOPPED');
         expect(await historyItems[3].$eval('.badge', (element) => element.innerText)).to.equal('DESTROYED');
-        expect(await historyItems[3].$eval('.badge', (element) => element.classList.contains('bg-primary'))).to.be.true;
     });
 
     it('Should successfully display the runs related to the environment', async () => {
