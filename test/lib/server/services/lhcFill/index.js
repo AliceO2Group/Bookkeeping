@@ -11,12 +11,10 @@
  *  or submit itself to any jurisdiction.
  */
 
-export const ShiftTypes = {
-    ECS: 'ECS',
-    QC_PDP: 'QC/PDP',
-    SLIMOS: 'SLIMOS',
-    SL: 'SL',
-    DCS: 'DCS',
-};
+const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
+const LhcFillServiceTest = require('./LhcFillService.test.js');
 
-export const SHIFT_TYPES = Object.values(ShiftTypes);
+module.exports = () => {
+    before(resetDatabaseContent);
+    describe('LhcFillService', LhcFillServiceTest);
+};

@@ -17,7 +17,8 @@ const {
     defaultAfter,
     checkMismatchingUrlParam,
     waitForNetworkIdleAndRedraw,
-    reloadPage, fillInput,
+    reloadPage,
+    fillInput,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -26,6 +27,8 @@ const { createRun } = require('../../../lib/server/services/run/createRun.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { customizedQcPdpEosReport } = require('../../mocks/mock-qc-pdp-eos-report.js');
 const { updateRunDetector } = require('../../../lib/server/services/runDetector/updateRunDetector.js');
+const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
+const { formatShiftDate } = require('../../../lib/server/services/shift/formatShiftDate.js');
 
 module.exports = () => {
     let page;
@@ -74,6 +77,12 @@ module.exports = () => {
 
         await reloadPage(page);
 
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const magnetStart = formatShiftDate(currentShift.start, { time: true });
+        const magnet1 = formatShiftDate(currentShift.start + 3600 * 4 * 1000, { time: true });
+        const magnet2 = formatShiftDate(currentShift.start + 3600 * 2 * 1000, { time: true });
+        const magnetEnd = formatShiftDate(currentShift.end, { time: true });
+
         await page.waitForSelector('#shifter-name input');
         expect(await page.$eval('#shifter-name input', (input) => input.value)).to.equal('Anonymous');
         await page.focus('#shifter-name input');
@@ -91,6 +100,35 @@ module.exports = () => {
         await page.focus('#shift-flow .CodeMirror textarea');
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
+        await page.waitForSelector('#type-specific #magnets-start input:nth-of-type(1)');
+        await page.focus('#type-specific #magnets-start input:nth-of-type(1)');
+        await page.keyboard.type('solenoid-start');
+        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
+        await page.keyboard.type('dipole-start');
+
+        await page.click('#type-specific #magnets-add');
+        await page.click('#type-specific #magnets-add');
+        await page.click('#type-specific #magnets-add');
+        await page.waitForSelector('#type-specific #magnets-0 .btn-danger');
+        await page.click('#type-specific #magnets-0 .btn-danger');
+
+        await fillInput(page, '#type-specific #magnets-1 input:nth-of-type(1)', magnet1);
+        await page.focus('#type-specific #magnets-1 input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
+        await page.focus('#type-specific #magnets-1 input:nth-of-type(3)');
+        await page.keyboard.type('dipole-1');
+
+        await fillInput(page, '#type-specific #magnets-2 input:nth-of-type(1)', magnet2);
+        await page.focus('#type-specific #magnets-2 input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-2');
+        await page.focus('#type-specific #magnets-2 input:nth-of-type(3)');
+        await page.keyboard.type('dipole-2');
+
+        await page.focus('#type-specific #magnets-end input:nth-of-type(1)');
+        await page.keyboard.type('solenoid-end');
+        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
+        await page.keyboard.type('dipole-end');
+
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
         await page.focus('#from-previous-shifter .CodeMirror textarea');
         await page.keyboard.type('From previous shifter\nOn multiple lines');
@@ -107,6 +145,7 @@ module.exports = () => {
         await page.click('#submit');
 
         await waitForNetworkIdleAndRedraw(page);
+
         expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '120' })).to.eql({});
 
         // Fetch log manually, because it's hard to parse codemirror display
@@ -116,14 +155,19 @@ module.exports = () => {
         expect(text.includes('## Issues during the shift\n')).to.be.true;
         expect(text.includes(`## Runs
 
-### COMMISSIONING
+### COMMISSIONING (1)
 - [200](http://localhost:4000?page=run-detail&id=108)
 
-### TECHNICAL
+### TECHNICAL (2)
 - [201](http://localhost:4000?page=run-detail&id=109)
 - [202](http://localhost:4000?page=run-detail&id=110)`)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
+        expect(text.includes(`## Magnets
+- ${magnetStart} - Solenoid solenoid-start - Dipole dipole-start
+- ${magnet2} - Solenoid solenoid-2 - Dipole dipole-2
+- ${magnet1} - Solenoid solenoid-1 - Dipole dipole-1
+- ${magnetEnd} - Solenoid solenoid-end - Dipole dipole-end`)).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;

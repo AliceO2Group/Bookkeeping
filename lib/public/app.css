@@ -15,6 +15,7 @@ html, body {
 .b1 { border-style: solid; border-width: 1px; }
 .b-danger { border-color: var(--color-danger); }
 .b-success { border-color: var(--color-success); }
+.b-primary { border-color: var(--color-primary); }
 
 .overflow {
     height: 1.5rem;
@@ -538,6 +539,19 @@ a.btn, a.btn:hover, a.btn.active {
     display: block;
 }
 
+/* Contextual messages */
+.contextual-message-icon {
+    width: 1.7em;
+    height: 1.7em;
+    text-align: center;
+    flex-shrink: 0;
+    border-style: solid;
+    border-width: 0px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    color: var(--color-primary);
+}
+
 /* Page layout styles */
 
 #global-container {
@@ -561,6 +575,13 @@ a.btn, a.btn:hover, a.btn.active {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-s)
+}
+
+.danger a:visited,
+.danger a:active,
+.danger a:link,
+.danger a:hover {
+    color: var(--color-danger);
 }
 
 @media screen and (max-width: 900px) {

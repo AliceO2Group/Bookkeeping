@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.58.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.58.0)
+* Notable changes for users:
+  * Adds total TF size display to LHC fill details, renamed 'total CTF' to 'total CTF size'
+  * Environment status in overview page is now colored according to the status
+  * Hints has been added on some of the EoS reports form fields
+  * A button to create EoS report has been added to the permanent top-bar of the application
+  * The DCS EoS report is now available
+  * A new gRPC enpoint has been added to fetch the last LHC fill
+  * The total TF size is now displayed on LHC fill details page
+
 ## [0.57.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.57.0)
 * Notable changes for users:
   * The SLIMOS automatic EoS report has been added
