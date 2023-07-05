@@ -19,9 +19,16 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 
 module.exports = () => {
     it('should successfully return the list of detectors that have an executed process for a given run', async () => {
-        const detectors = await dplProcessService.getAllDetectorsWithExecutedProcessesByRun({ runNumber: 106 });
-        expect(detectors.map(({ id }) => id)).to.eql([1, 2]);
-        expect(detectors.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        {
+            const detectors = await dplProcessService.getAllDetectorsWithExecutedProcessesByRun({ runNumber: 106 });
+            expect(detectors.map(({ id }) => id)).to.eql([1, 2]);
+            expect(detectors.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
+        {
+            const detectors = await dplProcessService.getAllDetectorsWithExecutedProcessesByRun({ runId: 106 });
+            expect(detectors.map(({ id }) => id)).to.eql([1, 2]);
+            expect(detectors.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
     });
 
     it('should throw an error if trying to fetch detectors for a run that does not exist', async () => {
@@ -32,12 +39,30 @@ module.exports = () => {
     });
 
     it('should successfully return the list of processes that have an executed process for a given run and a given detector', async () => {
-        const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
-            { runNumber: 106 },
-            { dplDetectorId: 1 },
-        );
-        expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
-        expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        {
+            const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+            );
+            expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
+            expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
+        {
+            const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
+                { runId: 106 },
+                { dplDetectorId: 1 },
+            );
+            expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
+            expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
+        {
+            const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorName: 'CPV' },
+            );
+            expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
+            expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
     });
 
     it('should throw an error if trying to fetch processes for a run that does not exist', async () => {
@@ -61,13 +86,42 @@ module.exports = () => {
     });
 
     it('should successfully return the list of hosts that have a given process executed for a given run and a given detector', async () => {
-        const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
-            { runNumber: 106 },
-            { dplDetectorId: 1 },
-            { dplProcessId: 1 },
-        );
-        expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
-        expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        {
+            const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+            );
+            expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
+            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
+        {
+            const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runId: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+            );
+            expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
+            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
+        {
+            const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorName: 'CPV' },
+                { dplProcessId: 1 },
+            );
+            expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
+            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
+        {
+            const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessName: 'PROCESS-1', dplProcessTypeId: 1 },
+            );
+            expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
+            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
+        }
     });
 
     it('should throw an error if trying to fetch hosts for a run that does not exist', async () => {
@@ -104,13 +158,51 @@ module.exports = () => {
     });
 
     it('should successfully return the list of execution of a given process on a given host for a given run and a given detector', async () => {
-        const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
-            { runNumber: 106 },
-            { dplDetectorId: 1 },
-            { dplProcessId: 1 },
-            { hostId: 1 },
-        );
-        expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+        {
+            const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+                { hostId: 1 },
+            );
+            expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+        }
+        {
+            const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runId: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+                { hostId: 1 },
+            );
+            expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+        }
+        {
+            const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorName: 'CPV' },
+                { dplProcessId: 1 },
+                { hostId: 1 },
+            );
+            expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+        }
+        {
+            const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessName: 'PROCESS-1', dplProcessTypeId: 1 },
+                { hostId: 1 },
+            );
+            expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+        }
+        {
+            const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
+                { runNumber: 106 },
+                { dplDetectorId: 1 },
+                { dplProcessId: 1 },
+                { hostname: 'FLP-1' },
+            );
+            expect(processesExecutions.map(({ id }) => id)).to.eql([2]);
+        }
     });
 
     it('should throw an error if trying to fetch process executions for a run that does not exist', async () => {
