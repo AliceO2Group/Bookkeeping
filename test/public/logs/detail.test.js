@@ -124,7 +124,7 @@ module.exports = () => {
         expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
     });
 
-    it('should successfully inherit parent log title if user does not provide one to a reply', async () => {
+    it('should successfully inherit parent log title', async () => {
         const parentLogId = 2;
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
@@ -156,6 +156,6 @@ module.exports = () => {
         const newLogId = await page.evaluate(() => window.model.router.params.id);
         const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
-        expect(newLogTitle).to.equal(`Re: ${parentLogTitle}`);
+        expect(newLogTitle).to.equal(`${parentLogTitle}`);
     });
 };
