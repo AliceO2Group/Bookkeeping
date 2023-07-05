@@ -385,19 +385,19 @@ module.exports = () => {
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
+        expect(table.length).to.equal(4);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(1);
+        expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmics]);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
+        expect(table.length).to.equal(3);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmics, RunDefinition.Technical]);
 
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
@@ -428,7 +428,7 @@ module.exports = () => {
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
         await page.waitForTimeout(300);
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(9);
+        expect(table.length).to.equal(10);
         await checkTableRunDefinitions(
             table,
             [RunDefinition.Cosmics, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],

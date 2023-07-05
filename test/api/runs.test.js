@@ -260,7 +260,7 @@ module.exports = () => {
 
             const { data } = response.body;
 
-            expect(data.length).to.equal(19);
+            expect(data.length).to.equal(20);
         });
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)

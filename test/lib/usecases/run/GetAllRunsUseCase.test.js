@@ -73,7 +73,7 @@ module.exports = () => {
 
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
-        const COSMICS_COUNT = 1;
+        const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
         const CALIBRATION_COUNT = 1;
@@ -180,7 +180,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
     });
 
     it('should return an array with specified limit, only containing runs with dcs false or null', async () => {
@@ -475,7 +475,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(19);
+        expect(runs).to.have.lengthOf(20);
     });
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
