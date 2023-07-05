@@ -57,7 +57,6 @@ int main(int argc, char** argv)
     creationRequest->set_processname("PROCESS-NAME");
     creationRequest->set_type(o2::bookkeeping::DPL_PROCESS_TYPE_MERGER);
     creationRequest->set_hostname("HOSTNAME");
-    request->add_relations(RUN_RELATIONS_LHC_FILL);
     std::shared_ptr<DplProcessExecution> dplProcessExecution = client->dplProcessExecution()->Create(creationRequest);
 
     // Short version
