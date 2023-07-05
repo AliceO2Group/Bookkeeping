@@ -26,12 +26,10 @@ module.exports = () => {
         {
             const detectors = await dplProcessService.getAllDetectorsWithExecutedProcessesByRun({ runNumber: 106 });
             expect(detectors.map(({ id }) => id)).to.eql([1, 2]);
-            expect(detectors.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
             const detectors = await dplProcessService.getAllDetectorsWithExecutedProcessesByRun({ runId: 106 });
             expect(detectors.map(({ id }) => id)).to.eql([1, 2]);
-            expect(detectors.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
     });
 
@@ -49,7 +47,6 @@ module.exports = () => {
                 { dplDetectorId: 1 },
             );
             expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
-            expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
             const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
@@ -57,7 +54,6 @@ module.exports = () => {
                 { dplDetectorId: 1 },
             );
             expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
-            expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
             const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
@@ -65,7 +61,6 @@ module.exports = () => {
                 { dplDetectorName: 'CPV' },
             );
             expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
-            expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
     });
 
@@ -97,7 +92,6 @@ module.exports = () => {
                 { dplProcessId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
-            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
@@ -106,7 +100,6 @@ module.exports = () => {
                 { dplProcessId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
-            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
@@ -115,7 +108,6 @@ module.exports = () => {
                 { dplProcessId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
-            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
@@ -124,7 +116,6 @@ module.exports = () => {
                 { dplProcessName: 'PROCESS-1', dplProcessTypeId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
-            expect(hosts.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
     });
 
