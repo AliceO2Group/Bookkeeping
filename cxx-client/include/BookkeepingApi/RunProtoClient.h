@@ -13,6 +13,8 @@ namespace o2::bkp::api::proto
 class RunProtoClient
 {
  public:
+  virtual ~RunProtoClient() = default;
+
   /// Returns the run corresponding to the given run number with optionally its relations
   virtual std::shared_ptr<bookkeeping::RunWithRelations> Get(const int runNumber, const std::vector<o2::bookkeeping::RunRelations>& relations) = 0;
 
@@ -21,4 +23,4 @@ class RunProtoClient
 };
 } // namespace o2::bkp::api::proto
 
-#endif // BOOKKEEPINGAPI_RUNPROTOCLIENT_H
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_RUNPROTOCLIENT_H
