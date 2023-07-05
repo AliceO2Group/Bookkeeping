@@ -29,7 +29,7 @@ module.exports = () => {
     it('Should throw when creating a log with a non-existing parent', async () => {
         await assert.rejects(
             () => logService.create({ ...logMock, parentLogId: 9999 }),
-            new NotFoundError('Parent log with this id (9999) does not exists'),
+            new NotFoundError('Parent log with this id (9999) could not be found'),
         );
     });
 };

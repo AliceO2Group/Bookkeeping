@@ -106,10 +106,8 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
 
-        const title = 'Test the reply button';
         const text = 'Test the reply button';
 
-        await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
         await page.waitForTimeout(250);
