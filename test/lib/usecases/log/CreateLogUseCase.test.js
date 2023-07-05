@@ -75,8 +75,8 @@ module.exports = () => {
         expect(result.tags.map(({ text }) => text)).to.deep.equal(expectedTagTexts);
     });
 
-    it('should create a new Log with empty title but a parent log', async () => {
-        const expectedTitle = '';
+    it('should successfully take the parent\'s title if none has been provided', async () => {
+        const expectedTitle = 'Third entry';
         const expectedParentLogId = 3;
 
         createLogDto.body.title = expectedTitle;
@@ -93,6 +93,7 @@ module.exports = () => {
         expect(result.title).to.equal(expectedTitle);
         expect(result.parentLogId).to.equal(expectedParentLogId);
     });
+
     it('should create a new Log with no duplicate run numbers', async () => {
         const expectedResult = [
             { id: 1, runNumber: 1 },

@@ -41,7 +41,7 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the log creation screen to be shown correctly
-        const header = await page.$('h3');
+        const header = await page.$('.f3');
         expect(Boolean(header)).to.be.true;
         const headerText = await page.evaluate((element) => element.innerText, header);
         expect(headerText).to.equal('New log');
@@ -80,6 +80,13 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
+    });
+
+    it('Should successfully display the log-reply form', async () => {
+        await goToPage(page, 'log-create&parentLogId=1');
+
+        const header = await page.$eval('.f3', (element) => element.textContent);
+        expect(header).to.equal('Reply to: First entry');
     });
 
     it('can disable submit with invalid data', async () => {

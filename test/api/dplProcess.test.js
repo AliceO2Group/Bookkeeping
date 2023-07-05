@@ -24,7 +24,7 @@ module.exports = () => {
         it('Should successfully return the list of detectors that have at least one executed process for the given run', async () => {
             const response = await request(server).get(buildUrl('/api/dpl-process/detectors', { runNumber: 106 }));
 
-            await new Promise((res) => setTimeout(res, 20));
+            await new Promise((res) => setTimeout(res, 50));
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('array');
             expect(response.body.data.map(({ id }) => parseInt(id, 10))).to.eql([1, 2]);

@@ -106,10 +106,8 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
 
-        const title = 'Test the reply button';
         const text = 'Test the reply button';
 
-        await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
         await page.waitForTimeout(250);
@@ -124,7 +122,7 @@ module.exports = () => {
         expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
     });
 
-    it('should successfully inherit parent log title if user does not provide one to a reply', async () => {
+    it('should successfully inherit parent log title', async () => {
         const parentLogId = 2;
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
@@ -156,6 +154,6 @@ module.exports = () => {
         const newLogId = await page.evaluate(() => window.model.router.params.id);
         const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
-        expect(newLogTitle).to.equal(`Re: ${parentLogTitle}`);
+        expect(newLogTitle).to.equal(`${parentLogTitle}`);
     });
 };
