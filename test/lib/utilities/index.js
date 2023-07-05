@@ -11,10 +11,14 @@
  * or submit itself to any jurisdiction.
  */
 
+const buildUrlTest = require('./buildUrl.test.js');
 const deepmerge = require('./deepmerge.test.js');
 const isPromise = require('./isPromise.test.js');
+const stringUtilsTest = require('./stringUtils.test.js');
 
 module.exports = () => {
+    describe('buildUrl', buildUrlTest);
     describe('deepmerge', deepmerge);
     describe('isPromise', isPromise);
+    describe('stringUtils', stringUtilsTest);
 };
