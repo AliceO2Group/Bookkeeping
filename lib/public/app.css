@@ -552,6 +552,13 @@ a.btn, a.btn:hover, a.btn.active {
     color: var(--color-primary);
 }
 
+/* Tree */
+.tree-node .tree-node-children {
+    padding-left: var(--space-m);
+    margin-left: var(--space-m);
+    border-left: 1px solid var(--color-gray);
+}
+
 /* Page layout styles */
 
 #global-container {
