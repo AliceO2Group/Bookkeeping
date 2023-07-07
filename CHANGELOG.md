@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.59.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.0)
+* Notable changes for users:
+  * A gRPC endpoint to insert DPL process executions has been added, and it has been implemented in the gRPC c++ library
+  * Fixed the COSMICS run filtering, now correctly allowing for undefined beam
+  * When replying to a log, the reply title is the same as the parent and is not modifiable
+  * Added HTTP endpoint for DPL processes:
+    * An endpoint to fetch all DPL processes that have been executed on a given run and detector
+    * An endpoint to fetch all the hosts on which a given process has been executed for a given run & detector
+    * An endpoint to fetch all the executions of a given process, on a given host for a given run & detector
+  * In environment overview page, the full line of environments that has been to error at some point are displayed in red
+  * The list of executed DPL processes are now available in a new tab in run details page
+  * Fix the visibility of environment details badges
+  * An icon has been added to environment overview to highlight environments that have been to error but are not in error anymore
+* Notable changes for developers:
+  * A reusable component has been created to display tabbed components 
+  * The run-details page has been reworked to use the new tabs system
+
 ## [0.58.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.58.0)
 * Notable changes for users:
   * Adds total TF size display to LHC fill details, renamed 'total CTF' to 'total CTF size'
