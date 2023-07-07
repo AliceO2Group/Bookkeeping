@@ -14,9 +14,11 @@
 const getRunDefinitionTest = require('./getRunDefinition.test.js');
 const getRunsInPeriodTest = require('./getRunsInPeriod.test.js');
 const RunServiceTest = require('./RunService.test.js');
+const updateRunTest = require('./updateRun.test.js');
 
 module.exports = () => {
     describe('getRunDefinition', getRunDefinitionTest);
     describe('getRunsInPeriod', getRunsInPeriodTest);
     describe('RunService', RunServiceTest);
+    describe('updateRun', updateRunTest);
 };

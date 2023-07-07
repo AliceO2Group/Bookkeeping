@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
 const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
+const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 
 module.exports = () => {
     const baseRun = {
@@ -40,7 +41,7 @@ module.exports = () => {
         expect(run.runType).to.be.an('object');
         expect(run.runType.name).to.equal('DoNotExists');
 
-        run = await runService.update({ ...baseRun, runNumber: 112 }, {}, { runTypeName: 'DoNotExistsEither' });
+        run = await runService.update({ runNumber: 112 }, {}, { runTypeName: 'DoNotExistsEither' });
         expect(run.runType).to.be.an('object');
         expect(run.runType.name).to.equal('DoNotExistsEither');
     });
@@ -50,5 +51,25 @@ module.exports = () => {
         expect(run.detectors).to.be.a('string');
         expect((await getDetectorsByNames(['DONOTEXISTS', 'DONOTEXISTSEITHER'])).map(({ name }) => name))
             .to.eql(['DONOTEXISTS', 'DONOTEXISTSEITHER']);
+    });
+
+    it('should successfully compute definition when creating a new run', async () => {
+        const timeTrgStart = new Date('2022-03-21 17:00:00');
+        const timeTrgEnd = new Date('2022-03-21 19:00:00');
+
+        const run = await runService.create({
+            dcs: true,
+            dd_flp: true,
+            epn: true,
+            triggerValue: 'CTP',
+            tfbDdMode: 'processing',
+            pdpWorkflowParameters: 'QC,CTF',
+            concatenatedDetectors: 'ITS, TST, FT0',
+            runNumber: 114,
+            fillNumber: 3,
+            timeTrgStart,
+            timeTrgEnd,
+        });
+        expect(run.definition).to.equal(RunDefinition.Physics);
     });
 };
