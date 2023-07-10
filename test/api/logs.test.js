@@ -188,15 +188,15 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal('Creation date must be a real date and in format YYYY-MM-DD or YYYY/MM/DD');
+                        .equal('"query.filter.created.from" must be a valid date');
 
                     done();
                 });
         });
 
-        it('should return 400 if filtering in the future', (done) => {
+        it('should return 400 if filtering "from" in the future', (done) => {
             request(server)
-                .get('/api/logs?filter[created][to]=4102531200000')
+                .get('/api/logs?filter[created][from]=4102531200000')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -210,7 +210,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal(`Creation date must be today (${today}T23:59:59.999Z) or earlier`);
+                        .equal('"query.filter.created.from" must be less than "now"');
 
                     done();
                 });
@@ -228,7 +228,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal('Creation date "to" cannot be before the "from" date');
+                        .equal('"query.filter.created.to" must be greater than "ref:from"');
 
                     done();
                 });

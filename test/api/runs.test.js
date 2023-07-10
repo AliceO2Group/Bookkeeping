@@ -170,7 +170,7 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
 
-        it('should return 400 if "to" date is before "from" date', (done) => {
+        it('should return 400 if o2start "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
                 .expect(400)
@@ -181,14 +181,13 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    expect(errors[0].detail).to
-                        .equal('Creation date "to" cannot be before the "from" date');
+                    expect(errors[0].detail).to.equal('"query.filter.o2start.to" must be greater than "ref:from"');
 
                     done();
                 });
         });
 
-        it('should return 400 if "to" date is before "from" date', (done) => {
+        it('should return 400 if o2start  "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2end][from]=946771200000&filter[o2end][to]=946684800000')
                 .expect(400)
@@ -199,14 +198,13 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    expect(errors[0].detail).to
-                        .equal('Creation date "to" cannot be before the "from" date');
+                    expect(errors[0].detail).to.equal('"query.filter.o2end.to" must be greater than "ref:from"');
 
                     done();
                 });
         });
 
-        it('should return 400 with 3 errors when all the wrong data is given', (done) => {
+        it('should return 400 with 2 errors when from is after to and after now', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=1896130800000&filter[o2start][to]=1893452400000')
                 .expect(400)
@@ -217,7 +215,7 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    expect(errors.length).to.equal(3);
+                    expect(errors.length).to.equal(2);
                     done();
                 });
         });
