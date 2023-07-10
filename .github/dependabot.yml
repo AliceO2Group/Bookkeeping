@@ -27,8 +27,8 @@ updates:
         - "supertest"
     grpc:
       patterns:
-      - "@grpc/grpc-js"
-      - "@grpc/proto-loader"
+        - "@grpc/grpc-js"
+        - "@grpc/proto-loader"
   open-pull-requests-limit: 10
   versioning-strategy: increase
   ignore:
