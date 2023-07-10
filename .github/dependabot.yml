@@ -11,6 +11,24 @@ updates:
     day: "tuesday"
     time: "07:00"
     timezone: "Europe/Zurich"
+  groups:
+    dev-dependencies:
+      patterns:
+        - "chai"
+        - "eslint"
+        - "js-yaml"
+        - "mocha"
+        - "nodemon"
+        - "nyc"
+        - "puppeteer"
+        - "puppeteer-to-istanbul"
+        - "sequelize-cli"
+        - "sinon"
+        - "supertest"
+    grpc:
+      patterns:
+      - "@grpc/grpc-js"
+      - "@grpc/proto-loader"
   open-pull-requests-limit: 10
   versioning-strategy: increase
   ignore:
