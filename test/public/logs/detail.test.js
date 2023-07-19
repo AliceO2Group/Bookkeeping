@@ -43,15 +43,16 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect other runs to be closed
-        const closedLog1 = await page.$$('#log-117 table tbody tr');
+        // const closedLog1 = await page.$$('#log-117 table tbody tr');
+        const closedLog1 = await page.$$('#log-117 .log-details > *')
         expect(closedLog1).to.have.lengthOf(2);
 
-        const closedLog2 = await page.$$('#log-118 table tbody tr');
+        const closedLog2 = await page.$$('#log-118 .log-details > *');
         expect(closedLog2).to.have.lengthOf(2);
 
         // Expect targeted run to be opened
-        const openedLog = await page.$$('#log-119 table tbody tr');
-        expect(openedLog).to.have.lengthOf(9);
+        const openedLog = await page.$$('#log-119 .log-details > *');
+        expect(openedLog).to.have.lengthOf(3);
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
