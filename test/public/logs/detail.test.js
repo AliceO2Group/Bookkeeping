@@ -43,8 +43,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect other runs to be closed
-        // const closedLog1 = await page.$$('#log-117 table tbody tr');
-        const closedLog1 = await page.$$('#log-117 .log-details > *')
+        const closedLog1 = await page.$$('#log-117 .log-details > *');
         expect(closedLog1).to.have.lengthOf(2);
 
         const closedLog2 = await page.$$('#log-118 .log-details > *');
