@@ -41,7 +41,7 @@ module.exports = () => {
 
     it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
-        takeScreenshot(page)
+        takeScreenshot(page);
         // Expect other runs to be closed
         const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
         expect(closedLog1).to.have.lengthOf(2);
