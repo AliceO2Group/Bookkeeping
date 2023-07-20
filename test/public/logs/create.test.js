@@ -233,7 +233,7 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
         const attachmentsField = await page.$(`#log-${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
-        expect(attachmentsText).to.equal(`${file1}, ${file2}`);
+        expect(attachmentsText).to.equal(`Attachments:\n${file1},\n${file2}`);
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -306,7 +306,7 @@ module.exports = () => {
         const runsField = await page.$(`#log-${rowId}-runs`);
 
         const runsText = await page.evaluate((element) => element.innerText, runsField);
-        expect(runsText).to.equal(runNumbersStr);
+        expect(runsText).to.equal(`Runs:\n${runNumbersStr}`);
     });
 
     it('can create a log with multiple run numbers', async () => {

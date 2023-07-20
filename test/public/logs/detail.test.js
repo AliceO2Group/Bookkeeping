@@ -44,14 +44,14 @@ module.exports = () => {
 
         // Expect other runs to be closed
         const closedLog1 = await page.$$('#log-117 .log-details > *');
-        expect(closedLog1).to.have.lengthOf(2);
+        expect(closedLog1).to.have.lengthOf(1);
 
         const closedLog2 = await page.$$('#log-118 .log-details > *');
-        expect(closedLog2).to.have.lengthOf(2);
+        expect(closedLog2).to.have.lengthOf(1);
 
         // Expect targeted run to be opened
-        const openedLog = await page.$$('#log-119 .log-details > *');
-        expect(openedLog).to.have.lengthOf(3);
+        const openedLog = await page.$$('#log-119 .log-expanded > *');
+        expect(openedLog).to.have.lengthOf(4);
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
@@ -83,7 +83,7 @@ module.exports = () => {
         // We expect the correct associated runs to be shown
         const runField = await page.$(`#log-${logId}-runs`);
         const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Runs:\t\n${runId}`);
+        expect(runText).to.equal(`Runs:\n${runId}`);
 
         // We expect the associated runs to be clickable with a valid link
         const runLink = await page.$(`#log-${logId}-runs a`);
