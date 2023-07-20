@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, takeScreenshot } = require('../defaults');
 
 const { expect } = chai;
 
@@ -41,16 +41,16 @@ module.exports = () => {
 
     it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
-
+        takeScreenshot(page)
         // Expect other runs to be closed
-        const closedLog1 = await page.$$('#log-117 .log-details > *');
-        expect(closedLog1).to.have.lengthOf(1);
+        const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
+        expect(closedLog1).to.have.lengthOf(2);
 
-        const closedLog2 = await page.$$('#log-118 .log-details > *');
-        expect(closedLog2).to.have.lengthOf(1);
+        const closedLog2 = await page.$$('#log-118 .log-details-collapsed > *');
+        expect(closedLog2).to.have.lengthOf(2);
 
         // Expect targeted run to be opened
-        const openedLog = await page.$$('#log-119 .log-expanded > *');
+        const openedLog = await page.$$('#log-119 .log-details-expanded > *');
         expect(openedLog).to.have.lengthOf(4);
     });
 
