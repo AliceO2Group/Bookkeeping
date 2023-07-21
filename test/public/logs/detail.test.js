@@ -41,7 +41,7 @@ module.exports = () => {
 
     it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
-        takeScreenshot(page);
+
         // Expect other runs to be closed
         const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
         expect(closedLog1).to.have.lengthOf(2);
@@ -52,6 +52,14 @@ module.exports = () => {
         // Expect targeted run to be opened
         const openedLog = await page.$$('#log-119 .log-details-expanded > *');
         expect(openedLog).to.have.lengthOf(4);
+    });
+
+    it('should display a button on each log for copying the url of the log', async () => {
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        // Expect the button to be there
+        const log119CopyBtn = await page.$('#log-119 #copy-119');
+        expect(log119CopyBtn).to.exist;
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
