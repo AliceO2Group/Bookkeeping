@@ -17,6 +17,7 @@ const PublicSuite = require('./lib/public');
 const ServerSuite = require('./lib/server');
 const UseCasesSuite = require('./lib/usecases');
 const UtilitiesSuite = require('./lib/utilities');
+const GrpcSuite = require('./gRPC');
 
 const APISuite = require('./api');
 const FrontendSuite = require('./public');
@@ -40,6 +41,7 @@ describe('Bookkeeping', () => {
         describe('Server', ServerSuite);
         describe('Use Cases', UseCasesSuite);
         describe('Utilities', UtilitiesSuite);
+        describe('gRPC suite', GrpcSuite);
     });
 
     describe('Integration Suite', () => {

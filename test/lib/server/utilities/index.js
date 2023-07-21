@@ -13,8 +13,10 @@
 
 const appendPathTest = require('./appendPath.test.js');
 const isAnEmptyShellTest = require('./isAnEmptyShell.test.js');
+const bigIntConverter = require('./bigIntConverter.test.js');
 
 module.exports = () => {
     describe('appendPath', appendPathTest);
+    describe('bigIntConverter', bigIntConverter);
     describe('isAnEmptyShell', isAnEmptyShellTest);
 };
