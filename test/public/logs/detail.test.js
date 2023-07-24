@@ -66,10 +66,10 @@ module.exports = () => {
         expect(log117CopyBtn).to.exist;
 
         await log117CopyBtn.click();
-        
+
         // The url has log 119, but the clipboard should have the url for 117.
-        actualClipboardContents = await page.evaluate(() => navigator.clipboard.readText())
-        expectedClipboardContents = url + '/?page=log-detail&id=117';
+        const actualClipboardContents = await page.evaluate(() => navigator.clipboard.readText());
+        const expectedClipboardContents = `${url}/?page=log-detail&id=117`;
         expect(actualClipboardContents).to.equal(expectedClipboardContents);
     });
 
