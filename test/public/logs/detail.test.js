@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, takeScreenshot } = require('../defaults');
 
 const { expect } = chai;
 
@@ -55,11 +55,22 @@ module.exports = () => {
     });
 
     it('should display a button on each log for copying the url of the log', async () => {
+        // Enable permissions to read/write to the clipboard. Ensure we keep sanitized write
+        const context = browser.defaultBrowserContext();
+        context.overridePermissions(url, ['clipboard-read', 'clipboard-write', 'clipboard-sanitized-write']);
+
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
-        // Expect the button to be there
-        const log119CopyBtn = await page.$('#log-119 #copy-119');
-        expect(log119CopyBtn).to.exist;
+        // Expect the button to be there. Log 117 should be a parent to 119.
+        const log117CopyBtn = await page.$('#copy-117');
+        expect(log117CopyBtn).to.exist;
+
+        await log117CopyBtn.click();
+        
+        // The url has log 119, but the clipboard should have the url for 117.
+        actualClipboardContents = await page.evaluate(() => navigator.clipboard.readText())
+        expectedClipboardContents = url + '/?page=log-detail&id=117';
+        expect(actualClipboardContents).to.equal(expectedClipboardContents);
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
