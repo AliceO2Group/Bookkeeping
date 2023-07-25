@@ -328,35 +328,35 @@ module.exports = () => {
 
         let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(7);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS   ,   FT0';
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(5);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS,FT0';
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(5);
 
         getAllRunsDto.query.filter.detectors.values = 'FT0,ITS';
 
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(5);
 
         getAllRunsDto.query.filter.detectors.operator = 'or';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(7);
 
         getAllRunsDto.query.filter.detectors.operator = 'none';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(3);
     });
 
     it('should successfully filter on detectors number', async () => {
