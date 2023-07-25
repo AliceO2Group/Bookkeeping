@@ -13,8 +13,8 @@ Bookkeeping receives updates about RUNs from multiple sources and based on them,
 This definition is computed automatically depending on several criteria in the following low level services: `createRun`, `updateRun` and in the `UpdateLhcFillUseCase`.
 
 When a run or lhcFill is created or updated without using those two services, for each updated runs the definition automatic update must be triggered manually using the following URL:
-- When one run has been updated: `curl -X PUT http://[bookkeeping-url]/api/runs/[run-id] -d "{}"` replacing `[bookkeeping-api]` by the actual bookkeeping API and `[run-id]` by the actual run ID
-- When one LHC fill has been updated: `curl -X PATCH http://[bookkeeping-url]/api/lhcFills/[fill-number] -d "{}"` replacing `[bookkeeping-api]` by the actual bookkeeping API and `[fill-number]` by the actual fill number
+- When one run has been updated: `curl -X PUT http://[bookkeeping-url]/api/runs/[run-id] -d "{}"` replacing `[bookkeeping-url]` by the actual bookkeeping URL and `[run-id]` by the actual run ID
+- When one LHC fill has been updated: `curl -X PATCH http://[bookkeeping-url]/api/lhcFills/[fill-number] -d "{}"` replacing `[bookkeeping-url]` by the actual bookkeeping URL and `[fill-number]` by the actual fill number
 
 ### PHYSICS:
 - be created and successully started during stable beams;
