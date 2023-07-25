@@ -1,5 +1,7 @@
 syntax = 'proto3';
 
+import 'google/protobuf/timestamp.proto';
+
 package o2.bookkeeping;
 
 enum Detector {
@@ -67,7 +69,7 @@ message Run {
   string environmentId = 2;
   int32 bytesReadOut = 3;
   // Unix timestamp when this entity was created
-  int64 createdAt = 4;
+  google.protobuf.Timestamp createdAt = 4;
   int32 Id = 5;
   int32 nDetectors = 6;
   int32 nEpns = 7;
@@ -100,7 +102,7 @@ message Run {
   string epnTopology = 27;
   repeated Detector detectors = 28;
   // Unix timestamp when this entity was last updated
-  int64 updatedAt = 30;
+  google.protobuf.Timestamp updatedAt = 30;
   // A string that marks the period of the lhc
   string lhcPeriod = 31;
 }
@@ -112,7 +114,7 @@ message LHCFill {
   // Timestamp of the end of the stable beam (if it applies)
   optional int64 stableBeamEnd = 3;
   // Duration of the stable beam (if it applies)
-  optional int64 stableBeamDuration = 4;
+  optional google.protobuf.Timestamp stableBeamDuration = 4;
   string beamType = 5;
   string fillingSchemeName = 6;
 }

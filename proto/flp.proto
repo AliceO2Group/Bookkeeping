@@ -1,5 +1,7 @@
 syntax = 'proto3';
 
+import 'google/protobuf/timestamp.proto';
+
 package o2.bookkeeping;
 
 // Services
@@ -41,9 +43,9 @@ message Flp {
   string name = 2;
   string hostname = 3;
   // Unix timestamp when this entity was created.
-  int64 createdAt = 4;
+  google.protobuf.Timestamp createdAt = 4;
   // Unix timestamp when this entity was last updated.
-  int64 updatedAt = 5;
+  google.protobuf.Timestamp updatedAt = 5;
   uint64 bytesEquipmentReadOut = 6;
   uint64 bytesFairMQReadOut = 7;
   uint64 bytesProcessed = 8;
