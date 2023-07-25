@@ -68,7 +68,11 @@ module.exports = () => {
             for (const run of environment.runs) {
                 const runId = await createRun(
                     run,
-                    await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '').split(',').map((value) => value.trim())),
+                    {
+                        detectors: await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '')
+                            .split(',')
+                            .map((value) => value.trim())),
+                    },
                 );
 
                 // Create the expected EOR

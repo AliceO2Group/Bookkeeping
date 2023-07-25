@@ -64,7 +64,7 @@ module.exports = () => {
             triggerValue: 'CTP',
             tfbDdMode: 'processing',
             pdpWorkflowParameters: 'QC,CTF',
-            concatenatedDetectors: 'ITS, TST, FT0',
+            detectors: 'ITS, TST, FT0',
             runNumber: 114,
             fillNumber: 3,
             timeTrgStart,
