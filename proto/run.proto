@@ -2,6 +2,7 @@ syntax = 'proto3';
 
 package o2.bookkeeping;
 
+import 'google/protobuf/timestamp.proto';
 import 'common.proto';
 
 // Services
@@ -47,10 +48,10 @@ message RunCreationRequest {
 
 message RunUpdateRequest {
   int32 runNumber = 1;
-  optional int64 timeO2Start = 3;
-  optional int64 timeO2End = 4;
-  optional int64 timeTrgStart = 5;
-  optional int64 timeTrgEnd = 6;
+  optional google.protobuf.Timestamp timeO2Start = 3;
+  optional google.protobuf.Timestamp timeO2End = 4;
+  optional google.protobuf.Timestamp timeTrgStart = 5;
+  optional google.protobuf.Timestamp timeTrgEnd = 6;
   optional string triggerValue = 7;
   optional string pdpConfigOption = 8;
   optional string pdpTopologyDescriptionLibraryFile = 9;
