@@ -12,7 +12,6 @@
  */
 
 const { expect } = require('chai');
-const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const { getLoaderOptions } = require('../../lib/server/GRPCServer.js');
 const { extractAbsoluteMessageDefinitions } = require('../../lib/server/gRPC/services/protoParsing/extractAbsoluteMessageDefinitions.js');
@@ -21,10 +20,10 @@ const PROTO_DIR = `${__dirname}/proto`;
 
 module.exports = () => {
     it('should successfully extract messages definitions map', () => {
-        const proto = grpc.loadPackageDefinition(protoLoader.loadSync(
+        const proto = protoLoader.loadSync(
             `${PROTO_DIR}/main.proto`,
             getLoaderOptions(PROTO_DIR),
-        )).test;
+        );
         const absoluteMessagesDefinitions = extractAbsoluteMessageDefinitions(proto);
 
         expect([...absoluteMessagesDefinitions.keys()]).to.eql([

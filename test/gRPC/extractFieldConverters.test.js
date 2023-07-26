@@ -25,17 +25,17 @@ module.exports = () => {
     let absoluteMessagesDefinitions;
 
     before(() => {
-        proto = grpc.loadPackageDefinition(protoLoader.loadSync(
+        proto = protoLoader.loadSync(
             `${PROTO_DIR}/main.proto`,
             getLoaderOptions(PROTO_DIR),
-        )).test;
+        );
         absoluteMessagesDefinitions = extractAbsoluteMessageDefinitions(proto);
     });
 
     it('should successfully extract enums paths form services messages', () => {
-        const service = proto.Service.service.TestEnums;
+        const service = proto['test.Service'].TestEnums;
 
-        const fieldsConverters = extractFieldsConverters(service.requestType.type, absoluteMessagesDefinitions);
+        const fieldsConverters = extractFieldsConverters('test', service.requestType.type, absoluteMessagesDefinitions);
         expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([
             { path: ['a'], name: 'a' },
             { path: ['b', 'b1'], name: 'b1' },
@@ -56,11 +56,19 @@ module.exports = () => {
     });
 
     it('should successfully extract int64 and uint64 paths form services messages', () => {
-        const service = proto.Service.service.TestBigInts;
-        const fieldsConverters = extractFieldsConverters(service.requestType.type, absoluteMessagesDefinitions);
+        const service = proto['test.Service'].TestBigInts;
+        const fieldsConverters = extractFieldsConverters('test', service.requestType.type, absoluteMessagesDefinitions);
         expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([
             { path: [], name: 'ui' },
             { path: [], name: 'i' },
+        ]);
+    });
+
+    it('should successfully extract dates paths form services messages', () => {
+        const service = proto['test.Service'].TestDates;
+        const fieldsConverters = extractFieldsConverters('test', service.requestType.type, absoluteMessagesDefinitions);
+        expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([
+            { path: [], name: 't' },
         ]);
     });
 };

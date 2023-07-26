@@ -1,10 +1,13 @@
 syntax = 'proto3';
 
+import 'google/protobuf/timestamp.proto';
+
 package test;
 
 service Service {
   rpc TestEnums(EnumsMessage) returns (EnumsMessage);
   rpc TestBigInts(BigIntMessage) returns (BigIntMessage);
+  rpc TestDates(DateMessage) returns (DateMessage);
 }
 
 message EnumsMessage {
@@ -80,6 +83,10 @@ message D {
 }
 
 message BigIntMessage {
-  uint64 ui = 11;
-  int64 i = 12;
+  uint64 ui = 1;
+  int64 i = 2;
+}
+
+message DateMessage {
+  google.protobuf.Timestamp t = 1;
 }

@@ -13,90 +13,53 @@
 
 const { expect } = require('chai');
 
-const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const { getLoaderOptions } = require('../../lib/server/GRPCServer.js');
 const { extractAbsoluteMessageDefinitions } = require('../../lib/server/gRPC/services/protoParsing/extractAbsoluteMessageDefinitions.js');
 const sinon = require('sinon');
 const { bindGRPCController } = require('../../lib/server/gRPC/bindGRPCController.js');
 const { Long } = require('@grpc/proto-loader');
+const { jsEnumsMessage, jsBigintMessage, grpcTestTimestamp, gRPCEnumsMessage, grpcBigintMessage, grpcDateMessage, jsDateMessage } = require('../mocks/grpc-messages-mock.js');
 
 const PROTO_DIR = `${__dirname}/proto`;
 
 module.exports = () => {
-    const proto = grpc.loadPackageDefinition(protoLoader.loadSync(
+    const proto = protoLoader.loadSync(
         `${PROTO_DIR}/main.proto`,
         getLoaderOptions(PROTO_DIR),
-    )).test;
+    );
     const absoluteMessagesDefinitions = extractAbsoluteMessageDefinitions(proto);
 
     it('Should successfully bind a synchronous controller', async () => {
-        const gRPCEnumsMessage = {
-            a: {
-                a: 'ENUM_A_1',
-            },
-            b: { b1: { b1: 'ENUM_B1_1' } },
-            b1: { b1: 'ENUM_B1_1' },
-            b11: { b1: 'ENUM_B1_1', b11: 'ENUM_B11_1' },
-            c: {
-                b: { b1: { b1: 'ENUM_B1_1' } },
-                b1: { b1: 'ENUM_B1_1' },
-                b11: { b1: 'ENUM_B1_1', b11: 'ENUM_B11_1' },
-                eb1: 'ENUM_B1_1',
-            },
-            d: {
-                d: 'ENUM_D_1',
-            },
-            ea: 'ENUM_A_1',
-            eb1: 'ENUM_B1_1',
-            eb11: 'ENUM_B11_1',
-            ed: 'ENUM_D_1',
-        };
 
-        const jsEnumsMessage = {
-            a: { a: '1' },
-            b: { b1: { b1: '1' } },
-            b1: { b1: '1' },
-            b11: { b1: '1', b11: '1' },
-            c: {
-                b: { b1: { b1: '1' } },
-                b1: { b1: '1' },
-                b11: { b1: '1', b11: '1' },
-                eb1: '1',
-            },
-            d: { d: '1' },
-            ea: '1',
-            eb1: '1',
-            eb11: '1',
-            ed: '1',
-        };
+        const testEnumsImpl = sinon.fake.returns(JSON.parse(JSON.stringify(jsEnumsMessage)));
+        const testBigIntsImpl = sinon.fake.returns({ ...jsBigintMessage });
+        const testDatesImpl = sinon.fake.returns({ t: new Date(grpcTestTimestamp) });
 
-        const testEnumsImpl = sinon.fake.returns(jsEnumsMessage);
-        const testBigIntsImpl = sinon.fake.returns({ ui: 0xFEDCBA9876543210n, i: -0x76543210FEDCBA98n });
         const callback = sinon.fake();
 
         const controller = {
             TestEnums: (...args) => testEnumsImpl(...args),
             TestBigInts: (...args) => testBigIntsImpl(...args),
+            TestDates: (...args) => testDatesImpl(...args),
         };
-        const adapter = bindGRPCController(proto.Service.service, controller, absoluteMessagesDefinitions);
+        const adapter = bindGRPCController('test', proto['test.Service'], controller, absoluteMessagesDefinitions);
 
-        const expectedJsEnumsArgument = JSON.parse(JSON.stringify(jsEnumsMessage));
-
-        await adapter.TestEnums({ request: gRPCEnumsMessage }, callback);
-        testEnumsImpl.calledWith(expectedJsEnumsArgument);
-        callback.calledWithMatch(null, gRPCEnumsMessage);
+        await adapter.TestEnums({ request: JSON.parse(JSON.stringify(gRPCEnumsMessage)) }, callback);
+        expect(testEnumsImpl.calledWithMatch(jsEnumsMessage)).to.be.true;
+        expect(callback.calledWithMatch(null, gRPCEnumsMessage)).to.be.true;
 
         callback.resetHistory();
 
-        await adapter.TestBigInts({
-            request: {
-                ui: Long.fromString('FEDCBA9876543210', true, 16),
-                i: Long.fromString('-76543210FEDCBA98', false, 16),
-            },
-        }, callback);
-        testBigIntsImpl.calledWithMatch({ ui: 0xFEDCBA9876543210n, i: -0x76543210FEDCBA98n });
-        callback.calledWithMatch(null, gRPCEnumsMessage);
+        await adapter.TestBigInts({ request: { ...grpcBigintMessage } }, callback);
+        expect(testBigIntsImpl.calledWithMatch(jsBigintMessage)).to.be.true;
+        expect(callback.calledWithMatch(null, grpcBigintMessage)).to.be.true;
+
+        callback.resetHistory();
+
+        await adapter.TestDates({ request: { t: { ...grpcDateMessage.t } } }, callback);
+        expect(testDatesImpl.calledWithMatch(jsDateMessage)).to.be.true;
+        expect(callback.calledWithMatch(null, grpcDateMessage)).to.be.true;
     });
 
     it('should throw when calling a controller without return is called', async () => {
@@ -104,10 +67,11 @@ module.exports = () => {
         const controller = {
             TestEnums: (...args) => testEnumsImpl(...args),
             TestBigInts: sinon.fake(),
+            TestDates: sinon.fake(),
         };
         const callback = sinon.fake();
 
-        const adapter = bindGRPCController(proto.Service.service, controller, absoluteMessagesDefinitions);
+        const adapter = bindGRPCController('test', proto['test.Service'], controller, absoluteMessagesDefinitions);
 
         await adapter.TestEnums({ request: {} }, callback);
 
