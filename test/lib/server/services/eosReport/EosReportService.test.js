@@ -63,10 +63,7 @@ module.exports = () => {
                 environmentId: environment.id,
             });
             for (const run of environment.runs) {
-                const runId = await createRun(
-                    run,
-                    [],
-                );
+                const runId = await createRun(run);
                 expectedRunNumbers.push(run.runNumber);
 
                 // Create the expected EOR
@@ -124,10 +121,7 @@ module.exports = () => {
         // Create the expected logs and runs
         for (const runs of Object.values(customizedQcPdpEosReport.typeSpecific.runs)) {
             for (const run of runs) {
-                const runId = await createRun(
-                    run,
-                    run.detectors,
-                );
+                const runId = await createRun(run, { detectors: run.detectors });
                 for (const detector of run.detectors) {
                     await updateRunDetector(
                         run.runNumber,
@@ -227,10 +221,7 @@ module.exports = () => {
         // Create the expected logs and runs
         for (const runs of Object.values(customizedShiftLeaderEosReport.typeSpecific.runs)) {
             for (const run of runs) {
-                await createRun(
-                    run,
-                    run.detectors,
-                );
+                await createRun(run, { detectors: run.detectors });
                 for (const detector of run.detectors) {
                     await updateRunDetector(
                         run.runNumber,

@@ -24,10 +24,10 @@ message ManyFlpsCreationRequest {
 message UpdateCountersRequest  {
   string flpName = 1;
   int32 runNumber = 2;
-  int64 nSubTimeframes = 3;
-  int64 nEquipmentBytes = 4;
-  int64 nRecordingBytes = 5;
-  int64 nFairMQBytes = 6;
+  uint64 nSubTimeframes = 3;
+  uint64 nEquipmentBytes = 4;
+  uint64 nRecordingBytes = 5;
+  uint64 nFairMQBytes = 6;
 }
 
 message FlpList {
@@ -44,9 +44,9 @@ message Flp {
   int64 createdAt = 4;
   // Unix timestamp when this entity was last updated.
   int64 updatedAt = 5;
-  int32 bytesEquipmentReadOut = 6;
-  int32 bytesFairMQReadOut = 7;
-  int32 bytesProcessed = 8;
-  int32 bytesRecordingReadOut = 9;
-  int32 nTimeframes = 10;
+  uint64 bytesEquipmentReadOut = 6;
+  uint64 bytesFairMQReadOut = 7;
+  uint64 bytesProcessed = 8;
+  uint64 bytesRecordingReadOut = 9;
+  uint64 nTimeframes = 10;
 }

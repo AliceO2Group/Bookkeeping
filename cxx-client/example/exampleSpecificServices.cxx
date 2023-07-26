@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
   try {
     auto client = BkpClientFactory::create(argv[1]);
-    client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 2, 2, 2, 2);
+    client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF);
     std::cout << "FLP counters have been successfully updated" << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;

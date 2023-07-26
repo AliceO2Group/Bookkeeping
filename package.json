@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.59.0",
+  "version": "0.59.1",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -34,12 +34,12 @@
   ],
   "devDependencies": {
     "chai": "4.3.4",
-    "eslint": "8.44.0",
+    "eslint": "8.45.0",
     "js-yaml": "4.1.0",
     "mocha": "10.2.0",
-    "nodemon": "2.0.19",
+    "nodemon": "3.0.1",
     "nyc": "15.1.0",
-    "puppeteer": "20.8.1",
+    "puppeteer": "20.9.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "15.2.0",
