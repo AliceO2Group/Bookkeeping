@@ -13,7 +13,6 @@
 
 const { extractFieldsConverters } = require('../../lib/server/gRPC/services/protoParsing/extractFieldsConverters.js');
 const { expect } = require('chai');
-const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const { getLoaderOptions } = require('../../lib/server/GRPCServer.js');
 const { extractAbsoluteMessageDefinitions } = require('../../lib/server/gRPC/services/protoParsing/extractAbsoluteMessageDefinitions.js');
@@ -67,8 +66,6 @@ module.exports = () => {
     it('should successfully extract dates paths form services messages', () => {
         const service = proto['test.Service'].TestDates;
         const fieldsConverters = extractFieldsConverters('test', service.requestType.type, absoluteMessagesDefinitions);
-        expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([
-            { path: [], name: 't' },
-        ]);
+        expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([{ path: [], name: 't' }]);
     });
 };

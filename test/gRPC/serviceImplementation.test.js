@@ -18,8 +18,8 @@ const { getLoaderOptions } = require('../../lib/server/GRPCServer.js');
 const { extractAbsoluteMessageDefinitions } = require('../../lib/server/gRPC/services/protoParsing/extractAbsoluteMessageDefinitions.js');
 const sinon = require('sinon');
 const { bindGRPCController } = require('../../lib/server/gRPC/bindGRPCController.js');
-const { Long } = require('@grpc/proto-loader');
-const { jsEnumsMessage, jsBigintMessage, grpcTestTimestamp, gRPCEnumsMessage, grpcBigintMessage, grpcDateMessage, jsDateMessage } = require('../mocks/grpc-messages-mock.js');
+const { jsEnumsMessage, jsBigintMessage, grpcTestTimestamp, gRPCEnumsMessage, grpcBigintMessage, grpcDateMessage, jsDateMessage }
+    = require('../mocks/grpc-messages-mock.js');
 
 const PROTO_DIR = `${__dirname}/proto`;
 
@@ -31,7 +31,6 @@ module.exports = () => {
     const absoluteMessagesDefinitions = extractAbsoluteMessageDefinitions(proto);
 
     it('Should successfully bind a synchronous controller', async () => {
-
         const testEnumsImpl = sinon.fake.returns(JSON.parse(JSON.stringify(jsEnumsMessage)));
         const testBigIntsImpl = sinon.fake.returns({ ...jsBigintMessage });
         const testDatesImpl = sinon.fake.returns({ t: new Date(grpcTestTimestamp) });
