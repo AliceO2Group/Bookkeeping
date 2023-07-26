@@ -726,6 +726,25 @@ module.exports = () => {
         expect(table.length).to.equal(6);
     });
 
+    it('should successfully filter on run types', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(100);
+
+        await pressElement(page, '.run-types-dropdown-container > div > div > .dropdown-selection');
+        await page.waitForTimeout(100);
+
+        await pressElement(page, '#run-types-dropdown-option-2');
+        await pressElement(page, '#run-types-dropdown-option-14');
+
+        await waitForNetworkIdleAndRedraw(page);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(5);
+    });
+
     it('should successfully filter on nDetectors', async () => {
         await goToPage(page, 'run-overview');
         page.waitForTimeout(100);
