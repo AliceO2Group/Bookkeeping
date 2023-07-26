@@ -43,15 +43,34 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect other runs to be closed
-        const closedLog1 = await page.$$('#log-117 table tbody tr');
+        const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
         expect(closedLog1).to.have.lengthOf(2);
 
-        const closedLog2 = await page.$$('#log-118 table tbody tr');
+        const closedLog2 = await page.$$('#log-118 .log-details-collapsed > *');
         expect(closedLog2).to.have.lengthOf(2);
 
         // Expect targeted run to be opened
-        const openedLog = await page.$$('#log-119 table tbody tr');
-        expect(openedLog).to.have.lengthOf(9);
+        const openedLog = await page.$$('#log-119 .log-details-expanded > *');
+        expect(openedLog).to.have.lengthOf(4);
+    });
+
+    it('should display a button on each log for copying the url of the log', async () => {
+        // Enable permissions to read/write to the clipboard. Ensure we keep sanitized write
+        const context = browser.defaultBrowserContext();
+        context.overridePermissions(url, ['clipboard-read', 'clipboard-write', 'clipboard-sanitized-write']);
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        // Expect the button to be there. Log 117 should be a parent to 119.
+        const log117CopyBtn = await page.$('#copy-117');
+        expect(log117CopyBtn).to.exist;
+
+        await log117CopyBtn.click();
+
+        // The url has log 119, but the clipboard should have the url for 117.
+        const actualClipboardContents = await page.evaluate(() => navigator.clipboard.readText());
+        const expectedClipboardContents = `${url}/?page=log-detail&id=117`;
+        expect(actualClipboardContents).to.equal(expectedClipboardContents);
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
@@ -83,7 +102,7 @@ module.exports = () => {
         // We expect the correct associated runs to be shown
         const runField = await page.$(`#log-${logId}-runs`);
         const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Runs:\t\n${runId}`);
+        expect(runText).to.equal(`Runs:\n${runId}`);
 
         // We expect the associated runs to be clickable with a valid link
         const runLink = await page.$(`#log-${logId}-runs a`);
