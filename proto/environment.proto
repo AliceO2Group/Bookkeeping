@@ -1,5 +1,6 @@
 syntax = 'proto3';
 
+import 'google/protobuf/timestamp.proto';
 import 'common.proto';
 
 package o2.bookkeeping;
@@ -15,14 +16,14 @@ service EnvironmentService {
 
 message EnvironmentCreationRequest {
   string id = 1;
-  optional int64 createdAt = 2;
+  optional google.protobuf.Timestamp createdAt = 2;
   optional string status = 3;
   optional string statusMessage = 4;
 }
 
 message EnvironmentUpdateRequest {
   string id = 1;
-  optional int64 toredownAt = 2;
+  optional google.protobuf.Timestamp toredownAt = 2;
   optional string status = 3;
   optional string statusMessage = 4;
 }
@@ -32,11 +33,11 @@ message EnvironmentUpdateRequest {
 message Environment {
   string id = 1;
   // Unix timestamp when this entity was created.
-  int64 createdAt = 2;
+  google.protobuf.Timestamp createdAt = 2;
   // Unix timestamp when this entity was last updated.
-  int64 updatedAt = 3;
+  google.protobuf.Timestamp updatedAt = 3;
   // Unix timestamp when this entity was tore down.
-  int64 toredownAt = 4;
+  google.protobuf.Timestamp toredownAt = 4;
   // The status of the environment.
   string status = 5;
   // A message explaining the status or the current state of the environment.
