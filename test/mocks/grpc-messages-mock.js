@@ -69,4 +69,5 @@ exports.grpcDateMessage = {
         nanos: grpcTestTimestamp % 1e3 * 1e6,
     },
 };
+
 exports.jsDateMessage = { t: new Date(grpcTestTimestamp) };
