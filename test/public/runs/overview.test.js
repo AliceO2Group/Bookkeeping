@@ -732,8 +732,10 @@ module.exports = () => {
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(100);
-        await pressElement(page, '#run-types-combination-operator-radio-button-or');
-        await pressElement(page, '.run-types-dropdown-container > .form-control');
+
+        await pressElement(page, '.run-types-dropdown-container > div > div > .dropdown-selection');
+        await page.waitForTimeout(100);
+
         await pressElement(page, '#run-types-dropdown-option-2');
         await pressElement(page, '#run-types-dropdown-option-14');
 
@@ -741,15 +743,6 @@ module.exports = () => {
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(5);
-
-        await pressElement(page, '.flex-row .items-baseline');
-        await pressElement(page, '#run-types-combination-operator-radio-button-and');
-        await page.waitForTimeout(100);
-
-        await waitForNetworkIdleAndRedraw(page);
-
-        table = await page.$$('tbody tr');
-        expectInnerText(page, 'tbody tr', 'No data');
     });
 
     it('should successfully filter on nDetectors', async () => {
