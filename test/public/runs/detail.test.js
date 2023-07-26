@@ -87,7 +87,7 @@ module.exports = () => {
                 .concat(['MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC']);
         expect(detectorNames).to.deep.equal(expectedDetectorNames);
 
-        const presentDetectorNameSelector = '#Run-detectors .isPresent .detector-name';
+        const presentDetectorNameSelector = '#Run-detectors :is(.success, .danger) .detector-name';
         const presentDetectorName = await page.$eval(presentDetectorNameSelector, (detector) => detector.innerText);
         expect(presentDetectorName).to.equal('CPV');
     });
@@ -97,8 +97,8 @@ module.exports = () => {
         const detectorBadgeClassesSelector = '#Run-detectors .detector-badge';
         const detectorBadgeClasses = await page.$$eval(detectorBadgeClassesSelector, (badges) => badges.map((badge) => badge.className));
 
-        const detectorBadgesPresent = detectorBadgeClasses.filter((elem) => elem.includes('isPresent'));
-        const detectorBadgesNotPresent = detectorBadgeClasses.filter((elem) => !elem.includes('isPresent'));
+        const detectorBadgesPresent = detectorBadgeClasses.filter((elem) => !elem.includes('gray'));
+        const detectorBadgesNotPresent = detectorBadgeClasses.filter((elem) => elem.includes('gray'));
 
         expect(detectorBadgesPresent.length).to.equal(1);
         expect(detectorBadgesNotPresent.length).to.equal(18);
