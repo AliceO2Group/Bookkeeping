@@ -47,12 +47,13 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    it('Can find table', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+    it('Can find a panel for each service', async () => {
+        const services = ['Bookkeeping', 'Database']
 
-        // We expect to find a table
-        await pressElement(page, `#${firstRowId}`);
-        expect(firstRowId).to.equal('rowBookkeeping');
+        // For each service, search for an element with that id 
+        for (const service of services) {
+            const servicePanel = await page.$(`#${service}`)
+            expect(servicePanel, `Couldn't find panel for service ${service}`).to.not.be.null;
+        }
     });
 };
