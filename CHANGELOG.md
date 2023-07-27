@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.60.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.60.0)
+* Notable changes for users:
+  * Run details page shows all detectors as grey (not present) or green/red (good/bad quality)
+  * Use dropdown to filter run types in Run Overview page
+  * int64 in proto files are casted to javascript numbers, not BigInt (be careful with overflow)
+* Notable changes for developers:
+  * Runs filtering has been separated from runs fetching to easily add relations in endpoints to fetch a list of runs
+
 ## [0.59.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.1)
 * Notable changes for users:
   * Run numbers and LHC period columns are wider on runs overview to improve readability on small screens
