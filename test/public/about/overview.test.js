@@ -46,17 +46,17 @@ module.exports = () => {
     });
 
     it('Can find a panel for each service', async () => {
-        const services = ['Bookkeeping', 'Database']
+        const services = ['Bookkeeping', 'Database'];
 
-        // For each service, search for an element with that id 
+        // For each service, search for an element with that id
         for (const service of services) {
-            const servicePanel = await page.$(`#${service}`)
+            const servicePanel = await page.$(`#${service}`);
             expect(servicePanel, `Couldn't find panel for service ${service}`).to.not.be.null;
         }
     });
 
     it('Displays the correct version number for the Bookkeeping service', async () => {
         const expectedVersion = packageJson.version;
-        await expectInnerText(page, '#Bookkeeping .version', expectedVersion)
-    })
+        await expectInnerText(page, '#Bookkeeping .version', expectedVersion);
+    });
 };
