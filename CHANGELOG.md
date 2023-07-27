@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.59.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.1)
+* Notable changes for users:
+  * Run numbers and LHC period columns are wider on runs overview to improve readability on small screens
+* Notable changes for developers:
+  * Readout counters are now unsigned bigints
+  * gRPC server controllers can now handle bigints
+* Changes made to the database:
+  * Readout counters are now unsigned bigints
+
+
 ## [0.59.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.0)
 * Notable changes for users:
   * A gRPC endpoint to insert DPL process executions has been added, and it has been implemented in the gRPC c++ library
