@@ -12,16 +12,14 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults');
+const packageJson = require('../../../package.json');
 
 const { expect } = chai;
 
 module.exports = () => {
     let page;
     let browser;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -56,4 +54,9 @@ module.exports = () => {
             expect(servicePanel, `Couldn't find panel for service ${service}`).to.not.be.null;
         }
     });
+
+    it('Displays the correct version number for the Bookkeeping service', async () => {
+        const expectedVersion = packageJson.version;
+        await expectInnerText(page, '#Bookkeeping .version', expectedVersion)
+    })
 };
