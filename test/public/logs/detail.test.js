@@ -60,7 +60,7 @@ module.exports = () => {
         const log119Title = await page.$('#log-119 #log-119-title');
         expect(log117Title).to.not.exist;
         expect(log119Title).to.exist;
-    })
+    });
 
     it('should display a button on each log for copying the url of the log', async () => {
         // Enable permissions to read/write to the clipboard. Ensure we keep sanitized write
@@ -89,10 +89,10 @@ module.exports = () => {
         expect(log117CopyBtn).to.exist;
 
         // Expect the text before the click to be different after
-        await expectInnerText(page, '#copy-117', 'Copy Link')
+        await expectInnerText(page, '#copy-117', 'Copy Link');
         await log117CopyBtn.click();
         await page.waitForTimeout(100);
-        await expectInnerText(page, '#copy-117', 'Copied!')
+        await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
