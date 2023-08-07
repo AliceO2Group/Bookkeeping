@@ -29,10 +29,10 @@ module.exports = () => {
             createdAt: new Date(shift1 + 5000),
         };
         // Not kept : not the good tags
-        await createLog(defaultLogData, [], ['EoS'], []);
-        await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], []);
+        await createLog(defaultLogData, [], ['EoS'], [], []);
+        await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], [], []);
         // Kept
-        await createLog(defaultLogData, [], ['ECS Shifter'], []);
+        await createLog(defaultLogData, [], ['ECS Shifter'], [], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.ECS);
         expect(logs).to.lengthOf(1);
@@ -50,10 +50,10 @@ module.exports = () => {
             createdAt: new Date(shift1 + 5000),
         };
         // Not kept : not the good tags
-        await createLog(defaultLogData, [], ['EoS'], []);
-        await createLog(defaultLogData, [], ['QC/PDP Shifter', 'EoS'], []);
+        await createLog(defaultLogData, [], ['EoS'], [], []);
+        await createLog(defaultLogData, [], ['QC/PDP Shifter', 'EoS'], [], []);
         // Kept
-        await createLog(defaultLogData, [], ['QC/PDP Shifter'], []);
+        await createLog(defaultLogData, [], ['QC/PDP Shifter'], [], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.QC_PDP);
         expect(logs).to.lengthOf(1);
@@ -71,10 +71,10 @@ module.exports = () => {
             createdAt: new Date(shift1 + 5000),
         };
         // Not kept : not the good tags
-        await createLog(defaultLogData, [], ['EoS'], []);
-        await createLog(defaultLogData, [], ['SLIMOS', 'EoS'], []);
+        await createLog(defaultLogData, [], ['EoS'], [], []);
+        await createLog(defaultLogData, [], ['SLIMOS', 'EoS'], [], []);
         // Kept
-        await createLog(defaultLogData, [], ['SLIMOS'], []);
+        await createLog(defaultLogData, [], ['SLIMOS'], [], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.SLIMOS);
         expect(logs).to.lengthOf(1);
@@ -92,10 +92,10 @@ module.exports = () => {
             createdAt: new Date(shift1 + 5000),
         };
         // Not kept : not the good tags
-        await createLog(defaultLogData, [], ['EoS'], []);
-        await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], []);
+        await createLog(defaultLogData, [], ['EoS'], [], []);
+        await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], [], []);
         // Kept
-        await createLog(defaultLogData, [], ['Shift Leader'], []);
+        await createLog(defaultLogData, [], ['Shift Leader'], [], []);
 
         const logs = await shiftService.getShiftIssues(shift1, ShiftTypes.SL);
         expect(logs).to.lengthOf(1);
