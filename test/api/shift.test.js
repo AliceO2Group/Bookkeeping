@@ -36,10 +36,10 @@ module.exports = () => {
                 createdAt: currentShift.start,
             };
             // Not kept : not the good tags
-            await createLog(defaultLogData, [], ['EoS'], []);
-            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], []));
+            await createLog(defaultLogData, [], ['EoS'], [], []);
+            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter', 'EoS'], [], []));
             // Keep the 1 log ids as it has good tags for 'ECS Shifter'
-            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter'], []));
+            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter'], [], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=ECS');
 
@@ -63,10 +63,10 @@ module.exports = () => {
                 createdAt: currentShift.start,
             };
             // Not kept : not the good tags
-            await createLog(defaultLogData, [], ['EoS'], []);
-            logIds.push(await createLog(defaultLogData, [], ['QC/PDP Shifter', 'EoS'], []));
+            await createLog(defaultLogData, [], ['EoS'], [], []);
+            logIds.push(await createLog(defaultLogData, [], ['QC/PDP Shifter', 'EoS'], [], []));
             // Keep the 1 log ids as it has good tags for 'QC/PDP Shifter'
-            logIds.push(await createLog(defaultLogData, [], ['QC/PDP Shifter'], []));
+            logIds.push(await createLog(defaultLogData, [], ['QC/PDP Shifter'], [], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=QC/PDP');
 
@@ -90,10 +90,10 @@ module.exports = () => {
                 createdAt: currentShift.start,
             };
             // Not kept : not the good tags
-            await createLog(defaultLogData, [], ['EoS'], []);
-            logIds.push(await createLog(defaultLogData, [], ['SLIMOS', 'EoS'], []));
+            await createLog(defaultLogData, [], ['EoS'], [], []);
+            logIds.push(await createLog(defaultLogData, [], ['SLIMOS', 'EoS'], [], []));
             // Keep the 1 log ids as it has good tags for 'SLIMOS'
-            logIds.push(await createLog(defaultLogData, [], ['SLIMOS'], []));
+            logIds.push(await createLog(defaultLogData, [], ['SLIMOS'], [], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=SLIMOS');
 
@@ -117,10 +117,10 @@ module.exports = () => {
                 createdAt: currentShift.start,
             };
             // Not kept : not the good tags
-            await createLog(defaultLogData, [], ['EoS'], []);
-            logIds.push(await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], []));
+            await createLog(defaultLogData, [], ['EoS'], [], []);
+            logIds.push(await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], [], []));
             // Keep the 1 log ids as it has good tags for 'Shift Leader'
-            logIds.push(await createLog(defaultLogData, [], ['Shift Leader'], []));
+            logIds.push(await createLog(defaultLogData, [], ['Shift Leader'], [], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=SL');
 

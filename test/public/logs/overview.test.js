@@ -505,7 +505,7 @@ module.exports = () => {
         await page.evaluate(() => {
             window.scrollBy(0, window.innerHeight);
         });
-        await page.waitForTimeout(400);
+        await page.waitForTimeout(600);
         const tableRows = await page.$$('table tr');
 
         expect(tableRows.length > 20).to.be.true;
