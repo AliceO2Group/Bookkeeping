@@ -116,6 +116,25 @@ module.exports = () => {
         }
     });
 
+    it ('should successfully filter on log environment', async () => {
+        const environment = 'Dxi029djX';
+        getAllLogsDto.query = { filter: { operation: 'and', values: environment } };
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(2);
+            for (const log of filteredResult) {
+                expect(log.environments.includes(environment).to.be.true);
+            }
+        }
+
+        getAllLogsDto.query = { filter: { operation: 'and', values: 'non-existent-environment' } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(0);
+        }
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 
