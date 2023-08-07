@@ -73,6 +73,69 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
+    it('should successfully filter by EOR Reasons', async () => {
+        await goToPage(page, 'run-overview');
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Expect the EOR filter to exist
+        const eorCategoryDropdown = await page.$('#eorCategories');
+        expect(eorCategoryDropdown).to.exist;
+        const eorTitleDropdown = await page.$('#eorTitles');
+        expect(eorTitleDropdown).to.exist;
+
+        // Select the EOR reason category DETECTORS
+        await page.select('#eorCategories', 'DETECTORS');
+        await page.waitForTimeout(500);
+        let detectorTitleElements = await eorTitleDropdown.$$('option');
+        expect(detectorTitleElements).has.lengthOf(3);
+
+        // The titles dropdown should have updated
+        const detectorTitles = await Promise.all(detectorTitleElements
+            .map(async (element) => (await element.getProperty('value')).jsonValue()));
+        expect(detectorTitles).deep.to.equal(['', 'CPV', 'TPC']);
+
+        /*
+         * The correct number of runs should be displayed in the table.
+         * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS'
+         */
+        let eorReasons = await page.$$('table td[id$="eorReason"]');
+        expect(eorReasons).has.lengthOf(3);
+
+        let eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
+
+        let allTextsContainDetectors = eorReasonTexts.every((text) => text.includes('DETECTORS'));
+        expect(allTextsContainDetectors).to.be.true;
+
+        // Select the EOR reason title CPV
+        await page.select('#eorTitles', 'CPV');
+        await page.waitForTimeout(500);
+
+        /*
+         * The correct number of runs should be displayed in the table.
+         * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS - CPV'
+         */
+        eorReasons = await page.$$('table td[id$="eorReason"]');
+        expect(eorReasons).has.lengthOf(2);
+
+        eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
+
+        allTextsContainDetectors = eorReasonTexts.every((text) => text.includes('DETECTORS - CPV'));
+        expect(allTextsContainDetectors).to.be.true;
+
+        // Reset filters. There should be a single blank option in the EOR titles dropdown
+        await page.click('#reset-filters');
+        await page.waitForTimeout(500);
+        detectorTitleElements = await eorTitleDropdown.$$('option');
+        expect(detectorTitleElements).has.lengthOf(1);
+
+        // There should be many items in the run details table
+        eorReasons = await page.$$('table td[id$="eorReason"]');
+        expect(eorReasons.length).to.be.greaterThan(3);
+    });
+
     it('shows correct datatypes in respective columns', async () => {
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
@@ -833,6 +896,8 @@ module.exports = () => {
         }));
         expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10)).to.be.true;
     });
+
+    // Put the test here!
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
     it('should successfully display runs export button', async () => {
