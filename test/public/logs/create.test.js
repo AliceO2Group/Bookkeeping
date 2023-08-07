@@ -347,4 +347,71 @@ module.exports = () => {
             expect(runsText).to.include(runNumber);
         }
     });
+
+    it('can create a log with an environment', async () => {
+        const title = 'Single environment test';
+        const text = 'Sample Text';
+        const environmentsStr = '8E4aZTjY';
+
+        // Return to the creation page
+        await goToPage(page, 'log-create');
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+
+        // Send the value of the environments string to the input
+        await page.type('#environments', environmentsStr);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+
+        await goToPage(page, 'log-overview');
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+    });
+
+    it('can create a log with multiple environments', async () => {
+        const title = 'Multiple environments test';
+        const text = 'Sample Text';
+        const environments = ['8E4aZTjY', 'GIDO1jdkD'];
+        const environmentsStr = environments.join(',');
+
+        // Return to the creation page
+        await goToPage(page, 'log-create');
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+
+        // Send the value of the environments string to the input
+        await page.type('#environments', environmentsStr);
+
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation();
+        await goToPage(page, 'log-overview');
+        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple environments test")');
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+    });
 };
