@@ -22,7 +22,6 @@ const {
     checkColumnBalloon,
     reloadPage,
     waitForNetworkIdleAndRedraw,
-    takeScreenshot,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
@@ -103,7 +102,6 @@ module.exports = () => {
          * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS'
          */
         let eorReasons = await page.$$('table td[id$="eorReason"]');
-        await takeScreenshot(page)
         expect(eorReasons).has.lengthOf(3);
 
         let eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
@@ -150,19 +148,19 @@ module.exports = () => {
         expect(eorDescriptionInput).to.exist;
 
         // Expect there to be one result that contains a certain description
-        await page.focus('#eorDescription')
-        const descriptionInput = 'some'
-        await page.keyboard.type(descriptionInput)
-        await page.waitForTimeout(500)
+        await page.focus('#eorDescription');
+        const descriptionInput = 'some';
+        await page.keyboard.type(descriptionInput);
+        await page.waitForTimeout(500);
 
         let eorReasons = await page.$$('table td[id$="eorReason"]');
         expect(eorReasons).has.lengthOf(1);
-        const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue()
-        expect(eorReasonText.toLowerCase()).to.include(descriptionInput)
+        const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
+        expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
 
         // Assuming this result had the category DETECTORS, when we select a different category it should disappear.
         await page.select('#eorCategories', 'OTHER');
-        await page.waitForTimeout(500)
+        await page.waitForTimeout(500);
         eorReasons = await page.$$('table td[id$="eorReason"]');
         expect(eorReasons).has.lengthOf(0);
 
@@ -172,10 +170,9 @@ module.exports = () => {
         eorReasons = await page.$$('table td[id$="eorReason"]');
         expect(eorReasons.length).to.be.greaterThan(1);
 
-        const inputText = await (await eorDescriptionInput.getProperty('value')).jsonValue()
-        console.log(inputText);
+        const inputText = await (await eorDescriptionInput.getProperty('value')).jsonValue();
         expect(inputText).to.equal('');
-    })
+    });
 
     it('shows correct datatypes in respective columns', async () => {
         table = await page.$$('tr');
