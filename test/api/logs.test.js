@@ -1216,6 +1216,58 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/logs/:logId/environments', () => {
+        it('should return 400 if the log id is not a number', (done) => {
+            request(server)
+                .get('/api/logs/abc/environments')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the log could not be found', (done) => {
+            request(server)
+                .get('/api/logs/999999999/environments')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
+
+                    done();
+                });
+        });
+
+        it('should return 200 in all other cases', (done) => {
+            request(server)
+                .get('/api/logs/119/environments')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+    });
+
     describe('GET /api/logs/:logId/attachments', () => {
         it('should return an array', (done) => {
             request(server)
