@@ -94,10 +94,9 @@ module.exports = () => {
             runQuality: (string) => RUN_QUALITIES.includes(string),
             nDetectors: (number) => typeof number == 'number',
             nFlps: (number) => typeof number == 'number',
-            nEpns: (number) => typeof number == 'number',
+            nEpns: (string) => typeof string == 'string',
             nSubtimeframes: (number) => typeof number == 'number',
             bytesReadOut: (number) => typeof number == 'number',
-            dd_flp: (boolean) => typeof boolean == 'boolean',
             dcs: (boolean) => typeof boolean == 'boolean',
             epn: (boolean) => typeof boolean == 'boolean',
             eorReasons: (string) => typeof string == 'string',
@@ -831,7 +830,21 @@ module.exports = () => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
         }));
-        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10)).to.be.true;
+        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10 || nEpns === 'OFF')).to.be.true;
+    });
+
+    it('should successfully filter on EPN on/off', async () => {
+        await goToPage(page, 'run-overview');
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(100);
+
+        await pressElement(page, '#epnFilterRadioOFF');
+        await page.waitForTimeout(200);
+
+        const table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
