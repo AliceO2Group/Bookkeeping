@@ -39,7 +39,7 @@
     "mocha": "10.2.0",
     "nodemon": "3.0.1",
     "nyc": "15.1.0",
-    "puppeteer": "20.9.0",
+    "puppeteer": "21.0.1",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "15.2.0",
