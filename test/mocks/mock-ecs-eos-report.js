@@ -20,6 +20,7 @@ const {
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
 const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
+const { SHIFT_DURATION } = require('../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 exports.eosEcsReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
@@ -143,6 +144,25 @@ exports.customizedECSEosReportRequest = {
     typeSpecific: {
         environmentComments: customizedECSEosReport.typeSpecific.environmentComments,
         runComments: customizedECSEosReport.typeSpecific.runComments,
+    },
+};
+
+const customizedECSEosReportPreviousShift = {
+    shifterName: 'John Doe',
+    issuesLogEntries: [],
+    shiftStart: new Date() - SHIFT_DURATION,
+    type: ShiftTypes.ECS,
+    typeSpecific: {},
+    previousInfo: 'Test information from prev. shifter\nwith a new line',
+};
+
+exports.customizedECSEosReportPreviousShift = customizedECSEosReportPreviousShift;
+
+exports.customizedECSEosReportPreviousShiftRequest = {
+    ...genericEmptyEosReportRequest,
+    typeSpecific: {
+        environmentComments: customizedECSEosReportPreviousShift.typeSpecific.environmentComments,
+        runComments: customizedECSEosReportPreviousShift.typeSpecific.runComments,
     },
 };
 
