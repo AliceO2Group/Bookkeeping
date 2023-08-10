@@ -100,7 +100,7 @@ module.exports = () => {
             dd_flp: (boolean) => typeof boolean == 'boolean',
             dcs: (boolean) => typeof boolean == 'boolean',
             epn: (boolean) => typeof boolean == 'boolean',
-            epnTopology: (string) => typeof string == 'string',
+            eorReasons: (string) => typeof string == 'string',
             detectors: (string) => typeof string == 'string',
         };
 
@@ -265,7 +265,7 @@ module.exports = () => {
         expect(urlParameters).to.contain(`id=${expectedRunId}`);
     });
 
-    it('Should have balloon on detector, tags and topology column', async () => {
+    it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
 
