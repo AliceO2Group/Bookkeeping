@@ -271,13 +271,21 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        // Run 106 have data long enough to overflow
+        // Run 106 has detectors and tags that overflow
         await page.type('#runNumber', '106');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 18);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Run 1 has eor reasons that overflow
+        await page.type('#runNumber', '1');
+        await page.waitForTimeout(500);
+
+        await checkColumnBalloon(page, 1, 16);
     });
 
     it('Should display balloon if the text overflows', async () => {
@@ -841,7 +849,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         await pressElement(page, '#epnFilterRadioOFF');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(400);
 
         const table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
