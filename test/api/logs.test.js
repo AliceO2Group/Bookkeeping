@@ -1005,6 +1005,25 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 201 if a proper body with LHC fill numbers was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another run')
+                .field('text', 'Text of yet another run')
+                .field('lhcFills', [1, 2])
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    
+                    const lhcFillNumbers = res.body.data.lhcFills.map(fill => fill.fillNumber)
+                    expect(lhcFillNumbers).to.deep.equal([1, 2])
+                    done();
+                });
+        });
     });
 
     describe('GET /api/logs/:logId', () => {
