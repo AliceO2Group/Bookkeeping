@@ -16,11 +16,13 @@ const {
     genericCustomizedEosReportRequest,
     genericFormattedEmptyEosReport,
     genericEmptyEosReportRequest,
+    genericCustomTimeEosReport,
+    genericCustomTimeEosReportRequest,
+    genericFormattedCustomTimeEosReport,
 } = require('./base-mock-eos-report.js');
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
 const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
-const { SHIFT_DURATION } = require('../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 exports.eosEcsReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
@@ -147,25 +149,6 @@ exports.customizedECSEosReportRequest = {
     },
 };
 
-const customizedECSEosReportPreviousShift = {
-    shifterName: 'John Doe',
-    issuesLogEntries: [],
-    shiftStart: new Date() - SHIFT_DURATION,
-    type: ShiftTypes.ECS,
-    typeSpecific: {},
-    previousInfo: 'Test information from prev. shifter\nwith a new line',
-};
-
-exports.customizedECSEosReportPreviousShift = customizedECSEosReportPreviousShift;
-
-exports.customizedECSEosReportPreviousShiftRequest = {
-    ...genericEmptyEosReportRequest,
-    typeSpecific: {
-        environmentComments: customizedECSEosReportPreviousShift.typeSpecific.environmentComments,
-        runComments: customizedECSEosReportPreviousShift.typeSpecific.runComments,
-    },
-};
-
 const formattedCustomizedECSEosReportTypeSpecific = `
 ## Environments and runs
 - (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
@@ -214,3 +197,44 @@ exports.emptyECSEosReportRequest = {
         runComments: {},
     },
 };
+
+// eslint-disable-next-line require-jsdoc
+const customTimeECSEosReport = (time, information) => ({
+    ...genericCustomTimeEosReport(time, information),
+    type: ShiftTypes.ECS,
+    typeSpecific: {
+        environmentComments: {},
+        runComments: {},
+    },
+});
+
+exports.customTimeECSEosReport = customTimeECSEosReport;
+
+const formattedCustomTimeECSEosReportTypeSpecific = `
+## Environments and runs
+- (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
+    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
+        - EOR:
+            * DETECTORS - CPV - EOR description
+            * DETECTORS - TPC - 2nd EOR description
+        - Logs:
+            * \\[ECS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+            * \\[ECS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+
+- (17/03/2023, 09:16:03) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
+`;
+
+exports.formattedCustomTimeECSEosReport = (time, information) => genericFormattedCustomTimeEosReport(
+    ShiftTypes.ECS,
+    formattedCustomTimeECSEosReportTypeSpecific,
+    time,
+    information,
+);
+
+exports.customTimeECSEosReportRequest = (time, information) => ({
+    ...genericCustomTimeEosReportRequest(time, information),
+    typeSpecific: {
+        environmentComments: {},
+        runComments: {},
+    },
+});
