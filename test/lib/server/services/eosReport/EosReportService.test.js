@@ -12,6 +12,8 @@
  */
 
 const { eosReportService } = require('../../../../../lib/server/services/eosReport/EosReportService.js');
+const { SHIFT_DURATION } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
+const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
 const { expect } = require('chai');
 const {
     emptyECSEosReportRequest,
@@ -21,6 +23,8 @@ const {
     customizedECSEosReportRequest,
     formattedEmptyECSEosReport,
     customizedECSEosReportLogs,
+    customTimeECSEosReportRequest,
+    formattedCustomTimeECSEosReport,
 } = require('../../../../mocks/mock-ecs-eos-report.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
@@ -102,6 +106,18 @@ module.exports = () => {
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.ECS));
         expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
         expect(log.author.id).to.equal(1);
+    });
+
+    it ('should create a new EoS report autofilled with previous EoS report', async () => {
+        const past = new Date() - SHIFT_DURATION;
+        const info = 'Important information\nfor the next tester\ncontaining #punctuation...';
+        const request = customTimeECSEosReportRequest(past, info);
+
+        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
+        expect(log.text).to.equal(formattedCustomTimeECSEosReport(past, info));
+
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.ECS);
+        expect(response.previousInfo).to.equal(info);
     });
 
     it('should successfully create a log containing ECS EoS report with default values', async () => {
