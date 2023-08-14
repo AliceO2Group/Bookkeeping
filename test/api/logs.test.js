@@ -1018,9 +1018,9 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    
-                    const lhcFillNumbers = res.body.data.lhcFills.map(fill => fill.fillNumber)
-                    expect(lhcFillNumbers).to.deep.equal([1, 2])
+
+                    const lhcFillNumbers = res.body.data.lhcFills.map((fill) => fill.fillNumber);
+                    expect(lhcFillNumbers).to.deep.equal([1, 2]);
                     done();
                 });
         });
