@@ -194,7 +194,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], []);
         }
 
         const log = await eosReportService.createLogEntry(ShiftTypes.SLIMOS, customizedSlimosEosReportRequest, { userId: 1 });
