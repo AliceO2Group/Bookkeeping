@@ -21,8 +21,10 @@ const {
     getFirstRow,
     getAllDataFields,
     checkColumnBalloon,
+    takeScreenshot,
 } = require('../defaults');
 const { reloadPage, waitForNetworkIdleAndRedraw, fillInput } = require('../defaults.js');
+const { Logger } = require('../../../lib/utilities');
 
 const { expect } = chai;
 
@@ -507,7 +509,7 @@ module.exports = () => {
         });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
-
+        await page.waitForTimeout(1000);
         expect(tableRows.length > 20).to.be.true;
     });
 
