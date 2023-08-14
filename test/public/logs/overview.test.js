@@ -23,7 +23,6 @@ const {
     checkColumnBalloon,
 } = require('../defaults');
 const { reloadPage, waitForNetworkIdleAndRedraw, fillInput } = require('../defaults.js');
-const { Logger } = require('../../../lib/utilities');
 
 const { expect } = chai;
 
