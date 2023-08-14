@@ -21,7 +21,6 @@ const {
     getFirstRow,
     getAllDataFields,
     checkColumnBalloon,
-    takeScreenshot,
 } = require('../defaults');
 const { reloadPage, waitForNetworkIdleAndRedraw, fillInput } = require('../defaults.js');
 const { Logger } = require('../../../lib/utilities');
