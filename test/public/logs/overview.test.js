@@ -507,7 +507,7 @@ module.exports = () => {
         });
         await page.waitForTimeout(400);
         const tableRows = await page.$$('table tr');
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(2000);
         expect(tableRows.length > 20).to.be.true;
     });
 
