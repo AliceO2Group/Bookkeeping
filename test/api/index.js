@@ -34,9 +34,7 @@ module.exports = () => {
     describe('EOS report API', EosReportSuite);
     // TODO [O2B-805] describe('FLP API', FlpSuite);
     describe('LhcFills API', LhcFillSuite);
-
     describe('Logs API', LogsSuite);
-
     describe('Runs API', RunsSuite);
     describe('RunTypes API', RunTypesSuite);
     describe('Shift API', ShiftSuite);
