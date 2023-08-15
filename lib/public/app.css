@@ -107,22 +107,14 @@ html, body {
     min-height: 0;
 }
 
-.justify-end {
-    justify-content: end;
-}
+.justify-end { justify-content: end; }
 
-.flex-grow.grow2 {
-    flex-grow: 2;
-}
+.flex-grow.grow2 { flex-grow: 2; }
 
-.flex-shrink-0 {
-    flex-shrink: 0;
-}
+.flex-shrink-0 { flex-shrink: 0; }
 
 /* Float */
-.float-right {
-    float: right
-}
+.float-right { float: right }
 
 /* z-index */
 .no-z-index {
