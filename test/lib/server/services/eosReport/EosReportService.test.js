@@ -110,20 +110,20 @@ module.exports = () => {
 
     it ('should create a new EoS report autofilled with previous EoS report', async () => {
         const now = Date.now();
-        const future = new Date(now + SHIFT_DURATION);
+        const past = new Date(now - SHIFT_DURATION);
         const info = 'Important information\nfor the next tester\ncontaining #punctuation...';
-        const request = customTimeECSEosReportRequest(now, info);
+        const request = customTimeECSEosReportRequest(past, info);
 
         const log = await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
-        expect(log.text).to.equal(formattedCustomTimeECSEosReport(now, info));
+        expect(log.text).to.equal(formattedCustomTimeECSEosReport(past, info));
 
-        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.ECS, future);
-        expect(response.previousInfo.value).to.equal(info);
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.ECS);
+        expect(response.infoFromPreviousShifter.value).to.equal(info);
     });
 
-    it ('should throw an error in previousInfo if no previous EoS report is found', async () => {
+    it ('should throw an error in infoFromPreviousShifter if no previous EoS report is found', async () => {
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS, Date.now());
-        expect(response.previousInfo.errorMessage).to.equal('No SLIMOS EoS reports found from the previous shift');
+        expect(response.infoFromPreviousShifter.errorMessage).to.equal('No SLIMOS EoS reports found from the previous shift');
     });
 
     it('should successfully create a log containing ECS EoS report with default values', async () => {
