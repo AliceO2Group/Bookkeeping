@@ -355,13 +355,13 @@ module.exports = () => {
 
     it('should display OFF in the nEPNs field when EPNs is null', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 3 } });
-        await page.waitForSelector('#Run-nEpns')
-        await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\nOFF')
-    })
+        await page.waitForSelector('#Run-nEpns');
+        await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\nOFF');
+    });
 
     it('should not display OFF in the nEPNs field when EPNs is not null', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
-        await page.waitForSelector('#Run-nEpns')
-        await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\n12')
-    })
+        await page.waitForSelector('#Run-nEpns');
+        await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\n12');
+    });
 };
