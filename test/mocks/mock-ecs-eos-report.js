@@ -16,9 +16,6 @@ const {
     genericCustomizedEosReportRequest,
     genericFormattedEmptyEosReport,
     genericEmptyEosReportRequest,
-    genericCustomTimeEosReport,
-    genericCustomTimeEosReportRequest,
-    genericFormattedCustomTimeEosReport,
 } = require('./base-mock-eos-report.js');
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
