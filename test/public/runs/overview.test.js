@@ -818,7 +818,7 @@ module.exports = () => {
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#nEpns-operator');
-        await page.waitForSelector('#nEpns-limit')
+        await page.waitForSelector('#nEpns-limit');
 
         const nEpnsOperatorSelector = '#nEpns-operator';
         const nEpnsOperator = await page.$(nEpnsOperatorSelector) || null;
