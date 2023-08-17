@@ -11,9 +11,6 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { formatShiftDate } = require('../../lib/server/services/shift/formatShiftDate');
-const { getShiftFromTimestamp } = require('../../lib/server/services/shift/getShiftFromTimestamp');
-
 // 2023-03-17 07:00:00 geneva time
 const MORNING_SHIFT_START = 1679032800000;
 
