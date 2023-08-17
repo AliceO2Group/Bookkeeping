@@ -72,65 +72,6 @@ exports.genericCustomizedEosReportRequest = {
     infoForRmRc: genericCustomizedEosReport.infoForRmRc,
 };
 
-// eslint-disable-next-line require-jsdoc
-const genericCustomTimeEosReport = (time, information) => ({
-    shifterName: 'Anon Y. Mouse',
-    traineeName: 'Trainee II',
-    shiftStart: time,
-    shiftFlow: 'The\nshift flow',
-    lhcTransitions: 'The\nLHC machine transitions',
-    infoFromPreviousShifter: 'Info from\nprevious shifter',
-    infoForNextShifter: information,
-    infoForRmRc: 'Info for\nRM and RC',
-});
-
-exports.genericCustomTimeEosReport = genericCustomTimeEosReport;
-
-exports.genericFormattedCustomTimeEosReport = (reportType, formattedTypeSpecific, time, information) => {
-    const shift = getShiftFromTimestamp(time);
-    const formattedDate = formatShiftDate(shift.start, { date: true, time: false });
-    return `\
-# End of shift report - ${reportType} - ${formattedDate} ${shift.period}
-- shifter: Anon Y. Mouse
-- trainee: Trainee II
-
-## Issues during the shift
--
-
-## LHC
-The
-LHC machine transitions
-
-## Shift flow
-The
-shift flow
-${formattedTypeSpecific}
-## Shift to shift transfer of information
-
-### From previous shifter
-Info from
-previous shifter
-
-### For next shifter
-${information}
-
-### For RM/RC
-Info for
-RM and RC\
-`;
-};
-
-exports.genericCustomTimeEosReportRequest = (time, information) => ({
-    shifterName: genericCustomTimeEosReport(time, information).shifterName,
-    traineeName: genericCustomTimeEosReport(time, information).traineeName,
-    shiftStart: genericCustomTimeEosReport(time, information).shiftStart,
-    shiftFlow: genericCustomTimeEosReport(time, information).shiftFlow,
-    lhcTransitions: genericCustomTimeEosReport(time, information).lhcTransitions,
-    infoFromPreviousShifter: genericCustomTimeEosReport(time, information).infoFromPreviousShifter,
-    infoForNextShifter: genericCustomTimeEosReport(time, information).infoForNextShifter,
-    infoForRmRc: genericCustomTimeEosReport(time, information).infoForRmRc,
-});
-
 const genericEmptyEosReport = {
     shifterName: 'John Doe',
     shiftStart: MORNING_SHIFT_START,
