@@ -814,10 +814,11 @@ module.exports = () => {
 
     it('should successfully filter on nEPNs', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        await page.waitForSelector('#openFilterToggle');
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await page.waitForSelector('#nEpns-operator');
+        await page.waitForSelector('#nEpns-limit')
 
         const nEpnsOperatorSelector = '#nEpns-operator';
         const nEpnsOperator = await page.$(nEpnsOperatorSelector) || null;
@@ -843,13 +844,13 @@ module.exports = () => {
 
     it('should successfully filter on EPN on/off', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        await page.waitForSelector('#openFilterToggle');
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(100);
+        await page.waitForSelector('#epnFilterRadioOFF');
 
         await pressElement(page, '#epnFilterRadioOFF');
-        await page.waitForTimeout(400);
+        await waitForNetworkIdleAndRedraw(page);
 
         const table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
