@@ -12,16 +12,14 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults');
+const packageJson = require('../../../package.json');
 
 const { expect } = chai;
 
 module.exports = () => {
     let page;
     let browser;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -47,12 +45,18 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    it('Can find table', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+    it('Can find a panel for each service', async () => {
+        const services = ['Bookkeeping', 'Database'];
 
-        // We expect to find a table
-        await pressElement(page, `#${firstRowId}`);
-        expect(firstRowId).to.equal('rowBookkeeping');
+        // For each service, search for an element with that id
+        for (const service of services) {
+            const servicePanel = await page.$(`#${service}`);
+            expect(servicePanel, `Couldn't find panel for service ${service}`).to.not.be.null;
+        }
+    });
+
+    it('Displays the correct version number for the Bookkeeping service', async () => {
+        const expectedVersion = packageJson.version;
+        await expectInnerText(page, '#Bookkeeping .version', expectedVersion);
     });
 };
