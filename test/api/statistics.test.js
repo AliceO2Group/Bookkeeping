@@ -19,9 +19,9 @@ const { expect } = require('chai');
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /statistics/lhc-fills', () => {
+    describe('GET /statistics/lhcFills', () => {
         it('should return 200 and an array for a normal request', async () => {
-            const response = await request(server).get('/api/statistics/lhc-fills?from=156525120000&to=1565305200000');
+            const response = await request(server).get('/api/statistics/lhcFills?from=156525120000&to=1565305200000');
 
             expect(response.status).to.equal(200);
             expect(response.body.data).to.lengthOf(1);
@@ -29,7 +29,7 @@ module.exports = () => {
 
         it('should return 400 if the request is invalid', async () => {
             {
-                const response = await request(server).get('/api/statistics/lhc-fills');
+                const response = await request(server).get('/api/statistics/lhcFills');
 
                 expect(response.status).to.equal(400);
                 expect(response.body.errors).to.lengthOf(2);
@@ -37,14 +37,14 @@ module.exports = () => {
                 expect(response.body.errors[1].detail).to.equal('"query.to" is required');
             }
             {
-                const response = await request(server).get('/api/statistics/lhc-fills?to=1565305200000');
+                const response = await request(server).get('/api/statistics/lhcFills?to=1565305200000');
 
                 expect(response.status).to.equal(400);
                 expect(response.body.errors).to.lengthOf(1);
                 expect(response.body.errors[0].detail).to.equal('"query.from" is required');
             }
             {
-                const response = await request(server).get('/api/statistics/lhc-fills?from=156525120000');
+                const response = await request(server).get('/api/statistics/lhcfills?from=156525120000');
 
                 expect(response.status).to.equal(400);
                 expect(response.body.errors).to.lengthOf(1);
