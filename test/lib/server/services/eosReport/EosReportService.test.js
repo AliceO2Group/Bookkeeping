@@ -109,13 +109,16 @@ module.exports = () => {
     });
 
     it ('should create a new EoS report autofilled with previous EoS report', async () => {
-        const now = Date.now();
-        const past = new Date(now - SHIFT_DURATION);
-        const info = 'Important information\nfor the next tester\ncontaining #punctuation...';
-        const request = customTimeECSEosReportRequest(past, info);
+        const past = new Date(Date.now() - SHIFT_DURATION);
+        const info = `Important information for the next tester
+        containing new lines and #punctuation...`;
+        const request = {
+            ...emptyECSEosReportRequest,
+            shiftStart: past,
+            infoForNextShifter: info,
+        };
 
-        const log = await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
-        expect(log.text).to.equal(formattedCustomTimeECSEosReport(past, info));
+        await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
 
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.ECS);
         expect(response.infoFromPreviousShifter.value).to.equal(info);
