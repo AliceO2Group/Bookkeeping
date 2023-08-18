@@ -13,6 +13,8 @@ html, body {
 .cell-fm { width: 20%; }
 
 .b1 { border-style: solid; border-width: 1px; }
+.bt1 { border-top: 1px solid }
+.b-gray-light { border-color: var(--color-gray-light) }
 .b-danger { border-color: var(--color-danger); }
 .b-success { border-color: var(--color-success); }
 .b-primary { border-color: var(--color-primary); }
@@ -105,13 +107,14 @@ html, body {
     min-height: 0;
 }
 
-.justify-end {
-    justify-content: end;
-}
+.justify-end { justify-content: end; }
 
-.flex-grow.grow2 {
-    flex-grow: 2;
-}
+.flex-grow.grow2 { flex-grow: 2; }
+
+.flex-shrink-0 { flex-shrink: 0; }
+
+/* Float */
+.float-right { float: right }
 
 /* z-index */
 .no-z-index {
@@ -597,6 +600,10 @@ a.btn, a.btn:hover, a.btn.active {
     }
 }
 
+/* Charts */
+.chart-box {
+    border: 1px solid var(--color-gray-dark);
+}
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)
