@@ -17,7 +17,6 @@ const chai = require('chai');
 const { expect } = chai;
 const assert = require('assert');
 const { cacheAsyncFunction } = require('../../../lib/utilities/cacheAsyncFunction.js');
-const { func } = require('joi');
 
 module.exports = () => {
     it('should successfully cache a resolving function', async () => {
@@ -81,8 +80,8 @@ module.exports = () => {
             fake(value);
             return value;
         };
-        const firstCache = cacheAsyncFunction(functionMock, {cacheSize: 2});
-        const secondCache = cacheAsyncFunction(functionMock, {cacheSize: 1});
+        const firstCache = cacheAsyncFunction(functionMock, { cacheSize: 2 });
+        const secondCache = cacheAsyncFunction(functionMock, { cacheSize: 1 });
 
         expect(await firstCache(0)).to.equal(0);
         expect(await firstCache(0)).to.equal(0);
