@@ -618,6 +618,19 @@ a.btn, a.btn:hover, a.btn.active {
 .chart-box {
     border: 1px solid var(--color-gray-dark);
 }
+
+.chart-tooltip {
+    position: fixed;
+    display: flex;
+    background-color: white;
+    padding: var(--space-s);
+}
+
+.tooltip-bullet {
+    width: 10px;
+    height: 10px;
+}
+
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)
