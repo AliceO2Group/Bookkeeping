@@ -374,7 +374,7 @@ module.exports = () => {
         expect(response.infoFromPreviousShifter.errorMessage).to.equal('Multiple SLIMOS EoS reports found from the previous shift');
     });
 
-    it ('should create a new EoS report autofilled with previous EoS report', async () => {
+    it ('should autofill new EoS reports with information from the previous shifter', async () => {
         const now = Date.now();
         const past = new Date(now - SHIFT_DURATION);
         const info = `Important information for the next tester
