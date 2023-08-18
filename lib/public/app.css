@@ -600,6 +600,10 @@ a.btn, a.btn:hover, a.btn.active {
     }
 }
 
+/* Charts */
+.chart-box {
+    border: 1px solid var(--color-gray-dark);
+}
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)
