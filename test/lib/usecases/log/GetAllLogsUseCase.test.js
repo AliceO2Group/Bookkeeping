@@ -116,6 +116,22 @@ module.exports = () => {
         }
     });
 
+    it('should successfully filter on lhc fills', async () => {
+        const lhcFills = [2, 5];
+        getAllLogsDto.query = { filter: { lhcFills } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.have.lengthOf(2);
+
+            const fillNumbersPerLog = filteredResult.map(({ lhcFills }) => lhcFills.map(({ fillNumber }) => fillNumber));
+
+            // For each returned log, check at least one of the associated fill numbers was in the filter query
+            expect(fillNumbersPerLog.every((logFillNumbers) =>
+                logFillNumbers.includes(lhcFills[0]) || logFillNumbers.includes(lhcFills[1]))).to.be.true;
+        }
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 
