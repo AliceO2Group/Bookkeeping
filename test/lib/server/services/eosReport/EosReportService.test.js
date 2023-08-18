@@ -12,7 +12,6 @@
  */
 
 const { eosReportService } = require('../../../../../lib/server/services/eosReport/EosReportService.js');
-const { SHIFT_DURATION, getShiftFromTimestamp } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
 const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
 const { expect } = require('chai');
 const {
@@ -52,6 +51,7 @@ const {
 } = require('../../../../mocks/mock-dcs-eos-report.js');
 const { logService } = require('../../../../../lib/server/services/log/LogService.js');
 const { formatEosReportTitle } = require('../../../../../lib/server/services/eosReport/formatEosReport.js');
+const { getShiftFromTimestamp, SHIFT_DURATION } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {
@@ -315,9 +315,10 @@ module.exports = () => {
     });
 
     it ('should throw an error if the previous EoS report has no information transfer field', async () => {
-        const past = new Date(Date.now() - SHIFT_DURATION);
-        const shift = getShiftFromTimestamp(past);
-        const title = formatEosReportTitle(shift, ShiftTypes.DCS);
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
+        const pastShift = getShiftFromTimestamp(past);
+        const title = formatEosReportTitle(pastShift, ShiftTypes.DCS);
         await logService.create({
             userId: 1,
             title: title,
@@ -329,7 +330,8 @@ module.exports = () => {
     });
 
     it ('should throw an error if the previous EoS report has no information for the next shifter', async () => {
-        const past = new Date(Date.now() - SHIFT_DURATION);
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
         const request = {
             ...emptySlimosEosReportRequest,
             shiftStart: past,
@@ -343,7 +345,8 @@ module.exports = () => {
     });
 
     it ('should throw an error if multiple previous EoS reports are found for autofilling', async () => {
-        const past = new Date(Date.now() - SHIFT_DURATION);
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
         const request1 = {
             ...emptySlimosEosReportRequest,
             shiftStart: past,
@@ -361,8 +364,8 @@ module.exports = () => {
     });
 
     it ('should autofill new EoS reports with information from the previous shifter', async () => {
-        const now = Date.now();
-        const past = new Date(now - SHIFT_DURATION);
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
         const info = `Important information for the next tester
         containing new lines and #punctuation...`;
         const request = {
