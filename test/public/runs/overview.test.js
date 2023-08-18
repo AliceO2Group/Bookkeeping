@@ -94,10 +94,9 @@ module.exports = () => {
             runQuality: (string) => RUN_QUALITIES.includes(string),
             nDetectors: (number) => typeof number == 'number',
             nFlps: (number) => typeof number == 'number',
-            nEpns: (number) => typeof number == 'number',
+            nEpns: (string) => typeof string == 'string',
             nSubtimeframes: (number) => typeof number == 'number',
             bytesReadOut: (number) => typeof number == 'number',
-            dd_flp: (boolean) => typeof boolean == 'boolean',
             dcs: (boolean) => typeof boolean == 'boolean',
             epn: (boolean) => typeof boolean == 'boolean',
             eorReasons: (string) => typeof string == 'string',
@@ -272,13 +271,21 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        // Run 106 have data long enough to overflow
+        // Run 106 has detectors and tags that overflow
         await page.type('#runNumber', '106');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 18);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Run 1 has eor reasons that overflow
+        await page.type('#runNumber', '1');
+        await page.waitForTimeout(500);
+
+        await checkColumnBalloon(page, 1, 16);
     });
 
     it('Should display balloon if the text overflows', async () => {
@@ -807,10 +814,11 @@ module.exports = () => {
 
     it('should successfully filter on nEPNs', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        await page.waitForSelector('#openFilterToggle');
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await page.waitForSelector('#nEpns-operator');
+        await page.waitForSelector('#nEpns-limit');
 
         const nEpnsOperatorSelector = '#nEpns-operator';
         const nEpnsOperator = await page.$(nEpnsOperatorSelector) || null;
@@ -831,7 +839,21 @@ module.exports = () => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
         }));
-        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10)).to.be.true;
+        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10 || nEpns === 'OFF')).to.be.true;
+    });
+
+    it('should successfully filter on EPN on/off', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForSelector('#openFilterToggle');
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector('#epnFilterRadioOFF');
+
+        await pressElement(page, '#epnFilterRadioOFF');
+        await waitForNetworkIdleAndRedraw(page);
+
+        const table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
     });
 
     it('should successfully filter by EOR Reason types', async () => {

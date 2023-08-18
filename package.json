@@ -15,17 +15,18 @@
     "docker-test": "docker-compose -p test -f docker-compose.yml -p test -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.3.0",
-    "@grpc/grpc-js": "1.8.8",
+    "@aliceo2/web-ui": "2.4.0",
+    "@grpc/grpc-js": "1.9.0",
     "@grpc/proto-loader": "0.7.0",
     "cls-hooked": "4.2.2",
+    "d3": "7.8.5",
     "deepmerge": "4.3.0",
     "joi": "17.9.1",
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
     "sequelize": "6.32.1",
-    "umzug": "3.2.1"
+    "umzug": "3.3.1"
   },
   "files": [
     "lib/",
@@ -33,13 +34,14 @@
     "proto/"
   ],
   "devDependencies": {
+    "@types/d3": "7.4.0",
     "chai": "4.3.4",
     "eslint": "8.46.0",
     "js-yaml": "4.1.0",
     "mocha": "10.2.0",
     "nodemon": "3.0.1",
     "nyc": "15.1.0",
-    "puppeteer": "20.9.0",
+    "puppeteer": "21.0.1",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "15.2.0",
