@@ -856,6 +856,107 @@ module.exports = () => {
         expect(table.length).to.equal(2);
     });
 
+    it('should successfully filter by EOR Reason types', async () => {
+        await goToPage(page, 'run-overview');
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Expect the EOR filter to exist
+        const eorCategoryDropdown = await page.$('#eorCategories');
+        expect(eorCategoryDropdown).to.exist;
+        const eorTitleDropdown = await page.$('#eorTitles');
+        expect(eorTitleDropdown).to.exist;
+
+        // Select the EOR reason category DETECTORS
+        await page.select('#eorCategories', 'DETECTORS');
+        await page.waitForTimeout(500);
+        let detectorTitleElements = await eorTitleDropdown.$$('option');
+        expect(detectorTitleElements).has.lengthOf(3);
+
+        // The titles dropdown should have updated
+        const detectorTitles = await Promise.all(detectorTitleElements
+            .map(async (element) => (await element.getProperty('value')).jsonValue()));
+        expect(detectorTitles).deep.to.equal(['', 'CPV', 'TPC']);
+
+        /*
+         * The correct number of runs should be displayed in the table.
+         * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS'
+         */
+        let eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(3);
+
+        let eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
+
+        let allTextsContainDetectors = eorReasonTexts.every((text) => text.includes('DETECTORS'));
+        expect(allTextsContainDetectors).to.be.true;
+
+        // Select the EOR reason title CPV
+        await page.select('#eorTitles', 'CPV');
+        await page.waitForTimeout(500);
+
+        /*
+         * The correct number of runs should be displayed in the table.
+         * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS - CPV'
+         */
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(2);
+
+        eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
+
+        allTextsContainDetectors = eorReasonTexts.every((text) => text.includes('DETECTORS - CPV'));
+        expect(allTextsContainDetectors).to.be.true;
+
+        // Reset filters. There should be a single blank option in the EOR titles dropdown
+        await page.click('#reset-filters');
+        await page.waitForTimeout(500);
+        detectorTitleElements = await eorTitleDropdown.$$('option');
+        expect(detectorTitleElements).has.lengthOf(1);
+
+        // There should be many items in the run details table
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons.length).to.be.greaterThan(3);
+    });
+
+    it('should correctly filter by EOR reason description', async () => {
+        await goToPage(page, 'run-overview');
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Expect the EOR description filter to exist
+        const eorDescriptionInput = await page.$('#eorDescription');
+        expect(eorDescriptionInput).to.exist;
+
+        // Expect there to be one result that contains a certain description
+        await page.focus('#eorDescription');
+        const descriptionInput = 'some';
+        await page.keyboard.type(descriptionInput);
+        await page.waitForTimeout(500);
+
+        let eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(1);
+        const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
+        expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
+
+        // Assuming this result had the category DETECTORS, when we select a different category it should disappear.
+        await page.select('#eorCategories', 'OTHER');
+        await page.waitForTimeout(500);
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(0);
+
+        // When we reset the filters, the input field should be empty
+        await page.click('#reset-filters');
+        await page.waitForTimeout(500);
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons.length).to.be.greaterThan(1);
+
+        const inputText = await (await eorDescriptionInput.getProperty('value')).jsonValue();
+        expect(inputText).to.equal('');
+    });
+
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
     it('should successfully display runs export button', async () => {
         const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
