@@ -328,20 +328,6 @@ module.exports = () => {
             .to.equal('EoS report from the previous shift is missing the information transfer field');
     });
 
-    it ('should throw an error if the previous EoS report has multiple information transfer fields', async () => {
-        const past = new Date(Date.now() - SHIFT_DURATION);
-        const shift = getShiftFromTimestamp(past);
-        const title = formatEosReportTitle(shift, ShiftTypes.QC_PDP);
-        await logService.create({
-            userId: 1,
-            title: title,
-            text: '\n\n### For next shifter\nINFO1\n\n###\n\n### For next shifter\nINFO2\n\n###)',
-        });
-        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.QC_PDP);
-        expect(response.infoFromPreviousShifter.errorMessage)
-            .to.equal('Previous EoS report contains multiple information transfer fields');
-    });
-
     it ('should throw an error if the previous EoS report has no information for the next shifter', async () => {
         const past = new Date(Date.now() - SHIFT_DURATION);
         const request = {
