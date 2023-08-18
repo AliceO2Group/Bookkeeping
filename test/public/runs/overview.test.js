@@ -94,10 +94,9 @@ module.exports = () => {
             runQuality: (string) => RUN_QUALITIES.includes(string),
             nDetectors: (number) => typeof number == 'number',
             nFlps: (number) => typeof number == 'number',
-            nEpns: (number) => typeof number == 'number',
+            nEpns: (string) => typeof string == 'string',
             nSubtimeframes: (number) => typeof number == 'number',
             bytesReadOut: (number) => typeof number == 'number',
-            dd_flp: (boolean) => typeof boolean == 'boolean',
             dcs: (boolean) => typeof boolean == 'boolean',
             epn: (boolean) => typeof boolean == 'boolean',
             eorReasons: (string) => typeof string == 'string',
@@ -272,13 +271,21 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        // Run 106 have data long enough to overflow
+        // Run 106 has detectors and tags that overflow
         await page.type('#runNumber', '106');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
-        await checkColumnBalloon(page, 1, 18);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Run 1 has eor reasons that overflow
+        await page.type('#runNumber', '1');
+        await page.waitForTimeout(500);
+
+        await checkColumnBalloon(page, 1, 16);
     });
 
     it('Should display balloon if the text overflows', async () => {
@@ -807,10 +814,11 @@ module.exports = () => {
 
     it('should successfully filter on nEPNs', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        await page.waitForSelector('#openFilterToggle');
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await page.waitForSelector('#nEpns-operator');
+        await page.waitForSelector('#nEpns-limit');
 
         const nEpnsOperatorSelector = '#nEpns-operator';
         const nEpnsOperator = await page.$(nEpnsOperatorSelector) || null;
@@ -831,7 +839,122 @@ module.exports = () => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
         }));
-        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10)).to.be.true;
+        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10 || nEpns === 'OFF')).to.be.true;
+    });
+
+    it('should successfully filter on EPN on/off', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForSelector('#openFilterToggle');
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector('#epnFilterRadioOFF');
+
+        await pressElement(page, '#epnFilterRadioOFF');
+        await waitForNetworkIdleAndRedraw(page);
+
+        const table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+    });
+
+    it('should successfully filter by EOR Reason types', async () => {
+        await goToPage(page, 'run-overview');
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Expect the EOR filter to exist
+        const eorCategoryDropdown = await page.$('#eorCategories');
+        expect(eorCategoryDropdown).to.exist;
+        const eorTitleDropdown = await page.$('#eorTitles');
+        expect(eorTitleDropdown).to.exist;
+
+        // Select the EOR reason category DETECTORS
+        await page.select('#eorCategories', 'DETECTORS');
+        await page.waitForTimeout(500);
+        let detectorTitleElements = await eorTitleDropdown.$$('option');
+        expect(detectorTitleElements).has.lengthOf(3);
+
+        // The titles dropdown should have updated
+        const detectorTitles = await Promise.all(detectorTitleElements
+            .map(async (element) => (await element.getProperty('value')).jsonValue()));
+        expect(detectorTitles).deep.to.equal(['', 'CPV', 'TPC']);
+
+        /*
+         * The correct number of runs should be displayed in the table.
+         * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS'
+         */
+        let eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(3);
+
+        let eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
+
+        let allTextsContainDetectors = eorReasonTexts.every((text) => text.includes('DETECTORS'));
+        expect(allTextsContainDetectors).to.be.true;
+
+        // Select the EOR reason title CPV
+        await page.select('#eorTitles', 'CPV');
+        await page.waitForTimeout(500);
+
+        /*
+         * The correct number of runs should be displayed in the table.
+         * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS - CPV'
+         */
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(2);
+
+        eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
+
+        allTextsContainDetectors = eorReasonTexts.every((text) => text.includes('DETECTORS - CPV'));
+        expect(allTextsContainDetectors).to.be.true;
+
+        // Reset filters. There should be a single blank option in the EOR titles dropdown
+        await page.click('#reset-filters');
+        await page.waitForTimeout(500);
+        detectorTitleElements = await eorTitleDropdown.$$('option');
+        expect(detectorTitleElements).has.lengthOf(1);
+
+        // There should be many items in the run details table
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons.length).to.be.greaterThan(3);
+    });
+
+    it('should correctly filter by EOR reason description', async () => {
+        await goToPage(page, 'run-overview');
+        page.waitForTimeout(100);
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        // Expect the EOR description filter to exist
+        const eorDescriptionInput = await page.$('#eorDescription');
+        expect(eorDescriptionInput).to.exist;
+
+        // Expect there to be one result that contains a certain description
+        await page.focus('#eorDescription');
+        const descriptionInput = 'some';
+        await page.keyboard.type(descriptionInput);
+        await page.waitForTimeout(500);
+
+        let eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(1);
+        const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
+        expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
+
+        // Assuming this result had the category DETECTORS, when we select a different category it should disappear.
+        await page.select('#eorCategories', 'OTHER');
+        await page.waitForTimeout(500);
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons).has.lengthOf(0);
+
+        // When we reset the filters, the input field should be empty
+        await page.click('#reset-filters');
+        await page.waitForTimeout(500);
+        eorReasons = await page.$$('table td[id$="eorReasons"]');
+        expect(eorReasons.length).to.be.greaterThan(1);
+
+        const inputText = await (await eorDescriptionInput.getProperty('value')).jsonValue();
+        expect(inputText).to.equal('');
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
