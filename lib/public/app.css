@@ -553,20 +553,6 @@ a.btn, a.btn:hover, a.btn.active {
     border-width: 0px;
     border-right-width: 1px;
     border-bottom-width: 1px;
-    color: var(--color-primary);
-}
-
-/* Warning messages */
-.warning-message-icon {
-    width: 1.7em;
-    height: 1.7em;
-    text-align: center;
-    flex-shrink: 0;
-    border-style: solid;
-    border-width: 0px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    color: var(--color-warning);
 }
 
 /* Tree */
