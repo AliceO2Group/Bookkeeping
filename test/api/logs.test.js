@@ -1011,7 +1011,7 @@ module.exports = () => {
                 .post('/api/logs')
                 .field('title', 'Yet another run')
                 .field('text', 'Text of yet another run')
-                .field('lhcFills', [1, 2])
+                .field('lhcFills', "1,2")
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
