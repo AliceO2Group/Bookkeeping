@@ -15,6 +15,7 @@ html, body {
 .b1 { border-style: solid; border-width: 1px; }
 .bt1 { border-top: 1px solid }
 .b-gray-light { border-color: var(--color-gray-light) }
+.b-warning { border-color: var(--color-warning); }
 .b-danger { border-color: var(--color-danger); }
 .b-success { border-color: var(--color-success); }
 .b-primary { border-color: var(--color-primary); }
@@ -553,6 +554,19 @@ a.btn, a.btn:hover, a.btn.active {
     border-right-width: 1px;
     border-bottom-width: 1px;
     color: var(--color-primary);
+}
+
+/* Warning messages */
+.warning-message-icon {
+    width: 1.7em;
+    height: 1.7em;
+    text-align: center;
+    flex-shrink: 0;
+    border-style: solid;
+    border-width: 0px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    color: var(--color-warning);
 }
 
 /* Tree */
