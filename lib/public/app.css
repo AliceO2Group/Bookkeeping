@@ -70,10 +70,6 @@ html, body {
     width: unset;
 }
 
-/* height scale */
-.h-100 {
-    height: 100%;
-}
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }
 .ml2 { margin-left: var(--space-s); }
