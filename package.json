@@ -25,7 +25,8 @@
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
     "sequelize": "6.32.1",
-    "umzug": "3.3.1"
+    "umzug": "3.3.1",
+    "express-rate-limit": "6.9.0"
   },
   "files": [
     "lib/",
