@@ -22,7 +22,6 @@ const {
     checkColumnBalloon,
     reloadPage,
     waitForNetworkIdleAndRedraw,
-    takeScreenshot,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
