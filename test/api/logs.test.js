@@ -1245,7 +1245,7 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Log with this id (999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Not found');
 
                     done();
                 });
