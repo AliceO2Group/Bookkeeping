@@ -17,18 +17,20 @@ const {
     defaultAfter,
     checkMismatchingUrlParam,
     waitForNetworkIdleAndRedraw,
-    reloadPage, fillInput,
+    reloadPage, fillInput, expectInnerText,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { getLog } = require('../../../lib/server/services/log/getLog.js');
 const { createEnvironment } = require('../../../lib/server/services/environment/createEnvironment.js');
-const { customizedECSEosReport } = require('../../mocks/mock-ecs-eos-report.js');
+const { customizedECSEosReport, emptyECSEosReportRequest } = require('../../mocks/mock-ecs-eos-report.js');
 const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { createRun } = require('../../../lib/server/services/run/createRun.js');
 const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
+const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
+const { SHIFT_DURATION } = require('../../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     let page;
@@ -86,6 +88,16 @@ module.exports = () => {
             }
         }
 
+        // Create the expected previous EoS report
+        const past = new Date(Date.now() - SHIFT_DURATION);
+        const info = 'Important information for the next tester';
+        const request = {
+            ...emptyECSEosReportRequest,
+            shiftStart: past,
+            infoForNextShifter: info,
+        };
+
+        await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
         await reloadPage(page);
 
         await page.waitForSelector('#shifter-name input');
@@ -110,8 +122,9 @@ module.exports = () => {
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
+        expectInnerText(page, '#from-previous-shifter .CodeMirror textarea', info);
         await page.focus('#from-previous-shifter .CodeMirror textarea');
-        await page.keyboard.type('From previous shifter\nOn multiple lines');
+        await page.keyboard.type('Old information: ');
 
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
@@ -125,10 +138,10 @@ module.exports = () => {
         await page.click('#submit');
 
         await waitForNetworkIdleAndRedraw(page);
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '120' })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '121' })).to.eql({});
 
         // Fetch log manually, because it's hard to parse codemirror display
-        const { text } = await getLog(120);
+        const { text } = await getLog(121);
         expect(text.includes('- shifter: Shifter name')).to.be.true;
         expect(text.includes('- trainee: Trainee name')).to.be.true;
         expect(text.includes('## Issues during the shift\n')).to.be.true;
@@ -143,7 +156,7 @@ module.exports = () => {
           on run`)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
-        expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
+        expect(text.includes(`### From previous shifter\nOld information: ${info}`)).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
     });
