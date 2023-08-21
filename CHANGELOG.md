@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.61.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
+* Notable changes for users:
+  * DPL processes executions can be inserted concurrently in bookkeeping to help with processing thousands of requests from QC at a time
+  * End of Shift reports are pre-filled with information from the previous shifter
+  * Added a statistics page that displays efficiency statistics as a graph
+  * When the log tree view page is displayed for single logs with no replies, the button now shows 'Collapse all' by default
+  * Removed Active Filters bar on Run Overview page and Log Overview page
+  * Run Overview page no longer has Data Distrubution column
+  * EPN columns on Run Overview page are combined to show either the number or 'OFF'
+  * In the runs overview, the EOR reasons are displayed and runs can be filtered on it
+  * Further improves the style of the log details page
+  * Adds feedback to the user when the log link is successfully copied
+  * The about page now includes information and status of services including the Bookkeeping gui and the database.
+* Notable changes for developers:
+  * A library has been created to render line-charts based on d3
+    * Line chart display a tooltip with dataset's values on point hover
+  * Adds a primary button component to the common component library
+  * Adds more tests on the log details page
+  * Refactored the log component to share common code between expanded and collapsed logs.
+  * An endpoint to fetch LHC fill statistics has been added
+* Changes made to the database:
+  * Two views has been added: one view representing overlap between runs and lhc fill and one view representing lhc fill statistics
+  * Added environment table to link logs to environment
+
 ## [0.60.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.60.0)
 * Notable changes for users:
   * Run details page shows all detectors as grey (not present) or green/red (good/bad quality)
