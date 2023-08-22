@@ -17,9 +17,10 @@ const { getDetectorsByNames } = require('../../../../../lib/server/services/dete
 const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
 const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
-const { RunCalibrationStatus } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
+const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { SYNTHETIC } = require('../../../../mocks/mock-run.js');
 
 module.exports = () => {
     const baseRun = {
@@ -77,6 +78,13 @@ module.exports = () => {
         expect(run.definition).to.equal(RunDefinition.Physics);
     });
 
+    it('should successfully prevent to create a non-calibration run with a calibrationStatus', async () => {
+        await assert.rejects(
+            () => runService.create({ ...SYNTHETIC.PBPB, calibrationStatus: RunCalibrationStatus.SUCCESS }),
+            new BadParameterError('Calibration status is reserved to calibration runs'),
+        );
+    });
+
     it('should successfully allow to update run calibration status', async () => {
         const runNumber = 40;
         let run = await getRun({ runNumber });
@@ -89,11 +97,6 @@ module.exports = () => {
     });
 
     it('should successfully prevent from updating calibration status from non-calibration runs', async () => {
-        await assert.rejects(
-            () => runService.update({ runNumber: 1 }, { calibrationStatus: RunCalibrationStatus.NO_STATUS }),
-            new BadParameterError('Calibration status is reserved to calibration runs'),
-        );
-
         await assert.rejects(
             () => runService.update({ runNumber: 1 }, { calibrationStatus: RunCalibrationStatus.NO_STATUS }),
             new BadParameterError('Calibration status is reserved to calibration runs'),
@@ -120,12 +123,17 @@ module.exports = () => {
         );
     });
 
-    it('should successfully reset calibration status when changing calibration run definition', async () => {
+    it('should successfully set default values for run calibration status when changing calibration run definition', async () => {
         const runNumber = 106;
         let run = await getRun({ runNumber });
         expect(run.definition).to.equal(RunDefinition.Calibration);
         run = await runService.update({ runNumber }, { definition: RunDefinition.Commissioning });
         expect(run.definition).to.equal(RunDefinition.Commissioning);
         expect(run.calibrationStatus).to.be.null;
+        run = await runService.update({ runNumber }, { definition: RunDefinition.Calibration });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
+        // Put back definition to commissioning
+        await runService.update({ runNumber }, { definition: RunDefinition.Commissioning });
     });
 };
