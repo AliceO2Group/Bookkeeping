@@ -15,6 +15,7 @@ const { repositories: { LogRepository } } = require('../../../../lib/database/in
 const { log: { CreateLogUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { CreateLogDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
+
 const { expect } = chai;
 
 module.exports = () => {
@@ -113,9 +114,9 @@ module.exports = () => {
     });
 
     it('should create a new Log with no duplicate lhcFill numbers', async () => {
-        const expectedFillNumbers = [1, 2, 3]
+        const expectedFillNumbers = [1, 2, 3];
 
-        createLogDto.body.lhcFills = '1, 2, 2, 3'
+        createLogDto.body.lhcFills = '1, 2, 2, 3';
         createLogDto.session = {
             personid: 2,
             id: 2,
@@ -123,23 +124,23 @@ module.exports = () => {
         };
 
         const { result: { lhcFills } } = await new CreateLogUseCase()
-            .execute(createLogDto)
-        
-        const returnedFillNumbers = lhcFills.map(fill => fill.fillNumber)
-        expect(returnedFillNumbers).to.deep.equal(expectedFillNumbers)
-    })
+            .execute(createLogDto);
+
+        const returnedFillNumbers = lhcFills.map((fill) => fill.fillNumber);
+        expect(returnedFillNumbers).to.deep.equal(expectedFillNumbers);
+    });
 
     it('should not create a new Log if at least one of the lhcFills do not exist', async () => {
-        createLogDto.body.lhcFills = '1, 99999'
+        createLogDto.body.lhcFills = '1, 99999';
         createLogDto.session = {
             personid: 2,
             id: 2,
             name: 'Jan Janssen',
         };
-        
+
         const { error: { status } } = await new CreateLogUseCase()
-            .execute(createLogDto)
-        
-        expect(status).to.equal('400')
-    })
+            .execute(createLogDto);
+
+        expect(status).to.equal('400');
+    });
 };
