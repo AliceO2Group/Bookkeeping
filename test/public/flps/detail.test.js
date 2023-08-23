@@ -64,6 +64,7 @@ module.exports = () => {
         await goToPage(page, 'flp-detail', { queryParameters: { id: flpRoleId } });
 
         // We expect the correct associated runs to be shown
+        await page.waitForSelector('#Flp-run');
         const runField = await page.$('#Flp-run');
         const runText = await page.evaluate((element) => element.innerText, runField);
         expect(runText).to.equal(`Run:\n${runId}`);

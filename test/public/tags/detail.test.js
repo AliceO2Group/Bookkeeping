@@ -20,7 +20,6 @@ module.exports = () => {
     let page;
     let browser;
 
-    let table;
     let firstRowId;
 
     before(async () => {
@@ -36,8 +35,7 @@ module.exports = () => {
     });
 
     it('can navigate to a log detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
@@ -52,6 +50,7 @@ module.exports = () => {
 
     it('should successfully display tag\'s related emails', async () => {
         await goToPage(page, 'tag-detail', { queryParameters: { id: 1, panel: 'logs' } });
+        await page.waitForSelector('#tag-email a');
         const emails = await page.$$('#tag-email a');
         expect(emails).to.lengthOf(1);
         expect(await emails[0].evaluate((element) => element.href)).to.equal('mailto:food-group@cern.ch');

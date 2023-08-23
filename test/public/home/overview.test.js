@@ -22,7 +22,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let table;
     let firstRowId;
 
     before(async () => {
@@ -45,16 +44,14 @@ module.exports = () => {
     });
 
     it('Can find table', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // We expect to find a table
         expect(firstRowId).to.equal('row119');
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {

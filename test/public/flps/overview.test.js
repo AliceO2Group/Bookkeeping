@@ -21,7 +21,6 @@ module.exports = () => {
     let page;
     let browser;
 
-    let table;
     let firstRowId;
 
     before(async () => {
@@ -49,8 +48,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
@@ -87,7 +85,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'flp-overview');
-        await page.waitForTimeout(100);
+        await page.waitForSelector('#firstRowIndex');
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
@@ -147,12 +145,11 @@ module.exports = () => {
         expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
-        const oldFirstRowId = await getFirstRow(table, page);
+        const oldFirstRowId = await getFirstRow(page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
         await page.waitForTimeout(500);
-        table = await page.$$('tr');
-        const newFirstRowId = await getFirstRow(table, page);
+        const newFirstRowId = await getFirstRow(page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
 
         // Expect us to be able to do the same with the page arrows

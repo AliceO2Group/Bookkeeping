@@ -21,7 +21,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let table;
     let firstRowId;
 
     before(async () => {
@@ -58,8 +57,7 @@ module.exports = () => {
     });
 
     it('can navigate to a log detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // We expect the entry page to have the same id as the id from the subsystem overview
         await pressElement(page, `#${firstRowId}`);

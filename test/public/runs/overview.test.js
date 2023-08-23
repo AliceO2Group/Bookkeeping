@@ -75,7 +75,7 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
@@ -127,7 +127,8 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+
+        await page.waitForSelector('#firstRowIndex');
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
@@ -248,7 +249,6 @@ module.exports = () => {
 
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
         await page.waitForSelector('tbody tr');
         const firstRow = await page.$('tbody tr');
         const expectedRunId = await firstRow.evaluate((element) => element.id)
@@ -266,7 +266,6 @@ module.exports = () => {
 
     it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
@@ -290,7 +289,7 @@ module.exports = () => {
 
     it('Should display balloon if the text overflows', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const cell = await page.$('tbody tr td:nth-of-type(2)');
         // We need the actual content to overflow in order to display balloon
         await cell.evaluate((element) => {
@@ -444,7 +443,7 @@ module.exports = () => {
 
     it('should update to current date when empty and time is set', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+
         // Open the filters
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
@@ -470,7 +469,6 @@ module.exports = () => {
     });
     it('Validates date will not be set again', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
         const dateString = '03-21-2021';
         const validValue = '2021-03-21';
         // Open the filters
@@ -490,7 +488,7 @@ module.exports = () => {
     });
     it('The max/min should be the right value when date is set to same day', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+
         const dateString = '03-02-2021';
         // Open the filters
         await pressElement(page, '#openFilterToggle');
@@ -521,7 +519,6 @@ module.exports = () => {
 
     it('The max should be the maximum value when having different dates', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
         const dateString = '03-20-2021';
         const maxTime = '23:59';
         const minTime = '00:00';
@@ -547,7 +544,6 @@ module.exports = () => {
 
     it('should successfully filter on duration', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
@@ -690,6 +686,7 @@ module.exports = () => {
 
     it('should successfully filter on a list of run ids and inform the user about it', async () => {
         await reloadPage(page);
+        await page.waitForSelector('#openFilterToggle');
         await page.$eval('#openFilterToggle', (element) => element.click());
         const filterInputSelector = '#runNumber';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
@@ -705,6 +702,7 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
+        await page.waitForSelector('#openFilterToggle');
         await page.$eval('#openFilterToggle', (element) => element.click());
 
         const filterInputSelector = '#fillNumbers';
@@ -721,6 +719,7 @@ module.exports = () => {
         await reloadPage(page);
         await page.evaluate(() => window.model.disableInputDebounce());
 
+        await page.waitForSelector('#openFilterToggle');
         await page.$eval('#openFilterToggle', (element) => element.click());
 
         const filterInputSelector = '#environmentIds';
@@ -735,7 +734,6 @@ module.exports = () => {
 
     it('should successfully filter on run types', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(100);
@@ -754,7 +752,6 @@ module.exports = () => {
 
     it('should successfully filter on nDetectors', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
@@ -785,7 +782,6 @@ module.exports = () => {
 
     it('should successfully filter on nFLPs', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
@@ -921,7 +917,6 @@ module.exports = () => {
 
     it('should correctly filter by EOR reason description', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
@@ -976,7 +971,7 @@ module.exports = () => {
 
     it('should successfully display information when export will be truncated', async () => {
         await reloadPage(page);
-        await page.waitForTimeout(200);
+        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
         await page.waitForTimeout(100);
@@ -989,10 +984,8 @@ module.exports = () => {
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
         await reloadPage(page);
-        await page.waitForTimeout(200);
-
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(20);
 
         // Type a fake run number to have no runs
         await page.focus('#runNumber');
@@ -1009,6 +1002,7 @@ module.exports = () => {
         const runId = 106;
 
         const fillNumberCellSelector = `#row${runId}-fillNumber`;
+        await page.waitForSelector(fillNumberCellSelector);
         const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);
 
         await page.$eval(`${fillNumberCellSelector} a`, (link) => link.click());
@@ -1023,6 +1017,7 @@ module.exports = () => {
 
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-overview');
+        await page.waitForSelector('#row106-runDuration');
         const runDurationCell = await page.$('#row106-runDuration');
         expect(await runDurationCell.$('.popover-container')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');

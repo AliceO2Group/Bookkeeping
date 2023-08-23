@@ -34,7 +34,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let table;
     let firstRowId;
 
     before(async () => {
@@ -69,8 +68,8 @@ module.exports = () => {
 
     it('successfully changed run tags in EDIT mode', async () => {
         await reloadPage(page);
+        await page.waitForSelector('#edit-run');
         await pressElement(page, '#edit-run');
-        await page.waitForTimeout(100);
         await pressElement(page, '#tags-selection #tagCheckbox1');
         await page.waitForTimeout(100);
         await pressElement(page, '#save-run');
@@ -83,6 +82,7 @@ module.exports = () => {
     it('should display detectors names', async () => {
         await reloadPage(page);
         const detectorNameSelector = '#Run-detectors .detector-name';
+        await page.waitForSelector(detectorNameSelector);
         const detectorNames = await page.$$eval(detectorNameSelector, (detectors) => detectors.map((detector) => detector.innerText));
         const expectedDetectorNames =
             ['ACO', 'CPV', 'CTP', 'EMC', 'FDD', 'FIT', 'FT0', 'FV0', 'HMP', 'ITS']
@@ -97,6 +97,7 @@ module.exports = () => {
     it('should display detectors qualities and colors', async () => {
         await reloadPage(page);
         const detectorBadgeClassesSelector = '#Run-detectors .detector-badge';
+        await page.waitForSelector(detectorBadgeClassesSelector);
         const detectorBadgeClasses = await page.$$eval(detectorBadgeClassesSelector, (badges) => badges.map((badge) => badge.className));
 
         const detectorBadgesPresent = detectorBadgeClasses.filter((elem) => !elem.includes('gray'));
@@ -118,6 +119,7 @@ module.exports = () => {
 
     it('should successfully display detectors icons', async () => {
         await reloadPage(page);
+        await page.waitForSelector('#Run-detectors .detector-quality-icon svg path');
         const svgPaths = await page.$$eval('#Run-detectors .detector-quality-icon svg path', (elements) =>
             elements.map((elem) => elem.getAttribute('d')));
 
@@ -247,8 +249,7 @@ module.exports = () => {
         expect(value).to.equal('Fill number:');
     });
     it('can navigate to a log detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // We expect the entry page to have the same id as the id from the run overview
         await pressElement(page, `#${firstRowId} .btn-redirect`);
@@ -277,10 +278,10 @@ module.exports = () => {
 
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
-        await page.waitForTimeout(100);
 
         const fillNumberSelector = '#lhc-fill-fillNumber a';
         // Remove "row" prefix to get fill number
+        await page.waitForSelector(fillNumberSelector);
         const fillNumber = await page.$eval(fillNumberSelector, (element) => element.innerText);
 
         await page.$eval(fillNumberSelector, (link) => link.click());
@@ -322,6 +323,7 @@ module.exports = () => {
 
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await page.waitForSelector('#runDurationValue');
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$('.popover-container')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
@@ -329,6 +331,7 @@ module.exports = () => {
 
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 105 } });
+        await page.waitForSelector('#runDurationValue');
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$('.popover-container')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
@@ -336,6 +339,7 @@ module.exports = () => {
 
     it('should successfully display popover warning when run is missing trigger start', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 104 } });
+        await page.waitForSelector('#runDurationValue');
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
             .to.equal('Duration based on o2 start because of missing trigger start information');
@@ -343,6 +347,7 @@ module.exports = () => {
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 103 } });
+        await page.waitForSelector('#runDurationValue');
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
             .to.equal('Duration based on o2 stop because of missing trigger stop information');
@@ -350,6 +355,7 @@ module.exports = () => {
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 102 } });
+        await page.waitForSelector('#runDurationValue');
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
             .to.equal('Duration based on o2 start AND stop because of missing trigger information');

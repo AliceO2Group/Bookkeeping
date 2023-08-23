@@ -104,7 +104,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await page.waitForTimeout(100);
+        await page.waitForSelector('#firstRowIndex');
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
@@ -113,7 +113,6 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await page.waitForTimeout(100);
 
         await checkColumnBalloon(page, 1, 12);
     });
@@ -163,6 +162,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
+        await page.waitForSelector('#page5');
         const pageFiveButton = await page.$('#page5');
         expect(pageFiveButton).to.be.not.null;
         const pageSixButton = await page.$('#page6');
@@ -177,7 +177,7 @@ module.exports = () => {
 
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await page.waitForTimeout(200);
+        await page.waitForSelector('tbody tr:nth-of-type(3)');
 
         // Use the third row to have a fill with statistics
         const row = await page.$('tbody tr:nth-of-type(3)');
@@ -197,6 +197,7 @@ module.exports = () => {
 
     it('should successfully display ONGOING information', async () => {
         await goToPage(page, 'lhc-fill-overview');
+        await page.waitForSelector('#row5-stableBeamsDuration-text');
         const stableBeamsDurationText = await page.$('#row5-stableBeamsDuration-text');
         expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success')));
         expect(await stableBeamsDurationText.evaluate((element) => element.innerText)).to.equal('ONGOING');

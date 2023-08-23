@@ -30,6 +30,7 @@ module.exports = () => {
     it('should successfully emphasize the fills that have a stable beams', async () => {
         // Fill #6 has a stable beam
         {
+            await page.waitForSelector('#stable-beam-badge');
             const stableBeamBadge = await page.$('#stable-beam-badge');
             expect(stableBeamBadge).to.be.not.null;
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-primary'))).to.be.true;
@@ -39,6 +40,7 @@ module.exports = () => {
         // Fill #5 has an ongoing stable beam
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 5 } });
         {
+            await page.waitForSelector('#stable-beam-badge');
             const stableBeamBadge = await page.$('#stable-beam-badge');
             expect(stableBeamBadge).to.be.not.null;
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
@@ -48,6 +50,7 @@ module.exports = () => {
 
     it('should successfully display runs statistics', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
+        await page.waitForSelector('#statistics');
         const statistics = await page.$('#statistics');
         expect(statistics).to.be.not.null;
         const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);

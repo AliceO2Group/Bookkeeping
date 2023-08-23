@@ -29,7 +29,6 @@ module.exports = () => {
     let page;
     let browser;
 
-    let table;
     let firstRowId;
 
     before(async () => {
@@ -57,8 +56,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
 
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
@@ -95,7 +93,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'env-overview');
-        await page.waitForTimeout(100);
+        await page.waitForSelector('#firstRowIndex');
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
@@ -104,7 +102,6 @@ module.exports = () => {
 
     it('Should have balloon on status message and runs columns', async () => {
         await goToPage(page, 'env-overview');
-        await page.waitForTimeout(100);
 
         await checkColumnBalloon(page, 1, 5);
         await checkColumnBalloon(page, 1, 6);
@@ -112,7 +109,6 @@ module.exports = () => {
 
     it('Should have correct status color in the overview page', async () => {
         await goToPage(page, 'env-overview');
-        await page.waitForTimeout(100);
 
         await checkEnvironmentStatusColor(page, 1, 4);
         await checkEnvironmentStatusColor(page, 2, 4);

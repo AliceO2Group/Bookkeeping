@@ -19,6 +19,8 @@ const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 
 const { expect } = chai;
 
+const TABLE_DATA_ROW_SELECTOR = 'tbody tr:not(.loader-row)';
+
 /**
  * Returns the URL with correct port postfixed.
  * @returns {String} URL specific to the port specified by user/host.
@@ -95,50 +97,33 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
 };
 
 /**
- * Reload the current page and wait for it to be loaded
- * @param {Page} puppeteerPage Puppeteer page object.
- * @return {Promise} resolves when the page has loaded
- */
-module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage.url());
-
-/**
- * Navigates to a specific URL and waits until everything is loaded.
+ * Navigates to a specific URL while authenticating user
  *
  * @param {Page} puppeteerPage puppeteer page object
  * @param {string} url the URL to navigate to
- * @param {object} [options] navigation options
- * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
- * @param {number} [options.redrawDuration] the estimated time to wait for the page to redraw
  * @returns {Promise} resolves with the navigation response
  */
-const goTo = async (puppeteerPage, url, options) => {
-    const { authenticate = true, redrawDuration = 20 } = options ?? {};
-
+const goTo = async (puppeteerPage, url) => {
     const queryParameters = {};
-    if (authenticate) {
-        queryParameters.personid = 0;
-        queryParameters.username = 'anonymous';
-        queryParameters.name = 'Anonymous';
-        queryParameters.access = 'admin';
-        queryParameters.token = server.http.o2TokenService.generateToken(
-            queryParameters.personid,
-            queryParameters.username,
-            queryParameters.name,
-            queryParameters.access,
-        );
-    }
+    queryParameters.personid = 0;
+    queryParameters.username = 'anonymous';
+    queryParameters.name = 'Anonymous';
+    queryParameters.access = 'admin';
+    queryParameters.token = server.http.o2TokenService.generateToken(
+        queryParameters.personid,
+        queryParameters.username,
+        queryParameters.name,
+        queryParameters.access,
+    );
 
-    const response = await puppeteerPage.goto(buildUrl(url, queryParameters), { waitUntil: 'networkidle0' });
-    await puppeteerPage.waitForTimeout(redrawDuration);
-    return response;
+    return puppeteerPage.goto(buildUrl(url, queryParameters), { waitUntil: 'load' });
 };
 
 /**
- * Goes to a specific page and waits until everything is loaded.
+ * Goes to a specific page
  * @param {Page} puppeteerPage Puppeteer page object.
  * @param {string} pageKey Value of pageKey in: URL/?page={pageKey}&...
  * @param {object} [options] navigation options
- * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
  * @param {object} [options.queryParameters] query parameters to add to the page's URL
  * @returns {Promise} Switches the user to the correct page.
  */
@@ -150,6 +135,54 @@ module.exports.goToPage = (puppeteerPage, pageKey, options) => {
     });
     return goTo(puppeteerPage, url);
 };
+
+/**
+ * Reload the current page
+ * @param {Page} puppeteerPage Puppeteer page object.
+ * @return {Promise} resolves when the page has loaded
+ */
+module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage.url());
+
+/**
+ * Navigates to a specific URL and waits until everything is loaded.
+ *
+ * @param {Page} puppeteerPage puppeteer page object
+ * @param {string} url the URL to navigate to
+ * @deprecated use normal {@see goTo} and use puppeteer waitForSelector
+ * @returns {Promise} resolves with the navigation response
+ */
+const goToAndWaitForRedraw = async (puppeteerPage, url) => {
+    const response = goTo(puppeteerPage, url);
+    await puppeteerPage.waitForNetworkIdle({ idleTime: 100 });
+    await puppeteerPage.waitForTimeout(20);
+    return response;
+};
+
+/**
+ * Goes to a specific page and waits until everything is loaded.
+ * @param {Page} puppeteerPage Puppeteer page object.
+ * @param {string} pageKey Value of pageKey in: URL/?page={pageKey}&...
+ * @param {object} [options] navigation options
+ * @param {object} [options.queryParameters] query parameters to add to the page's URL
+ * @deprecated use {@see goToPage} and use puppeteer waitForSelector
+ * @returns {Promise} Switches the user to the correct page.
+ */
+module.exports.goToPageAndWaitForRedraw = (puppeteerPage, pageKey, options) => {
+    const { queryParameters = {} } = options || {};
+    const url = buildUrl(getUrl(), {
+        page: pageKey,
+        ...queryParameters,
+    });
+    return goToAndWaitForRedraw(puppeteerPage, url);
+};
+
+/**
+ * Reload the current page and wait for it to be loaded
+ * @param {Page} puppeteerPage Puppeteer page object.
+ * @deprecated use {@see reloadPage} and use puppeteer waitForSelector
+ * @return {Promise} resolves when the page has loaded
+ */
+module.exports.reloadPageAndWaitForRedraw = (puppeteerPage) => goToAndWaitForRedraw(puppeteerPage, puppeteerPage.url());
 
 /**
  * Wait for page network idle and add a small timeout to let the page redraw
@@ -187,13 +220,15 @@ module.exports.validateElement = async (page, selector) => {
  * @param {String} name Name of the screenshot taken. Useful when taking multiple in a row.
  * @returns {*} None
  */
-module.exports.takeScreenshot = async (page, name = 'screenshot') => {
+const takeScreenshot = async (page, name = 'screenshot') => {
     await page.screenshot({
         path: `/var/storage/${name}.png`,
         type: 'png',
         fullPage: true,
     });
 };
+
+module.exports.takeScreenshot = takeScreenshot;
 
 /**
  * Validates if selector is present and returns the element.
@@ -211,18 +246,42 @@ module.exports.validateElementEqualTo = async (page, selector, value) => {
 };
 
 /**
+ * Wait for a common data table to be ready
+ *
+ * @param {Page} page Puppeteer page
+ * @return {Promise<void>} resolve once the table is ready and not loading
+ */
+const waitForTableLoad = async (page) => {
+    await page.evaluate(async () => {
+        await new Promise((resolve) => {
+            window.requestAnimationFrame(resolve);
+            setTimeout(() => resolve(), 500);
+        });
+    });
+    return page.waitForSelector('tbody tr:not(.loader-row)');
+};
+
+module.exports.waitForTableLoad = waitForTableLoad;
+
+/**
+ * Returns the rows of a common data table
+ *
+ * @param {Page} page Puppeteer page
+ * @return {Promise<object[]>} resolves with the table rows
+ */
+module.exports.getAllTableRows = async (page) => {
+    await waitForTableLoad(page);
+    return page.$$(TABLE_DATA_ROW_SELECTOR);
+};
+
+/**
  * Special method built due to Puppeteer limitations: looks for the first row matching an ID in a table
- * @param {Object} table An HTML element representing the entire run table
- * @param {Object} page An object representing the browser page being used by Puppeteer
+ * @param {Page} page An object representing the browser page being used by Puppeteer
  * @return {Promise<String>} The ID of the first matching row with data
  */
-module.exports.getFirstRow = async (table, page) => {
-    for await (const child of table) {
-        const id = await page.evaluate((element) => element.id, child);
-        if (id.startsWith('row')) {
-            return id;
-        }
-    }
+module.exports.getFirstRow = async (page) => {
+    await waitForTableLoad(page);
+    return page.$eval(TABLE_DATA_ROW_SELECTOR, (firstRow) => firstRow.id);
 };
 
 /**
@@ -262,7 +321,9 @@ module.exports.getInnerHtml = getInnerHtml;
  * @returns {Promise<void>} void promise
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
+    const selector = `tbody tr td:nth-of-type(${columnIndex})`;
+    await page.waitForSelector(selector);
+    const cell = await page.$(selector);
     const balloon = await cell.$('.popover');
     expect(balloon).to.not.be.null;
     const actualContent = await cell.$('.popover-actual-content');
@@ -274,12 +335,13 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 /**
  * Check that a given cell of the given column displays the correct color depending on the status
  *
- * @param {{$: function}} page the puppeteer page
+ * @param {Page} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for status color
  * @param {number} columnIndex the index of the column to look for status color
  * @returns {Promise<Chai.Assertion>} void promise
  */
 module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex) => {
+    await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex})`);
     const cellStatus = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
     const cell = await page.$(`tbody tr:nth-of-type(${rowIndex})`);
     const cellStatusContent = await getInnerHtml(cellStatus);
@@ -308,11 +370,15 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
     await page.waitForSelector(inputSelector);
-    await page.evaluate((inputSelector, value, events) => {
+    await page.evaluate(async (inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
         element.value = value;
         for (const eventKey of events) {
-            element.dispatchEvent(new Event(eventKey, { bubbles: true }));
+            // Wait for event to finish bubble up
+            await new Promise((resolve) => {
+                document.addEventListener(eventKey, resolve, { once: true });
+                element.dispatchEvent(new Event(eventKey, { bubbles: true }));
+            });
         }
     }, inputSelector, value, events);
 };

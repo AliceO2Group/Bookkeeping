@@ -63,7 +63,7 @@ module.exports = () => {
     });
     it('Should show no fields when having no admin roles', async () => {
         await goToPage(page, 'tag-create');
-        await page.waitForTimeout(100);
+        await page.waitForSelector('div[title="User Actions"]');
         await page.click('div[title="User Actions"]');
         await page.waitForTimeout(100);
         await page.click('span.slider.round');

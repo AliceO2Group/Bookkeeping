@@ -21,7 +21,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let table;
     let firstRowId;
     let parsedFirstRowId;
 
@@ -44,8 +43,7 @@ module.exports = () => {
     });
 
     it('can navigate to a subsystem detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        firstRowId = await getFirstRow(page);
         parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the subsystem overview

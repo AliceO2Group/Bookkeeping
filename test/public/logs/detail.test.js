@@ -32,6 +32,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 5 } });
 
         // We expect to be the only log on page and opened
+        await page.waitForSelector('#log-5');
         const postExists = await page.$('#log-5');
         const openedLogs = await page.evaluate(() => window.model.logs.treeViewModel.detailedPostsIds);
         expect(openedLogs).to.have.lengthOf(1);
@@ -43,6 +44,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect other logs to be closed
+        await page.waitForSelector('#log-117 .log-details-collapsed > *');
         const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
 
         const closedLog2 = await page.$$('#log-118 .log-details-collapsed > *');
@@ -56,6 +58,7 @@ module.exports = () => {
     it('should display the log title on the log card if it is the same title as the parent log', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
+        await page.waitForSelector('#log-117 #log-117-title');
         const log117Title = await page.$('#log-117 #log-117-title');
         const log119Title = await page.$('#log-119 #log-119-title');
         expect(log117Title).to.not.exist;
@@ -70,6 +73,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect the button to be there. Log 117 should be a parent to 119.
+        await page.waitForSelector('#copy-117');
         const log117CopyBtn = await page.$('#copy-117');
         expect(log117CopyBtn).to.exist;
 
@@ -85,6 +89,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect the button to be there. Log 117 should be a parent to 119.
+        await page.waitForSelector('#copy-117');
         const log117CopyBtn = await page.$('#copy-117');
         expect(log117CopyBtn).to.exist;
 
@@ -99,6 +104,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one log in this log entry
+        await page.waitForSelector('#log-1');
         const postExists = await page.$('#log-1');
         expect(Boolean(postExists)).to.be.true;
     });
@@ -118,6 +124,7 @@ module.exports = () => {
 
         // Navigate to a log detail view
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+        await page.waitForSelector('#toggleCollapse');
         const showAllButton = await page.$('#toggleCollapse');
         await showAllButton.click();
         await page.waitForTimeout(1000);
