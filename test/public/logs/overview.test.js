@@ -701,7 +701,7 @@ module.exports = () => {
         expect(urlParameters).to.contain('id=2');
     });
 
-    it('should successfully display the list of related lhcFills as hyperlinks to their details page', async () => {
+    it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
         await goToPage(page, 'log-overview');
         await pressElement(page, '#row119-lhcFills a');
         await waitForNetworkIdleAndRedraw(page);

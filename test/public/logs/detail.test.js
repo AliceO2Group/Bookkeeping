@@ -136,6 +136,30 @@ module.exports = () => {
         expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}`);
     });
 
+    it('allows navigating to an associated LHC fill', async () => {
+        const logId = 1;
+        const fillNumbers = [5, 6];
+
+        // Navigate to a log detail view
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+        const showAllButton = await page.$('#toggleCollapse');
+        await showAllButton.click();
+        await page.waitForTimeout(1000);
+        // We expect the correct associated lhcFills to be shown
+        const lhcFillField = await page.$(`#log-${logId}-lhcFills`);
+        const lhcFillText = await page.evaluate((element) => element.innerText, lhcFillField);
+        expect(lhcFillText).to.equal(`LHC Fills:\n${fillNumbers.join(',\n')}`);
+
+        // We expect the associated lhcFills to be clickable with a valid link
+        const lhcFillLink = await page.$(`#log-${logId}-lhcFills a`);
+        await lhcFillLink.click();
+        await page.waitForTimeout(1000);
+
+        // We expect the link to navigate to the correct lhcFill detail page
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=lhc-fill-detail&fillNumber=${fillNumbers[0]}`);
+    });
+
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
