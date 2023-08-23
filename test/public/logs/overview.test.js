@@ -693,11 +693,21 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row150-runs a');
+        await pressElement(page, '#row119-runs a');
         await waitForNetworkIdleAndRedraw(page);
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('id=2');
+    });
+
+    it('should successfully display the list of related lhcFills as hyperlinks to their details page', async () => {
+        await goToPage(page, 'log-overview');
+        await pressElement(page, '#row119-lhcFills a');
+        await waitForNetworkIdleAndRedraw(page);
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain('fillNumber=1');
     });
 };
