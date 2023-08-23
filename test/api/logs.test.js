@@ -1343,7 +1343,6 @@ module.exports = () => {
         });
     });
 
-
     describe('GET /api/logs/:logId/attachments', () => {
         it('should return an array', (done) => {
             request(server)
