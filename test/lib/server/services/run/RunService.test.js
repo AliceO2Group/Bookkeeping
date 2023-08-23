@@ -16,6 +16,11 @@ const { runService } = require('../../../../../lib/server/services/run/RunServic
 const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
 const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
 const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
+const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
+const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { SYNTHETIC } = require('../../../../mocks/mock-run.js');
 
 module.exports = () => {
     const baseRun = {
@@ -71,5 +76,64 @@ module.exports = () => {
             timeTrgEnd,
         });
         expect(run.definition).to.equal(RunDefinition.Physics);
+    });
+
+    it('should successfully prevent to create a non-calibration run with a calibrationStatus', async () => {
+        await assert.rejects(
+            () => runService.create({ ...SYNTHETIC.PBPB, calibrationStatus: RunCalibrationStatus.SUCCESS }),
+            new BadParameterError('Calibration status is reserved to calibration runs'),
+        );
+    });
+
+    it('should successfully allow to update run calibration status', async () => {
+        const runNumber = 40;
+        let run = await getRun({ runNumber });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        run = await runService.update({ runNumber }, { calibrationStatus: RunCalibrationStatus.SUCCESS });
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+        run = await runService.update({ runNumber }, { calibrationStatus: RunCalibrationStatus.NO_STATUS });
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+    });
+
+    it('should successfully prevent from updating calibration status from non-calibration runs', async () => {
+        await assert.rejects(
+            () => runService.update({ runNumber: 1 }, { calibrationStatus: RunCalibrationStatus.NO_STATUS }),
+            new BadParameterError('Calibration status is reserved to calibration runs'),
+        );
+    });
+
+    it('should successfully consider current patch to allow/disallow calibration status update', async () => {
+        const runNumber = 106;
+        let run = await getRun({ runNumber });
+        expect(run.definition).to.equal(RunDefinition.Commissioning);
+        expect(run.calibrationStatus).to.be.null;
+        // Run was commissioning, set it to calibration and set calibration status at once
+        run = await runService.update({ runNumber }, { definition: RunDefinition.Calibration, calibrationStatus: RunCalibrationStatus.SUCCESS });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+
+        // Try to move the run to commissioning and set its calibration status in the same time
+        await assert.rejects(
+            () => runService.update(
+                { runNumber },
+                { definition: RunDefinition.Commissioning, calibrationStatus: RunCalibrationStatus.SUCCESS },
+            ),
+            new BadParameterError('Calibration status is reserved to calibration runs'),
+        );
+    });
+
+    it('should successfully set default values for run calibration status when changing calibration run definition', async () => {
+        const runNumber = 106;
+        let run = await getRun({ runNumber });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        run = await runService.update({ runNumber }, { definition: RunDefinition.Commissioning });
+        expect(run.definition).to.equal(RunDefinition.Commissioning);
+        expect(run.calibrationStatus).to.be.null;
+        run = await runService.update({ runNumber }, { definition: RunDefinition.Calibration });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
+        // Put back definition to commissioning
+        await runService.update({ runNumber }, { definition: RunDefinition.Commissioning });
     });
 };

@@ -19,6 +19,7 @@ const { RunDefinition } = require('../../lib/server/services/run/getRunDefinitio
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
+const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -820,6 +821,24 @@ module.exports = () => {
                 .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
             expect(status).to.equal(500);
             expect(body.errors[0].detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
+        });
+
+        it('should successfully allow to update calibration status for calibration run', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
+            expect(status).to.equal(201);
+            expect(body.data).to.be.an('object');
+            expect(body.data.id).to.equal(40);
+            expect(body.data.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+        });
+
+        it('should successfully return 400 when trying to set calibration status for non-calibration run', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/106')
+                .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail).to.equal('Calibration status is reserved to calibration runs');
         });
     });
 
