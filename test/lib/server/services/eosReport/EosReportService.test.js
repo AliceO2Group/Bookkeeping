@@ -12,6 +12,7 @@
  */
 
 const { eosReportService } = require('../../../../../lib/server/services/eosReport/EosReportService.js');
+const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
 const { expect } = require('chai');
 const {
     emptyECSEosReportRequest,
@@ -48,6 +49,9 @@ const {
     customizedDcsEosReportLogs, customizedDcsEosReport, customizedDcsEosReportRequest, formattedCustomizedDcsEosReport, eosDcsReportTitle,
     emptyDcsEosReportRequest, formattedEmptyDcsEosReport,
 } = require('../../../../mocks/mock-dcs-eos-report.js');
+const { logService } = require('../../../../../lib/server/services/log/LogService.js');
+const { formatEosReportTitle } = require('../../../../../lib/server/services/eosReport/formatEosReport.js');
+const { getShiftFromTimestamp, SHIFT_DURATION } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {
@@ -63,10 +67,7 @@ module.exports = () => {
                 environmentId: environment.id,
             });
             for (const run of environment.runs) {
-                const runId = await createRun(
-                    run,
-                    [],
-                );
+                const runId = await createRun(run);
                 expectedRunNumbers.push(run.runNumber);
 
                 // Create the expected EOR
@@ -93,7 +94,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), []);
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], []);
             logRuns.push({ logId, runId: 1 });
         }
 
@@ -124,10 +125,7 @@ module.exports = () => {
         // Create the expected logs and runs
         for (const runs of Object.values(customizedQcPdpEosReport.typeSpecific.runs)) {
             for (const run of runs) {
-                const runId = await createRun(
-                    run,
-                    run.detectors,
-                );
+                const runId = await createRun(run, { detectors: run.detectors });
                 for (const detector of run.detectors) {
                     await updateRunDetector(
                         run.runNumber,
@@ -161,7 +159,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), []);
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], []);
             logRuns.push({ logId, runId: 1 });
         }
 
@@ -200,7 +198,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], []);
         }
 
         const log = await eosReportService.createLogEntry(ShiftTypes.SLIMOS, customizedSlimosEosReportRequest, { userId: 1 });
@@ -227,10 +225,7 @@ module.exports = () => {
         // Create the expected logs and runs
         for (const runs of Object.values(customizedShiftLeaderEosReport.typeSpecific.runs)) {
             for (const run of runs) {
-                await createRun(
-                    run,
-                    run.detectors,
-                );
+                await createRun(run, { detectors: run.detectors });
                 for (const detector of run.detectors) {
                     await updateRunDetector(
                         run.runNumber,
@@ -255,7 +250,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), []);
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], []);
             logRuns.push({ logId, runId: 1 });
         }
 
@@ -294,7 +289,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), []);
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], []);
         }
 
         const log = await eosReportService.createLogEntry(ShiftTypes.DCS, customizedDcsEosReportRequest, { userId: 1 });
@@ -312,5 +307,76 @@ module.exports = () => {
         expect(log.title).to.equal(eosDcsReportTitle);
         expect(log.runs.length).to.equal(0);
         expect(log.author.id).to.equal(1);
+    });
+
+    it ('should throw an error if no previous EoS report is found for autofilling', async () => {
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS);
+        expect(response.infoFromPreviousShifter.errorMessage).to.equal('No SLIMOS EoS reports found from the previous shift');
+    });
+
+    it ('should throw an error if the previous EoS report has no information transfer field', async () => {
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
+        const pastShift = getShiftFromTimestamp(past);
+        const title = formatEosReportTitle(pastShift, ShiftTypes.DCS);
+        await logService.create({
+            userId: 1,
+            title: title,
+            text: 'Missing information',
+        });
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.DCS);
+        expect(response.infoFromPreviousShifter.errorMessage)
+            .to.equal('EoS report from the previous shift is missing the information transfer field');
+    });
+
+    it ('should throw an error if the previous EoS report has no information for the next shifter', async () => {
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
+        const request = {
+            ...emptySlimosEosReportRequest,
+            shiftStart: past,
+            infoForNextShifter: '',
+        };
+
+        await eosReportService.createLogEntry(ShiftTypes.SLIMOS, request, { userId: 1 });
+
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS);
+        expect(response.infoFromPreviousShifter.errorMessage).to.equal('Previous EoS report contains no information for next shifter');
+    });
+
+    it ('should throw an error if multiple previous EoS reports are found for autofilling', async () => {
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
+        const request1 = {
+            ...emptySlimosEosReportRequest,
+            shiftStart: past,
+        };
+        const request2 = {
+            ...emptySlimosEosReportRequest,
+            shiftStart: past,
+        };
+
+        await eosReportService.createLogEntry(ShiftTypes.SLIMOS, request1, { userId: 1 });
+        await eosReportService.createLogEntry(ShiftTypes.SLIMOS, request2, { userId: 1 });
+
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS);
+        expect(response.infoFromPreviousShifter.errorMessage).to.equal('Multiple SLIMOS EoS reports found from the previous shift');
+    });
+
+    it ('should autofill new EoS reports with information from the previous shifter', async () => {
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const past = new Date(currentShift.start - SHIFT_DURATION);
+        const info = `Important information for the next tester
+        containing new lines and #punctuation...`;
+        const request = {
+            ...emptyECSEosReportRequest,
+            shiftStart: past,
+            infoForNextShifter: info,
+        };
+
+        await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
+
+        const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.ECS);
+        expect(response.infoFromPreviousShifter.value).to.equal(info);
     });
 };

@@ -47,7 +47,7 @@ module.exports = () => {
         const { result, error } = await new StartRunUseCase().execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
-        expect(result.id).to.equal(109);
+        expect(result.id).to.equal(110);
     });
 
     it('should fail to save a run with an already existing run number', async () => {
@@ -69,7 +69,7 @@ module.exports = () => {
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.runType.name).to.equal('NONE');
-        expect(result.id).to.equal(110);
+        expect(result.id).to.equal(111);
         expect(result.detectors).to.equal('');
         expect(result.runQuality).to.equal(RunQualities.NONE);
     });
