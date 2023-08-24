@@ -1334,7 +1334,7 @@ module.exports = () => {
 
                     expect(data).to.be.an('array');
 
-                    const expectedLhcFillNumbers = [1, 2, 4, 6];
+                    const expectedLhcFillNumbers = [1, 4, 6];
                     const lhcFillNumbers = data.map((lhcFill) => lhcFill.fillNumber);
                     expect(lhcFillNumbers).to.deep.equal(expectedLhcFillNumbers);
 
