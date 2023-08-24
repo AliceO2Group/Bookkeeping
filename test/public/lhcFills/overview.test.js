@@ -69,9 +69,9 @@ module.exports = () => {
             // Seems to not exist anymore
             statusMessage: (string) => typeof string == 'string',
             efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
-            durationBeforeFirstRun: (data) => data === '-'
+            timeLossAtStart: (data) => data === '-'
                 || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
-            durationAfterLastRun: (data) => data === '-'
+            timeLossAtEnd: (data) => data === '-'
                 || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runsCoverage: (duration) => duration === '-' || duration.match(durationRegex) !== null,

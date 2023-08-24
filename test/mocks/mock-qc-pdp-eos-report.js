@@ -19,6 +19,7 @@ const {
     genericFormattedCustomizedEosReport,
 } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
+const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 
 exports.eosQcPdpReportTitle = 'End of shift report - QC/PDP - 17/03/2023 Morning';
 
@@ -113,6 +114,7 @@ const customizedQcPdpEosReport = {
                     ],
                     detectors: [],
                     detectorsQualities: [],
+                    definition: RunDefinition.Commissioning,
                 },
             ],
             TECHNICAL: [

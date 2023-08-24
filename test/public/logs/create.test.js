@@ -225,15 +225,12 @@ module.exports = () => {
         const button = await page.$(`a#btn${buttonId}`);
         await button.evaluate((btn) => btn.click());
         await page.waitForTimeout(1000);
-        // Click on "Show all" button
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(500);
-        // Verify that the attachment names match the ones we uploaded
+
+        // We expect the log to contain the attachments
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
         const attachmentsField = await page.$(`#log-${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
-        expect(attachmentsText).to.equal(`Attachments:\t\n${file1},\n${file2}`);
+        expect(attachmentsText).to.equal(`Attachments:\n${file1},\n${file2}`);
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -299,14 +296,10 @@ module.exports = () => {
 
         await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
 
-        // Click on "Show all" button
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(20);
+        // We expect the log to contain the run number
         const runsField = await page.$(`#log-${rowId}-runs`);
-
         const runsText = await page.evaluate((element) => element.innerText, runsField);
-        expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
+        expect(runsText).to.equal(`Runs:\n${runNumbersStr}`);
     });
 
     it('can create a log with multiple run numbers', async () => {
@@ -347,10 +340,7 @@ module.exports = () => {
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
         await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
 
-        // Click on "Show all" button
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(20);
+        // We expect the log to contain the correct run numbers
         const runsField = await page.$(`#log-${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         for (const runNumber of runNumbers) {

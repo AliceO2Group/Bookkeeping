@@ -24,8 +24,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'ITS, TST, FT0',
         },
         processingAndFT0AndITS: {
@@ -39,8 +39,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'FT0, TST, ITS',
         },
         processingDiskAndITSAndFT0: {
@@ -54,8 +54,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'ITS, TST, FT0',
         },
         processingDiskAndFT0AndITS: {
@@ -69,8 +69,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'FT0, TST, ITS',
         },
     },
@@ -86,8 +86,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'COSMICS',
@@ -105,8 +105,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'COSMICS',
@@ -125,8 +125,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'STANDALONE',
@@ -143,8 +143,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-03T10:00:00',
                 stableBeamsEnd: '2022-10-04T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'ITS, TST',
         },
     },
@@ -160,8 +160,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'TECHNICAL',
@@ -182,8 +182,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'TECHNICAL',
@@ -201,8 +201,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'TECHNICAL',
@@ -222,8 +222,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'PEDESTAL',
@@ -241,8 +241,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'LASER',
@@ -260,8 +260,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'PULSER',
@@ -279,8 +279,8 @@ module.exports = {
                 stableBeamsStart: '2022-10-01T10:00:00',
                 stableBeamsEnd: '2022-10-02T10:00:00',
             },
-            startTime: 1664618400000, // 2022-10-01T12:00:00
-            endTime: 1664625600000, // 2022-10-01T14:00:00
+            timeTrgStart: 1664618400000, // 2022-10-01T12:00:00
+            timeTrgEnd: 1664625600000, // 2022-10-01T14:00:00
             concatenatedDetectors: 'TPC, TST',
             runType: {
                 name: 'NOISE',

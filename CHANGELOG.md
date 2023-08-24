@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.61.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
+* Notable changes for users:
+  * DPL processes executions can be inserted concurrently in bookkeeping to help with processing thousands of requests from QC at a time
+  * End of Shift reports are pre-filled with information from the previous shifter
+  * Added a statistics page that displays efficiency statistics as a graph
+  * When the log tree view page is displayed for single logs with no replies, the button now shows 'Collapse all' by default
+  * Removed Active Filters bar on Run Overview page and Log Overview page
+  * Run Overview page no longer has Data Distrubution column
+  * EPN columns on Run Overview page are combined to show either the number or 'OFF'
+  * In the runs overview, the EOR reasons are displayed and runs can be filtered on it
+  * Further improves the style of the log details page
+  * Adds feedback to the user when the log link is successfully copied
+  * The about page now includes information and status of services including the Bookkeeping gui and the database.
+* Notable changes for developers:
+  * A library has been created to render line-charts based on d3
+    * Line chart display a tooltip with dataset's values on point hover
+  * Adds a primary button component to the common component library
+  * Adds more tests on the log details page
+  * Refactored the log component to share common code between expanded and collapsed logs.
+  * An endpoint to fetch LHC fill statistics has been added
+* Changes made to the database:
+  * Two views has been added: one view representing overlap between runs and lhc fill and one view representing lhc fill statistics
+  * Added environment table to link logs to environment
+
+## [0.60.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.60.0)
+* Notable changes for users:
+  * Run details page shows all detectors as grey (not present) or green/red (good/bad quality)
+  * Use dropdown to filter run types in Run Overview page
+  * int64 in proto files are casted to javascript numbers, not BigInt (be careful with overflow)
+* Notable changes for developers:
+  * Runs filtering has been separated from runs fetching to easily add relations in endpoints to fetch a list of runs
+
+## [0.59.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.1)
+* Notable changes for users:
+  * Run numbers and LHC period columns are wider on runs overview to improve readability on small screens
+* Notable changes for developers:
+  * Readout counters are now unsigned bigints
+  * gRPC server controllers can now handle bigints
+* Changes made to the database:
+  * Readout counters are now unsigned bigints
+
+
 ## [0.59.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.0)
 * Notable changes for users:
   * A gRPC endpoint to insert DPL process executions has been added, and it has been implemented in the gRPC c++ library
