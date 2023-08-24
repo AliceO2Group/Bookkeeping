@@ -362,7 +362,7 @@ module.exports = () => {
             for (const row of rows) {
                 expect(await row.evaluate((rowItem) => {
                     const rowId = rowItem.id;
-                    return document.querySelector(`#${rowId}-definition-text`).innerText;
+                    return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
                 })).to.be.oneOf(authorizedRunDefinition);
             }
         };

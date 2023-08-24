@@ -18,7 +18,6 @@ const chai = require('chai');
 const { GetAllLogsUseCase } = require('../../../../lib/usecases/log/index.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../../../lib/domain/enums/RunDetectorQualities.js');
-const Logger = require('../../../../lib/utilities/Logger.js');
 
 const { expect } = chai;
 
@@ -84,13 +83,11 @@ module.exports = () => {
 
             updateRunDto.body.runQuality = RunQualities.BAD;
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-            const l = Logger('hello');
-            l.error(JSON.stringify(error));
 
             expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
-            expect(result.runQuality).to.equal(RunQualities.BAD);
+            expect(result.runQuality).equal(RunQualities.BAD);
         });
 
         it('should return error as run quality cannot be changed for ongoing runs', async () => {
