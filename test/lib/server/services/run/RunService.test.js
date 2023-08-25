@@ -21,6 +21,7 @@ const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { SYNTHETIC } = require('../../../../mocks/mock-run.js');
+const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
 
 module.exports = () => {
     const baseRun = {
@@ -94,6 +95,22 @@ module.exports = () => {
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
         run = await runService.update({ runNumber }, { calibrationStatus: RunCalibrationStatus.NO_STATUS });
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+    });
+
+    it('should successfully create a log when setting run calibration status to failled', async () => {
+        const runNumber = 40;
+        let run = await getRun({ runNumber });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        run = await runService.update({ runNumber }, { calibrationStatus: RunCalibrationStatus.FAILED });
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
+        const lastLog = await getLog(120, (qb) => {
+            qb.include('tags');
+        });
+        expect(lastLog.title).to.equal('Run 40 calibration status has changed to FAILED');
+        expect(lastLog.text.startsWith('The calibration status for run 40 has been changed from NO STATUS to FAILED')).to.be.true;
+        expect(lastLog.tags).to.lengthOf(1);
+        expect(lastLog.tags[0].text).to.equal('CPV');
     });
 
     it('should successfully prevent from updating calibration status from non-calibration runs', async () => {
