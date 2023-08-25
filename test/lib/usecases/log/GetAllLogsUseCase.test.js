@@ -117,9 +117,21 @@ module.exports = () => {
     });
 
     it('should successfully filter on lhc fills', async () => {
-        const lhcFills = [2, 5];
-        getAllLogsDto.query = { filter: { lhcFills } };
+        const lhcFills = [1, 6];
 
+        getAllLogsDto.query = { filter: { lhcFills: { operation: 'and', values: lhcFills } } };
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.have.lengthOf(1);
+
+            const fillNumbersPerLog = filteredResult.map(({ lhcFills }) => lhcFills.map(({ fillNumber }) => fillNumber));
+
+            // For each returned log, check at least one of the associated fill numbers was in the filter query
+            expect(fillNumbersPerLog.every((logFillNumbers) =>
+                logFillNumbers.includes(lhcFills[0]) && logFillNumbers.includes(lhcFills[1]))).to.be.true;
+        }
+
+        getAllLogsDto.query = { filter: { lhcFills: { operation: 'or', values: lhcFills } } };
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
             expect(filteredResult).to.have.lengthOf(3);
