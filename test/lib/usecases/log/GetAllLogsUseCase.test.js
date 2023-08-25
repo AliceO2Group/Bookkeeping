@@ -15,7 +15,6 @@ const { repositories: { LogRepository } } = require('../../../../lib/database/in
 const { log: { GetAllLogsUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetAllLogsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
-const Logger = require('../../../../lib/utilities/Logger.js');
 
 const { expect } = chai;
 
@@ -120,14 +119,12 @@ module.exports = () => {
     it('should successfully filter on lhc fills', async () => {
         const lhcFills = [2, 5];
         getAllLogsDto.query = { filter: { lhcFills } };
-        const l = Logger('test')
-        
+
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
             expect(filteredResult).to.have.lengthOf(3);
-            
+
             const fillNumbersPerLog = filteredResult.map(({ lhcFills }) => lhcFills.map(({ fillNumber }) => fillNumber));
-            l.error(JSON.stringify(fillNumbersPerLog))
 
             // For each returned log, check at least one of the associated fill numbers was in the filter query
             expect(fillNumbersPerLog.every((logFillNumbers) =>
