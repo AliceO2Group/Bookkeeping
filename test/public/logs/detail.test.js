@@ -157,7 +157,7 @@ module.exports = () => {
 
         // We expect the link to navigate to the correct lhcFill detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=lhc-fill-detail&fillNumber=${fillNumbers[0]}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=lhc-fill-details&fillNumber=${fillNumbers[0]}`);
     });
 
     it('should have a button to reply on a entry', async () => {

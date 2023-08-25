@@ -390,6 +390,57 @@ module.exports = () => {
         await waitForNetworkIdleAndRedraw(page);
     });
 
+    it('can filter by lhc fill number', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#lhcFillsFilter', '1, 6');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.equal(1);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a not existing run number
+        await page.type('#lhcFillsFilter', '1234567890');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await pressElement(page, '#openFilterToggle');
@@ -693,22 +744,38 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        // Assumes the first created log has run number 1
+
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row119-runs a');
+
+        // Sort by creation date in ascending manner
+        const createdAtHeader = await page.$('th#createdAt');
+        await createdAtHeader.evaluate((button) => button.click());
+        await page.waitForSelector('#row1-runs a');
+        await pressElement(page, '#row1-runs a');
         await waitForNetworkIdleAndRedraw(page);
+
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=2');
+        expect(urlParameters).to.contain('id=1');
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
+        // Assumes the first created log has lhc fill number 5
+
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row119-lhcFills a');
+
+        // Sort by creation date in ascending manner
+        const createdAtHeader = await page.$('th#createdAt');
+        await createdAtHeader.evaluate((button) => button.click());
+        await page.waitForSelector('#row1-lhcFills a');
+        await pressElement(page, '#row1-lhcFills a');
         await waitForNetworkIdleAndRedraw(page);
+
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=lhc-fill-details');
-        expect(urlParameters).to.contain('fillNumber=1');
+        expect(urlParameters).to.contain('fillNumber=5');
     });
 };
