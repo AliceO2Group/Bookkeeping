@@ -22,6 +22,7 @@ const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { SYNTHETIC } = require('../../../../mocks/mock-run.js');
 const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
+const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 
 module.exports = () => {
     const baseRun = {
@@ -97,7 +98,7 @@ module.exports = () => {
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
     });
 
-    it('should successfully create a log when setting run calibration status to failled', async () => {
+    it('should successfully create a log when setting run calibration status to failed', async () => {
         const runNumber = 40;
         let run = await getRun({ runNumber });
         expect(run.definition).to.equal(RunDefinition.Calibration);
@@ -113,10 +114,66 @@ module.exports = () => {
         expect(lastLog.tags[0].text).to.equal('CPV');
     });
 
+    it('should successfully create a log when setting run calibration status from failed', async () => {
+        const runNumber = 40;
+        const reason = 'Here is the reason of the change';
+
+        let run = await getRun({ runNumber });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
+        run = await runService.update(
+            { runNumber },
+            { runPatch: { calibrationStatus: RunCalibrationStatus.SUCCESS }, metadata: { calibrationStatusChangeReason: reason } },
+        );
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+        const lastLog = await getLog(121, (qb) => {
+            qb.include('tags');
+        });
+        expect(lastLog.title).to.equal('Run 40 calibration status has changed to SUCCESS');
+        expect(lastLog.text.startsWith('The calibration status for run 40 has been changed from FAILED to SUCCESS')).to.be.true;
+        expect(lastLog.tags).to.lengthOf(1);
+        expect(lastLog.tags[0].text).to.equal('CPV');
+        expect(lastLog.text.endsWith(`Reason: ${reason}`)).to.be.true;
+    });
+
     it('should successfully prevent from updating calibration status from non-calibration runs', async () => {
         await assert.rejects(
             () => runService.update({ runNumber: 1 }, { runPatch: { calibrationStatus: RunCalibrationStatus.NO_STATUS } }),
             new BadParameterError('Calibration status is reserved to calibration runs'),
+        );
+    });
+
+    it('should successfully throw when updating calibration run with reason when calibration status was not failed', async () => {
+        const runNumber = 40;
+
+        const run = await getRun({ runNumber });
+        expect(run.calibrationStatus).to.not.equal(RunCalibrationStatus.FAILED);
+
+        await assert.rejects(
+            () => runService.update(
+                { runNumber },
+                {
+                    runPatch: { calibrationStatus: RunCalibrationStatus.NO_STATUS },
+                    metadata: { calibrationStatusChangeReason: 'An inappropriate reason' },
+                },
+            ),
+            new BadParameterError('Calibration status change reason can only be specified'
+                + ` when changing from ${RunCalibrationStatus.FAILED}`),
+        );
+    });
+
+    it('should successfully throw when updating calibration run from failed without reason runs', async () => {
+        const runNumber = 40;
+
+        // Put back run calibration status to failed
+        await updateRun({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED } });
+
+        const run = await getRun({ runNumber });
+        expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
+
+        await assert.rejects(
+            () => runService.update({ runNumber: 40 }, { runPatch: { calibrationStatus: RunCalibrationStatus.NO_STATUS } }),
+            new BadParameterError(`Calibration status change require a reason when changing from ${RunCalibrationStatus.FAILED}`),
         );
     });
 
