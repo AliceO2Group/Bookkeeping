@@ -23,8 +23,13 @@ const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
 const ShiftSuite = require('./shift/index.js');
 const StatisticsSuite = require('./statistics/index.js');
+const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
+    before(resetDatabaseContent);
+
+    after(resetDatabaseContent);
+
     describe('Detector', DetectorSuite);
     describe('DPL', DplSuite);
     describe('Environment', Environment);
