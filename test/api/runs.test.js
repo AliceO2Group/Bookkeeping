@@ -848,17 +848,29 @@ module.exports = () => {
                 .send({ calibrationStatus: RunCalibrationStatus.NO_STATUS, calibrationStatusChangeReason: 'A spurious reason' });
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
-                .to.equal(`Calibration status change reason can only be specified when changing from ${RunCalibrationStatus.FAILED}`);
+                .to.equal(`Calibration status change reason can only be specified when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
+
+        it('should successfully return 500 when trying to set calibration status to FAILED without reason', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.FAILED });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail)
+                .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
 
         it('should successfully return 500 when trying to set calibration status from FAILED without reason', async () => {
-            await updateRun({ runNumber: 40 }, { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED } });
+            await updateRun(
+                { runNumber: 40 },
+                { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
+            );
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
-                .to.equal(`Calibration status change require a reason when changing from ${RunCalibrationStatus.FAILED}`);
+                .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
     });
 

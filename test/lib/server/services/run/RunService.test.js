@@ -100,10 +100,15 @@ module.exports = () => {
 
     it('should successfully create a log when setting run calibration status to failed', async () => {
         const runNumber = 40;
+        const reason = 'Here is the reason of the change';
+
         let run = await getRun({ runNumber });
         expect(run.definition).to.equal(RunDefinition.Calibration);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
-        run = await runService.update({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED } });
+        run = await runService.update(
+            { runNumber },
+            { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: reason } },
+        );
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
         const lastLog = await getLog(120, (qb) => {
             qb.include('tags');
@@ -112,6 +117,7 @@ module.exports = () => {
         expect(lastLog.text.startsWith('The calibration status for run 40 has been changed from NO STATUS to FAILED')).to.be.true;
         expect(lastLog.tags).to.lengthOf(1);
         expect(lastLog.tags[0].text).to.equal('CPV');
+        expect(lastLog.text.endsWith(`Reason: ${reason}`)).to.be.true;
     });
 
     it('should successfully create a log when setting run calibration status from failed', async () => {
@@ -143,7 +149,7 @@ module.exports = () => {
         );
     });
 
-    it('should successfully throw when updating calibration run with reason when calibration status was not failed', async () => {
+    it('should successfully throw when updating calibration run with a spurious reason', async () => {
         const runNumber = 40;
 
         const run = await getRun({ runNumber });
@@ -158,22 +164,34 @@ module.exports = () => {
                 },
             ),
             new BadParameterError('Calibration status change reason can only be specified'
-                + ` when changing from ${RunCalibrationStatus.FAILED}`),
+                + ` when changing from/to ${RunCalibrationStatus.FAILED}`),
         );
     });
 
-    it('should successfully throw when updating calibration run from failed without reason runs', async () => {
+    it('should successfully throw when updating calibration run to failed without reason', async () => {
+        const runNumber = 40;
+
+        await assert.rejects(
+            () => runService.update({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED } }),
+            new BadParameterError(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`),
+        );
+    });
+
+    it('should successfully throw when updating calibration run from failed without reason', async () => {
         const runNumber = 40;
 
         // Put back run calibration status to failed
-        await updateRun({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED } });
+        await updateRun(
+            { runNumber },
+            { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
+        );
 
         const run = await getRun({ runNumber });
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
 
         await assert.rejects(
-            () => runService.update({ runNumber: 40 }, { runPatch: { calibrationStatus: RunCalibrationStatus.NO_STATUS } }),
-            new BadParameterError(`Calibration status change require a reason when changing from ${RunCalibrationStatus.FAILED}`),
+            () => runService.update({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.NO_STATUS } }),
+            new BadParameterError(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`),
         );
     });
 
