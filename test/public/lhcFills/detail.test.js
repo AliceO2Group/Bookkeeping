@@ -64,10 +64,10 @@ module.exports = () => {
         expect(totalCtf.endsWith('67.9569 GB')).to.be.true;
         const totalTf = await page.$eval('#lhc-fill-totalTfFileSize', (element) => element.innerText);
         expect(totalTf.endsWith('741.801 GB')).to.be.true;
-        const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
-        expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
-        const durationAfterLastRun = await page.$eval('#lhc-fill-durationAfterLastRun', (element) => element.innerText);
-        expect(durationAfterLastRun.endsWith('02:00:00 (16.67%)')).to.be.true;
+        const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
+        expect(timeLossAtStart.endsWith('03:00:00 (25.00%)')).to.be.true;
+        const timeLossAtEnd = await page.$eval('#lhc-fill-timeLossAtEnd', (element) => element.innerText);
+        expect(timeLossAtEnd.endsWith('02:00:00 (16.67%)')).to.be.true;
         const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
         expect(meanRunDuration.endsWith('01:40:00')).to.be.true;
         const runsCoverage = await page.$eval('#lhc-fill-runsCoverage', (element) => element.innerText);
@@ -107,8 +107,8 @@ module.exports = () => {
         await page.waitForTimeout(50);
 
         {
-            const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
-            expect(durationBeforeFirstRun.endsWith('02:00:00 (16.67%)')).to.be.true;
+            const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
+            expect(timeLossAtStart.endsWith('02:00:00 (16.67%)')).to.be.true;
         }
 
         const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);
@@ -137,8 +137,8 @@ module.exports = () => {
         await page.waitForTimeout(50);
 
         {
-            const durationBeforeFirstRun = await page.$eval('#lhc-fill-durationBeforeFirstRun', (element) => element.innerText);
-            expect(durationBeforeFirstRun.endsWith('03:00:00 (25.00%)')).to.be.true;
+            const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
+            expect(timeLossAtStart.endsWith('03:00:00 (25.00%)')).to.be.true;
         }
     });
 
