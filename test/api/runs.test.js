@@ -20,6 +20,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
+const { updateRun } = require('../../lib/server/services/run/updateRun.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -833,17 +834,48 @@ module.exports = () => {
             expect(body.data.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
         });
 
-        it('should successfully return 400 when trying to set calibration status for non-calibration run', async () => {
+        it('should successfully return 500 when trying to set calibration status for non-calibration run', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/106')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
             expect(status).to.equal(500);
             expect(body.errors[0].detail).to.equal('Calibration status is reserved to calibration runs');
         });
+
+        it('should successfully return 500 when trying to set calibration status change reason for non-failed calibration', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.NO_STATUS, calibrationStatusChangeReason: 'A spurious reason' });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail)
+                .to.equal(`Calibration status change reason can only be specified when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
+
+        it('should successfully return 500 when trying to set calibration status to FAILED without reason', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.FAILED });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail)
+                .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
+
+        it('should successfully return 500 when trying to set calibration status from FAILED without reason', async () => {
+            await updateRun(
+                { runNumber: 40 },
+                { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
+            );
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail)
+                .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
     });
 
     describe('PATCH api/runs query:runNumber', () => {
-        it('should return 400 if the wrong id is given', (done) => {
+        it('should return 500 if the wrong id is given', (done) => {
             request(server)
                 .patch('/api/runs?runNumber=99999')
                 .send({

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.62.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
+* Notable changes for users:
+  * End of Shift reports are pre-filled with information from the previous shifter
+  * Fixed the efficiency graph tooltip value display
+  * Calibration runs can now have a calibration status assigned defined
+    * A log is created when calibration status goes from/to failed
+  * Show 'Number of EPNs' as 'ON' if nEpns not defined on Run Details page and Run Overview page
+  * Efficiency graphs points size have been increased
+* Notable changes for developers:
+  * Added an adapter for lhc fills to logs
+  * Added API route for adding environments to logs
+  * API route for logs accepts filtering on environments
+* Changes made to the database:
+  * Added a table, migration, and seeders for the log_lhcFills table, enabling a many-to-many relationship between logs and lhc fills.
+  * Added calibration_status column to runs table
+
 ## [0.61.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
 * Notable changes for users:
   * DPL processes executions can be inserted concurrently in bookkeeping to help with processing thousands of requests from QC at a time
