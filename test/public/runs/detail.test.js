@@ -14,6 +14,8 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
 const { reloadPage, goToPage } = require('../defaults.js');
+const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
+const { getRun } = require('../../../lib/server/services/run/getRun.js');
 
 const { expect } = chai;
 
@@ -363,5 +365,32 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
         await page.waitForSelector('#Run-nEpns');
         await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\n12');
+    });
+
+    it('should not display calibration status on non-calibration runs', async () => {
+        await page.waitForSelector('#Run-definition');
+        expect(await page.$('#Run-definition + #Run-runType')).to.not.be.null;
+    });
+
+    it('should display calibration status on calibration runs', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 40 } });
+        await page.waitForSelector('#Run-calibrationStatus');
+        await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.NO_STATUS}`);
+    });
+
+    it('should allow to update calibration status on calibration runs', async () => {
+        const runNumber = 40;
+        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+
+        await goToPage(page, 'run-detail', { queryParameters: { id: runNumber } });
+        await pressElement(page, '#edit-run');
+        await page.waitForSelector('#Run-calibrationStatus select');
+        await page.select('#Run-calibrationStatus select', RunCalibrationStatus.SUCCESS);
+        await pressElement(page, '#save-run');
+
+        // Wait for page to be reloaded
+        await page.waitForSelector('#edit-run');
+
+        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
     });
 };
