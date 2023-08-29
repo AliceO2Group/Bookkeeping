@@ -23,15 +23,17 @@ module.exports = () => {
         const { timeTrgStart, timeTrgEnd } = run;
 
         await updateRun({ runNumber }, {
-            timeTrgStart: new Date('2020-01-01 01:00:00'),
-            timeTrgEnd: new Date('2020-01-01 00:00:00'),
+            runPatch: {
+                timeTrgStart: new Date('2020-01-01 01:00:00'),
+                timeTrgEnd: new Date('2020-01-01 00:00:00'),
+            },
         });
 
         let updatedRun = await getRun({ runNumber });
 
         expect(updatedRun.definition).to.equal(RunDefinition.Commissioning);
 
-        updatedRun = await updateRun({ runNumber }, { timeTrgStart, timeTrgEnd });
+        updatedRun = await updateRun({ runNumber }, { runPatch: { timeTrgStart, timeTrgEnd } });
 
         expect(updatedRun.definition).to.equal(RunDefinition.Physics);
     });
