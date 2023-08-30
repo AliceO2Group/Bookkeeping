@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(138);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(139);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -309,6 +309,57 @@ module.exports = () => {
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
+    });
+
+    it('can filter by environments', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#environments', '8E4aZTjY');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a non-existent environment ID
+        await fillInput(page, '#environments', 'abcdefgh');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
     });
 
     it('can search for tag in the dropdown', async () => {
