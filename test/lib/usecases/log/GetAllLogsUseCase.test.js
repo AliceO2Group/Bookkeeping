@@ -130,8 +130,8 @@ module.exports = () => {
             expect(fillNumbersPerLog.every((logFillNumbers) =>
                 logFillNumbers.includes(lhcFills[0]) || logFillNumbers.includes(lhcFills[1]))).to.be.true;
         }
-    })
-    
+    });
+
     it ('should successfully filter on log environment', async () => {
         const environments = ['8E4aZTjY', 'eZF99lH6'];
         getAllLogsDto.query = { filter: { environments: { operation: 'and', values: environments } } };
