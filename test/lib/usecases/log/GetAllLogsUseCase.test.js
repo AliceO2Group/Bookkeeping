@@ -144,6 +144,38 @@ module.exports = () => {
         }
     });
 
+    it ('should successfully filter on log environment', async () => {
+        const environments = ['8E4aZTjY', 'eZF99lH6'];
+        getAllLogsDto.query = { filter: { environments: { operation: 'and', values: environments } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(2);
+            for (const log of filteredResult) {
+                const relatedEnvironments = log.environments.map(({ id }) => id);
+                expect(environments.every((env) => relatedEnvironments.includes(env))).to.be.true;
+            }
+        }
+
+        getAllLogsDto.query = { filter: { environments: { operation: 'or', values: environments } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(5);
+            for (const log of filteredResult) {
+                const relatedEnvironments = log.environments.map(({ id }) => id);
+                expect(environments.some((env) => relatedEnvironments.includes(env))).to.be.true;
+            }
+        }
+
+        getAllLogsDto.query = { filter: { environments: { operation: 'and', values: ['non-existent-environment'] } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.have.lengthOf(0);
+        }
+    });
+
     it('should return a count that is the same as the count method of the repository', async () => {
         const expectedCount = await LogRepository.count();
 
