@@ -1011,7 +1011,7 @@ module.exports = () => {
                 .post('/api/logs')
                 .field('title', 'Yet another lhc fill')
                 .field('text', 'Text of yet another lhc fill')
-                .field('lhcFills', '1,2')
+                .field('lhcFills', [1, 2])
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -1021,6 +1021,27 @@ module.exports = () => {
 
                     const lhcFillNumbers = res.body.data.lhcFills.map((fill) => fill.fillNumber);
                     expect(lhcFillNumbers).to.deep.equal([1, 2]);
+                    done();
+                });
+        });
+
+        it('should return 400 if one of the LHC fill numbers is invalid', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another lhc fill')
+                .field('text', 'Text of yet another lhc fill')
+                .field('lhcFills', [1, 'hello'])
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const fillError = errors.find((err) => err.source.pointer === '/data/attributes/body/lhcFills/1');
+                    expect(fillError.detail).to.equal('"body.lhcFills[1]" must be a number');
+
                     done();
                 });
         });
