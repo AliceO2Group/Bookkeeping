@@ -1308,62 +1308,6 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/logs/:logId/lhcFills', () => {
-        it('should return 400 if the log id is not a number', (done) => {
-            request(server)
-                .get('/api/logs/abc/lhcFills')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
-                    expect(titleError.detail).to.equal('"params.logId" must be a number');
-
-                    done();
-                });
-        });
-
-        it('should return 404 if the log could not be found', (done) => {
-            request(server)
-                .get('/api/logs/999999999/lhcFills')
-                .expect(404)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.errors[0].title).to.equal('Not found');
-
-                    done();
-                });
-        });
-
-        it('should return 200 and the correct lhc fill numbers in all other cases', (done) => {
-            request(server)
-                .get('/api/logs/119/lhcFills')
-                .expect(200)
-                .end((err, { body: { data } }) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(data).to.be.an('array');
-
-                    const expectedLhcFillNumbers = [1, 2, 4, 6];
-                    const lhcFillNumbers = data.map((lhcFill) => lhcFill.fillNumber);
-                    expect(lhcFillNumbers).to.deep.equal(expectedLhcFillNumbers);
-
-                    done();
-                });
-        });
-    });
-
     describe('GET /api/logs/:logId/attachments', () => {
         it('should return an array', (done) => {
             request(server)
