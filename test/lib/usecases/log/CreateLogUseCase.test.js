@@ -116,7 +116,7 @@ module.exports = () => {
     it('should create a new Log with no duplicate lhcFill numbers', async () => {
         const expectedFillNumbers = [1, 2, 3];
 
-        createLogDto.body.lhcFills = '1, 2, 2, 3';
+        createLogDto.body.lhcFills = [1, 2, 2, 3];
         createLogDto.session = {
             personid: 2,
             id: 2,
