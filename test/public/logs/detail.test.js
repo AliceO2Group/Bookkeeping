@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { takeScreenshot, reloadPage } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -118,22 +119,33 @@ module.exports = () => {
 
         // Navigate to a log detail view
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(1000);
+
         // We expect the correct associated runs to be shown
-        const runField = await page.$(`#log-${logId}-runs`);
-        const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Runs:\n${runId}`);
+        await expectInnerText(page, `#log-${logId}-runs`, `Runs:\n${runId}`);
 
         // We expect the associated runs to be clickable with a valid link
-        const runLink = await page.$(`#log-${logId}-runs a`);
-        await runLink.click();
-        await page.waitForTimeout(1000);
+        await pressElement(page, `#log-${logId}-runs a`);
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}`);
+    });
+
+    it('allows navigating to an associated environment', async () => {
+        const logId = 1;
+        const environmentId = '8E4aZTjY';
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+
+        // We expect the correct associated runs to be shown
+        await expectInnerText(page, `#log-${logId}-environments`, 'Environments:\n8E4aZTjY,\neZF99lH6');
+
+        // We expect the associated runs to be clickable with a valid link
+        await pressElement(page, `#log-${logId}-environments a`);
+
+        // We expect the link to navigate to the correct run detail page
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=env-details&environmentId=${environmentId}`);
     });
 
     it('should have a button to reply on a entry', async () => {
