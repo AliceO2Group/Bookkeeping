@@ -34,7 +34,6 @@ module.exports = () => {
         expect(fill6.totalCtfFileSize).to.equal(67956862061);
         expect(fill6.totalTfFileSize).to.equal(741800696322);
 
-        console.log(fill1);
         expect(fill1.fillNumber).to.equal(1);
         expect(fill1.runsCoverage).to.equal(0);
         expect(fill1.efficiency).to.equal(0);
