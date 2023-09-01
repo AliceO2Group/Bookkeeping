@@ -136,13 +136,13 @@ module.exports = () => {
 
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
 
-        // We expect the correct associated runs to be shown
+        // We expect the correct associated enironments to be shown
         await expectInnerText(page, `#log-${logId}-environments`, 'Environments:\n8E4aZTjY,\neZF99lH6');
 
-        // We expect the associated runs to be clickable with a valid link
+        // We expect the associated environments to be clickable with a valid link
         await pressElement(page, `#log-${logId}-environments a`);
 
-        // We expect the link to navigate to the correct run detail page
+        // We expect the link to navigate to the correct environments detail page
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=env-details&environmentId=${environmentId}`);
     });
@@ -151,22 +151,15 @@ module.exports = () => {
         const logId = 1;
         const fillNumbers = [5, 6];
 
-        // Navigate to a log detail view
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(1000);
+
         // We expect the correct associated lhcFills to be shown
-        const lhcFillField = await page.$(`#log-${logId}-lhcFills`);
-        const lhcFillText = await page.evaluate((element) => element.innerText, lhcFillField);
-        expect(lhcFillText).to.equal(`LHC Fills:\n${fillNumbers.join(',\n')}`);
+        await expectInnerText(page, `#log-${logId}-lhcFills`, `LHC Fills:\n${fillNumbers.join(',\n')}`);
 
         // We expect the associated lhcFills to be clickable with a valid link
-        const lhcFillLink = await page.$(`#log-${logId}-lhcFills a`);
-        await lhcFillLink.click();
-        await page.waitForTimeout(1000);
+        await pressElement(page, `#log-${logId}-lhcFills a`);
 
-        // We expect the link to navigate to the correct lhcFill detail page
+        // We expect the link to navigate to the correct lhcFills detail page
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=lhc-fill-details&fillNumber=${fillNumbers[0]}`);
     });
