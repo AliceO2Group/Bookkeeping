@@ -18,20 +18,33 @@ module.exports = () => {
     it('Should successfully extract fill statistics', async () => {
         const allStatistics = await statisticsService.getLhcFillStatistics({
             from: new Date('2019/08/08 10:00:00'),
-            to: new Date('2019/08/09 01:00:00'),
+            to: new Date('2023/08/09 01:00:00'),
         });
-        expect(allStatistics).to.lengthOf(1);
-        const [statistics] = allStatistics;
-        expect(statistics.fillNumber).to.equal(6);
-        expect(statistics.runsCoverage).to.equal(5 * 3600 * 1000);
-        expect(statistics.efficiency).to.equal(0.4167);
-        expect(statistics.timeLossAtStart).to.equal(3 * 3600 * 1000);
-        expect(statistics.efficiencyLossAtStart).to.equal(0.25);
-        expect(statistics.timeLossAtEnd).to.equal(2 * 3600 * 1000);
-        expect(statistics.efficiencyLossAtEnd).to.equal(0.1667);
-        expect(statistics.meanRunDuration).to.equal((3600 + 40 * 60) * 1000);
-        expect(statistics.totalCtfFileSize).to.equal(67956862061);
-        expect(statistics.totalTfFileSize).to.equal(741800696322);
+        expect(allStatistics).to.lengthOf(4);
+        // eslint-disable-next-line no-unused-vars
+        const [fill1, _fill2, _fill3, fill6] = allStatistics;
+        expect(fill6.fillNumber).to.equal(6);
+        expect(fill6.runsCoverage).to.equal(5 * 3600 * 1000);
+        expect(fill6.efficiency).to.equal(0.4167);
+        expect(fill6.timeLossAtStart).to.equal(3 * 3600 * 1000);
+        expect(fill6.efficiencyLossAtStart).to.equal(0.25);
+        expect(fill6.timeLossAtEnd).to.equal(2 * 3600 * 1000);
+        expect(fill6.efficiencyLossAtEnd).to.equal(0.1667);
+        expect(fill6.meanRunDuration).to.equal((3600 + 40 * 60) * 1000);
+        expect(fill6.totalCtfFileSize).to.equal(67956862061);
+        expect(fill6.totalTfFileSize).to.equal(741800696322);
+
+        console.log(fill1);
+        expect(fill1.fillNumber).to.equal(1);
+        expect(fill1.runsCoverage).to.equal(0);
+        expect(fill1.efficiency).to.equal(0);
+        expect(fill1.timeLossAtStart).to.equal(0);
+        expect(fill1.efficiencyLossAtStart).to.equal(0);
+        expect(fill1.timeLossAtEnd).to.equal(0);
+        expect(fill1.efficiencyLossAtEnd).to.equal(0);
+        expect(fill1.meanRunDuration).to.equal(0);
+        expect(fill1.totalCtfFileSize).to.equal(0);
+        expect(fill1.totalTfFileSize).to.equal(0);
     });
 
     it('should successfully filter out fills after a date, excluded', async () => {
