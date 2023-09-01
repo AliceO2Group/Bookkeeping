@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(138);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(140);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -213,12 +213,13 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Update original number of rows with the new limit
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
+        const originalRows = await page.$('#totalRowsCount');
+        const originalNumberOfRows = parseInt(await originalRows.evaluate((el) => el.innerText), 10);
 
-        // Insert a minimum date into the filter
-        await page.waitForTimeout(100);
-        // 13 logs are created before this test
+        /*
+         * Insert a minimum date into the filter
+         * 14 logs are created before this test
+         */
         const limitDate = new Date();
         const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
             + String(limitDate.getDate()).padStart(2, '0')
@@ -228,8 +229,8 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        const firstFilteredRows = await page.$('#totalRowsCount');
+        const firstFilteredNumberOfRows = parseInt(await firstFilteredRows.evaluate((el) => el.innerText), 10);
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert a maximum date into the filter
@@ -237,10 +238,10 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
 
-        // 9 logs are created before this test
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(19);
+        // 10 logs are created before this test
+        const secondFilteredRows = await page.$('#totalRowsCount');
+        const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
+        expect(secondFilteredNumberOfRows).to.equal(21);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -248,8 +249,8 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
-        const thirdFilteredRows = await page.$$('table tr');
-        const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
+        const thirdFilteredRows = await page.$('#totalRowsCount');
+        const thirdFilteredNumberOfRows = parseInt(await thirdFilteredRows.evaluate((el) => el.innerText), 10);
         expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
 
         // Clear the filters
@@ -558,7 +559,6 @@ module.exports = () => {
         });
         await page.waitForTimeout(600);
         const tableRows = await page.$$('table tr');
-
         expect(tableRows.length > 20).to.be.true;
     });
 
@@ -750,6 +750,6 @@ module.exports = () => {
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('id=106');
     });
 };
