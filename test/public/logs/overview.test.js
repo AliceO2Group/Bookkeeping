@@ -795,20 +795,22 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!'
-        
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
+
         await goToPage(page, 'log-overview');
-        
-        // We have to filter for a specific log since the first page contains no logs with runs,
-        // Even when changing the logs per page to 20
+
+        /*
+         * We have to filter for a specific log since the first page contains no logs with runs,
+         * Even when changing the logs per page to 20
+         */
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#titleFilterText')
+        await page.waitForSelector('#titleFilterText');
 
         // Insert some text into the filter
-        await page.waitForSelector('#titleFilterText')
+        await page.waitForSelector('#titleFilterText');
         await page.type('#titleFilterText', log119Title);
         await waitForNetworkIdleAndRedraw(page);
-        await page.waitForSelector('#row119-runs a')
+        await page.waitForSelector('#row119-runs a');
         await pressElement(page, '#row119-runs a');
 
         const [, parametersExpr] = await page.url().split('?');
@@ -818,20 +820,22 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
-        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!'
-        
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
+
         await goToPage(page, 'log-overview');
-        
-        // We have to filter for a specific log since the first page contains no logs with runs,
-        // Even when changing the logs per page to 20
-        await page.waitForSelector('#openFilterToggle')
+
+        /*
+         * We have to filter for a specific log since the first page contains no logs with runs,
+         * Even when changing the logs per page to 20
+         */
+        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
-        
+
         // Insert some text into the filter
-        await page.waitForSelector('#titleFilterText')
+        await page.waitForSelector('#titleFilterText');
         await page.type('#titleFilterText', log119Title);
         await waitForNetworkIdleAndRedraw(page);
-        await page.waitForSelector('#row119-lhcFills a')
+        await page.waitForSelector('#row119-lhcFills a');
         await pressElement(page, '#row119-lhcFills a');
 
         const [, parametersExpr] = await page.url().split('?');
