@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(139);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(140);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -238,10 +238,10 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
 
-        // 10 logs are created before this test
+        // 11 logs are created before this test
         const secondFilteredRows = await page.$('#totalRowsCount');
         const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(secondFilteredNumberOfRows).to.equal(20);
+        expect(secondFilteredNumberOfRows).to.equal(21);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -744,9 +744,22 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!'
+        
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row119-runs a');
+        
+        // We have to filter for a specific log since the first page contains no logs with runs,
+        // Even when changing the logs per page to 20
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector('#titleFilterText')
+
+        // Insert some text into the filter
+        await page.waitForSelector('#titleFilterText')
+        await page.type('#titleFilterText', log119Title);
         await waitForNetworkIdleAndRedraw(page);
+        await page.waitForSelector('#row119-runs a')
+        await pressElement(page, '#row119-runs a');
+
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
@@ -754,9 +767,22 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!'
+        
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row119-lhcFills a');
+        
+        // We have to filter for a specific log since the first page contains no logs with runs,
+        // Even when changing the logs per page to 20
+        await page.waitForSelector('#openFilterToggle')
+        await pressElement(page, '#openFilterToggle');
+        
+        // Insert some text into the filter
+        await page.waitForSelector('#titleFilterText')
+        await page.type('#titleFilterText', log119Title);
         await waitForNetworkIdleAndRedraw(page);
+        await page.waitForSelector('#row119-lhcFills a')
+        await pressElement(page, '#row119-lhcFills a');
+
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=lhc-fill-details');
