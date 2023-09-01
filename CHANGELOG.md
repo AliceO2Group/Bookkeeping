@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.63.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.1)
+* Notable changes for users:
+  * Removed the dupplicate LHC fill input in the log creation page 
+
 ## [0.63.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.0)
 * Notable changes for users:
   * Logs can now be assigned to environment
