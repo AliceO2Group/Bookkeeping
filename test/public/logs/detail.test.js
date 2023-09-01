@@ -13,7 +13,6 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-const { takeScreenshot, reloadPage } = require('../defaults.js');
 
 const { expect } = chai;
 
