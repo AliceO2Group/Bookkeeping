@@ -831,9 +831,9 @@ module.exports = () => {
 
         await nEpnsLimit.focus();
         await page.keyboard.type('10');
-        await page.waitForTimeout(300);
+        await waitForNetworkIdleAndRedraw(page);
         await page.select(nEpnsOperatorSelector, '<=');
-        await page.waitForTimeout(300);
+        await waitForNetworkIdleAndRedraw(page);
 
         const nEpnsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
