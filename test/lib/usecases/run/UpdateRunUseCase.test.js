@@ -87,7 +87,7 @@ module.exports = () => {
             expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
-            expect(result.runQuality).equal(RunQualities.BAD);
+            expect(result.runQuality).to.equal(RunQualities.BAD);
         });
 
         it('should return error as run quality cannot be changed for ongoing runs', async () => {
