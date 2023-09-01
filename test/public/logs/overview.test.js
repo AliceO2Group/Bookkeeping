@@ -441,6 +441,57 @@ module.exports = () => {
         await waitForNetworkIdleAndRedraw(page);
     });
 
+    it('can filter by lhc fill number', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#lhcFillsFilter', '1, 6');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.equal(1);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a not existing run number
+        await page.type('#lhcFillsFilter', '1234567890');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await pressElement(page, '#openFilterToggle');
@@ -747,6 +798,7 @@ module.exports = () => {
         const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
 
         await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
 
         /*
          * We have to filter for a specific log since the first page contains no logs with runs,
@@ -772,6 +824,7 @@ module.exports = () => {
         const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
 
         await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
 
         /*
          * We have to filter for a specific log since the first page contains no logs with runs,
