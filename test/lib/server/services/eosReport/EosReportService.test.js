@@ -94,7 +94,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], []);
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], [], []);
             logRuns.push({ logId, runId: 1 });
         }
 
@@ -159,7 +159,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], []);
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], [], []);
             logRuns.push({ logId, runId: 1 });
         }
 
@@ -198,7 +198,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], []);
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], [], []);
         }
 
         const log = await eosReportService.createLogEntry(ShiftTypes.SLIMOS, customizedSlimosEosReportRequest, { userId: 1 });
@@ -250,7 +250,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], []);
+            const logId = await createLog(logCreationRequest, [200], log.tags.map(({ text }) => text), [], [], []);
             logRuns.push({ logId, runId: 1 });
         }
 
@@ -289,7 +289,7 @@ module.exports = () => {
             if (log.parentLogId) {
                 logCreationRequest.parentLogId = log.parentLogId;
             }
-            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], []);
+            await createLog(logCreationRequest, [], log.tags.map(({ text }) => text), [], [], []);
         }
 
         const log = await eosReportService.createLogEntry(ShiftTypes.DCS, customizedDcsEosReportRequest, { userId: 1 });
