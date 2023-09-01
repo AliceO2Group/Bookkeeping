@@ -414,4 +414,50 @@ module.exports = () => {
         const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
         expect(titleText).to.equal(title);
     });
+
+    it('can create a log with multiple LHC fill numbers', async () => {
+        const title = 'Multiple lhc numbers test';
+        const text = 'Sample Text';
+        const lhcFillNumbers = [1, 2];
+        const lhcFillNumbersStr = lhcFillNumbers.join(',');
+
+        // Return to the creation page
+        await goToPage(page, 'log-create');
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+
+        // Send the value of the run numbers string to the input
+        await page.type('#lhc-fills', lhcFillNumbersStr);
+
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation();
+        await goToPage(page, 'log-overview');
+        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+
+        // Go to the log detail page
+        const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
+        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
+
+        // We expect the log to contain the correct run numbers
+        const lhcFillsField = await page.$(`#log-${rowId}-lhcFills`);
+        const lhcFillsText = await page.evaluate((element) => element.innerText, lhcFillsField);
+        for (const fillNumber of lhcFillNumbers) {
+            expect(lhcFillsText).to.include(fillNumber);
+        }
+    });
 };
