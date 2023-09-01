@@ -796,8 +796,9 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
-
+        
         await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
 
         /*
          * We have to filter for a specific log since the first page contains no logs with runs,
@@ -821,8 +822,9 @@ module.exports = () => {
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
         const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
-
+        
         await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
 
         /*
          * We have to filter for a specific log since the first page contains no logs with runs,
