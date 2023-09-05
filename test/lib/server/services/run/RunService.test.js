@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { runService, RunService } = require('../../../../../lib/server/services/run/RunService.js');
+const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
 const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
 const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
@@ -24,8 +24,6 @@ const { SYNTHETIC, CALIBRATION } = require('../../../../mocks/mock-run.js');
 const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 const { RunDetectorQualities } = require('../../../../../lib/domain/enums/RunDetectorQualities.js');
-const { createDetector } = require('../../../../../lib/server/services/detector/createDetector.js');
-const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
 
 module.exports = () => {
     const baseRun = {
