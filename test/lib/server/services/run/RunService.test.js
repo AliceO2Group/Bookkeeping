@@ -83,6 +83,16 @@ module.exports = () => {
         expect(run.definition).to.equal(RunDefinition.Physics);
     });
 
+    it('should throw when trying to change detector quality without justification', async () => {
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { relations: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] } },
+            ),
+            new BadParameterError('Detector quality change reason is required when updating detector quality'),
+        );
+    });
+
     it('should successfully use default calibration status when creating a new calibration run', async () => {
         const run = await runService.create(
             { ...CALIBRATION.LASER, runNumber: ++lastRunNumber },
@@ -242,15 +252,5 @@ module.exports = () => {
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
         // Put back definition to commissioning
         await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Commissioning } });
-    });
-
-    it('should throw when trying to change detector quality without justification', async () => {
-        await assert.rejects(
-            () => runService.update(
-                { runNumber: 1 },
-                { relations: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] } },
-            ),
-            new BadParameterError('Detector quality change reason is required when updating detector quality'),
-        );
     });
 };
