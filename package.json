@@ -14,6 +14,9 @@
     "docker-run": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker-compose -p test -f docker-compose.yml -p test -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
+  "engines": {
+    "node": ">= 18.x"
+  },
   "dependencies": {
     "@aliceo2/web-ui": "2.4.0",
     "@grpc/grpc-js": "1.9.0",
