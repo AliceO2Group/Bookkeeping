@@ -75,8 +75,8 @@ module.exports = () => {
         expect(result.tags.map(({ text }) => text)).to.deep.equal(expectedTagTexts);
     });
 
-    it('should create a new Log with empty title but a parent log', async () => {
-        const expectedTitle = '';
+    it('should successfully take the parent\'s title if none has been provided', async () => {
+        const expectedTitle = 'Third entry';
         const expectedParentLogId = 3;
 
         createLogDto.body.title = expectedTitle;
@@ -93,6 +93,7 @@ module.exports = () => {
         expect(result.title).to.equal(expectedTitle);
         expect(result.parentLogId).to.equal(expectedParentLogId);
     });
+
     it('should create a new Log with no duplicate run numbers', async () => {
         const expectedResult = [
             { id: 1, runNumber: 1 },
@@ -110,5 +111,36 @@ module.exports = () => {
         const { result } = await new CreateLogUseCase()
             .execute(createLogDto);
         expect(result.runs).to.deep.equal(expectedResult);
+    });
+
+    it('should create a new Log with no duplicate lhcFill numbers', async () => {
+        const expectedFillNumbers = [1, 2, 3];
+
+        createLogDto.body.lhcFills = [1, 2, 2, 3];
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { result: { lhcFills } } = await new CreateLogUseCase()
+            .execute(createLogDto);
+
+        const returnedFillNumbers = lhcFills.map((fill) => fill.fillNumber);
+        expect(returnedFillNumbers).to.deep.equal(expectedFillNumbers);
+    });
+
+    it('should not create a new Log if at least one of the lhcFills do not exist', async () => {
+        createLogDto.body.lhcFills = '1, 99999';
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { error: { status } } = await new CreateLogUseCase()
+            .execute(createLogDto);
+
+        expect(status).to.equal('400');
     });
 };

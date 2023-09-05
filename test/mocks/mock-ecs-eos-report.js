@@ -19,6 +19,7 @@ const {
 } = require('./base-mock-eos-report.js');
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
+const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 
 exports.eosEcsReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
@@ -115,6 +116,7 @@ const customizedECSEosReport = {
                                 tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
                             },
                         ],
+                        definition: RunDefinition.Commissioning,
                     },
                 ],
             },
@@ -144,7 +146,7 @@ exports.customizedECSEosReportRequest = {
     },
 };
 
-const formattedCustomizedECSEosReportTypeSpecific = `\
+const formattedCustomizedECSEosReportTypeSpecific = `
 ## Environments and runs
 - (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
     * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
@@ -161,7 +163,7 @@ const formattedCustomizedECSEosReportTypeSpecific = `\
 - (17/03/2023, 09:16:03) [ENV2](http://localhost:4000?page=env-details&environmentId=ENV2)
     * Comments:
       An environment
-      comment\
+      comment
 `;
 
 exports.formattedCustomizedECSEosReport = genericFormattedCustomizedEosReport(
@@ -183,7 +185,7 @@ const emptyECSEosReport = {
 
 exports.emptyECSEosReport = emptyECSEosReport;
 
-exports.formattedEmptyECSEosReport = genericFormattedEmptyEosReport(ShiftTypes.ECS, '## Environments and runs\n-');
+exports.formattedEmptyECSEosReport = genericFormattedEmptyEosReport(ShiftTypes.ECS, '\n## Environments and runs\n-\n');
 
 exports.emptyECSEosReportRequest = {
     ...genericEmptyEosReportRequest,

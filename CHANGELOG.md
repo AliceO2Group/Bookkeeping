@@ -2,6 +2,122 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.63.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.1)
+* Notable changes for users:
+  * Removed the dupplicate LHC fill input in the log creation page 
+
+## [0.63.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.0)
+* Notable changes for users:
+  * Logs can now be assigned to environment
+  * Logs can now be filtered by environment
+  * Related environments are displayed in the log tree view
+  * Logs can now be assigned to LHC fill
+  * Logs can now be filtered by LHC fill
+  * Related LHC fill are displayed in the log tree view
+  * Bug of calibration runs not being registered has been fixed
+  * Statistics graph display efficiency in %
+  * Statistics graph have axis labels
+  * Where runs have detectors without qualities, they are shown as being a different colour to detectors that weren't included in the run
+  * Fill statistics now also include fills without runs
+* Notable changes for developers:
+  * Graphs library handle display of axis labels
+
+## [0.62.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.62.0)
+* Notable changes for users:
+  * End of Shift reports are pre-filled with information from the previous shifter
+  * Fixed the efficiency graph tooltip value display
+  * Calibration runs can now have a calibration status assigned defined
+    * A log is created when calibration status goes from/to failed
+  * Show 'Number of EPNs' as 'ON' if nEpns not defined on Run Details page and Run Overview page
+  * Efficiency graphs points size have been increased
+* Notable changes for developers:
+  * Added an adapter for lhc fills to logs
+  * Added API route for adding environments to logs
+  * API route for logs accepts filtering on environments
+* Changes made to the database:
+  * Added a table, migration, and seeders for the log_lhcFills table, enabling a many-to-many relationship between logs and lhc fills.
+  * Added calibration_status column to runs table
+
+## [0.61.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
+* Notable changes for users:
+  * DPL processes executions can be inserted concurrently in bookkeeping to help with processing thousands of requests from QC at a time
+  * End of Shift reports are pre-filled with information from the previous shifter
+  * Added a statistics page that displays efficiency statistics as a graph
+  * When the log tree view page is displayed for single logs with no replies, the button now shows 'Collapse all' by default
+  * Removed Active Filters bar on Run Overview page and Log Overview page
+  * Run Overview page no longer has Data Distrubution column
+  * EPN columns on Run Overview page are combined to show either the number or 'OFF'
+  * In the runs overview, the EOR reasons are displayed and runs can be filtered on it
+  * Further improves the style of the log details page
+  * Adds feedback to the user when the log link is successfully copied
+  * The about page now includes information and status of services including the Bookkeeping gui and the database.
+* Notable changes for developers:
+  * A library has been created to render line-charts based on d3
+    * Line chart display a tooltip with dataset's values on point hover
+  * Adds a primary button component to the common component library
+  * Adds more tests on the log details page
+  * Refactored the log component to share common code between expanded and collapsed logs.
+  * An endpoint to fetch LHC fill statistics has been added
+* Changes made to the database:
+  * Two views has been added: one view representing overlap between runs and lhc fill and one view representing lhc fill statistics
+  * Added environment table to link logs to environment
+
+## [0.60.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.60.0)
+* Notable changes for users:
+  * Run details page shows all detectors as grey (not present) or green/red (good/bad quality)
+  * Use dropdown to filter run types in Run Overview page
+  * int64 in proto files are casted to javascript numbers, not BigInt (be careful with overflow)
+* Notable changes for developers:
+  * Runs filtering has been separated from runs fetching to easily add relations in endpoints to fetch a list of runs
+
+## [0.59.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.1)
+* Notable changes for users:
+  * Run numbers and LHC period columns are wider on runs overview to improve readability on small screens
+* Notable changes for developers:
+  * Readout counters are now unsigned bigints
+  * gRPC server controllers can now handle bigints
+* Changes made to the database:
+  * Readout counters are now unsigned bigints
+
+
+## [0.59.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.0)
+* Notable changes for users:
+  * A gRPC endpoint to insert DPL process executions has been added, and it has been implemented in the gRPC c++ library
+  * Fixed the COSMICS run filtering, now correctly allowing for undefined beam
+  * When replying to a log, the reply title is the same as the parent and is not modifiable
+  * Added HTTP endpoint for DPL processes:
+    * An endpoint to fetch all DPL processes that have been executed on a given run and detector
+    * An endpoint to fetch all the hosts on which a given process has been executed for a given run & detector
+    * An endpoint to fetch all the executions of a given process, on a given host for a given run & detector
+  * In environment overview page, the full line of environments that has been to error at some point are displayed in red
+  * The list of executed DPL processes are now available in a new tab in run details page
+  * Fix the visibility of environment details badges
+  * An icon has been added to environment overview to highlight environments that have been to error but are not in error anymore
+* Notable changes for developers:
+  * A reusable component has been created to display tabbed components 
+  * The run-details page has been reworked to use the new tabs system
+
+## [0.58.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.58.0)
+* Notable changes for users:
+  * Adds total TF size display to LHC fill details, renamed 'total CTF' to 'total CTF size'
+  * Environment status in overview page is now colored according to the status
+  * Hints has been added on some of the EoS reports form fields
+  * A button to create EoS report has been added to the permanent top-bar of the application
+  * The DCS EoS report is now available
+  * A new gRPC enpoint has been added to fetch the last LHC fill
+  * The total TF size is now displayed on LHC fill details page
+
+## [0.57.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.57.0)
+* Notable changes for users:
+  * The SLIMOS automatic EoS report has been added
+  * A firt version of the Shift Leader automatic EoS report has been added
+
+## [0.56.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.1)
+* Notable changes for developers:
+  * The model to store DPL processes has been created
+  * A flag has been added to enable housekeeping, which for now consists in cleaning lost runs & environments
+  * Logs ended and environments transitionned to error by housekeeping script are now logged
+
 ## [0.56.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.0)
 * Notable changes for users:
   * Every 30 seconds, bookkeeping check on AliECS GUI the active environments and their runs, and transition to error lost environments and set timeO2End of lost runs

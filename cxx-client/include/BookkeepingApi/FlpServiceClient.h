@@ -29,10 +29,10 @@ class FlpServiceClient
   virtual void updateReadoutCountersByFlpNameAndRunNumber(
     const std::string& flpName,
     int32_t runNumber,
-    int64_t nSubtimeframes,
-    int64_t nEquipmentBytes,
-    int64_t nRecordingBytes,
-    int64_t nFairMQBytes) = 0;
+    uint64_t nSubtimeframes,
+    uint64_t nEquipmentBytes,
+    uint64_t nRecordingBytes,
+    uint64_t nFairMQBytes) = 0;
 };
 } // namespace o2::bkp::api
 

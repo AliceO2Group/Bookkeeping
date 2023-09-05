@@ -42,16 +42,57 @@ module.exports = () => {
     it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
-        // Expect other runs to be closed
-        const closedLog1 = await page.$$('#log-117 table tbody tr');
-        expect(closedLog1).to.have.lengthOf(2);
+        // Expect other logs to be closed
+        const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
 
-        const closedLog2 = await page.$$('#log-118 table tbody tr');
-        expect(closedLog2).to.have.lengthOf(2);
+        const closedLog2 = await page.$$('#log-118 .log-details-collapsed > *');
 
-        // Expect targeted run to be opened
-        const openedLog = await page.$$('#log-119 table tbody tr');
-        expect(openedLog).to.have.lengthOf(9);
+        // Expect targeted log to contain more details than the collapsed ones
+        const openedLog = await page.$$('#log-119 .log-details-expanded > *');
+        expect(openedLog.length).to.be.greaterThan(closedLog1.length);
+        expect(openedLog.length).to.be.greaterThan(closedLog2.length);
+    });
+
+    it('should display the log title on the log card if it is the same title as the parent log', async () => {
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        const log117Title = await page.$('#log-117 #log-117-title');
+        const log119Title = await page.$('#log-119 #log-119-title');
+        expect(log117Title).to.not.exist;
+        expect(log119Title).to.exist;
+    });
+
+    it('should display a button on each log for copying the url of the log', async () => {
+        // Enable permissions to read/write to the clipboard. Ensure we keep sanitized write
+        const context = browser.defaultBrowserContext();
+        context.overridePermissions(url, ['clipboard-read', 'clipboard-write', 'clipboard-sanitized-write']);
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        // Expect the button to be there. Log 117 should be a parent to 119.
+        const log117CopyBtn = await page.$('#copy-117');
+        expect(log117CopyBtn).to.exist;
+
+        await log117CopyBtn.click();
+
+        // The url has log 119, but the clipboard should have the url for 117.
+        const actualClipboardContents = await page.evaluate(() => navigator.clipboard.readText());
+        const expectedClipboardContents = `${url}/?page=log-detail&id=117`;
+        expect(actualClipboardContents).to.equal(expectedClipboardContents);
+    });
+
+    it('should display feedback to the user when the copy link button is clicked', async () => {
+        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+
+        // Expect the button to be there. Log 117 should be a parent to 119.
+        const log117CopyBtn = await page.$('#copy-117');
+        expect(log117CopyBtn).to.exist;
+
+        // Expect the text before the click to be different after
+        await expectInnerText(page, '#copy-117', 'Copy Link');
+        await log117CopyBtn.click();
+        await page.waitForTimeout(100);
+        await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
     it('should successfuly expand opened log when displaying a log tree', async () => {
@@ -77,22 +118,50 @@ module.exports = () => {
 
         // Navigate to a log detail view
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(1000);
+
         // We expect the correct associated runs to be shown
-        const runField = await page.$(`#log-${logId}-runs`);
-        const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Runs:\t\n${runId}`);
+        await expectInnerText(page, `#log-${logId}-runs`, `Runs:\n${runId}`);
 
         // We expect the associated runs to be clickable with a valid link
-        const runLink = await page.$(`#log-${logId}-runs a`);
-        await runLink.click();
-        await page.waitForTimeout(1000);
+        await pressElement(page, `#log-${logId}-runs a`);
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}&panel=logs`);
+        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}`);
+    });
+
+    it('allows navigating to an associated environment', async () => {
+        const logId = 1;
+        const environmentId = '8E4aZTjY';
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+
+        // We expect the correct associated enironments to be shown
+        await expectInnerText(page, `#log-${logId}-environments`, 'Environments:\n8E4aZTjY,\neZF99lH6');
+
+        // We expect the associated environments to be clickable with a valid link
+        await pressElement(page, `#log-${logId}-environments a`);
+
+        // We expect the link to navigate to the correct environments detail page
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=env-details&environmentId=${environmentId}`);
+    });
+
+    it('allows navigating to an associated LHC fill', async () => {
+        const logId = 1;
+        const fillNumbers = [5, 6];
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+
+        // We expect the correct associated lhcFills to be shown
+        await expectInnerText(page, `#log-${logId}-lhcFills`, `LHC Fills:\n${fillNumbers.join(',\n')}`);
+
+        // We expect the associated lhcFills to be clickable with a valid link
+        await pressElement(page, `#log-${logId}-lhcFills a`);
+
+        // We expect the link to navigate to the correct lhcFills detail page
+        const redirectedUrl = await page.url();
+        expect(redirectedUrl).to.equal(`${url}/?page=lhc-fill-details&fillNumber=${fillNumbers[0]}`);
     });
 
     it('should have a button to reply on a entry', async () => {
@@ -106,10 +175,8 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
 
-        const title = 'Test the reply button';
         const text = 'Test the reply button';
 
-        await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
         await page.waitForTimeout(250);
@@ -124,7 +191,7 @@ module.exports = () => {
         expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
     });
 
-    it('should successfully inherit parent log title if user does not provide one to a reply', async () => {
+    it('should successfully inherit parent log title', async () => {
         const parentLogId = 2;
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
@@ -156,6 +223,6 @@ module.exports = () => {
         const newLogId = await page.evaluate(() => window.model.router.params.id);
         const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
-        expect(newLogTitle).to.equal(`Re: ${parentLogTitle}`);
+        expect(newLogTitle).to.equal(`${parentLogTitle}`);
     });
 };

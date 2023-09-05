@@ -19,6 +19,7 @@ const {
     genericFormattedCustomizedEosReport,
 } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
+const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 
 exports.eosQcPdpReportTitle = 'End of shift report - QC/PDP - 17/03/2023 Morning';
 
@@ -113,6 +114,7 @@ const customizedQcPdpEosReport = {
                     ],
                     detectors: [],
                     detectorsQualities: [],
+                    definition: RunDefinition.Commissioning,
                 },
             ],
             TECHNICAL: [
@@ -195,7 +197,7 @@ exports.customizedQcPdpEosReportRequest = {
     },
 };
 
-const formattedCustomizedQcPdpEosReportTypeSpecific = `\
+const formattedCustomizedQcPdpEosReportTypeSpecific = `
 ## Runs
 
 ### COMMISSIONING
@@ -218,7 +220,7 @@ const formattedCustomizedQcPdpEosReportTypeSpecific = `\
     * Detectors QC bad: \`TST\`
 - [202](http://localhost:4000?page=run-detail&id=110) - 01:02:03 - bad
     * Detectors: \`FT0\`, \`TST\`
-    * Detectors QC bad: \`FT0\`, \`TST\`\
+    * Detectors QC bad: \`FT0\`, \`TST\`
 `;
 
 exports.formattedCustomizedQcPdpEosReport = genericFormattedCustomizedEosReport(
@@ -239,7 +241,7 @@ const emptyQcPdpEosReport = {
 
 exports.emptyQcPdpEosReport = emptyQcPdpEosReport;
 
-exports.formattedEmptyQcPdpEosReport = genericFormattedEmptyEosReport(ShiftTypes.QC_PDP, '## Runs\n-');
+exports.formattedEmptyQcPdpEosReport = genericFormattedEmptyEosReport(ShiftTypes.QC_PDP, '\n## Runs\n-\n');
 
 exports.emptyQcPdpEosReportRequest = {
     ...genericEmptyEosReportRequest,

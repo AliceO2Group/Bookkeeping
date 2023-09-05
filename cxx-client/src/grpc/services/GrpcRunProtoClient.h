@@ -2,8 +2,8 @@
 // Created by mboulais on 02/03/23.
 //
 
-#ifndef BOOKKEEPINGAPI_GRPCRUNPROTOCLIENT_H
-#define BOOKKEEPINGAPI_GRPCRUNPROTOCLIENT_H
+#ifndef BOOKKEEPINGAPI_GRPC_SERVICES_GRPCRUNPROTOCLIENT_H
+#define BOOKKEEPINGAPI_GRPC_SERVICES_GRPCRUNPROTOCLIENT_H
 
 #include "BookkeepingApi/RunProtoClient.h"
 #include "run.grpc.pb.h"
@@ -23,4 +23,4 @@ class GrpcRunProtoClient : public ::o2::bkp::api::proto::RunProtoClient
 };
 } // namespace o2::bkp::api::proto
 
-#endif // BOOKKEEPINGAPI_GRPCRUNPROTOCLIENT_H
+#endif // BOOKKEEPINGAPI_GRPC_SERVICES_GRPCRUNPROTOCLIENT_H

@@ -41,7 +41,7 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the log creation screen to be shown correctly
-        const header = await page.$('h3');
+        const header = await page.$('.f3');
         expect(Boolean(header)).to.be.true;
         const headerText = await page.evaluate((element) => element.innerText, header);
         expect(headerText).to.equal('New log');
@@ -80,6 +80,13 @@ module.exports = () => {
         const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
         const titleText = await firstRowTitle.evaluate((element) => element.innerText);
         expect(titleText).to.equal(title);
+    });
+
+    it('Should successfully display the log-reply form', async () => {
+        await goToPage(page, 'log-create&parentLogId=1');
+
+        const header = await page.$eval('.f3', (element) => element.textContent);
+        expect(header).to.equal('Reply to: First entry');
     });
 
     it('can disable submit with invalid data', async () => {
@@ -218,15 +225,12 @@ module.exports = () => {
         const button = await page.$(`a#btn${buttonId}`);
         await button.evaluate((btn) => btn.click());
         await page.waitForTimeout(1000);
-        // Click on "Show all" button
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(500);
-        // Verify that the attachment names match the ones we uploaded
+
+        // We expect the log to contain the attachments
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
         const attachmentsField = await page.$(`#log-${parsedFirstRowId}-attachments`);
         const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
-        expect(attachmentsText).to.equal(`Attachments:\t\n${file1},\n${file2}`);
+        expect(attachmentsText).to.equal(`Attachments:\n${file1},\n${file2}`);
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -292,14 +296,10 @@ module.exports = () => {
 
         await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
 
-        // Click on "Show all" button
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(20);
+        // We expect the log to contain the run number
         const runsField = await page.$(`#log-${rowId}-runs`);
-
         const runsText = await page.evaluate((element) => element.innerText, runsField);
-        expect(runsText).to.equal(`Runs:\t\n${runNumbersStr}`);
+        expect(runsText).to.equal(`Runs:\n${runNumbersStr}`);
     });
 
     it('can create a log with multiple run numbers', async () => {
@@ -340,14 +340,124 @@ module.exports = () => {
         const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
         await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
 
-        // Click on "Show all" button
-        const showAllButton = await page.$('#toggleCollapse');
-        await showAllButton.click();
-        await page.waitForTimeout(20);
+        // We expect the log to contain the correct run numbers
         const runsField = await page.$(`#log-${rowId}-runs`);
         const runsText = await page.evaluate((element) => element.innerText, runsField);
         for (const runNumber of runNumbers) {
             expect(runsText).to.include(runNumber);
+        }
+    });
+
+    it('can create a log with an environment', async () => {
+        const title = 'Single environment test';
+        const text = 'Sample Text';
+        const environmentsStr = '8E4aZTjY';
+
+        // Return to the creation page
+        await goToPage(page, 'log-create');
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+
+        // Send the value of the environments string to the input
+        await page.type('#environments', environmentsStr);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+
+        await goToPage(page, 'log-overview');
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+    });
+
+    it('can create a log with multiple environments', async () => {
+        const title = 'Multiple environments test';
+        const text = 'Sample Text';
+        const environments = ['8E4aZTjY', 'GIDO1jdkD'];
+        const environmentsStr = environments.join(',');
+
+        // Return to the creation page
+        await goToPage(page, 'log-create');
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+
+        // Send the value of the environments string to the input
+        await page.type('#environments', environmentsStr);
+
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation();
+        await goToPage(page, 'log-overview');
+        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple environments test")');
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+    });
+
+    it('can create a log with multiple LHC fill numbers', async () => {
+        const title = 'Multiple lhc numbers test';
+        const text = 'Sample Text';
+        const lhcFillNumbers = [1, 2];
+        const lhcFillNumbersStr = lhcFillNumbers.join(',');
+
+        // Return to the creation page
+        await goToPage(page, 'log-create');
+
+        // Select the boxes and send the values of the title and text to it
+        await page.type('#title', title);
+        // eslint-disable-next-line no-undef
+        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+
+        // Send the value of the run numbers string to the input
+        await page.type('#lhc-fills', lhcFillNumbersStr);
+
+        // Wait for the button to not be disabled
+        await page.waitForTimeout(50);
+
+        // Create the new log
+        const buttonSend = await page.$('button#send');
+        await buttonSend.evaluate((button) => button.click());
+        await page.waitForNavigation();
+        await goToPage(page, 'log-overview');
+        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
+
+        // Find the created log
+        const table = await page.$$('tr');
+        firstRowId = await getFirstRow(table, page);
+        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
+        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
+        expect(titleText).to.equal(title);
+
+        // Go to the log detail page
+        const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
+        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
+
+        // We expect the log to contain the correct run numbers
+        const lhcFillsField = await page.$(`#log-${rowId}-lhcFills`);
+        const lhcFillsText = await page.evaluate((element) => element.innerText, lhcFillsField);
+        for (const fillNumber of lhcFillNumbers) {
+            expect(lhcFillsText).to.include(fillNumber);
         }
     });
 };

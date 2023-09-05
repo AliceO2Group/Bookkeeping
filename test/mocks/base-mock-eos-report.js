@@ -42,9 +42,7 @@ LHC machine transitions
 ## Shift flow
 The
 shift flow
-
 ${formattedTypeSpecific}
-
 ## Shift to shift transfer of information
 
 ### From previous shifter
@@ -92,9 +90,7 @@ exports.genericFormattedEmptyEosReport = (reportType, formattedTypeSpecific) => 
 
 ## Shift flow
 -
-
 ${formattedTypeSpecific}
-
 ## Shift to shift transfer of information
 
 ### From previous shifter

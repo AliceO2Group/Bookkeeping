@@ -188,15 +188,15 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal('Creation date must be a real date and in format YYYY-MM-DD or YYYY/MM/DD');
+                        .equal('"query.filter.created.from" must be a valid date');
 
                     done();
                 });
         });
 
-        it('should return 400 if filtering in the future', (done) => {
+        it('should return 400 if filtering "from" in the future', (done) => {
             request(server)
-                .get('/api/logs?filter[created][to]=4102531200000')
+                .get('/api/logs?filter[created][from]=4102531200000')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -210,7 +210,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal(`Creation date must be today (${today}T23:59:59.999Z) or earlier`);
+                        .equal('"query.filter.created.from" must be less than "now"');
 
                     done();
                 });
@@ -228,7 +228,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     expect(errors[0].detail).to
-                        .equal('Creation date "to" cannot be before the "from" date');
+                        .equal('"query.filter.created.to" must be greater than "ref:from"');
 
                     done();
                 });
@@ -1002,6 +1002,46 @@ module.exports = () => {
                     expect(res.body.data.runs).to.deep.include({ id: 1, runNumber: 1 });
                     expect(res.body.data.runs).to.deep.include({ id: 2, runNumber: 2 });
                     expect(res.body.data.runs).to.deep.include({ id: 3, runNumber: 3 });
+                    done();
+                });
+        });
+
+        it('should return 201 if a proper body with LHC fill numbers was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another lhc fill')
+                .field('text', 'Text of yet another lhc fill')
+                .field('lhcFills', [1, 2])
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const lhcFillNumbers = res.body.data.lhcFills.map((fill) => fill.fillNumber);
+                    expect(lhcFillNumbers).to.deep.equal([1, 2]);
+                    done();
+                });
+        });
+
+        it('should return 400 if one of the LHC fill numbers is invalid', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another lhc fill')
+                .field('text', 'Text of yet another lhc fill')
+                .field('lhcFills', [1, 'hello'])
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const fillError = errors.find((err) => err.source.pointer === '/data/attributes/body/lhcFills/1');
+                    expect(fillError.detail).to.equal('"body.lhcFills[1]" must be a number');
+
                     done();
                 });
         });

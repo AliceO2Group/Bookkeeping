@@ -11,7 +11,6 @@
 namespace o2::bkp::api::proto {
 class BkpProtoClientFactory {
  public:
- public:
   BkpProtoClientFactory() = delete;
 
   /// Provides a Bookkeeping proto API client configured from a given configuration URI

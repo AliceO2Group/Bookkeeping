@@ -61,7 +61,7 @@ module.exports = () => {
                         timeTrgStart: new Date(),
                         timeTrgEnd: new Date(),
                     },
-                    run.detectors,
+                    { detectors: run.detectors },
                 );
                 for (const detector of run.detectors) {
                     await updateRunDetector(

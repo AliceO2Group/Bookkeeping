@@ -12,23 +12,34 @@
  */
 
 const DetectorSuite = require('./detector/index.js');
+const DplSuite = require('./dpl/index.js');
 const Environment = require('./environment/index.js');
 const EnvironmentHistoryItemSuite = require('./environmentHistoryItem/index.js');
 const EosReportSuite = require('./eosReport/index.js');
 const FlpRoleSuite = require('./flpRole');
+const LhcFillSuite = require('./lhcFill');
 const LogSuite = require('./log');
 const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
 const ShiftSuite = require('./shift/index.js');
+const StatisticsSuite = require('./statistics/index.js');
+const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
+    before(resetDatabaseContent);
+
+    after(resetDatabaseContent);
+
     describe('Detector', DetectorSuite);
+    describe('DPL', DplSuite);
     describe('Environment', Environment);
     describe('Environment history item', EnvironmentHistoryItemSuite);
     describe('EOS report', EosReportSuite);
     describe('Flp role', FlpRoleSuite);
+    describe('LHC fill suite', LhcFillSuite);
     describe('Logs', LogSuite);
     describe('RunType', RunTypeSuite);
     describe('Run', RunSuite);
     describe('Shift', ShiftSuite);
+    describe('Statistics', StatisticsSuite);
 };

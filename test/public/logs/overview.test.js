@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(144);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(139);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -213,12 +213,13 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Update original number of rows with the new limit
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
+        const originalRows = await page.$('#totalRowsCount');
+        const originalNumberOfRows = parseInt(await originalRows.evaluate((el) => el.innerText), 10);
 
-        // Insert a minimum date into the filter
-        await page.waitForTimeout(100);
-        // 13 logs are created before this test
+        /*
+         * Insert a minimum date into the filter
+         * 14 logs are created before this test
+         */
         const limitDate = new Date();
         const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
             + String(limitDate.getDate()).padStart(2, '0')
@@ -228,8 +229,8 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        const firstFilteredRows = await page.$('#totalRowsCount');
+        const firstFilteredNumberOfRows = parseInt(await firstFilteredRows.evaluate((el) => el.innerText), 10);
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert a maximum date into the filter
@@ -237,10 +238,10 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
 
-        // 9 logs are created before this test
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(19);
+        // 11 logs are created before this test
+        const secondFilteredRows = await page.$('#totalRowsCount');
+        const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
+        expect(secondFilteredNumberOfRows).to.equal(20);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -248,8 +249,8 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
-        const thirdFilteredRows = await page.$$('table tr');
-        const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
+        const thirdFilteredRows = await page.$('#totalRowsCount');
+        const thirdFilteredNumberOfRows = parseInt(await thirdFilteredRows.evaluate((el) => el.innerText), 10);
         expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
 
         // Clear the filters
@@ -308,6 +309,57 @@ module.exports = () => {
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
+    });
+
+    it('can filter by environments', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#environments', '8E4aZTjY');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a non-existent environment ID
+        await fillInput(page, '#environments', 'abcdefgh');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
     });
 
     it('can search for tag in the dropdown', async () => {
@@ -373,6 +425,57 @@ module.exports = () => {
 
         // Filter on a not existing run number
         await page.type('#runsFilterText', '1234567890');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+    });
+
+    it('can filter by lhc fill number', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#lhcFillsFilter', '1, 6');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.equal(1);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a not existing run number
+        await page.type('#lhcFillsFilter', '1234567890');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the table to be empty
@@ -505,9 +608,8 @@ module.exports = () => {
         await page.evaluate(() => {
             window.scrollBy(0, window.innerHeight);
         });
-        await page.waitForTimeout(400);
+        await page.waitForTimeout(600);
         const tableRows = await page.$$('table tr');
-
         expect(tableRows.length > 20).to.be.true;
     });
 
@@ -693,12 +795,54 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
+
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row144-runs a');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        /*
+         * We have to filter for a specific log since the first page contains no logs with runs,
+         * Even when changing the logs per page to 20
+         */
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector('#titleFilterText');
+
+        // Insert some text into the filter
+        await page.waitForSelector('#titleFilterText');
+        await page.type('#titleFilterText', log119Title);
         await waitForNetworkIdleAndRedraw(page);
+        await page.waitForSelector('#row119-runs a');
+        await pressElement(page, '#row119-runs a');
+
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('id=2');
+    });
+
+    it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
+
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        /*
+         * We have to filter for a specific log since the first page contains no logs with runs,
+         * Even when changing the logs per page to 20
+         */
+        await page.waitForSelector('#openFilterToggle');
+        await pressElement(page, '#openFilterToggle');
+
+        // Insert some text into the filter
+        await page.waitForSelector('#titleFilterText');
+        await page.type('#titleFilterText', log119Title);
+        await waitForNetworkIdleAndRedraw(page);
+        await page.waitForSelector('#row119-lhcFills a');
+        await pressElement(page, '#row119-lhcFills a');
+
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain('fillNumber=1');
     });
 };

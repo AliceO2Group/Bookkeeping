@@ -3,10 +3,11 @@ syntax = 'proto3';
 package test;
 
 service Service {
-  rpc Method(ServiceMessage) returns (ServiceMessage);
+  rpc TestEnums(EnumsMessage) returns (EnumsMessage);
+  rpc TestBigInts(BigIntMessage) returns (BigIntMessage);
 }
 
-message ServiceMessage {
+message EnumsMessage {
   message D {
     enum EnumD {
       ENUMD_0 = 0;
@@ -76,4 +77,9 @@ message D {
   }
 
   int32 d = 1;
+}
+
+message BigIntMessage {
+  uint64 ui = 11;
+  int64 i = 12;
 }

@@ -14,6 +14,7 @@
 #include <sstream>
 #include "BookkeepingApi/BkpProtoClientFactory.h"
 #include "run.pb.h"
+#include "dplProcessExecution.pb.h"
 
 using namespace o2::bkp::api::proto;
 using namespace o2::bookkeeping;
@@ -48,6 +49,18 @@ int main(int argc, char** argv)
       messageStreamRun105 << " and related fill info such as fill beam type <" << run106WithRelations->lhcfill().beamtype() << ">";
     }
     std::cout << messageStreamRun105.str() << std::endl;
+
+    // Test of DPL process execution
+    auto creationRequest = std::make_shared<DplProcessExecutionCreationRequest>();
+    creationRequest->set_runnumber(106);
+    creationRequest->set_detectorname("DETECTOR");
+    creationRequest->set_processname("PROCESS-NAME");
+    creationRequest->set_type(o2::bookkeeping::DPL_PROCESS_TYPE_MERGER);
+    creationRequest->set_hostname("HOSTNAME");
+    std::shared_ptr<DplProcessExecution> dplProcessExecution = client->dplProcessExecution()->Create(creationRequest);
+
+    // Short version
+    client->dplProcessExecution()->registerProcessExecution(106, o2::bookkeeping::DPL_PROCESS_TYPE_QC_CHECKER, "SECOND-HOSTNAME", "PROCESS-NAME", "", "DEFAUlT");
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);

@@ -27,8 +27,7 @@ module.exports = () => {
     });
 
     it('should return an array', async () => {
-        const { runs } = await new GetAllRunsUseCase()
-            .execute();
+        const { runs } = await new GetAllRunsUseCase().execute();
 
         expect(runs).to.be.an('array');
     });
@@ -73,55 +72,55 @@ module.exports = () => {
 
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
-        const COSMICS_COUNT = 1;
+        const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
         const CALIBRATION_COUNT = 1;
 
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Physics } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Cosmics } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Cosmics] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(COSMICS_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Cosmics)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Synthetic } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Synthetic] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(SYNTHETIC_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Synthetic)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Technical } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Technical)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Calibration } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Calibration] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(CALIBRATION_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Calibration)).to.be.true;
         }
 
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics, RunDefinition.Cosmics].join(',') } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics, RunDefinition.Cosmics] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMICS_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Physics || definition === RunDefinition.Cosmics)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical, RunDefinition.Synthetic].join(',') } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical, RunDefinition.Synthetic] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT + SYNTHETIC_COUNT);
             expect(runs.every(({ definition }) => definition === RunDefinition.Technical || definition === RunDefinition.Synthetic)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: RunDefinition.Commissioning } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Commissioning] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs.every(({ definition }) => definition === RunDefinition.Commissioning)).to.be.true;
@@ -134,7 +133,7 @@ module.exports = () => {
                     RunDefinition.Cosmics,
                     RunDefinition.Technical,
                     RunDefinition.Calibration,
-                ].join(','),
+                ],
             },
         };
         {
@@ -180,7 +179,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
     });
 
     it('should return an array with specified limit, only containing runs with dcs false or null', async () => {
@@ -198,7 +197,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(10);
+        expect(runs).to.have.lengthOf(8);
     });
 
     it('should return an array only containing runs with ddflp true', async () => {
@@ -226,7 +225,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(2);
     });
 
     it('should return an array with runs on certain timestamps', async () => {
@@ -314,13 +313,13 @@ module.exports = () => {
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
 
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(5);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
         runDuration.operator = '>';
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(4);
         expect(runs.every((run) => run.runDuration > pivot)).to.be.true;
     });
 
@@ -357,7 +356,7 @@ module.exports = () => {
         getAllRunsDto.query.filter.detectors.operator = 'none';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(3);
+        expect(runs).to.have.lengthOf(2);
     });
 
     it('should successfully filter on detectors number', async () => {
@@ -374,13 +373,13 @@ module.exports = () => {
         nDetectors.operator = '<=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(62);
+        expect(runs).to.have.lengthOf(60);
         expect(runs.every((run) => run.nDetectors <= 3)).to.be.true;
 
         nDetectors.operator = '=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(52);
+        expect(runs).to.have.lengthOf(50);
         expect(runs.every((run) => run.nDetectors === 3)).to.be.true;
 
         nDetectors.limit = 6;
@@ -411,13 +410,13 @@ module.exports = () => {
         nFlps.operator = '<=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(5);
         expect(runs.every((run) => run.nFlps <= 10)).to.be.true;
 
         nFlps.operator = '=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(5);
         expect(runs.every((run) => run.nFlps === 10)).to.be.true;
 
         nFlps.limit = 12;
@@ -464,7 +463,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(46);
+        expect(runs).to.have.lengthOf(44);
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
@@ -475,7 +474,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(19);
+        expect(runs).to.have.lengthOf(20);
     });
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {

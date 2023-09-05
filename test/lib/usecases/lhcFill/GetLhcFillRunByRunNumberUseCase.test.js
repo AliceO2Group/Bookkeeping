@@ -12,9 +12,7 @@
  */
 const { lhcFill: { GetLhcFillRunByRunNumberUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetLhcFillRunDto } } = require('../../../../lib/domain/index.js');
-const chai = require('chai');
-
-const { expect } = chai;
+const { expect } = require('chai');
 
 module.exports = () => {
     let getLhcFillRunDto;

@@ -33,45 +33,12 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'Flp #FLP-TPC-1');
     });
 
-    /*
-     * It('can navigate to the log panel', async () => {
-     *     await pressElement(page, '#logs-tab');
-     *     await page.waitForTimeout(100);
-     *     const redirectedUrl = await page.url();
-     *     expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
-     * });
-     */
-
     it('can navigate to the main panel', async () => {
         await pressElement(page, '#main-tab');
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=main`)).to.be.true;
     });
-
-    /*
-     * It('can navigate to the log panel', async () => {
-     *     await pressElement(page, '#logs-tab');
-     *     await page.waitForTimeout(100);
-     *     const redirectedUrl = await page.url();
-     *     expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=logs`)).to.be.true;
-     * });
-     */
-
-    /*
-     * It('can navigate to a log detail page', async () => {
-     *     table = await page.$$('tr');
-     *     firstRowId = await getFirstRow(table, page);
-     */
-
-    /*
-     *     // We expect the entry page to have the same id as the id from the flp overview
-     *     await pressElement(page, `#${firstRowId}`);
-     *     await page.waitForTimeout(100);
-     *     const redirectedUrl = await page.url();
-     *     expect(String(redirectedUrl).startsWith(`${url}/?page=log-detail&id=1`)).to.be.true;
-     * });
-     */
 
     it('notifies if a specified flp id is invalid', async () => {
         // Navigate to a flp detail view with an id that cannot exist
@@ -108,6 +75,6 @@ module.exports = () => {
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}&panel=logs`);
+        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&id=${runId}`);
     });
 };

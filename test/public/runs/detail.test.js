@@ -14,6 +14,8 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
 const { reloadPage, goToPage } = require('../defaults.js');
+const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
+const { getRun } = require('../../../lib/server/services/run/getRun.js');
 
 const { expect } = chai;
 
@@ -22,6 +24,10 @@ const checkIconPath =
 const xIconPath =
     'M1.406 0l-1.406 1.406.688.719 1.781 1.781-1.781 1.781-.688.719 1.406 1.406.719-.688 1.781-1.781 1.781 1.781.719.688'
     + ' 1.406-1.406-.688-.719-1.781-1.781 1.781-1.781.688-.719-1.406-1.406-.719.688-1.781 1.781-1.781-1.781-.719-.688z';
+const banIconPath =
+    'M4 0c-2.203 0-4 1.797-4 4 0 2.203 1.797 4 4 4 2.203 0 4-1.797 4-4 0-2.203-1.797-4-4-4zm0 1c.655 0 1.258.209 1.75.563l-4.188'
+    + ' 4.188c-.353-.492-.563-1.095-.563-1.75 0-1.663 1.337-3 3-3zm2.438 1.25c.353.492.563 1.095.563 1.75 0 1.663-1.337 3-3 3-.655'
+    + ' 0-1.258-.209-1.75-.563l4.188-4.188z';
 
 module.exports = () => {
     let page;
@@ -74,15 +80,54 @@ module.exports = () => {
         expect(await page.$eval('#tags-selection #tagCheckbox1', (elem) => elem.checked)).to.be.true;
     });
 
-    it('successfully display detectors qualities with colors and icon', async () => {
+    it('should display detectors names', async () => {
         await reloadPage(page);
-        const detectorBadgeSelector = '#Run-detectors .detector-badge';
-        const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
-        expect(detectorBadgeClass).to.contain('b-success');
-        expect(detectorBadgeClass).to.contain('success');
-        expect(await page.$eval(detectorBadgeSelector, (element) => element.innerText)).to.equal('CPV');
-        expect(await page.$eval('#Run-detectors .detector-quality-icon svg path', (element) => element.getAttribute('d')))
-            .to.equal(checkIconPath);
+        const detectorNameSelector = '#Run-detectors .detector-name';
+        const detectorNames = await page.$$eval(detectorNameSelector, (detectors) => detectors.map((detector) => detector.innerText));
+        const expectedDetectorNames =
+            ['ACO', 'CPV', 'CTP', 'EMC', 'FDD', 'FIT', 'FT0', 'FV0', 'HMP', 'ITS']
+                .concat(['MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC']);
+        expect(detectorNames).to.deep.equal(expectedDetectorNames);
+
+        const presentDetectorNameSelector = '#Run-detectors :is(.success, .danger) .detector-name';
+        const presentDetectorName = await page.$eval(presentDetectorNameSelector, (detector) => detector.innerText);
+        expect(presentDetectorName).to.equal('CPV');
+    });
+
+    it('should display detectors qualities and colors', async () => {
+        await reloadPage(page);
+        const detectorBadgeClassesSelector = '#Run-detectors .detector-badge';
+        const detectorBadgeClasses = await page.$$eval(detectorBadgeClassesSelector, (badges) => badges.map((badge) => badge.className));
+
+        const detectorBadgesPresent = detectorBadgeClasses.filter((elem) => !elem.includes('gray'));
+        const detectorBadgesNotPresent = detectorBadgeClasses.filter((elem) => elem.includes('gray'));
+
+        expect(detectorBadgesPresent.length).to.equal(1);
+        expect(detectorBadgesNotPresent.length).to.equal(18);
+
+        detectorBadgesPresent.every((badge) => {
+            expect(badge).to.contain.oneOf(['success', 'danger']);
+            expect(badge).to.contain.oneOf(['b-success', 'b-danger']);
+        });
+
+        detectorBadgesNotPresent.every((badge) => {
+            expect(badge).to.contain('b-gray');
+            expect(badge).to.contain('gray');
+        });
+    });
+
+    it('should successfully display detectors icons', async () => {
+        await reloadPage(page);
+        const svgPaths = await page.$$eval('#Run-detectors .detector-quality-icon svg path', (elements) =>
+            elements.map((elem) => elem.getAttribute('d')));
+
+        svgPaths.every((path, index) => {
+            if (index == 1) {
+                expect(path).to.equal(checkIconPath);
+            } else {
+                expect(path).to.equal(banIconPath);
+            }
+        });
     });
 
     it('successfully update detectors qualities in EDIT mode', async () => {
@@ -97,15 +142,15 @@ module.exports = () => {
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.false;
         await pressElement(page, badQualityRadioSelector);
         await pressElement(page, '#save-run');
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
-        const detectorBadgeSelector = '#Run-detectors .detector-badge';
+        const detectorBadgeSelector = '#Run-detectors .detector-badge:nth-child(2)';
         const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
         expect(detectorBadgeClass).to.contain('b-danger');
         expect(detectorBadgeClass).to.contain('danger');
         expect(await page.$eval(detectorBadgeSelector, (element) => element.innerText)).to.equal('CPV');
-        expect(await page.$eval('#Run-detectors .detector-quality-icon svg path', (element) => element.getAttribute('d')))
-            .to.equal(xIconPath);
+        expect(await page.$eval('#Run-detectors .detector-badge:nth-child(2) .detector-quality-icon svg path', (element) =>
+            element.getAttribute('d'))).to.equal(xIconPath);
 
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
@@ -308,5 +353,44 @@ module.exports = () => {
         const runDurationCell = await page.$('#runDurationValue');
         expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
             .to.equal('Duration based on o2 start AND stop because of missing trigger information');
+    });
+
+    it('should display OFF in the nEPNs field when EPNs is null', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 3 } });
+        await page.waitForSelector('#Run-nEpns');
+        await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\nOFF');
+    });
+
+    it('should not display OFF in the nEPNs field when EPNs is not null', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await page.waitForSelector('#Run-nEpns');
+        await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\n12');
+    });
+
+    it('should not display calibration status on non-calibration runs', async () => {
+        await page.waitForSelector('#Run-definition');
+        expect(await page.$('#Run-definition + #Run-runType')).to.not.be.null;
+    });
+
+    it('should display calibration status on calibration runs', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 40 } });
+        await page.waitForSelector('#Run-calibrationStatus');
+        await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.NO_STATUS}`);
+    });
+
+    it('should allow to update calibration status on calibration runs', async () => {
+        const runNumber = 40;
+        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+
+        await goToPage(page, 'run-detail', { queryParameters: { id: runNumber } });
+        await pressElement(page, '#edit-run');
+        await page.waitForSelector('#Run-calibrationStatus select');
+        await page.select('#Run-calibrationStatus select', RunCalibrationStatus.SUCCESS);
+        await pressElement(page, '#save-run');
+
+        // Wait for page to be reloaded
+        await page.waitForSelector('#edit-run');
+
+        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
     });
 };
