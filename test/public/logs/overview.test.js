@@ -836,6 +836,7 @@ module.exports = () => {
         // Insert some text into the filter
         await page.waitForSelector('#titleFilterText');
         await page.type('#titleFilterText', log119Title);
+
         await waitForNetworkIdleAndRedraw(page);
         await page.waitForSelector('#row119-lhcFills a');
         await pressElement(page, '#row119-lhcFills a');
