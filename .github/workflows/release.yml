@@ -50,7 +50,6 @@ jobs:
       run: echo "tgz_name=$(npm pack)" >> $GITHUB_OUTPUT
       id: tgz
     - name: Upload tarball to release assets via GH CLI
-      working-directory: ./Bookkeeping
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh release upload @aliceo2/bookkeeping@${{ needs.deploy-npm-module.outputs.VERSION }} ${{ steps.tgz.outputs.tgz_name }}
