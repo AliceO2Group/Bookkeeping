@@ -20,7 +20,7 @@ const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
 const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
-const { SYNTHETIC } = require('../../../../mocks/mock-run.js');
+const { SYNTHETIC, CALIBRATION } = require('../../../../mocks/mock-run.js');
 const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 
@@ -78,6 +78,12 @@ module.exports = () => {
             timeTrgEnd,
         });
         expect(run.definition).to.equal(RunDefinition.Physics);
+    });
+
+    it('should successfully use default calibration status when creating a new calibration run', async () => {
+        const run = await runService.create({ ...CALIBRATION.LASER, runNumber: 115 }, { runTypeName: CALIBRATION.LASER.runType.name });
+        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
     });
 
     it('should successfully prevent to create a non-calibration run with a calibrationStatus', async () => {

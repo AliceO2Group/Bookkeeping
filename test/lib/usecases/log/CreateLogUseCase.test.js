@@ -112,4 +112,35 @@ module.exports = () => {
             .execute(createLogDto);
         expect(result.runs).to.deep.equal(expectedResult);
     });
+
+    it('should create a new Log with no duplicate lhcFill numbers', async () => {
+        const expectedFillNumbers = [1, 2, 3];
+
+        createLogDto.body.lhcFills = [1, 2, 2, 3];
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { result: { lhcFills } } = await new CreateLogUseCase()
+            .execute(createLogDto);
+
+        const returnedFillNumbers = lhcFills.map((fill) => fill.fillNumber);
+        expect(returnedFillNumbers).to.deep.equal(expectedFillNumbers);
+    });
+
+    it('should not create a new Log if at least one of the lhcFills do not exist', async () => {
+        createLogDto.body.lhcFills = '1, 99999';
+        createLogDto.session = {
+            personid: 2,
+            id: 2,
+            name: 'Jan Janssen',
+        };
+
+        const { error: { status } } = await new CreateLogUseCase()
+            .execute(createLogDto);
+
+        expect(status).to.equal('400');
+    });
 };
