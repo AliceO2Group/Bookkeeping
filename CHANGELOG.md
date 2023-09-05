@@ -2,7 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.62.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
+## [0.63.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.1)
+* Notable changes for users:
+  * Removed the dupplicate LHC fill input in the log creation page 
+
+## [0.63.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.0)
+* Notable changes for users:
+  * Logs can now be assigned to environment
+  * Logs can now be filtered by environment
+  * Related environments are displayed in the log tree view
+  * Logs can now be assigned to LHC fill
+  * Logs can now be filtered by LHC fill
+  * Related LHC fill are displayed in the log tree view
+  * Bug of calibration runs not being registered has been fixed
+  * Statistics graph display efficiency in %
+  * Statistics graph have axis labels
+  * Where runs have detectors without qualities, they are shown as being a different colour to detectors that weren't included in the run
+  * Fill statistics now also include fills without runs
+* Notable changes for developers:
+  * Graphs library handle display of axis labels
+
+## [0.62.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.62.0)
 * Notable changes for users:
   * End of Shift reports are pre-filled with information from the previous shifter
   * Fixed the efficiency graph tooltip value display

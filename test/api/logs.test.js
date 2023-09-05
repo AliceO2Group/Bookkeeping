@@ -1005,6 +1005,46 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 201 if a proper body with LHC fill numbers was sent', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another lhc fill')
+                .field('text', 'Text of yet another lhc fill')
+                .field('lhcFills', [1, 2])
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const lhcFillNumbers = res.body.data.lhcFills.map((fill) => fill.fillNumber);
+                    expect(lhcFillNumbers).to.deep.equal([1, 2]);
+                    done();
+                });
+        });
+
+        it('should return 400 if one of the LHC fill numbers is invalid', (done) => {
+            request(server)
+                .post('/api/logs')
+                .field('title', 'Yet another lhc fill')
+                .field('text', 'Text of yet another lhc fill')
+                .field('lhcFills', [1, 'hello'])
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const fillError = errors.find((err) => err.source.pointer === '/data/attributes/body/lhcFills/1');
+                    expect(fillError.detail).to.equal('"body.lhcFills[1]" must be a number');
+
+                    done();
+                });
+        });
     });
 
     describe('GET /api/logs/:logId', () => {
@@ -1210,58 +1250,6 @@ module.exports = () => {
                     }
 
                     expect(res.body.data).to.deep.equal(tree);
-
-                    done();
-                });
-        });
-    });
-
-    describe('GET /api/logs/:logId/environments', () => {
-        it('should return 400 if the log id is not a number', (done) => {
-            request(server)
-                .get('/api/logs/abc/environments')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
-                    expect(titleError.detail).to.equal('"params.logId" must be a number');
-
-                    done();
-                });
-        });
-
-        it('should return 404 if the log could not be found', (done) => {
-            request(server)
-                .get('/api/logs/999999999/environments')
-                .expect(404)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.errors[0].title).to.equal('Not found');
-
-                    done();
-                });
-        });
-
-        it('should return 200 in all other cases', (done) => {
-            request(server)
-                .get('/api/logs/119/environments')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.be.an('array');
 
                     done();
                 });
