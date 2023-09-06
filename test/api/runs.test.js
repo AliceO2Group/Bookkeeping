@@ -21,6 +21,8 @@ const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
+const { createRun } = require('../../lib/server/services/run/createRun');
+const { getRun } = require('../../lib/server/services/run/getRun');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -242,6 +244,26 @@ module.exports = () => {
             expect(data).to.be.an('array');
 
             expect(data).to.have.lengthOf(12);
+        });
+
+        it('should successfully filter on updatedAt', async () => {
+            const desiredRunNumbers = [1000, 1001, 1002, 1003];
+            await Promise.all(desiredRunNumbers.map((runNumber) => createRun({runNumber})));
+            const updatedAtValues = Promise.all(
+                    desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
+            
+                
+            const response =
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${Math.min(updateRun)}`);
+
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            
+            expect(data).to.be.an('array');
+            expect(data).to.have.lengthOf(desiredRunNumbers.length);
+            expect(data.map(({runNumber}) => runNumber)).to.have.all.members(desiredRunNumbers);
         });
 
         it('should filter run on their quality', async () => {
