@@ -249,21 +249,34 @@ module.exports = () => {
         it('should successfully filter on updatedAt', async () => {
             const desiredRunNumbers = [1000, 1001, 1002, 1003];
             await Promise.all(desiredRunNumbers.map((runNumber) => createRun({runNumber})));
-            const updatedAtValues = Promise.all(
+            const updatedAtValues = await Promise.all(
                     desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
-            
-                
+            const [lowerInclusiveBound, upperExclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
+
+            console.log(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperExclusiveBound}`)
             const response =
                 await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${Math.min(updateRun)}`);
+                    .get(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperExclusiveBound}`);
 
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            
+
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(desiredRunNumbers.length);
-            expect(data.map(({runNumber}) => runNumber)).to.have.all.members(desiredRunNumbers);
+            expect(data).to.have.lengthOf(desiredRunNumbers.length - 1);
+            expect(desiredRunNumbers).to.have.all.members(data.map(({runNumber}) => runNumber));
+        });
+
+        it('should return http status 400 if updatedAt from larger than to', async () => {
+            const response =
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${Date.now()}&filter[updatedAt][to]=${Date.now() - 10000}`);
+            
+            expect(response.status).to.equal(400);
+            const { errors: [error] } = response.body;
+            expect(error.detail).to.equal('"query.filter.updatedAt.to" must be greater than "ref:from"');
+            expect(error.title).to.equal('"Invalid Attribute"');
+
         });
 
         it('should filter run on their quality', async () => {
