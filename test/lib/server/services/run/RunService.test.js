@@ -83,6 +83,16 @@ module.exports = () => {
         expect(run.definition).to.equal(RunDefinition.Physics);
     });
 
+    it('should throw when trying to change run quality without justification', async () => {
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { runPatch: { runQuality: RunQualities.GOOD } },
+            ),
+            new BadParameterError('Run quality change require a reason'),
+        );
+    });
+
     it('should throw when trying to change detector quality without justification', async () => {
         await assert.rejects(
             () => runService.update(
