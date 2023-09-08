@@ -12,9 +12,11 @@
  */
 
 const { database } = require('../../lib/application.js');
+const { setRunsTimestamps } = require('../testutils/setRunsTimestamps.js');
 
 exports.resetDatabaseContent = async () => {
     await database.dropAllTables();
     await database.migrate();
     await database.seed();
+    await setRunsTimestamps();
 };

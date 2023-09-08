@@ -13,7 +13,7 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { repositories: { RunRepository }, models: { Run } } = require('../../lib/database');
+const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
 const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
@@ -21,8 +21,8 @@ const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
-const { createRun } = require('../../lib/server/services/run/createRun');
 const { getRun } = require('../../lib/server/services/run/getRun');
+const { runRunNumbersWithCustomizedTimestamps } = require('../testutils/setRunsTimestamps.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -247,16 +247,9 @@ module.exports = () => {
         });
 
         it('should successfully filter on updatedAt', async () => {
-            const desiredRunNumbers = [1000, 1100, 1200, 1300];
-            await Promise.all(desiredRunNumbers.map((runNumber) => 
-                Run.create(
-                    { runNumber, updatedAt: new Date(runNumber * 1000) }, 
-                    { silent: true, ignoreDuplicates: true })));
-
-            const updatedAtValues = await Promise.all(
-                    desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
-            const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
-
+            const valuesOfUpdatedAtColumn = await Promise.all(
+                    runRunNumbersWithCustomizedTimestamps.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
+            const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...valuesOfUpdatedAtColumn), Math.max(...valuesOfUpdatedAtColumn)];
             const response =
                 await request(server)
                     .get(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperInclusiveBound}`);
@@ -266,15 +259,15 @@ module.exports = () => {
             const { data } = response.body;
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(desiredRunNumbers.length);
-            expect(desiredRunNumbers).to.have.all.members(data.map(({runNumber}) => runNumber));
+            expect(data).to.have.lengthOf(runRunNumbersWithCustomizedTimestamps.length);
+            expect(runRunNumbersWithCustomizedTimestamps).to.have.all.members(data.map(({runNumber}) => runNumber));
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
-            const timeNow = Date.now();
+            const dateNow = Date.now();
             const response =
                 await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+                    .get(`/api/runs?filter[updatedAt][from]=${dateNow}&filter[updatedAt][to]=${dateNow}`);
 
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;
