@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { sequelize } = require('../../lib/database');
+const { sequelize, repositories: { RunRepository } } = require('../../lib/database');
 
 
 const getEscapedPastDate = (runNumber, dateNow) => `'${(new Date(dateNow - runNumber * 1000 * 60))
@@ -35,11 +35,22 @@ const setRunsTimestamps = async () => {
             SET 
                 created_at=${getEscapedPastDate(runNumber, dateNow)},
                 updated_at=${getEscapedPastDate(runNumber, dateNow)} 
-            WHERE run_number = ${runNumber}`))};
+            WHERE run_number = ${runNumber}`))
 
     return Promise.all(dbPromises);
+}
+
+/**
+ * Return array of runs with customized timestamps @see setRunsTimestamps
+ * @returns {Array<import('sequelize').Model>} runs
+ */
+const getRunsWithCustomizedTimestamps = async () => {
+    const dbPromises = runRunNumbersWithCustomizedTimestamps.map((runNumber) => RunRepository.findOne({ where: { runNumber } }));
+    return await Promise.all(dbPromises);
+}
 
 module.exports = {
     runRunNumbersWithCustomizedTimestamps,
     setRunsTimestamps,
+    getRunsWithCustomizedTimestamps,
 };

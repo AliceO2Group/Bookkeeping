@@ -12,7 +12,7 @@
  */
 
 const { database } = require('../../lib/application.js');
-const { setRunsTimestamps } = require('../testutils/setRunsTimestamps.js');
+const { setRunsTimestamps } = require('./setRunsTimestamps.js');
 
 exports.resetDatabaseContent = async () => {
     await database.dropAllTables();

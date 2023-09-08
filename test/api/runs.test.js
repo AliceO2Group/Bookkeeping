@@ -22,7 +22,7 @@ const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQual
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
 const { getRun } = require('../../lib/server/services/run/getRun');
-const { runRunNumbersWithCustomizedTimestamps } = require('../testutils/setRunsTimestamps.js');
+const { runRunNumbersWithCustomizedTimestamps } = require('../utilities/setRunsTimestamps.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
