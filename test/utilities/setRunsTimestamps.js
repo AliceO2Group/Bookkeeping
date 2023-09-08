@@ -12,8 +12,9 @@
  */
 const { sequelize, repositories: { RunRepository } } = require('../../lib/database');
 
+const moduleSetupTime = Date.now();
 
-const getEscapedPastDate = (runNumber, dateNow) => `'${(new Date(dateNow - runNumber * 1000 * 60))
+const getEscapedPastDate = (runNumber) => `'${(new Date(moduleSetupTime - runNumber * 1000 * 60 * 30))
     .toISOString()
     .replace(/T/, ' ')
     .replace(/\..+/, '')  }'`;
@@ -25,16 +26,15 @@ const runRunNumbersWithCustomizedTimestamps = [1, 2, 3, 4];
 
 /**
  * Set timestamps (created_at and updated_at) for runs with run_number specified in variable @see runRunNumbersWithCustomizedTimestamps
- * according to formula `UPSERTED_TIMESTAMP = THIS_METHOD_CALL_TIME - run_number * 1000 * 60`
+ * according to formula `UPSERTED_TIMESTAMP = THIS_METHOD_CALL_TIME - run_number * 1000 * 60 * 30` (run_number * 30min)
  * so there are time differences between the runs
  */
 const setRunsTimestamps = async () => {
-    const dateNow = Date.now();
     const dbPromises = runRunNumbersWithCustomizedTimestamps.map((runNumber) => 
         sequelize.query(`UPDATE runs 
             SET 
-                created_at=${getEscapedPastDate(runNumber, dateNow)},
-                updated_at=${getEscapedPastDate(runNumber, dateNow)} 
+                created_at=${getEscapedPastDate(runNumber)},
+                updated_at=${getEscapedPastDate(runNumber)} 
             WHERE run_number = ${runNumber}`))
 
     return Promise.all(dbPromises);
@@ -50,6 +50,7 @@ const getRunsWithCustomizedTimestamps = async () => {
 }
 
 module.exports = {
+    dateNow: moduleSetupTime,
     runRunNumbersWithCustomizedTimestamps,
     setRunsTimestamps,
     getRunsWithCustomizedTimestamps,

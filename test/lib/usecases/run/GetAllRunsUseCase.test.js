@@ -10,16 +10,19 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
+const { models: { Run } } = require('../../../../lib/database');
 const { run: { GetAllRunsUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { getRunsWithCustomizedTimestamps, setRunsTimestamps, runRunNumbersWithCustomizedTimestamps } = require('../../../utilities/setRunsTimestamps');
 
 const { expect } = chai;
 
 module.exports = () => {
+    before(setRunsTimestamps);
+    
     let getAllRunsDto;
 
     beforeEach(async () => {
@@ -281,6 +284,56 @@ module.exports = () => {
             .execute(getAllRunsDto);
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(100);
+    });
+
+    it('should successfully filter on updatedAt', async () => {
+        const timestamps = (await getRunsWithCustomizedTimestamps()).map(({updatedAt}) => updatedAt);
+        const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...timestamps), Math.max(...timestamps)]
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: lowerInclusiveBound,
+                        to: upperInclusiveBound,
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(runRunNumbersWithCustomizedTimestamps.length);
+            expect(runRunNumbersWithCustomizedTimestamps).to.have.all.members(runs.map(({runNumber}) => runNumber))
+        }
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: lowerInclusiveBound,
+                        to: upperInclusiveBound - 1,
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(runRunNumbersWithCustomizedTimestamps.length - 1);
+            expect(runRunNumbersWithCustomizedTimestamps).to.contain.members(runs.map(({runNumber}) => runNumber))
+        }
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: lowerInclusiveBound + 1,
+                        to: upperInclusiveBound,
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(runRunNumbersWithCustomizedTimestamps.length - 1);
+            expect(runRunNumbersWithCustomizedTimestamps).to.contain.members(runs.map(({runNumber}) => runNumber))
+        }
     });
 
     it('should successfully filter on duration', async () => {
