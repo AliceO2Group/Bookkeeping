@@ -20,8 +20,6 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const { server } = require('../../lib/application');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities');
 
-process.env.NODE_ENV = 'test access';
-
 module.exports = () => {
     before(resetDatabaseContent);
 
