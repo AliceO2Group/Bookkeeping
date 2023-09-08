@@ -22,7 +22,7 @@ const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQual
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
 const { getRun } = require('../../lib/server/services/run/getRun');
-const { runRunNumbersWithCustomizedTimestamps } = require('../utilities/setRunsTimestamps.js');
+const { runRunNumbersWithCustomizedTimestamps, getRunsWithCustomizedTimestamps} = require('../utilities/setRunsTimestamps.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -247,8 +247,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on updatedAt', async () => {
-            const valuesOfUpdatedAtColumn = await Promise.all(
-                    runRunNumbersWithCustomizedTimestamps.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
+            const valuesOfUpdatedAtColumn = (await getRunsWithCustomizedTimestamps()).map(({updatedAt}) => updatedAt);
             const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...valuesOfUpdatedAtColumn), Math.max(...valuesOfUpdatedAtColumn)];
             const response =
                 await request(server)
