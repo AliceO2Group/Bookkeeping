@@ -248,7 +248,11 @@ module.exports = () => {
 
         it('should successfully filter on updatedAt', async () => {
             const desiredRunNumbers = [1000, 1100, 1200, 1300];
-            await Promise.all(desiredRunNumbers.map((runNumber) => Run.create({ runNumber, updatedAt: new Date(runNumber * 1000) }, { silent: true })));
+            await Promise.all(desiredRunNumbers.map((runNumber) => 
+                Run.create(
+                    { runNumber, updatedAt: new Date(runNumber * 1000) }, 
+                    { silent: true, ignoreDuplicates: true })));
+
             const updatedAtValues = await Promise.all(
                     desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
             const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
