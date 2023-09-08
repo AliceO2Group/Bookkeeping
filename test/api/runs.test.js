@@ -13,7 +13,7 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { repositories: { RunRepository } } = require('../../lib/database');
+const { repositories: { RunRepository }, models: { Run } } = require('../../lib/database');
 const { server } = require('../../lib/application');
 const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
@@ -247,13 +247,12 @@ module.exports = () => {
         });
 
         it('should successfully filter on updatedAt', async () => {
-            const desiredRunNumbers = [1000, 1001, 1002, 1003];
-            await Promise.all(desiredRunNumbers.map((runNumber) => createRun({runNumber})));
+            const desiredRunNumbers = [1000, 1100, 1200, 1300];
+            await Promise.all(desiredRunNumbers.map((runNumber) => Run.create({ runNumber, updatedAt: new Date(runNumber * 1000) }, { silent: true })));
             const updatedAtValues = await Promise.all(
                     desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
             const [lowerInclusiveBound, upperExclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
 
-            console.log(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperExclusiveBound}`)
             const response =
                 await request(server)
                     .get(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperExclusiveBound}`);
@@ -263,19 +262,20 @@ module.exports = () => {
             const { data } = response.body;
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(desiredRunNumbers.length - 1);
+            expect(data).to.have.lengthOf(desiredRunNumbers.length);
             expect(desiredRunNumbers).to.have.all.members(data.map(({runNumber}) => runNumber));
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
+            const timeNow = Date.now();
             const response =
                 await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${Date.now()}&filter[updatedAt][to]=${Date.now() - 10000}`);
-            
+                    .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;
             expect(error.detail).to.equal('"query.filter.updatedAt.to" must be greater than "ref:from"');
-            expect(error.title).to.equal('"Invalid Attribute"');
+            expect(error.title).to.equal('Invalid Attribute');
 
         });
 
