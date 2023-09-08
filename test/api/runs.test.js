@@ -633,7 +633,7 @@ module.exports = () => {
 
         it('should successfully return the stored run entity', (done) => {
             request(server)
-                .post('/api/runs')
+                .post('/api/runs?token=admin')
                 .expect(201)
                 .send({
                     ...testRun,
@@ -654,7 +654,7 @@ module.exports = () => {
         });
         it('should return an error due to invalid detectors list', (done) => {
             request(server)
-                .post('/api/runs')
+                .post('/api/runs?token=admin')
                 .expect(400)
                 .send({
                     ...testRun,
@@ -675,7 +675,7 @@ module.exports = () => {
         });
         it('should return an error due to already existing run number', async () => {
             const response = await request(server)
-                .post('/api/runs')
+                .post('/api/runs?token=admin')
                 .send({
                     ...testRun,
                 });
@@ -689,7 +689,7 @@ module.exports = () => {
     describe('PUT /api/runs/:runId', () => {
         it('should return 200 in all other cases', (done) => {
             request(server)
-                .put('/api/runs/9999999999')
+                .put('/api/runs/9999999999?token=admin')
                 .send({
                     runQuality: RunQualities.BAD,
                 })
@@ -706,7 +706,7 @@ module.exports = () => {
         });
         it('should return 201 in all other cases', (done) => {
             request(server)
-                .put('/api/runs/1')
+                .put('/api/runs/1?token=admin')
                 .send({
                     runQuality: RunQualities.BAD,
                 })
@@ -723,7 +723,7 @@ module.exports = () => {
 
         it('should successfully return the updated run entity with new runQuality value', async () => {
             const { body } = await request(server)
-                .put('/api/runs/1')
+                .put('/api/runs/1?token=admin')
                 .expect(201)
                 .send({ runQuality: RunQualities.GOOD });
             expect(body.data).to.be.an('object');
@@ -733,7 +733,7 @@ module.exports = () => {
 
         it('should return an error due to invalid runQuality value', async () => {
             const { body } = await request(server)
-                .put('/api/runs/1')
+                .put('/api/runs/1?token=admin')
                 .expect(400)
                 .send({ runQuality: 'wrong' });
             expect(body.errors).to.be.an('array');
@@ -742,7 +742,7 @@ module.exports = () => {
 
         it('should successfully return the updated run entity with new runQuality value', async () => {
             const { body } = await request(server)
-                .put('/api/runs/106')
+                .put('/api/runs/106?token=admin')
                 .expect(201)
                 .send({
                     runQuality: RunQualities.GOOD,
@@ -761,7 +761,7 @@ module.exports = () => {
 
         it('should successfully add eorReasons to run and check runQuality did not change', async () => {
             const currentRun = await request(server)
-                .get('/api/runs/106')
+                .get('/api/runs/106?token=admin')
                 .expect(200);
             expect(currentRun.body.data).to.be.an('object');
             expect(currentRun.body.data.id).to.equal(106);
@@ -769,7 +769,7 @@ module.exports = () => {
             expect(currentRun.body.data.eorReasons).to.have.lengthOf(0);
 
             const { body } = await request(server)
-                .put('/api/runs/106')
+                .put('/api/runs/106?token=admin')
                 .expect(201)
                 .send({
                     eorReasons: [
@@ -788,7 +788,7 @@ module.exports = () => {
 
         it('should give a proper error when a detectorId does not exists', async () => {
             const { body } = await request(server)
-                .put('/api/runs/1')
+                .put('/api/runs/1?token=admin')
                 .expect(500)
                 .send({
                     detectorsQualities: [
@@ -808,7 +808,7 @@ module.exports = () => {
 
         it('should successfully return the updated run entity with new detector\'s run quality', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/1')
+                .put('/api/runs/1?token=admin')
                 .send({
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
                     detectorsQualitiesChangeReason: 'Justification',
@@ -823,7 +823,7 @@ module.exports = () => {
 
         it('should return 500 when trying to update the detector\'s quality of a run that has not ended yet', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/105')
+                .put('/api/runs/105?token=admin')
                 .send({
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
                     detectorsQualitiesChangeReason: 'Justification',
@@ -834,7 +834,7 @@ module.exports = () => {
 
         it('should return 500 when trying to update the detector\'s quality without justification', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/1')
+                .put('/api/runs/1?token=admin')
                 .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
             expect(status).to.equal(500);
             expect(body.errors[0].detail).to.equal('Detector quality change reason is required when updating detector quality');
@@ -842,7 +842,7 @@ module.exports = () => {
 
         it('should successfully allow to update calibration status for calibration run', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/40')
+                .put('/api/runs/40?token=admin')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
             expect(status).to.equal(201);
             expect(body.data).to.be.an('object');
@@ -852,7 +852,7 @@ module.exports = () => {
 
         it('should successfully return 500 when trying to set calibration status for non-calibration run', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/106')
+                .put('/api/runs/106?token=admin')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
             expect(status).to.equal(500);
             expect(body.errors[0].detail).to.equal('Calibration status is reserved to calibration runs');
@@ -860,7 +860,7 @@ module.exports = () => {
 
         it('should successfully return 500 when trying to set calibration status change reason for non-failed calibration', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/40')
+                .put('/api/runs/40?token=admin')
                 .send({ calibrationStatus: RunCalibrationStatus.NO_STATUS, calibrationStatusChangeReason: 'A spurious reason' });
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
@@ -869,7 +869,7 @@ module.exports = () => {
 
         it('should successfully return 500 when trying to set calibration status to FAILED without reason', async () => {
             const { body, status } = await request(server)
-                .put('/api/runs/40')
+                .put('/api/runs/40?token=admin')
                 .send({ calibrationStatus: RunCalibrationStatus.FAILED });
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
@@ -882,7 +882,7 @@ module.exports = () => {
                 { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
             );
             const { body, status } = await request(server)
-                .put('/api/runs/40')
+                .put('/api/runs/40?token=admin')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
@@ -893,7 +893,7 @@ module.exports = () => {
     describe('PATCH api/runs query:runNumber', () => {
         it('should return 500 if the wrong id is given', (done) => {
             request(server)
-                .patch('/api/runs?runNumber=99999')
+                .patch('/api/runs?runNumber=99999&token=admin')
                 .send({
                     lhcBeamEnergy: 232.156,
                     lhcBeamMode: 'STABLE BEAMS',
@@ -918,7 +918,7 @@ module.exports = () => {
             const TIMESTAMP = 1664271988000;
             const BIG_INT_NUMBER = '99999999999999999';
             request(server)
-                .patch('/api/runs?runNumber=1')
+                .patch('/api/runs?runNumber=1&token=admin')
                 .send({
                     lhcBeamEnergy: 232.156,
                     lhcBeamMode: 'STABLE BEAMS',
@@ -968,7 +968,7 @@ module.exports = () => {
         const dateValue = new Date('1-1-2021').setHours(0, 0, 0, 0);
         it('should return 400 when runNumber is wrong', (done) => {
             request(server)
-                .patch('/api/runs/9999999999')
+                .patch('/api/runs/9999999999?token=admin')
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
@@ -986,7 +986,7 @@ module.exports = () => {
         });
         it('should successfully update a run by its RunNumber with partial information', (done) => {
             request(server)
-                .patch('/api/runs/1')
+                .patch('/api/runs/1?token=admin')
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
@@ -1017,7 +1017,7 @@ module.exports = () => {
 
         it('should successfully update a run by its RunNumber with partial information and keep previous updated values the same', async () => {
             const { body } = await request(server)
-                .patch('/api/runs/1')
+                .patch('/api/runs/1?token=admin')
                 .expect(201)
                 .send({
                     timeO2Start: dateValue,
