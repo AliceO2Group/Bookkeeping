@@ -14,10 +14,15 @@ const { sequelize, repositories: { RunRepository } } = require('../../lib/databa
 
 const moduleSetupTime = Date.now();
 
-const getEscapedPastDate = (runNumber) => `'${(new Date(moduleSetupTime - runNumber * 1000 * 60 * 30))
+/**
+ * Created custom escaped timestamp string for test purpose
+ * @param {Number} runNumber run_number
+ * @returns {String} escaped date formated for mariadb
+ */
+const getEscapedPastDate = (runNumber) => `'${new Date(moduleSetupTime - runNumber * 1000 * 60 * 30)
     .toISOString()
     .replace(/T/, ' ')
-    .replace(/\..+/, '')  }'`;
+    .replace(/\..+/, '')}'`;
 
 /**
  * This var holds run_numbers which will have customized timestamps
@@ -28,26 +33,28 @@ const runRunNumbersWithCustomizedTimestamps = [1, 2, 3, 4];
  * Set timestamps (created_at and updated_at) for runs with run_number specified in variable @see runRunNumbersWithCustomizedTimestamps
  * according to formula `UPSERTED_TIMESTAMP = THIS_METHOD_CALL_TIME - run_number * 1000 * 60 * 30` (run_number * 30min)
  * so there are time differences between the runs
+ * @return {Promise<Array<Object>>} information from db whether update was successful or not
  */
 const setRunsTimestamps = async () => {
-    const dbPromises = runRunNumbersWithCustomizedTimestamps.map((runNumber) => 
+    const dbPromises = runRunNumbersWithCustomizedTimestamps.map((runNumber) =>
         sequelize.query(`UPDATE runs 
             SET 
                 created_at=${getEscapedPastDate(runNumber)},
                 updated_at=${getEscapedPastDate(runNumber)} 
-            WHERE run_number = ${runNumber}`))
+            WHERE run_number = ${runNumber}`));
 
     return Promise.all(dbPromises);
-}
+};
 
 /**
- * Return array of runs with customized timestamps @see setRunsTimestamps
- * @returns {Array<import('sequelize').Model>} runs
+ * Return array of runs with customized timestamps
+ * @see setRunsTimestamps
+ * @return {Array<Model>} runs
  */
 const getRunsWithCustomizedTimestamps = async () => {
     const dbPromises = runRunNumbersWithCustomizedTimestamps.map((runNumber) => RunRepository.findOne({ where: { runNumber } }));
     return await Promise.all(dbPromises);
-}
+};
 
 module.exports = {
     dateNow: moduleSetupTime,

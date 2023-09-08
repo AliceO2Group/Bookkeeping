@@ -21,8 +21,7 @@ const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
-const { getRun } = require('../../lib/server/services/run/getRun');
-const { runRunNumbersWithCustomizedTimestamps, getRunsWithCustomizedTimestamps} = require('../utilities/setRunsTimestamps.js');
+const { runRunNumbersWithCustomizedTimestamps, getRunsWithCustomizedTimestamps } = require('../utilities/setRunsTimestamps.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -247,7 +246,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on updatedAt', async () => {
-            const valuesOfUpdatedAtColumn = (await getRunsWithCustomizedTimestamps()).map(({updatedAt}) => updatedAt);
+            const valuesOfUpdatedAtColumn = (await getRunsWithCustomizedTimestamps()).map(({ updatedAt }) => updatedAt);
             const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...valuesOfUpdatedAtColumn), Math.max(...valuesOfUpdatedAtColumn)];
             const response =
                 await request(server)
@@ -259,7 +258,7 @@ module.exports = () => {
 
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(runRunNumbersWithCustomizedTimestamps.length);
-            expect(runRunNumbersWithCustomizedTimestamps).to.have.all.members(data.map(({runNumber}) => runNumber));
+            expect(runRunNumbersWithCustomizedTimestamps).to.have.all.members(data.map(({ runNumber }) => runNumber));
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
@@ -272,7 +271,6 @@ module.exports = () => {
             const { errors: [error] } = response.body;
             expect(error.detail).to.equal('"query.filter.updatedAt.to" must be greater than "ref:from"');
             expect(error.title).to.equal('Invalid Attribute');
-
         });
 
         it('should filter run on their quality', async () => {
