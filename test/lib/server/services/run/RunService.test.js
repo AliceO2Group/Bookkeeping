@@ -23,6 +23,7 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 const { SYNTHETIC, CALIBRATION } = require('../../../../mocks/mock-run.js');
 const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
+const { RunDetectorQualities } = require('../../../../../lib/domain/enums/RunDetectorQualities.js');
 
 module.exports = () => {
     const baseRun = {
@@ -42,19 +43,21 @@ module.exports = () => {
         epnTopology: 'normal',
         detectors: '',
     };
+    let lastLogId = 119;
+    let lastRunNumber = 111;
 
     it('should successfully create the run type if it does not exist when creating or updating a run', async () => {
-        let run = await runService.create({ ...baseRun, runNumber: 112 }, { runTypeName: 'DoNotExists' });
+        let run = await runService.create({ ...baseRun, runNumber: ++lastRunNumber }, { runTypeName: 'DoNotExists' });
         expect(run.runType).to.be.an('object');
         expect(run.runType.name).to.equal('DoNotExists');
 
-        run = await runService.update({ runNumber: 112 }, { relations: { runTypeName: 'DoNotExistsEither' } });
+        run = await runService.update({ runNumber: lastRunNumber }, { relations: { runTypeName: 'DoNotExistsEither' } });
         expect(run.runType).to.be.an('object');
         expect(run.runType.name).to.equal('DoNotExistsEither');
     });
 
     it('should successfully create the given detectors if they do not exist', async () => {
-        const run = await runService.create({ ...baseRun, runNumber: 113, detectors: 'CTP,DONOTEXISTS,DONOTEXISTSEITHER' });
+        const run = await runService.create({ ...baseRun, runNumber: ++lastRunNumber, detectors: 'CTP,DONOTEXISTS,DONOTEXISTSEITHER' });
         expect(run.detectors).to.be.a('string');
         expect((await getDetectorsByNames(['DONOTEXISTS', 'DONOTEXISTSEITHER'])).map(({ name }) => name))
             .to.eql(['DONOTEXISTS', 'DONOTEXISTSEITHER']);
@@ -72,7 +75,7 @@ module.exports = () => {
             tfbDdMode: 'processing',
             pdpWorkflowParameters: 'QC,CTF',
             detectors: 'ITS, TST, FT0',
-            runNumber: 114,
+            runNumber: ++lastRunNumber,
             fillNumber: 3,
             timeTrgStart,
             timeTrgEnd,
@@ -80,8 +83,31 @@ module.exports = () => {
         expect(run.definition).to.equal(RunDefinition.Physics);
     });
 
+    it('should throw when trying to change run quality without justification', async () => {
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { runPatch: { runQuality: RunQualities.GOOD } },
+            ),
+            new BadParameterError('Run quality change require a reason'),
+        );
+    });
+
+    it('should throw when trying to change detector quality without justification', async () => {
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { relations: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] } },
+            ),
+            new BadParameterError('Detector quality change reason is required when updating detector quality'),
+        );
+    });
+
     it('should successfully use default calibration status when creating a new calibration run', async () => {
-        const run = await runService.create({ ...CALIBRATION.LASER, runNumber: 115 }, { runTypeName: CALIBRATION.LASER.runType.name });
+        const run = await runService.create(
+            { ...CALIBRATION.LASER, runNumber: ++lastRunNumber },
+            { runTypeName: CALIBRATION.LASER.runType.name },
+        );
         expect(run.definition).to.equal(RunDefinition.Calibration);
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
     });
@@ -116,7 +142,7 @@ module.exports = () => {
             { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: reason } },
         );
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
-        const lastLog = await getLog(120, (qb) => {
+        const lastLog = await getLog(++lastLogId, (qb) => {
             qb.include('tags');
         });
         expect(lastLog.title).to.equal('Run 40 calibration status has changed to FAILED');
@@ -138,7 +164,7 @@ module.exports = () => {
             { runPatch: { calibrationStatus: RunCalibrationStatus.SUCCESS }, metadata: { calibrationStatusChangeReason: reason } },
         );
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
-        const lastLog = await getLog(121, (qb) => {
+        const lastLog = await getLog(++lastLogId, (qb) => {
             qb.include('tags');
         });
         expect(lastLog.title).to.equal('Run 40 calibration status has changed to SUCCESS');
