@@ -251,11 +251,11 @@ module.exports = () => {
             await Promise.all(desiredRunNumbers.map((runNumber) => Run.create({ runNumber, updatedAt: new Date(runNumber * 1000) }, { silent: true })));
             const updatedAtValues = await Promise.all(
                     desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
-            const [lowerInclusiveBound, upperExclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
+            const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
 
             const response =
                 await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperExclusiveBound}`);
+                    .get(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperInclusiveBound}`);
 
             expect(response.status).to.equal(200);
 
