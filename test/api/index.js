@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const AccessSuite = require('./access.test.js');
 const AttachmentsSuite = require('./attachments.test.js');
 const DetectorsSuite = require('./detectors.test.js');
 const DPLProcessSuite = require('./dplProcess.test.js');
@@ -28,6 +29,7 @@ const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
 
 module.exports = () => {
+    describe('Access API', AccessSuite);
     describe('Attachments API', AttachmentsSuite);
     describe('Detectors API', DetectorsSuite);
     describe('DPL Process API', DPLProcessSuite);
