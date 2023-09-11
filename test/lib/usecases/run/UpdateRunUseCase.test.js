@@ -30,17 +30,11 @@ module.exports = () => {
     let updateRunByRunNumberDto;
     beforeEach(async () => {
         updateRunDto = await UpdateRunDto.validateAsync({
-            body: {
-                runQuality: RunQualities.TEST,
-            },
-            params: {
-                runId: 106,
-            },
+            body: {},
+            params: { runId: 106 },
         });
         getRunDto = await GetRunDto.validateAsync({
-            params: {
-                runId: 106,
-            },
+            params: { runId: 106 },
         });
 
         updateRunByRunNumberDto = await UpdateRunByRunNumberDto.validateAsync({
@@ -82,6 +76,7 @@ module.exports = () => {
             expect(run.runQuality).to.equal(RunQualities.GOOD);
 
             updateRunDto.body.runQuality = RunQualities.BAD;
+            updateRunDto.body.runQualityChangeReason = 'Change reason';
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
 
             expect(error).to.be.an('undefined');
@@ -99,6 +94,7 @@ module.exports = () => {
 
             updateRunDto.params.runId = 105;
             updateRunDto.body.runQuality = RunQualities.BAD;
+            updateRunDto.body.runQualityChangeReason = 'Change reason';
             const { error } = await new UpdateRunUseCase().execute(updateRunDto);
 
             expect(error).to.be.an('object');
@@ -106,6 +102,9 @@ module.exports = () => {
         });
 
         it('should successfully create a log when run quality change', async () => {
+            const changeReason = 'Change reason';
+            updateRunDto.body.runQualityChangeReason = changeReason;
+
             // eslint-disable-next-line require-jsdoc
             const expectLastLogToBeForQualityChange = async (previousQuality, newQuality, expectedTags) => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
@@ -114,6 +113,7 @@ module.exports = () => {
                 expect(log.title).to.equal(`Run 106 quality has changed to ${newQuality}`);
                 expect(log.text.startsWith(`The run quality for run 106 has been changed from ${previousQuality} to ${newQuality} on `))
                     .to.be.true;
+                expect(log.text.endsWith(`Reason: ${changeReason}`)).to.be.true;
                 expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
                 expect(log.tags.map(({ text }) => text)).to.eql(expectedTags);
             };
