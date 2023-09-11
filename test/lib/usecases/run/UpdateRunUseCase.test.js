@@ -225,6 +225,7 @@ module.exports = () => {
         });
 
         it('should successfully update the run detector\'s quality and create a log accordingly', async () => {
+            const justification = 'The detector quality change justification';
             // eslint-disable-next-line require-jsdoc
             const expectLastLogToBeForDetectorQualityChange = async (newQuality) => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
@@ -232,14 +233,17 @@ module.exports = () => {
                 const [log] = logs;
                 expect(log.title).to.equal('Detector(s) quality for run 1 has been changed');
                 expect(log.text.startsWith('Here are the updated detector\'s qualities for run 1')).to.be.true;
-                expect(log.text.endsWith(`- CPV: ${newQuality}`)).to.be.true;
+                expect(log.text.endsWith(`- CPV: ${newQuality}\nReason: ${justification}`)).to.be.true;
                 expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([1]);
                 expect(log.tags.map(({ text }) => text)).to.eql(['CPV']);
             };
 
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
-                body: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] },
+                body: {
+                    detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
+                    detectorsQualitiesChangeReason: justification,
+                },
             });
             expect(error).to.be.undefined;
             expect(result).to.be.an('object');
@@ -251,7 +255,10 @@ module.exports = () => {
 
             await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
-                body: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] },
+                body: {
+                    detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
+                    detectorsQualitiesChangeReason: justification,
+                },
             });
             await expectLastLogToBeForDetectorQualityChange(RunDetectorQualities.GOOD);
         });
@@ -259,7 +266,10 @@ module.exports = () => {
         it('should throw an error when trying to update the quality of a non-existing detector', async () => {
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 1 },
-                body: { detectorsQualities: [{ detectorId: 2, quality: RunDetectorQualities.BAD }] },
+                body: {
+                    detectorsQualities: [{ detectorId: 2, quality: RunDetectorQualities.BAD }],
+                    detectorsQualitiesChangeReason: 'Justification',
+                },
             });
             expect(result).to.be.undefined;
             expect(error).to.be.an('object');
@@ -269,7 +279,10 @@ module.exports = () => {
         it('should throw an error when trying to update the quality of a run not ended yet', async () => {
             const { result, error } = await new UpdateRunUseCase().execute({
                 params: { runId: 105 },
-                body: { detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }] },
+                body: {
+                    detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
+                    detectorsQualitiesChangeReason: 'Justification',
+                },
             });
             expect(result).to.be.undefined;
             expect(error).to.be.an('object');

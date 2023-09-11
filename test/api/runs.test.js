@@ -752,6 +752,7 @@ module.exports = () => {
                             quality: RunDetectorQualities.BAD,
                         },
                     ],
+                    detectorsQualitiesChangeReason: 'Justification',
                 });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(106);
@@ -800,6 +801,7 @@ module.exports = () => {
                             quality: RunDetectorQualities.BAD,
                         },
                     ],
+                    detectorsQualitiesChangeReason: 'Justification',
                 });
             expect(body.errors[0].detail).to.equal('This run\'s detector with runNumber: (1) and with detector Id: (32) could not be found');
         });
@@ -807,7 +809,10 @@ module.exports = () => {
         it('should successfully return the updated run entity with new detector\'s run quality', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/1')
-                .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
+                .send({
+                    detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
+                    detectorsQualitiesChangeReason: 'Justification',
+                });
             expect(status).to.equal(201);
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(1);
@@ -819,9 +824,20 @@ module.exports = () => {
         it('should return 500 when trying to update the detector\'s quality of a run that has not ended yet', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/105')
-                .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
+                .send({
+                    detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
+                    detectorsQualitiesChangeReason: 'Justification',
+                });
             expect(status).to.equal(500);
             expect(body.errors[0].detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
+        });
+
+        it('should return 500 when trying to update the detector\'s quality without justification', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/1')
+                .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail).to.equal('Detector quality change reason is required when updating detector quality');
         });
 
         it('should successfully allow to update calibration status for calibration run', async () => {
