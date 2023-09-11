@@ -39,7 +39,7 @@ module.exports = () => {
         await pressElement(page, 'button#submit');
 
         // Verify the title of the page
-        await expectInnerText(page, '.mv2', `Tag: ${text}`);
+        await expectInnerText(page, 'h2.mv2', `Tag: ${text}`);
 
         // Return the page to the tag overview
         await goToPage(page, 'tag-overview');
@@ -64,9 +64,9 @@ module.exports = () => {
     it('Should show no fields when having no admin roles', async () => {
         await goToPage(page, 'tag-create');
         await page.waitForTimeout(100);
-        await page.click('div[title="User Actions"]');
+        await page.click('#roles-menu');
         await page.waitForTimeout(100);
-        await page.click('span.slider.round');
+        await page.click('#select-role-admin');
         await page.waitForTimeout(100);
         expect(await page.$('#mattermost')).to.equal(null);
         expect(await page.$('#email')).to.equal(null);
