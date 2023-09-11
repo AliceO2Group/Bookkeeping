@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, checkMismatchingUrlParam } = require('../defaults.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -176,6 +176,17 @@ module.exports = () => {
 
         expect(urlParameters).to.contain('page=run-detail');
         expect(urlParameters).to.contain(`id=${runId}`);
+    });
+
+    it('should successfully expose a button to create a new log related to the displayed fill', async () => {
+        await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
+
+        await pressElement(page, '#create-log');
+
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', lhcFillNumbers: '6' })).to.eql({});
+
+        await page.waitForSelector('input#lhc-fills');
+        expect(await page.$eval('input#lhc-fills', (element) => element.value)).to.equal('6');
     });
 
     after(async () => {
