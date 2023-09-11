@@ -400,7 +400,7 @@ module.exports = () => {
 
         await pressElement(page, '#create-log');
 
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: 106 })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106' })).to.eql({});
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#run-number', (element) => element.value)).to.equal('106');
