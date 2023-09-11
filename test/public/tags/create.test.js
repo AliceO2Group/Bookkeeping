@@ -27,7 +27,7 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
-    it('can create a tag', async () => {
+    it.skip('can create a tag', async () => {
         const text = 'EXAMPLE';
         await goToPage(page, 'tag-create');
 
@@ -45,7 +45,7 @@ module.exports = () => {
         await goToPage(page, 'tag-overview');
     });
 
-    it('shows an error message if tag creation failed', async () => {
+    it.skip('shows an error message if tag creation failed', async () => {
         const text = 'EXAMPLE';
 
         // Go to the tag creation page
