@@ -21,8 +21,6 @@ const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
-const { createRun } = require('../../lib/server/services/run/createRun');
-const { getRun } = require('../../lib/server/services/run/getRun');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -246,28 +244,30 @@ module.exports = () => {
             expect(data).to.have.lengthOf(12);
         });
 
+        /*
+         * Groud truf
+         * {
+         *     '2022-03-22 15:00:00': 1,
+         *     '2019-08-09 14:00:00': 1
+         *     '2019-08-08 22:00:00': 1,
+         *     '2019-08-08 19:00:00': 1,
+         *     '2019-08-08 17:00:00': 1,
+         *     '2019-08-08 14:00:00': 3,
+         *     '2019-08-08 13:00:00': 98,
+         * }
+         */
         it('should successfully filter on updatedAt', async () => {
-            const desiredRunNumbers = [1000, 1100, 1200, 1300];
-            await Promise.all(desiredRunNumbers.map((runNumber) => 
-                Run.create(
-                    { runNumber, updatedAt: new Date(runNumber * 1000) }, 
-                    { silent: true, ignoreDuplicates: true })));
-
-            const updatedAtValues = await Promise.all(
-                    desiredRunNumbers.map(async (runNumber) => (await getRun({ runNumber })).updatedAt));
-            const [lowerInclusiveBound, upperInclusiveBound] = [Math.min(...updatedAtValues), Math.max(...updatedAtValues)];
-
             const response =
                 await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${lowerInclusiveBound}&filter[updatedAt][to]=${upperInclusiveBound}`);
+                    .get(`/api/runs?filter[updatedAt][from]=${new Date('2019-08-08 13:00:00').getTime()}
+                    &filter[updatedAt][to]=${new Date('2019-08-08 14:00:00').getTime()}`);
 
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(desiredRunNumbers.length);
-            expect(desiredRunNumbers).to.have.all.members(data.map(({runNumber}) => runNumber));
+            expect(data).to.have.lengthOf(101);
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
@@ -280,7 +280,6 @@ module.exports = () => {
             const { errors: [error] } = response.body;
             expect(error.detail).to.equal('"query.filter.updatedAt.to" must be greater than "ref:from"');
             expect(error.title).to.equal('Invalid Attribute');
-
         });
 
         it('should filter run on their quality', async () => {
