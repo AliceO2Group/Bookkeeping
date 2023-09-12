@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, goToPage, fillInput } = require('../defaults.js');
+const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
 
@@ -393,5 +393,16 @@ module.exports = () => {
         await page.waitForSelector('#edit-run');
 
         expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+    });
+
+    it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+
+        await pressElement(page, '#create-log');
+
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106' })).to.eql({});
+
+        await page.waitForSelector('input#environments');
+        expect(await page.$eval('input#run-number', (element) => element.value)).to.equal('106');
     });
 };
