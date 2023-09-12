@@ -247,15 +247,13 @@ module.exports = () => {
         it('should successfully filter on updatedAt', async () => {
             const lowerTimeLimit = new Date('2019-08-08 14:00:00').getTime();
             const upperTimeLimit = new Date('2022-03-22 15:00:00').getTime();
-            const url = `/api/runs?filter[updatedAt][from]=${lowerTimeLimit}&filter[updatedAt][to]=${upperTimeLimit}`;
             const response =
                 await request(server)
-                    .get(url);
+                    .get(`/api/runs?filter[updatedAt][from]=${lowerTimeLimit}&filter[updatedAt][to]=${upperTimeLimit}`);
 
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            dcl(data.map(({ runNumber }) => runNumber));
 
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(8);
