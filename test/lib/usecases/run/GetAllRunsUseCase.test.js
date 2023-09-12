@@ -70,6 +70,34 @@ module.exports = () => {
         expect(detectors).to.equal('ACO,CPV,CTP,EMC,FIT,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC');
     });
 
+    it('should successfully return an array only containing runs found with tags', async () => {
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    tags: { operation: 'and', values: ['FOOD', 'RUN'] },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [run] = runs;
+            const tagTexts = run.tags.map(({ text }) => text);
+            expect(tagTexts.includes('FOOD') && tagTexts.includes('RUN')).to.be.true;
+        }
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    tags: { operation: 'or', values: ['FOOD', 'TEST-TAG-41'] },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(2);
+            for (const run of runs) {
+                const tagTexts = run.tags.map(({ text }) => text);
+                expect(tagTexts.includes('FOOD') || tagTexts.includes('TEST-TAG-41')).to.be.true;
+            }
+        }
+    });
+
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 4;
         const COSMICS_COUNT = 2;
