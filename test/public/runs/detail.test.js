@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, goToPage } = require('../defaults.js');
+const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
 
@@ -141,10 +141,11 @@ module.exports = () => {
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.true;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.false;
         await pressElement(page, badQualityRadioSelector);
+        await fillInput(page, '#Run-detectors textarea', 'Justification');
         await pressElement(page, '#save-run');
-        await page.waitForTimeout(200);
 
         const detectorBadgeSelector = '#Run-detectors .detector-badge:nth-child(2)';
+        await page.waitForSelector(detectorBadgeSelector);
         const detectorBadgeClass = await page.$eval(detectorBadgeSelector, (element) => element.className);
         expect(detectorBadgeClass).to.contain('b-danger');
         expect(detectorBadgeClass).to.contain('danger');
@@ -392,5 +393,16 @@ module.exports = () => {
         await page.waitForSelector('#edit-run');
 
         expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+    });
+
+    it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+
+        await pressElement(page, '#create-log');
+
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106' })).to.eql({});
+
+        await page.waitForSelector('input#environments');
+        expect(await page.$eval('input#run-number', (element) => element.value)).to.equal('106');
     });
 };
