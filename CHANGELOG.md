@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.65.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.65.0)
+* Notable changes for users:
+  * LHC fill details statistics rely on stableBeamEnd as end of run, not stableBeamStart + duration
+  * A button to create a log is now available in LHC fill details page
+  * Run edition justification inputs are now visually similar to other inputs
+  * Fixed bug for filtering tags using "or"
+  * Added possibility to filter runs on `updatedAt` for `/api/runs` 
+  * Editing run quality from none to good or test is now possible without justification
+  * A button has been added to create log for a given environment
+
 ## [0.64.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.64.0)
 * Notable changes for users:
   * Changing the DETECTOR run quality will require input from user as justification for the change.
