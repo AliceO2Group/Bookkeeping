@@ -276,6 +276,37 @@ module.exports = () => {
         expect(runs[0].runNumber).to.equal(1);
     });
 
+    it('should successfuly filter on "updatedAt"', async () => {
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: new Date('2019-08-08 13:00:00').getTime(),
+                        to: new Date('2019-08-08 13:00:00').getTime(),
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(98);
+        }
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: new Date('2019-08-09 14:00:00').getTime(),
+                        to: new Date('2022-03-22 15:00:00').getTime(),
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(2);
+        }
+    });
+
     it('should return an array with only from values given', async () => {
         getAllRunsDto.query = {
             filter: {

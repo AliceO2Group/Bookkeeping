@@ -244,6 +244,33 @@ module.exports = () => {
             expect(data).to.have.lengthOf(12);
         });
 
+        it('should successfully filter on updatedAt', async () => {
+            const lowerTimeLimit = new Date('2019-08-08 14:00:00').getTime();
+            const upperTimeLimit = new Date('2022-03-22 15:00:00').getTime();
+            const response =
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${lowerTimeLimit}&filter[updatedAt][to]=${upperTimeLimit}`);
+
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+
+            expect(data).to.be.an('array');
+            expect(data).to.have.lengthOf(8);
+        });
+
+        it('should return http status 400 if updatedAt from larger than to', async () => {
+            const timeNow = Date.now();
+            const response =
+                 await request(server)
+                     .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+
+            expect(response.status).to.equal(400);
+            const { errors: [error] } = response.body;
+            expect(error.detail).to.equal('"query.filter.updatedAt.to" must be greater than "ref:from"');
+            expect(error.title).to.equal('Invalid Attribute');
+        });
+
         it('should filter run on their quality', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=bad,test');
