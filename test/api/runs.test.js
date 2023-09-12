@@ -13,7 +13,7 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { repositories: { RunRepository }, models: { Run } } = require('../../lib/database');
+const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
 const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
@@ -244,37 +244,28 @@ module.exports = () => {
             expect(data).to.have.lengthOf(12);
         });
 
-        /*
-         * Groud truf
-         * {
-         *     '2022-03-22 15:00:00': 1,
-         *     '2019-08-09 14:00:00': 1
-         *     '2019-08-08 22:00:00': 1,
-         *     '2019-08-08 19:00:00': 1,
-         *     '2019-08-08 17:00:00': 1,
-         *     '2019-08-08 14:00:00': 3,
-         *     '2019-08-08 13:00:00': 98,
-         * }
-         */
         it('should successfully filter on updatedAt', async () => {
+            const lowerTimeLimit = new Date('2019-08-08 14:00:00').getTime();
+            const upperTimeLimit = new Date('2022-03-22 15:00:00').getTime();
+            const url = `/api/runs?filter[updatedAt][from]=${lowerTimeLimit}&filter[updatedAt][to]=${upperTimeLimit}`;
             const response =
                 await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${new Date('2019-08-08 13:00:00').getTime()}
-                    &filter[updatedAt][to]=${new Date('2019-08-08 14:00:00').getTime()}`);
+                    .get(url);
 
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
+            dcl(data.map(({ runNumber }) => runNumber));
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(101);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =
-                await request(server)
-                    .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+                 await request(server)
+                     .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
 
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;
