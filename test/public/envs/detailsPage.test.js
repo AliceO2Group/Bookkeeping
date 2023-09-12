@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
-const { goToPage } = require('../defaults.js');
+const { goToPage, pressElement, checkMismatchingUrlParam } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -67,5 +67,16 @@ module.exports = () => {
         expect(await runsRows[0].$eval('td:first-of-type', (element) => element.innerText)).to.equal('103');
         expect(await runsRows[1].$eval('td:first-of-type', (element) => element.innerText)).to.equal('104');
         expect(await runsRows[2].$eval('td:first-of-type', (element) => element.innerText)).to.equal('105');
+    });
+
+    it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
+
+        await pressElement(page, '#create-log');
+
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', environmentIds: 'TDI59So3d' })).to.eql({});
+
+        await page.waitForSelector('input#environments');
+        expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
     });
 };
