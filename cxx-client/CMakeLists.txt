@@ -6,6 +6,7 @@ project(BookkeepingApi
 )
 
 find_package(Protobuf CONFIG REQUIRED)
+find_package(absl CONFIG REQUIRED)
 find_package(gRPC REQUIRED)
 
 set(CMAKE_INSTALL_LIBDIR lib)

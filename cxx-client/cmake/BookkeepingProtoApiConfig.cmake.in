@@ -3,6 +3,7 @@ include(CMakeFindDependencyMacro)
 get_filename_component(BookkeepingProtoApi_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 find_dependency(Protobuf CONFIG REQUIRED)
+find_dependency(absl CONFIG REQUIRED)
 find_dependency(gRPC REQUIRED)
 
 if(NOT TARGET AliceO2::BookkeepingProtoApi)
