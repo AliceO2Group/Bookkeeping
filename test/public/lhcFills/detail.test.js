@@ -189,6 +189,21 @@ module.exports = () => {
         expect(await page.$eval('input#lhc-fills', (element) => element.value)).to.equal('6');
     });
 
+    it('should successfully provide a tab to display related logs', async () => {
+        await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
+
+        await pressElement(page, '#logs-tab');
+
+        const tableSelector = '#logs-pane table tbody tr';
+        await page.waitForSelector(tableSelector);
+
+        const table = await page.$$(tableSelector);
+        expect(table).to.lengthOf(2);
+
+        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
+        expect(await table[1].evaluate((row) => row.id)).to.equal('row119');
+    });
+
     after(async () => {
         await defaultAfter(page, browser);
     });
