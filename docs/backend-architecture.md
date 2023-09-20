@@ -18,7 +18,7 @@ To do the conversion between the `entities` and the `models`, `adapters` are ava
 
 The backend follow a 3-tier architecture: `controller`, `service` and `model`.
 
-The `controller` is responsible for extracting domain `entities` from the request parameters and body and provide it as API-agnostic parameters to the services.
+The `controller` is responsible for extracting domain `entities` from the request parameters and body and provide it as API-agnostic parameters to the services. The controllers must ensure that the data passed to services is valid and in the right format. To do so, validators should be used: for simple validation (query parameters and URL parameters) the validation schema can be defined directly in the controller (eventually using `DtoFactory` methods). However, if the request need complex validation, dedicated DTOS must be created (in `lib/dtos`).
 
 The services perform all the domain-related treatment, while delegating all the data access and persistence to the model layer through repositories.
 
@@ -26,7 +26,7 @@ In the current state of the application, the service tier is represented by the 
 
 In the end, the `usecases` needs to be replaced one part by the controllers (parsing the requests and formatting the responses, either for the `HTTP` or the `gRPC` API) and the other part by services to do the treatment itself.
 
-Because the services might have inter-dependencies that can lead to cyclic dependencies, services are divided into two categories: 
+Because the services might have inter-dependencies that can lead to cyclic dependencies, services are divided into two categories:
 
 - Low level services, that are functions responsible of one action. For example `createRun`, `updateLhcFill`. Because those functions are low level and are not expected to be manipulated into controllers, they manipulate exclusively models (Sequelize models). Those functions may depend the one on the others, but **must never** depend on higher level components such as high level services or controllers. They manipulate data through repositories exclusively and must not use Sequelize directly.
 
