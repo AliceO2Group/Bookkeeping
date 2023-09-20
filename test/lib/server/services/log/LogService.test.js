@@ -41,4 +41,10 @@ module.exports = () => {
         expect(logsForFill).to.lengthOf(2);
         expect(logsForFill.map(({ id }) => id)).to.eql([1, 119]);
     });
+
+    it('Should successfully return all the logs linked to a given environment', async () => {
+        const logsForFill = await logService.getAllByEnvironment('8E4aZTjY');
+        expect(logsForFill).to.lengthOf(3);
+        expect(logsForFill.map(({ id }) => id)).to.eql([1, 3, 4]);
+    });
 };
