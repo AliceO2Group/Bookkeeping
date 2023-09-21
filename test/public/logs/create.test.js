@@ -14,8 +14,19 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage, getFirstRow } = require('../defaults');
 const path = require('path');
+const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 
 const { expect } = chai;
+
+/**
+ * Return the most recent log
+ *
+ * @return {Promise<Log>} the last log
+ */
+const getLastLog = async () => {
+    const { logs: [lastLog] } = await new GetAllLogsUseCase().execute({ body: {}, params: {}, query: { page: { limit: 1, offset: 0 } } });
+    return lastLog;
+};
 
 module.exports = () => {
     let page;
@@ -64,22 +75,8 @@ module.exports = () => {
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation();
 
-        // Return the page to home
-        await goToPage(page, 'log-overview');
-        await page.waitForNetworkIdle();
-        await page.waitForTimeout(100);
-
-        // Ensure you are at the overview page again
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-overview`);
-        await page.waitForTimeout(100);
-
-        // Get the latest post and verify the title of the log we posted
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await firstRowTitle.evaluate((element) => element.innerText);
-        expect(titleText).to.equal(title);
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(title);
     });
 
     it('Should successfully display the log-reply form', async () => {
@@ -150,14 +147,8 @@ module.exports = () => {
         await page.waitForTimeout(250);
 
         // Return the page to home
-        await goToPage(page, 'log-overview');
-
-        // Get the latest post and verify that the selected tags correspond to the posted tags
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const firstRowTags = await page.$(`#${firstRowId}-tags .popover-actual-content`);
-        const tagsText = await page.evaluate((element) => element.innerText, firstRowTags);
-        expect(tagsText).to.equal(tags.join(', '));
+        const lastLog = await getLastLog();
+        expect(lastLog.tags.map(({ text }) => text)).to.eql(tags);
     });
 
     it('can navigate to tag creation screen', async () => {
@@ -206,31 +197,12 @@ module.exports = () => {
         await page.waitForTimeout(2500);
 
         // Return the page to home
-        await goToPage(page, 'log-overview');
+        const lastLog = await getLastLog();
 
-        // Get the latest post and verify the title of the log we posted
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
-        expect(titleText).to.equal(title);
-
-        // Verify that this log has two attachments, as was submitted
-        const firstRowAttachmentsCount = await page.$(`#${firstRowId}-attachments-text`);
-        const attachmentsCountText = await page.evaluate((element) => element.innerText, firstRowAttachmentsCount);
-        expect(attachmentsCountText).to.equal('2');
-
-        // Go to the log detail page via ahref link
-        const buttonId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-        const button = await page.$(`a#btn${buttonId}`);
-        await button.evaluate((btn) => btn.click());
-        await page.waitForTimeout(1000);
-
-        // We expect the log to contain the attachments
-        const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-        const attachmentsField = await page.$(`#log-${parsedFirstRowId}-attachments`);
-        const attachmentsText = await page.evaluate((element) => element.innerText, attachmentsField);
-        expect(attachmentsText).to.equal(`Attachments:\n${file1},\n${file2}`);
+        expect(lastLog.title).to.equal(title);
+        expect(lastLog.attachments).to.lengthOf(2);
+        expect(lastLog.attachments[0].originalName).to.equal(file1);
+        expect(lastLog.attachments[1].originalName).to.equal(file2);
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -281,25 +253,10 @@ module.exports = () => {
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation({ waitUntil: 'networkidle0' });
 
-        await goToPage(page, 'log-overview');
-
-        // Find the created log
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
-        expect(titleText).to.equal(title);
-
-        // Go to the log detail page
-        const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
-
-        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
-
-        // We expect the log to contain the run number
-        const runsField = await page.$(`#log-${rowId}-runs`);
-        const runsText = await page.evaluate((element) => element.innerText, runsField);
-        expect(runsText).to.equal(`Runs:\n${runNumbersStr}`);
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(title);
+        expect(lastLog.runs).to.lengthOf(1);
+        expect(`${lastLog.runs[0].runNumber}`).to.eql(runNumbersStr);
     });
 
     it('can create a log with multiple run numbers', async () => {
@@ -326,26 +283,10 @@ module.exports = () => {
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation();
-        await goToPage(page, 'log-overview');
-        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
 
-        // Find the created log
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
-        expect(titleText).to.equal(title);
-
-        // Go to the log detail page
-        const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
-        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
-
-        // We expect the log to contain the correct run numbers
-        const runsField = await page.$(`#log-${rowId}-runs`);
-        const runsText = await page.evaluate((element) => element.innerText, runsField);
-        for (const runNumber of runNumbers) {
-            expect(runsText).to.include(runNumber);
-        }
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(title);
+        expect(lastLog.runs.map(({ runNumber }) => runNumber)).to.eql(runNumbers);
     });
 
     it('can create a log with an environment', async () => {
@@ -369,15 +310,8 @@ module.exports = () => {
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation({ waitUntil: 'networkidle0' });
 
-        await goToPage(page, 'log-overview');
-
-        // Find the created log
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
-        expect(titleText).to.equal(title);
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(title);
     });
 
     it('can create a log with multiple environments', async () => {
@@ -404,15 +338,9 @@ module.exports = () => {
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation();
-        await goToPage(page, 'log-overview');
-        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple environments test")');
 
-        // Find the created log
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
-        expect(titleText).to.equal(title);
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(title);
     });
 
     it('can create a log with multiple LHC fill numbers', async () => {
@@ -439,25 +367,9 @@ module.exports = () => {
         const buttonSend = await page.$('button#send');
         await buttonSend.evaluate((button) => button.click());
         await page.waitForNavigation();
-        await goToPage(page, 'log-overview');
-        await page.waitForFunction('document.querySelector("body").innerText.includes("Multiple run numbers test")');
 
-        // Find the created log
-        const table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        const firstRowTitle = await page.$(`#${firstRowId}-title .popover-actual-content`);
-        const titleText = await page.evaluate((element) => element.innerText, firstRowTitle);
-        expect(titleText).to.equal(title);
-
-        // Go to the log detail page
-        const rowId = parseInt(firstRowId.replace(/\D/g, ''), 10);
-        await goToPage(page, 'log-detail', { queryParameters: { id: rowId } });
-
-        // We expect the log to contain the correct run numbers
-        const lhcFillsField = await page.$(`#log-${rowId}-lhcFills`);
-        const lhcFillsText = await page.evaluate((element) => element.innerText, lhcFillsField);
-        for (const fillNumber of lhcFillNumbers) {
-            expect(lhcFillsText).to.include(fillNumber);
-        }
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(title);
+        expect(lastLog.lhcFills.map(({ fillNumber }) => fillNumber)).to.eql(lhcFillNumbers);
     });
 };

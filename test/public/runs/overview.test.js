@@ -290,27 +290,8 @@ module.exports = () => {
 
     it('Should display balloon if the text overflows', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
-        const cell = await page.$('tbody tr td:nth-of-type(2)');
-        // We need the actual content to overflow in order to display balloon
-        await cell.evaluate((element) => {
-            element.querySelector('.popover-actual-content').innerText = 'a really long text'.repeat(50);
-        });
-        // Scroll to refresh the balloon triggers
-        await page.mouse.wheel({ deltaY: 100 });
 
-        const popoverAnchor = await cell.$('.popover-anchor');
-        expect(popoverAnchor).to.not.be.null;
-
-        /**
-         * Returns the computed display attribute of the popover anchor
-         * @returns {*} the computed display
-         */
-        const getPopoverDisplay = () => popoverAnchor.evaluate((element) => window.getComputedStyle(element).display);
-
-        expect(await getPopoverDisplay()).to.be.equal('none');
-        await cell.hover();
-        expect(await getPopoverDisplay()).to.be.equal('flex');
+        await checkColumnBalloon(page, 1, 2);
     });
 
     it('should successfully filter on detectors', async () => {
