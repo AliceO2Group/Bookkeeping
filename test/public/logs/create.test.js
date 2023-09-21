@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 
@@ -33,10 +33,8 @@ module.exports = () => {
     let browser;
     let url;
 
-    let firstRowId;
-
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser, url] = await defaultBefore();
         await page.setViewport({
             width: 700,
             height: 720,
