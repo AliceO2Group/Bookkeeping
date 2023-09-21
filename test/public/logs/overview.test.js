@@ -830,7 +830,6 @@ module.exports = () => {
          * We have to filter for a specific log since the first page contains no logs with runs,
          * Even when changing the logs per page to 20
          */
-        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
 
         // Insert some text into the filter
