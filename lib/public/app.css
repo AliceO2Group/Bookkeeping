@@ -456,45 +456,15 @@ a.btn, a.btn:hover, a.btn.active {
 
 /* Popover system */
 
-.popover-container {
-    overflow: visible;
-    display: flex;
-}
-
-.popover-sizer {
-    display: flex;
-    flex: 0 0;
-    max-width: 100%;
-    position: relative;
-}
-
-.popover-anchor {
-    position: absolute;
-    left: 50%;
-    width: 0;
-    justify-content: center;
-    display: none;
-}
-
-.popover-anchor.anchor-top {
-    bottom: 100%;
-}
-
-.popover-anchor:not(.anchor-top) {
-    top: 100%;
-}
-
-.popover-container.enabled > .popover-sizer > .popover-anchor {
-    display: flex;
-}
-
 .popover {
-    display: flex;
     flex-shrink: 0;
     flex-wrap: wrap;
-    max-width: var(--ui-component-medium);
-    position: relative;
     align-items: flex-start;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1002;
+    max-width: var(--ui-component-medium);
 }
 
 /* Modal */
