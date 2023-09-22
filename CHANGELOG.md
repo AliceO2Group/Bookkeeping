@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.66.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.66.0)
+* Notable changes for users:
+  * An endpoint has been added to fetch all the logs for a given LHC fill
+  * Added a tab in LHC fill display to show all the related logs
+  * Added endpoint to fetch all the logs for a given environment
+  * Added a tab displaying the logs of a given environment in display view
+  * An icon with tooltip has been added to tag pickers to display description
+  * Fixed the alignment of chart tooltip
+* Notable changes for developers:
+  * QueryBuilder is now provided by a factory method in DataSource class
+  * Transaction wrapper is now provided by DataSource class
+  * Popover is rendered outside its trigger to not be limited by overflow
+
 ## [0.65.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.65.0)
 * Notable changes for users:
   * LHC fill details statistics rely on stableBeamEnd as end of run, not stableBeamStart + duration
