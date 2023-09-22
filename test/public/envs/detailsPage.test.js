@@ -62,7 +62,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the runs related to the environment', async () => {
-        const runsRows = await page.$$('#runs tbody tr');
+        const runsRows = await page.$$('#runs-pane tbody tr');
         expect(runsRows).to.have.lengthOf(3);
         expect(await runsRows[0].$eval('td:first-of-type', (element) => element.innerText)).to.equal('103');
         expect(await runsRows[1].$eval('td:first-of-type', (element) => element.innerText)).to.equal('104');
