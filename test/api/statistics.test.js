@@ -51,8 +51,39 @@ module.exports = () => {
                 expect(response.body.errors[0].detail).to.equal('"query.to" is required');
             }
         });
+    });
+
+    describe('GET /statistics/runs/weeklyDataSize', () => {
+        it('should return 200 and an array for a normal request', async () => {
+            const response = await request(server).get('/api/statistics/runs/weeklyDataSize?from=156525120000&to=1565305200000');
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.lengthOf(1);
+        });
 
         it('should return 400 if the request is invalid', async () => {
+            {
+                const response = await request(server).get('/api/statistics/runs/weeklyDataSize');
+
+                expect(response.status).to.equal(400);
+                expect(response.body.errors).to.lengthOf(2);
+                expect(response.body.errors[0].detail).to.equal('"query.from" is required');
+                expect(response.body.errors[1].detail).to.equal('"query.to" is required');
+            }
+            {
+                const response = await request(server).get('/api/statistics/runs/weeklyDataSize?to=1565305200000');
+
+                expect(response.status).to.equal(400);
+                expect(response.body.errors).to.lengthOf(1);
+                expect(response.body.errors[0].detail).to.equal('"query.from" is required');
+            }
+            {
+                const response = await request(server).get('/api/statistics/runs/weeklyDataSize?from=156525120000');
+
+                expect(response.status).to.equal(400);
+                expect(response.body.errors).to.lengthOf(1);
+                expect(response.body.errors[0].detail).to.equal('"query.to" is required');
+            }
         });
     });
 };

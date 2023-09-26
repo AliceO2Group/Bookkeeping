@@ -591,6 +591,11 @@ a.btn, a.btn:hover, a.btn.active {
     height: 10px;
 }
 
+.chart-grid {
+    stroke: var(--color-gray-darker);
+    stroke-width: 0.5px;
+}
+
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)
