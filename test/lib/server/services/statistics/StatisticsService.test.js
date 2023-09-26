@@ -66,7 +66,7 @@ module.exports = () => {
     it('should successfully filter out fills before a date, included', async () => {
         {
             const allStatistics = await statisticsService.getLhcFillStatistics({
-                from: new Date('2019/08/08 22:59:59'),
+                from: new Date('2019/08/08 23:00:00'),
                 to: new Date('2019/08/09 01:00:00'),
             });
             expect(allStatistics).to.lengthOf(1);
@@ -77,6 +77,52 @@ module.exports = () => {
                 to: new Date('2019/08/09 01:00:00'),
             });
             expect(allStatistics).to.lengthOf(0);
+        }
+    });
+
+    it('Should successfully extract weekly data sizes', async () => {
+        const dataSizes = await statisticsService.getWeeklyDataSize({
+            from: new Date('2019/08/08 10:00:00'),
+            to: new Date('2023/08/09 01:00:00'),
+        });
+        expect(dataSizes).to.lengthOf(1);
+        expect(dataSizes[0].size).to.equal('809757558383');
+        expect(dataSizes[0].week).to.equal(31);
+        expect(dataSizes[0].year).to.equal(2019);
+    });
+
+    it('should successfully filter out data size after a date, excluded', async () => {
+        // 20 - 21
+        {
+            const dataSizes = await statisticsService.getWeeklyDataSize({
+                from: new Date('2019/08/08 19:00:00'),
+                to: new Date('2019/08/08 20:00:01'),
+            });
+            expect(dataSizes).to.lengthOf(1);
+        }
+        {
+            const dataSizes = await statisticsService.getWeeklyDataSize({
+                from: new Date('2019/08/08 19:00:00'),
+                to: new Date('2019/08/08 20:00:00'),
+            });
+            expect(dataSizes).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out data size before a date, included', async () => {
+        {
+            const dataSizes = await statisticsService.getWeeklyDataSize({
+                from: new Date('2019/08/08 21:00:00'),
+                to: new Date('2019/08/09 22:00:00'),
+            });
+            expect(dataSizes).to.lengthOf(1);
+        }
+        {
+            const dataSizes = await statisticsService.getWeeklyDataSize({
+                from: new Date('2019/08/08 21:00:01'),
+                to: new Date('2019/08/09 22:00:00'),
+            });
+            expect(dataSizes).to.lengthOf(0);
         }
     });
 };
