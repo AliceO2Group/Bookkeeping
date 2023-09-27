@@ -32,7 +32,7 @@ services:
         target: /var/storage
 
   database:
-    image: mariadb:10.5.3
+    image: mariadb:10.5.9
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     restart: unless-stopped
