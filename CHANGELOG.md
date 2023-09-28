@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.67.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.67.0)
+* Notable changes for users:
+  * Added horizontal lines in front of axis ticks
+  * Weekly data size graph is now available in statistics page
+  * Mean run duration graph is now available in statistics page
+  * Fixed popover misbehaving when cursor moves from child element to parent element
+
 ## [0.66.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.66.0)
 * Notable changes for users:
   * An endpoint has been added to fetch all the logs for a given LHC fill
