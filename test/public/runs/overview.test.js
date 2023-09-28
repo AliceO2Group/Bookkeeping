@@ -25,7 +25,7 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -146,18 +146,21 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
-        const amountSelectorButton = await page.$('#amountSelector button');
+        await reloadPage(page);
+        const amountSelectorButtonSelector = await '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await pressElement(page, amountSelectorButtonSelector);
+
         const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
+
         const initialTableRows = (await page.$$('table tr')).length;
 
-        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
-        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
+        await pressElement(page, infiniteModeButtonSelector);
+        await page.waitForTimeout(100);
+        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).endsWith('Infinite')).to.be.true;
 
         await page.evaluate(() => {
             window.scrollBy(0, window.innerHeight);
@@ -169,25 +172,20 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await page.waitForTimeout(300);
-        // Expect the amount selector to currently be set to Infinite (after the previous test)
-        const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        await reloadPage(page);
 
-        // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        const amountSelectorId = '#amountSelector';
+        const amountSelectorButtonSelector = `${amountSelectorId} button`;
+        await pressElement(page, amountSelectorButtonSelector);
+
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
+        await pressElement(page, amountItems5);
+        await page.waitForTimeout(600);
 
+        // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
 

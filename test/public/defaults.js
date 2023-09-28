@@ -63,19 +63,6 @@ module.exports.defaultAfter = async (page, browser) => {
 };
 
 /**
- * Wait till selector is visible, then search for innertext on page.
- * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
- * @param {String} innerText Text to search for.
- * @returns {Promise<Boolean>} Whether the text was found on the page or not.
- */
-module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector);
-    const elementInnerText = await page.$eval(selector, (element) => element.innerText);
-    expect(elementInnerText).to.equal(innerText);
-};
-
-/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {String} selector Css selector.
@@ -240,6 +227,28 @@ module.exports.getAllDataFields = async (page, key) => {
         }
         return accumulator;
     }, []);
+};
+
+/**
+ * Evaluate and return the text content of a given element handler
+ * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
+ * @returns {Promise<XPathResult>} the html content
+ */
+const getInnerText = async (elementHandler) => await elementHandler.evaluate((element) => element.innerText);
+
+module.exports.getInnerText = getInnerText;
+
+/**
+ * Expect an element to have a given text
+ *
+ * @param {Object} page Puppeteer page object.
+ * @param {String} selector Css selector.
+ * @param {String} innerText Text to search for.
+ * @return {void}
+ */
+module.exports.expectInnerText = async (page, selector, innerText) => {
+    await page.waitForSelector(selector);
+    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
 };
 
 /**
