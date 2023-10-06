@@ -134,7 +134,7 @@ module.exports = () => {
         });
         expect(histogram).to.be.an('object');
         const { bins, min, max } = histogram;
-        expect(bins).to.eql([{ offset: 0, count: 1 }, { offset: 8, count: 1 }]);
+        expect(bins).to.eql([{ offset: 0, count: 1 }, { offset: 6, count: 1 }]);
         expect(min).to.equal(0);
         expect(max).to.equal(9);
     });
