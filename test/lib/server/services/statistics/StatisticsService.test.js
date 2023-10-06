@@ -95,15 +95,15 @@ module.exports = () => {
         // 20 - 21
         {
             const dataSizes = await statisticsService.getWeeklyDataSize({
-                from: new Date('2019/08/08 19:00:00'),
-                to: new Date('2019/08/08 20:00:01'),
+                from: new Date('2019/08/08 19:00:00').getTime(),
+                to: new Date('2019/08/08 20:00:01').getTime(),
             });
             expect(dataSizes).to.lengthOf(1);
         }
         {
             const dataSizes = await statisticsService.getWeeklyDataSize({
-                from: new Date('2019/08/08 19:00:00'),
-                to: new Date('2019/08/08 20:00:00'),
+                from: new Date('2019/08/08 19:00:00').getTime(),
+                to: new Date('2019/08/08 20:00:00').getTime(),
             });
             expect(dataSizes).to.lengthOf(0);
         }
@@ -112,17 +112,64 @@ module.exports = () => {
     it('should successfully filter out data size before a date, included', async () => {
         {
             const dataSizes = await statisticsService.getWeeklyDataSize({
-                from: new Date('2019/08/08 21:00:00'),
-                to: new Date('2019/08/09 22:00:00'),
+                from: new Date('2019/08/08 21:00:00').getTime(),
+                to: new Date('2019/08/09 22:00:00').getTime(),
             });
             expect(dataSizes).to.lengthOf(1);
         }
         {
             const dataSizes = await statisticsService.getWeeklyDataSize({
-                from: new Date('2019/08/08 21:00:01'),
-                to: new Date('2019/08/09 22:00:00'),
+                from: new Date('2019/08/08 21:00:01').getTime(),
+                to: new Date('2019/08/09 22:00:00').getTime(),
             });
             expect(dataSizes).to.lengthOf(0);
+        }
+    });
+
+    it('Should successfully extract distribution of time between runs', async () => {
+        // 3 runs in the seeders: 1 during 1 hour and 2 during 2 hours
+        const histogram = await statisticsService.getTimeBetweenRunsDistribution({
+            from: new Date('2019/08/08 10:00:00').getTime(),
+            to: new Date('2023/08/09 01:00:00').getTime(),
+        });
+        expect(histogram).to.be.an('object');
+        const { bins, min, max } = histogram;
+        expect(bins).to.eql([{ offset: 0, count: 1 }, { offset: 6, count: 1 }]);
+        expect(min).to.equal(0);
+        expect(max).to.equal(9);
+    });
+
+    it('should successfully filter out runs after a date, excluded', async () => {
+        {
+            const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
+                from: new Date('2019/08/08 15:00:00'),
+                to: new Date('2019/08/08 16:00:01'),
+            });
+            expect(bins).to.lengthOf(1);
+        }
+        {
+            const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
+                from: new Date('2019/08/08 15:00:00'),
+                to: new Date('2019/08/08 16:00:00'),
+            });
+            expect(bins).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out runs before a date, included', async () => {
+        {
+            const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
+                from: new Date('2019/08/08 21:00:00'),
+                to: new Date('2019/08/09 01:00:00'),
+            });
+            expect(bins).to.lengthOf(1);
+        }
+        {
+            const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
+                from: new Date('2019/08/08 21:00:01'),
+                to: new Date('2019/08/09 01:00:00'),
+            });
+            expect(bins).to.lengthOf(0);
         }
     });
 };
