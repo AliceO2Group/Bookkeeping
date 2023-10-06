@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.68.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.68.0)
+* Notable changes for users:
+  * Added time between runs histogram
+  * Display EoR reason in runs table in LHC fill and environments details pages
+
 ## [0.67.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.67.0)
 * Notable changes for users:
   * Added horizontal lines in front of axis ticks
