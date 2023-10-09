@@ -136,7 +136,8 @@ module.exports = () => {
         const { bins, min, max } = histogram;
         expect(bins).to.eql([{ offset: 0, count: 1 }, { offset: 6, count: 1 }]);
         expect(min).to.equal(0);
-        expect(max).to.equal(9);
+        // Limit window is 30 minutes, which means max 7 (6 * 5minutes => 30)
+        expect(max).to.equal(7);
     });
 
     it('should successfully filter out runs after a date, excluded', async () => {
