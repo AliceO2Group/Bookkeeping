@@ -589,7 +589,13 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
+        const INFINITE_SCROLL_CHUNK = 19;
         await reloadPage(page);
+
+        // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
+        await page.waitForSelector('table tbody tr:nth-child(2)');
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
+
         const amountSelectorButtonSelector = '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
@@ -600,15 +606,17 @@ module.exports = () => {
 
         const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
         await pressElement(page, infiniteModeButtonSelector);
-        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).endsWith('Infinite')).to.be.true;
-        await page.waitForTimeout(100);
+
+        // Wait for the first chunk to be loaded
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).trim().endsWith('Infinite')).to.be.true;
 
         await page.evaluate(() => {
-            window.scrollBy(0, window.innerHeight);
+            document.querySelector('table tbody tr:last-child').scrollIntoView({ behavior: 'instant' });
         });
-        await page.waitForTimeout(600);
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length > 20).to.be.true;
+
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.not.be.null;
     });
 
     it('can set how many logs are available per page', async () => {
