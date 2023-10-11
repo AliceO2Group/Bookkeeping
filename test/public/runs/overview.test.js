@@ -146,7 +146,13 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
+        const INFINITE_SCROLL_CHUNK = 19;
         await reloadPage(page);
+
+        // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
+        await page.waitForSelector('table tbody tr:nth-child(2)');
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
+
         const amountSelectorButtonSelector = await '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
@@ -155,20 +161,19 @@ module.exports = () => {
         const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        const initialTableRows = (await page.$$('table tr')).length;
-
         const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
         await pressElement(page, infiniteModeButtonSelector);
-        await page.waitForTimeout(100);
-        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).endsWith('Infinite')).to.be.true;
+
+        // Wait for the first chunk to be loaded
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).trim().endsWith('Infinite')).to.be.true;
 
         await page.evaluate(() => {
-            window.scrollBy(0, window.innerHeight);
+            document.querySelector('table tbody tr:last-child').scrollIntoView({ behavior: 'instant' });
         });
 
-        await page.waitForTimeout(400);
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length).to.be.greaterThan(initialTableRows);
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.not.be.null;
     });
 
     it('can set how many runs are available per page', async () => {
