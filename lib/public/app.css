@@ -465,7 +465,20 @@ a.btn, a.btn:hover, a.btn.active {
     left: 0;
     z-index: 1002;
     max-width: var(--ui-component-medium);
+}
+
+.no-events {
     pointer-events: none;
+}
+
+.btn-group-item:not(.last-item) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.btn-group-item:not(.first-item) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 /* Modal */
