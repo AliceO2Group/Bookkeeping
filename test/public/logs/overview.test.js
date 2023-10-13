@@ -22,7 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -267,7 +267,7 @@ module.exports = () => {
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
 
-        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
@@ -370,22 +370,22 @@ module.exports = () => {
         await page.waitForTimeout(20);
 
         // Open the filters
-        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
         await page.waitForTimeout(20);
         {
             await fillInput(page, '#tag-dropdown-search-input', 'food');
-            await page.waitForTimeout(20);
-            const options = await page.$$('.dropdown-option');
-            await page.waitForTimeout(40);
-            expect(options).to.lengthOf(1);
+            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+            const popoverSelector = await getPopoverSelector(popoverTrigger);
+            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+            const options = await page.$$(`${popoverSelector} .dropdown-option`);
             expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
         }
         {
             await fillInput(page, '#tag-dropdown-search-input', 'fOoD');
-            await page.waitForTimeout(20);
-            const options = await page.$$('.dropdown-option');
-            await page.waitForTimeout(40);
-            expect(options).to.lengthOf(1);
+            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+            const popoverSelector = await getPopoverSelector(popoverTrigger);
+            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+            const options = await page.$$(`${popoverSelector} .dropdown-option`);
             expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
         }
     });
@@ -808,8 +808,7 @@ module.exports = () => {
 
         // Insert some text into the filter
         await page.waitForSelector('#titleFilterText');
-        await page.type('#titleFilterText', log119Title);
-        await waitForNetworkIdleAndRedraw(page);
+        await fillInput(page, '#titleFilterText', log119Title);
         await page.waitForSelector('#row119-runs a');
         await pressElement(page, '#row119-runs a');
 

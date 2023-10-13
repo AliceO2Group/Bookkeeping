@@ -132,7 +132,7 @@ module.exports = () => {
         await reloadPage(page);
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
-        await pressElement(page, '#Run-detectors .toggle-container');
+        await pressElement(page, '#Run-detectors .dropdown-trigger');
         await page.waitForTimeout(100);
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';
@@ -153,7 +153,7 @@ module.exports = () => {
 
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
-        await pressElement(page, '#Run-detectors .toggle-container');
+        await pressElement(page, '#Run-detectors .dropdown-trigger');
         await page.waitForTimeout(100);
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.false;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
@@ -271,7 +271,7 @@ module.exports = () => {
 
         await pressElement(page, '#edit-run');
         await page.waitForTimeout(100);
-        expect(await page.$('#Run-detectors .toggle-container')).to.be.null;
+        expect(await page.$('#Run-detectors .dropdown-trigger')).to.be.null;
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
