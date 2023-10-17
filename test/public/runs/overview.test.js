@@ -300,7 +300,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        await page.$eval('.detector-filter-dropdown-container', (element) => element.click());
+        await page.$eval('.detectors-filter .dropdown-trigger', (element) => element.click());
         await pressElement(page, '#detector-filter-dropdown-option-ITS');
         await pressElement(page, '#detector-filter-dropdown-option-FT0');
         await page.waitForTimeout(300);
@@ -720,7 +720,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(100);
 
-        await pressElement(page, '.run-types-dropdown-container > div > div > .dropdown-selection');
+        await pressElement(page, '.runType-filter .dropdown-trigger');
         await page.waitForTimeout(100);
 
         await pressElement(page, '#run-types-dropdown-option-2');
