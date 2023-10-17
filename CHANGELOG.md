@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.69.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.69.0)
+* Notable changes for users:
+  * Infologger links has been added in run overview, run details, environment overview and environment details
+  * Fixed the misbehaving time between runs graphs
+  * Fixed the popover of tag description not being displayed after filtering
+  * Fixed tag picker glitch when unselecting then selecting a tag
+  * Popover can now be opened in any direction relatively to the trigger
+* Notable change for developers:
+  * Fixed infinite selector failing tests
+  * Deleted useless controllers (exposing only routes returning 501) and the corresponding routers:
+    * AuthController
+    * CreatepdfController
+    * OverviewController
+    * SettingsController
+    * UsersController
+  * use newer docker compose syntax instead of legacy docker-compose
+
 ## [0.68.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.68.0)
 * Notable changes for users:
   * Added time between runs histogram
