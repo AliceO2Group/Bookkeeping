@@ -173,4 +173,60 @@ module.exports = () => {
             expect(bins).to.lengthOf(0);
         }
     });
+
+    it('Should successfully extract efficiency per detectors', async () => {
+        const detectorsEfficienciesPerFill = await statisticsService.getDetectorEfficiencyPerFill({
+            from: new Date('2019/08/08 10:00:00').getTime(),
+            to: new Date('2023/08/09 01:00:00').getTime(),
+        }, false);
+        expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        const [{ fillNumber, efficiencies }] = detectorsEfficienciesPerFill;
+        expect(fillNumber).to.equal(6);
+        expect(efficiencies).to.eql({ ITS: 0.25, FT0: 0.25 });
+    });
+
+    it('Should successfully extract ned efficiency per detectors', async () => {
+        const detectorsEfficienciesPerFill = await statisticsService.getDetectorEfficiencyPerFill({
+            from: new Date('2019/08/08 10:00:00').getTime(),
+            to: new Date('2023/08/09 01:00:00').getTime(),
+        }, true);
+        expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        const [{ fillNumber, efficiencies }] = detectorsEfficienciesPerFill;
+        expect(fillNumber).to.equal(6);
+        expect(efficiencies).to.eql({ ITS: 0.0833, FT0: 0.25 });
+    });
+
+    it('should successfully filter out runs after a date (excluded) for detector efficiencies', async () => {
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorEfficiencyPerFill({
+                from: new Date('2019/08/08 15:00:00'),
+                to: new Date('2019/08/08 16:00:01'),
+            }, true);
+            expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        }
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorEfficiencyPerFill({
+                from: new Date('2019/08/08 15:00:00'),
+                to: new Date('2019/08/08 16:00:00'),
+            }, true);
+            expect(detectorsEfficienciesPerFill).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out runs before a date (included) for detector efficiencies', async () => {
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorEfficiencyPerFill({
+                from: new Date('2019/08/08 21:00:00'),
+                to: new Date('2019/08/09 01:00:00'),
+            }, true);
+            expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        }
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorEfficiencyPerFill({
+                from: new Date('2019/08/08 21:00:01'),
+                to: new Date('2019/08/09 01:00:00'),
+            }, true);
+            expect(detectorsEfficienciesPerFill).to.lengthOf(0);
+        }
+    });
 };
