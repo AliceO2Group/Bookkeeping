@@ -17,8 +17,8 @@ const { expect } = require('chai');
 module.exports = () => {
     it('Should successfully extract fill statistics', async () => {
         const allStatistics = await statisticsService.getLhcFillStatistics({
-            from: new Date('2019/08/08 10:00:00'),
-            to: new Date('2023/08/09 01:00:00'),
+            from: new Date('2019/08/08 10:00:00').getTime(),
+            to: new Date('2023/08/09 01:00:00').getTime(),
         });
         expect(allStatistics).to.lengthOf(4);
         // eslint-disable-next-line no-unused-vars
@@ -46,35 +46,35 @@ module.exports = () => {
         expect(fill1.totalTfFileSize).to.equal(0);
     });
 
-    it('should successfully filter out fills after a date, excluded', async () => {
+    it('should successfully filter out fills after a date (excluded) for statistics', async () => {
         {
             const allStatistics = await statisticsService.getLhcFillStatistics({
-                from: new Date('2019/08/08 10:00:00'),
-                to: new Date('2019/08/08 11:00:01'),
+                from: new Date('2019/08/08 10:00:00').getTime(),
+                to: new Date('2019/08/08 11:00:01').getTime(),
             });
             expect(allStatistics).to.lengthOf(1);
         }
         {
             const allStatistics = await statisticsService.getLhcFillStatistics({
-                from: new Date('2019/08/08 10:00:00'),
-                to: new Date('2019/08/08 11:00:00'),
+                from: new Date('2019/08/08 10:00:00').getTime(),
+                to: new Date('2019/08/08 11:00:00').getTime(),
             });
             expect(allStatistics).to.lengthOf(0);
         }
     });
 
-    it('should successfully filter out fills before a date, included', async () => {
+    it('should successfully filter out fills before a date (included) for statistics', async () => {
         {
             const allStatistics = await statisticsService.getLhcFillStatistics({
-                from: new Date('2019/08/08 23:00:00'),
-                to: new Date('2019/08/09 01:00:00'),
+                from: new Date('2019/08/08 23:00:00').getTime(),
+                to: new Date('2019/08/09 01:00:00').getTime(),
             });
             expect(allStatistics).to.lengthOf(1);
         }
         {
             const allStatistics = await statisticsService.getLhcFillStatistics({
-                from: new Date('2019/08/08 23:00:01'),
-                to: new Date('2019/08/09 01:00:00'),
+                from: new Date('2019/08/08 23:00:01').getTime(),
+                to: new Date('2019/08/09 01:00:00').getTime(),
             });
             expect(allStatistics).to.lengthOf(0);
         }
@@ -82,8 +82,8 @@ module.exports = () => {
 
     it('Should successfully extract weekly data sizes', async () => {
         const dataSizes = await statisticsService.getWeeklyDataSize({
-            from: new Date('2019/08/08 10:00:00'),
-            to: new Date('2023/08/09 01:00:00'),
+            from: new Date('2019/08/08 10:00:00').getTime(),
+            to: new Date('2023/08/09 01:00:00').getTime(),
         });
         expect(dataSizes).to.lengthOf(1);
         expect(dataSizes[0].size).to.equal('809757558383');
@@ -91,7 +91,7 @@ module.exports = () => {
         expect(dataSizes[0].year).to.equal(2019);
     });
 
-    it('should successfully filter out data size after a date, excluded', async () => {
+    it('should successfully filter out data size after a date (excluded) for weekly data size', async () => {
         // 20 - 21
         {
             const dataSizes = await statisticsService.getWeeklyDataSize({
@@ -109,7 +109,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfully filter out data size before a date, included', async () => {
+    it('should successfully filter out data size before a date (included) for weekly data size', async () => {
         {
             const dataSizes = await statisticsService.getWeeklyDataSize({
                 from: new Date('2019/08/08 21:00:00').getTime(),
@@ -140,37 +140,83 @@ module.exports = () => {
         expect(max).to.equal(7);
     });
 
-    it('should successfully filter out runs after a date, excluded', async () => {
+    it('should successfully filter out runs after a date (excluded) for time between runs distribution', async () => {
         {
             const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
-                from: new Date('2019/08/08 15:00:00'),
-                to: new Date('2019/08/08 16:00:01'),
+                from: new Date('2019/08/08 15:00:00').getTime(),
+                to: new Date('2019/08/08 16:00:01').getTime(),
             });
             expect(bins).to.lengthOf(1);
         }
         {
             const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
-                from: new Date('2019/08/08 15:00:00'),
-                to: new Date('2019/08/08 16:00:00'),
+                from: new Date('2019/08/08 15:00:00').getTime(),
+                to: new Date('2019/08/08 16:00:00').getTime(),
             });
             expect(bins).to.lengthOf(0);
         }
     });
 
-    it('should successfully filter out runs before a date, included', async () => {
+    it('should successfully filter out runs before a date (included) for time between runs distribution', async () => {
         {
             const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
-                from: new Date('2019/08/08 21:00:00'),
-                to: new Date('2019/08/09 01:00:00'),
+                from: new Date('2019/08/08 21:00:00').getTime(),
+                to: new Date('2019/08/09 01:00:00').getTime(),
             });
             expect(bins).to.lengthOf(1);
         }
         {
             const { bins } = await statisticsService.getTimeBetweenRunsDistribution({
-                from: new Date('2019/08/08 21:00:01'),
-                to: new Date('2019/08/09 01:00:00'),
+                from: new Date('2019/08/08 21:00:01').getTime(),
+                to: new Date('2019/08/09 01:00:00').getTime(),
             });
             expect(bins).to.lengthOf(0);
+        }
+    });
+
+    it('Should successfully extract efficiency per detectors', async () => {
+        const detectorsEfficienciesPerFill = await statisticsService.getDetectorsEfficienciesPerFill({
+            from: new Date('2019/08/08 10:00:00').getTime(),
+            to: new Date('2023/08/09 01:00:00').getTime(),
+        });
+        expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        const [{ fillNumber, efficiencies, netEfficiencies }] = detectorsEfficienciesPerFill;
+        expect(fillNumber).to.equal(6);
+        expect(efficiencies).to.eql({ ITS: 0.25, FT0: 0.25 });
+        expect(netEfficiencies).to.eql({ ITS: 0.0833, FT0: 0.25 });
+    });
+
+    it('should successfully filter out runs after a date (excluded) for detector efficiencies', async () => {
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorsEfficienciesPerFill({
+                from: new Date('2019/08/08 10:00:00').getTime(),
+                to: new Date('2019/08/08 11:00:01').getTime(),
+            });
+            expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        }
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorsEfficienciesPerFill({
+                from: new Date('2019/08/08 10:00:00').getTime(),
+                to: new Date('2019/08/08 11:00:00').getTime(),
+            });
+            expect(detectorsEfficienciesPerFill).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out runs before a date (included) for detector efficiencies', async () => {
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorsEfficienciesPerFill({
+                from: new Date('2019/08/08 23:00:00').getTime(),
+                to: new Date('2019/08/09 01:00:00').getTime(),
+            });
+            expect(detectorsEfficienciesPerFill).to.lengthOf(1);
+        }
+        {
+            const detectorsEfficienciesPerFill = await statisticsService.getDetectorsEfficienciesPerFill({
+                from: new Date('2019/08/08 23:00:01').getTime(),
+                to: new Date('2019/08/09 01:00:00').getTime(),
+            });
+            expect(detectorsEfficienciesPerFill).to.lengthOf(0);
         }
     });
 };
