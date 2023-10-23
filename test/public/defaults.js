@@ -261,6 +261,27 @@ const getInnerHtml = async (elementHandler) => await elementHandler.evaluate((el
 module.exports.getInnerHtml = getInnerHtml;
 
 /**
+ * Return the selector of a popover that correspond to a popover trigger
+ *
+ * @param {object} popoverTrigger the puppeteer element of the popover trigger
+ * @return {Promise<string|null>} the popover selector
+ */
+exports.getPopoverSelector = (popoverTrigger) => {
+    if (popoverTrigger === null) {
+        return null;
+    }
+
+    return popoverTrigger.evaluate((element) => {
+        const key = element.dataset.popoverKey;
+        if (!key) {
+            return null;
+        }
+
+        return `.popover[data-popover-key="${key}"]`;
+    });
+};
+
+/**
  * Extract the content of a popover corresponding to a popover trigger
  *
  * @param {object} popoverTrigger the puppeteer element of the popover trigger

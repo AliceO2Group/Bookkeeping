@@ -12,6 +12,7 @@
  */
 
 const AttachmentsSuite = require('./attachments.test.js');
+const ConfigurationSuite = require('./configuration.test.js');
 const DetectorsSuite = require('./detectors.test.js');
 const DPLProcessSuite = require('./dplProcess.test.js');
 const EnvironmentsSuite = require('./environments.test.js');
@@ -29,6 +30,7 @@ const TagsSuite = require('./tags.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
+    describe('Configuration API', ConfigurationSuite);
     describe('Detectors API', DetectorsSuite);
     describe('DPL Process API', DPLProcessSuite);
     describe('Environments API', EnvironmentsSuite);

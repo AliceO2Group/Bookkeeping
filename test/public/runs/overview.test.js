@@ -35,7 +35,7 @@ module.exports = () => {
 
     let table;
     let firstRowId;
-
+    const runNumberInputSelector = '#runNumber';
     const timeFilterSelectors = {
         startFrom: '#o2startFilterFromTime',
         startTo: '#o2startFilterToTime',
@@ -271,7 +271,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Run 106 has detectors and tags that overflow
-        await page.type('#runNumber', '106');
+        await page.type(runNumberInputSelector, '106');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
@@ -281,7 +281,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Run 1 has eor reasons that overflow
-        await page.type('#runNumber', '1');
+        await page.type(runNumberInputSelector, '1');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 16);
@@ -300,7 +300,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        await page.$eval('.detector-filter-dropdown-container', (element) => element.click());
+        await page.$eval('.detectors-filter .dropdown-trigger', (element) => element.click());
         await pressElement(page, '#detector-filter-dropdown-option-ITS');
         await pressElement(page, '#detector-filter-dropdown-option-FT0');
         await page.waitForTimeout(300);
@@ -669,16 +669,38 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of run ids and inform the user about it', async () => {
+        const inputValue = '1, 2';
+        await goToPage(page, 'run-overview');
+
+        /**
+         * This is the sequence to test filtering the runs on run numbers.
+         * @param {string} selector Specific selector for each case
+         * @return {void}
+         */
+        const filterOnRun = async (selector) => {
+            expect(await page.$eval(selector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+            await page.focus(selector);
+            await page.keyboard.type(inputValue);
+            await page.waitForTimeout(500);
+            // Validate amount in the table
+            table = await page.$$('tbody tr');
+            expect(table.length).to.equal(2);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+        };
+
+        // First filter validation on the main page.
+        await filterOnRun(`#runOverviewFilter > ${runNumberInputSelector}`);
+
+        // Validate if the filter tab value is equal to the main page value.
+        await page.$eval('#openFilterToggle', (element) => element.click());
+        expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
+
+        // Test if it works in the filter tab.
         await reloadPage(page);
         await page.$eval('#openFilterToggle', (element) => element.click());
-        const filterInputSelector = '#runNumber';
-        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
-        await page.focus(filterInputSelector);
-        await page.keyboard.type('1, 2');
-        await page.waitForTimeout(500);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
-        expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+
+        // Run the same test sequence on the filter tab.
+        await filterOnRun(runNumberInputSelector);
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
@@ -720,7 +742,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(100);
 
-        await pressElement(page, '.run-types-dropdown-container > div > div > .dropdown-selection');
+        await pressElement(page, '.runType-filter .dropdown-trigger');
         await page.waitForTimeout(100);
 
         await pressElement(page, '#run-types-dropdown-option-2');
@@ -975,7 +997,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Type a fake run number to have no runs
-        await page.focus('#runNumber');
+        await page.focus(runNumberInputSelector);
         await page.keyboard.type('99999999999');
         await page.waitForTimeout(300);
 
