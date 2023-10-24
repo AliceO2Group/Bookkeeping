@@ -16,6 +16,11 @@ const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
+const assert = require('assert');
+const { logService } = require('../../../../lib/server/services/log/LogService.js');
+const { NotFoundError } = require('../../../../lib/server/errors/NotFoundError.js');
+const { get } = require('sinon/lib/sinon/util/core/sinon-type.js');
 
 const { expect } = chai;
 
@@ -68,6 +73,36 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(1);
         const [{ detectors }] = runs;
         expect(detectors).to.equal('ACO,CPV,CTP,EMC,FIT,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC');
+    });
+
+    it('should successfully return a list of runs with the specified calibration status', async () => {
+        {
+            getAllRunsDto.query = { filter: { calibrationStatus: [RunCalibrationStatus.NO_STATUS] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatus: [RunCalibrationStatus.NO_STATUS, RunCalibrationStatus.FAILED] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatus: [RunCalibrationStatus.FAILED] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(0);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatus: [] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(0);
+        }
     });
 
     it('should successfully return an array only containing runs found with tags', async () => {
