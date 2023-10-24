@@ -17,10 +17,6 @@ const chai = require('chai');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
-const assert = require('assert');
-const { logService } = require('../../../../lib/server/services/log/LogService.js');
-const { NotFoundError } = require('../../../../lib/server/errors/NotFoundError.js');
-const { get } = require('sinon/lib/sinon/util/core/sinon-type.js');
 
 const { expect } = chai;
 
