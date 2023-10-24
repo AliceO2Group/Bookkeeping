@@ -35,7 +35,7 @@ module.exports = () => {
                 pdpConfigOption: 'Repository hash',
                 pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                 tfbDdMode: 'processing',
-                lhcPeriod: 'lhc22b',
+                lhcPeriod: 'LHC22b',
                 triggerValue: 'CTP',
                 odcTopologyFullName: 'synchronous-workflow',
                 pdpWorkflowParameters: 'QC,GPU,CTF,EVENT_DISPLAY',
@@ -62,7 +62,7 @@ module.exports = () => {
         expect(result.pdpConfigOption).to.equal('Repository hash');
         expect(result.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
         expect(result.tfbDdMode).to.equal('processing');
-        expect(result.lhcPeriod).to.equal('lhc22b');
+        expect(result.lhcPeriod).to.eql({ id: 2, name: 'LHC22b' });
         expect(result.triggerValue).to.equal('CTP');
         expect(result.odcTopologyFullName).to.equal('synchronous-workflow');
         expect(result.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');

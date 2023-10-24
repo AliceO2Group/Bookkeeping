@@ -331,7 +331,7 @@ module.exports = () => {
 
         it('should successfully filter on lhcPeriod', async () => {
             const response =
-                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22b');
+                await request(server).get('/api/runs?filter[lhcPeriods]=LHC22b');
 
             expect(response.status).to.equal(200);
 
@@ -1050,7 +1050,7 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    lhcPeriod: 'lhc22b',
+                    lhcPeriod: 'LHC22b',
                     odcTopologyFullName: 'hash',
                     pdpWorkflowParameters: 'EVENT_DISPLAY',
                     pdpBeamType: 'fill',
@@ -1066,7 +1066,7 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.lhcPeriod).to.equal('lhc22b');
+                    expect(res.body.data.lhcPeriod).to.equal('LHC22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
                     expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
                     expect(res.body.data.pdpBeamType).to.equal('fill');
@@ -1085,7 +1085,7 @@ module.exports = () => {
                     pdpConfigOption: 'Repository hash',
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
-                    lhcPeriod: 'lhc22b',
+                    lhcPeriod: 'LHC22b',
                     triggerValue: 'LTU',
                     odcTopologyFullName: 'default',
                 });
@@ -1095,7 +1095,7 @@ module.exports = () => {
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
-            expect(body.data.lhcPeriod).to.equal('lhc22b');
+            expect(body.data.lhcPeriod).to.equal('LHC22b');
             expect(body.data.triggerValue).to.equal('LTU');
             expect(body.data.odcTopologyFullName).to.equal('default');
         });
