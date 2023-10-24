@@ -62,7 +62,7 @@ module.exports = () => {
         expect(result.pdpConfigOption).to.equal('Repository hash');
         expect(result.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
         expect(result.tfbDdMode).to.equal('processing');
-        chai.assert.deepStrictEqual(result.lhcPeriod, { id: 2, name: 'LHC22b' });
+        expect(result.lhcPeriod).to.eql({ id: 2, name: 'LHC22b' });
         expect(result.triggerValue).to.equal('CTP');
         expect(result.odcTopologyFullName).to.equal('synchronous-workflow');
         expect(result.pdpWorkflowParameters).to.equal('QC,GPU,CTF,EVENT_DISPLAY');
