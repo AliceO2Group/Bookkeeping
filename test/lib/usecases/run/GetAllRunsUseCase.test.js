@@ -73,7 +73,7 @@ module.exports = () => {
 
     it('should successfully return a list of runs with the specified calibration status', async () => {
         {
-            getAllRunsDto.query = { filter: { calibrationStatus: [RunCalibrationStatus.NO_STATUS] } };
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.NO_STATUS] } };
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.lengthOf(1);
             const [{ calibrationStatus }] = runs;
@@ -81,7 +81,7 @@ module.exports = () => {
         }
 
         {
-            getAllRunsDto.query = { filter: { calibrationStatus: [RunCalibrationStatus.NO_STATUS, RunCalibrationStatus.FAILED] } };
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.NO_STATUS, RunCalibrationStatus.FAILED] } };
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.lengthOf(1);
             const [{ calibrationStatus }] = runs;
@@ -89,13 +89,13 @@ module.exports = () => {
         }
 
         {
-            getAllRunsDto.query = { filter: { calibrationStatus: [RunCalibrationStatus.FAILED] } };
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.FAILED] } };
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.lengthOf(0);
         }
 
         {
-            getAllRunsDto.query = { filter: { calibrationStatus: [] } };
+            getAllRunsDto.query = { filter: { calibrationStatuses: [] } };
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.lengthOf(0);
         }

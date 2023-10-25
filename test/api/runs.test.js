@@ -131,7 +131,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on calibration', async () => {
-            const response = await request(server).get(`/api/runs?filter[calibrationStatus][]=${RunCalibrationStatus.NO_STATUS}`);
+            const response = await request(server).get(`/api/runs?filter[calibrationStatuses][]=${RunCalibrationStatus.NO_STATUS}`);
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -142,22 +142,22 @@ module.exports = () => {
 
         it('should return 400 if the calibration status filter is invalid', async () => {
             {
-                const response = await request(server).get('/api/runs?filter[calibrationStatus]=invalid');
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
 
                 expect(response.status).to.equal(400);
 
                 const { errors: [error] } = response.body;
                 expect(error.title).to.equal('Invalid Attribute');
-                expect(error.detail).to.equal('"query.filter.calibrationStatus" must be an array');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses" must be an array');
             }
             {
-                const response = await request(server).get('/api/runs?filter[calibrationStatus][]=DO-NOT-EXIST');
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses][]=DO-NOT-EXIST');
 
                 expect(response.status).to.equal(400);
 
                 const { errors: [error] } = response.body;
                 expect(error.title).to.equal('Invalid Attribute');
-                expect(error.detail).to.equal('"query.filter.calibrationStatus[0]" does not match any of the allowed types');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses[0]" does not match any of the allowed types');
             }
         });
 
