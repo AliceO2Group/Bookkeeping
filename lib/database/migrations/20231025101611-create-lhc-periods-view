@@ -1,0 +1,43 @@
+'use strict';
+
+CREATE_GET_CENTER_OF_MASS_ENERGY=`
+CREATE OR REPLACE FUNCTION get_center_of_mass_energy(
+    IN _enrgy_per_beam float,
+    IN _beam_type varchar
+) return float
+BEGIN
+    DECLARE Av, Zv, P float;
+    if _beam_type is null or _energy_per_beam is null then
+        return null;
+    end if;
+
+END;
+`;
+
+CREATE_PERIODS_VIEW=`
+CREATE OR REPLACE VIEW lhc_periods_with_statistics AS
+SELECT  
+    p.id,
+    p.name,
+
+`;
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+    up: async (queryInterface, Sequelize) => queryInterface.sequelize.transaction(async (transaction) => {
+        await queryInterface.createTable('physical_data', {
+            key: {
+                type: Sequelize.STRING,
+                primaryKey: true,
+            },
+            value: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+        }, { transaction });
+    }),
+
+    down: async (queryInterface, Sequelize) => queryInterface.sequelize.transaction(async (transaction) => {
+        queryInterface.dropTable('physical_data', { transaction });
+    }),
+};
