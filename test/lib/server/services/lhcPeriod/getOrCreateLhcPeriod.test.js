@@ -12,10 +12,18 @@
  */
 
 const { getOrCreateLhcPeriod } = require('../../../../../lib/server/services/lhcPeriod/getOrCreateLhcPeriod.js');
+const { expect } = require('chai');
 
 module.exports = () => {
-    it('should get existing lhc periods', async () => {
+    it('should get existing lhc period', async () => {
         const lhcPeriod = await getOrCreateLhcPeriod({ id: 1 });
-        
-    })
+        expect(lhcPeriod.id).to.equal(1);
+        expect(lhcPeriod.name).to.equal('LHC22a');
+    });
+
+    it('should create and get new lhc period', async () => {
+        const lhcPeriod = await getOrCreateLhcPeriod({ name: 'LHC23zz' });
+        expect(lhcPeriod.id).to.equal(3);
+        expect(lhcPeriod.name).to.equal('LHC23zz');
+    });
 };
