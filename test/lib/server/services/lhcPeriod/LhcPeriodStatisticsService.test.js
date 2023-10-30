@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { lhcPeriodService } = require('../../../../../lib/server/services/lhcPeriod/LhcPeriodService.js');
+const { lhcPeriodStatisticsService } = require('../../../../../lib/server/services/lhcPeriod/LhcPeriodStatisticsService.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 
@@ -19,13 +19,13 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     it('should succesfully get by id', async () => {
-        const lhcPeriod = await lhcPeriodService.getById({ id: 1 });
+        const lhcPeriod = await lhcPeriodStatisticsService.getById({ id: 1 });
         expect(lhcPeriod.id).to.be.equal(1);
         expect(lhcPeriod.name).to.be.equal('LHC22a');
     });
 
     it('should succesfully get all data', async () => {
-        const { rows: lhcPeriods } = await lhcPeriodService.getAllForPhysicsRuns();
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns();
         expect(lhcPeriods).to.be.lengthOf(2);
     });
 
@@ -37,7 +37,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: lhcPeriods } = await lhcPeriodService.getAllForPhysicsRuns(dto);
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto);
         expect(lhcPeriods).to.be.lengthOf(1);
     });
 
@@ -49,7 +49,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: lhcPeriods } = await lhcPeriodService.getAllForPhysicsRuns(dto);
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto);
         expect(lhcPeriods).to.be.lengthOf(2);
     });
 };
