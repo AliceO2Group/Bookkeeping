@@ -404,7 +404,7 @@ module.exports = () => {
         });
         it('should return 403 with no admin rights', (done) => {
             request(server)
-                .delete(`/api/tags/${createdTag.id}?token=admin`)
+                .delete(`/api/tags/${createdTag.id}?token=q376cti`)
                 .expect(403)
                 .end((err) => {
                     if (err) {
