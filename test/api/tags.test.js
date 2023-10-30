@@ -56,7 +56,7 @@ module.exports = () => {
     describe('POST /api/tags', () => {
         it('should return 400 if no text is provided', (done) => {
             request(server)
-                .post('/api/tags')
+                .post('/api/tags?token=admin')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -74,7 +74,7 @@ module.exports = () => {
 
         it('should return 400 if the title is too short', (done) => {
             request(server)
-                .post('/api/tags')
+                .post('/api/tags?token=admin')
                 .send({
                     text: 'A',
                 })
@@ -94,7 +94,7 @@ module.exports = () => {
         });
         it('should return 400 if the title has illegal characters', (done) => {
             request(server)
-                .post('/api/tags')
+                .post('/api/tags?token=admin')
                 .send({
                     text: '^%$#@',
                 })
@@ -114,7 +114,7 @@ module.exports = () => {
         });
         it('should return 400 if the title is too long', (done) => {
             request(server)
-                .post('/api/tags')
+                .post('/api/tags?token=admin')
                 .send({
                     text: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
                 })
@@ -136,7 +136,7 @@ module.exports = () => {
 
         it('should return 201 if a proper body was sent', async () => {
             const expectedText = `UNIX:${new Date().getTime()}`;
-            const response = await request(server).post('/api/tags').send({
+            const response = await request(server).post('/api/tags?token=admin').send({
                 text: expectedText,
             });
 
@@ -146,7 +146,7 @@ module.exports = () => {
 
         it('should return 409 if we are creating the same tag again', (done) => {
             request(server)
-                .post('/api/tags')
+                .post('/api/tags?token=admin')
                 .send({
                     text: 'FOOD',
                 })
@@ -184,62 +184,12 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 201 only text is filled in with no admin rights', (done) => {
-            request(server)
-                .post('/api/tags?token=guest')
-                .send({
-                    text: 'guestTest',
-                })
-                .expect(201)
-                .end((err) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    done();
-                });
-        });
-        it('should return 403 if email/mattermost are filled in with no admin rights', (done) => {
+        it('should return 403 with no admin rights', (done) => {
             request(server)
                 .post('/api/tags?token=guest')
                 .send({
                     text: 'test123123',
                     mattermost: 'test-test',
-                    email: 'cake@cern.ch,test@cern.ch',
-                })
-                .expect(403)
-                .end((err) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    done();
-                });
-        });
-        it('should return 403 if email/mattermost are filled in with no admin rights', (done) => {
-            request(server)
-                .post('/api/tags?token=guest')
-                .send({
-                    text: 'test123123',
-                    mattermost: 'test-test',
-                })
-                .expect(403)
-                .end((err) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    done();
-                });
-        });
-        it('should return 403 if only email is filled in with no admin rights', (done) => {
-            request(server)
-                .post('/api/tags')
-                .send({
-                    text: 'test123123',
                     email: 'cake@cern.ch,test@cern.ch',
                 })
                 .expect(403)
@@ -368,7 +318,7 @@ module.exports = () => {
 
         it('should return 400 if the tag id is not a number', (done) => {
             request(server)
-                .delete('/api/tags/abc')
+                .delete('/api/tags/abc?token=admin')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -386,7 +336,7 @@ module.exports = () => {
 
         it('should return 400 if the tag id is not positive', (done) => {
             request(server)
-                .delete('/api/tags/-1')
+                .delete('/api/tags/-1?token=admin')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -404,7 +354,7 @@ module.exports = () => {
 
         it('should return 400 if the tag id is not a whole number', (done) => {
             request(server)
-                .delete('/api/tags/0.5')
+                .delete('/api/tags/0.5?token=admin')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -422,7 +372,7 @@ module.exports = () => {
 
         it('should return 404 if the tag could not be found', (done) => {
             request(server)
-                .delete('/api/tags/999999999')
+                .delete('/api/tags/999999999?token=admin')
                 .expect(404)
                 .end((err, res) => {
                     if (err) {
@@ -438,7 +388,7 @@ module.exports = () => {
 
         it('should return 200 in all other cases', (done) => {
             request(server)
-                .delete(`/api/tags/${createdTag.id}`)
+                .delete(`/api/tags/${createdTag.id}?token=admin`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -638,7 +588,7 @@ module.exports = () => {
         });
         it('Should return 403 when no valid token is given', (done) => {
             request(server)
-                .put(`/api/tags/${createdTag.id}?token=guest`)
+                .put(`/api/tags/${createdTag.id}?token=cq2i5642qai6ct4`)
                 .send({
                     email: 'groupa@cern.ch,groupb@cern.ch',
                     mattermost: 'groupa,groupb',
