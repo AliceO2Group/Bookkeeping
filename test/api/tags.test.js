@@ -402,6 +402,19 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 403 with no admin rights', (done) => {
+            request(server)
+                .delete(`/api/tags/${createdTag.id}?token=admin`)
+                .expect(403)
+                .end((err) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    done();
+                });
+        });
     });
 
     describe('GET /api/tags/:tagId/logs', () => {
