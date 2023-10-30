@@ -12,8 +12,9 @@
  */
 
 const getOrCreateLhcPeriodTest = require('./getOrCreateLhcPeriod.test');
+const LhcPeriodServiceTest = require('./LhcPeriodService.test');
 
 module.exports = () => {
     describe('getOrCreateLhcPeriodTest', getOrCreateLhcPeriodTest);
-    // describe('LhcPeriodService', )
+    describe('LhcPeriodService', LhcPeriodServiceTest);
 };
