@@ -249,18 +249,18 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
         await page.waitForSelector('tbody tr');
-        const firstRow = await page.$('tbody tr');
-        const expectedRunId = await firstRow.evaluate((element) => element.id)
-            .then((id) => parseInt(id.slice('row'.length), 10));
 
-        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
+        const selector = 'tbody tr:first-of-type a';
+        const expectedRunNumber = await page.evaluate(() => document.querySelector(selector).innerText);
+
+        await page.evaluate(() => document.querySelector(selector).click());
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`id=${expectedRunId}`);
+        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
 
     it('Should have balloon on detector, tags and eor column', async () => {
