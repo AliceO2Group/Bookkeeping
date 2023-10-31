@@ -226,7 +226,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
         expect(urlParameters).to.contain('panel=flps');
     });
 
@@ -236,7 +236,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
         expect(urlParameters).to.contain('panel=logs');
     });
     it('should show lhc data in normal mode', async () => {
@@ -255,7 +255,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=log-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
