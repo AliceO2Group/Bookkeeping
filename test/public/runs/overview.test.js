@@ -250,10 +250,9 @@ module.exports = () => {
         await page.waitForTimeout(100);
         await page.waitForSelector('tbody tr');
 
-        const selector = 'tbody tr:first-of-type a';
-        const expectedRunNumber = await page.evaluate(() => document.querySelector(selector).innerText);
+        const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await page.evaluate(() => document.querySelector(selector).click());
+        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
         await page.waitForTimeout(100);
         const redirectedUrl = await page.url();
 
