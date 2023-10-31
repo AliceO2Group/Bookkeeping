@@ -255,7 +255,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=log-detail');
-        expect(urlParameters).to.contain('runNumber=1');
+        expect(urlParameters).to.contain('id=1');
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
