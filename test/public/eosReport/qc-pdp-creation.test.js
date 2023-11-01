@@ -131,7 +131,7 @@ module.exports = () => {
         expect(text.includes(`## Runs
 
 ### COMMISSIONING
-- [200](http://localhost:4000?page=run-detail&id=108) - 00:00:00 - good
+- [200](http://localhost:4000?page=run-detail&runNumber=108) - 00:00:00 - good
     * Detectors: -
     * Detectors QC bad: -
     * EOR:
@@ -142,10 +142,10 @@ module.exports = () => {
       on run
 
 ### TECHNICAL
-- [201](http://localhost:4000?page=run-detail&id=109) - 00:00:00 - good
+- [201](http://localhost:4000?page=run-detail&runNumber=109) - 00:00:00 - good
     * Detectors: \`ITS\`, \`TST\`
     * Detectors QC bad: \`TST\`
-- [202](http://localhost:4000?page=run-detail&id=110) - 00:00:00 - bad
+- [202](http://localhost:4000?page=run-detail&runNumber=110) - 00:00:00 - bad
     * Detectors: \`FT0\`, \`TST\`
     * Detectors QC bad: \`FT0\`, \`TST\``)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
