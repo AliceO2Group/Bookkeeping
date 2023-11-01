@@ -22,7 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -267,7 +267,7 @@ module.exports = () => {
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
 
-        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
@@ -370,22 +370,22 @@ module.exports = () => {
         await page.waitForTimeout(20);
 
         // Open the filters
-        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
         await page.waitForTimeout(20);
         {
             await fillInput(page, '#tag-dropdown-search-input', 'food');
-            await page.waitForTimeout(20);
-            const options = await page.$$('.dropdown-option');
-            await page.waitForTimeout(40);
-            expect(options).to.lengthOf(1);
+            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+            const popoverSelector = await getPopoverSelector(popoverTrigger);
+            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+            const options = await page.$$(`${popoverSelector} .dropdown-option`);
             expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
         }
         {
             await fillInput(page, '#tag-dropdown-search-input', 'fOoD');
-            await page.waitForTimeout(20);
-            const options = await page.$$('.dropdown-option');
-            await page.waitForTimeout(40);
-            expect(options).to.lengthOf(1);
+            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+            const popoverSelector = await getPopoverSelector(popoverTrigger);
+            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+            const options = await page.$$(`${popoverSelector} .dropdown-option`);
             expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
         }
     });
@@ -589,7 +589,13 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
+        const INFINITE_SCROLL_CHUNK = 19;
         await reloadPage(page);
+
+        // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
+        await page.waitForSelector('table tbody tr:nth-child(2)');
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
+
         const amountSelectorButtonSelector = '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
@@ -600,15 +606,17 @@ module.exports = () => {
 
         const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
         await pressElement(page, infiniteModeButtonSelector);
-        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).endsWith('Infinite')).to.be.true;
-        await page.waitForTimeout(100);
+
+        // Wait for the first chunk to be loaded
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).trim().endsWith('Infinite')).to.be.true;
 
         await page.evaluate(() => {
-            window.scrollBy(0, window.innerHeight);
+            document.querySelector('table tbody tr:last-child').scrollIntoView({ behavior: 'instant' });
         });
-        await page.waitForTimeout(600);
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length > 20).to.be.true;
+
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.not.be.null;
     });
 
     it('can set how many logs are available per page', async () => {
@@ -800,8 +808,7 @@ module.exports = () => {
 
         // Insert some text into the filter
         await page.waitForSelector('#titleFilterText');
-        await page.type('#titleFilterText', log119Title);
-        await waitForNetworkIdleAndRedraw(page);
+        await fillInput(page, '#titleFilterText', log119Title);
         await page.waitForSelector('#row119-runs a');
         await pressElement(page, '#row119-runs a');
 

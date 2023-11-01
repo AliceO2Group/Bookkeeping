@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.70.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.70.0)
+* Notable changes for users:
+  * Fixed broken infologger run link
+  * A second input field is visible to filter runs. This input is visible in the main overview screen without opening the filter tab.
+  * Added endpoint to fetch detectors efficiency
+  * Efficiency graph vertical axis is forced between 0 and 100%
+  * Fixed bugs in chart renderer:
+    * Fixed popover staying displayed when cursor moves out of the graph
+    * Fixed graph not updating in some specific conditions
+  * Run API allow filtering on calibration status
+  * Fixed display error when displaying chart with empty data
+  * Detectors efficiencies graphs has been added
+* Notable change for developers:
+  * Improved formatPercentage to use normalized values ([0, 1])
+  * Chart axis limits can be overiden
+  * remove dead code (/api/runs/endpoint)
+  * update runs related usecases
+* Changes made to the database:
+  * add table `lhc_periods`, replaced column `runs.lhc_period` with `run.lhc_period_id` (reference to table `lhc_periods`)
+
+## [0.69.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.69.0)
+* Notable changes for users:
+  * Infologger links has been added in run overview, run details, environment overview and environment details
+  * Fixed the misbehaving time between runs graphs
+  * Fixed the popover of tag description not being displayed after filtering
+  * Fixed tag picker glitch when unselecting then selecting a tag
+  * Popover can now be opened in any direction relatively to the trigger
+* Notable change for developers:
+  * Fixed infinite selector failing tests
+  * Deleted useless controllers (exposing only routes returning 501) and the corresponding routers:
+    * AuthController
+    * CreatepdfController
+    * OverviewController
+    * SettingsController
+    * UsersController
+  * use newer docker compose syntax instead of legacy docker-compose
+
+## [0.68.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.68.0)
+* Notable changes for users:
+  * Added time between runs histogram
+  * Display EoR reason in runs table in LHC fill and environments details pages
+
 ## [0.67.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.67.0)
 * Notable changes for users:
   * Added horizontal lines in front of axis ticks
