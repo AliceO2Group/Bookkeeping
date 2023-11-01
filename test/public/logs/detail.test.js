@@ -114,20 +114,20 @@ module.exports = () => {
 
     it('allows navigating to an associated run', async () => {
         const logId = 1;
-        const runId = 1;
+        const runNumber = 1;
 
         // Navigate to a log detail view
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
 
         // We expect the correct associated runs to be shown
-        await expectInnerText(page, `#log-${logId}-runs`, `Runs:\n${runId}`);
+        await expectInnerText(page, `#log-${logId}-runs`, `Runs:\n${runNumber}`);
 
         // We expect the associated runs to be clickable with a valid link
         await pressElement(page, `#log-${logId}-runs a`);
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&runNumber=${runId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&runNumber=${runNumber}`);
     });
 
     it('allows navigating to an associated environment', async () => {
