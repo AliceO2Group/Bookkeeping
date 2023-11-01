@@ -84,7 +84,6 @@ const customizedECSEosReport = {
                 updatedAt: new Date('2023-03-17T08:13:03Z'),
                 runs: [
                     {
-                        // id: 108,
                         timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                         timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
                         runDuration: (3600 + 2 * 60 + 3) * 1000,
