@@ -75,6 +75,6 @@ module.exports = () => {
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&runNumber=${runId}&panel=logs`);
+        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&runNumber=${runId}`);
     });
 };
