@@ -148,8 +148,8 @@ exports.customizedECSEosReportRequest = {
 
 const formattedCustomizedECSEosReportTypeSpecific = `
 ## Environments and runs
-- (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=env-details&environmentId=ENV1)
-    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&id=108) - COMMISSIONING - 01:02:03 - good
+- (17/03/2023, 09:13:03) [ENV1](http://localhost:4000?page=e
+    * (17/03/2023, 09:14:03) [200](http://localhost:4000?page=run-detail&runNumber=108) - COMMISSIONING - 01:02:03 - good
         - EOR:
             * DETECTORS - CPV - EOR description
             * DETECTORS - TPC - 2nd EOR description
