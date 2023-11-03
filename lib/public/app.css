@@ -118,6 +118,10 @@ html, body {
     align-self: end;
 }
 
+.g5 {
+    gap: var(--space-xl)
+}
+
 /* Float */
 .float-right { float: right }
 
