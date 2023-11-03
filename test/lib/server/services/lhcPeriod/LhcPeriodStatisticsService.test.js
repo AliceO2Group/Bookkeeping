@@ -24,6 +24,12 @@ module.exports = () => {
         expect(lhcPeriod.name).to.be.equal('LHC22a');
     });
 
+    it('should succesfully get by name', async () => {
+        const lhcPeriod = await lhcPeriodStatisticsService.getById({ name: 'LHC22a' });
+        expect(lhcPeriod.id).to.be.equal(1);
+        expect(lhcPeriod.name).to.be.equal('LHC22a');
+    });
+
     it('should succesfully get all data', async () => {
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns();
         expect(lhcPeriods).to.be.lengthOf(2);
