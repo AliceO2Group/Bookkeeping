@@ -39,7 +39,7 @@ module.exports = () => {
         const dto = {
             query: {
                 filter: {
-                    names: 'LHC22a',
+                    names: ['LHC22a'],
                 },
             },
         };
@@ -51,7 +51,7 @@ module.exports = () => {
         const dto = {
             query: {
                 filter: {
-                    ids: '1,2',
+                    ids: ['1', '2'],
                 },
             },
         };
