@@ -130,6 +130,37 @@ module.exports = () => {
                 });
         });
 
+        it('should successfully filter on calibration', async () => {
+            const response = await request(server).get(`/api/runs?filter[calibrationStatuses][]=${RunCalibrationStatus.NO_STATUS}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        });
+
+        it('should return 400 if the calibration status filter is invalid', async () => {
+            {
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
+
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses" must be an array');
+            }
+            {
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses][]=DO-NOT-EXIST');
+
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses[0]" does not match any of the allowed types');
+            }
+        });
+
         it('should return 400 if the detectors filter is invalid', async () => {
             const response =
                 await request(server).get('/api/runs?filter[detectors][operator]=invalid&filter[detectors][values]=ITS');
@@ -262,8 +293,8 @@ module.exports = () => {
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =
-                 await request(server)
-                     .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
 
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;

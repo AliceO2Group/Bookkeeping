@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.70.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.70.0)
+* Notable changes for users:
+  * Fixed broken infologger run link
+  * A second input field is visible to filter runs. This input is visible in the main overview screen without opening the filter tab.
+  * Added endpoint to fetch detectors efficiency
+  * Efficiency graph vertical axis is forced between 0 and 100%
+  * Fixed bugs in chart renderer:
+    * Fixed popover staying displayed when cursor moves out of the graph
+    * Fixed graph not updating in some specific conditions
+  * Run API allow filtering on calibration status
+  * Fixed display error when displaying chart with empty data
+  * Detectors efficiencies graphs has been added
+* Notable change for developers:
+  * Improved formatPercentage to use normalized values ([0, 1])
+  * Chart axis limits can be overiden
+  * remove dead code (/api/runs/endpoint)
+  * update runs related usecases
+* Changes made to the database:
+  * add table `lhc_periods`, replaced column `runs.lhc_period` with `run.lhc_period_id` (reference to table `lhc_periods`)
+
 ## [0.69.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.69.0)
 * Notable changes for users:
   * Infologger links has been added in run overview, run details, environment overview and environment details
