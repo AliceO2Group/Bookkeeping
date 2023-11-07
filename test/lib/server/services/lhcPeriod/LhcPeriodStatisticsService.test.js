@@ -43,7 +43,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto);
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(1);
     });
 
@@ -55,7 +55,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto);
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(2);
     });
 };
