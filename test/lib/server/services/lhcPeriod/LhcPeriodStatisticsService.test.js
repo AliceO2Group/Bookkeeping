@@ -19,7 +19,13 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     it('should succesfully get by id', async () => {
-        const lhcPeriod = await lhcPeriodStatisticsService.getById({ id: 1 });
+        const lhcPeriod = await lhcPeriodStatisticsService.getByIdentifier({ id: 1 });
+        expect(lhcPeriod.id).to.be.equal(1);
+        expect(lhcPeriod.name).to.be.equal('LHC22a');
+    });
+
+    it('should succesfully get by name', async () => {
+        const lhcPeriod = await lhcPeriodStatisticsService.getByIdentifier({ name: 'LHC22a' });
         expect(lhcPeriod.id).to.be.equal(1);
         expect(lhcPeriod.name).to.be.equal('LHC22a');
     });
@@ -33,11 +39,11 @@ module.exports = () => {
         const dto = {
             query: {
                 filter: {
-                    names: 'LHC22a',
+                    names: ['LHC22a'],
                 },
             },
         };
-        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto);
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(1);
     });
 
@@ -45,11 +51,11 @@ module.exports = () => {
         const dto = {
             query: {
                 filter: {
-                    ids: '1,2',
+                    ids: ['1', '2'],
                 },
             },
         };
-        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto);
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(2);
     });
 };
