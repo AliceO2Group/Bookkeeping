@@ -19,13 +19,13 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     it('should succesfully get by id', async () => {
-        const lhcPeriod = await lhcPeriodStatisticsService.getById({ id: 1 });
+        const lhcPeriod = await lhcPeriodStatisticsService.getByIdentifier({ id: 1 });
         expect(lhcPeriod.id).to.be.equal(1);
         expect(lhcPeriod.name).to.be.equal('LHC22a');
     });
 
     it('should succesfully get by name', async () => {
-        const lhcPeriod = await lhcPeriodStatisticsService.getById({ name: 'LHC22a' });
+        const lhcPeriod = await lhcPeriodStatisticsService.getByIdentifier({ name: 'LHC22a' });
         expect(lhcPeriod.id).to.be.equal(1);
         expect(lhcPeriod.name).to.be.equal('LHC22a');
     });
