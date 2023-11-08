@@ -243,4 +243,54 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/lhcPeriods', () => {
+        it('should successfuly fetch period with given id 1', (done) => {
+            request(server)
+                .get('/api/lhcPeriods/1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.eql(lhcPeriod_LHC22a);
+                    done();
+                });
+        });
+
+        it('should successfuly fetch period with given id 2', (done) => {
+            request(server)
+                .get('/api/lhcPeriods/2')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.eql(lhcPeriod_LHC22b);
+                    done();
+                });
+        });
+
+        it('should successfuly fetch period with given id', (done) => {
+            request(server)
+                .get('/api/lhcPeriods/1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.eql(lhcPeriod_LHC22a);
+                    done();
+                });
+        });
+    });
 };
