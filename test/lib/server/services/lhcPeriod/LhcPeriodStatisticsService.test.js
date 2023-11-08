@@ -58,4 +58,8 @@ module.exports = () => {
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(2);
     });
+
+    it('should return null when no lhc period with given id', async () => {
+        expect(await lhcPeriodStatisticsService.getByIdentifier({ id: 99999 })).to.be.null;
+    });
 };
