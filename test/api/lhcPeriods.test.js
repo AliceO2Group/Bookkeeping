@@ -244,7 +244,7 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/lhcPeriods', () => {
+    describe('GET /api/lhcPeriods/:lhcPeriodId', () => {
         it('should successfuly fetch period with given id 1', (done) => {
             request(server)
                 .get('/api/lhcPeriods/1')
@@ -277,18 +277,17 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly fetch period with given id', (done) => {
+        it('should return 404 if lhc period could not be found', (done) => {
             request(server)
-                .get('/api/lhcPeriods/1')
-                .expect(200)
+                .get('/api/lhcPeriods/3')
+                .expect(404)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
 
-                    const { data } = res.body;
-                    expect(data).to.be.eql(lhcPeriod_LHC22a);
+                    expect(res.body.errors[0].title).to.equal('Lhc Period with this id (9999) could not be found');
                     done();
                 });
         });
