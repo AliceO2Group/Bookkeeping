@@ -287,7 +287,7 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Lhc Period with this id (9999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Lhc period with this id (9999) could not be found');
                     done();
                 });
         });
