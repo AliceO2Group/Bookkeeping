@@ -189,7 +189,7 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.equal(lhcPeriod_LHC22a);
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22a);
 
                     done();
                 });
