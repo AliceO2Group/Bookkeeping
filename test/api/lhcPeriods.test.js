@@ -16,6 +16,24 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
+const lhcPeriod_LHC22b = {
+    id: 2,
+    name: 'LHC22b',
+    lhcPeriodStatistics: {
+        id: 2,
+        avgEnergy: null,
+    },
+};
+
+const lhcPeriod_LHC22a = {
+    id: 1,
+    name: 'LHC22a',
+    lhcPeriodStatistics: {
+        id: 1,
+        avgEnergy: 23.209999084472656,
+    },
+};
+
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -50,7 +68,7 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0].name).to.be.equal('LHC22a');
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22a);
 
                     done();
                 });
@@ -68,8 +86,74 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0].id).to.be.equal(2);
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
 
+                    done();
+                });
+        });
+        it('should retrive no records when filtering on ids', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?filter[ids]=9999')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(0);
+
+                    done();
+                });
+        });
+        it('should retrive no records when filtering on names', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?filter[names]=LHC29xyz')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(0);
+                    done();
+                });
+        });
+        it('should succefully filter on ids given as array', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?filter[ids][]=1&filter[ids][]=2')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(2);
+                    done();
+                });
+        });
+        it('should succefully filter on names given as array', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?filter[names][]=LHC22b')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(1);
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
                     done();
                 });
         });
@@ -86,8 +170,8 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(2);
-                    expect(data[0].name).to.be.equal('LHC22b');
-                    expect(data[1].name).to.be.equal('LHC22a');
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
+                    expect(data[1]).to.be.eql(lhcPeriod_LHC22a);
 
                     done();
                 });
@@ -105,8 +189,56 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0].name).to.be.equal('LHC22a');
+                    expect(data[0]).to.be.equal(lhcPeriod_LHC22a);
 
+                    done();
+                });
+        });
+        it('should return 400 when bad query paramter provided', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?a=1')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/a');
+                    expect(titleError.detail).to.equal('"query.a" is not allowed');
+                    done();
+                });
+        });
+        it('should return 400 if the limit is below 1', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?page[limit]=0')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+                    done();
+                });
+        });
+        it('should return 400 if the limit is below 1', (done) => {
+            request(server)
+                .get('/api/lhcPeriods?page[limit]=0')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
                     done();
                 });
         });
