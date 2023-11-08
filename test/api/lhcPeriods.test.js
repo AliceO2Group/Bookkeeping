@@ -279,7 +279,7 @@ module.exports = () => {
 
         it('should return 404 if lhc period could not be found', (done) => {
             request(server)
-                .get('/api/lhcPeriods/3')
+                .get('/api/lhcPeriods/9999')
                 .expect(404)
                 .end((err, res) => {
                     if (err) {
