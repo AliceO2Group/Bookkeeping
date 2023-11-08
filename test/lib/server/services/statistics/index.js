@@ -12,7 +12,10 @@
  */
 
 const StatisticsServiceTest = require('./StatisticsService.test.js');
+const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
+    before(resetDatabaseContent);
+
     describe('StatisticsService', StatisticsServiceTest);
 };
