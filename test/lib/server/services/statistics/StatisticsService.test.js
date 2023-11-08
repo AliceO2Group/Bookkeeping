@@ -219,4 +219,43 @@ module.exports = () => {
             expect(detectorsEfficienciesPerFill).to.lengthOf(0);
         }
     });
+
+    it('should successfully extract tags occurrences for logs created in a given period', async () => {
+        {
+            const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
+                from: new Date('2019/01/01 00:00:00').getTime(),
+                to: new Date('2020/12/31 23:59:59').getTime(),
+            });
+            expect(tagsOccurrences).eql([
+                { tag: 'FOOD', count: 2 },
+                { tag: 'RUN', count: 2 },
+                { tag: 'DPG', count: 1 },
+                { tag: 'GLOBAL', count: 1 },
+                { tag: 'RC', count: 1 },
+                { tag: 'TEST-TAG-36', count: 1 },
+                { tag: 'TEST-TAG-37', count: 1 },
+                { tag: 'TEST-TAG-38', count: 1 },
+                { tag: 'TEST-TAG-39', count: 1 },
+                { tag: 'TEST-TAG-40', count: 1 },
+                { tag: 'TEST-TAG-41', count: 1 },
+            ]);
+        }
+    });
+
+    it('should successfully filter out logs before a date (excluded)', async () => {
+        {
+            const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
+                from: new Date('2000/01/02 00:00:00').getTime(),
+                to: new Date('2000/01/02 12:00:01').getTime(),
+            });
+            expect(tagsOccurrences).eql([{ tag: 'MAINTENANCE', count: 1 }]);
+        }
+        {
+            const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
+                from: new Date('2000/01/02 00:00:00').getTime(),
+                to: new Date('2000/01/02 12:00:00').getTime(),
+            });
+            expect(tagsOccurrences).to.lengthOf(0);
+        }
+    });
 };
