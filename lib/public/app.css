@@ -185,6 +185,9 @@ a.btn, a.btn:hover, a.btn.active {
 
 /* form */
 
+label {
+    margin: unset;
+}
 .label {
     cursor: pointer;
 }
