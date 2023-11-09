@@ -57,7 +57,7 @@ module.exports = () => {
         });
         it('should successfuly filter on ids', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[ids]=1')
+                .get('/api/lhcPeriods?filter[ids][]=1')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -75,7 +75,7 @@ module.exports = () => {
         });
         it('should successfuly filter on names', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[names]=LHC22b')
+                .get('/api/lhcPeriods?filter[names][]=LHC22b')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -93,7 +93,7 @@ module.exports = () => {
         });
         it('should retrive no records when filtering on ids', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[ids]=9999')
+                .get('/api/lhcPeriods?filter[ids][]=9999')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -110,7 +110,7 @@ module.exports = () => {
         });
         it('should retrive no records when filtering on names', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[names]=LHC29xyz')
+                .get('/api/lhcPeriods?filter[names][]=LHC29xyz')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -137,23 +137,6 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(2);
-                    done();
-                });
-        });
-        it('should succefully filter on names given as array', (done) => {
-            request(server)
-                .get('/api/lhcPeriods?filter[names][]=LHC22b')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
                     done();
                 });
         });
