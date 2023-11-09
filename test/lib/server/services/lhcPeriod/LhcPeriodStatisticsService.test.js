@@ -15,19 +15,35 @@ const { lhcPeriodStatisticsService } = require('../../../../../lib/server/servic
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 
+const lhcPeriod_LHC22b = {
+    id: 2,
+    avgEnergy: null,
+    lhcPeriod: {
+        id: 2,
+        name: 'LHC22b',
+    },
+};
+
+const lhcPeriod_LHC22a = {
+    avgEnergy: 23.209999084472656,
+    id: 1,
+    lhcPeriod: {
+        id: 1,
+        name: 'LHC22a',
+    },
+};
+
 module.exports = () => {
     before(resetDatabaseContent);
 
     it('should succesfully get by id', async () => {
         const lhcPeriod = await lhcPeriodStatisticsService.getByIdentifier({ id: 1 });
-        expect(lhcPeriod.id).to.be.equal(1);
-        expect(lhcPeriod.name).to.be.equal('LHC22a');
+        expect(lhcPeriod).to.be.eql(lhcPeriod_LHC22a);
     });
 
     it('should succesfully get by name', async () => {
         const lhcPeriod = await lhcPeriodStatisticsService.getByIdentifier({ name: 'LHC22a' });
-        expect(lhcPeriod.id).to.be.equal(1);
-        expect(lhcPeriod.name).to.be.equal('LHC22a');
+        expect(lhcPeriod).to.be.eql(lhcPeriod_LHC22a);
     });
 
     it('should succesfully get all data', async () => {
@@ -45,6 +61,20 @@ module.exports = () => {
         };
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(1);
+        expect(lhcPeriods[0]).to.be.eql(lhcPeriod_LHC22a);
+    });
+
+    it('should succesfully filter period statistics on names given as string', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    names: ['LHC22b'],
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(1);
+        expect(lhcPeriods[0]).to.be.eql(lhcPeriod_LHC22b);
     });
 
     it('should succesfully filter period statistics on ids', async () => {
