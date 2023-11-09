@@ -65,7 +65,7 @@ module.exports.defaultAfter = async (page, browser) => {
 /**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
+ * @param {string} selector Css selector.
  * @param {boolean} [jsClick=false] if true, use js native click on the element instead of page's click method (useful if element is not visible)
  * @returns {Promise} Whether the element was clickable or not.
  */
@@ -155,7 +155,7 @@ module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
 /**
  * Validates if selector is present and returns the element.
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
+ * @param {string} selector Css selector.
  * @returns {Object} Element matching the selector.
  */
 module.exports.validateElement = async (page, selector) => {
@@ -170,7 +170,7 @@ module.exports.validateElement = async (page, selector) => {
  * This function takes a screenshot of the current screen the page is at, and saves it to
  * database/storage/screenshot.png
  * @param {*} page Puppeteer page object.
- * @param {String} name Name of the screenshot taken. Useful when taking multiple in a row.
+ * @param {string} name Name of the screenshot taken. Useful when taking multiple in a row.
  * @returns {*} None
  */
 module.exports.takeScreenshot = async (page, name = 'screenshot') => {
@@ -184,7 +184,7 @@ module.exports.takeScreenshot = async (page, name = 'screenshot') => {
 /**
  * Validates if selector is present and returns the element.
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
+ * @param {string} selector Css selector.
  * @param {Object} value value that is expected at the Css selector element.
  * @returns {Object} Element matching the selector
  */
@@ -214,7 +214,7 @@ module.exports.getFirstRow = async (table, page) => {
 /**
  * Special method built to gather all currently visible table entities from a specific column into an array
  * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {String} key The key for the column to gather entities of
+ * @param {string} key The key for the column to gather entities of
  * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
  */
 module.exports.getAllDataFields = async (page, key) => {
@@ -242,8 +242,8 @@ module.exports.getInnerText = getInnerText;
  * Expect an element to have a given text
  *
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
- * @param {String} innerText Text to search for.
+ * @param {string} selector Css selector.
+ * @param {string} innerText Text to search for.
  * @return {void}
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
