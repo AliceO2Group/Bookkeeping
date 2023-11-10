@@ -647,3 +647,8 @@ a.btn, a.btn:hover, a.btn.active {
     height: 15.66px;
     display: inline-block;
 }
+
+.linkDisabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
