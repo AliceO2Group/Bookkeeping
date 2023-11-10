@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Added parent log entry display when replying to log
 * Notable change for developers:
   * Chart system has been improved to allow easily display bar charts
-  * Extracted a utility function `isInTestMode` to factorize configuration
+  * Extracted two utility functions `isInTestMode` and `isInDevMode` to factorize configuration
   * Added runToHTTPView function to handle introduced differences of entity Run
   * Added LhcPeriod sequelize model
   * Refactored log-related components
