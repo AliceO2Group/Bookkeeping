@@ -82,6 +82,19 @@ module.exports = () => {
 
         const header = await page.$eval('.f3', (element) => element.textContent);
         expect(header).to.equal('Reply to: First entry');
+
+        const showCollapseBtn = await page.$('#show-collapse-1');
+        expect(showCollapseBtn).to.exist;
+        await showCollapseBtn.evaluate((button) => button.click());
+
+        const parentLogText = await page.$eval('span[role="presentation"]:first-of-type', (span) => span.innerText);
+        expect(parentLogText).to.equal('Power interruption due to unplugged wire.');
+
+        const log1DetailsBtn = await page.$('#details-of-1');
+        expect(log1DetailsBtn).to.exist;
+
+        await log1DetailsBtn.evaluate((button) => button.click());
+        expect(new URL(page.url()).search).to.equal('?page=log-detail&id=1');
     });
 
     it('can disable submit with invalid data', async () => {
