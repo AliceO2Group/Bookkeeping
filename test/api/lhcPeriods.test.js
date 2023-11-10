@@ -48,7 +48,8 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data } = res.body;
+                    const { data, meta } = res.body;
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(2);
 
@@ -65,7 +66,8 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data } = res.body;
+                    const { data, meta } = res.body;
+                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
                     expect(data[0]).to.be.eql(lhcPeriod_LHC22a);
