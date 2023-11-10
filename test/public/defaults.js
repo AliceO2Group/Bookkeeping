@@ -21,7 +21,7 @@ const { expect } = chai;
 
 /**
  * Returns the URL with correct port postfixed.
- * @returns {String} URL specific to the port specified by user/host.
+ * @returns {string} URL specific to the port specified by user/host.
  */
 const getUrl = () => `http://localhost:${server.address().port}`;
 
