@@ -641,13 +641,6 @@ a.btn, a.btn:hover, a.btn.active {
     }
 }
 
-.center-of-mass-energy {
-    background-image: url('/assets/center-of-mass-energy.svg');
-    width: 40px;
-    height: 15.66px;
-    display: inline-block;
-}
-
 .linkDisabled {
     pointer-events: none;
     opacity: 0.5;
