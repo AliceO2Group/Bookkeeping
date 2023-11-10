@@ -651,4 +651,4 @@ a.btn, a.btn:hover, a.btn.active {
 .linkDisabled {
     pointer-events: none;
     opacity: 0.5;
-  }
+}
