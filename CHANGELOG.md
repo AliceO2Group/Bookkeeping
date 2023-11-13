@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.71.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.71.0)
+* Notable changes for users:
+  * Only admin is authorised to create and delete tags
+  * Added tag occurrences in logs chart
+  * Added link to ali-flp main page visible as button with text - 'ALI FLP'
+  * Added parent log entry display when replying to log
+* Notable change for developers:
+  * Chart system has been improved to allow easily display bar charts
+  * Extracted two utility functions `isInTestMode` and `isInDevMode` to factorize configuration
+  * Added runToHTTPView function to handle introduced differences of entity Run
+  * Added LhcPeriod sequelize model
+  * Refactored log-related components
+* Changes made to the database:
+  * add table `lhc_periods`, replaced column `runs.lhc_period` with `run.lhc_period_id` (reference to table `lhc_periods`)
+
 ## [0.70.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.70.0)
 * Notable changes for users:
   * Fixed broken infologger run link
@@ -19,8 +34,6 @@ All notable changes to this project will be documented in this file. See [standa
   * Chart axis limits can be overiden
   * remove dead code (/api/runs/endpoint)
   * update runs related usecases
-* Changes made to the database:
-  * add table `lhc_periods`, replaced column `runs.lhc_period` with `run.lhc_period_id` (reference to table `lhc_periods`)
 
 ## [0.69.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.69.0)
 * Notable changes for users:
