@@ -37,10 +37,10 @@ const lhcPeriod_LHC22a = {
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/lhcPeriods', () => {
+    describe('GET /api/lhcPeriodsStatistics', () => {
         it('should successfuly fetch all data', (done) => {
             request(server)
-                .get('/api/lhcPeriods')
+                .get('/api/lhcPeriodsStatistics')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -58,7 +58,7 @@ module.exports = () => {
         });
         it('should successfuly filter on ids', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[ids][]=1')
+                .get('/api/lhcPeriodsStatistics?filter[ids][]=1')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -77,7 +77,7 @@ module.exports = () => {
         });
         it('should successfuly filter on names', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[names][]=LHC22b')
+                .get('/api/lhcPeriodsStatistics?filter[names][]=LHC22b')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -95,7 +95,7 @@ module.exports = () => {
         });
         it('should retrive no records when filtering on ids', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[ids][]=9999')
+                .get('/api/lhcPeriodsStatistics?filter[ids][]=9999')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -112,7 +112,7 @@ module.exports = () => {
         });
         it('should retrive no records when filtering on names', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[names][]=LHC29xyz')
+                .get('/api/lhcPeriodsStatistics?filter[names][]=LHC29xyz')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -128,7 +128,7 @@ module.exports = () => {
         });
         it('should succefully filter on ids given as array', (done) => {
             request(server)
-                .get('/api/lhcPeriods?filter[ids][]=1&filter[ids][]=2')
+                .get('/api/lhcPeriodsStatistics?filter[ids][]=1&filter[ids][]=2')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -144,7 +144,7 @@ module.exports = () => {
         });
         it('should successfuly sort on id and name', (done) => {
             request(server)
-                .get('/api/lhcPeriods?sort[id]=DESC&sort[name]=ASC')
+                .get('/api/lhcPeriodsStatistics?sort[id]=DESC&sort[name]=ASC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -163,7 +163,7 @@ module.exports = () => {
         });
         it('should support pagination', (done) => {
             request(server)
-                .get('/api/lhcPeriods?page[offset]=1&sort[id]=desc')
+                .get('/api/lhcPeriodsStatistics?page[offset]=1&sort[id]=desc')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -181,7 +181,7 @@ module.exports = () => {
         });
         it('should return 400 when bad query paramter provided', (done) => {
             request(server)
-                .get('/api/lhcPeriods?a=1')
+                .get('/api/lhcPeriodsStatistics?a=1')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -197,7 +197,7 @@ module.exports = () => {
         });
         it('should return 400 if the limit is below 1', (done) => {
             request(server)
-                .get('/api/lhcPeriods?page[limit]=0')
+                .get('/api/lhcPeriodsStatistics?page[limit]=0')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -213,7 +213,7 @@ module.exports = () => {
         });
         it('should return 400 if the limit is below 1', (done) => {
             request(server)
-                .get('/api/lhcPeriods?page[limit]=0')
+                .get('/api/lhcPeriodsStatistics?page[limit]=0')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -229,10 +229,10 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/lhcPeriods/:lhcPeriodId', () => {
+    describe('GET /api/lhcPeriodsStatistics/:lhcPeriodId', () => {
         it('should successfuly fetch period with given id 1', (done) => {
             request(server)
-                .get('/api/lhcPeriods/1')
+                .get('/api/lhcPeriodsStatistics/1')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -248,7 +248,7 @@ module.exports = () => {
 
         it('should successfuly fetch period with given id 2', (done) => {
             request(server)
-                .get('/api/lhcPeriods/2')
+                .get('/api/lhcPeriodsStatistics/2')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -264,7 +264,7 @@ module.exports = () => {
 
         it('should return 404 if lhc period could not be found', (done) => {
             request(server)
-                .get('/api/lhcPeriods/9999')
+                .get('/api/lhcPeriodsStatistics/9999')
                 .expect(404)
                 .end((err, res) => {
                     if (err) {
@@ -272,7 +272,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Lhc period with this id (9999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Not found');
+                    expect(res.body.errors[0].detail).to.equal('LHC Period with this id (9999) could not be found');
                     done();
                 });
         });

@@ -14,6 +14,8 @@
 const { lhcPeriodStatisticsService } = require('../../../../../lib/server/services/lhcPeriod/LhcPeriodStatisticsService.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
+const assert = require('assert');
+const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 
 const lhcPeriod_LHC22b = {
     id: 2,
@@ -49,6 +51,13 @@ module.exports = () => {
     it('should succesfully get all data', async () => {
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns();
         expect(lhcPeriods).to.be.lengthOf(2);
+    });
+
+    it('should fail when no LHC Period with given id', async () => {
+        await assert.rejects(
+            () => lhcPeriodStatisticsService.getOneOrFail({ id: 99999 }),
+            new NotFoundError('LHC Period with this id (99999) could not be found'),
+        );
     });
 
     it('should succesfully filter period statistics on names', async () => {
