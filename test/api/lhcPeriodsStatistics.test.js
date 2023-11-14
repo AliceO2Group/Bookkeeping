@@ -273,7 +273,7 @@ module.exports = () => {
                     }
 
                     expect(res.body.errors[0].title).to.equal('Not found');
-                    expect(res.body.errors[0].detail).to.equal('LHC period with this id (9999) could not be found');
+                    expect(res.body.errors[0].detail).to.equal('LHC Period with this id (9999) could not be found');
                     done();
                 });
         });
