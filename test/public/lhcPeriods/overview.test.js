@@ -90,7 +90,7 @@ module.exports = () => {
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
     });
 
-    it('can set how many lhcFills are available per page', async () => {
+    it('can set how many lhcPeriods is available per page', async () => {
         await page.waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
