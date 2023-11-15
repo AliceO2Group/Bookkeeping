@@ -640,8 +640,3 @@ a.btn, a.btn:hover, a.btn.active {
         grid-template-columns: repeat(3, 1fr);
     }
 }
-
-.linkDisabled {
-    pointer-events: none;
-    opacity: 0.5;
-}
