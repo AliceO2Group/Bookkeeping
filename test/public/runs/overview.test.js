@@ -25,7 +25,7 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -35,7 +35,7 @@ module.exports = () => {
 
     let table;
     let firstRowId;
-
+    const runNumberInputSelector = '#runNumber';
     const timeFilterSelectors = {
         startFrom: '#o2startFilterFromTime',
         startTo: '#o2startFilterToTime',
@@ -146,48 +146,51 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
-        const amountSelectorButton = await page.$('#amountSelector button');
+        const INFINITE_SCROLL_CHUNK = 19;
+        await reloadPage(page);
+
+        // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
+        await page.waitForSelector('table tbody tr:nth-child(2)');
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
+
+        const amountSelectorButtonSelector = await '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await pressElement(page, amountSelectorButtonSelector);
+
         const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
-        const initialTableRows = (await page.$$('table tr')).length;
 
-        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
-        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
+        await pressElement(page, infiniteModeButtonSelector);
+
+        // Wait for the first chunk to be loaded
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).trim().endsWith('Infinite')).to.be.true;
 
         await page.evaluate(() => {
-            window.scrollBy(0, window.innerHeight);
+            document.querySelector('table tbody tr:last-child').scrollIntoView({ behavior: 'instant' });
         });
 
-        await page.waitForTimeout(400);
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length).to.be.greaterThan(initialTableRows);
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.not.be.null;
     });
 
     it('can set how many runs are available per page', async () => {
-        await page.waitForTimeout(300);
-        // Expect the amount selector to currently be set to Infinite (after the previous test)
-        const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        await reloadPage(page);
 
-        // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        const amountSelectorId = '#amountSelector';
+        const amountSelectorButtonSelector = `${amountSelectorId} button`;
+        await pressElement(page, amountSelectorButtonSelector);
+
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
+        await pressElement(page, amountItems5);
+        await page.waitForTimeout(600);
 
+        // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
 
@@ -224,10 +227,6 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        /*
-         * As an example, override the amount of runs visible per page manually
-         * We know the limit is 100 as specified by the Dto
-         */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.pagination.itemsPerPage = 200;
@@ -272,7 +271,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Run 106 has detectors and tags that overflow
-        await page.type('#runNumber', '106');
+        await page.type(runNumberInputSelector, '106');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
@@ -282,7 +281,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Run 1 has eor reasons that overflow
-        await page.type('#runNumber', '1');
+        await page.type(runNumberInputSelector, '1');
         await page.waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 16);
@@ -290,27 +289,8 @@ module.exports = () => {
 
     it('Should display balloon if the text overflows', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
-        const cell = await page.$('tbody tr td:nth-of-type(2)');
-        // We need the actual content to overflow in order to display balloon
-        await cell.evaluate((element) => {
-            element.querySelector('.popover-actual-content').innerText = 'a really long text'.repeat(50);
-        });
-        // Scroll to refresh the balloon triggers
-        await page.mouse.wheel({ deltaY: 100 });
 
-        const popoverAnchor = await cell.$('.popover-anchor');
-        expect(popoverAnchor).to.not.be.null;
-
-        /**
-         * Returns the computed display attribute of the popover anchor
-         * @returns {*} the computed display
-         */
-        const getPopoverDisplay = () => popoverAnchor.evaluate((element) => window.getComputedStyle(element).display);
-
-        expect(await getPopoverDisplay()).to.be.equal('none');
-        await cell.hover();
-        expect(await getPopoverDisplay()).to.be.equal('flex');
+        await checkColumnBalloon(page, 1, 2);
     });
 
     it('should successfully filter on detectors', async () => {
@@ -320,7 +300,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
-        await page.$eval('.detector-filter-dropdown-container', (element) => element.click());
+        await page.$eval('.detectors-filter .dropdown-trigger', (element) => element.click());
         await pressElement(page, '#detector-filter-dropdown-option-ITS');
         await pressElement(page, '#detector-filter-dropdown-option-FT0');
         await page.waitForTimeout(300);
@@ -689,16 +669,38 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of run ids and inform the user about it', async () => {
+        const inputValue = '1, 2';
+        await goToPage(page, 'run-overview');
+
+        /**
+         * This is the sequence to test filtering the runs on run numbers.
+         * @param {string} selector Specific selector for each case
+         * @return {void}
+         */
+        const filterOnRun = async (selector) => {
+            expect(await page.$eval(selector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+            await page.focus(selector);
+            await page.keyboard.type(inputValue);
+            await page.waitForTimeout(500);
+            // Validate amount in the table
+            table = await page.$$('tbody tr');
+            expect(table.length).to.equal(2);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+        };
+
+        // First filter validation on the main page.
+        await filterOnRun(`#runOverviewFilter > ${runNumberInputSelector}`);
+
+        // Validate if the filter tab value is equal to the main page value.
+        await page.$eval('#openFilterToggle', (element) => element.click());
+        expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
+
+        // Test if it works in the filter tab.
         await reloadPage(page);
         await page.$eval('#openFilterToggle', (element) => element.click());
-        const filterInputSelector = '#runNumber';
-        expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
-        await page.focus(filterInputSelector);
-        await page.keyboard.type('1, 2');
-        await page.waitForTimeout(500);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
-        expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+
+        // Run the same test sequence on the filter tab.
+        await filterOnRun(runNumberInputSelector);
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
@@ -740,7 +742,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(100);
 
-        await pressElement(page, '.run-types-dropdown-container > div > div > .dropdown-selection');
+        await pressElement(page, '.runType-filter .dropdown-trigger');
         await page.waitForTimeout(100);
 
         await pressElement(page, '#run-types-dropdown-option-2');
@@ -995,7 +997,7 @@ module.exports = () => {
         await page.waitForTimeout(200);
 
         // Type a fake run number to have no runs
-        await page.focus('#runNumber');
+        await page.focus(runNumberInputSelector);
         await page.keyboard.type('99999999999');
         await page.waitForTimeout(300);
 
@@ -1024,31 +1026,28 @@ module.exports = () => {
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-overview');
         const runDurationCell = await page.$('#row106-runDuration');
-        expect(await runDurationCell.$('.popover-container')).to.be.null;
+        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
         const runDurationCell = await page.$('#row105-runDuration');
-        expect(await runDurationCell.$('.popover-container')).to.be.null;
+        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
     });
 
     it('should successfully display popover warning when run is missing trigger start', async () => {
-        const runDurationCell = await page.$('#row104-runDuration');
-        expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 start because of missing trigger start information');
+        const popoverContent = await getPopoverContent(await page.$('#row104-runDuration .popover-trigger'));
+        expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
     });
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
-        const runDurationCell = await page.$('#row103-runDuration');
-        expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 stop because of missing trigger stop information');
+        const popoverContent = await getPopoverContent(await page.$('#row103-runDuration .popover-trigger'));
+        expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
-        const runDurationCell = await page.$('#row102-runDuration');
-        expect(await runDurationCell.$eval('.popover-container .popover', (element) => element.innerHTML))
-            .to.equal('Duration based on o2 start AND stop because of missing trigger information');
+        const popoverContent = await getPopoverContent(await page.$('#row102-runDuration .popover-trigger'));
+        expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 };

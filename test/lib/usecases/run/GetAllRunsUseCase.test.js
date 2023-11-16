@@ -16,6 +16,7 @@ const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
 
 const { expect } = chai;
 
@@ -68,6 +69,64 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(1);
         const [{ detectors }] = runs;
         expect(detectors).to.equal('ACO,CPV,CTP,EMC,FIT,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC');
+    });
+
+    it('should successfully return a list of runs with the specified calibration status', async () => {
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.NO_STATUS] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.NO_STATUS, RunCalibrationStatus.FAILED] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.FAILED] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(0);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully return an array only containing runs found with tags', async () => {
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    tags: { operation: 'and', values: ['FOOD', 'RUN'] },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [run] = runs;
+            const tagTexts = run.tags.map(({ text }) => text);
+            expect(tagTexts.includes('FOOD') && tagTexts.includes('RUN')).to.be.true;
+        }
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    tags: { operation: 'or', values: ['FOOD', 'TEST-TAG-41'] },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(2);
+            for (const run of runs) {
+                const tagTexts = run.tags.map(({ text }) => text);
+                expect(tagTexts.includes('FOOD') || tagTexts.includes('TEST-TAG-41')).to.be.true;
+            }
+        }
     });
 
     it('should successfully filter on run definition', async () => {
@@ -246,6 +305,37 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(1);
         expect(runs[0].runNumber).to.equal(1);
+    });
+
+    it('should successfuly filter on "updatedAt"', async () => {
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: new Date('2019-08-08 13:00:00').getTime(),
+                        to: new Date('2019-08-08 13:00:00').getTime(),
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(98);
+        }
+        {
+            getAllRunsDto.query = {
+                filter: {
+                    updatedAt: {
+                        from: new Date('2019-08-09 14:00:00').getTime(),
+                        to: new Date('2022-03-22 15:00:00').getTime(),
+                    },
+                },
+            };
+            const { runs } = await new GetAllRunsUseCase()
+                .execute(getAllRunsDto);
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(2);
+        }
     });
 
     it('should return an array with only from values given', async () => {
@@ -479,7 +569,7 @@ module.exports = () => {
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
             filter: {
-                lhcPeriods: 'lhc22b, lhc22a',
+                lhcPeriods: 'LHC22b, LHC22a',
             },
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);

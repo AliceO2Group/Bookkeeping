@@ -130,6 +130,37 @@ module.exports = () => {
                 });
         });
 
+        it('should successfully filter on calibration', async () => {
+            const response = await request(server).get(`/api/runs?filter[calibrationStatuses][]=${RunCalibrationStatus.NO_STATUS}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        });
+
+        it('should return 400 if the calibration status filter is invalid', async () => {
+            {
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
+
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses" must be an array');
+            }
+            {
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses][]=DO-NOT-EXIST');
+
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses[0]" does not match any of the allowed types');
+            }
+        });
+
         it('should return 400 if the detectors filter is invalid', async () => {
             const response =
                 await request(server).get('/api/runs?filter[detectors][operator]=invalid&filter[detectors][values]=ITS');
@@ -244,6 +275,33 @@ module.exports = () => {
             expect(data).to.have.lengthOf(12);
         });
 
+        it('should successfully filter on updatedAt', async () => {
+            const lowerTimeLimit = new Date('2019-08-08 14:00:00').getTime();
+            const upperTimeLimit = new Date('2022-03-22 15:00:00').getTime();
+            const response =
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${lowerTimeLimit}&filter[updatedAt][to]=${upperTimeLimit}`);
+
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+
+            expect(data).to.be.an('array');
+            expect(data).to.have.lengthOf(8);
+        });
+
+        it('should return http status 400 if updatedAt from larger than to', async () => {
+            const timeNow = Date.now();
+            const response =
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+
+            expect(response.status).to.equal(400);
+            const { errors: [error] } = response.body;
+            expect(error.detail).to.equal('"query.filter.updatedAt.to" must be greater than "ref:from"');
+            expect(error.title).to.equal('Invalid Attribute');
+        });
+
         it('should filter run on their quality', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[runQualities]=bad,test');
@@ -304,7 +362,7 @@ module.exports = () => {
 
         it('should successfully filter on lhcPeriod', async () => {
             const response =
-                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22b');
+                await request(server).get('/api/runs?filter[lhcPeriods]=LHC22b');
 
             expect(response.status).to.equal(200);
 
@@ -725,7 +783,7 @@ module.exports = () => {
             const { body } = await request(server)
                 .put('/api/runs/1')
                 .expect(201)
-                .send({ runQuality: RunQualities.GOOD });
+                .send({ runQuality: RunQualities.GOOD, runQualityChangeReason: 'Justification' });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(1);
             expect(body.data.runQuality).to.equal(RunQualities.GOOD);
@@ -735,25 +793,32 @@ module.exports = () => {
             const { body } = await request(server)
                 .put('/api/runs/1')
                 .expect(400)
-                .send({ runQuality: 'wrong' });
+                .send({ runQuality: 'wrong', runQualityChangeReason: 'Justification' });
             expect(body.errors).to.be.an('array');
             expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test, none]');
+        });
+
+        it('should return 500 when trying to update the run quality without justification', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/1')
+                .send({ runQuality: RunQualities.BAD });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail).to.equal('Run quality change require a reason');
+        });
+
+        it('should return 500 when trying to update the run quality with an empty justification', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/1')
+                .send({ runQuality: RunQualities.BAD });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail).to.equal('Run quality change require a reason');
         });
 
         it('should successfully return the updated run entity with new runQuality value', async () => {
             const { body } = await request(server)
                 .put('/api/runs/106')
                 .expect(201)
-                .send({
-                    runQuality: RunQualities.GOOD,
-                    detectorsQualities: [
-                        {
-                            detectorId: 1,
-                            quality: RunDetectorQualities.BAD,
-                        },
-                    ],
-                    detectorsQualitiesChangeReason: 'Justification',
-                });
+                .send({ runQuality: RunQualities.GOOD });
             expect(body.data).to.be.an('object');
             expect(body.data.id).to.equal(106);
             expect(body.data.runQuality).to.equal(RunQualities.GOOD);
@@ -794,7 +859,7 @@ module.exports = () => {
                     detectorsQualities: [
                         {
                             detectorId: 1,
-                            quality: RunDetectorQualities.GOOD,
+                            quality: RunDetectorQualities.BAD,
                         },
                         {
                             detectorId: 32,
@@ -840,6 +905,14 @@ module.exports = () => {
             expect(body.errors[0].detail).to.equal('Detector quality change reason is required when updating detector quality');
         });
 
+        it('should return 500 when trying to update the detector\'s quality with an empty justification', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/1')
+                .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }], detectorsQualitiesChangeReason: '     ' });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail).to.equal('Detector quality change reason is required when updating detector quality');
+        });
+
         it('should successfully allow to update calibration status for calibration run', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
@@ -876,6 +949,15 @@ module.exports = () => {
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
 
+        it('should successfully return 500 when trying to set calibration status to FAILED with an empty', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.FAILED, calibrationStatusChangeReason: '      ' });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail)
+                .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
+
         it('should successfully return 500 when trying to set calibration status from FAILED without reason', async () => {
             await updateRun(
                 { runNumber: 40 },
@@ -884,6 +966,15 @@ module.exports = () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
+            expect(status).to.equal(500);
+            expect(body.errors[0].detail)
+                .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
+
+        it('should successfully return 500 when trying to set calibration status from FAILED with an empty reason', async () => {
+            const { body, status } = await request(server)
+                .put('/api/runs/40')
+                .send({ calibrationStatus: RunCalibrationStatus.SUCCESS, calibrationStatusChangeReason: '    ' });
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
@@ -990,7 +1081,7 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    lhcPeriod: 'lhc22b',
+                    lhcPeriod: 'LHC22b',
                     odcTopologyFullName: 'hash',
                     pdpWorkflowParameters: 'EVENT_DISPLAY',
                     pdpBeamType: 'fill',
@@ -1006,7 +1097,7 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.lhcPeriod).to.equal('lhc22b');
+                    expect(res.body.data.lhcPeriod).to.equal('LHC22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
                     expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
                     expect(res.body.data.pdpBeamType).to.equal('fill');
@@ -1025,7 +1116,7 @@ module.exports = () => {
                     pdpConfigOption: 'Repository hash',
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
-                    lhcPeriod: 'lhc22b',
+                    lhcPeriod: 'LHC22b',
                     triggerValue: 'LTU',
                     odcTopologyFullName: 'default',
                 });
@@ -1035,7 +1126,7 @@ module.exports = () => {
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
-            expect(body.data.lhcPeriod).to.equal('lhc22b');
+            expect(body.data.lhcPeriod).to.equal('LHC22b');
             expect(body.data.triggerValue).to.equal('LTU');
             expect(body.data.odcTopologyFullName).to.equal('default');
         });

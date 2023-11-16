@@ -21,19 +21,18 @@ const { expect } = chai;
 
 /**
  * Returns the URL with correct port postfixed.
- * @returns {String} URL specific to the port specified by user/host.
+ * @returns {string} URL specific to the port specified by user/host.
  */
 const getUrl = () => `http://localhost:${server.address().port}`;
 
 /**
  * Constructor to build elements before tests start.
- * @param {Object} page Puppeteer page object
- * @param {Object} browser Browser object to run tests on
+ *
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
-module.exports.defaultBefore = async (page, browser) => {
-    browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
-    page = await browser.newPage();
+module.exports.defaultBefore = async () => {
+    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    const page = await browser.newPage();
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
         page.coverage.startCSSCoverage(),
@@ -64,22 +63,9 @@ module.exports.defaultAfter = async (page, browser) => {
 };
 
 /**
- * Wait till selector is visible, then search for innertext on page.
- * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
- * @param {String} innerText Text to search for.
- * @returns {Promise<Boolean>} Whether the text was found on the page or not.
- */
-module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector);
-    const elementInnerText = await page.$eval(selector, (element) => element.innerText);
-    expect(elementInnerText).to.equal(innerText);
-};
-
-/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
+ * @param {string} selector Css selector.
  * @param {boolean} [jsClick=false] if true, use js native click on the element instead of page's click method (useful if element is not visible)
  * @returns {Promise} Whether the element was clickable or not.
  */
@@ -169,7 +155,7 @@ module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
 /**
  * Validates if selector is present and returns the element.
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
+ * @param {string} selector Css selector.
  * @returns {Object} Element matching the selector.
  */
 module.exports.validateElement = async (page, selector) => {
@@ -184,7 +170,7 @@ module.exports.validateElement = async (page, selector) => {
  * This function takes a screenshot of the current screen the page is at, and saves it to
  * database/storage/screenshot.png
  * @param {*} page Puppeteer page object.
- * @param {String} name Name of the screenshot taken. Useful when taking multiple in a row.
+ * @param {string} name Name of the screenshot taken. Useful when taking multiple in a row.
  * @returns {*} None
  */
 module.exports.takeScreenshot = async (page, name = 'screenshot') => {
@@ -198,7 +184,7 @@ module.exports.takeScreenshot = async (page, name = 'screenshot') => {
 /**
  * Validates if selector is present and returns the element.
  * @param {Object} page Puppeteer page object.
- * @param {String} selector Css selector.
+ * @param {string} selector Css selector.
  * @param {Object} value value that is expected at the Css selector element.
  * @returns {Object} Element matching the selector
  */
@@ -228,7 +214,7 @@ module.exports.getFirstRow = async (table, page) => {
 /**
  * Special method built to gather all currently visible table entities from a specific column into an array
  * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {String} key The key for the column to gather entities of
+ * @param {string} key The key for the column to gather entities of
  * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
  */
 module.exports.getAllDataFields = async (page, key) => {
@@ -244,6 +230,28 @@ module.exports.getAllDataFields = async (page, key) => {
 };
 
 /**
+ * Evaluate and return the text content of a given element handler
+ * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
+ * @returns {Promise<XPathResult>} the html content
+ */
+const getInnerText = async (elementHandler) => await elementHandler.evaluate((element) => element.innerText);
+
+module.exports.getInnerText = getInnerText;
+
+/**
+ * Expect an element to have a given text
+ *
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {string} innerText Text to search for.
+ * @return {void}
+ */
+module.exports.expectInnerText = async (page, selector, innerText) => {
+    await page.waitForSelector(selector);
+    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+};
+
+/**
  * Evaluate and return the html content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
  * @returns {Promise<XPathResult>} the html content
@@ -251,6 +259,51 @@ module.exports.getAllDataFields = async (page, key) => {
 const getInnerHtml = async (elementHandler) => await elementHandler.evaluate((element) => element.innerHTML);
 
 module.exports.getInnerHtml = getInnerHtml;
+
+/**
+ * Return the selector of a popover that correspond to a popover trigger
+ *
+ * @param {object} popoverTrigger the puppeteer element of the popover trigger
+ * @return {Promise<string|null>} the popover selector
+ */
+exports.getPopoverSelector = (popoverTrigger) => {
+    if (popoverTrigger === null) {
+        return null;
+    }
+
+    return popoverTrigger.evaluate((element) => {
+        const key = element.dataset.popoverKey;
+        if (!key) {
+            return null;
+        }
+
+        return `.popover[data-popover-key="${key}"]`;
+    });
+};
+
+/**
+ * Extract the content of a popover corresponding to a popover trigger
+ *
+ * @param {object} popoverTrigger the puppeteer element of the popover trigger
+ * @return {Promise<string>} the content of the trigger
+ */
+const getPopoverContent = (popoverTrigger) => {
+    if (popoverTrigger === null) {
+        return null;
+    }
+
+    return popoverTrigger.evaluate((element) => {
+        const key = element.dataset.popoverKey;
+        if (!key) {
+            return null;
+        }
+
+        const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
+        return popover.innerHTML;
+    });
+};
+
+module.exports.getPopoverContent = getPopoverContent;
 
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
@@ -263,12 +316,12 @@ module.exports.getInnerHtml = getInnerHtml;
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const cell = await page.$(`tbody tr td:nth-of-type(${columnIndex})`);
-    const balloon = await cell.$('.popover');
-    expect(balloon).to.not.be.null;
-    const actualContent = await cell.$('.popover-actual-content');
-    expect(actualContent).to.not.be.null;
+    const popoverTrigger = await cell.$('.popover-trigger');
+    const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
 
-    expect(await getInnerHtml(balloon)).to.be.equal(await getInnerHtml(actualContent));
+    const actualContent = await getPopoverContent(popoverTrigger);
+
+    expect(triggerContent).to.be.equal(actualContent);
 };
 
 /**

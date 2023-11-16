@@ -83,6 +83,43 @@ module.exports = () => {
         expect(run.definition).to.equal(RunDefinition.Physics);
     });
 
+    it('should throw when trying to change run quality without justification except from specific cases', async () => {
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { runPatch: { runQuality: RunQualities.TEST } },
+            ),
+            new BadParameterError('Run quality change require a reason'),
+        );
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { runPatch: { runQuality: RunQualities.GOOD } },
+            ),
+            new BadParameterError('Run quality change require a reason'),
+        );
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { runPatch: { runQuality: RunQualities.NONE } },
+            ),
+            new BadParameterError('Run quality change require a reason'),
+        );
+        await runService.update(
+            { runNumber: 1 },
+            { runPatch: { runQuality: RunQualities.NONE }, metadata: { runQualityChangeReason: 'Justification' } },
+        );
+        // A log has been created
+        ++lastLogId;
+        await assert.rejects(
+            () => runService.update(
+                { runNumber: 1 },
+                { runPatch: { runQuality: RunQualities.BAD } },
+            ),
+            new BadParameterError('Run quality change require a reason'),
+        );
+    });
+
     it('should throw when trying to change detector quality without justification', async () => {
         await assert.rejects(
             () => runService.update(
@@ -252,5 +289,25 @@ module.exports = () => {
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
         // Put back definition to commissioning
         await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Commissioning } });
+    });
+
+    it('should successfully update run quality without justification in specific use-cases', async () => {
+        const runNumber = 1;
+        await runService.update(
+            { runNumber },
+            { runPatch: { runQuality: RunQualities.NONE }, metadata: { runQualityChangeReason: 'Justification' } },
+        );
+        await runService.update(
+            { runNumber },
+            { runPatch: { runQuality: RunQualities.GOOD } },
+        );
+        await runService.update(
+            { runNumber },
+            { runPatch: { runQuality: RunQualities.NONE }, metadata: { runQualityChangeReason: 'Justification' } },
+        );
+        await runService.update(
+            { runNumber },
+            { runPatch: { runQuality: RunQualities.TEST } },
+        );
     });
 };
