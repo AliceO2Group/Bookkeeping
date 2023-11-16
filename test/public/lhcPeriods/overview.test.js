@@ -49,7 +49,7 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
-            avgEnergy: (avgEnergy) => !isNaN(avgEnergy),
+            avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
         };
 
         // We find the headers matching the datatype keys
