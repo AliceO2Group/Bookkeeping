@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(BookkeepingApi
-        VERSION 0.0.1
+        VERSION 0.76.0
         LANGUAGES CXX
 )
 
