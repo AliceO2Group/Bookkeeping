@@ -62,7 +62,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the runs related to the environment', async () => {
-        const runsRows = await page.$$('#runs tbody tr');
+        const runsRows = await page.$$('#runs-pane tbody tr');
         expect(runsRows).to.have.lengthOf(3);
         expect(await runsRows[0].$eval('td:first-of-type', (element) => element.innerText)).to.equal('103');
         expect(await runsRows[1].$eval('td:first-of-type', (element) => element.innerText)).to.equal('104');
@@ -78,5 +78,21 @@ module.exports = () => {
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
+    });
+
+    it('should successfully provide a tab to display related logs', async () => {
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: '8E4aZTjY' } });
+
+        await pressElement(page, '#logs-tab');
+
+        const tableSelector = '#logs-pane table tbody tr';
+        await page.waitForSelector(tableSelector);
+
+        const table = await page.$$(tableSelector);
+        expect(table).to.lengthOf(3);
+
+        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
+        expect(await table[1].evaluate((row) => row.id)).to.equal('row3');
+        expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
     });
 };

@@ -16,6 +16,7 @@ const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
 
 const { expect } = chai;
 
@@ -68,6 +69,36 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(1);
         const [{ detectors }] = runs;
         expect(detectors).to.equal('ACO,CPV,CTP,EMC,FIT,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC');
+    });
+
+    it('should successfully return a list of runs with the specified calibration status', async () => {
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.NO_STATUS] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.NO_STATUS, RunCalibrationStatus.FAILED] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [RunCalibrationStatus.FAILED] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(0);
+        }
+
+        {
+            getAllRunsDto.query = { filter: { calibrationStatuses: [] } };
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.lengthOf(0);
+        }
     });
 
     it('should successfully return an array only containing runs found with tags', async () => {
@@ -538,7 +569,7 @@ module.exports = () => {
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
             filter: {
-                lhcPeriods: 'lhc22b, lhc22a',
+                lhcPeriods: 'LHC22b, LHC22a',
             },
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);

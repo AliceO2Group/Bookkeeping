@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.71.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.71.0)
+* Notable changes for users:
+  * Only admin is authorised to create and delete tags
+  * Added tag occurrences in logs chart
+  * Added link to ali-flp main page visible as button with text - 'ALI FLP'
+  * Added parent log entry display when replying to log
+* Notable change for developers:
+  * Chart system has been improved to allow easily display bar charts
+  * Extracted two utility functions `isInTestMode` and `isInDevMode` to factorize configuration
+  * Added runToHTTPView function to handle introduced differences of entity Run
+  * Added LhcPeriod sequelize model
+  * Refactored log-related components
+* Changes made to the database:
+  * add table `lhc_periods`, replaced column `runs.lhc_period` with `run.lhc_period_id` (reference to table `lhc_periods`)
+
+## [0.70.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.70.0)
+* Notable changes for users:
+  * Fixed broken infologger run link
+  * A second input field is visible to filter runs. This input is visible in the main overview screen without opening the filter tab.
+  * Added endpoint to fetch detectors efficiency
+  * Efficiency graph vertical axis is forced between 0 and 100%
+  * Fixed bugs in chart renderer:
+    * Fixed popover staying displayed when cursor moves out of the graph
+    * Fixed graph not updating in some specific conditions
+  * Run API allow filtering on calibration status
+  * Fixed display error when displaying chart with empty data
+  * Detectors efficiencies graphs has been added
+* Notable change for developers:
+  * Improved formatPercentage to use normalized values ([0, 1])
+  * Chart axis limits can be overiden
+  * remove dead code (/api/runs/endpoint)
+  * update runs related usecases
+
+## [0.69.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.69.0)
+* Notable changes for users:
+  * Infologger links has been added in run overview, run details, environment overview and environment details
+  * Fixed the misbehaving time between runs graphs
+  * Fixed the popover of tag description not being displayed after filtering
+  * Fixed tag picker glitch when unselecting then selecting a tag
+  * Popover can now be opened in any direction relatively to the trigger
+* Notable change for developers:
+  * Fixed infinite selector failing tests
+  * Deleted useless controllers (exposing only routes returning 501) and the corresponding routers:
+    * AuthController
+    * CreatepdfController
+    * OverviewController
+    * SettingsController
+    * UsersController
+  * use newer docker compose syntax instead of legacy docker-compose
+
+## [0.68.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.68.0)
+* Notable changes for users:
+  * Added time between runs histogram
+  * Display EoR reason in runs table in LHC fill and environments details pages
+
+## [0.67.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.67.0)
+* Notable changes for users:
+  * Added horizontal lines in front of axis ticks
+  * Weekly data size graph is now available in statistics page
+  * Mean run duration graph is now available in statistics page
+  * Fixed popover misbehaving when cursor moves from child element to parent element
+
+## [0.66.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.66.0)
+* Notable changes for users:
+  * An endpoint has been added to fetch all the logs for a given LHC fill
+  * Added a tab in LHC fill display to show all the related logs
+  * Added endpoint to fetch all the logs for a given environment
+  * Added a tab displaying the logs of a given environment in display view
+  * An icon with tooltip has been added to tag pickers to display description
+  * Fixed the alignment of chart tooltip
+* Notable changes for developers:
+  * QueryBuilder is now provided by a factory method in DataSource class
+  * Transaction wrapper is now provided by DataSource class
+  * Popover is rendered outside its trigger to not be limited by overflow
+
 ## [0.65.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.65.0)
 * Notable changes for users:
   * LHC fill details statistics rely on stableBeamEnd as end of run, not stableBeamStart + duration

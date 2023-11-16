@@ -130,6 +130,37 @@ module.exports = () => {
                 });
         });
 
+        it('should successfully filter on calibration', async () => {
+            const response = await request(server).get(`/api/runs?filter[calibrationStatuses][]=${RunCalibrationStatus.NO_STATUS}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(1);
+            const [{ calibrationStatus }] = runs;
+            expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
+        });
+
+        it('should return 400 if the calibration status filter is invalid', async () => {
+            {
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
+
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses" must be an array');
+            }
+            {
+                const response = await request(server).get('/api/runs?filter[calibrationStatuses][]=DO-NOT-EXIST');
+
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.filter.calibrationStatuses[0]" does not match any of the allowed types');
+            }
+        });
+
         it('should return 400 if the detectors filter is invalid', async () => {
             const response =
                 await request(server).get('/api/runs?filter[detectors][operator]=invalid&filter[detectors][values]=ITS');
@@ -262,8 +293,8 @@ module.exports = () => {
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =
-                 await request(server)
-                     .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
+                await request(server)
+                    .get(`/api/runs?filter[updatedAt][from]=${timeNow}&filter[updatedAt][to]=${timeNow}`);
 
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;
@@ -331,7 +362,7 @@ module.exports = () => {
 
         it('should successfully filter on lhcPeriod', async () => {
             const response =
-                await request(server).get('/api/runs?filter[lhcPeriods]=lhc22b');
+                await request(server).get('/api/runs?filter[lhcPeriods]=LHC22b');
 
             expect(response.status).to.equal(200);
 
@@ -1050,7 +1081,7 @@ module.exports = () => {
                 .send({
                     timeO2End: dateValue,
                     timeTrgEnd: dateValue,
-                    lhcPeriod: 'lhc22b',
+                    lhcPeriod: 'LHC22b',
                     odcTopologyFullName: 'hash',
                     pdpWorkflowParameters: 'EVENT_DISPLAY',
                     pdpBeamType: 'fill',
@@ -1066,7 +1097,7 @@ module.exports = () => {
                     expect(res.body.data.id).to.equal(1);
                     expect(res.body.data.timeO2End).to.equal(dateValue);
                     expect(res.body.data.timeTrgEnd).to.equal(dateValue);
-                    expect(res.body.data.lhcPeriod).to.equal('lhc22b');
+                    expect(res.body.data.lhcPeriod).to.equal('LHC22b');
                     expect(res.body.data.odcTopologyFullName).to.equal('hash');
                     expect(res.body.data.pdpWorkflowParameters).to.equal('EVENT_DISPLAY');
                     expect(res.body.data.pdpBeamType).to.equal('fill');
@@ -1085,7 +1116,7 @@ module.exports = () => {
                     pdpConfigOption: 'Repository hash',
                     pdpTopologyDescriptionLibraryFile: 'production/production.desc',
                     tfbDdMode: 'processing',
-                    lhcPeriod: 'lhc22b',
+                    lhcPeriod: 'LHC22b',
                     triggerValue: 'LTU',
                     odcTopologyFullName: 'default',
                 });
@@ -1095,7 +1126,7 @@ module.exports = () => {
             expect(body.data.pdpConfigOption).to.equal('Repository hash');
             expect(body.data.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
             expect(body.data.tfbDdMode).to.equal('processing');
-            expect(body.data.lhcPeriod).to.equal('lhc22b');
+            expect(body.data.lhcPeriod).to.equal('LHC22b');
             expect(body.data.triggerValue).to.equal('LTU');
             expect(body.data.odcTopologyFullName).to.equal('default');
         });

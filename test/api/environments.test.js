@@ -150,4 +150,12 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('GET /api/environments/:envId/logs/', () => {
+        it('should successfully return a 200 response containing the logs linked to a given environment', async () => {
+            const response = await request(server).get('/api/environments/8E4aZTjY/logs');
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.lengthOf(3);
+        });
+    });
 };

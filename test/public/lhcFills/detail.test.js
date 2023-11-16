@@ -11,7 +11,15 @@
  * or submit itself to any jurisdiction.
  */
 
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, checkMismatchingUrlParam } = require('../defaults.js');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    goToPage,
+    checkMismatchingUrlParam,
+    getPopoverContent,
+} = require('../defaults.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -77,10 +85,7 @@ module.exports = () => {
             (element) => element.innerText,
         );
         expect(timeBetweenRuns.startsWith('02:00:00')).to.be.true;
-        const timeBetweenRunsWarning = await page.$eval(
-            '#lhc-fill-timeElapsedBetweenRuns .popover',
-            (element) => element.innerText,
-        );
+        const timeBetweenRunsWarning = await getPopoverContent(await page.$('#lhc-fill-timeElapsedBetweenRuns .popover-trigger'));
         expect(timeBetweenRunsWarning).to.equal('Some runs have missing start or end');
 
         const itsStatisticsName = await page.$eval(
@@ -187,6 +192,21 @@ module.exports = () => {
 
         await page.waitForSelector('input#lhc-fills');
         expect(await page.$eval('input#lhc-fills', (element) => element.value)).to.equal('6');
+    });
+
+    it('should successfully provide a tab to display related logs', async () => {
+        await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
+
+        await pressElement(page, '#logs-tab');
+
+        const tableSelector = '#logs-pane table tbody tr';
+        await page.waitForSelector(tableSelector);
+
+        const table = await page.$$(tableSelector);
+        expect(table).to.lengthOf(2);
+
+        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
+        expect(await table[1].evaluate((row) => row.id)).to.equal('row119');
     });
 
     after(async () => {
