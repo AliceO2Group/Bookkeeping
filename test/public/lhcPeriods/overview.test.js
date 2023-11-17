@@ -49,6 +49,7 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
+            year: (year) => !isNaN(year),
             avgEnergy: (avgEnergy) => !isNaN(avgEnergy),
         };
 
