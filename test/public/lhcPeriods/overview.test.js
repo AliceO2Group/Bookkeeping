@@ -51,8 +51,8 @@ module.exports = () => {
             name: (name) => periodNameRegex.test(name),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => distinctEnergies
-                ?.split(', ')
-                .map((energy) => Number(energy.trim()))
+                ?.trim()
+                .split(', ')
                 .every((energy) => !isNaN(energy)),
         };
 
