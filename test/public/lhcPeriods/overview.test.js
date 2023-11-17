@@ -50,6 +50,10 @@ module.exports = () => {
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
+            distinctEnergies: (distinctEnergies) => distinctEnergies
+                ?.split(', ')
+                .map((energy) => Number(energy.trim()))
+                .every((energy) => !isNaN(energy)),
         };
 
         // We find the headers matching the datatype keys
