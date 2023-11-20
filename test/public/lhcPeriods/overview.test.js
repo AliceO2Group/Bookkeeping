@@ -82,8 +82,8 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
     });
 
     it('can set how many lhcPeriods is available per page', async () => {
@@ -107,7 +107,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
+        expect(tableRows.length - 1).to.equal(3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
