@@ -221,28 +221,26 @@ module.exports = () => {
     });
 
     it('should successfully extract tags occurrences for logs created in a given period', async () => {
-        {
-            const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
-                from: new Date('2019/01/01 00:00:00').getTime(),
-                to: new Date('2020/12/31 23:59:59').getTime(),
-            });
-            expect(tagsOccurrences).eql([
-                { tag: 'FOOD', count: 2 },
-                { tag: 'RUN', count: 2 },
-                { tag: 'DPG', count: 1 },
-                { tag: 'GLOBAL', count: 1 },
-                { tag: 'RC', count: 1 },
-                { tag: 'TEST-TAG-36', count: 1 },
-                { tag: 'TEST-TAG-37', count: 1 },
-                { tag: 'TEST-TAG-38', count: 1 },
-                { tag: 'TEST-TAG-39', count: 1 },
-                { tag: 'TEST-TAG-40', count: 1 },
-                { tag: 'TEST-TAG-41', count: 1 },
-            ]);
-        }
+        const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
+            from: new Date('2019/01/01 00:00:00').getTime(),
+            to: new Date('2020/12/31 23:59:59').getTime(),
+        });
+        expect(tagsOccurrences).eql([
+            { tag: 'FOOD', count: 2 },
+            { tag: 'RUN', count: 2 },
+            { tag: 'DPG', count: 1 },
+            { tag: 'GLOBAL', count: 1 },
+            { tag: 'RC', count: 1 },
+            { tag: 'TEST-TAG-36', count: 1 },
+            { tag: 'TEST-TAG-37', count: 1 },
+            { tag: 'TEST-TAG-38', count: 1 },
+            { tag: 'TEST-TAG-39', count: 1 },
+            { tag: 'TEST-TAG-40', count: 1 },
+            { tag: 'TEST-TAG-41', count: 1 },
+        ]);
     });
 
-    it('should successfully filter out logs before a date (excluded)', async () => {
+    it('should successfully filter out logs before a date (included) for tag occurrences', async () => {
         {
             const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
                 from: new Date('2000/01/02 00:00:00').getTime(),
@@ -256,6 +254,77 @@ module.exports = () => {
                 to: new Date('2000/01/02 12:00:00').getTime(),
             });
             expect(tagsOccurrences).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out logs after a date (excluded) for tags occurrences', async () => {
+        {
+            const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
+                from: new Date('2000/01/02 12:00:00').getTime(),
+                to: new Date('2000/01/02 13:00:00').getTime(),
+            });
+            expect(tagsOccurrences).eql([{ tag: 'MAINTENANCE', count: 1 }]);
+        }
+        {
+            const tagsOccurrences = await statisticsService.getTagsOccurrencesInLogs({
+                from: new Date('2000/01/02 12:01:00').getTime(),
+                to: new Date('2000/01/02 13:00:00').getTime(),
+            });
+            expect(tagsOccurrences).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully extract EoR reason occurrences for runs in a given period', async () => {
+        const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
+            from: new Date('2000/01/01 00:00:00').getTime(),
+            to: new Date('2023/12/31 23:59:59').getTime(),
+        });
+        expect(eorReasonsOccurrences).to.lengthOf(2);
+        expect(eorReasonsOccurrences).to.eql([
+            { category: 'DETECTORS', title: 'TPC', count: 2 },
+            { category: 'DETECTORS', title: 'CPV', count: 1 },
+        ]);
+    });
+
+    it('should successfully filter out runs after a date (excluded) for EoR reasons occurrences', async () => {
+        {
+            const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
+                from: new Date('2019/08/08 12:00:00').getTime(),
+                to: new Date('2019/08/08 14:00:01').getTime(),
+            });
+            expect(eorReasonsOccurrences).to.lengthOf(2);
+            expect(eorReasonsOccurrences).to.eql([
+                { category: 'DETECTORS', title: 'CPV', count: 1 },
+                { category: 'DETECTORS', title: 'TPC', count: 1 },
+            ]);
+        }
+        {
+            const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
+                from: new Date('2019/08/08 12:00:00').getTime(),
+                to: new Date('2019/08/08 14:00:00').getTime(),
+            });
+            expect(eorReasonsOccurrences).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out runs before a date (included) for EoR reasons occurrences', async () => {
+        {
+            const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
+                from: new Date('2019/08/08 16:00:00').getTime(),
+                to: new Date('2019/08/08 18:00:01').getTime(),
+            });
+            expect(eorReasonsOccurrences).to.lengthOf(2);
+            expect(eorReasonsOccurrences).to.eql([
+                { category: 'DETECTORS', title: 'CPV', count: 1 },
+                { category: 'DETECTORS', title: 'TPC', count: 1 },
+            ]);
+        }
+        {
+            const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
+                from: new Date('2019/08/08 16:00:01').getTime(),
+                to: new Date('2019/08/08 18:00:00').getTime(),
+            });
+            expect(eorReasonsOccurrences).to.lengthOf(0);
         }
     });
 };
