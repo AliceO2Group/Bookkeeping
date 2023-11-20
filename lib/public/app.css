@@ -653,10 +653,3 @@ label {
         grid-template-columns: repeat(3, 1fr);
     }
 }
-
-.center-of-mass-energy {
-    background-image: url('/assets/center-of-mass-energy.svg');
-    width: 40px;
-    height: 15.66px;
-    display: inline-block;
-}
