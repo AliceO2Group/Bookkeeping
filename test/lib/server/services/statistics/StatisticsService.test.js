@@ -279,10 +279,11 @@ module.exports = () => {
             from: new Date('2000/01/01 00:00:00').getTime(),
             to: new Date('2023/12/31 23:59:59').getTime(),
         });
-        expect(eorReasonsOccurrences).to.lengthOf(2);
+        expect(eorReasonsOccurrences).to.lengthOf(3);
         expect(eorReasonsOccurrences).to.eql([
-            { category: 'DETECTORS', title: 'TPC', count: 2 },
             { category: 'DETECTORS', title: 'CPV', count: 1 },
+            { category: 'DETECTORS', title: 'TPC', count: 1 },
+            { category: 'OTHER', title: 'Some-other', count: 1 },
         ]);
     });
 
@@ -292,11 +293,8 @@ module.exports = () => {
                 from: new Date('2019/08/08 12:00:00').getTime(),
                 to: new Date('2019/08/08 14:00:01').getTime(),
             });
-            expect(eorReasonsOccurrences).to.lengthOf(2);
-            expect(eorReasonsOccurrences).to.eql([
-                { category: 'DETECTORS', title: 'CPV', count: 1 },
-                { category: 'DETECTORS', title: 'TPC', count: 1 },
-            ]);
+            expect(eorReasonsOccurrences).to.lengthOf(1);
+            expect(eorReasonsOccurrences).to.eql([{ category: 'DETECTORS', title: 'TPC', count: 1 }]);
         }
         {
             const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
@@ -313,11 +311,8 @@ module.exports = () => {
                 from: new Date('2019/08/08 16:00:00').getTime(),
                 to: new Date('2019/08/08 18:00:01').getTime(),
             });
-            expect(eorReasonsOccurrences).to.lengthOf(2);
-            expect(eorReasonsOccurrences).to.eql([
-                { category: 'DETECTORS', title: 'CPV', count: 1 },
-                { category: 'DETECTORS', title: 'TPC', count: 1 },
-            ]);
+            expect(eorReasonsOccurrences).to.lengthOf(1);
+            expect(eorReasonsOccurrences).to.eql([{ category: 'DETECTORS', title: 'TPC', count: 1 }]);
         }
         {
             const eorReasonsOccurrences = await statisticsService.getEorReasonsOccurrences({
