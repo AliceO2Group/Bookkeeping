@@ -35,6 +35,15 @@ const lhcPeriod_LHC22a = {
     },
 };
 
+const lhcPeriod_LHC23f = {
+    avgEnergy: null,
+    id: 3,
+    lhcPeriod: {
+        id: 3,
+        name: 'LHC23f',
+    },
+};
+
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -50,7 +59,7 @@ module.exports = () => {
 
     it('should succesfully get all data', async () => {
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns();
-        expect(lhcPeriods).to.be.lengthOf(2);
+        expect(lhcPeriods).to.be.lengthOf(3);
     });
 
     it('should fail when no LHC Period with given id', async () => {
@@ -100,5 +109,31 @@ module.exports = () => {
 
     it('should return null when no lhc period with given id', async () => {
         expect(await lhcPeriodStatisticsService.getByIdentifier({ id: 99999 })).to.be.null;
+    });
+
+    it('should succesfully filter period statistics on year', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    years: [2022],
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(2);
+        expect(lhcPeriods).to.have.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
+    });
+
+    it('should succesfully order period statistics on year', async () => {
+        const dto = {
+            query: {
+                sort: {
+                    year: 'ASC',
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(3);
+        expect(lhcPeriods[2]).to.be.eql(lhcPeriod_LHC23f);
     });
 };

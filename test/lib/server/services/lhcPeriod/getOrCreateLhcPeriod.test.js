@@ -23,7 +23,7 @@ module.exports = () => {
 
     it('should create and get new lhc period', async () => {
         const lhcPeriod = await getOrCreateLhcPeriod({ name: 'LHC23zz' });
-        expect(lhcPeriod.id).to.equal(3);
+        expect(lhcPeriod.id).to.equal(4);
         expect(lhcPeriod.name).to.equal('LHC23zz');
     });
 };
