@@ -27,7 +27,7 @@ const ShiftSuite = require('./shift.test.js');
 const StatisticsSuite = require('./statistics.test.js');
 const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
-const RunsV2Suite = require('./runs-v2.test.js');
+const RunsWithRunId = require('./runs-with-runId.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -40,7 +40,7 @@ module.exports = () => {
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
     describe('Runs API', RunsSuite);
-    describe('RunsV2Suite', RunsV2Suite);
+    describe('RunsWithRunId API', RunsWithRunId);
     describe('RunTypes API', RunTypesSuite);
     describe('Shift API', ShiftSuite);
     describe('Status API', StatusSuite);
