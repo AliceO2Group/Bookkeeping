@@ -179,12 +179,21 @@ th.text-center, td.text-center {
 
 /* buttons */
 
+.btn-pill {
+    border-radius: 50%;
+    padding: var(--space-s);
+    font-size: 0.65em;
+}
+
 a.btn, a.btn:hover, a.btn.active {
     text-decoration: none;
 }
 
 /* form */
 
+label {
+    margin: unset;
+}
 .label {
     cursor: pointer;
 }
@@ -244,6 +253,10 @@ a.btn, a.btn:hover, a.btn.active {
 
 .dropdown-options-head {
     border-bottom: 1px solid var(--color-gray);
+}
+
+.dropdown-option {
+    cursor: pointer;
 }
 
 .dropdown-option:hover {
