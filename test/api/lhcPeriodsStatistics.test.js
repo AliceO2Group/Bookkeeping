@@ -18,7 +18,8 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 
 const lhcPeriod_LHC22b = {
     id: 2,
-    avgEnergy: null,
+    avgCenterOfMassEnergy: 1264.9836246503144,
+    distinctEnergies: [55.2],
     lhcPeriod: {
         id: 2,
         name: 'LHC22b',
@@ -27,7 +28,11 @@ const lhcPeriod_LHC22b = {
 
 const lhcPeriod_LHC22a = {
     id: 1,
-    avgEnergy: 23.209999084472656,
+    avgCenterOfMassEnergy: 99.52079923444215,
+    distinctEnergies: [
+        23.21,
+        56.1,
+    ],
     lhcPeriod: {
         id: 1,
         name: 'LHC22a',
@@ -35,7 +40,8 @@ const lhcPeriod_LHC22a = {
 };
 
 const lhcPeriod_LHC23f = {
-    avgEnergy: null,
+    avgCenterOfMassEnergy: null,
+    distinctEnergies: [],
     id: 3,
     lhcPeriod: {
         id: 3,
