@@ -280,10 +280,11 @@ module.exports = () => {
             to: new Date('2023/12/31 23:59:59').getTime(),
         });
         expect(eorReasonsOccurrences).to.lengthOf(3);
+        eorReasonsOccurrences.sort(({ title: title1 }, { title: title2 }) => title1.localeCompare(title2));
         expect(eorReasonsOccurrences).to.eql([
             { category: 'DETECTORS', title: 'CPV', count: 1 },
-            { category: 'DETECTORS', title: 'TPC', count: 1 },
             { category: 'OTHER', title: 'Some-other', count: 1 },
+            { category: 'DETECTORS', title: 'TPC', count: 1 },
         ]);
     });
 
