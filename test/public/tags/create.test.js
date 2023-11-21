@@ -64,7 +64,7 @@ module.exports = () => {
     it('Should show no fields when having no admin roles', async () => {
         await goToPage(page, 'tag-create');
         await page.waitForTimeout(100);
-        await page.click('div[title="User Actions"]');
+        await page.click('#account-dropdown');
         await page.waitForTimeout(100);
         await page.click('span.slider.round');
         await page.waitForTimeout(100);
