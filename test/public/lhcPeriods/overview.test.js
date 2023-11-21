@@ -50,9 +50,9 @@ module.exports = () => {
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
-            distinctEnergies: (distinctEnergies) => distinctEnergies
-                ?.trim()
-                .split(', ')
+            distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
+                .trim()
+                .split(',')
                 .every((energy) => !isNaN(energy)),
             year: (year) => !isNaN(year),
         };
