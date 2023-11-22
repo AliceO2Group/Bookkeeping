@@ -69,7 +69,8 @@ module.exports = () => {
             expect(error.detail).to.equal(`Run with this run number (${wrongRunNumber}) could not be found`);
         });
 
-        it('should successfully retrieve run via ID, store and return the new run with runQuality passed as to update fields', async () => {
+        it('should successfully retrieve run via run number, \
+                store and return the new run with runQuality passed as to update fields', async () => {
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
             expect(run.id).to.equal(106);
@@ -158,7 +159,8 @@ module.exports = () => {
             await expectLastLogToBeForQualityChange(RunQualities.NONE, RunQualities.BAD, []);
         });
 
-        it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {
+        it('should successfully retrieve run via run number, \
+                store and return the new run with eorReasons passed as to update fields', async () => {
             getRunDto.params.runNumber = 1;
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
