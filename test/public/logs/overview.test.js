@@ -22,7 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -37,7 +37,7 @@ module.exports = () => {
     let parsedFirstRowId;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser, url] = await defaultBefore();
         await page.setViewport({
             width: 1400,
             height: 940,
@@ -213,12 +213,13 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Update original number of rows with the new limit
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
+        const originalRows = await page.$('#totalRowsCount');
+        const originalNumberOfRows = parseInt(await originalRows.evaluate((el) => el.innerText), 10);
 
-        // Insert a minimum date into the filter
-        await page.waitForTimeout(100);
-        // 13 logs are created before this test
+        /*
+         * Insert a minimum date into the filter
+         * 14 logs are created before this test
+         */
         const limitDate = new Date();
         const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
             + String(limitDate.getDate()).padStart(2, '0')
@@ -228,8 +229,8 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        const firstFilteredRows = await page.$('#totalRowsCount');
+        const firstFilteredNumberOfRows = parseInt(await firstFilteredRows.evaluate((el) => el.innerText), 10);
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert a maximum date into the filter
@@ -237,9 +238,9 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await page.waitForTimeout(300);
 
-        // 9 logs are created before this test
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        // 10 logs are created before this test
+        const secondFilteredRows = await page.$('#totalRowsCount');
+        const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
         expect(secondFilteredNumberOfRows).to.equal(19);
 
         // Insert a maximum date into the filter that is invalid
@@ -248,8 +249,8 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
-        const thirdFilteredRows = await page.$$('table tr');
-        const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
+        const thirdFilteredRows = await page.$('#totalRowsCount');
+        const thirdFilteredNumberOfRows = parseInt(await thirdFilteredRows.evaluate((el) => el.innerText), 10);
         expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
 
         // Clear the filters
@@ -266,7 +267,7 @@ module.exports = () => {
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
 
-        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
@@ -310,6 +311,57 @@ module.exports = () => {
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
     });
 
+    it('can filter by environments', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#environments', '8E4aZTjY');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a non-existent environment ID
+        await fillInput(page, '#environments', 'abcdefgh');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+    });
+
     it('can search for tag in the dropdown', async () => {
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
@@ -318,22 +370,22 @@ module.exports = () => {
         await page.waitForTimeout(20);
 
         // Open the filters
-        await page.$eval('.tag-dropdown-container', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
         await page.waitForTimeout(20);
         {
             await fillInput(page, '#tag-dropdown-search-input', 'food');
-            await page.waitForTimeout(20);
-            const options = await page.$$('.dropdown-option');
-            await page.waitForTimeout(40);
-            expect(options).to.lengthOf(1);
+            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+            const popoverSelector = await getPopoverSelector(popoverTrigger);
+            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+            const options = await page.$$(`${popoverSelector} .dropdown-option`);
             expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
         }
         {
             await fillInput(page, '#tag-dropdown-search-input', 'fOoD');
-            await page.waitForTimeout(20);
-            const options = await page.$$('.dropdown-option');
-            await page.waitForTimeout(40);
-            expect(options).to.lengthOf(1);
+            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+            const popoverSelector = await getPopoverSelector(popoverTrigger);
+            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+            const options = await page.$$(`${popoverSelector} .dropdown-option`);
             expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
         }
     });
@@ -373,6 +425,57 @@ module.exports = () => {
 
         // Filter on a not existing run number
         await page.type('#runsFilterText', '1234567890');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the table to be empty
+        const secondFilteredRows = await page.$$('table tr');
+        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
+        expect(secondFilteredNumberOfRows).to.equal(1);
+        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+
+        // Clear again the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+    });
+
+    it('can filter by lhc fill number', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        // Open the filters
+        await pressElement(page, '#openFilterToggle');
+
+        // Expect the page to have loaded enough rows to be able to test the filtering
+        const originalRows = await page.$$('table tr');
+        originalNumberOfRows = originalRows.length - 1;
+        expect(originalNumberOfRows).to.be.greaterThan(1);
+
+        // Insert some text into the filter
+        await fillInput(page, '#lhcFillsFilter', '1, 6');
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the (new) total number of rows to be less than the original number of rows
+        const firstFilteredRows = await page.$$('table tr');
+        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
+        expect(firstFilteredNumberOfRows).to.be.equal(1);
+
+        // Clear the filters
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.logs.reset();
+        });
+        await waitForNetworkIdleAndRedraw(page);
+
+        // Expect the total number of rows to once more equal the original total
+        const unfilteredRows = await page.$$('table tr');
+        const unfilteredNumberOfRows = unfilteredRows.length - 1;
+        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+
+        // Filter on a not existing run number
+        await page.type('#lhcFillsFilter', '1234567890');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the table to be empty
@@ -486,51 +589,49 @@ module.exports = () => {
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
+        const INFINITE_SCROLL_CHUNK = 19;
         await reloadPage(page);
-        const amountSelectorButton = await page.$('#amountSelector button');
+
+        // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
+        await page.waitForSelector('table tbody tr:nth-child(2)');
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
+
+        const amountSelectorButtonSelector = '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await pressElement(page, amountSelectorButtonSelector);
+
         const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        const menuItems = await page.$$('#amountSelector .dropup-menu .menu-item');
-        await menuItems[menuItems.length - 1].evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
+        await pressElement(page, infiniteModeButtonSelector);
 
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        // Wait for the first chunk to be loaded
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).trim().endsWith('Infinite')).to.be.true;
 
         await page.evaluate(() => {
-            window.scrollBy(0, window.innerHeight);
+            document.querySelector('table tbody tr:last-child').scrollIntoView({ behavior: 'instant' });
         });
-        await page.waitForTimeout(600);
-        const tableRows = await page.$$('table tr');
 
-        expect(tableRows.length > 20).to.be.true;
+        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
+        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.not.be.null;
     });
 
     it('can set how many logs are available per page', async () => {
-        await page.waitForTimeout(500);
-        // Expect the amount selector to currently be set to Infinite (after the previous test)
-        const amountSelectorId = '#amountSelector';
-        await page.waitForTimeout(500);
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        await reloadPage(page);
+        const amountSelectorButtonSelector = '#amountSelector button';
+        await pressElement(page, amountSelectorButtonSelector);
 
-        // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
+        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible logs to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        const amountItems5 = '#amountSelector .dropup-menu .menu-item:first-child';
+        await pressElement(page, amountItems5);
+        await page.waitForTimeout(600);
 
+        // Expect the amount of visible logs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
     });
@@ -693,12 +794,52 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
+
         await goToPage(page, 'log-overview');
-        await pressElement(page, '#row138-runs a');
-        await waitForNetworkIdleAndRedraw(page);
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        /*
+         * We have to filter for a specific log since the first page contains no logs with runs,
+         * Even when changing the logs per page to 20
+         */
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector('#titleFilterText');
+
+        // Insert some text into the filter
+        await page.waitForSelector('#titleFilterText');
+        await fillInput(page, '#titleFilterText', log119Title);
+        await page.waitForSelector('#row119-runs a');
+        await pressElement(page, '#row119-runs a');
+
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('id=2');
+    });
+
+    it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
+        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
+
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        /*
+         * We have to filter for a specific log since the first page contains no logs with runs,
+         * Even when changing the logs per page to 20
+         */
+        await pressElement(page, '#openFilterToggle');
+
+        // Insert some text into the filter
+        await fillInput(page, '#titleFilterText', log119Title);
+
+        await waitForNetworkIdleAndRedraw(page);
+        await page.waitForSelector('#row119-lhcFills a');
+        await pressElement(page, '#row119-lhcFills a');
+
+        const [, parametersExpr] = await page.url().split('?');
+        const urlParameters = parametersExpr.split('&');
+        expect(urlParameters).to.contain('page=lhc-fill-details');
+        expect(urlParameters).to.contain('fillNumber=1');
     });
 };

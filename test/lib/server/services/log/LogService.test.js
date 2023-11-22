@@ -14,6 +14,9 @@
 const assert = require('assert');
 const { logService } = require('../../../../../lib/server/services/log/LogService.js');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
+const chai = require('chai');
+
+const { expect } = chai;
 
 module.exports = () => {
     let logMock;
@@ -31,5 +34,17 @@ module.exports = () => {
             () => logService.create({ ...logMock, parentLogId: 9999 }),
             new NotFoundError('Parent log with this id (9999) could not be found'),
         );
+    });
+
+    it('Should successfully return all the logs linked to a given LHC fill', async () => {
+        const logsForFill = await logService.getAllByLhcFill(6);
+        expect(logsForFill).to.lengthOf(2);
+        expect(logsForFill.map(({ id }) => id)).to.eql([1, 119]);
+    });
+
+    it('Should successfully return all the logs linked to a given environment', async () => {
+        const logsForFill = await logService.getAllByEnvironment('8E4aZTjY');
+        expect(logsForFill).to.lengthOf(3);
+        expect(logsForFill.map(({ id }) => id)).to.eql([1, 3, 4]);
     });
 };

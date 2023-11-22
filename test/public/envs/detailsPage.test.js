@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
-const { goToPage } = require('../defaults.js');
+const { goToPage, pressElement, checkMismatchingUrlParam } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -62,10 +62,37 @@ module.exports = () => {
     });
 
     it('Should successfully display the runs related to the environment', async () => {
-        const runsRows = await page.$$('#runs tbody tr');
+        const runsRows = await page.$$('#runs-pane tbody tr');
         expect(runsRows).to.have.lengthOf(3);
         expect(await runsRows[0].$eval('td:first-of-type', (element) => element.innerText)).to.equal('103');
         expect(await runsRows[1].$eval('td:first-of-type', (element) => element.innerText)).to.equal('104');
         expect(await runsRows[2].$eval('td:first-of-type', (element) => element.innerText)).to.equal('105');
+    });
+
+    it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
+
+        await pressElement(page, '#create-log');
+
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', environmentIds: 'TDI59So3d' })).to.eql({});
+
+        await page.waitForSelector('input#environments');
+        expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
+    });
+
+    it('should successfully provide a tab to display related logs', async () => {
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: '8E4aZTjY' } });
+
+        await pressElement(page, '#logs-tab');
+
+        const tableSelector = '#logs-pane table tbody tr';
+        await page.waitForSelector(tableSelector);
+
+        const table = await page.$$(tableSelector);
+        expect(table).to.lengthOf(3);
+
+        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
+        expect(await table[1].evaluate((row) => row.id)).to.equal('row3');
+        expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
     });
 };
