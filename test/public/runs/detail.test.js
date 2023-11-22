@@ -295,10 +295,10 @@ module.exports = () => {
 
     it('notifies if a specified run id is invalid', async () => {
         // Navigate to a run detail view with an id that cannot exist
-        await goToPage(page, 'run-detail', { queryParameters: { id: 'abc' } });
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 'abc' } });
 
         // We expect there to be an error message
-        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runId" must be a number');
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runNumber" must be a number');
     });
 
     it('notifies if a specified run id is not found', async () => {
