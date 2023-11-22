@@ -22,7 +22,7 @@ const { RunDetectorQualities } = require('../../../../lib/domain/enums/RunDetect
 const { expect } = chai;
 
 module.exports = () => {
-    const wrongId = 9999999999;
+    const wrongRunNumber = 9999999999;
     const TIMESTAMP = 1664271988000;
     const BIG_INT_NUMBER = '99999999999999999';
     let getRunDto;
@@ -31,10 +31,10 @@ module.exports = () => {
     beforeEach(async () => {
         updateRunDto = await UpdateRunDto.validateAsync({
             body: {},
-            params: { runId: 106 },
+            params: { runNumber: 106 },
         });
         getRunDto = await GetRunDto.validateAsync({
-            params: { runId: 106 },
+            params: { runNumber: 106 },
         });
 
         updateRunByRunNumberDto = await UpdateRunByRunNumberDto.validateAsync({
@@ -61,12 +61,12 @@ module.exports = () => {
             },
         });
     });
-    describe('updates with runId parameter.', () => {
+    describe('updates with runNumber parameter.', () => {
         it('Should give an error when the id of the environment can not be found', async () => {
-            updateRunDto.params.runId = wrongId;
+            updateRunDto.params.runNumber = wrongRunNumber;
             const { error } = await new UpdateRunUseCase().execute(updateRunDto);
             expect(error.status).to.equal(500);
-            expect(error.detail).to.equal(`Run with this id (${wrongId}) could not be found`);
+            expect(error.detail).to.equal(`Run with this run number (${wrongRunNumber}) could not be found`);
         });
 
         it('should successfully retrieve run via ID, store and return the new run with runQuality passed as to update fields', async () => {
@@ -86,13 +86,13 @@ module.exports = () => {
         });
 
         it('should return error as run quality cannot be changed for ongoing runs', async () => {
-            getRunDto.params.runId = 105;
+            getRunDto.params.runNumber = 105;
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
             expect(run.id).to.equal(105);
             expect(run.runQuality).to.equal(RunQualities.TEST);
 
-            updateRunDto.params.runId = 105;
+            updateRunDto.params.runNumber = 105;
             updateRunDto.body.runQuality = RunQualities.BAD;
             updateRunDto.body.runQualityChangeReason = 'Change reason';
             const { error } = await new UpdateRunUseCase().execute(updateRunDto);
@@ -159,14 +159,14 @@ module.exports = () => {
         });
 
         it('should successfully retrieve run via ID, store and return the new run with eorReasons passed as to update fields', async () => {
-            getRunDto.params.runId = 1;
+            getRunDto.params.runNumber = 1;
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
             expect(run.id).to.equal(1);
             expect(run.eorReasons).to.have.lengthOf(2);
             expect(run.eorReasons[0].description).to.equal('Some Reason other than selected');
 
-            updateRunDto.params.runId = 1;
+            updateRunDto.params.runNumber = 1;
 
             /*
              * EorReasons with ID should be kept, those without ID should be inserted, existing EoRReasons in entry not matching
@@ -205,10 +205,10 @@ module.exports = () => {
         });
 
         it('should throw an error when the at least one of the given tag do not exists', async () => {
-            const runId = 1;
-            updateRunDto.params.runId = runId;
+            const runNumber = 1;
+            updateRunDto.params.runNumber = runNumber;
             updateRunDto.body.tags = ['FOOD', 'DO-NOT-EXIST', 'DO-NOT-EXIST-EITHER'];
-            const originalRun = await new GetRunUseCase().execute({ params: { runId: runId } });
+            const originalRun = await new GetRunUseCase().execute({ params: { runNumber: runNumber } });
 
             const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
 
@@ -218,7 +218,7 @@ module.exports = () => {
             expect(error.detail).to.equal('Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
 
             // Expect run to have other fields unchanged
-            const run = await new GetRunUseCase().execute({ params: { runId: runId } });
+            const run = await new GetRunUseCase().execute({ params: { runNumber: runNumber } });
             for (const property in run) {
                 expect(run[property]).to.eql(originalRun[property]);
             }
@@ -239,7 +239,7 @@ module.exports = () => {
             };
 
             const { result, error } = await new UpdateRunUseCase().execute({
-                params: { runId: 1 },
+                params: { runNumber: 1 },
                 body: {
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
                     detectorsQualitiesChangeReason: justification,
@@ -254,7 +254,7 @@ module.exports = () => {
             await expectLastLogToBeForDetectorQualityChange(RunDetectorQualities.BAD);
 
             await new UpdateRunUseCase().execute({
-                params: { runId: 1 },
+                params: { runNumber: 1 },
                 body: {
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
                     detectorsQualitiesChangeReason: justification,
@@ -265,7 +265,7 @@ module.exports = () => {
 
         it('should throw an error when trying to update the quality of a non-existing detector', async () => {
             const { result, error } = await new UpdateRunUseCase().execute({
-                params: { runId: 1 },
+                params: { runNumber: 1 },
                 body: {
                     detectorsQualities: [{ detectorId: 2, quality: RunDetectorQualities.BAD }],
                     detectorsQualitiesChangeReason: 'Justification',
@@ -278,7 +278,7 @@ module.exports = () => {
 
         it('should throw an error when trying to update the quality of a run not ended yet', async () => {
             const { result, error } = await new UpdateRunUseCase().execute({
-                params: { runId: 105 },
+                params: { runNumber: 105 },
                 body: {
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
                     detectorsQualitiesChangeReason: 'Justification',
@@ -313,15 +313,15 @@ module.exports = () => {
         });
 
         it('Should give an error when the id of the run can not be found', async () => {
-            updateRunByRunNumberDto.query.runNumber = wrongId;
+            updateRunByRunNumberDto.query.runNumber = wrongRunNumber;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
             expect(error.status).to.equal(500);
-            expect(error.detail).to.equal(`Run with this run number (${wrongId}) could not be found`);
+            expect(error.detail).to.equal(`Run with this run number (${wrongRunNumber}) could not be found`);
         });
 
         it('Should give an error when the id of the lhcFill cannot be found', async () => {
-            updateRunByRunNumberDto.body.fillNumber = wrongId;
+            updateRunByRunNumberDto.body.fillNumber = wrongRunNumber;
             const { error } = await new UpdateRunUseCase()
                 .execute(updateRunByRunNumberDto);
             expect(error.status).to.equal(500);
