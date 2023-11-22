@@ -18,7 +18,8 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 
 const lhcPeriod_LHC22b = {
     id: 2,
-    avgEnergy: null,
+    avgCenterOfMassEnergy: 1264.9836246503144,
+    distinctEnergies: [55.2],
     lhcPeriod: {
         id: 2,
         name: 'LHC22b',
@@ -27,10 +28,24 @@ const lhcPeriod_LHC22b = {
 
 const lhcPeriod_LHC22a = {
     id: 1,
-    avgEnergy: 23.209999084472656,
+    avgCenterOfMassEnergy: 99.52079923444215,
+    distinctEnergies: [
+        23.21,
+        56.1,
+    ],
     lhcPeriod: {
         id: 1,
         name: 'LHC22a',
+    },
+};
+
+const lhcPeriod_LHC23f = {
+    avgCenterOfMassEnergy: null,
+    distinctEnergies: [],
+    id: 3,
+    lhcPeriod: {
+        id: 3,
+        name: 'LHC23f',
     },
 };
 
@@ -49,9 +64,9 @@ module.exports = () => {
                     }
 
                     const { data, meta } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(2);
+                    expect(data).to.be.lengthOf(3);
 
                     done();
                 });
@@ -142,6 +157,23 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should succefully filter on years', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?filter[years][]=2023')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(1);
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC23f);
+                    done();
+                });
+        });
         it('should successfuly sort on id and name', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[id]=DESC&sort[name]=ASC')
@@ -152,11 +184,33 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(2);
-                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
-                    expect(data[1]).to.be.eql(lhcPeriod_LHC22a);
+                    const { data: lhcPeriods } = res.body;
+                    expect(lhcPeriods).to.be.an('array');
+                    expect(lhcPeriods).to.be.lengthOf(3);
+                    expect(lhcPeriods).to.have.ordered.deep.members([
+                        lhcPeriod_LHC23f,
+                        lhcPeriod_LHC22b,
+                        lhcPeriod_LHC22a,
+                    ]);
+
+                    done();
+                });
+        });
+        it('should successfuly sort on year', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?sort[year]=DESC')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: lhcPeriods } = res.body;
+                    expect(lhcPeriods).to.be.an('array');
+                    expect(lhcPeriods).to.be.lengthOf(3);
+                    expect(lhcPeriods[0]).to.be.eql(lhcPeriod_LHC23f);
+                    expect(lhcPeriods.slice(1)).to.have.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
 
                     done();
                 });
@@ -171,10 +225,12 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.eql(lhcPeriod_LHC22a);
+                    const { data: lhcPeriods } = res.body;
+                    expect(lhcPeriods).to.be.an('array');
+                    expect(lhcPeriods).to.have.ordered.deep.members([
+                        lhcPeriod_LHC22b,
+                        lhcPeriod_LHC22a,
+                    ]);
 
                     done();
                 });
