@@ -113,6 +113,38 @@ module.exports = () => {
         expect(lhcPeriods).to.be.lengthOf(2);
     });
 
+    it('should succesfully filter period statistics on distinctEnergies', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    distinctEnergies: [
+                        23.21,
+                        56.1,
+                    ],
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(1);
+        expect(lhcPeriods).to.has.deep.members(lhcPeriod_LHC22a);
+    });
+
+    it('should succesfully filter period statistics on distinctEnergies - ver 2', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    distinctEnergies: [
+                        55.2,
+                        56.1,
+                    ],
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(2);
+        expect(lhcPeriods).to.has.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
+    });
+
     it('should return null when no lhc period with given id', async () => {
         expect(await lhcPeriodStatisticsService.getByIdentifier({ id: 99999 })).to.be.null;
     });

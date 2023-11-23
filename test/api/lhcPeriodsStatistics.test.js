@@ -174,6 +174,23 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should succefully filter on distinctEnergies', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?filter[distinctEnergies][]=55.2&filter[distinctEnergies][]=56.1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: lhcPeriods } = res.body;
+                    expect(lhcPeriods).to.be.an('array');
+                    expect(lhcPeriods).to.be.lengthOf(2);
+                    expect(lhcPeriods).to.has.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
+                    done();
+                });
+        });
         it('should successfuly sort on id and name', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[id]=DESC&sort[name]=ASC')
