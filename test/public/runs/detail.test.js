@@ -226,7 +226,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
         expect(urlParameters).to.contain('panel=flps');
     });
 
@@ -236,7 +236,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
         expect(urlParameters).to.contain('panel=logs');
     });
     it('should show lhc data in normal mode', async () => {
@@ -295,10 +295,10 @@ module.exports = () => {
 
     it('notifies if a specified run id is invalid', async () => {
         // Navigate to a run detail view with an id that cannot exist
-        await goToPage(page, 'run-detail', { queryParameters: { id: 'abc' } });
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 'abc' } });
 
         // We expect there to be an error message
-        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runId" must be a number');
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runNumber" must be a number');
     });
 
     it('notifies if a specified run id is not found', async () => {
