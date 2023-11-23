@@ -938,7 +938,7 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
-        expect(eorReasons).has.lengthOf(1);
+        expect(eorReasons).has.lengthOf(2);
         const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
         expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
 
