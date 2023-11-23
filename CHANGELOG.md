@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.72.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.72.0)
+* Notable changes for users:
+  * Added EoR reason chart
+  * existing endpoints which used :runId, use :runNumber now instead
+  * endpoint GET /api/runs/:runId moved to GET /api/legacy/runs/:runId
+  * run-detail page use runNumber instead of runId as run identifier, using runId is still possible but not recommended
+  * Replace nav bar LHC Fills tab with LHC dropdown with two options:
+    * LHC Fills
+    * LHC Periods
+  * Fixed the run order in LHC fill API when some of the runs have EoR reason
+  * User can now choose the date range on which statistics must be applied, using a time picker with pre-defined options
+  * Fixed misbehaving in chart fill conditions
+  * add LHC Period overview page from RCT and the corresponding API
+* Notable change for developers:
+  * use only one method in model to toggle nav bar dropdowns
+  * change links id in https://github.com/AliceO2Group/Bookkeeping/pull/1240/files#diff-90f47b96a0752a7ea8dbe41825baf3804e1228ab28f024b599524e0d0ea2c551R47-R49, because of test failure after adding LHC Fills as pageLink
+  * A time range picker has been created
+  * Updated the way docker compose is started
+  * formatTimestamp function now properly display 0 timestamp value
+  * refactor docs: scalar types to lowercase
+
 ## [0.71.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.71.0)
 * Notable changes for users:
   * Only admin is authorised to create and delete tags
