@@ -177,6 +177,23 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should succefully filter on beamTypes', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?filter[beamTypes][]=XeXe')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(1);
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
+                    done();
+                });
+        });
         it('should successfuly sort on id and name', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[id]=DESC&sort[name]=ASC')
@@ -215,6 +232,23 @@ module.exports = () => {
                     expect(lhcPeriods[0]).to.be.eql(lhcPeriod_LHC23f);
                     expect(lhcPeriods.slice(1)).to.have.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
 
+                    done();
+                });
+        });
+        it('should successfuly sort on year', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?sort[beamType]=DESC')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: lhcPeriods } = res.body;
+                    expect(lhcPeriods).to.be.an('array');
+                    expect(lhcPeriods).to.be.lengthOf(3);
+                    expect(lhcPeriods).to.have.deep.ordered.members([lhcPeriod_LHC22b, lhcPeriod_LHC22a, lhcPeriod_LHC23f]);
                     done();
                 });
         });
