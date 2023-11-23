@@ -192,7 +192,7 @@ module.exports = () => {
             expect(result.eorReasons).to.have.lengthOf(2);
             expect(result.eorReasons[0].id).to.equal(2);
             expect(result.eorReasons[0].description).to.equal('Some Reason other than selected plus one');
-            expect(result.eorReasons[1].id).to.equal(6);
+            expect(result.eorReasons[1].id).to.equal(7);
             expect(result.eorReasons[1].description).to.be.null;
         });
 
