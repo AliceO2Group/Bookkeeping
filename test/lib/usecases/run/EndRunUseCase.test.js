@@ -25,7 +25,7 @@ module.exports = () => {
     beforeEach(async () => {
         endRunDto = await EndRunDto.validateAsync({
             params: {
-                runId: '1',
+                runNumber: '1',
             },
             body: {
                 timeO2End: dateValue,
@@ -71,7 +71,7 @@ module.exports = () => {
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {
-        endRunDto.params.runId = wrongId;
+        endRunDto.params.runNumber = wrongId;
         const { error } = await new EndRunUseCase()
             .execute(endRunDto);
         expect(error.status).to.equal('400');
