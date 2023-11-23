@@ -815,7 +815,7 @@ module.exports = () => {
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=2');
+        expect(urlParameters).to.contain('runNumber=2');
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
