@@ -235,7 +235,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on year', (done) => {
+        it('should successfuly sort on beamType', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[beamType]=DESC')
                 .expect(200)
