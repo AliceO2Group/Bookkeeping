@@ -126,7 +126,7 @@ module.exports = () => {
         };
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(1);
-        expect(lhcPeriods).to.has.deep.members(lhcPeriod_LHC22a);
+        expect(lhcPeriods).to.has.deep.members([lhcPeriod_LHC22a]);
     });
 
     it('should succesfully filter period statistics on distinctEnergies - ver 2', async () => {
