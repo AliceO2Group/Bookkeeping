@@ -174,7 +174,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
-        const firstavgCeneterOfMassEnergy = await getAllDataFields(page, 'avgCenterOfMassEnergy');
-        expect(firstavgCeneterOfMassEnergy).to.have.all.deep.ordered.members(firstavgCeneterOfMassEnergy.sort());
+        const firstAvgCeneterOfMassEnergies = await getAllDataFields(page, 'avgCenterOfMassEnergy');
+        expect(firstAvgCeneterOfMassEnergies).to.have.all.deep.ordered.members(firstAvgCeneterOfMassEnergies.sort());
     });
 };
