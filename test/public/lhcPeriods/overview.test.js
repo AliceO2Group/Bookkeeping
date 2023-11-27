@@ -151,13 +151,13 @@ module.exports = () => {
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by year in an ascending manner
-        const nameHeader = await page.$('th#year');
-        await nameHeader.evaluate((button) => button.click());
+        const yearHeader = await page.$('th#year');
+        await yearHeader.evaluate((button) => button.click());
         await page.waitForTimeout(300);
 
         // Expect the year to be in order
-        const firstNames = await getAllDataFields(page, 'year');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        const firstYears = await getAllDataFields(page, 'year');
+        expect(firstYears).to.have.all.deep.ordered.members(firstYears.sort());
     });
 
     it('can sort by avgCenterOfMassEnergy column in ascending and descending manners', async () => {
@@ -169,12 +169,12 @@ module.exports = () => {
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by avgCenterOfMassEnergy in an ascending manner
-        const nameHeader = await page.$('th#avgCenterOfMassEnergy');
-        await nameHeader.evaluate((button) => button.click());
+        const avgCeneterOfMassEnergyHeader = await page.$('th#avgCenterOfMassEnergy');
+        await avgCeneterOfMassEnergyHeader.evaluate((button) => button.click());
         await page.waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
-        const firstNames = await getAllDataFields(page, 'avgCenterOfMassEnergy');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        const firstavgCeneterOfMassEnergy = await getAllDataFields(page, 'avgCenterOfMassEnergy');
+        expect(firstavgCeneterOfMassEnergy).to.have.all.deep.ordered.members(firstavgCeneterOfMassEnergy.sort());
     });
 };
