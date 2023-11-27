@@ -833,7 +833,7 @@ module.exports = () => {
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
 
-        await waitForNetworkIdleAndRedraw(page);
+        // Await waitForNetworkIdleAndRedraw(page);
         await page.waitForSelector('#row119-lhcFills a');
         await pressElement(page, '#row119-lhcFills a');
 
