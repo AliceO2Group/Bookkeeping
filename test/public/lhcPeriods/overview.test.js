@@ -16,6 +16,8 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
+    getAllDataFields,
+    fillInput,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -121,5 +123,28 @@ module.exports = () => {
         });
         await page.waitForTimeout(100);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+    });
+
+    it('should successfuly apply lhc period name filter', async () => {
+        await goToPage(page, 'lhc-period-overview');
+        await page.waitForTimeout(100);
+
+        const filterToggleButton = await page.$('#openFilterToggle');
+        expect(filterToggleButton).to.not.be.null;
+
+        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, '#namesFilterInput', 'LHC22a');
+        await page.waitForTimeout(100);
+
+        let allLhcPeriodNames = await getAllDataFields(page, 'name');
+        expect(allLhcPeriodNames).to.has.all.deep.members(['LHC22a']);
+
+        const resetFiltersButton = await page.$('#reset-filters');
+        expect(resetFiltersButton).to.not.be.null;
+        await resetFiltersButton.evaluate((button) => button.click());
+        await page.waitForTimeout(100);
+
+        allLhcPeriodNames = await getAllDataFields(page, 'name');
+        expect(allLhcPeriodNames).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
     });
 };
