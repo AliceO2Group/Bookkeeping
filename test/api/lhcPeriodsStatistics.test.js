@@ -18,6 +18,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 
 const lhcPeriod_LHC22b = {
     id: 2,
+    beamType: 'XeXe',
     avgCenterOfMassEnergy: 1264.9836246503144,
     distinctEnergies: [55.2],
     lhcPeriod: {
@@ -28,6 +29,7 @@ const lhcPeriod_LHC22b = {
 
 const lhcPeriod_LHC22a = {
     id: 1,
+    beamType: 'pp',
     avgCenterOfMassEnergy: 99.52079923444215,
     distinctEnergies: [
         23.21,
@@ -40,9 +42,10 @@ const lhcPeriod_LHC22a = {
 };
 
 const lhcPeriod_LHC23f = {
+    id: 3,
+    beamType: null,
     avgCenterOfMassEnergy: null,
     distinctEnergies: [],
-    id: 3,
     lhcPeriod: {
         id: 3,
         name: 'LHC23f',
@@ -174,6 +177,23 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should succefully filter on beamTypes', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?filter[beamTypes][]=XeXe')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(1);
+                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
+                    done();
+                });
+        });
         it('should successfuly sort on id and name', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[id]=DESC&sort[name]=ASC')
@@ -212,6 +232,23 @@ module.exports = () => {
                     expect(lhcPeriods[0]).to.be.eql(lhcPeriod_LHC23f);
                     expect(lhcPeriods.slice(1)).to.have.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
 
+                    done();
+                });
+        });
+        it('should successfuly sort on beamType', (done) => {
+            request(server)
+                .get('/api/lhcPeriodsStatistics?sort[beamType]=DESC')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: lhcPeriods } = res.body;
+                    expect(lhcPeriods).to.be.an('array');
+                    expect(lhcPeriods).to.be.lengthOf(3);
+                    expect(lhcPeriods).to.have.deep.ordered.members([lhcPeriod_LHC22b, lhcPeriod_LHC22a, lhcPeriod_LHC23f]);
                     done();
                 });
         });
