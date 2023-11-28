@@ -19,6 +19,7 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 
 const lhcPeriod_LHC22b = {
     id: 2,
+    beamType: 'XeXe',
     avgCenterOfMassEnergy: 1264.9836246503144,
     distinctEnergies: [55.2],
     lhcPeriod: {
@@ -29,6 +30,7 @@ const lhcPeriod_LHC22b = {
 
 const lhcPeriod_LHC22a = {
     id: 1,
+    beamType: 'pp',
     avgCenterOfMassEnergy: 99.52079923444215,
     distinctEnergies: [
         23.21,
@@ -41,9 +43,10 @@ const lhcPeriod_LHC22a = {
 };
 
 const lhcPeriod_LHC23f = {
+    id: 3,
+    beamType: null,
     avgCenterOfMassEnergy: null,
     distinctEnergies: [],
-    id: 3,
     lhcPeriod: {
         id: 3,
         name: 'LHC23f',
@@ -141,5 +144,31 @@ module.exports = () => {
         const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
         expect(lhcPeriods).to.be.lengthOf(3);
         expect(lhcPeriods[2]).to.be.eql(lhcPeriod_LHC23f);
+    });
+
+    it('should succesfully filter period statistics on beamType', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    beamTypes: ['XeXe'],
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(1);
+        expect(lhcPeriods).to.have.deep.members([lhcPeriod_LHC22b]);
+    });
+
+    it('should succesfully sort period statistics on beamType', async () => {
+        const dto = {
+            query: {
+                sort: {
+                    beamType: 'ASC',
+                },
+            },
+        };
+        const { rows: lhcPeriods } = await lhcPeriodStatisticsService.getAllForPhysicsRuns(dto.query);
+        expect(lhcPeriods).to.be.lengthOf(3);
+        expect(lhcPeriods).to.have.deep.ordered.members([lhcPeriod_LHC23f, lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
     });
 };
