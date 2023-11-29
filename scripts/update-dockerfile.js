@@ -96,7 +96,7 @@ const replaceTokens = new Map();
                 log(`Version ${currentVersion} is already the last for ${pkg}`);
                 continue;
             }
-            log(`Updating from ${currentVersion} to ${newVersion}`);
+            log(`Updating ${pkg} from ${currentVersion} to ${newVersion}`);
 
             const replaceToken = replaceTokens.get(lineIndex) ?? [];
             if (replaceToken.length === 0) {
