@@ -62,12 +62,6 @@ module.exports = () => {
     });
 
     it('successfully exited EDIT mode of a run', async () => {
-        try {
-            await page.$('#edit-run');
-            console.log('selected #edit-run')
-        } catch (e) {
-            console.log(e.message);
-        }
         await pressElement(page, '#cancel-run');
         await page.waitForTimeout(100);
         await expectInnerText(page, '#edit-run', 'Edit Run');
