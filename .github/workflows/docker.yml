@@ -35,15 +35,15 @@ jobs:
             -f docker-compose.yml \
             -f docker-compose.dev.yml \
             config --quiet
-      - name: Validate docker-compose.staging.yml
-        run: |
-          docker-compose \
-            -f docker-compose.yml \
-            -f docker-compose.staging.yml \
-            config --quiet
       - name: Validate docker-compose.test.yml
         run: |
           docker-compose \
             -f docker-compose.yml \
             -f docker-compose.test.yml \
+            config --quiet
+      - name: Validate docker-compose.coverage.yml
+        run: |
+          docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.coverage.yml \
             config --quiet
