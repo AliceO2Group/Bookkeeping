@@ -324,7 +324,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter
-        await fillInput(page, '#environments', '8E4aZTjY');
+        await fillInput(page, '#environments-filter', '8E4aZTjY');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -345,7 +345,7 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
         // Filter on a non-existent environment ID
-        await fillInput(page, '#environments', 'abcdefgh');
+        await fillInput(page, '#environments-filter', 'abcdefgh');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the table to be empty
