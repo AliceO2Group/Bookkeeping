@@ -79,6 +79,11 @@ const replaceTokens = new Map();
 
     if (inBlockToUpdate) {
         const matches = line.matchAll(/([^= ]*)=([^= ]*)/g);
+
+        /*
+         * Index provided by the regex match is from the original line, but we need to consider that the replacement versions may not have
+         * the same size and adapt index if there is several dependencies on one line
+         */
         let offset = 0;
 
         for (const match of matches) {
