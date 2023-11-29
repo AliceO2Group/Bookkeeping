@@ -31,7 +31,7 @@ module.exports = () => {
     });
 
     it('should only containing lhc fills with stable beams', async () => {
-        getAllLhcFillsDto.query = { filter: { isStableBeam: true } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
         expect(lhcFills).to.be.an('array');
