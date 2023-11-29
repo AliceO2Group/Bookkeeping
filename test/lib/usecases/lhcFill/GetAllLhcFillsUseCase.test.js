@@ -12,6 +12,7 @@
  */
 
 const { environment: { GetAllEnvironmentsUseCase } } = require('../../../../lib/usecases/index.js');
+const { lhcFill: { GetAllLhcFillsUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetAllLhcFillsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 
@@ -27,5 +28,16 @@ module.exports = () => {
         const result = await new GetAllEnvironmentsUseCase()
             .execute(getAllLhcFillsDto);
         expect(result.environments).to.be.an('array');
+    });
+
+    it('should only containing lhc fills with stable beams', async () => {
+        getAllLhcFillsDto.query = { filter: { isStableBeam: true } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+        expect(lhcFills).to.be.an('array');
+        lhcFills.forEach((lhcFill) => {
+            // Every lhcFill should have stableBeamStart
+            expect(lhcFill.stableBeamsStart).to.not.be.null;
+        });
     });
 };
