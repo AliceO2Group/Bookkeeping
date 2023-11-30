@@ -64,10 +64,8 @@ module.exports = () => {
     it('Should show no fields when having no admin roles', async () => {
         await goToPage(page, 'tag-create');
         await page.waitForTimeout(100);
-        await page.click('div[title="User Actions"]');
-        await page.waitForTimeout(100);
-        await page.click('span.slider.round');
-        await page.waitForTimeout(100);
+        await pressElement(page, 'div[title="User Actions"]');
+        await pressElement(page, 'span.slider.round');
         expect(await page.$('#mattermost')).to.equal(null);
         expect(await page.$('#email')).to.equal(null);
     });
