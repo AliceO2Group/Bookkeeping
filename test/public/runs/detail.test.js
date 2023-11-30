@@ -240,7 +240,7 @@ module.exports = () => {
         expect(urlParameters).to.contain('panel=logs');
     });
     it('should show lhc data in normal mode', async () => {
-        await page.waitForTimeout(100);
+        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
         const element = await page.$('#lhc-fill-fillNumber>strong');
         const value = await element.evaluate((el) => el.textContent);
         expect(value).to.equal('Fill number:');
@@ -275,7 +275,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
         await page.waitForTimeout(100);
 
         const fillNumberSelector = '#lhc-fill-fillNumber a';
@@ -409,7 +409,7 @@ module.exports = () => {
 
     it('should display the LHC fill number when beam is stable', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
-        await page.waitForSelector('#NoLHCDataNotStable');
+        await page.waitForSelector('#lhc-fill-fillNumber');
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 };
