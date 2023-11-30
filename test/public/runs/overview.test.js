@@ -678,11 +678,10 @@ module.exports = () => {
         const filterOnRun = async () => {
             await page.waitForSelector(runNumberInputSelector);
             expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
-            await page.focus(runNumberInputSelector);
-            await page.keyboard.type(inputValue);
+            await fillInput(page, runNumberInputSelector, inputValue);
             await page.waitForTimeout(500);
             // Validate amount in the table
-            table = await page.$$('tbody tr');
+            const table = await page.$$('tbody tr');
             expect(table.length).to.equal(2);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
         };
