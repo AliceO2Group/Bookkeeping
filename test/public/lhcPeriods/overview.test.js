@@ -135,7 +135,7 @@ module.exports = () => {
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, '#namesFilterInput', 'LHC22a');
+        await fillInput(page, 'input.mt1', 'LHC22a');
         await page.waitForTimeout(100);
 
         let allLhcPeriodNames = await getAllDataFields(page, 'name');
