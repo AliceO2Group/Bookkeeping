@@ -240,7 +240,7 @@ module.exports = () => {
         expect(urlParameters).to.contain('panel=logs');
     });
     it('should show lhc data in normal mode', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await page.waitForTimeout(100);
         const element = await page.$('#lhc-fill-fillNumber>strong');
         const value = await element.evaluate((el) => el.textContent);
         expect(value).to.equal('Fill number:');
