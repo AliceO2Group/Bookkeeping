@@ -130,12 +130,12 @@ module.exports = () => {
     it('should successfuly apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await page.waitForTimeout(100);
-
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, 'input.mt1', 'LHC22a');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22a');
+
         await page.waitForTimeout(100);
 
         let allLhcPeriodNames = await getAllDataFields(page, 'name');
@@ -148,5 +148,20 @@ module.exports = () => {
 
         allLhcPeriodNames = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNames).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
+    });
+
+    it('should successfuly apply lhc period year filter', async () => {
+        await goToPage(page, 'lhc-period-overview');
+        await page.waitForTimeout(100);
+        const filterToggleButton = await page.$('#openFilterToggle');
+        expect(filterToggleButton).to.not.be.null;
+
+        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', '2022');
+
+        await page.waitForTimeout(100);
+
+        const allLhcPeriodNames = await getAllDataFields(page, 'year');
+        expect([...new Set(allLhcPeriodNames)]).to.has.all.members(['2022']);
     });
 };
