@@ -176,7 +176,7 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
-        const allLhcPeriodNames = await getAllDataFields(page, 'beamType');
-        expect([...new Set(allLhcPeriodNames)]).to.has.all.members(['XeXe']);
+        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamType');
+        expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
     });
 };
