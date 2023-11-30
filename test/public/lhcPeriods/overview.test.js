@@ -161,7 +161,7 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
-        const allLhcPeriodNames = await getAllDataFields(page, 'year');
-        expect([...new Set(allLhcPeriodNames)]).to.has.all.members(['2022']);
+        const allLhcPeriodYears = await getAllDataFields(page, 'year');
+        expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2022']);
     });
 };
