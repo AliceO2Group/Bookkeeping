@@ -133,7 +133,7 @@ const replaceTokens = new Map();
         }).join('\n');
         fs.writeFileSync(DOCKERFILE_SRC, recomposedDockerfile);
     },
-    () => {
-        log('An error occurred');
+    (error) => {
+        log('An error has occurred: ', error.message);
     },
 );
