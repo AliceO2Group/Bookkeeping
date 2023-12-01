@@ -125,3 +125,13 @@ message User {
   // Name of the user.
   string name = 3;
 }
+
+// End of run reason
+message EorReason {
+  // The unique identifier
+  int32 id = 1;
+  // Category of the eor (as described in reason_types)
+  string category = 2;
+  string title = 3;
+  optional string description = 4;
+}
