@@ -665,3 +665,13 @@ label {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+.run-quality.good {
+    background-color: var(--color-green) !important;
+    color: var(--white);
+}
+
+.run-quality.bad {
+    background-color: var(--color-soft-red) !important;
+    color: var(--white);
+}
