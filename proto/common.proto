@@ -129,9 +129,10 @@ message User {
 // End of run reason
 message EorReason {
   // The unique identifier
-  int32 id = 1;
-  // Category of the eor (as described in reason_types)
+  optional int32 id = 1;
+  // Category of the eor (as described in reason_types table)
   string category = 2;
+  // Title of the eor (as described in reason_types table)
   string title = 3;
   optional string description = 4;
 }

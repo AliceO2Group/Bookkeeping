@@ -57,7 +57,7 @@ message RunUpdateRequest {
   optional string pdpWorkflowParameters = 13;
   optional string pdpBeamType = 14;
   optional string readoutCfgUri = 15;
-  optional repeated EorReason eorReasons = 16;
+  repeated EorReason eorReasons = 16;
 }
 
 // Enums
