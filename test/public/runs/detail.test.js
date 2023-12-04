@@ -50,7 +50,7 @@ module.exports = () => {
     });
 
     it('run detail loads correctly', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 1 } });
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
