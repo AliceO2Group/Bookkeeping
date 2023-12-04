@@ -218,4 +218,19 @@ module.exports = () => {
         const allLhcPeriodYears = await getAllDataFields(page, 'year');
         expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2022']);
     });
+
+    it('should successfuly apply lhc period beam type filter', async () => {
+        await goToPage(page, 'lhc-period-overview');
+        await page.waitForTimeout(100);
+        const filterToggleButton = await page.$('#openFilterToggle');
+        expect(filterToggleButton).to.not.be.null;
+
+        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(4) input[type=text]', 'XeXe');
+
+        await page.waitForTimeout(100);
+
+        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamType');
+        expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
+    });
 };
