@@ -310,4 +310,86 @@ module.exports = () => {
             { runPatch: { runQuality: RunQualities.TEST } },
         );
     });
+
+    it('should successfully update run with eorReasons with reasonTypeId', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [
+            {
+                reasonTypeId: 1,
+                description: 'test1',
+            },
+            {
+                reasonTypeId: 1,
+                description: 'test2',
+            },
+            {
+                reasonTypeId: 1,
+                description: 'test3',
+            },
+        ];
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+    });
+
+    it('should successfully update run with eorReasons with category and title', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [
+            {
+                category: 'DETECTORS',
+                title: 'CPV',
+                description: 'test1',
+            },
+            {
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test2',
+            },
+            {
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test3',
+            },
+        ];
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+    });
+
+    it('should successfully update run with empty eorReasons', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [];
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+    });
+
+    it('should throw when trying to update run with non existing eorReason', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [
+            {
+                category: 'NONE',
+                title: 'NON-EXISTING TEST',
+                description: 'non-existing',
+            },
+        ];
+
+        await assert.rejects(
+            () => runService.update(
+                { runNumber },
+                { relations: { eorReasons: eorReasons } },
+            ),
+            new Error('Provided reason types do not exist'),
+        );
+    });
 };
