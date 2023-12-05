@@ -15,6 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
+const { pressElement, expectInnerText } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -83,17 +84,14 @@ module.exports = () => {
         const header = await page.$eval('.f3', (element) => element.textContent);
         expect(header).to.equal('Reply to: First entry');
 
-        const showCollapseBtn = await page.$('#show-collapse-1');
-        expect(showCollapseBtn).to.exist;
-        await showCollapseBtn.evaluate((button) => button.click());
+        await pressElement(page, '#show-collapse-1');
+        await page.waitForTimeout(20);
 
-        const parentLogText = await page.$eval('span[role="presentation"]:first-of-type', (span) => span.innerText);
-        expect(parentLogText).to.equal('Power interruption due to unplugged wire.');
+        await expectInnerText(page, 'span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
 
-        const log1DetailsBtn = await page.$('#details-of-1');
-        expect(log1DetailsBtn).to.exist;
+        await pressElement(page, '#details-of-1');
+        await page.waitForTimeout(20);
 
-        await log1DetailsBtn.evaluate((button) => button.click());
         expect(new URL(page.url()).search).to.equal('?page=log-detail&id=1');
     });
 
