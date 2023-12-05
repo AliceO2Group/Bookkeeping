@@ -80,7 +80,7 @@ const customizedQcPdpEosReport = {
         runs: {
             COMMISSIONING: [
                 {
-                    id: 108,
+                    id: 110,
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                     timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
                     runDuration: (3600 + 2 * 60 + 3) * 1000,
@@ -119,7 +119,7 @@ const customizedQcPdpEosReport = {
             ],
             TECHNICAL: [
                 {
-                    id: 109,
+                    id: 111,
                     runNumber: 201,
                     runQuality: 'good',
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
@@ -149,7 +149,7 @@ const customizedQcPdpEosReport = {
                         },
                     ],
                 }, {
-                    id: 110,
+                    id: 112,
                     runNumber: 202,
                     runQuality: 'bad',
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
