@@ -27,6 +27,7 @@ const ShiftSuite = require('./shift.test.js');
 const StatisticsSuite = require('./statistics.test.js');
 const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
+const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
 
 module.exports = () => {
@@ -48,4 +49,5 @@ module.exports = () => {
     describe('Subsystems API', SubsystemsSuite);
     describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);
+    describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
 };
