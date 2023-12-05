@@ -50,7 +50,7 @@ module.exports = () => {
     });
 
     it('run detail loads correctly', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 1 } });
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
@@ -404,7 +404,7 @@ module.exports = () => {
     it('should not display the LHC Data when beam is not stable', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
         await page.waitForSelector('#NoLHCDataNotStable');
-        await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Data, beam mode was not stable');
+        await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
 
     it('should display the LHC fill number when beam is stable', async () => {
