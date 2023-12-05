@@ -201,7 +201,7 @@ const formattedCustomizedQcPdpEosReportTypeSpecific = `
 ## Runs
 
 ### COMMISSIONING
-- [200](http://localhost:4000?page=run-detail&id=108) - 01:02:03 - good
+- [200](http://localhost:4000?page=run-detail&runNumber=200) - 01:02:03 - good
     * Detectors: -
     * Detectors QC bad: -
     * EOR:
@@ -215,10 +215,10 @@ const formattedCustomizedQcPdpEosReportTypeSpecific = `
       comment
 
 ### TECHNICAL
-- [201](http://localhost:4000?page=run-detail&id=109) - 01:02:03 - good
+- [201](http://localhost:4000?page=run-detail&runNumber=201) - 01:02:03 - good
     * Detectors: \`ITS\`, \`TST\`
     * Detectors QC bad: \`TST\`
-- [202](http://localhost:4000?page=run-detail&id=110) - 01:02:03 - bad
+- [202](http://localhost:4000?page=run-detail&runNumber=202) - 01:02:03 - bad
     * Detectors: \`FT0\`, \`TST\`
     * Detectors QC bad: \`FT0\`, \`TST\`
 `;

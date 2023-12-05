@@ -21,8 +21,10 @@ const HomeSuite = require('./home');
 const AboutSuite = require('./about');
 const EnvsSuite = require('./envs');
 const EosReportSuite = require('./eosReport');
+const LhcPeriodsSuite = require('./lhcPeriods');
 
 module.exports = () => {
+    describe('LhcPeriods', LhcPeriodsSuite);
     describe('LhcFills', LhcFillsSuite);
     describe('Logs', LogsSuite);
     describe('Envs', EnvsSuite);

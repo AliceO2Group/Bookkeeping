@@ -2,6 +2,7 @@ html, body {
     scroll-behavior: smooth;
 
     --ui-component-medium: 550px;
+    --ui-component-large: 850px;
 }
 
 .cell-xs { max-width: 2rem; }
@@ -41,6 +42,7 @@ html, body {
 .cell-xs:last-child .resizeWidth, .cell-s:last-child .resizeWidth, .cell-m:last-child .resizeWidth, .cell-l:last-child .resizeWidth, .cell-xl:last-child .resizeWidth { visibility: hidden; }
 
 /* width scale */
+.w-l { width: var(--ui-component-large) }
 .w-2   { width:   2.5%; }
 .w-5   { width:   5%; }
 .w-7   { width:   7.5%; }
@@ -120,6 +122,10 @@ html, body {
 
 .g5 {
     gap: var(--space-xl)
+}
+
+.flex-grid {
+    display: grid;
 }
 
 /* Float */
@@ -215,11 +221,6 @@ label {
 
 .v-resize {
     resize: vertical;
-}
-
-.dropdown-container {
-    position: relative;
-    line-height: inherit;
 }
 
 .dropdown-trigger {
@@ -475,7 +476,7 @@ label {
     top: 0;
     left: 0;
     z-index: 1002;
-    max-width: var(--ui-component-medium);
+    max-width: var(--ui-component-large);
 }
 
 .no-events {
@@ -620,6 +621,17 @@ label {
     stroke: var(--color-gray-darker);
     stroke-width: 0.5px;
 }
+
+/* Custom styles */
+.time-range-selector .month-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.time-range-selector .month-option:nth-last-child(-n+3), .time-range-selector .dropdown-option:last-child {
+    border-bottom: 1px solid var(--color-gray-dark);
+}
+
 
 /**
  * Breakpoints :

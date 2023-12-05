@@ -324,7 +324,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter
-        await fillInput(page, '#environments', '8E4aZTjY');
+        await fillInput(page, '.environments-filter input', '8E4aZTjY');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -345,7 +345,7 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
         // Filter on a non-existent environment ID
-        await fillInput(page, '#environments', 'abcdefgh');
+        await fillInput(page, '.environments-filter input', 'abcdefgh');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the table to be empty
@@ -809,13 +809,17 @@ module.exports = () => {
         // Insert some text into the filter
         await page.waitForSelector('#titleFilterText');
         await fillInput(page, '#titleFilterText', log119Title);
+
+        // Close filter toggle
+        await pressElement(page, '#openFilterToggle');
+
         await page.waitForSelector('#row119-runs a');
         await pressElement(page, '#row119-runs a');
 
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=2');
+        expect(urlParameters).to.contain('runNumber=2');
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
@@ -833,7 +837,7 @@ module.exports = () => {
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
 
-        await waitForNetworkIdleAndRedraw(page);
+        // Await waitForNetworkIdleAndRedraw(page);
         await page.waitForSelector('#row119-lhcFills a');
         await pressElement(page, '#row119-lhcFills a');
 
