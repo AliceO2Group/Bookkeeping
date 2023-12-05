@@ -7,7 +7,6 @@ All notable changes to this project will be documented in this file. See [standa
   * Replace nav bar LHC Fills tab with LHC dropdown with two options:
     * LHC Fills
     * LHC Periods
-  * Notable change for developers:
 * Notable change for developers:
   * A script has been added to update Dockerfile dependencies automatically
   * Filter panel now uses popover
