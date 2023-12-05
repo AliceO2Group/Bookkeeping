@@ -217,7 +217,7 @@ module.exports = () => {
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(4);
+        expect(runs).to.have.lengthOf(6);
         expect(runs.every((run) => [1, 3].includes(run.fillNumber))).to.be.true;
     });
 
@@ -266,7 +266,7 @@ module.exports = () => {
 
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(10);
-        expect(runs[0].runNumber).to.equal(96);
+        expect(runs[0].runNumber).to.equal(98);
     });
 
     it('should return an array, only containing runs with epn true', async () => {
@@ -334,7 +334,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(2);
+            expect(runs).to.have.lengthOf(4);
         }
     });
 
@@ -396,14 +396,14 @@ module.exports = () => {
         runDuration.limit = pivot;
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
+        expect(runs).to.have.lengthOf(3);
         expect(runs.every((run) => run.runDuration === pivot)).to.be.true;
 
         runDuration.operator = '>=';
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
 
-        expect(runs).to.have.lengthOf(5);
+        expect(runs).to.have.lengthOf(7);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
         runDuration.operator = '>';
@@ -418,7 +418,7 @@ module.exports = () => {
 
         let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(8);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS   ,   FT0';
 
@@ -441,7 +441,7 @@ module.exports = () => {
         getAllRunsDto.query.filter.detectors.operator = 'or';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(8);
 
         getAllRunsDto.query.filter.detectors.operator = 'none';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
@@ -476,14 +476,14 @@ module.exports = () => {
         nDetectors.operator = '>=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(46);
+        expect(runs).to.have.lengthOf(48);
         expect(runs.every((run) => run.nDetectors >= 6)).to.be.true;
 
         nDetectors.operator = '>';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        // 1 run has 15 detectors
-        expect(runs).to.have.lengthOf(1);
+        // 3 runs have 15 detectors
+        expect(runs).to.have.lengthOf(3);
     });
 
     it('should successfully filter on flps number', async () => {
