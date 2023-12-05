@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const appendPath = require('./appendPath');
-const { dtoValidator } = require('./dtoValidator');
+const OverviewSuite = require('./overview.test');
 
-module.exports = {
-    appendPath,
-    dtoValidator,
+module.exports = () => {
+    describe('Overview Page', OverviewSuite);
 };

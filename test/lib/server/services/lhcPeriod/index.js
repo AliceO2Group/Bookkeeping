@@ -11,10 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const appendPath = require('./appendPath');
-const { dtoValidator } = require('./dtoValidator');
+const getOrCreateLhcPeriodTest = require('./getOrCreateLhcPeriod.test');
+const LhcPeriodStatisticsService = require('./LhcPeriodStatisticsService.test');
 
-module.exports = {
-    appendPath,
-    dtoValidator,
+module.exports = () => {
+    describe('getOrCreateLhcPeriodTest', getOrCreateLhcPeriodTest);
+    describe('LhcPeriodStatisticsService', LhcPeriodStatisticsService);
 };
