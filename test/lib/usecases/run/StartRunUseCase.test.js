@@ -25,7 +25,7 @@ module.exports = () => {
     beforeEach(async () => {
         startRunDto = await StartRunDto.validateAsync({
             body: {
-                runNumber: 107,
+                runNumber: 109,
                 timeO2Start: '2022-03-21 13:00:00',
                 timeTrgStart: '2022-03-21 13:00:00',
                 environmentId: '1234567890',
@@ -47,7 +47,7 @@ module.exports = () => {
         const { result, error } = await new StartRunUseCase().execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
-        expect(result.id).to.equal(107);
+        expect(result.id).to.equal(109);
     });
 
     it('should fail to save a run with an already existing run number', async () => {
@@ -58,24 +58,24 @@ module.exports = () => {
         expect(error).to.eql({
             status: 409,
             title: 'Conflict',
-            detail: 'A run already exists with run number 107',
+            detail: 'A run already exists with run number 109',
         });
     });
 
     it('should successfully store and return the saved run with default values if not provided', async () => {
         delete startRunDto.body.detectors;
-        startRunDto.body.runNumber = 108;
+        startRunDto.body.runNumber = 110;
         const { result, error } = await new StartRunUseCase().execute(startRunDto);
         expect(error).to.be.undefined;
         expect(result).to.be.an('object');
         expect(result.runType.name).to.equal('NONE');
-        expect(result.id).to.equal(108);
+        expect(result.id).to.equal(110);
         expect(result.detectors).to.equal('');
         expect(result.runQuality).to.equal(RunQualities.NONE);
     });
 
     it('should successfully create a run with a non-existing run type', async () => {
-        startRunDto.body.runNumber = 109;
+        startRunDto.body.runNumber = 111;
         startRunDto.body.runType = 'NEW_FAKE_RUN_TYPE';
         const { result, error } = await new StartRunUseCase()
             .execute(startRunDto);
@@ -87,7 +87,7 @@ module.exports = () => {
 
     it('should successfully link the run to the given environment', async () => {
         const environmentId = 'Dxi029djX';
-        const runNumber = 110;
+        const runNumber = 112;
         startRunDto.body.runNumber = runNumber;
         startRunDto.body.environmentId = environmentId;
         const { error } = await new StartRunUseCase().execute(startRunDto);
