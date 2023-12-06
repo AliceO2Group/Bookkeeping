@@ -112,7 +112,8 @@ module.exports = () => {
                 expect(logs).to.have.lengthOf(1);
                 const [log] = logs;
                 expect(log.title).to.equal(`Run 106 quality has changed to ${newQuality}`);
-                expect(log.text.startsWith(`The run quality for run 106 has been changed from ${previousQuality} to ${newQuality} on `))
+                expect(log.text
+                    .startsWith(`The run quality for run 106 from period LHC22b has been changed from ${previousQuality} to ${newQuality} on `))
                     .to.be.true;
                 expect(log.text.endsWith(`Reason: ${changeReason}`)).to.be.true;
                 expect(log.runs.map(({ runNumber }) => runNumber)).to.eql([106]);
