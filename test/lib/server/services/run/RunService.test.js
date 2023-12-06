@@ -244,6 +244,8 @@ module.exports = () => {
             { runNumber },
             { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
         );
+        // a new log has been created
+        ++lastLogId;
 
         const run = await getRun({ runNumber });
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
@@ -252,6 +254,33 @@ module.exports = () => {
             () => runService.update({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.NO_STATUS } }),
             new BadParameterError(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`),
         );
+    });
+
+    it('should successfully create a log when updating EoR reason to DETECTOR-TPC', async () => {
+        const runNumber = 1;
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: [{ reasonTypeId: 2, description: 'A description' }] } },
+        );
+
+        const lastLog = await getLog(++lastLogId, (qb) => {
+            qb.include('tags');
+        });
+        expect(lastLog.title).to.equal('EoR reason has changed for 1');
+        expect(lastLog.text.startsWith('End of run reason for the run 1 has been changed')).to.be.true;
+        expect(lastLog.tags).to.lengthOf(0);
+    });
+
+    it('should successfully NOT create a log when updating EoR reason for something else than DETECTOR-TPC', async () => {
+        const runNumber = 1;
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: [{ reasonTypeId: 1, description: 'A description' }] } },
+        );
+
+        expect(await getLog(lastLogId + 1, (qb) => qb.include('tags'))).to.be.null;
     });
 
     it('should successfully consider current patch to allow/disallow calibration status update', async () => {
