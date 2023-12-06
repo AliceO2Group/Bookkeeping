@@ -131,7 +131,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(106);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(108);
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -311,7 +311,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        expect(table.length).to.equal(8);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
         await page.waitForTimeout(300);
@@ -714,7 +714,7 @@ module.exports = () => {
         await waitForNetworkIdleAndRedraw(page);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(6);
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
@@ -1011,7 +1011,7 @@ module.exports = () => {
         await reloadPage(page);
 
         // Run 106 has a fill attached
-        const runId = 106;
+        const runId = 108;
 
         const fillNumberCellSelector = `#row${runId}-fillNumber`;
         const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);
