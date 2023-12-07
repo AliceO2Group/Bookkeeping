@@ -11,6 +11,11 @@ services:
       PAGE_ITEMS_LIMIT: 100
       CCDB_SYNCHRONIZATION_PERIOD: 3153600000000 # 100y in milliseconds, to be sure all the runs are included when testing sync
     restart: "no"
+    volumes:
+      - type: bind
+        read_only: true
+        source: ../WebUi/Framework
+        target: /usr/src/app/node_modules/@aliceo2/web-ui
 
   database:
     environment:
