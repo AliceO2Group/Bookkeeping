@@ -205,7 +205,7 @@ module.exports = () => {
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
-    it('ASDF dynamically switches between visible pages in the page selector', async () => {
+    it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
