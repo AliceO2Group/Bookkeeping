@@ -211,7 +211,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            window.model.runs.overviewModel.pagination.itemsPerPage = 1;
+            model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -231,10 +231,8 @@ module.exports = () => {
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.overviewModel.pagination.itemsPerPage = 200;
-        });
+        // eslint-disable-next-line no-return-assign, no-undef
+        await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -244,7 +242,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 10;
+            model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
