@@ -180,7 +180,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(6);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should successfully return 400 if the given definitions are not valid', async () => {
@@ -272,7 +272,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
 
-            expect(data).to.have.lengthOf(12);
+            expect(data).to.have.lengthOf(14);
         });
 
         it('should successfully filter on updatedAt', async () => {
@@ -287,7 +287,7 @@ module.exports = () => {
             const { data } = response.body;
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(8);
+            expect(data).to.have.lengthOf(10);
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
@@ -326,7 +326,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(5);
+            expect(data.length).to.equal(7);
         });
 
         it('should return 400 if "runQuality" is invalid', async () => {
@@ -357,7 +357,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(46);
+            expect(data).to.have.lengthOf(48);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -705,7 +705,7 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType.id).to.be.a('number');
-                    expect(res.body.data.id).to.equal(107);
+                    expect(res.body.data.id).to.equal(109);
 
                     done();
                 });

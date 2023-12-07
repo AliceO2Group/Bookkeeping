@@ -50,7 +50,7 @@ module.exports = () => {
     });
 
     it('run detail loads correctly', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 1 } });
         await expectInnerText(page, 'h2', 'Run #1');
     });
 
@@ -275,7 +275,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
         await page.waitForTimeout(100);
 
         const fillNumberSelector = '#lhc-fill-fillNumber a';
@@ -399,5 +399,17 @@ module.exports = () => {
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#run-number', (element) => element.value)).to.equal('106');
+    });
+
+    it('should not display the LHC Data when beam is not stable', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
+        await page.waitForSelector('#NoLHCDataNotStable');
+        await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
+    });
+
+    it('should display the LHC fill number when beam is stable', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
+        await page.waitForSelector('#lhc-fill-fillNumber');
+        await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 };
