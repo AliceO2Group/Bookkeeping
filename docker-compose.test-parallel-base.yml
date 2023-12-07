@@ -30,6 +30,10 @@ services:
         source: ./database/storage
         target: /var/storage
         read_only: false
+      - type: bind
+        read_only: true
+        source: ../WebUi/Framework
+        target: /usr/src/app/node_modules/@aliceo2/web-ui
 
   test_db:
     image: mariadb:10.5.9
