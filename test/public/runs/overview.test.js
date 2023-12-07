@@ -205,11 +205,13 @@ module.exports = () => {
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
-    it('dynamically switches between visible pages in the page selector', async () => {
+    it('ASDF dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 1;
+            window.model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -227,9 +229,11 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 200;
+            model.runs.overviewModel.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
@@ -407,8 +411,10 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 20;
+            model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
+        await page.waitForTimeout(100);
+
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
