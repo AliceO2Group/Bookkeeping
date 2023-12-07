@@ -21,6 +21,10 @@ services:
         read_only: true
         source: ./proto
         target: /usr/src/app/proto
+      - type: bind
+        read_only: true
+        source: ../WebUi/Framework
+        target: /usr/src/app/node_modules/@aliceo2/web-ui
 
   database:
     environment:
