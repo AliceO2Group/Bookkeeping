@@ -392,4 +392,7 @@ module.exports = () => {
             new Error('Provided reason types do not exist'),
         );
     });
+
+    // TODO: add new test and update the present ones after implementing PR comments
+    // TODO: for example: also with mixed eorReasons: reasonTypeId and category+title
 };
