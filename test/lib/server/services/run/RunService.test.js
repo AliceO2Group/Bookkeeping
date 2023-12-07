@@ -323,16 +323,14 @@ module.exports = () => {
                 reasonTypeId: 1,
                 description: 'test2',
             },
-            {
-                reasonTypeId: 1,
-                description: 'test3',
-            },
         ];
 
-        await runService.update(
+        const run = await runService.update(
             { runNumber },
             { relations: { eorReasons: eorReasons } },
         );
+
+        expect(run.eorReasons).to.lengthOf(2);
     });
 
     it('should successfully update run with eorReasons with category and title', async () => {
@@ -349,17 +347,43 @@ module.exports = () => {
                 title: 'TPC',
                 description: 'test2',
             },
+        ];
+
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+
+        expect(run.eorReasons).to.lengthOf(2);
+    });
+
+    it('should successfully update run with eorReasons with mixed category and title. reasonTypeId and non-existing reasonType', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [
             {
                 category: 'DETECTORS',
-                title: 'TPC',
+                title: 'CPV',
+                description: 'test1',
+            },
+            {
+                reasonTypeId: 1,
+                description: 'test2',
+            },
+            {
+                category: 'NON-EXISTING',
+                title: 'NON-EXISTING',
                 description: 'test3',
             },
         ];
 
-        await runService.update(
+        const run = await runService.update(
             { runNumber },
             { relations: { eorReasons: eorReasons } },
         );
+
+        // Should only include the valid ones without throwing for invalid one (is simply excluded)
+        expect(run.eorReasons).to.lengthOf(2);
     });
 
     it('should successfully update run with empty eorReasons', async () => {
@@ -367,32 +391,43 @@ module.exports = () => {
 
         const eorReasons = [];
 
-        await runService.update(
+        const run = await runService.update(
             { runNumber },
             { relations: { eorReasons: eorReasons } },
         );
+
+        expect(run.eorReasons).to.lengthOf(0);
     });
 
-    it('should throw when trying to update run with non existing eorReason', async () => {
+    it('should add only eorReasons that do not have an id', async () => {
         const runNumber = 1;
 
         const eorReasons = [
             {
-                category: 'NONE',
-                title: 'NON-EXISTING TEST',
-                description: 'non-existing',
+                id: 5000,
+                category: 'DETECTORS',
+                title: 'CPV',
+                description: 'test1',
+            },
+            {
+                id: 5001,
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test2',
+            },
+            {
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test3',
             },
         ];
 
-        await assert.rejects(
-            () => runService.update(
-                { runNumber },
-                { relations: { eorReasons: eorReasons } },
-            ),
-            new Error('Provided reason types do not exist'),
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
         );
-    });
 
-    // TODO: add new test and update the present ones after implementing PR comments
-    // TODO: for example: also with mixed eorReasons: reasonTypeId and category+title
+        // EorReasons should only include the one that does not have an id
+        expect(run.eorReasons).to.lengthOf(1);
+    });
 };
