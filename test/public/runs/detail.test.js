@@ -301,12 +301,12 @@ module.exports = () => {
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runNumber" must be a number');
     });
 
-    it('notifies if a specified run number is not found', async () => {
+    it('notifies if a specified run id is not found', async () => {
         // Navigate to a run detail view with an id that cannot exist
         await goToPage(page, 'run-detail', { queryParameters: { id: 999 } });
 
         // We expect there to be an error message
-        await expectInnerText(page, '.alert', 'Run with this run number (999) could not be found');
+        await expectInnerText(page, '.alert', 'Run with this id (999) could not be found');
     });
 
     it('can return to the overview page if an error occurred', async () => {
