@@ -94,22 +94,22 @@ module.exports = () => {
     });
 
     it('can set how many lhcPeriods is available per page', async () => {
-        await page.waitForTimeout(300);
+        await goToPage(page, 'lhc-period-overview');
+        await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
+        const amountSelectorButton = await page.$('.dropup button');
+        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
         await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
+        const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
+        const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
@@ -117,14 +117,14 @@ module.exports = () => {
         expect(tableRows.length - 1).to.equal(3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
-        const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
+        const customPerPageInput = await page.$('.dropup input[type=number]');
         await customPerPageInput.evaluate((input) => input.focus());
-        await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
+        await page.$eval('.dropup input[type=number]', (el) => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
