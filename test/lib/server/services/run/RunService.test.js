@@ -331,6 +331,10 @@ module.exports = () => {
         );
 
         expect(run.eorReasons).to.lengthOf(2);
+        // Description is unique, should be equal
+        for (let i = 0; i < run.eorReasons.length; i++) {
+            expect(run.eorReasons[i].description).to.equal(eorReasons[i].description);
+        }
     });
 
     it('should successfully update run with eorReasons with category and title', async () => {
@@ -355,6 +359,10 @@ module.exports = () => {
         );
 
         expect(run.eorReasons).to.lengthOf(2);
+        // Description is unique, should be equal
+        for (let i = 0; i < run.eorReasons.length; i++) {
+            expect(run.eorReasons[i].description).to.equal(eorReasons[i].description);
+        }
     });
 
     it('should successfully update run with eorReasons with mixed category and title. reasonTypeId and non-existing reasonType', async () => {
@@ -384,6 +392,9 @@ module.exports = () => {
 
         // Should only include the valid ones without throwing for invalid one (is simply excluded)
         expect(run.eorReasons).to.lengthOf(2);
+        // Only first and second should be includes
+        expect(run.eorReasons[0].description).to.equal(eorReasons[0].description);
+        expect(run.eorReasons[1].description).to.equal(eorReasons[1].description);
     });
 
     it('should successfully update run with empty eorReasons', async () => {
@@ -429,5 +440,7 @@ module.exports = () => {
 
         // EorReasons should only include the one that does not have an id
         expect(run.eorReasons).to.lengthOf(1);
+        // Only last one should be included
+        expect(run.eorReasons[0].description).to.equal(eorReasons[2].description);
     });
 };
