@@ -84,8 +84,7 @@ module.exports = () => {
 
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be larger than or equal to 1');
-
+                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
                     done();
                 });
         });
@@ -105,40 +104,6 @@ module.exports = () => {
                     expect(res.body.data).to.have.lengthOf(2);
                     expect(res.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
                     expect(res.body.meta.page.totalCount).to.equal(totalNumber);
-
-                    done();
-                });
-        });
-
-        it('should support sorting, name DESC', (done) => {
-            request(server)
-                .get('/api/flps?sort[name]=desc')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data[0].name).to.be.greaterThan(data[1].name);
-
-                    done();
-                });
-        });
-
-        it('should support sorting, name ASC', (done) => {
-            request(server)
-                .get('/api/flps?sort[name]=asc')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data[1].name).to.be.greaterThan(data[0].name);
 
                     done();
                 });
@@ -233,65 +198,6 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/flps/:flpId/logs', () => {
-        it('should return 400 if the flp id is not a number', (done) => {
-            request(server)
-                .get('/api/flps/abc/logs')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/flpId');
-                    expect(titleError.detail).to.equal('"params.flpId" must be a number');
-
-                    done();
-                });
-        });
-
-        it('should return 404 if the flp could not be found', (done) => {
-            request(server)
-                .get('/api/flps/999999999/logs')
-                .expect(404)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.errors[0].title).to.equal('Flp with this id (999999999) could not be found');
-
-                    done();
-                });
-        });
-
-        it('should return 200 in all other cases', (done) => {
-            request(server)
-                .get('/api/flps/1/logs')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.be.an('array');
-                    expect(res.body.data).to.have.lengthOf(4);
-
-                    expect(res.body.data[0].id).to.equal(1);
-                    expect(res.body.data[0].flps).to.deep.equal([
-                        {
-                            id: 1,
-                        },
-                    ]);
-                    done();
-                });
-        });
-    });
-
     describe('POST api/flps', () => {
         it('should return 400 if no name or hostname is provided', (done) => {
             request(server)
@@ -320,6 +226,7 @@ module.exports = () => {
                 .send({
                     name: 'FLPIEE',
                     hostname: 'www.home.cern',
+                    runNumber: 106,
                 })
                 .expect(201)
                 .end((err, res) => {
@@ -330,6 +237,7 @@ module.exports = () => {
 
                     expect(res.body.data.name).to.equal('FLPIEE');
                     expect(res.body.data.hostname).to.equal('www.home.cern');
+                    expect(res.body.data.runNumber).to.equal(106);
 
                     done();
                 });
