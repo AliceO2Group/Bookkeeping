@@ -12,11 +12,9 @@
  */
 
 const CreateFlpUseCase = require('./CreateFlpUseCase.test.js');
-const GetAllFlpsUseCase = require('./GetAllFlpsUseCase.test.js');
 const GetFlpUseCase = require('./GetFlpUseCase.test.js');
 
 module.exports = () => {
     describe('CreateFlpUseCase', CreateFlpUseCase);
-    describe('GetAllFlpsUseCase', GetAllFlpsUseCase);
     describe('GetFlpUseCase', GetFlpUseCase);
 };
