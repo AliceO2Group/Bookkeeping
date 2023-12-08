@@ -17,7 +17,7 @@ const DetectorsSuite = require('./detectors.test.js');
 const DPLProcessSuite = require('./dplProcess.test.js');
 const EnvironmentsSuite = require('./environments.test.js');
 const EosReportSuite = require('./eosReport.test.js');
-// TODO [O2B-805] const FlpSuite = require('./flps.test.js');
+const FlpSuite = require('./flps.test.js');
 const StatusSuite = require('./status.test.js');
 const LogsSuite = require('./logs.test.js');
 const LhcFillSuite = require('./lhcFills.test.js');
@@ -27,6 +27,7 @@ const ShiftSuite = require('./shift.test.js');
 const StatisticsSuite = require('./statistics.test.js');
 const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
+const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
 
 module.exports = () => {
@@ -36,7 +37,7 @@ module.exports = () => {
     describe('DPL Process API', DPLProcessSuite);
     describe('Environments API', EnvironmentsSuite);
     describe('EOS report API', EosReportSuite);
-    // TODO [O2B-805] describe('FLP API', FlpSuite);
+    describe('FLP API', FlpSuite);
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
     describe('Runs API', RunsSuite);
@@ -48,4 +49,5 @@ module.exports = () => {
     describe('Subsystems API', SubsystemsSuite);
     describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);
+    describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
 };
