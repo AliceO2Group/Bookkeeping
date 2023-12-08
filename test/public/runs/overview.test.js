@@ -207,9 +207,11 @@ module.exports = () => {
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 1;
+            model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -227,10 +229,10 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 200;
-        });
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        // eslint-disable-next-line no-return-assign, no-undef
+        await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -240,7 +242,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 10;
+            model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -407,8 +409,10 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 20;
+            model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
+        await page.waitForTimeout(100);
+
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
