@@ -6,7 +6,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Notable changes for users:
   * Tag details logs list now has a pagination
-  * /api/tags/:tagId/logs now allows for pagination parameters as in offset, and limit values
   * LHC Data is hidden when the beam mode is not stable
   * Removed spurious rendering on chart hover
   * Fixed time input clear re-render
@@ -25,6 +24,7 @@ All notable changes to this project will be documented in this file. See [standa
   * refactor createRunsExport
   * refactor Runs Overview Page
   * remove unnecessary call when loading log-overview
+  * /api/tags/:tagId/logs now allows for pagination parameters as in offset, and limit values
 * Changes made to the database:
   * Added index on runs.lhc_period_id in order to boost performance for LHC Period page
 
