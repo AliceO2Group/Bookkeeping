@@ -70,9 +70,9 @@ module.exports = () => {
             statusMessage: (string) => typeof string == 'string',
             efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
             timeLossAtStart: (data) => data === '-'
-                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
+                || data.match(new RegExp(`${durationRegex.source}\n\\(${percentageRegex.source}\\)`)) !== null,
             timeLossAtEnd: (data) => data === '-'
-                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
+                || data.match(new RegExp(`${durationRegex.source}\n\\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runsCoverage: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runs: (string) => typeof string == 'string',
