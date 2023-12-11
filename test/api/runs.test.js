@@ -412,6 +412,16 @@ module.exports = () => {
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(5);
         });
+
+        it('should filter runs on the run number by pattern', async () => {
+            const response = await request(server)
+                .get('/api/runs?filter[runNumberPattern]=100');
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            expect(data[0].runNumber).to.equal(100);
+            expect(data.length).to.equal(1);
+        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
