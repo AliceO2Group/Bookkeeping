@@ -131,7 +131,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(106);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(108);
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -207,9 +207,11 @@ module.exports = () => {
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 1;
+            model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -227,10 +229,10 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 200;
-        });
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        // eslint-disable-next-line no-return-assign, no-undef
+        await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -240,7 +242,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 10;
+            model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -311,7 +313,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        expect(table.length).to.equal(8);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
         await page.waitForTimeout(300);
@@ -407,8 +409,10 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 20;
+            model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
+        await page.waitForTimeout(100);
+
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
@@ -714,7 +718,7 @@ module.exports = () => {
         await waitForNetworkIdleAndRedraw(page);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(6);
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
@@ -1011,7 +1015,7 @@ module.exports = () => {
         await reloadPage(page);
 
         // Run 106 has a fill attached
-        const runId = 106;
+        const runId = 108;
 
         const fillNumberCellSelector = `#row${runId}-fillNumber`;
         const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);

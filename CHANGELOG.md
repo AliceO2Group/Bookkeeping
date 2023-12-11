@@ -2,21 +2,55 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.72.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.72.0)
+## [0.74.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.74.0)
+
 * Notable changes for users:
-  * Added EoR reason chart
-  * run-detail page use runNumber instead of runId as run identifier, using runId is still possible but not recommended
+  * Tag details logs list now has a pagination
+  * LHC Data is hidden when the beam mode is not stable
+  * Removed spurious rendering on chart hover
+  * Fixed time input clear re-render
+  * More rows (up to capacity of page) is displayed on LHC Periods page by default
+  * Minor user-interface improvements readability for the LHC Fill table
+  * Added a line in efficiency chart to display mean efficiency on the period
+  * Replies are now tallied not only for the primary log but also for its associated child logs.
+  * The number of replies is now displayed on every log overview page, extending beyond just the log entries page.
+* Notable change for developers:
+  * RemoteDataFetcher has been split in RemoteDataSource and ObservableData
+  * Removed the remnants of the FLP Log implementation that was broken and disabled
+  * Removed test cases that were testing non-existent FLP functionality
+  * FLP API tests have been fixed and re-added to the API test suites
+  * A new stateful component has been created to create components that can trigger re-rendering without depending on the model
+  * extract Runs Overview model
+  * refactor createRunsExport
+  * refactor Runs Overview Page
+  * remove unnecessary call when loading log-overview
+  * /api/tags/:tagId/logs now allows for pagination parameters as in offset, and limit values
+* Changes made to the database:
+  * Added index on runs.lhc_period_id in order to boost performance for LHC Period page
+
+## [0.73.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.73.0)
+
+* Notable changes for users:
   * Replace nav bar LHC Fills tab with LHC dropdown with two options:
     * LHC Fills
     * LHC Periods
+* Notable change for developers:
+  * A script has been added to update Dockerfile dependencies automatically
+  * Filter panel now uses popover
+  * Added an option to GetAllLhcFills to filter on stable beams
+  * use only one method in model to toggle nav bar dropdowns
+
+## [0.72.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.72.0)
+
+* Notable changes for users:
+  * Added EoR reason chart
+  * run-detail page use runNumber instead of runId as run identifier, using runId is still possible but not recommended
   * Fixed the run order in LHC fill API when some of the runs have EoR reason
   * User can now choose the date range on which statistics must be applied, using a time picker with pre-defined options
   * Fixed misbehaving in chart fill conditions
   * add LHC Period overview page from RCT and the corresponding API
-* Notable change for developers:
   * existing endpoints which used :runId, use :runNumber now instead
   * endpoint GET /api/runs/:runId moved to GET /api/legacy/runs/:runId
-  * use only one method in model to toggle nav bar dropdowns
   * change links id in https://github.com/AliceO2Group/Bookkeeping/pull/1240/files#diff-90f47b96a0752a7ea8dbe41825baf3804e1228ab28f024b599524e0d0ea2c551R47-R49, because of test failure after adding LHC Fills as pageLink
   * A time range picker has been created
   * Updated the way docker compose is started
@@ -24,6 +58,7 @@ All notable changes to this project will be documented in this file. See [standa
   * refactor docs: scalar types to lowercase
 
 ## [0.71.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.71.0)
+
 * Notable changes for users:
   * Only admin is authorised to create and delete tags
   * Added tag occurrences in logs chart
@@ -39,6 +74,7 @@ All notable changes to this project will be documented in this file. See [standa
   * add table `lhc_periods`, replaced column `runs.lhc_period` with `run.lhc_period_id` (reference to table `lhc_periods`)
 
 ## [0.70.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.70.0)
+
 * Notable changes for users:
   * Fixed broken infologger run link
   * A second input field is visible to filter runs. This input is visible in the main overview screen without opening the filter tab.
@@ -57,6 +93,7 @@ All notable changes to this project will be documented in this file. See [standa
   * update runs related usecases
 
 ## [0.69.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.69.0)
+
 * Notable changes for users:
   * Infologger links has been added in run overview, run details, environment overview and environment details
   * Fixed the misbehaving time between runs graphs
@@ -74,11 +111,13 @@ All notable changes to this project will be documented in this file. See [standa
   * use newer docker compose syntax instead of legacy docker-compose
 
 ## [0.68.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.68.0)
+
 * Notable changes for users:
   * Added time between runs histogram
   * Display EoR reason in runs table in LHC fill and environments details pages
 
 ## [0.67.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.67.0)
+
 * Notable changes for users:
   * Added horizontal lines in front of axis ticks
   * Weekly data size graph is now available in statistics page
@@ -86,6 +125,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed popover misbehaving when cursor moves from child element to parent element
 
 ## [0.66.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.66.0)
+
 * Notable changes for users:
   * An endpoint has been added to fetch all the logs for a given LHC fill
   * Added a tab in LHC fill display to show all the related logs
@@ -99,25 +139,29 @@ All notable changes to this project will be documented in this file. See [standa
   * Popover is rendered outside its trigger to not be limited by overflow
 
 ## [0.65.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.65.0)
+
 * Notable changes for users:
   * LHC fill details statistics rely on stableBeamEnd as end of run, not stableBeamStart + duration
   * A button to create a log is now available in LHC fill details page
   * Run edition justification inputs are now visually similar to other inputs
   * Fixed bug for filtering tags using "or"
-  * Added possibility to filter runs on `updatedAt` for `/api/runs` 
+  * Added possibility to filter runs on `updatedAt` for `/api/runs`
   * Editing run quality from none to good or test is now possible without justification
   * A button has been added to create log for a given environment
 
 ## [0.64.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.64.0)
+
 * Notable changes for users:
   * Changing the DETECTOR run quality will require input from user as justification for the change.
   * Changing the GLOBAL run quality will require input from user as justification for the change.
 
 ## [0.63.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.1)
+
 * Notable changes for users:
-  * Removed the dupplicate LHC fill input in the log creation page 
+  * Removed the dupplicate LHC fill input in the log creation page
 
 ## [0.63.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.63.0)
+
 * Notable changes for users:
   * Logs can now be assigned to environment
   * Logs can now be filtered by environment
@@ -134,6 +178,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Graphs library handle display of axis labels
 
 ## [0.62.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.62.0)
+
 * Notable changes for users:
   * End of Shift reports are pre-filled with information from the previous shifter
   * Fixed the efficiency graph tooltip value display
@@ -150,6 +195,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Added calibration_status column to runs table
 
 ## [0.61.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.61.0)
+
 * Notable changes for users:
   * DPL processes executions can be inserted concurrently in bookkeeping to help with processing thousands of requests from QC at a time
   * End of Shift reports are pre-filled with information from the previous shifter
@@ -174,6 +220,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Added environment table to link logs to environment
 
 ## [0.60.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.60.0)
+
 * Notable changes for users:
   * Run details page shows all detectors as grey (not present) or green/red (good/bad quality)
   * Use dropdown to filter run types in Run Overview page
@@ -182,6 +229,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Runs filtering has been separated from runs fetching to easily add relations in endpoints to fetch a list of runs
 
 ## [0.59.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.1)
+
 * Notable changes for users:
   * Run numbers and LHC period columns are wider on runs overview to improve readability on small screens
 * Notable changes for developers:
@@ -190,8 +238,8 @@ All notable changes to this project will be documented in this file. See [standa
 * Changes made to the database:
   * Readout counters are now unsigned bigints
 
-
 ## [0.59.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.59.0)
+
 * Notable changes for users:
   * A gRPC endpoint to insert DPL process executions has been added, and it has been implemented in the gRPC c++ library
   * Fixed the COSMICS run filtering, now correctly allowing for undefined beam
@@ -205,10 +253,11 @@ All notable changes to this project will be documented in this file. See [standa
   * Fix the visibility of environment details badges
   * An icon has been added to environment overview to highlight environments that have been to error but are not in error anymore
 * Notable changes for developers:
-  * A reusable component has been created to display tabbed components 
+  * A reusable component has been created to display tabbed components
   * The run-details page has been reworked to use the new tabs system
 
 ## [0.58.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.58.0)
+
 * Notable changes for users:
   * Adds total TF size display to LHC fill details, renamed 'total CTF' to 'total CTF size'
   * Environment status in overview page is now colored according to the status
@@ -219,29 +268,35 @@ All notable changes to this project will be documented in this file. See [standa
   * The total TF size is now displayed on LHC fill details page
 
 ## [0.57.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.57.0)
+
 * Notable changes for users:
   * The SLIMOS automatic EoS report has been added
   * A firt version of the Shift Leader automatic EoS report has been added
 
 ## [0.56.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.1)
+
 * Notable changes for developers:
   * The model to store DPL processes has been created
   * A flag has been added to enable housekeeping, which for now consists in cleaning lost runs & environments
   * Logs ended and environments transitionned to error by housekeeping script are now logged
 
 ## [0.56.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.56.0)
+
 * Notable changes for users:
   * Every 30 seconds, bookkeeping check on AliECS GUI the active environments and their runs, and transition to error lost environments and set timeO2End of lost runs
 
 ## [0.55.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.2)
+
 * Notable changes for users:
-  *  Runs will be definied as Definition `PHYSICS` only if they include both detectors `FT0` and `ITS`. This change will also apply to previous runs
+  * Runs will be definied as Definition `PHYSICS` only if they include both detectors `FT0` and `ITS`. This change will also apply to previous runs
 
 ## [0.55.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.1)
+
 * Notable changes for users:
   * QC/PDP EoS report now includes the following tags: QC-PDP shifter, QC, PDP, EoS
 
 ## [0.55.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.55.0)
+
 * Notable changes for users:
   * Shift endpoint can now provide QC data
   * The EoS report generation API endpoint now support QC EoS report generation
@@ -254,6 +309,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Updated Docker ca-certificates dependency
 
 ## [0.54.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.54.0)
+
 * Notable changes for users:
   * Reply logs do not appear in EoS report anymore
   * Bug of LHC fill overview infinite scroll missing data has been fixed
@@ -268,6 +324,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Adds the GH option to allow for manual triggers on release job
 
 ## [0.53.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.53.1)
+
 * Notable changes for users:
   * EoS report now have the related runs linked to it
   * The current user is used as author of EoS report log
@@ -282,12 +339,14 @@ All notable changes to this project will be documented in this file. See [standa
   * Chromium has been updated to 112.0.5615.165-r0 in Dockerfile
 
 ## [0.53.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.53.0)
+
 * Notable changes for users:
   * Adds a new page for End-of-Shift(EOS) report generation which retrieves and build a report and allows users to modify before saving it
   * Allows users to search by content of a log
   * Allows admins to add tag description which is displayed then in tag-details
 
 ## [0.52.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.52.0)
+
 * Notable changes for users:
   * EOR reason is now reverted when reverting the operation of editing details of a run
   * Runs overview columns do not overlap anymore on small screens
@@ -303,6 +362,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Tags used in picker and dropdown now comes from a separate provider, not from model
 
 ## [0.51.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.51.0)
+
 * Notable changes for users:
   * A popover is displayed in place of * and ** for run start/stop/duration with missing triggers
   * When displaying a log tree, the log selected in the URL is expanded by default
@@ -310,6 +370,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Fixed the date of log creation for detectors/runs quality change
 
 ## [0.50.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.50.0)
+
 * Notable changes for users:
   * cxx API's documentation has been fixed
   * A log is created when detector quality changes, and tags depend on which detector is concerned
@@ -327,10 +388,12 @@ All notable changes to this project will be documented in this file. See [standa
   * NotificationService now passes logIdand parentLogId as well
 
 ## [0.49.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.1)
+
 * Notable changes for developers:
   * Timeout for connection to the database has been temporarily removed
 
 ## [0.49.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.49.0)
+
 * Notable changes for users:
   * Physics runs automatically have a 'good' quality when they ends
   * When creating or updating a run, if related detectors and run type do not exists, create them
@@ -345,13 +408,14 @@ All notable changes to this project will be documented in this file. See [standa
   * The Flp naming has been uniformized to FlpRole, and the relation is a one to many between Run (1) <--> (n) FlpRole
 
 ## [0.48.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.48.0)
+
 * Notable changes for users:
   * Log runs filter applies on run number and not on run ID anymore
   * An icon has been added to outline the detector's quality
   * OpenAPI has been removed, and with it all the auto-generated Go and c++ plugins
   * Detectors are now sorted in the run's detector filter
   * FLP proto creation request expect a hostname instead of hostName
-  * LHC fill GET endpoint returns the fill with all its runs, and not only the physics ones 
+  * LHC fill GET endpoint returns the fill with all its runs, and not only the physics ones
   * LHC fill display page now have tabs to display all the runs or physics ones ony
   * Tags can now be marked as archived by administrators, and those tags can not be linked to new runs or logs
 
@@ -359,6 +423,7 @@ All notable changes to this project will be documented in this file. See [standa
   * A general architecture documentation has been added
 
 ## [0.47.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.47.0)
+
 * Notable changes for users:
   * A log is created when run quality change, and DPG and RC tags are added for good<->bad quality change only
   * Run's detectors are sorted alphabetically in run details
@@ -368,6 +433,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Tests were added for the run detectors quality edition
 
 ## [0.46.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.46.0)
+
 * Notable changes for users:
   * Fixes an issue in which clicking on an attachement link would not open/download the file
   * Introduces run quality per detector which allows users to modify the run and specify the quality for each detector on top of the current general run quality;
@@ -376,14 +442,17 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for developers: none
 
 ## [0.45.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.45.0)
+
 * Notable changes for developers:
   * GRPC endpoints have been added in parallel of the endpoints available through the Go API (the GO plugin will be removed in a future release)
 
 ## [0.44.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.44.1)
+
 * Notable changes for developers:
   * Fixed the detectors table fill migration to handle runs with empty or null detectors list
 
 ## [0.44.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.44.0)
+
 * Notable changes for users:
   * Synthetic run definition is less restrictive on readout_cfg_uri, it simply needs to contain replay and one of pp or pbpb
   * There is no more links that refresh completely the page and discard user configuration
@@ -395,6 +464,7 @@ All notable changes to this project will be documented in this file. See [standa
   * All links are now frontLink, which are handled by the frontend router
 
 ## [0.43.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.43.0)
+
 * Notable changes for users:
   * Adds a new run definition `CALIBRATION` for runs that do not match any criteria
   * Adds a new feature which allows the user to see how many entries in a table (runs, logs, etc.) match their filtering;
@@ -420,6 +490,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Rework adapters to be class instances and not only static methods, thus making them able to depend the one on the other recursively
 
 ## [0.42.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.42.0)
+
 * Notable changes for users:
   * Added extra run fields for ccdb in the run details
 * Notable changes for develops:
@@ -439,6 +510,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Some entities and sequelize models have typedefs to help autocompletion, code navigation and refactoring
 
 ## [0.41.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.41.0)
+
 * Notable changes for users:
   * Efficiency per detector and Time between runs are now displayed on LHC fill details
   * UX improvements on displaying and calculating `run_duration` based on `o2 time/date` values when `trigger time/date` values are missing
@@ -448,6 +520,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Accents are now handled in file names
 
 ## [0.40.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.40.0)
+
 * Notable changes for users:
   * Fix synthetic run definition computation
   * Fix fill efficiency on LHC fill overview
@@ -476,9 +549,10 @@ All notable changes to this project will be documented in this file. See [standa
       * `runType` A run type can be given to a run to update it. A new type will be generated if it does not exist.
 
 ## [0.39.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.39.0)
+
 * Notable changes for users:
   * Environment overview page now loads in a normal time
-  * Only administrators as defined in CERN Application portal can create and edit tags 
+  * Only administrators as defined in CERN Application portal can create and edit tags
   * `definition` is now available in run overview's table and filtering
   * Fixed table bug when row ids of multiple tables were the same and in the same order
   * Fixed log creation display bug when doing log creation => any page => log creation
@@ -497,6 +571,7 @@ All notable changes to this project will be documented in this file. See [standa
       * Apply one profile to a table
 
 ## [0.38.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.38.0)
+
 * Notable changes for users:
   * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` field added to the runs detail page and can be exported.
   * Time after last run and corresponding loss has been added to fill statistics
@@ -511,6 +586,7 @@ All notable changes to this project will be documented in this file. See [standa
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
 
 ## [0.37.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.37.0)
+
 * Notable changes for users:
   * Tags with a length of 2 characters are now allowed
   * A notification is sent any time a log is created, not only when a log is created from the log creation page (for example auto-generated logs)
@@ -526,10 +602,11 @@ All notable changes to this project will be documented in this file. See [standa
     * `pdpWorkflowParameters, pdpBeamType, readoutCfgUri` Can now be updated when updating a run.
 
 ## [0.36.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.36.0)
+
 * Notable changes for users:
   * `odcTopologyFullname` field added to the runs detail page and can be exported.
   * A detail page has been created for LHC fills and is accessible from LHC fills overview, run details and runs overview. This page contains statistics about:
-    * Fill efficiency 
+    * Fill efficiency
       * The fill efficiency, calculated based on the percent of time we had ongoing RUNS compared to the FILL duration during a stable beam
       * The time elapsed between the stable beam start and the start of the first run, and the percentage that this time represents compared to the total SB duration (loss)
       * The mean run duration
@@ -549,6 +626,7 @@ All notable changes to this project will be documented in this file. See [standa
       * `odcTopologyFullname` Can now be updated when updating a run.
 
 ## [0.35.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.35.0)
+
 * Notable changes for users:
   * Fixes a bug in which updating EOR reasons for a run, would change the `RunQuality` back to default;
   * Run LHC period, number of EPNs are now shown in the run details and can be exported via the export runs tab;
@@ -563,6 +641,7 @@ All notable changes to this project will be documented in this file. See [standa
     * `lhcPeriod` is added to `endRun` endpoint and for the GO openAPI the `updateRun` function;
 
 ## [0.34.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.34.0)
+
 * Notable changes for users:
   * Run tags update is now integrated in the global run update
   * LHC Fill overview's run lists are now hyperlinks to the corresponding run detail page
@@ -580,6 +659,7 @@ All notable changes to this project will be documented in this file. See [standa
     * tags list is now the list of tag text and no tags ids
 
 ## [0.33.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.33.0)
+
 * Notable changes for users:
   * Displays `UNKNOWN` for run duration above 48 hours, else `RUNNING`
   * Add fill number information on run overview page and in its filtering
@@ -587,7 +667,8 @@ All notable changes to this project will be documented in this file. See [standa
   * `GET` RUNS API:
     * `fillNumbers` is a new optional filter
 
-## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.32.0) 
+## [0.32.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.32.0)
+
 * Notable changes for users:
   * Adds new fields for Run-Details
   * Fixes a bug in which infinite scrolling would not apply filters on runs & logs pages
@@ -598,7 +679,8 @@ All notable changes to this project will be documented in this file. See [standa
   * `PATCH` RUNS API:
     * `timeO2Start`, `timeTrgStart`, `trgGlobalRunEnabled`, `trgEnabled`, `pdpConfigOption`, `pdpTopologyDescriptionLibraryFile`, `tfbDdMode` are now added and optional fields.
 
-## [0.31.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0) 
+## [0.31.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.31.0)
+
 * Notable changes for users:
   * Adds `RunDuration` for Run-Overview, Run-Details and Run-Filters
   * Adds option to export the currently filtered runs from Run-Overview Page
@@ -607,7 +689,8 @@ All notable changes to this project will be documented in this file. See [standa
   * `GET` RUNS API:
     * `runDuration` added as a virtual column with sequalize
 
-## [0.30.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.30.0) 
+## [0.30.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.30.0)
+
 * Notable changes for users:
   * Improvements on RunFilters:
     * Numerical input now accepts operators (<, <=, =, =>, >);
@@ -623,24 +706,27 @@ All notable changes to this project will be documented in this file. See [standa
     * `nDetectors` and `nFLPS` filter needs to provide both operator and limit for the values;
     * `environmentId` is now `environmentIds` allowing for multiple values separated by comma;
     * `runQuality` is now `runQualities` allowing for multiple values separated by comma;
-  
-## [0.29.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.29.0) 
+
+## [0.29.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.29.0)
+
 * Notable changes for users:
   * Improves Run-Overview page to better display information;
   * Improves usability of LHC Fills page;
   * Bug fixes for systems with no tags;
 
-## [0.28.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.28.0) 
+## [0.28.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.28.0)
+
 * Notable changes for users:
   * Introduces support for AliECS - End Of Run - Reason;
   * Introduces support for LHC Fills Data;
 * Notable changes for developers:
   * Adds new `eor_reasons` and `reason_types` SQL tables and migration scripts;
   * Adds new lhc_fills SQL Table and migration scripts;
-  * Adds API routes to retrieve lhc fills data individually or collectively; 
-  * Adds API routes to retrieve eor reasons data individually or collectively; 
+  * Adds API routes to retrieve lhc fills data individually or collectively;
+  * Adds API routes to retrieve eor reasons data individually or collectively;
 
-## [0.27.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.27.0) 
+## [0.27.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.27.0)
+
 * Notable changes for users:
   * Introduces support for AliECS environments;
 * Notable changes for developers:
@@ -650,11 +736,13 @@ All notable changes to this project will be documented in this file. See [standa
   * `POST /api/environments` && `PUT /api/environments/:envId` - Adds API routes to store environment data
   * Generates new OpenAPI GO plugin to include environments manipulation methods
 
-## [0.26.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.1) 
+## [0.26.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.1)
+
 * Notable changes for users:
   * Improves UX when users would input negative filter values;
 
-## [0.26.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.0) 
+## [0.26.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.26.0)
+
 * Notable changes for users:
   * Fixes a bug in which filters would not work due to cached date on server side;
   * Admin users can specify emails and mattermost channels at TAG creation time;
@@ -662,7 +750,8 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable changes for developers:
   * `POST /api/tags/` - Add emails and mattermost channels for a tag if user has admin privileges;
 
-## [0.25.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.25.0) 
+## [0.25.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.25.0)
+
 * Notable changes for users:
   * RUN Filters Improvements:
     * Allow users to specify start and stop filters with time;
@@ -673,7 +762,8 @@ All notable changes to this project will be documented in this file. See [standa
   * `PUT /api/tags/:id` - Update the emails and mattermost channels for a tag if user has admin privileges;
   * `GET /api/tags/name` - Expects a query parameter `name` to return one tag with specified name;
 
-## [0.24.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.24.0) 
+## [0.24.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.24.0)
+
 * Notable changes for users:
   * RUN Filters Improvements:
     * Allows users to filter by DD, DCS, EPN with ON,OFF or ANY
@@ -689,19 +779,23 @@ All notable changes to this project will be documented in this file. See [standa
   * `/api/runs` - listRuns - improves filtering for `dcs`, `dd_flp`, `epn`;
   * `/api/tags` - listTags - accepts multiple `ids`, `texts`, `emails` and/or `mattermosts` as filters;
 
-## [0.23.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.23.0) 
+## [0.23.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.23.0)
+
 * Notable changes for developers:
   * Add as new feature the option to send email and mattermost log creation notification;
 
-## [0.22.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.22.0) 
+## [0.22.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.22.0)
+
 * Notable changes for developers:
   * Path for storing attachments of logs is now configurable via ATTACHMENT_PATH env;
 
-## [0.21.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.1) 
+## [0.21.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.1)
+
 * Notable changes for developers:
   * Adds `run_quality` back to validation of `EndRun` request to ensure backwards compatibility;
 
-## [0.21.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.0) 
+## [0.21.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.21.0)
+
 * Notable changes for users:
   * Run Quality is now displayed in both `Run-Statistics` and `Run-Details` pages;
   * Users are now able to update the quality of a run (`good`, `test`, `bad`);
@@ -715,7 +809,8 @@ All notable changes to this project will be documented in this file. See [standa
     * Fixed CMake config;
   * Adds migration file for `run_quality` column so that enum accepts `test` as well;
 
-## [0.20.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.20.0) 
+## [0.20.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.20.0)
+
 * Notable changes for users:
   * All tables were refactored and are now fixed in width, reducing the text displayed if it is longer than the space;
   * Tables take into consideration the user's screen space and adapt accordingly on first load;
@@ -724,8 +819,9 @@ All notable changes to this project will be documented in this file. See [standa
   * "Reply logs" with no title will inherit the title of the parent log;
 * Notable changes for developers:
   * `ca-certificates` dependency in docker updated
-  
-## [0.19.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.19.0) 
+
+## [0.19.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.19.0)
+
 * Notable changes for users:
   * Tables from `Logs`, `Runs` and `Home` pages benefit of a new button `More`, making the tables not actionable anymore; This will allows the users to easily copy table values;
   * Fixes a bug in which users were not able to download attachments;
@@ -736,8 +832,9 @@ All notable changes to this project will be documented in this file. See [standa
   * Server will boot up even if database is not up and running;
   * Refactors configuration loading files;
   * Updates dependencies versions to avoid security flaws;
-  
-## [0.18.0] 
+
+## [0.18.0]
+
 * Updates dependencies versions to avoid security flaws
 * Updates Dockerfile and fixes lint issues
 * Allow users to insert replies to logs without having to specify a title
@@ -747,51 +844,58 @@ All notable changes to this project will be documented in this file. See [standa
 * Fixes a bug in which updating the tags of a run would hide the logs for the run
 
 ## [0.17.12]
+
 * Added run filter to run-overview table [#433]https://github.com/AliceO2Group/Bookkeeping/pull/433
 * Changed verification of Title [#432]https://github.com/AliceO2Group/Bookkeeping/pull/432
 
 ## [0.17.11]
+
 * Changes made to the database and go-api-bindings[#420]https://github.com/AliceO2Group/Bookkeeping/pull/420
-    * New field to be added to the RUNS table.
-        - name: detectors
-            - type: SET 
-                - ALTER TABLE runs ADD detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
-                - ALTER TABLE runs modify detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
-                
+  * New field to be added to the RUNS table.
+    - name: detectors
+      - type: SET
+        - ALTER TABLE runs ADD detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
+        - ALTER TABLE runs modify detectors SET('CPV', 'EMC', 'FDD', 'FT0', 'FV0', 'HMP', 'ITS', 'MCH', 'MFT', 'MID', 'PHS', 'TOF', 'TPC', 'TRD', 'TST', 'ZDC');
+
 ## [0.17.10]
+
 * Make /logs, /flps and /attachment routes private again [#419] https://github.com/AliceO2Group/Bookkeeping/pull/419
 
 ## [0.17.9]
+
 * Added optional chaining to usecases.
 
 ## [0.17.8]
+
 * updated dockerfile from version node:12.18.1-alpine3.12 to node:16.9.1-alpine3.12
 * Made api/log and api/flp public [#415] (https://github.com/AliceO2Group/Bookkeeping/pull/415)
 * log-overview changed id to runNumber [#416] (https://github.com/AliceO2Group/Bookkeeping/pull/416)
 
 ## [0.17.7]
+
 * Added the field epn_topology. [#411] (https://github.com/AliceO2Group/Bookkeeping/pull/411)
 * Changes made to the database. Changes are registerd in the CHANGELOG.md file in the database folder.
 
-    * New fields to be added to the RUNS table:
-        - epn_topology
-            - type: string 
+  * New fields to be added to the RUNS table:
+    - epn_topology
+      - type: string
 
 ## [0.17.6]
+
 * Add more information to run entries. [#406] (https://github.com/AliceO2Group/Bookkeeping/pull/406)
 * Hide/change existing Run Statistics fields. [#408] (https://github.com/AliceO2Group/Bookkeeping/pull/408)
 * Changes made to the database and go-api-bindings. Changes are registerd in the CHANGELOG.md file in the database folder.
 
-    * New fields to be added to the RUNS table:
-        - dd_flp
-            - type: boolean 
-        - dcs
-            - type: boolean 
-        - epn
-            - type: boolean 
+  * New fields to be added to the RUNS table:
+    - dd_flp
+      - type: boolean
+    - dcs
+      - type: boolean
+    - epn
+      - type: boolean
 
-    * Changed a field to another name in the RUNS table:
-        - activity_id is changed to environment_id
+  * Changed a field to another name in the RUNS table:
+    - activity_id is changed to environment_id
 
 ## [0.17.4]
 
@@ -809,7 +913,7 @@ All notable changes to this project will be documented in this file. See [standa
 * O2B-410 CPP-api-client can now be updated with the unqiue combination of flpName and runNumber instead of a auto incrementend integer. [$388] (https://github.com/AliceO2Group/Bookkeeping/pull/388)
 * O2B-419 Fixed an issue where the log creation got a bug when both tag and attachment was selected. The issue was with multiform data and the way it accepts array data. [#386](https://github.com/AliceO2Group/Bookkeeping/pull/386)
 
-## [0.17.1] 
+## [0.17.1]
 
 * Updated @aliceo2/web-ui version from 1.15.1 to 1.18.2. A bug fix that adds a name to JWT token for the bookkeeping team. https://github.com/AliceO2Group/WebUi/releases/tag/%40aliceo2%2Fweb-ui%401.18.2
 
@@ -817,12 +921,11 @@ All notable changes to this project will be documented in this file. See [standa
 * O2B-398 Improve display of Main tab in Run Details page ([#364]https://github.com/AliceO2Group/Bookkeeping/pull/364])
 * O2B-400 Update tags are fixed ([#370]https://github.com/AliceO2Group/Bookkeeping/pull/370)]
 
-## [0.17.0] 
+## [0.17.0]
 
 * Reverted ibm-openapi-validator to version 0.44.0 in the bookkeeping/.github/workflows/openapi.yml file. Version 0.46.0 has problems with invalid configuration with validaterc. The GitHub checks for OpenApi / validate pull request would fail with version 0.46.0. However version 0.44.0 does not have this problem and the checks will pass, ready for the pull request to be merged with the master. This is a temporary solution and we should later try to fix the OpenApi/validate with the newest version 0.46.0.
 
 ## [0.14.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.13.0...v0.14.0) (2020-09-18)
-
 
 ### Features
 
@@ -830,7 +933,6 @@ All notable changes to this project will be documented in this file. See [standa
 * Associated tags now visible on log detail screen ([#193](https://github.com/AliceO2Group/Bookkeeping/issues/193)) ([0eec605](https://github.com/AliceO2Group/Bookkeeping/commit/0eec605a0a519b13bc12065140b893acbe6338a3))
 
 ## [0.13.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.6.0...v0.13.0) (2020-09-08)
-
 
 ### Features
 
@@ -842,7 +944,6 @@ All notable changes to this project will be documented in this file. See [standa
 * Added Support Forum link to profile dropdown ([7c1bcd6](https://github.com/AliceO2Group/Bookkeeping/commit/7c1bcd6f0a0d62e611227732062d801152b4a4bd))
 * added test files for subsystem-overview ([5399a6f](https://github.com/AliceO2Group/Bookkeeping/commit/5399a6f528b3bde45a1aff5dfcc032a35c08fb67))
 * Rebuilt filter components to support multiple filter types through dropdowns ([d251f5d](https://github.com/AliceO2Group/Bookkeeping/commit/d251f5d07edd6ef4f9fc619d3790151cd57c224f))
-
 
 ### Bug Fixes
 
@@ -862,7 +963,6 @@ All notable changes to this project will be documented in this file. See [standa
 * **ui:** HyperMD editor not properly removed ([ded9d7c](https://github.com/AliceO2Group/Bookkeeping/commit/ded9d7c628a4ff4ea45907a9979c9f44398e6dfa))
 
 ## [0.6.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.5.0...v0.6.0) (2020-06-26)
-
 
 ### Features
 
@@ -890,7 +990,6 @@ All notable changes to this project will be documented in this file. See [standa
 * **ui:** added links to Jira and GitHub in profile dropdown ([be4fca8](https://github.com/AliceO2Group/Bookkeeping/commit/be4fca84528bbff87909e76b09bf7b52c705903d))
 * use OpenID data to link user to created logs ([00afc71](https://github.com/AliceO2Group/Bookkeeping/commit/00afc71bb0d742c6fc67caa78613158c50554cc0))
 
-
 ### Bug Fixes
 
 * cleanup ([55980aa](https://github.com/AliceO2Group/Bookkeeping/commit/55980aab944b982b8291cd4bfad00abf23cba552))
@@ -904,7 +1003,6 @@ All notable changes to this project will be documented in this file. See [standa
 * tag list of a log incomplete when filtering based tags ([3ad21f3](https://github.com/AliceO2Group/Bookkeeping/commit/3ad21f39deae93d2a3be79841c112158c86e280f))
 
 ## [0.5.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.4.0...v0.5.0) (2020-06-12)
-
 
 ### Features
 
@@ -930,7 +1028,6 @@ All notable changes to this project will be documented in this file. See [standa
 * **ui:** redirect to overview if no tag id is provided ([53d6a6f](https://github.com/AliceO2Group/Bookkeeping/commit/53d6a6ff0e513ff6a5e891b88546bd9fc7848dae))
 * **ui:** scroll to the selected Log entry on detail view ([7e1cb32](https://github.com/AliceO2Group/Bookkeeping/commit/7e1cb32c5e8291ebf0e2ab2ad603221ba4189549))
 
-
 ### Bug Fixes
 
 * **docker:** added bash to all targets ([7db5ad8](https://github.com/AliceO2Group/Bookkeeping/commit/7db5ad862c0d27ff23fe873685ee523c3cb6e2c4))
@@ -946,7 +1043,6 @@ All notable changes to this project will be documented in this file. See [standa
 * use 201 for Created instead of 301, naming of variables ([b2477d9](https://github.com/AliceO2Group/Bookkeeping/commit/b2477d96efe810ab42685b0eb743062df4543822))
 
 ## [0.4.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.3.0...v0.4.0) (2020-05-29)
-
 
 ### Features
 
@@ -1001,7 +1097,6 @@ All notable changes to this project will be documented in this file. See [standa
 * filtering on GET /api/logs ([f20dcb0](https://github.com/AliceO2Group/Bookkeeping/commit/f20dcb07bdfdd67ad7905cbd216a649823391f82))
 * Implemented a generic object-to-table mapper ([7dbce76](https://github.com/AliceO2Group/Bookkeeping/commit/7dbce765e8e9ef0538ea5d1cb1647c4865d61ede))
 
-
 ### Bug Fixes
 
 * count should not include associations ([d08d92c](https://github.com/AliceO2Group/Bookkeeping/commit/d08d92cd2983c51efc5c336566e112a7b225806d))
@@ -1051,7 +1146,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 # [0.3.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.2.0...v0.3.0) (2020-05-08)
 
-
 ### Bug Fixes
 
 * Added executable permission on docker build script ([2299c2d](https://github.com/AliceO2Group/Bookkeeping/commit/2299c2de9f11929e30b0d7a3f189bd2448bf5fd7))
@@ -1066,7 +1160,6 @@ All notable changes to this project will be documented in this file. See [standa
 * **docker:** wait for database to be up ([c6c3fd7](https://github.com/AliceO2Group/Bookkeeping/commit/c6c3fd79a8be8ec57818f5e9255228ed201c6f22))
 * **spec:** use relative instead of absolute server url ([90d7cb8](https://github.com/AliceO2Group/Bookkeeping/commit/90d7cb86eca90a44df5daa0c5e7656d8336e3d6d))
 * **test:** test should only start the application once ([df16d2d](https://github.com/AliceO2Group/Bookkeeping/commit/df16d2de56ed46eec1a09ad9077309ee15896bda))
-
 
 ### Features
 
@@ -1091,10 +1184,7 @@ All notable changes to this project will be documented in this file. See [standa
 * implemented graceful shutdown process ([0088052](https://github.com/AliceO2Group/Bookkeeping/commit/0088052b74dce052231efe87e401658ccf0c3687))
 * mount MariaDB data directory on host ([11f0e56](https://github.com/AliceO2Group/Bookkeeping/commit/11f0e567535933d3c669d965e5a811f8cf805172))
 
-
-
 # [0.2.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.1.0...v0.2.0) (2020-04-24)
-
 
 ### Bug Fixes
 
@@ -1118,7 +1208,6 @@ All notable changes to this project will be documented in this file. See [standa
 * route /tag is not plural ([efecacd](https://github.com/AliceO2Group/Bookkeeping/commit/efecacd73316fe40de2c687c73e666fa92d39ed8))
 * starting the application via NPM not Node ([860b5ab](https://github.com/AliceO2Group/Bookkeeping/commit/860b5aba8b161002bc41e24ada520a5457aa34a5))
 * starting the application via NPM not Node ([8d444a9](https://github.com/AliceO2Group/Bookkeeping/commit/8d444a91f32358972628bbdb7f3f6328bf392b44))
-
 
 ### Features
 
@@ -1157,7 +1246,6 @@ All notable changes to this project will be documented in this file. See [standa
 * Upgraded appendPath utility ([40f366b](https://github.com/AliceO2Group/Bookkeeping/commit/40f366b1964536c87de6efdbdc3f081d0e45c9b8))
 
 # [0.1.0](https://github.com/AliceO2Group/Bookkeeping/compare/v0.0.0...v0.1.0) (2020-03-03)
-
 
 ### Features
 

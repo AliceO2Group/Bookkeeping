@@ -310,4 +310,161 @@ module.exports = () => {
             { runPatch: { runQuality: RunQualities.TEST } },
         );
     });
+
+    it('should successfully update run with eorReasons with reasonTypeId', async () => {
+        const runNumber = 1;
+        const reasonTypeId = 1;
+
+        const eorReasons = [
+            {
+                reasonTypeId: reasonTypeId,
+                description: 'test1',
+            },
+            {
+                reasonTypeId: reasonTypeId,
+                description: 'test2',
+            },
+        ];
+
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+
+        expect(run.eorReasons).to.lengthOf(2);
+        // Description is unique, should be equal
+        for (let i = 0; i < run.eorReasons.length; i++) {
+            expect(run.eorReasons[i].description).to.equal(eorReasons[i].description);
+            // Also, check the reasonTypeId
+            expect(run.eorReasons[i].reasonTypeId).to.equal(reasonTypeId);
+        }
+    });
+
+    it('should successfully update run with eorReasons with category and title', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [
+            {
+                // ReasonTypeId == 1 (from reason_types db seeder)
+                category: 'DETECTORS',
+                title: 'CPV',
+                description: 'test1',
+            },
+            {
+                // ReasonTypeId == 2 (from reason_types db seeder)
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test2',
+            },
+        ];
+
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+
+        expect(run.eorReasons).to.lengthOf(2);
+        // Description is unique, should be equal
+        for (let i = 0; i < run.eorReasons.length; i++) {
+            expect(run.eorReasons[i].description).to.equal(eorReasons[i].description);
+            // Check category and title as well
+            expect(run.eorReasons[i].category).to.equal(eorReasons[i].category);
+            expect(run.eorReasons[i].title).to.equal(eorReasons[i].title);
+        }
+        // Also, check the reasonTypeId
+        expect(run.eorReasons[0].reasonTypeId).to.equal(1);
+        expect(run.eorReasons[1].reasonTypeId).to.equal(2);
+    });
+
+    it('should successfully update run with eorReasons with mixed category and title. reasonTypeId and non-existing reasonType', async () => {
+        const runNumber = 1;
+        const reasonTypeId = 1;
+
+        const eorReasons = [
+            {
+                // ReasonTypeId == 1 (from reason_types db seeder)
+                category: 'DETECTORS',
+                title: 'CPV',
+                description: 'test1',
+            },
+            {
+                reasonTypeId: reasonTypeId,
+                description: 'test2',
+            },
+            {
+                category: 'NON-EXISTING',
+                title: 'NON-EXISTING',
+                description: 'test3',
+            },
+        ];
+
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+
+        // Should only include the valid ones without throwing for invalid one (is simply excluded)
+        expect(run.eorReasons).to.lengthOf(2);
+        // Only first and second should be includes
+        expect(run.eorReasons[0].description).to.equal(eorReasons[0].description);
+        expect(run.eorReasons[1].description).to.equal(eorReasons[1].description);
+        // Also, check the reasonTypeId, category and title
+        expect(run.eorReasons[0].reasonTypeId).to.equal(reasonTypeId);
+        expect(run.eorReasons[0].category).to.equal(eorReasons[0].category);
+        expect(run.eorReasons[0].title).to.equal(eorReasons[0].title);
+        expect(run.eorReasons[1].reasonTypeId).to.equal(reasonTypeId);
+    });
+
+    it('should successfully update run with empty eorReasons', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [];
+
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+
+        expect(run.eorReasons).to.lengthOf(0);
+    });
+
+    it('should add only eorReasons that do not have an id', async () => {
+        const runNumber = 1;
+
+        const eorReasons = [
+            {
+                id: 5000,
+                category: 'DETECTORS',
+                title: 'CPV',
+                description: 'test1',
+            },
+            {
+                id: 5001,
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test2',
+            },
+            {
+                // ReasonTypeId == 2 (from reason_types db seeder)
+                category: 'DETECTORS',
+                title: 'TPC',
+                description: 'test3',
+            },
+        ];
+
+        const run = await runService.update(
+            { runNumber },
+            { relations: { eorReasons: eorReasons } },
+        );
+
+        // EorReasons should only include the one that does not have an id
+        expect(run.eorReasons).to.lengthOf(1);
+        // Only last one should be included
+        expect(run.eorReasons[0].description).to.equal(eorReasons[2].description);
+        // Also, check the reasonTypeId, category and title
+        expect(run.eorReasons[0].reasonTypeId).to.equal(2);
+        // Check category and title as well
+        expect(run.eorReasons[0].category).to.equal(eorReasons[2].category);
+        expect(run.eorReasons[0].title).to.equal(eorReasons[2].title);
+    });
 };
