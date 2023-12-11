@@ -770,7 +770,7 @@ module.exports = () => {
         await secondPageButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
         // Expect the pagination to still be on page two
-        let currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
+        let currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
 
         // Navigate to a log detail page via href
