@@ -256,7 +256,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
     });
 
@@ -436,7 +436,7 @@ module.exports = () => {
         // Clear again the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
     });
@@ -761,7 +761,7 @@ module.exports = () => {
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 1;
+            model.logs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -789,7 +789,7 @@ module.exports = () => {
         const currentLocation = await page.url();
         expect(currentLocation).to.equal(`${url}/?page=log-overview`);
         // Expect the pagination to still be on page two
-        currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
+        currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
     });
 
