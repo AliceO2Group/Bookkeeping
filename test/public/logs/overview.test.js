@@ -110,7 +110,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForTimeout(100);
 
@@ -154,7 +154,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForTimeout(100);
 
@@ -208,7 +208,7 @@ module.exports = () => {
         // Increase the amount of items displayed to see logs count difference above 10
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 20;
+            model.logs.overviewModel.pagination.itemsPerPage = 20;
         });
         await page.waitForTimeout(500);
 
@@ -335,7 +335,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
 
@@ -357,7 +357,7 @@ module.exports = () => {
         // Clear again the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
     });
@@ -414,7 +414,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
 
@@ -465,7 +465,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
 
@@ -678,7 +678,7 @@ module.exports = () => {
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 1;
+            model.logs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -722,7 +722,7 @@ module.exports = () => {
          */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 200;
+            model.logs.overviewModel.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
