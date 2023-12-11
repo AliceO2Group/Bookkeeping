@@ -193,7 +193,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
@@ -365,7 +365,7 @@ module.exports = () => {
     it('can search for tag in the dropdown', async () => {
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForTimeout(20);
 
@@ -487,7 +487,7 @@ module.exports = () => {
         // Clear again the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
     });
@@ -699,7 +699,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 10;
+            model.logs.overviewModel.pagination.itemsPerPage = 10;
         });
     });
 
@@ -733,7 +733,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 10;
+            model.logs.overviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
