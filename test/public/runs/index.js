@@ -18,5 +18,5 @@ const RunsPerPeriodOverviewSuite = require('./runsPerPeriod.overview.test');
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
     describe('Detail Page', DetailSuite);
-    describe('runs Per Period Overview Page', RunsPerPeriodOverviewSuite);
+    describe('Runs Per Period Overview Page', RunsPerPeriodOverviewSuite);
 };
