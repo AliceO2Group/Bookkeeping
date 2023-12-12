@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.72.0",
+  "version": "0.74.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -12,7 +12,8 @@
     "start:prod": "node lib/main.js",
     "test": "mocha --exit --timeout 0",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit"
+    "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
+    "docker-update": "node scripts/update-dockerfile.js"
   },
   "engines": {
     "node": ">= 18.x"
@@ -39,7 +40,7 @@
   "devDependencies": {
     "@types/d3": "7.4.0",
     "chai": "4.3.4",
-    "eslint": "8.54.0",
+    "eslint": "8.55.0",
     "js-yaml": "4.1.0",
     "mocha": "10.2.0",
     "nodemon": "3.0.1",

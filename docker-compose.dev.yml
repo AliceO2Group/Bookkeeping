@@ -7,11 +7,10 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_LOGGING: "${DATABASE_LOGGING-True}"
+      JWT_SECRET: BOOKKEEPING-DEV
     ports:
-      - target: 4000
-        published: 4000
-      - target: 4001
-        published: 4001
+      - "4000:4000"
+      - "4001:4001"
     restart: "no"
     volumes:
       - type: bind
@@ -27,5 +26,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: cern
     ports:
-      - target: 3306
-        published: 3306
+      - "3306:3306"
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data
+        target: /var/lib/mysql
+
+volumes:
+  database-data:
