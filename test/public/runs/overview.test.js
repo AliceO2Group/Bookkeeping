@@ -687,7 +687,7 @@ module.exports = () => {
             // Validate amount in the table
             const table = await page.$$('tbody tr');
             expect(table.length).to.equal(2);
-            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row102', 'row101']);
         };
 
         // First filter validation on the main page.
