@@ -21,11 +21,29 @@ const {
     goToPage,
     reloadPage,
 } = require('../defaults');
-const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
-const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
+const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
 const { getInnerText } = require('../defaults.js');
 
 const { expect } = chai;
+
+const DETECTORS = [
+    'CPV',
+    'EMC',
+    'FDD',
+    'FT0',
+    'FV0',
+    'HMP',
+    'ITS',
+    'MCH',
+    'MFT',
+    'MID',
+    'PHS',
+    'TOF',
+    'TPC',
+    'TRD',
+    'TST',
+    'ZDC',
+];
 
 module.exports = () => {
     let page;
@@ -72,6 +90,7 @@ module.exports = () => {
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
             aliceL3Current: (current) => !isNaN(Number(current)),
             aliceL3Dipole: (current) => !isNaN(Number(current)),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
         // We find the headers matching the datatype keys
@@ -212,23 +231,31 @@ module.exports = () => {
         expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
 
-    // const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+    // Const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
-    // it('should successfully display runs export button', async () => {
-    //     await reloadPage(page);
-    //     await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-    //     const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
-    //     expect(runsExportButton).to.be.not.null;
-    // });
+    /*
+     * It('should successfully display runs export button', async () => {
+     *     await reloadPage(page);
+     *     await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
+     *     const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
+     *     expect(runsExportButton).to.be.not.null;
+     * });
+     */
 
-    // it('should successfully display runs export modal on click on export button', async () => {
-    //     let exportModal = await page.$('#export-runs-modal');
-    //     expect(exportModal).to.be.null;
+    /*
+     * It('should successfully display runs export modal on click on export button', async () => {
+     *     let exportModal = await page.$('#export-runs-modal');
+     *     expect(exportModal).to.be.null;
+     */
 
-    //     await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-    //     await page.waitForTimeout(100);
-    //     exportModal = await page.$('#export-runs-modal');
+    /*
+     *     Await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+     *     await page.waitForTimeout(100);
+     *     exportModal = await page.$('#export-runs-modal');
+     */
 
-    //     expect(exportModal).to.not.be.null;
-    // });
+    /*
+     *     Expect(exportModal).to.not.be.null;
+     * });
+     */
 };
