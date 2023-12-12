@@ -672,7 +672,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of run numbers and inform the user about it', async () => {
-        const inputValue = '1, 2';
+        const inputValue = '101, 102';
         await goToPage(page, 'run-overview');
 
         /**
