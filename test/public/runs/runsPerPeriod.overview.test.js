@@ -137,7 +137,7 @@ module.exports = () => {
 
     it('can switch to infinite mode in amountSelector', async () => {
         const INFINITE_SCROLL_CHUNK = 19;
-        await reloadPage(page);
+        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
 
         // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
         await page.waitForSelector('table tbody tr:nth-child(2)');
@@ -167,7 +167,7 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await reloadPage(page);
+        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
 
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
