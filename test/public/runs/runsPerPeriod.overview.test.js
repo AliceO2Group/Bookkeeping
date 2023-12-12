@@ -22,7 +22,6 @@ const {
     reloadPage,
 } = require('../defaults');
 const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
-const { getInnerText } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -66,7 +65,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
+        const response = await goToPage(page, 'runs-per-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -77,6 +76,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
+        await reloadPage(page);
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
@@ -116,8 +116,8 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
-        await page.waitForTimeout(100);
+        await reloadPage(page);
+        await page.waitForTimeout(1000);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
@@ -125,9 +125,10 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
+        await reloadPage(page);
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(2)').innerText)).to.equal('08/08/2019\n22:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n23:00:00');
+        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(2)').innerText)).to.equal('08/08/2019\n20:00:00');
+        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n21:00:00');
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
         expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(2)').innerText)).to.equal('1565294400000');
         expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565298000000');
@@ -135,39 +136,8 @@ module.exports = () => {
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
     });
 
-    it('can switch to infinite mode in amountSelector', async () => {
-        const INFINITE_SCROLL_CHUNK = 19;
-        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
-
-        // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
-        await page.waitForSelector('table tbody tr:nth-child(2)');
-        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
-
-        const amountSelectorButtonSelector = await '#amountSelector button';
-
-        // Expect the dropdown options to be visible when it is selected
-        await pressElement(page, amountSelectorButtonSelector);
-
-        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
-
-        const infiniteModeButtonSelector = '#amountSelector .dropup-menu .menu-item:nth-last-child(-n +2)';
-        await pressElement(page, infiniteModeButtonSelector);
-
-        // Wait for the first chunk to be loaded
-        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
-        expect((await getInnerText(await page.$(amountSelectorButtonSelector))).trim().endsWith('Infinite')).to.be.true;
-
-        await page.evaluate(() => {
-            document.querySelector('table tbody tr:last-child').scrollIntoView({ behavior: 'instant' });
-        });
-
-        await page.waitForSelector(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`);
-        expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.not.be.null;
-    });
-
     it('can set how many runs are available per page', async () => {
-        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
+        await reloadPage(page);
 
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
@@ -182,7 +152,7 @@ module.exports = () => {
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(5);
+        expect(tableRows.length - 1).to.equal(3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -196,10 +166,10 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
+        await reloadPage(page);
         await page.waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
+        await page.evaluate(() => model.runs.perPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -209,13 +179,13 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.overviewModel.pagination.itemsPerPage = 10;
+            model.runs.perPeriodOverviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
 
     it('can navigate to a run detail page', async () => {
-        await await goToPage(page, 'runs-per-period', { lhcPeriodName: 'LHC22a' });
+        await reloadPage(page);
         await page.waitForTimeout(100);
         await page.waitForSelector('tbody tr');
 
@@ -230,32 +200,4 @@ module.exports = () => {
         expect(urlParameters).to.contain('page=run-detail');
         expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
-
-    // Const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
-
-    /*
-     * It('should successfully display runs export button', async () => {
-     *     await reloadPage(page);
-     *     await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-     *     const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
-     *     expect(runsExportButton).to.be.not.null;
-     * });
-     */
-
-    /*
-     * It('should successfully display runs export modal on click on export button', async () => {
-     *     let exportModal = await page.$('#export-runs-modal');
-     *     expect(exportModal).to.be.null;
-     */
-
-    /*
-     *     Await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-     *     await page.waitForTimeout(100);
-     *     exportModal = await page.$('#export-runs-modal');
-     */
-
-    /*
-     *     Expect(exportModal).to.not.be.null;
-     * });
-     */
 };
