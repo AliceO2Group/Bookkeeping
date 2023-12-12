@@ -193,7 +193,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         /**
-         * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column text from inner buttons is also taken.
+         * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
          * @param {string[]} periodNames list of names
          * @return {string[]} cells content
          */
