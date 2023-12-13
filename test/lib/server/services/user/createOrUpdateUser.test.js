@@ -19,7 +19,7 @@ module.exports = () => {
         const externalId = 1000;
         const name = 'testUser';
 
-        const user = await createOrUpdateUser({ personId: externalId, name });
+        const user = await createOrUpdateUser({ personid: externalId, name });
 
         // User should exist now
         expect(user).not.to.be.null;
@@ -36,7 +36,7 @@ module.exports = () => {
         const updatedName = 'testUserUpdated';
 
         // Create user
-        const user = await createOrUpdateUser({ personId: externalId, name });
+        const user = await createOrUpdateUser({ personid: externalId, name });
 
         // Update user
         const updatedUser = await createOrUpdateUser({ personId: externalId, name: updatedName });
