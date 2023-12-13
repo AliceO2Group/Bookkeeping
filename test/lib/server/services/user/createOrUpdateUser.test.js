@@ -39,7 +39,7 @@ module.exports = () => {
         const user = await createOrUpdateUser({ personid: externalId, name });
 
         // Update user
-        const updatedUser = await createOrUpdateUser({ personId: externalId, name: updatedName });
+        const updatedUser = await createOrUpdateUser({ personid: externalId, name: updatedName });
 
         // Users should exist now
         expect(user).not.to.be.null;
@@ -51,6 +51,6 @@ module.exports = () => {
         // ExternalId should be equal
         expect(user.externalId).to.equal(updatedUser.externalId);
         // Name should be updated
-        expect(user.name).to.equal(updatedName);
+        expect(updatedUser.name).to.equal(updatedName);
     });
 };
