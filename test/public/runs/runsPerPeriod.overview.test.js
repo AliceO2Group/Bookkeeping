@@ -127,11 +127,11 @@ module.exports = () => {
     it('successfully switch to raw timestamp display', async () => {
         await reloadPage(page);
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(2)').innerText)).to.equal('08/08/2019\n20:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n21:00:00');
+        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
+        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(2)').innerText)).to.equal('1565294400000');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565298000000');
+        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565294400000');
+        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('1565298000000');
         // Go back to normal
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
     });
@@ -169,7 +169,7 @@ module.exports = () => {
         await reloadPage(page);
         await page.waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perPeriodOverviewModel.pagination.itemsPerPage = 200);
+        await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -179,7 +179,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perPeriodOverviewModel.pagination.itemsPerPage = 10;
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
