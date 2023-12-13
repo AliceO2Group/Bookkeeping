@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { createOrUpdateUser } = require('../../../../../lib/server/services/user/CreateOrUpdateUser');
+const { createOrUpdateUser } = require('../../../../../lib/server/services/user/createOrUpdateUser');
 
 module.exports = () => {
     it('should successfully create the user', async () => {

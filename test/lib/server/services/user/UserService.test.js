@@ -14,7 +14,7 @@
 const { expect } = require('chai');
 const { userService } = require('../../../../../lib/server/services/user/UserService.js');
 const { getUser } = require('../../../../../lib/server/services/user/getUser.js');
-const { createOrUpdateUser } = require('../../../../../lib/server/services/user/CreateOrUpdateUser.js');
+const { createOrUpdateUser } = require('../../../../../lib/server/services/user/createOrUpdateUser.js');
 
 module.exports = () => {
     it('should successfully get the existing user with getOrCreate function', async () => {
