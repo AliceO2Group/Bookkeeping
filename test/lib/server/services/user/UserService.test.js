@@ -13,8 +13,8 @@
 
 const { expect } = require('chai');
 const { userService } = require('../../../../../lib/server/services/user/UserService.js');
-const { createUser } = require('../../../../../lib/server/services/user/createUser.js');
 const { getUser } = require('../../../../../lib/server/services/user/getUser.js');
+const { createOrUpdateUser } = require('../../../../../lib/server/services/user/CreateOrUpdateUser.js');
 
 module.exports = () => {
     it('should successfully get the existing user with getOrCreate function', async () => {
@@ -22,7 +22,7 @@ module.exports = () => {
         const name = 'testUser';
 
         // Create user in db
-        await createUser({ externalUserId: externalId, name });
+        await createOrUpdateUser({ personid: externalId, name });
 
         const user = await userService.getOrCreate({ externalUserId: externalId }, name);
 

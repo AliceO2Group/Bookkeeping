@@ -12,9 +12,9 @@
  */
 
 const UserServiceTest = require('./UserService.test.js');
-const createUserTest = require('./createUser.test.js');
+const createOrUpdateUserTest = require('./createOrUpdateUser.test.js');
 
 module.exports = () => {
-    describe('createUser', createUserTest);
+    describe('createUser', createOrUpdateUserTest);
     describe('UserService', UserServiceTest);
 };
