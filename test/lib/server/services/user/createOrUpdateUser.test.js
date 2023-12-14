@@ -53,4 +53,25 @@ module.exports = () => {
         // Name should be updated
         expect(updatedUser.name).to.equal(updatedName);
     });
+
+    it('should not update the user but still return the same user', async () => {
+        const externalId = 1001;
+        const name = 'testUser';
+
+        // Create user
+        const user = await createOrUpdateUser({ personid: externalId, name });
+
+        // Update user with the same variables (should stay the same)
+        const sameUser = await createOrUpdateUser({ personid: externalId, name });
+
+        // Users should exist now
+        expect(user).not.to.be.null;
+        expect(sameUser).not.to.be.null;
+        // Id should be filled automatically
+        expect(sameUser.id).not.to.be.null;
+        // Id, externalId and name should be the same
+        expect(user.id).to.equal(sameUser.id);
+        expect(user.externalId).to.equal(sameUser.externalId);
+        expect(user.name).to.equal(sameUser.name);
+    });
 };
