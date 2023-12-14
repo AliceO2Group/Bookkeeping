@@ -665,7 +665,3 @@ label {
         grid-template-columns: repeat(3, 1fr);
     }
 }
-
-.bg-soft-red {
-    background-color: var(--color-soft-red) !important;
-}
