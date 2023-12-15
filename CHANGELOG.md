@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.75.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.75.0)
+* Notable changes for users:
+  * Added run per Period view
+  * The run number filter has been put back in place after being accidentally removed
+  * Fixed error displayed when deleting environment filter on logs overview
+  * A margin has been added between the popover and the screen edges
+  * Missing dates on the LHC overview pages are now shown to the user as '-' instead of 01/01/1970 01:00:00
+  * The LHC Periods page filter button is now styled in the same way as other pages
+  * Clicking in popover keep the scroll in place
+* Notable change for developers:
+  * Refactored LogsModel, extracted overview to separate class
+  * Created separate model for Home page
+  * Reduce number of request of RunsOverviewModel
+  * Added getOrCreate function to UserService replacing the CreateOrUpdateUser use case and cleaned the user authentication code
+
 ## [0.74.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.74.0)
 
 * Notable changes for users:
