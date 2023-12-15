@@ -11,8 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
+const { server } = require('../../../lib/application');
+const request = require('supertest');
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const path = require('path');
+const fs = require('fs');
 
 const { expect } = chai;
 
@@ -224,5 +228,34 @@ module.exports = () => {
         const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
         expect(newLogTitle).to.equal(`${parentLogTitle}`);
+    });
+
+    it('should succesfully fetch attachemnt from log details', async () => {
+        const logId = 1;
+        const downloadPath = path.resolve('./download');
+        const fileName = '1200px-CERN_logo.png';
+        const filePath = path.resolve(__dirname, '..', '..', 'assets', fileName);
+
+        // PUT attachment
+        const response = await request(server)
+            .post('/api/attachments')
+            .field('log', logId)
+            .attach('attachments', filePath);
+        expect(response.status).to.equal(201);
+
+        // Check accessibility on frontend
+        const client = await page.target().createCDPSession();
+        await client .send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: downloadPath,
+        });
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+        const attachmentAnchor = await page.$('a.break-all.clickable');
+        attachmentAnchor.click();
+
+        await page.waitForTimeout(100);
+        const dowloadFilesNames = fs.readdirSync(downloadPath);
+        expect(dowloadFilesNames.filter((name) => RegExp(`^\\d+_${name}$`))).to.be.lengthOf(1);
     });
 };
