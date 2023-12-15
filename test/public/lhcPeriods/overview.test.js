@@ -100,7 +100,7 @@ module.exports = () => {
         const amountSelectorButton = await page.$('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
         await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
@@ -192,8 +192,15 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
+        /**
+         * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
+         * @param {string[]} periodNames list of names
+         * @return {string[]} cells content
+         */
+        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nruns`);
+
         let allLhcPeriodNames = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNames).to.has.all.deep.members(['LHC22a']);
+        expect(allLhcPeriodNames).to.has.all.deep.members(appendButtonsText(['LHC22a']));
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
@@ -201,7 +208,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         allLhcPeriodNames = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNames).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
+        expect(allLhcPeriodNames).to.has.all.deep.members(appendButtonsText(['LHC22a', 'LHC22b', 'LHC23f']));
     });
 
     it('should successfuly apply lhc period year filter', async () => {
