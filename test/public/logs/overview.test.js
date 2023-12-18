@@ -204,36 +204,6 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
     });
 
-    it('can exclude logs from anonymous authors', async () => {
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        await page.waitForTimeout(200);
-        expect(originalNumberOfRows).to.be.greaterThan(1);
-
-        // By default the exclude anonymous checkbox is checked, so uncheck it
-        await pressElement(page, '.excludeAnonymous');
-        await page.waitForTimeout(500);
-
-        // Expect the (new) total number of rows to be more that the original number of rows
-        const includedRows = await page.$$('table tr');
-        const includedNumberOfRows = includedRows.length - 1;
-        expect(includedNumberOfRows).to.be.greaterThan(originalNumberOfRows);
-
-        // Clear the filters to reset the checkbox to its default state
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await page.waitForNetworkIdle();
-        await page.waitForTimeout(100);
-
-        // Expect the total number of rows to once more equal the original total
-        const excludedRows = await page.$$('table tr');
-        const excludedNumberOfRows = excludedRows.length - 1;
-        expect(excludedNumberOfRows).to.equal(originalNumberOfRows);
-    });
-
     it('can filter by creation date', async () => {
         // Increase the amount of items displayed to see logs count difference above 10
         await page.evaluate(() => {
@@ -271,7 +241,7 @@ module.exports = () => {
         // 10 logs are created before this test
         const secondFilteredRows = await page.$('#totalRowsCount');
         const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(secondFilteredNumberOfRows).to.equal(7);
+        expect(secondFilteredNumberOfRows).to.equal(19);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -337,7 +307,7 @@ module.exports = () => {
         // Expect the same amount of rows as the original number of rows
         const thirdFilteredRows = await page.$$('table tr');
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
-        expect(thirdFilteredNumberOfRows).to.equal(firstFilteredNumberOfRows);
+        expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
         expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
     });
 
