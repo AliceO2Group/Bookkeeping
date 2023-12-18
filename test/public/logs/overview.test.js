@@ -212,7 +212,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // By default the exclude anonymous checkbox is checked, so uncheck it
-        await page.click('[id*="excludeAnonymousCheckbox"]');
+        await page.click('.excludeAnonymous');
         await page.waitForTimeout(500);
 
         // Expect the (new) total number of rows to be more that the original number of rows
@@ -300,7 +300,7 @@ module.exports = () => {
         await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
 
         // By default the exclude anonymous checkbox is checked, so uncheck it for the test
-        await page.click('[id*="excludeAnonymousCheckbox"]');
+        await page.click('.excludeAnonymous');
         await page.waitForTimeout(500);
 
         // Select the second available filter and wait for the changes to be processed
@@ -834,7 +834,7 @@ module.exports = () => {
         await page.evaluate(() => window.model.disableInputDebounce());
 
         // By default the exclude anonymous checkbox is checked, so uncheck it for the test
-        await page.click('[id*="excludeAnonymousCheckbox"]');
+        await page.click('.excludeAnonymous');
         await page.waitForTimeout(500);
 
         /*
