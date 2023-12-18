@@ -66,7 +66,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(138);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(125);
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -212,7 +212,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // By default the exclude anonymous checkbox is checked, so uncheck it
-        await page.click('#excludeAnonymousCheckboxExclude Anonymous');
+        await page.click('[id*="excludeAnonymousCheckbox"]');
         await page.waitForTimeout(500);
 
         // Expect the (new) total number of rows to be more that the original number of rows
@@ -271,7 +271,7 @@ module.exports = () => {
         // 10 logs are created before this test
         const secondFilteredRows = await page.$('#totalRowsCount');
         const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(secondFilteredNumberOfRows).to.equal(19);
+        expect(secondFilteredNumberOfRows).to.equal(7);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -298,6 +298,10 @@ module.exports = () => {
         originalNumberOfRows = originalRows.length - 1;
 
         await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+
+        // By default the exclude anonymous checkbox is checked, so uncheck it for the test
+        await page.click('[id*="excludeAnonymousCheckbox"]');
+        await page.waitForTimeout(500);
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
@@ -828,6 +832,10 @@ module.exports = () => {
 
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
+
+        // By default the exclude anonymous checkbox is checked, so uncheck it for the test
+        await page.click('[id*="excludeAnonymousCheckbox"]');
+        await page.waitForTimeout(500);
 
         /*
          * We have to filter for a specific log since the first page contains no logs with runs,
