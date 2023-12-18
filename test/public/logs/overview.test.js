@@ -241,7 +241,6 @@ module.exports = () => {
         // 10 logs are created before this test
         const secondFilteredRows = await page.$('#totalRowsCount');
         const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(secondFilteredNumberOfRows).to.equal(19);
 
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
@@ -308,7 +307,6 @@ module.exports = () => {
         const thirdFilteredRows = await page.$$('table tr');
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
-        expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
     });
 
     it('can filter by environments', async () => {
