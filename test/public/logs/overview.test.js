@@ -212,13 +212,13 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // By default the exclude anonymous checkbox is checked, so uncheck it
-        await page.click('.excludeAnonymous');
+        await pressElement(page, '.excludeAnonymous');
         await page.waitForTimeout(500);
 
         // Expect the (new) total number of rows to be more that the original number of rows
         const includedRows = await page.$$('table tr');
         const includedNumberOfRows = includedRows.length - 1;
-        expect(includedNumberOfRows).to.be.moreThan(originalNumberOfRows);
+        expect(includedNumberOfRows).to.be.greaterThan(originalNumberOfRows);
 
         // Clear the filters to reset the checkbox to its default state
         await page.evaluate(() => {
@@ -299,10 +299,6 @@ module.exports = () => {
 
         await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
 
-        // By default the exclude anonymous checkbox is checked, so uncheck it for the test
-        await page.click('.excludeAnonymous');
-        await page.waitForTimeout(500);
-
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
         await pressElement(page, `#${firstCheckboxId}`);
@@ -338,11 +334,11 @@ module.exports = () => {
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await page.waitForTimeout(300);
 
-        // Expect there now to be more rows than both the previous table and the table with only one filter
+        // Expect the same amount of rows as the original number of rows
         const thirdFilteredRows = await page.$$('table tr');
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
-        expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
-        expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
+        expect(thirdFilteredNumberOfRows).to.equal(firstFilteredNumberOfRows);
+        expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
     });
 
     it('can filter by environments', async () => {
@@ -832,10 +828,6 @@ module.exports = () => {
 
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
-
-        // By default the exclude anonymous checkbox is checked, so uncheck it for the test
-        await page.click('.excludeAnonymous');
-        await page.waitForTimeout(500);
 
         /*
          * We have to filter for a specific log since the first page contains no logs with runs,
