@@ -118,6 +118,23 @@ module.exports = () => {
                 });
         });
 
+        it('should prioritize exclusion filtering over inclusion filtering', (done) => {
+            request(server)
+                .get('/api/logs?filter[author]=!John,John')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.equal(0);
+
+                    done();
+                });
+        });
+
         it('should return all for empty exclusion filter', (done) => {
             request(server)
                 .get('/api/logs?filter[author]=!')
