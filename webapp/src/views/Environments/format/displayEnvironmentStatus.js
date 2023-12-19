@@ -12,7 +12,7 @@
  */
 
 import { coloredEnvironmentStatusComponent } from '../ColoredEnvironmentStatusComponent.js';
-import { h, iconWarning } from '/js/src/index.js';
+import { h, iconWarning } from '@aliceo2/web-ui-frontend';
 import { tooltip } from '../../../components/common/popover/tooltip.js';
 
 /**

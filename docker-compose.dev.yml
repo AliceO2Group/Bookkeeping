@@ -12,26 +12,9 @@ services:
       - "4000:4000"
       - "4001:4001"
     restart: "no"
-    volumes:
-      - type: bind
-        read_only: true
-        source: ./lib
-        target: /usr/src/app/lib
-      - type: bind
-        read_only: true
-        source: ./proto
-        target: /usr/src/app/proto
 
   database:
     environment:
       MYSQL_ROOT_PASSWORD: cern
     ports:
       - "3306:3306"
-    volumes:
-      - type: volume
-        read_only: false
-        source: database-data
-        target: /var/lib/mysql
-
-volumes:
-  database-data:

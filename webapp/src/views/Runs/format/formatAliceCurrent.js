@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { switchCase } from '/js/src/index.js';
+import { switchCase } from '@aliceo2/web-ui-frontend';
 
 /**
  * Formatt alice current value

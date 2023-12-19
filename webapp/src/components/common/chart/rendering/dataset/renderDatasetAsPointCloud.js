@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { select } from '/assets/d3.min.js';
+import { select } from 'd3';
 import { getUniqueId } from '../../../../../utilities/getUniqueId.js';
 
 /**

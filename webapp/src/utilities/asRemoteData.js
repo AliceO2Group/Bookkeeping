@@ -10,7 +10,7 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
-import { RemoteData } from '/js/src/index.js';
+import { RemoteData } from '@aliceo2/web-ui-frontend';
 
 /**
  * Returns the given data as a remote data

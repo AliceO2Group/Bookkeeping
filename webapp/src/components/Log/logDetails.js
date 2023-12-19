@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * For some given fields, returns the hyperscript to display those fields in the form

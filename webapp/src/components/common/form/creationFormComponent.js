@@ -12,7 +12,7 @@
  */
 import errorAlert from '../errorAlert.js';
 import { createButton } from './createButton.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Wrapp a given form inputs in a form component, with errors at the top and submit button

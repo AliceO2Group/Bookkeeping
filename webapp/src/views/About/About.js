@@ -12,7 +12,7 @@
  */
 
 import { getRemoteData } from '../../utilities/fetch/getRemoteData.js';
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 
 /**
  * Model representing handlers for aboutPage.js

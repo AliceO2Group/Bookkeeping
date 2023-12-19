@@ -10,7 +10,7 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { tabbedPanelComponent } from '../../components/TabbedPanel/tabbedPanelComponent.js';
 import { STATISTICS_PANELS_KEYS } from './StatisticsPageModel.js';
 import { efficiencyChartComponent } from './charts/efficiencyChartComponent.js';

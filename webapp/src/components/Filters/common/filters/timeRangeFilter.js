@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 import { dropdown } from '../../../common/popover/dropdown.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { dateTimeInput } from '../../../common/form/inputs/dateTimeInput.js';
 import {
     getLocaleDateAndTime,

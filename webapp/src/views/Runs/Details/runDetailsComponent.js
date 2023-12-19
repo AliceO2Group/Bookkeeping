@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { lhcFillPanel } from './lhcFillPanel.js';
 import { editTagsPanel } from './editTagsPanel.js';
 import { tabbedPanelComponent } from '../../../components/TabbedPanel/tabbedPanelComponent.js';

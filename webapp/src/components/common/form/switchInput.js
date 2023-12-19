@@ -17,7 +17,7 @@
  * @return {void}
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Render a switch input (styled checkbox)

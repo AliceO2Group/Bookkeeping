@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { fetchClient, Observable, RemoteData } from '/js/src/index.js';
+import { fetchClient, Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 import { PaginationModel } from '../../components/Pagination/PaginationModel.js';
 
 /**

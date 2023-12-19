@@ -12,7 +12,7 @@
  */
 
 import { lhcFillDetailsComponent } from './lhcFillDetailsComponent.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Page displaying the details of a given LHC fill

@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { select, scaleLinear, scaleBand, scalePoint } from '/assets/d3.min.js';
+import { select, scaleLinear, scaleBand, scalePoint } from 'd3';
 import { BottomAxisRenderer } from './axis/BottomAxisRenderer.js';
 import { LeftAxisRenderer } from './axis/LeftAxisRenderer.js';
 import { renderHorizontalGrid } from './grid/renderHorizontalGrid.js';

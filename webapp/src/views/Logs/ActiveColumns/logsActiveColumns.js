@@ -11,8 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
-import { iconCommentSquare, iconPaperclip } from '/js/src/icons.js';
+import { h, iconCommentSquare, iconPaperclip } from '@aliceo2/web-ui-frontend';
 
 import { authorFilter } from '../../../components/Filters/LogsFilter/author/authorFilter.js';
 import createdFilter from '../../../components/Filters/LogsFilter/created.js';

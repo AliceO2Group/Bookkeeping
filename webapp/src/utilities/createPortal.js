@@ -10,7 +10,7 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
-import { h, mount, Observable } from '/js/src/index.js';
+import { h, mount, Observable } from '@aliceo2/web-ui-frontend';
 import { documentClickTaggedEventRegistry } from './documentClickTaggedEventRegistry.js';
 
 /**

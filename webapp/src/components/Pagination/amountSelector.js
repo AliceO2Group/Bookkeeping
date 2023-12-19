@@ -11,8 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
-import { iconCaretTop } from '/js/src/icons.js';
+import { h, iconCaretTop } from '@aliceo2/web-ui-frontend';
 import { documentClickTaggedEventRegistry } from '../../utilities/documentClickTaggedEventRegistry.js';
 
 /**

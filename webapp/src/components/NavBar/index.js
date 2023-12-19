@@ -12,8 +12,7 @@
  */
 
 const { CONFIGURATION: { ALI_FLP_INDEX_URL } } = window;
-import { h } from '/js/src/index.js';
-import { iconPerson, iconPlus } from '/js/src/icons.js';
+import { h, iconPerson, iconPlus } from '@aliceo2/web-ui-frontend';
 import { userPreferencesStore } from '../../utilities/userPreferencesStore.js';
 import { frontLink } from '../common/navigation/frontLink.js';
 import { absoluteFrontLink } from '../common/navigation/absoluteFrontLink.js';

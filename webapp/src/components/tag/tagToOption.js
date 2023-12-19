@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h, info } from '/js/src/index.js';
+import { h, info } from '@aliceo2/web-ui-frontend';
 import { tooltip } from '../common/popover/tooltip.js';
 
 /**

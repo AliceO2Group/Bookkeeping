@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 import { SelectionModel } from '../SelectionModel.js';
-import { RemoteData } from '/js/src/index.js';
+import { RemoteData } from '@aliceo2/web-ui-frontend';
 
 /**
  * @typedef SelectionDropdownModelExclusiveConfiguration

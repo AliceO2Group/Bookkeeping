@@ -13,7 +13,7 @@
 import { popover } from '../../common/popover/popover.js';
 import { PopoverTriggerPreConfiguration } from '../../common/popover/popoverPreConfigurations.js';
 import { PopoverAnchors } from '../../common/popover/PopoverEngine.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Return the filters panel popover trigger

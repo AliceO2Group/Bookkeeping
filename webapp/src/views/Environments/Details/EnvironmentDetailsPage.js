@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import spinner from '../../../components/common/spinner.js';
 import errorAlert from '../../../components/common/errorAlert.js';
 import { formatTimestamp } from '../../../utilities/formatting/formatTimestamp.js';

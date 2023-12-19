@@ -13,7 +13,7 @@
 
 import spinner from '../common/spinner.js';
 import { picker } from '../common/selection/picker/picker.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { frontLink } from '../common/navigation/frontLink.js';
 import { asRemoteData } from '../../utilities/asRemoteData.js';
 

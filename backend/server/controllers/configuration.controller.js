@@ -19,11 +19,14 @@ const { ServicesConfig } = require('../../config/index.js');
  * Request to provide configuration to the frontend
  */
 const getConfigurationHandler = (_, response) => {
-    response.status(200).type('.js').send(`window.CONFIGURATION=${JSON.stringify({
-        FLP_INFOLOGGER_URL: ServicesConfig.infologger.flp.url,
-        EPN_INFOLOGGER_URL: ServicesConfig.infologger.epn.url,
-        ALI_FLP_INDEX_URL: ServicesConfig.aliFlp.index,
-    })}`);
+    response.status(200)
+        .type('.js')
+        .contentType('text/javascript')
+        .send(`window.CONFIGURATION=${JSON.stringify({
+            FLP_INFOLOGGER_URL: ServicesConfig.infologger.flp.url,
+            EPN_INFOLOGGER_URL: ServicesConfig.infologger.epn.url,
+            ALI_FLP_INDEX_URL: ServicesConfig.aliFlp.index,
+        })}`);
 };
 
 module.exports = { getConfigurationHandler };

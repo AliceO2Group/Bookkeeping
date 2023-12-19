@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 import { getRemoteData } from '../../../utilities/fetch/getRemoteData.js';
 import { jsonFetch } from '../../../utilities/fetch/jsonFetch.js';
 import { tagToOptionWithArchiveBadge } from '../../../components/tag/tagToOptionWithArchiveBadge.js';

@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 import { TagFilterModel } from '../../../components/Filters/common/TagFilterModel.js';
 import { SortModel } from '../../../components/common/table/SortModel.js';
 import { debounce } from '../../../utilities/debounce.js';

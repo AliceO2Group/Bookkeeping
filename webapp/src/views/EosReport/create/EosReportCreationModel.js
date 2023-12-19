@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { Observable, RemoteData, sessionService } from '/js/src/index.js';
+import { Observable, RemoteData, sessionService } from '@aliceo2/web-ui-frontend';
 import { getRemoteData } from '../../../utilities/fetch/getRemoteData.js';
 import { CreationModel } from '../../../models/CreationModel.js';
 import { ShiftTypes } from '../../../domain/enums/ShiftTypes.js';

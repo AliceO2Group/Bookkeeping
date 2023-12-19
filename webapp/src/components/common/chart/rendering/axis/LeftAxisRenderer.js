@@ -12,7 +12,7 @@
  */
 
 import { AxisRenderer } from './AxisRenderer.js';
-import { axisLeft } from '/assets/d3.min.js';
+import { axisLeft } from 'd3';
 
 /**
  * Implementation of {@see AxisRenderer} to display a vertical axis at the left of a chart

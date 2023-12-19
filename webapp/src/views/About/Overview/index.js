@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h, iconCheck, iconX } from '/js/src/index.js';
+import { h, iconCheck, iconX } from '@aliceo2/web-ui-frontend';
 
 /**
  * A green success badge with the tick icon

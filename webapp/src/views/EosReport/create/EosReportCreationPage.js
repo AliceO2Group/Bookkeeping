@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 import { eosReportCreationComponent } from './eosReportCreationComponent.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { SHIFT_TYPES } from '../../../domain/enums/ShiftTypes.js';
 import { frontLink } from '../../../components/common/navigation/frontLink.js';
 

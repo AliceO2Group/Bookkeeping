@@ -11,8 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h, iconTrash } from '/js/src/index.js';
-import { iconPlus } from '/js/src/icons.js';
+import { h, iconTrash, iconPlus } from '@aliceo2/web-ui-frontend';
 import spinner from '../../../components/common/spinner.js';
 
 /**

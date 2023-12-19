@@ -12,7 +12,7 @@
  */
 
 import { environmentOverviewComponent } from './environmentOverviewComponent.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Returns the environment's overview page component

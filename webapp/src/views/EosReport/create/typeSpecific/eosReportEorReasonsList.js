@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Format a list of end of run reasons to be displayed in an end of shift report

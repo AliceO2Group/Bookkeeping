@@ -12,7 +12,7 @@
  */
 
 import { SelectionDropdownModel } from '../common/selection/dropdown/SelectionDropdownModel.js';
-import { RemoteData } from '/js/src/index.js';
+import { RemoteData } from '@aliceo2/web-ui-frontend';
 import { detectorsProvider } from '../../services/detectors/detectorsProvider.js';
 
 /**

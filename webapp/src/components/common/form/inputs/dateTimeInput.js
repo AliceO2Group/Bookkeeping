@@ -10,8 +10,7 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
-import { h } from '/js/src/index.js';
-import { iconX } from '/js/src/icons.js';
+import { h, iconX } from '@aliceo2/web-ui-frontend';
 
 /**
  * Returns a component to pick a date and time

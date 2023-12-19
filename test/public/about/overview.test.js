@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults');
-const packageJson = require('../../../package.json');
+const packageJson = require('../../../backend/package.json');
 
 const { expect } = chai;
 

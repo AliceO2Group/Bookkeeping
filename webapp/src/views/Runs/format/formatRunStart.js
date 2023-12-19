@@ -12,7 +12,7 @@
  */
 
 import { formatTimestamp } from '../../../utilities/formatting/formatTimestamp.js';
-import { iconWarning, h } from '/js/src/index.js';
+import { iconWarning, h } from '@aliceo2/web-ui-frontend';
 import { getLocaleDateAndTime } from '../../../utilities/dateUtils.js';
 import { tooltip } from '../../../components/common/popover/tooltip.js';
 

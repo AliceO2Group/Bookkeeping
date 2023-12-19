@@ -13,7 +13,7 @@
 
 const { Logger } = require('../utilities');
 const { OpenIdConfig, JwtConfig } = require('../config');
-const { HttpServer } = require('@aliceo2/web-ui');
+const { HttpServer } = require('@aliceo2/web-ui-backend');
 const path = require('path');
 const buildEndpoints = require('./routers');
 const { BkpRoles } = require('../domain/enums/BkpRoles.js');
@@ -73,8 +73,11 @@ class WebUiServer {
             });
         });
 
-        this.http.addStaticPath(path.resolve(__dirname, '..', 'public'));
         buildEndpoints(this.http);
+        this.http.addStaticPath(path.resolve(__dirname, '..', '..', 'webapp', 'public'));
+        this.http.routerStatics.get('/', (_req, res) => {
+            res.render(path.resolve(__dirname, '..', 'views', 'index.html.ejs'));
+        });
     }
 
     /**

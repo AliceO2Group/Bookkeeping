@@ -12,7 +12,7 @@
  */
 
 import { formatTimestamp } from '../../../utilities/formatting/formatTimestamp.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { displayRunDuration } from '../format/displayRunDuration.js';
 import { frontLink } from '../../../components/common/navigation/frontLink.js';
 import { formatRunType } from '../../../utilities/formatting/formatRunType.js';

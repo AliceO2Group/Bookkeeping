@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 import { RunCalibrationStatus } from '../../domain/enums/RunCalibrationStatus.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * Return a colored component representing a given calibration status

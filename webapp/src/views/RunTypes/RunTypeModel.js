@@ -13,7 +13,7 @@
  */
 
 import RunTypeOverview from './RunTypeOverview.js';
-import { Observable } from '/js/src/index.js';
+import { Observable } from '@aliceo2/web-ui-frontend';
 
 /**
  * General run types model

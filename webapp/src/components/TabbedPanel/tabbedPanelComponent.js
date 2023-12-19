@@ -1,4 +1,4 @@
-import { h, switchCase } from '/js/src/index.js';
+import { h, switchCase } from '@aliceo2/web-ui-frontend';
 import { tabLink } from '../common/navigation/tabLink.js';
 
 /**

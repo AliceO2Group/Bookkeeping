@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { popover } from './popover.js';
 import { PopoverAnchors } from './PopoverEngine.js';
 import { PopoverTriggerPreConfiguration } from './popoverPreConfigurations.js';

@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { Log } = require('@aliceo2/web-ui');
+const { Log } = require('@aliceo2/web-ui-backend');
 const { isInDevMode } = require('./env-utils');
 
 module.exports = (name) => {

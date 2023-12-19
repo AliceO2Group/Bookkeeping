@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { RUN_CALIBRATION_STATUS } from '../../../domain/enums/RunCalibrationStatus.js';
 import { coloredCalibrationStatusComponent } from '../coloredCalibrationStatusComponent.js';
 

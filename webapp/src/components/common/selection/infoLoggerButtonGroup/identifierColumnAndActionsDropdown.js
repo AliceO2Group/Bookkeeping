@@ -13,8 +13,7 @@
 
 import { frontLink } from '../../navigation/frontLink.js';
 import { dropdown } from '../../popover/dropdown.js';
-import { iconCaretBottom } from '/js/src/icons.js';
-import { h } from '/js/src/index.js';
+import { h, iconCaretBottom } from '@aliceo2/web-ui-frontend';
 
 /**
  * Renders a button group with an identifier column and actions dropdown.

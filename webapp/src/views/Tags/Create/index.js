@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h, sessionService } from '/js/src/index.js';
+import { h, sessionService } from '@aliceo2/web-ui-frontend';
 import { BkpRoles } from '../../../domain/enums/BkpRoles.js';
 import { creationFormComponent } from '../../../components/common/form/creationFormComponent.js';
 

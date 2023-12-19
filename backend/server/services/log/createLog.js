@@ -13,7 +13,7 @@
 
 const { utilities: { TransactionHelper } } = require('../../../database');
 const { Notification, HttpConfig } = require('../../../config');
-const { NotificationService } = require('@aliceo2/web-ui');
+const { NotificationService } = require('@aliceo2/web-ui-backend');
 const { getLog } = require('./getLog.js');
 const { getAllTagsByTextOrFail } = require('../tag/getAllTagsByTextOrFail.js');
 const { getAllEnvironmentsOrFail } = require('../environment/getAllEnvironmentsOrFail.js');

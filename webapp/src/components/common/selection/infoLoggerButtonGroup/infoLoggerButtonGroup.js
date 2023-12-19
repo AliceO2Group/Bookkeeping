@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { getInfologgerLinksUrls } from '../../../../services/externalRouting/getInfologgerLinksUrls.js';
 import { CopyToClipboardComponent } from './CopyToClipboardComponent.js';
 import { identifierColumnAndActionsDropdown } from './identifierColumnAndActionsDropdown.js';

@@ -24,12 +24,24 @@ services:
     volumes:
       - type: bind
         read_only: true
+        source: ./backend
+        target: /usr/src/app/backend
+      - type: bind
+        read_only: true
+        source: ./webapp
+        target: /usr/src/app/webapp
+      - type: bind
+        read_only: true
         source: ./scripts
         target: /opt
       - type: bind
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: bind
+        read_only: true
+        source: ../WebUi
+        target: /usr/src/WebUI
 
   database:
     image: mariadb:10.5.9
@@ -37,9 +49,9 @@ services:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     restart: unless-stopped
     volumes:
-      - type: bind
+      - type: volume
         read_only: false
-        source: ./database/data
+        source: database-data
         target: /var/lib/mysql
       - type: bind
         read_only: true
@@ -49,3 +61,6 @@ services:
         read_only: true
         source: ./database/populate
         target: /docker-entrypoint-initdb.d
+
+volumes:
+  database-data:

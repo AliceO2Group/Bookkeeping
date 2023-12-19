@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { version } = require('../../../package.json');
+const { version } = require('../../package.json');
 
 /**
  * GetGuiStatusUseCase

@@ -1,7 +1,6 @@
 import errorAlert from '../errorAlert.js';
 import spinner from '../spinner.js';
-import { h, iconCaretRight } from '/js/src/index.js';
-import { iconCaretBottom } from '/js/src/icons.js';
+import { h, iconCaretRight, iconCaretBottom } from '@aliceo2/web-ui-frontend';
 
 /**
  * Display the node of a tree and its children

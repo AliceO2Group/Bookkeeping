@@ -11,8 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
-import { iconCaretTop, iconCaretBottom, iconX } from '/js/src/icons.js';
+import { h, iconCaretTop, iconCaretBottom, iconX } from '@aliceo2/web-ui-frontend';
 
 /**
  * @typedef TableModels the list of models that handle an eventual table state

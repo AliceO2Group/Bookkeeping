@@ -12,8 +12,7 @@
  */
 import { frontLink } from '../../../components/common/navigation/frontLink.js';
 import { dropdown } from '../../../components/common/popover/dropdown.js';
-import { iconCaretBottom } from '/js/src/icons.js';
-import { h } from '/js/src/index.js';
+import { h, iconCaretBottom } from '@aliceo2/web-ui-frontend';
 import { getInfologgerLinksUrls } from '../../../services/externalRouting/getInfologgerLinksUrls.js';
 
 /**

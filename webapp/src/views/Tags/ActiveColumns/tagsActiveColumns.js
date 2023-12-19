@@ -12,7 +12,7 @@
  */
 
 import { formatTimestamp } from '../../../utilities/formatting/formatTimestamp.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * List of active columns for a tags table

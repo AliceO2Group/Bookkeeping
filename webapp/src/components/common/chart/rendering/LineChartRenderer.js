@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { quadtree } from '/assets/d3.min.js';
+import { quadtree } from 'd3';
 import { ChartRenderer } from './ChartRenderer.js';
 import { renderDatasetAsLine } from './dataset/renderDatasetAsLine.js';
 import { renderDatasetAsPointCloud } from './dataset/renderDatasetAsPointCloud.js';

@@ -12,7 +12,7 @@
  */
 
 import { detailsList } from '../Detail/detailsList.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { formatTimestamp } from '../../utilities/formatting/formatTimestamp.js';
 import { formatEmail } from '../../utilities/formatting/formatEmail.js';
 

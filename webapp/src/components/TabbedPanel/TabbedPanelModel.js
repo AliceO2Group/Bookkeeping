@@ -1,4 +1,4 @@
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 
 /**
  * Model to handle tab-based panel state

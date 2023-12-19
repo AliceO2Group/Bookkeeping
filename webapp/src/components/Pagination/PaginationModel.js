@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-import { Observable } from '/js/src/index.js';
+import { Observable } from '@aliceo2/web-ui-frontend';
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
 const DEFAULT_CURRENT_PAGE = 1;

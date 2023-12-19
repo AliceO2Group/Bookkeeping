@@ -12,7 +12,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { table } from '../../../components/common/table/table.js';
 import { lhcFillsActiveColumns } from '../ActiveColumns/lhcFillsActiveColumns.js';
 import { estimateDisplayableRowsCount } from '../../../utilities/estimateDisplayableRowsCount.js';

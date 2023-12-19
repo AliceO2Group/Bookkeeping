@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { Observable } from '/js/src/index.js';
+import { Observable } from '@aliceo2/web-ui-frontend';
 import { RunsOverviewModel } from '../../Runs/Overview/RunsOverviewModel.js';
 import { LogsOverviewModel } from '../../Logs/Overview/LogsOverviewModel.js';
 

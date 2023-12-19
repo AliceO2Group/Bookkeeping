@@ -16,7 +16,7 @@ import { formatTimestamp } from '../../../utilities/formatting/formatTimestamp.j
 import { formatDuration } from '../../../utilities/formatting/formatDuration.mjs';
 import { frontLink } from '../../../components/common/navigation/frontLink.js';
 import { formatPercentage } from '../../../utilities/formatting/formatPercentage.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { formatRunsList } from '../../Runs/format/formatRunsList.js';
 import { formatLhcFillsTimeLoss } from '../format/formatLhcFillsTimeLoss.js';
 

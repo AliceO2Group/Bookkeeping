@@ -12,7 +12,7 @@
  */
 import spinner from '../../../components/common/spinner.js';
 import { TAG_DETAILS_PANELS_KEYS } from './TagDetailsModel.js';
-import { h, sessionService } from '/js/src/index.js';
+import { h, sessionService } from '@aliceo2/web-ui-frontend';
 import { tagDetail } from '../../../components/tag/tagDetail.js';
 import { table } from '../../../components/common/table/table.js';
 import { logsActiveColumns } from '../../Logs/ActiveColumns/logsActiveColumns.js';

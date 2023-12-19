@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { estimateDisplayableRowsCount } from '../../../utilities/estimateDisplayableRowsCount.js';
 import { exportRunsTriggerAndModal } from './exportRunsTriggerAndModal.js';
 import { filtersPanelPopover } from '../../../components/Filters/common/filtersPanelPopover.js';

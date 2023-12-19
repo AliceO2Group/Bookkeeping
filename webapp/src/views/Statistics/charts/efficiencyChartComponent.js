@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 import { lineChartComponent } from '../../../components/common/chart/lineChart/lineChartComponent.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { ChartColors } from '../chartColors.js';
 import { formatPercentage } from '../../../utilities/formatting/formatPercentage.js';
 

@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h, iconMinus, iconPlus } from '/js/src/index.js';
+import { h, iconMinus, iconPlus } from '@aliceo2/web-ui-frontend';
 
 /**
  * @typedef PickerConfiguration The configuration of the picker

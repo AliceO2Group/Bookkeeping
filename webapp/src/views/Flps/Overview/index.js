@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { table } from '../../../components/common/table/table.js';
 import { flpsActiveColumns } from '../ActiveColumns/flpsActiveColumns.js';
 import { paginationComponent } from '../../../components/Pagination/paginationComponent.js';

@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { h, iconTrash } from '/js/src/index.js';
+import { h, iconTrash } from '@aliceo2/web-ui-frontend';
 import { frontLink } from '../../../../components/common/navigation/frontLink.js';
 import { getLocaleDateAndTime } from '../../../../utilities/dateUtils.js';
 

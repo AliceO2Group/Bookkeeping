@@ -1,64 +1,15 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.75.0",
-  "author": "ALICEO2",
+  "workspaces": [
+    "backend",
+    "webapp"
+  ],
   "scripts": {
-    "coverage": "nyc npm test && npm run coverage:report",
-    "coverage:report": "nyc report --reporter=html --reporter=json",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "npm run lint -- --fix",
-    "sequelize": "sequelize-cli",
-    "start:dev": "nodemon --ignore 'backend/public/**/*.js' backend/main.js",
-    "start:prod": "node backend/main.js",
-    "test": "mocha --exit --timeout 0",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
-    "docker-update": "node scripts/update-dockerfile.js"
+    "start:dev": "NODE_ENV=development npx concurrently 'npm run -w backend start:dev' 'npm run -w webapp start:dev'"
   },
-  "engines": {
-    "node": ">= 18.x"
-  },
-  "dependencies": {
-    "@aliceo2/web-ui": "2.5.0",
-    "@grpc/grpc-js": "1.9.0",
-    "@grpc/proto-loader": "0.7.0",
-    "cls-hooked": "4.2.2",
-    "d3": "7.8.5",
-    "deepmerge": "4.3.0",
-    "joi": "17.11.0",
-    "mariadb": "3.0.0",
-    "multer": "1.4.5-lts.1",
-    "node-fetch": "3.3.1",
-    "sequelize": "6.35.0",
-    "umzug": "3.5.0"
-  },
-  "files": [
-    "backend/",
-    "docs/",
-    "proto/"
-  ],
   "devDependencies": {
-    "@types/d3": "7.4.0",
-    "chai": "4.3.4",
-    "eslint": "8.56.0",
-    "js-yaml": "4.1.0",
-    "mocha": "10.2.0",
-    "nodemon": "3.0.1",
-    "nyc": "15.1.0",
-    "puppeteer": "21.6.1",
-    "puppeteer-to-istanbul": "1.4.0",
-    "sequelize-cli": "6.6.0",
-    "sinon": "17.0.1",
-    "supertest": "6.3.0"
-  },
-  "bundleDependencies": [
-    "@aliceo2/web-ui",
-    "cls-hooked",
-    "deepmerge",
-    "joi",
-    "mariadb",
-    "multer",
-    "sequelize",
-    "umzug"
-  ]
+    "concurrently": "8.2.2"
+  }
 }

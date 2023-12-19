@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h, Observable, RemoteData } from '/js/src/index.js';
+import { h, Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 import spinner from '../../spinner.js';
 import { cleanPrefix } from '../../../../utilities/cleanPrefix.js';
 import { dropdown } from '../../popover/dropdown.js';

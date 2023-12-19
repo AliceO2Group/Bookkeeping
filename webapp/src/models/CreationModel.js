@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 import { jsonPost } from '../utilities/fetch/jsonPost.js';
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 
 /**
  * Base model representing the state of the creation of an entity

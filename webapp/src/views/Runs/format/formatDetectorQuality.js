@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-import { h, iconBan, switchCase } from '/js/src/index.js';
+import { h, iconBan, switchCase } from '@aliceo2/web-ui-frontend';
 
 /**
  * Format detector quality

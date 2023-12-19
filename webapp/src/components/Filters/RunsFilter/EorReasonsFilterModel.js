@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { RemoteData, Observable } from '/js/src/index.js';
+import { RemoteData, Observable } from '@aliceo2/web-ui-frontend';
 import { getRemoteData } from '../../../utilities/fetch/getRemoteData.js';
 
 const emptyEorReason = {

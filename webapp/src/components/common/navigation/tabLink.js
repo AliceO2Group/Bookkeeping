@@ -12,7 +12,7 @@
  */
 
 import { currentPageAndParameters } from '../../../utilities/currentPageAndParameters.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import { frontLink } from './frontLink.js';
 
 /**

@@ -1,24 +1,26 @@
-/**
- * @license
- * Copyright CERN and copyright holders of ALICE O2. This software is
- * distributed under the terms of the GNU General Public License v3 (GPL
- * Version 3), copied verbatim in the file "COPYING".
+/*
+ *  @license
+ *  Copyright CERN and copyright holders of ALICE O2. This software is
+ *  distributed under the terms of the GNU General Public License v3 (GPL
+ *  Version 3), copied verbatim in the file "COPYING".
  *
- * See http://alice-o2.web.cern.ch/license for full licensing information.
+ *  See http://alice-o2.web.cern.ch/license for full licensing information.
  *
- * In applying this license CERN does not waive the privileges and immunities
- * granted to it by virtue of its status as an Intergovernmental Organization
- * or submit itself to any jurisdiction.
+ *  In applying this license CERN does not waive the privileges and immunities
+ *  granted to it by virtue of its status as an Intergovernmental Organization
+ *  or submit itself to any jurisdiction.
  */
 
-import sessionService from '/js/src/sessionService.js';
+import 'vite/modulepreload-polyfill';
+import '@aliceo2/web-ui-frontend/css/src/bootstrap.css';
+import { sessionService, mount } from '@aliceo2/web-ui-frontend';
+
 sessionService.loadAndHideParameters();
 
 // Expose sessionService to interact with it the browser's console
 window.sessionService = sessionService;
 
 // Import MVC
-import { mount } from '/js/src/index.js';
 import view from './view.js';
 import Model from './Model.js';
 import { markdownEngine } from './components/common/markdown/markdownEngine.js';

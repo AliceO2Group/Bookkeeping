@@ -10,7 +10,7 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
-import { Observable, RemoteData } from '/js/src/index.js';
+import { Observable, RemoteData } from '@aliceo2/web-ui-frontend';
 import { getRemoteData } from './getRemoteData.js';
 import { ObservableData } from '../ObservableData.js';
 

@@ -12,7 +12,7 @@
  */
 
 import { extractUTCTimestampFromHTMLInput, formatUTCDateForHTMLInput } from '../../../../utilities/formatting/HTMLInputDateFormat.js';
-import { Observable } from '/js/src/index.js';
+import { Observable } from '@aliceo2/web-ui-frontend';
 import { MILLISECONDS_IN_ONE_DAY } from '../../../../utilities/dateUtils.js';
 
 /**

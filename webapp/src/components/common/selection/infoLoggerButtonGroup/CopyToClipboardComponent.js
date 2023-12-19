@@ -11,8 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
-import { iconLinkIntact, iconCheck } from '/js/src/icons.js';
+import { h, iconLinkIntact, iconCheck } from '@aliceo2/web-ui-frontend';
 import { StatefulComponent } from '../../StatefulComponent.js';
 
 /**

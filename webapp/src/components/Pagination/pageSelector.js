@@ -11,8 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
-import { iconArrowThickLeft, iconArrowThickRight } from '/js/src/icons.js';
+import { h, iconArrowThickLeft, iconArrowThickRight } from '@aliceo2/web-ui-frontend';
 
 const MAX_VISIBLE_PAGES = 5;
 

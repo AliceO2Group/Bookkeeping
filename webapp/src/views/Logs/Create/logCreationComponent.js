@@ -12,7 +12,7 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 import errorAlert from '../../../components/common/errorAlert.js';
 import { tagPicker } from '../../../components/tag/tagPicker.js';
 import { markdownInput } from '../../../components/common/markdown/markdown.js';

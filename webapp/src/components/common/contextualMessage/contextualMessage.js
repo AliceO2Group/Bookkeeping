@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-import { h, iconWarning, info } from '/js/src/index.js';
+import { h, iconWarning, info } from '@aliceo2/web-ui-frontend';
 
 const typeToIcon = {
     info: info,

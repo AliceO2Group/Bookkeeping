@@ -11,10 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+import { h, iconCheck, iconX, iconBan } from '@aliceo2/web-ui-frontend';
 import { RUN_DETECTOR_QUALITIES, RunDetectorQualities } from '../../../domain/enums/RunDetectorQualities.js';
 import { dropdown } from '../../../components/common/popover/dropdown.js';
-import { iconCheck, iconX, iconBan } from '/js/src/icons.js';
 
 /**
  * Format a list of detectors

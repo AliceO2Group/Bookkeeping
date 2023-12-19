@@ -1,4 +1,4 @@
-import { Observable } from '/js/src/index.js';
+import { Observable } from '@aliceo2/web-ui-frontend';
 
 /**
  * Model class to store the preferences of the users

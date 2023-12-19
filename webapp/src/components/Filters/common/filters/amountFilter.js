@@ -12,7 +12,7 @@
  */
 
 import { comparisonOperatorFilter } from './comparisonOperatorFilter.js';
-import { h } from '/js/src/index.js';
+import { h } from '@aliceo2/web-ui-frontend';
 
 /**
  * @callback filterChangeHandler
