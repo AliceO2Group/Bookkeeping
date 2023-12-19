@@ -13,8 +13,10 @@
 
 const OverviewSuite = require('./overview.test');
 const DetailSuite = require('./detail.test');
+const RunsPerPeriodOverviewSuite = require('./runsPerPeriod.overview.test');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
     describe('Detail Page', DetailSuite);
+    describe('Runs Per Period Overview Page', RunsPerPeriodOverviewSuite);
 };

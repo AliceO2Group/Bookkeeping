@@ -11,8 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const CreateOrUpdateUser = require('./CreateOrUpdateUser');
+const UserServiceTest = require('./UserService.test.js');
+const createOrUpdateUserTest = require('./createOrUpdateUser.test.js');
 
-module.exports = {
-    CreateOrUpdateUser,
+module.exports = () => {
+    describe('createOrUpdateUser', createOrUpdateUserTest);
+    describe('UserService', UserServiceTest);
 };
