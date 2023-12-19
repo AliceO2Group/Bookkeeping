@@ -493,6 +493,32 @@ label {
     border-bottom-left-radius: 0;
 }
 
+/* File preview (popover) */
+
+.preview-window {
+    margin: var(--space-xs);
+    max-height: 99%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    margin-bottom: var(--space-xs);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.preview-content {
+    overflow: auto;
+}
+
+.preview-file-content {
+    margin: 0;
+    width: 100%;
+}
+
 /* Modal */
 
 .modal-container {
