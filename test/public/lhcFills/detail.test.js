@@ -152,7 +152,7 @@ module.exports = () => {
 
         expect(runsTable.length).to.equal(4);
 
-        expect(await page.$eval('#runs tbody tr:nth-child(1) td:nth-child(2)', (element) => element.innerText)).to.equal('2FT0, ITS');
+        expect(await page.$eval('#runs tbody tr:nth-child(1) td:nth-child(2)', (element) => element.innerText)).to.equal('2FT0,ITS');
     });
 
     it('should successfully display time elapsed between runs', async () => {
