@@ -467,4 +467,162 @@ module.exports = () => {
         expect(run.eorReasons[0].category).to.equal(eorReasons[2].category);
         expect(run.eorReasons[0].title).to.equal(eorReasons[2].title);
     });
+
+    it('should successfully create run with only user_o2_start', async () => {
+        const runNumber = ++lastRunNumber;
+        const user_o2_start = {
+            externalId: 1000,
+            name: 'test',
+        };
+
+        const run = await runService.create(
+            // Run
+            {
+                runNumber: runNumber,
+            },
+            // Relations
+            {
+                user_o2_start: user_o2_start,
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.user_o2_start).to.not.be.null;
+        // Id should have been assigned by the service
+        expect(run.user_o2_start.id).to.not.be.null;
+    });
+
+    it('should successfully create run with only user_o2_stop', async () => {
+        const runNumber = ++lastRunNumber;
+        const user_o2_stop = {
+            externalId: 1001,
+            name: 'test',
+        };
+
+        const run = await runService.create(
+            // Run
+            {
+                runNumber: runNumber,
+            },
+            // Relations
+            {
+                user_o2_stop: user_o2_stop,
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.user_o2_stop).to.not.be.null;
+        // Id should have been assigned by the service
+        expect(run.user_o2_stop.id).to.not.be.null;
+    });
+
+    it('should successfully create run with user_o2_start and user_o2_stop', async () => {
+        const runNumber = ++lastRunNumber;
+        const user_o2_start = {
+            externalId: 1002,
+            name: 'test',
+        };
+        const user_o2_stop = {
+            externalId: 1003,
+            name: 'test',
+        };
+
+        const run = await runService.create(
+            // Run
+            {
+                runNumber: runNumber,
+            },
+            // Relations
+            {
+                user_o2_start: user_o2_start,
+                user_o2_stop: user_o2_stop,
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.user_o2_start).to.not.be.null;
+        expect(run.user_o2_stop).to.not.be.null;
+        // Id should have been assigned by the service
+        expect(run.user_o2_start.id).to.not.be.null;
+        expect(run.user_o2_stop.id).to.not.be.null;
+    });
+
+    it('should successfully update run with only user_o2_start', async () => {
+        const runNumber = 1;
+        const user_o2_start = {
+            externalId: 1000,
+            name: 'test',
+        };
+
+        const run = await runService.update(
+            { runNumber },
+            {
+                relations: {
+                    user_o2_start: user_o2_start,
+                },
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.user_o2_start).to.not.be.null;
+        // Id should have been assigned by the service
+        expect(run.user_o2_start.id).to.not.be.null;
+    });
+
+    it('should successfully update run with only user_o2_stop', async () => {
+        const runNumber = 1;
+        const user_o2_stop = {
+            externalId: 1000,
+            name: 'test',
+        };
+
+        const run = await runService.update(
+            { runNumber },
+            {
+                relations: {
+                    user_o2_stop: user_o2_stop,
+                },
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.user_o2_stop).to.not.be.null;
+        // Id should have been assigned by the service
+        expect(run.user_o2_stop.id).to.not.be.null;
+    });
+
+    it('should successfully update run with user_o2_start and user_o2_stop', async () => {
+        const runNumber = 1;
+        const user_o2_start = {
+            externalId: 1002,
+            name: 'test',
+        };
+        const user_o2_stop = {
+            externalId: 1003,
+            name: 'test',
+        };
+
+        const run = await runService.update(
+            { runNumber },
+            {
+                relations: {
+                    user_o2_start: user_o2_start,
+                    user_o2_stop: user_o2_stop,
+                },
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.user_o2_start).to.not.be.null;
+        expect(run.user_o2_stop).to.not.be.null;
+        // Id should have been assigned by the service
+        expect(run.user_o2_start.id).to.not.be.null;
+        expect(run.user_o2_stop.id).to.not.be.null;
+    });
 };
