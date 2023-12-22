@@ -104,8 +104,9 @@ message Run {
   // A string that marks the period of the lhc
   string lhcPeriod = 31;
   // Optional users that stopped or started the run (can also be undefined)
-  optional User user_o2_start = 32;
-  optional User user_o2_stop = 33;
+  // id in this case because Run has a user id in bookkeeping
+  optional int32 user_o2_start = 32;
+  optional int32 user_o2_stop = 33;
 }
 
 message LHCFill {
