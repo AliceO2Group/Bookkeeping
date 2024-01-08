@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { database } = require('../../lib/application.js');
+const { database } = require('../../backend/application.js');
 
 exports.resetDatabaseContent = async () => {
     await database.dropAllTables();

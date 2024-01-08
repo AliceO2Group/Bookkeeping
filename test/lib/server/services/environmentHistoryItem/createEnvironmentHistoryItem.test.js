@@ -12,12 +12,12 @@
  */
 
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
-const { createEnvironmentHistoryItem } = require('../../../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
+const { createEnvironmentHistoryItem } = require('../../../../../backend/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { expect } = require('chai');
-const { getEnvironmentHistoryItem } = require('../../../../../lib/server/services/environmentHistoryItem/getEnvironmentHistoryItem.js');
+const { getEnvironmentHistoryItem } = require('../../../../../backend/server/services/environmentHistoryItem/getEnvironmentHistoryItem.js');
 const assert = require('assert');
-const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
-const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
+const { ConflictError } = require('../../../../../backend/server/errors/ConflictError.js');
+const { NotFoundError } = require('../../../../../backend/server/errors/NotFoundError.js');
 
 module.exports = () => {
     before(async () => {

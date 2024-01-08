@@ -74,7 +74,7 @@ COPY package*.json ./
 RUN npm --silent ci --production
 
 # Copy all files, except those ignored by .dockerignore, to the container
-COPY ./lib ./lib
+COPY backend ./lib
 
 
 #

@@ -11,10 +11,10 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { lhcFill: { GetLhcFillUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetLhcFillDto } } = require('../../../../lib/domain/index.js');
+const { lhcFill: { GetLhcFillUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetLhcFillDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
-const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
+const { RunDefinition } = require('../../../../backend/server/services/run/getRunDefinition.js');
 
 const { expect } = chai;
 

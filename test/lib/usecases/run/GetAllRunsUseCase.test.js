@@ -11,12 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const { run: { GetAllRunsUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
+const { run: { GetAllRunsUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetAllRunsDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
-const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
-const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
-const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
+const { RunDefinition } = require('../../../../backend/server/services/run/getRunDefinition.js');
+const { RunQualities } = require('../../../../backend/domain/enums/RunQualities.js');
+const { RunCalibrationStatus } = require('../../../../backend/domain/enums/RunCalibrationStatus.js');
 
 const { expect } = chai;
 

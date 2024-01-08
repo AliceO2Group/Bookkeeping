@@ -21,7 +21,7 @@ const {
     goToPage,
     reloadPage,
 } = require('../defaults');
-const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
+const { RUN_QUALITIES } = require('../../../backend/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 

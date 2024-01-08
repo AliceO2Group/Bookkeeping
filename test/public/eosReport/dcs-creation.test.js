@@ -21,8 +21,8 @@ const {
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { getLog } = require('../../../lib/server/services/log/getLog.js');
-const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
+const { getLog } = require('../../../backend/server/services/log/getLog.js');
+const { ShiftTypes } = require('../../../backend/domain/enums/ShiftTypes.js');
 
 module.exports = () => {
     let page;

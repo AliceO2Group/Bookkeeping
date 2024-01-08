@@ -21,16 +21,16 @@ const {
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { getLog } = require('../../../lib/server/services/log/getLog.js');
-const { createEnvironment } = require('../../../lib/server/services/environment/createEnvironment.js');
+const { getLog } = require('../../../backend/server/services/log/getLog.js');
+const { createEnvironment } = require('../../../backend/server/services/environment/createEnvironment.js');
 const { customizedECSEosReport, emptyECSEosReportRequest } = require('../../mocks/mock-ecs-eos-report.js');
-const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
-const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
-const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
-const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
-const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
-const { SHIFT_DURATION } = require('../../../lib/server/services/shift/getShiftFromTimestamp.js');
+const { createEnvironmentHistoryItem } = require('../../../backend/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
+const { createRun } = require('../../../backend/server/services/run/createRun.js');
+const { getOrCreateAllDetectorsByName } = require('../../../backend/server/services/detector/getOrCreateAllDetectorsByName.js');
+const EorReasonRepository = require('../../../backend/database/repositories/EorReasonRepository.js');
+const { ShiftTypes } = require('../../../backend/domain/enums/ShiftTypes.js');
+const { eosReportService } = require('../../../backend/server/services/eosReport/EosReportService.js');
+const { SHIFT_DURATION } = require('../../../backend/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     let page;

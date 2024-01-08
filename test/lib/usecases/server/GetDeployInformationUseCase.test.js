@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { server: { GetDeployInformationUseCase } } = require('../../../../lib/usecases/index.js');
+const { server: { GetDeployInformationUseCase } } = require('../../../../backend/usecases/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

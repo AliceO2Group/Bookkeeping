@@ -13,7 +13,7 @@
 
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const request = require('supertest');
-const { server } = require('../../lib/application.js');
+const { server } = require('../../backend/application.js');
 const { expect } = require('chai');
 const { emptyECSEosReportRequest } = require('../mocks/mock-ecs-eos-report.js');
 

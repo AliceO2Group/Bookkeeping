@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { isPromise } = require('../../../lib/utilities/index.js');
+const { isPromise } = require('../../../backend/utilities/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

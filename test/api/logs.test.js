@@ -14,10 +14,10 @@
 const path = require('path');
 const { expect } = require('chai');
 const request = require('supertest');
-const { repositories: { LogRepository } } = require('../../lib/database');
+const { repositories: { LogRepository } } = require('../../backend/database');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 
 module.exports = () => {
     before(resetDatabaseContent);

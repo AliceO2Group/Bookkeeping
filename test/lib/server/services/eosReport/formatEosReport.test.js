@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { formatEosReport } = require('../../../../../lib/server/services/eosReport/formatEosReport.js');
+const { formatEosReport } = require('../../../../../backend/server/services/eosReport/formatEosReport.js');
 const { expect } = require('chai');
 const {
     customizedECSEosReport,

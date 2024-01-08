@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { environment: { GetAllEnvironmentsUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetAllEnvironmentsDto } } = require('../../../../lib/domain/index.js');
+const { environment: { GetAllEnvironmentsUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetAllEnvironmentsDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

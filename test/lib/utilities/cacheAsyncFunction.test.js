@@ -16,7 +16,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 const assert = require('assert');
-const { cacheAsyncFunction } = require('../../../lib/utilities/cacheAsyncFunction.js');
+const { cacheAsyncFunction } = require('../../../backend/utilities/cacheAsyncFunction.js');
 
 module.exports = () => {
     it('should successfully cache a resolving function', async () => {

@@ -18,8 +18,8 @@ const {
     genericEmptyEosReportRequest,
 } = require('./base-mock-eos-report.js');
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
-const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
-const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
+const { ShiftTypes } = require('../../backend/domain/enums/ShiftTypes.js');
+const { RunDefinition } = require('../../backend/server/services/run/getRunDefinition.js');
 
 exports.eosEcsReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 

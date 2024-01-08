@@ -11,9 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { SubsystemRepository } } = require('../../../../lib/database/index.js');
-const { dtos: { GetAllSubsystemsDto } } = require('../../../../lib/domain/index.js');
-const { subsystem: { GetAllSubsystemsUseCase } } = require('../../../../lib/usecases/index.js');
+const { repositories: { SubsystemRepository } } = require('../../../../backend/database/index.js');
+const { dtos: { GetAllSubsystemsDto } } = require('../../../../backend/domain/index.js');
+const { subsystem: { GetAllSubsystemsUseCase } } = require('../../../../backend/usecases/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

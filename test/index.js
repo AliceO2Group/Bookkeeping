@@ -22,7 +22,7 @@ const GrpcSuite = require('./gRPC');
 const APISuite = require('./api');
 const FrontendSuite = require('./public');
 
-const application = require('../lib/application');
+const application = require('../backend/application');
 
 describe('Bookkeeping', () => {
     before(async () => {

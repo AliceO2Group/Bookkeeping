@@ -18,7 +18,7 @@ const {
     genericEmptyEosReportRequest,
     genericFormattedCustomizedEosReport,
 } = require('./base-mock-eos-report.js');
-const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
+const { ShiftTypes } = require('../../backend/domain/enums/ShiftTypes.js');
 
 exports.eosSlimosReportTitle = 'End of shift report - SLIMOS - 17/03/2023 Morning';
 

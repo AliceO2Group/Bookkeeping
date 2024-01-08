@@ -12,8 +12,8 @@
  */
 
 const assert = require('assert');
-const { logService } = require('../../../../../lib/server/services/log/LogService.js');
-const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
+const { logService } = require('../../../../../backend/server/services/log/LogService.js');
+const { NotFoundError } = require('../../../../../backend/server/errors/NotFoundError.js');
 const chai = require('chai');
 
 const { expect } = chai;

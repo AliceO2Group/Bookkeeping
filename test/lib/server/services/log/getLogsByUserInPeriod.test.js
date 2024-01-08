@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getLogsByUserInPeriod } = require('../../../../../lib/server/services/log/getLogsByUserInPeriod.js');
+const { getLogsByUserInPeriod } = require('../../../../../backend/server/services/log/getLogsByUserInPeriod.js');
 
 module.exports = () => {
     const limit1 = new Date('2000-01-01 12:00:00').getTime();

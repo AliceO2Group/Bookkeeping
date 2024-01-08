@@ -11,8 +11,8 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
-const { lhcFillService } = require('../../../../../lib/server/services/lhcFill/LhcFillService.js');
+const { RunDefinition } = require('../../../../../backend/server/services/run/getRunDefinition.js');
+const { lhcFillService } = require('../../../../../backend/server/services/lhcFill/LhcFillService.js');
 const { expect } = require('chai');
 
 module.exports = () => {

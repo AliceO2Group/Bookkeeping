@@ -11,8 +11,8 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { eosReportService } = require('../../../../../lib/server/services/eosReport/EosReportService.js');
-const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
+const { eosReportService } = require('../../../../../backend/server/services/eosReport/EosReportService.js');
+const { shiftService } = require('../../../../../backend/server/services/shift/ShiftService.js');
 const { expect } = require('chai');
 const {
     emptyECSEosReportRequest,
@@ -24,19 +24,19 @@ const {
     customizedECSEosReportLogs,
 } = require('../../../../mocks/mock-ecs-eos-report.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
-const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
-const { ShiftTypes } = require('../../../../../lib/domain/enums/ShiftTypes.js');
-const { LogRunsRepository } = require('../../../../../lib/database/repositories/index.js');
-const { createEnvironment } = require('../../../../../lib/server/services/environment/createEnvironment.js');
-const { createEnvironmentHistoryItem } = require('../../../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
-const { createRun } = require('../../../../../lib/server/services/run/createRun.js');
-const EorReasonRepository = require('../../../../../lib/database/repositories/EorReasonRepository.js');
-const { getEosReportTagsByType } = require('../../../../../lib/server/services/eosReport/eosTypeSpecificFormatter/getEosReportTagsByType.js');
+const { createLog } = require('../../../../../backend/server/services/log/createLog.js');
+const { ShiftTypes } = require('../../../../../backend/domain/enums/ShiftTypes.js');
+const { LogRunsRepository } = require('../../../../../backend/database/repositories/index.js');
+const { createEnvironment } = require('../../../../../backend/server/services/environment/createEnvironment.js');
+const { createEnvironmentHistoryItem } = require('../../../../../backend/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
+const { createRun } = require('../../../../../backend/server/services/run/createRun.js');
+const EorReasonRepository = require('../../../../../backend/database/repositories/EorReasonRepository.js');
+const { getEosReportTagsByType } = require('../../../../../backend/server/services/eosReport/eosTypeSpecificFormatter/getEosReportTagsByType.js');
 const {
     formattedEmptyQcPdpEosReport, eosQcPdpReportTitle, emptyQcPdpEosReportRequest, customizedQcPdpEosReport, customizedQcPdpEosReportLogs,
     customizedQcPdpEosReportRequest, formattedCustomizedQcPdpEosReport,
 } = require('../../../../mocks/mock-qc-pdp-eos-report.js');
-const { updateRunDetector } = require('../../../../../lib/server/services/runDetector/updateRunDetector.js');
+const { updateRunDetector } = require('../../../../../backend/server/services/runDetector/updateRunDetector.js');
 const {
     customizedSlimosEosReportLogs, customizedSlimosEosReport, customizedSlimosEosReportRequest, formattedCustomizedSlimosEosReport,
     eosSlimosReportTitle, emptySlimosEosReportRequest, formattedEmptySlimosEosReport,
@@ -49,9 +49,9 @@ const {
     customizedDcsEosReportLogs, customizedDcsEosReport, customizedDcsEosReportRequest, formattedCustomizedDcsEosReport, eosDcsReportTitle,
     emptyDcsEosReportRequest, formattedEmptyDcsEosReport,
 } = require('../../../../mocks/mock-dcs-eos-report.js');
-const { logService } = require('../../../../../lib/server/services/log/LogService.js');
-const { formatEosReportTitle } = require('../../../../../lib/server/services/eosReport/formatEosReport.js');
-const { getShiftFromTimestamp, SHIFT_DURATION } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
+const { logService } = require('../../../../../backend/server/services/log/LogService.js');
+const { formatEosReportTitle } = require('../../../../../backend/server/services/eosReport/formatEosReport.js');
+const { getShiftFromTimestamp, SHIFT_DURATION } = require('../../../../../backend/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {

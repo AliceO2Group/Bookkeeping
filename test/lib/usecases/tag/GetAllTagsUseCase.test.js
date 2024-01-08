@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { tag: { GetAllTagsUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetAllTagsDto } } = require('../../../../lib/domain/index.js');
+const { tag: { GetAllTagsUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetAllTagsDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

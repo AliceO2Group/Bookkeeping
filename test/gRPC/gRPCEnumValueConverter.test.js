@@ -12,8 +12,8 @@
  */
 
 const { expect } = require('chai');
-const { toGRPCEnum, fromGRPCEnum } = require('../../lib/server/gRPC/services/enumConverter/gRPCEnumValueConverter.js');
-const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
+const { toGRPCEnum, fromGRPCEnum } = require('../../backend/server/gRPC/services/enumConverter/gRPCEnumValueConverter.js');
+const { RunQualities } = require('../../backend/domain/enums/RunQualities.js');
 
 module.exports = () => {
     it('should successfully convert between js to gRPC enums values', () => {

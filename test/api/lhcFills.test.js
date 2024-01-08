@@ -13,7 +13,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 
 module.exports = () => {
     before(resetDatabaseContent);

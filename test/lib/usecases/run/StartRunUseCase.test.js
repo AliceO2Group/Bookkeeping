@@ -11,11 +11,11 @@
  * or submit itself to any jurisdiction.
  */
 
-const { run: { StartRunUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { StartRunDto } } = require('../../../../lib/domain/index.js');
+const { run: { StartRunUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { StartRunDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
-const { environmentService } = require('../../../../lib/server/services/environment/EnvironmentService.js');
-const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { environmentService } = require('../../../../backend/server/services/environment/EnvironmentService.js');
+const { RunQualities } = require('../../../../backend/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 

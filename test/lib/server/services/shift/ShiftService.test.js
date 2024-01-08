@@ -11,10 +11,10 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { createLog } = require('../../../../../lib/server/services/log/createLog.js');
-const { shiftService } = require('../../../../../lib/server/services/shift/ShiftService.js');
+const { createLog } = require('../../../../../backend/server/services/log/createLog.js');
+const { shiftService } = require('../../../../../backend/server/services/shift/ShiftService.js');
 const { expect } = require('chai');
-const { ShiftTypes } = require('../../../../../lib/domain/enums/ShiftTypes.js');
+const { ShiftTypes } = require('../../../../../backend/domain/enums/ShiftTypes.js');
 
 module.exports = () => {
     const shift1 = new Date('2020-02-02 12:00:00').getTime();

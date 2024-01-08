@@ -13,8 +13,8 @@
 
 const assert = require('assert');
 const { expect } = require('chai');
-const { getEnvironmentOrFail } = require('../../../../../lib/server/services/environment/getEnvironmentOrFail.js');
-const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
+const { getEnvironmentOrFail } = require('../../../../../backend/server/services/environment/getEnvironmentOrFail.js');
+const { NotFoundError } = require('../../../../../backend/server/errors/NotFoundError.js');
 
 module.exports = () => {
     it('should successfully return an environment extracted by its id', async () => {

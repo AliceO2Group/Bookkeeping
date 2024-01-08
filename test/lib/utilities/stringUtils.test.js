@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal } = require('../../../lib/utilities/stringUtils.js');
+const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal } = require('../../../backend/utilities/stringUtils.js');
 const { expect } = require('chai');
 
 module.exports = () => {

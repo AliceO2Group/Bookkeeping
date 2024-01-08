@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getOrCreateAllDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
+const { getOrCreateAllDetectorsByName } = require('../../../../../backend/server/services/detector/getOrCreateAllDetectorsByName.js');
 
 module.exports = () => {
     it('should successfully retrieve a list of detectors and create the missing ones', async () => {

@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getRunDefinition, RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
+const { getRunDefinition, RunDefinition } = require('../../../../../backend/server/services/run/getRunDefinition.js');
 const { PHYSICS, COSMICS, COMMISSIONING, TECHNICAL, SYNTHETIC, CALIBRATION } = require('./../../../../mocks/mock-run.js');
 
 module.exports = () => {

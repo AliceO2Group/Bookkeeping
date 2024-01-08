@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { buildUrl } = require('../../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('../../../backend/utilities/buildUrl.js');
 
 module.exports = () => {
     it('should successfully build URL using only parameters object', () => {

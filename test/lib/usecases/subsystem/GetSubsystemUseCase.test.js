@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { subsystem: { GetSubsystemUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetSubsystemDto } } = require('../../../../lib/domain/index.js');
+const { subsystem: { GetSubsystemUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetSubsystemDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

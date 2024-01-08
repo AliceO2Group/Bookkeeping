@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { detectorService } = require('../../../../../lib/server/services/detector/DetectorService.js');
+const { detectorService } = require('../../../../../backend/server/services/detector/DetectorService.js');
 const { expect } = require('chai');
 
 module.exports = () => {

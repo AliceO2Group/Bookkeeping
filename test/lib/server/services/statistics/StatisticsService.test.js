@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { statisticsService } = require('../../../../../lib/server/services/statistics/StatisticsService.js');
+const { statisticsService } = require('../../../../../backend/server/services/statistics/StatisticsService.js');
 const { expect } = require('chai');
 
 module.exports = () => {

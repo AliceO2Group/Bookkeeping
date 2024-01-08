@@ -14,7 +14,7 @@
 const path = require('path');
 const request = require('supertest');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 const { expect } = require('chai');
 
 module.exports = () => {

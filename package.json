@@ -8,8 +8,8 @@
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
-    "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
-    "start:prod": "node lib/main.js",
+    "start:dev": "nodemon --ignore 'backend/public/**/*.js' backend/main.js",
+    "start:prod": "node backend/main.js",
     "test": "mocha --exit --timeout 0",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
@@ -33,7 +33,7 @@
     "umzug": "3.5.0"
   },
   "files": [
-    "lib/",
+    "backend/",
     "docs/",
     "proto/"
   ],

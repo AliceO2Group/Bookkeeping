@@ -11,10 +11,10 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { run: { EndRunUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { EndRunDto } } = require('../../../../lib/domain/index.js');
+const { run: { EndRunUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { EndRunDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
-const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
+const { RunQualities } = require('../../../../backend/domain/enums/RunQualities.js');
 
 const { expect } = chai;
 

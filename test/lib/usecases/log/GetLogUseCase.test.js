@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { log: { GetLogUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetLogDto } } = require('../../../../lib/domain/index.js');
+const { log: { GetLogUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetLogDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

@@ -11,11 +11,11 @@
  * or submit itself to any jurisdiction.
  */
 
-const { lhcPeriodStatisticsService } = require('../../../../../lib/server/services/lhcPeriod/LhcPeriodStatisticsService.js');
+const { lhcPeriodStatisticsService } = require('../../../../../backend/server/services/lhcPeriod/LhcPeriodStatisticsService.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
-const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
+const { NotFoundError } = require('../../../../../backend/server/errors/NotFoundError.js');
 
 const lhcPeriod_LHC22b = {
     id: 2,

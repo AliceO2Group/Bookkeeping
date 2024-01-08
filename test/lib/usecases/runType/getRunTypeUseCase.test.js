@@ -10,8 +10,8 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { runType: { GetRunTypeUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetRunTypeDto } } = require('../../../../lib/domain/index.js');
+const { runType: { GetRunTypeUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetRunTypeDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

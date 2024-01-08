@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { getRunsInPeriod } = require('../../../../../lib/server/services/run/getRunsInPeriod.js');
+const { getRunsInPeriod } = require('../../../../../backend/server/services/run/getRunsInPeriod.js');
 const { expect } = require('chai');
 
 module.exports = () => {

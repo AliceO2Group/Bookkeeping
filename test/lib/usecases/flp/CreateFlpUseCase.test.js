@@ -11,9 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { FlpRoleRepository } } = require('../../../../lib/database/index.js');
-const { flp: { CreateFlpUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { CreateFlpDto } } = require('../../../../lib/domain/index.js');
+const { repositories: { FlpRoleRepository } } = require('../../../../backend/database/index.js');
+const { flp: { CreateFlpUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { CreateFlpDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

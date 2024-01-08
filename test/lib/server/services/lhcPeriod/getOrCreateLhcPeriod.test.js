@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { getOrCreateLhcPeriod } = require('../../../../../lib/server/services/lhcPeriod/getOrCreateLhcPeriod.js');
+const { getOrCreateLhcPeriod } = require('../../../../../backend/server/services/lhcPeriod/getOrCreateLhcPeriod.js');
 const { expect } = require('chai');
 
 module.exports = () => {

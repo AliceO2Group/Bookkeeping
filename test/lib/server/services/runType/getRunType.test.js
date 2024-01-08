@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getRunType: getRunTypeTest } = require('../../../../../lib/server/services/runType/getRunType.js');
+const { getRunType: getRunTypeTest } = require('../../../../../backend/server/services/runType/getRunType.js');
 
 module.exports = () => {
     it('should successfully retrieve a given run type', async () => {

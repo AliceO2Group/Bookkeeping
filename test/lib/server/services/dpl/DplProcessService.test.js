@@ -11,15 +11,15 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { dplProcessService } = require('../../../../../lib/server/services/dpl/DplProcessService.js');
+const { dplProcessService } = require('../../../../../backend/server/services/dpl/DplProcessService.js');
 
 const assert = require('assert');
 const { expect } = require('chai');
-const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
-const { getDplDetectorOrFail } = require('../../../../../lib/server/services/dpl/getDplDetectorOrFail.js');
-const { getDplProcessOrFail } = require('../../../../../lib/server/services/dpl/getDplProcessOrFail.js');
-const { getDplProcessType } = require('../../../../../lib/server/services/dpl/getDplProcessType.js');
-const { getHostOrFail } = require('../../../../../lib/server/services/host/getHostOrFail.js');
+const { NotFoundError } = require('../../../../../backend/server/errors/NotFoundError.js');
+const { getDplDetectorOrFail } = require('../../../../../backend/server/services/dpl/getDplDetectorOrFail.js');
+const { getDplProcessOrFail } = require('../../../../../backend/server/services/dpl/getDplProcessOrFail.js');
+const { getDplProcessType } = require('../../../../../backend/server/services/dpl/getDplProcessType.js');
+const { getHostOrFail } = require('../../../../../backend/server/services/host/getHostOrFail.js');
 
 module.exports = () => {
     it('should successfully return the list of detectors that have an executed process for a given run', async () => {

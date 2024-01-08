@@ -10,8 +10,8 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { lhcFill: { GetLhcFillRunByRunNumberUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetLhcFillRunDto } } = require('../../../../lib/domain/index.js');
+const { lhcFill: { GetLhcFillRunByRunNumberUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetLhcFillRunDto } } = require('../../../../backend/domain/index.js');
 const { expect } = require('chai');
 
 module.exports = () => {

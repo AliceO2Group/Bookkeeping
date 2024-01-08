@@ -13,14 +13,14 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { repositories: { RunRepository } } = require('../../lib/database');
-const { server } = require('../../lib/application');
-const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
+const { repositories: { RunRepository } } = require('../../backend/database');
+const { server } = require('../../backend/application');
+const { RunDefinition } = require('../../backend/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
-const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
-const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
-const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
-const { updateRun } = require('../../lib/server/services/run/updateRun.js');
+const { RunQualities } = require('../../backend/domain/enums/RunQualities.js');
+const { RunDetectorQualities } = require('../../backend/domain/enums/RunDetectorQualities.js');
+const { RunCalibrationStatus } = require('../../backend/domain/enums/RunCalibrationStatus.js');
+const { updateRun } = require('../../backend/server/services/run/updateRun.js');
 
 module.exports = () => {
     before(resetDatabaseContent);

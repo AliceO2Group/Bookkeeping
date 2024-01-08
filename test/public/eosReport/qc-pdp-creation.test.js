@@ -21,12 +21,12 @@ const {
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { getLog } = require('../../../lib/server/services/log/getLog.js');
-const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
-const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
+const { getLog } = require('../../../backend/server/services/log/getLog.js');
+const { createRun } = require('../../../backend/server/services/run/createRun.js');
+const EorReasonRepository = require('../../../backend/database/repositories/EorReasonRepository.js');
+const { ShiftTypes } = require('../../../backend/domain/enums/ShiftTypes.js');
 const { customizedQcPdpEosReport } = require('../../mocks/mock-qc-pdp-eos-report.js');
-const { updateRunDetector } = require('../../../lib/server/services/runDetector/updateRunDetector.js');
+const { updateRunDetector } = require('../../../backend/server/services/runDetector/updateRunDetector.js');
 
 module.exports = () => {
     let page;

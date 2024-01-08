@@ -11,11 +11,11 @@
  * or submit itself to any jurisdiction.
  */
 
-const { createFlpRole } = require('../../../../../lib/server/services/flp/createFlpRole.js');
-const { getFlpRole } = require('../../../../../lib/server/services/flp/getFlpRole.js');
+const { createFlpRole } = require('../../../../../backend/server/services/flp/createFlpRole.js');
+const { getFlpRole } = require('../../../../../backend/server/services/flp/getFlpRole.js');
 const { expect } = require('chai');
 const assert = require('assert');
-const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { BadParameterError } = require('../../../../../backend/server/errors/BadParameterError.js');
 
 module.exports = () => {
     it('should successfully create an FLP role', async () => {

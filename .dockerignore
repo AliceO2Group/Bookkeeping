@@ -2,7 +2,7 @@
 *
 
 # Project
-!lib/
+!backend/
 !proto/
 !test/
 !.sequelizerc

@@ -11,7 +11,7 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { indent, eosReportFormatLog, eosReportFormatEorReason } = require('../../../../../lib/server/services/eosReport/formatters.js');
+const { indent, eosReportFormatLog, eosReportFormatEorReason } = require('../../../../../backend/server/services/eosReport/formatters.js');
 const { expect } = require('chai');
 
 module.exports = () => {

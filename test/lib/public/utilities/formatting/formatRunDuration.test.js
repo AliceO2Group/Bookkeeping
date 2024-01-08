@@ -17,7 +17,7 @@ let formatRunDuration;
 
 module.exports = () => {
     before(async () => {
-        ({ formatRunDuration } = await import('../../../../../lib/public/utilities/formatting/formatRunDuration.mjs'));
+        ({ formatRunDuration } = await import('../../../../../backend/public/utilities/formatting/formatRunDuration.mjs'));
     });
 
     it('should successfully format run duration for a run that has ended after less than 48 hours', () => {

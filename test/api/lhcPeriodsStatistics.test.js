@@ -13,7 +13,7 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
 const lhcPeriod_LHC22b = {

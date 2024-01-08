@@ -13,10 +13,10 @@
 
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const request = require('supertest');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 const { expect } = require('chai');
-const { shiftService } = require('../../lib/server/services/shift/ShiftService.js');
-const { createLog } = require('../../lib/server/services/log/createLog.js');
+const { shiftService } = require('../../backend/server/services/shift/ShiftService.js');
+const { createLog } = require('../../backend/server/services/log/createLog.js');
 
 module.exports = () => {
     beforeEach(resetDatabaseContent);

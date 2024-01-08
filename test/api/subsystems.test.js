@@ -17,14 +17,14 @@ const {
     dtos: {
         CreateSubsystemDto,
     },
-} = require('../../lib/domain');
+} = require('../../backend/domain');
 const {
     subsystem: {
         CreateSubsystemUseCase,
     },
-} = require('../../lib/usecases');
+} = require('../../backend/usecases');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 
 module.exports = () => {
     before(resetDatabaseContent);

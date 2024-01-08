@@ -17,7 +17,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 
 module.exports = () => {
     before(resetDatabaseContent);
-    const { server } = require('../../lib/application');
+    const { server } = require('../../backend/application');
 
     describe('GET /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {

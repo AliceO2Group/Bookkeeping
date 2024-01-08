@@ -12,11 +12,11 @@
  */
 
 const assert = require('assert');
-const { environmentService } = require('../../../../../lib/server/services/environment/EnvironmentService.js');
+const { environmentService } = require('../../../../../backend/server/services/environment/EnvironmentService.js');
 const { expect } = require('chai');
-const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
+const { BadParameterError } = require('../../../../../backend/server/errors/BadParameterError');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
-const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
+const { NotFoundError } = require('../../../../../backend/server/errors/NotFoundError.js');
 
 module.exports = () => {
     before(async () => {

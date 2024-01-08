@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { bigIntToLong, longToBigInt } = require('../../../../lib/server/utilities/bigIntConverter.js');
+const { bigIntToLong, longToBigInt } = require('../../../../backend/server/utilities/bigIntConverter.js');
 const { Long } = require('@grpc/proto-loader');
 
 module.exports = () => {

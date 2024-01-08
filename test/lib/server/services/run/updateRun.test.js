@@ -11,10 +11,10 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
-const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
+const { getRun } = require('../../../../../backend/server/services/run/getRun.js');
+const { updateRun } = require('../../../../../backend/server/services/run/updateRun.js');
 const { expect } = require('chai');
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
+const { RunDefinition } = require('../../../../../backend/server/services/run/getRunDefinition.js');
 
 module.exports = () => {
     it('should successfully update the run definition when updating run', async () => {

@@ -23,8 +23,8 @@ const {
     reloadPage,
     waitForNetworkIdleAndRedraw,
 } = require('../defaults');
-const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
-const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
+const { RunDefinition } = require('../../../backend/server/services/run/getRunDefinition.js');
+const { RUN_QUALITIES, RunQualities } = require('../../../backend/domain/enums/RunQualities.js');
 const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
 
 const { expect } = chai;

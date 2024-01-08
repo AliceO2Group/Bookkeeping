@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { isAnEmptyShell } = require('../../../../lib/server/utilities/isAnEmptyShell.js');
+const { isAnEmptyShell } = require('../../../../backend/server/utilities/isAnEmptyShell.js');
 
 module.exports = () => {
     it('should successfully return true for an undefined value', () => {

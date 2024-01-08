@@ -10,9 +10,9 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { repositories: { EnvironmentRepository } } = require('../../../../lib/database/index.js');
-const { environment: { CreateEnvironmentUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { CreateEnvironmentDto } } = require('../../../../lib/domain/index.js');
+const { repositories: { EnvironmentRepository } } = require('../../../../backend/database/index.js');
+const { environment: { CreateEnvironmentUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { CreateEnvironmentDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

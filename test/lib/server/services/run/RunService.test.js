@@ -12,18 +12,18 @@
  */
 
 const { expect } = require('chai');
-const { runService } = require('../../../../../lib/server/services/run/RunService.js');
-const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
-const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
-const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
-const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
+const { runService } = require('../../../../../backend/server/services/run/RunService.js');
+const { getDetectorsByNames } = require('../../../../../backend/server/services/detector/getDetectorsByNames.js');
+const { RunQualities } = require('../../../../../backend/domain/enums/RunQualities.js');
+const { RunDefinition } = require('../../../../../backend/server/services/run/getRunDefinition.js');
+const { getRun } = require('../../../../../backend/server/services/run/getRun.js');
+const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../backend/domain/enums/RunCalibrationStatus.js');
 const assert = require('assert');
-const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { BadParameterError } = require('../../../../../backend/server/errors/BadParameterError.js');
 const { SYNTHETIC, CALIBRATION } = require('../../../../mocks/mock-run.js');
-const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
-const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
-const { RunDetectorQualities } = require('../../../../../lib/domain/enums/RunDetectorQualities.js');
+const { getLog } = require('../../../../../backend/server/services/log/getLog.js');
+const { updateRun } = require('../../../../../backend/server/services/run/updateRun.js');
+const { RunDetectorQualities } = require('../../../../../backend/domain/enums/RunDetectorQualities.js');
 
 module.exports = () => {
     const baseRun = {

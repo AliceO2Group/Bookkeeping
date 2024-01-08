@@ -13,12 +13,12 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { tag: { CreateTagUseCase } } = require('../../lib/usecases');
-const { dtos: { CreateTagDto } } = require('../../lib/domain');
+const { tag: { CreateTagUseCase } } = require('../../backend/usecases');
+const { dtos: { CreateTagDto } } = require('../../backend/domain');
 const { beforeEach } = require('mocha');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 
 module.exports = () => {
     before(resetDatabaseContent);

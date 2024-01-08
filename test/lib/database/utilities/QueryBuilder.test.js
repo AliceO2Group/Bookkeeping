@@ -18,7 +18,7 @@ const {
     utilities: {
         QueryBuilder,
     },
-} = require('../../../../lib/database/index.js');
+} = require('../../../../backend/database/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

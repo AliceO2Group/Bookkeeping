@@ -14,7 +14,7 @@
 const {
     getEnvironmentsInPeriod,
     ENVIRONMENT_CONSIDERED_LOST_AFTER,
-} = require('../../../../../lib/server/services/environment/getEnvironmentsInPeriod.js');
+} = require('../../../../../backend/server/services/environment/getEnvironmentsInPeriod.js');
 const { expect } = require('chai');
 
 module.exports = () => {

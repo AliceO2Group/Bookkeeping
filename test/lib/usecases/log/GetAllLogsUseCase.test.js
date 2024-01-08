@@ -11,9 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { LogRepository } } = require('../../../../lib/database/index.js');
-const { log: { GetAllLogsUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetAllLogsDto } } = require('../../../../lib/domain/index.js');
+const { repositories: { LogRepository } } = require('../../../../backend/database/index.js');
+const { log: { GetAllLogsUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetAllLogsDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

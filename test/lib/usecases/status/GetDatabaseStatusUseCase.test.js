@@ -12,15 +12,15 @@
  * or submit itself to any jurisdiction.
  */
 
-const { status: { GetDatabaseStatusUseCase } } = require('../../../../lib/usecases/index.js');
+const { status: { GetDatabaseStatusUseCase } } = require('../../../../backend/usecases/index.js');
 const chai = require('chai');
 const sinon = require('sinon');
-const database = require('../../../../lib/database/index.js');
+const database = require('../../../../backend/database/index.js');
 const {
     DatabaseConfig: {
         host,
         port,
-    } } = require('../../../../lib/config/index.js');
+    } } = require('../../../../backend/config/index.js');
 
 const { expect } = chai;
 

@@ -14,7 +14,7 @@
 
 const request = require('supertest');
 const { expect } = require('chai');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
 module.exports = () => {

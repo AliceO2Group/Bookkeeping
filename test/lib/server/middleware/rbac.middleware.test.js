@@ -13,7 +13,7 @@
 
 const sinon = require('sinon');
 const chai = require('chai');
-const { rbacMiddleware } = require('../../../../lib/server/middleware/rbac.middleware.js');
+const { rbacMiddleware } = require('../../../../backend/server/middleware/rbac.middleware.js');
 
 const { expect } = chai;
 

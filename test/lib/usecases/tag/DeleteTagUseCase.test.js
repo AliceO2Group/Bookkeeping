@@ -11,9 +11,9 @@
  * or submit itself to any jurisdiction.
  */
 
-const { repositories: { TagRepository } } = require('../../../../lib/database/index.js');
-const { tag: { CreateTagUseCase, DeleteTagUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { CreateTagDto } } = require('../../../../lib/domain/index.js');
+const { repositories: { TagRepository } } = require('../../../../backend/database/index.js');
+const { tag: { CreateTagUseCase, DeleteTagUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { CreateTagDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

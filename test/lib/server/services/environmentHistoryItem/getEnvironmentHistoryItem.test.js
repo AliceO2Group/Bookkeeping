@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { getEnvironmentHistoryItem } = require('../../../../../lib/server/services/environmentHistoryItem/getEnvironmentHistoryItem.js');
+const { getEnvironmentHistoryItem } = require('../../../../../backend/server/services/environmentHistoryItem/getEnvironmentHistoryItem.js');
 const { expect } = require('chai');
 
 module.exports = () => {

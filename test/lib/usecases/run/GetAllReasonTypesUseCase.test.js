@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { run: { GetAllReasonTypesUseCase } } = require('../../../../lib/usecases/index.js');
+const { run: { GetAllReasonTypesUseCase } } = require('../../../../backend/usecases/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

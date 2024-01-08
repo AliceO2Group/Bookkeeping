@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { runType: { GetAllRunTypesUseCase } } = require('../../../../lib/usecases');
+const { runType: { GetAllRunTypesUseCase } } = require('../../../../backend/usecases');
 const chai = require('chai');
 
 const { expect } = chai;

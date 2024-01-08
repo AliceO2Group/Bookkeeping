@@ -14,8 +14,8 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
 const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam, getPopoverContent } = require('../defaults.js');
-const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
-const { getRun } = require('../../../lib/server/services/run/getRun.js');
+const { RunCalibrationStatus } = require('../../../backend/domain/enums/RunCalibrationStatus.js');
+const { getRun } = require('../../../backend/server/services/run/getRun.js');
 
 const { expect } = chai;
 

@@ -12,10 +12,10 @@
  */
 
 const { expect } = require('chai');
-const { getRunType } = require('../../../../../lib/server/services/runType/getRunType.js');
-const { createRunType } = require('../../../../../lib/server/services/runType/createRunType.js');
+const { getRunType } = require('../../../../../backend/server/services/runType/getRunType.js');
+const { createRunType } = require('../../../../../backend/server/services/runType/createRunType.js');
 const assert = require('assert');
-const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
+const { ConflictError } = require('../../../../../backend/server/errors/ConflictError.js');
 
 module.exports = () => {
     it('should successfully create a run type and return the corresponding ID', async () => {

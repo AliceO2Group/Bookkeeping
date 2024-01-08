@@ -11,12 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const { lhcFill: { UpdateLhcFillUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { UpdateLhcFillDto } } = require('../../../../lib/domain/index.js');
+const { lhcFill: { UpdateLhcFillUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { UpdateLhcFillDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
-const { getLhcFill } = require('../../../../lib/server/services/lhcFill/getLhcFill.js');
-const { getRun } = require('../../../../lib/server/services/run/getRun.js');
-const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
+const { getLhcFill } = require('../../../../backend/server/services/lhcFill/getLhcFill.js');
+const { getRun } = require('../../../../backend/server/services/run/getRun.js');
+const { RunDefinition } = require('../../../../backend/server/services/run/getRunDefinition.js');
 
 const { expect } = chai;
 

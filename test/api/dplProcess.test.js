@@ -13,9 +13,9 @@
 
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const request = require('supertest');
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 const { expect } = require('chai');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('../../backend/utilities/buildUrl.js');
 
 module.exports = () => {
     before(resetDatabaseContent);

@@ -22,13 +22,13 @@ const {
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { getLog } = require('../../../lib/server/services/log/getLog.js');
-const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
+const { getLog } = require('../../../backend/server/services/log/getLog.js');
+const { createRun } = require('../../../backend/server/services/run/createRun.js');
+const { ShiftTypes } = require('../../../backend/domain/enums/ShiftTypes.js');
 const { customizedQcPdpEosReport } = require('../../mocks/mock-qc-pdp-eos-report.js');
-const { updateRunDetector } = require('../../../lib/server/services/runDetector/updateRunDetector.js');
-const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
-const { formatShiftDate } = require('../../../lib/server/services/shift/formatShiftDate.js');
+const { updateRunDetector } = require('../../../backend/server/services/runDetector/updateRunDetector.js');
+const { shiftService } = require('../../../backend/server/services/shift/ShiftService.js');
+const { formatShiftDate } = require('../../../backend/server/services/shift/formatShiftDate.js');
 
 module.exports = () => {
     let page;

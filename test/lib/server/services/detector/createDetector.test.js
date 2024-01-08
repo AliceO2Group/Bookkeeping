@@ -13,9 +13,9 @@
 
 const { expect } = require('chai');
 const assert = require('assert');
-const { createDetector } = require('../../../../../lib/server/services/detector/createDetector.js');
-const { getDetector } = require('../../../../../lib/server/services/detector/getDetector.js');
-const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
+const { createDetector } = require('../../../../../backend/server/services/detector/createDetector.js');
+const { getDetector } = require('../../../../../backend/server/services/detector/getDetector.js');
+const { ConflictError } = require('../../../../../backend/server/errors/ConflictError.js');
 
 module.exports = () => {
     it('should successfully create a detector and return the corresponding ID', async () => {

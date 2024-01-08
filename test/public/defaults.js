@@ -14,8 +14,8 @@
 const chai = require('chai');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
-const { server } = require('../../lib/application');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { server } = require('../../backend/application');
+const { buildUrl } = require('../../backend/utilities/buildUrl.js');
 
 const { expect } = chai;
 

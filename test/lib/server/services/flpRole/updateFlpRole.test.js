@@ -12,8 +12,8 @@
  */
 
 const { expect } = require('chai');
-const { getFlpRole } = require('../../../../../lib/server/services/flp/getFlpRole.js');
-const { updateFlpRole } = require('../../../../../lib/server/services/flp/updateFlpRole.js');
+const { getFlpRole } = require('../../../../../backend/server/services/flp/getFlpRole.js');
+const { updateFlpRole } = require('../../../../../backend/server/services/flp/updateFlpRole.js');
 
 module.exports = () => {
     it('should successfully update a given FLP role', async () => {

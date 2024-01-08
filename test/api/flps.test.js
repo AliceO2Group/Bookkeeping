@@ -13,9 +13,9 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { repositories: { FlpRoleRepository } } = require('../../lib/database');
+const { repositories: { FlpRoleRepository } } = require('../../backend/database');
 
-const { server } = require('../../lib/application');
+const { server } = require('../../backend/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
 module.exports = () => {

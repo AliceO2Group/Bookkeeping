@@ -14,8 +14,8 @@
 const { expect } = require('chai');
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
-const { getLoaderOptions } = require('../../lib/server/GRPCServer.js');
-const { extractAbsoluteMessageDefinitions } = require('../../lib/server/gRPC/services/protoParsing/extractAbsoluteMessageDefinitions.js');
+const { getLoaderOptions } = require('../../backend/server/GRPCServer.js');
+const { extractAbsoluteMessageDefinitions } = require('../../backend/server/gRPC/services/protoParsing/extractAbsoluteMessageDefinitions.js');
 
 const PROTO_DIR = `${__dirname}/proto`;
 

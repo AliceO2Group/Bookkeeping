@@ -15,7 +15,7 @@ const {
     DatabaseConfig: {
         host,
         port,
-    } } = require('../../../lib/config');
+    } } = require('../../config');
 const database = require('../../database');
 
 /**

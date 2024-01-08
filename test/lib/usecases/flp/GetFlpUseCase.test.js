@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const { flp: { GetFlpUseCase } } = require('../../../../lib/usecases/index.js');
-const { dtos: { GetFlpDto } } = require('../../../../lib/domain/index.js');
+const { flp: { GetFlpUseCase } } = require('../../../../backend/usecases/index.js');
+const { dtos: { GetFlpDto } } = require('../../../../backend/domain/index.js');
 const chai = require('chai');
 
 const { expect } = chai;

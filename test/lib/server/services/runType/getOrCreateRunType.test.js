@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getOrCreateRunType: getOrCreateRunTypeTest } = require('../../../../../lib/server/services/runType/getOrCreateRunType.js');
+const { getOrCreateRunType: getOrCreateRunTypeTest } = require('../../../../../backend/server/services/runType/getOrCreateRunType.js');
 
 module.exports = () => {
     it('should successfully retrieve a given run type and create it if it does not exist', async () => {

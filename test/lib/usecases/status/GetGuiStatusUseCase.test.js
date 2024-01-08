@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { status: { GetGuiStatusUseCase } } = require('../../../../lib/usecases/index.js');
+const { status: { GetGuiStatusUseCase } } = require('../../../../backend/usecases/index.js');
 const chai = require('chai');
 
 const { expect } = chai;
