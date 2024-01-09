@@ -304,7 +304,7 @@ module.exports = () => {
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await page.waitForTimeout(300);
 
-        // Expect there now to be more rows than the table with only one filter
+        // Expect there now to be more rows than both the previous table and the table with only one filter
         const thirdFilteredRows = await page.$$('table tr');
         const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
         expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
