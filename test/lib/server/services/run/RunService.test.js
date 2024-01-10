@@ -488,9 +488,7 @@ module.exports = () => {
 
         // Run and user should exist
         expect(run).to.not.be.null;
-        expect(run.userO2Start).to.not.be.null;
-        // Id should have been assigned by the service
-        expect(run.userO2Start.id).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
     });
 
     it('should successfully create run with only userO2Stop', async () => {
@@ -513,9 +511,7 @@ module.exports = () => {
 
         // Run and user should exist
         expect(run).to.not.be.null;
-        expect(run.userO2Stop).to.not.be.null;
-        // Id should have been assigned by the service
-        expect(run.userO2Stop.id).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
     });
 
     it('should successfully create run with userO2Start and userO2Stop', async () => {
@@ -543,11 +539,8 @@ module.exports = () => {
 
         // Run and user should exist
         expect(run).to.not.be.null;
-        expect(run.userO2Start).to.not.be.null;
-        expect(run.userO2Stop).to.not.be.null;
-        // Id should have been assigned by the service
-        expect(run.userO2Start.id).to.not.be.null;
-        expect(run.userO2Stop.id).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
     });
 
     it('should successfully update run with only userO2Start', async () => {
@@ -568,9 +561,7 @@ module.exports = () => {
 
         // Run and user should exist
         expect(run).to.not.be.null;
-        expect(run.userO2Start).to.not.be.null;
-        // Id should have been assigned by the service
-        expect(run.userO2Start.id).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
     });
 
     it('should successfully update run with only userO2Stop', async () => {
@@ -591,9 +582,7 @@ module.exports = () => {
 
         // Run and user should exist
         expect(run).to.not.be.null;
-        expect(run.userO2Stop).to.not.be.null;
-        // Id should have been assigned by the service
-        expect(run.userO2Stop.id).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
     });
 
     it('should successfully update run with userO2Start and userO2Stop', async () => {
@@ -619,10 +608,7 @@ module.exports = () => {
 
         // Run and user should exist
         expect(run).to.not.be.null;
-        expect(run.userO2Start).to.not.be.null;
-        expect(run.userO2Stop).to.not.be.null;
-        // Id should have been assigned by the service
-        expect(run.userO2Start.id).to.not.be.null;
-        expect(run.userO2Stop.id).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
     });
 };
