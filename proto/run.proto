@@ -41,8 +41,8 @@ message RunCreationRequest {
   optional string odcTopologyFullName = 11;
   repeated Detector detectors = 12;
   // Optional users that stopped or started the run (can also be undefined)
-  optional User user_o2_start = 13;
-  optional User user_o2_stop = 14;
+  optional User userO2Start = 13;
+  optional User userO2Stop = 14;
 }
 
 message RunUpdateRequest {
@@ -62,8 +62,8 @@ message RunUpdateRequest {
   optional string readoutCfgUri = 15;
   repeated EorReason eorReasons = 16;
   // Optional users that stopped or started the run (can also be undefined)
-  optional User user_o2_start = 17;
-  optional User user_o2_stop = 18;
+  optional User userO2Start = 17;
+  optional User userO2Stop = 18;
 }
 
 // Enums
