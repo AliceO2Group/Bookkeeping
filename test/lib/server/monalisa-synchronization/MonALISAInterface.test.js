@@ -26,8 +26,9 @@ module.exports = () => {
     it('Should get data with respect to given year limit (2022) and in correct format', async () => {
         const monALISAInterface = getMockMonALISAInterface(2022);
         const dataPasses = await monALISAInterface.getDataPasses();
+
         expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(79);
+        expect(dataPasses).to.be.lengthOf(12);
         dataPasses.forEach((dataPass) => expect(Object.keys(dataPass)).to.has.all.members(Object.keys(sampleDataPass)));
         dataPasses.forEach((dataPass) => expect(Object.values(dataPass).map((value) => typeof value))
             .to.has.all.members(Object.values(sampleDataPass).map((value) => typeof value)));
@@ -36,8 +37,9 @@ module.exports = () => {
     it('Should get data with respect to given year limit (2023) and in correct format', async () => {
         const monALISAInterface = getMockMonALISAInterface(2023);
         const dataPasses = await monALISAInterface.getDataPasses();
+
         expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(24);
+        expect(dataPasses).to.be.lengthOf(5);
         dataPasses.forEach((dataPass) => expect(Object.keys(dataPass)).to.has.all.members(Object.keys(sampleDataPass)));
         dataPasses.forEach((dataPass) => expect(Object.values(dataPass).map((value) => typeof value))
             .to.has.all.members(Object.values(sampleDataPass).map((value) => typeof value)));

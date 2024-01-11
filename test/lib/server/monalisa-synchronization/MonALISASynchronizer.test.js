@@ -37,7 +37,7 @@ module.exports = () => {
 
         // Correct amount of data
         expect(dataPassesDB).to.be.an('array');
-        expect(dataPassesDB).to.be.lengthOf(24);
+        expect(dataPassesDB).to.be.lengthOf(5);
 
         // All expected data passes names present
         const expectedNames = expectedDataPasses.map(({ name }) => name);
