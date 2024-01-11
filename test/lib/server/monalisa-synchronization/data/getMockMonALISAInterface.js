@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { MonALISAInterface } = require('../../../../../lib/server/MonALISASynchronization/MonALISAInterface.js');
+const { MonALISAInterface } = require('../../../../../lib/server/monalisa-synchronization/MonALISAInterface.js');
 
 const mockDataPasses = require('./mockDataPasses.json');
 const mockDescriptionToDataPassDetails = require('./mockDescriptionToDataPassDetails.json');

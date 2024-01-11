@@ -13,7 +13,7 @@
 
 const { expect } = require('chai');
 const { getMockMonALISAInterface } = require('./data/getMockMonALISAInterface.js');
-const { monALISASynchronizer } = require('../../../../lib/server/MonALISASynchronization/MonALISASynchronizer.js');
+const { monALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
 const { repositories: { DataPassRepository, LhcPeriodRepository } } = require('../../../../lib/database');
 const { dataSource } = require('../../../../lib/database/DataSource.js');
 
