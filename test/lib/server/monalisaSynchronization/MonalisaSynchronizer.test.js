@@ -12,9 +12,10 @@
  */
 
 const { expect } = require('chai');
-const { getMockMonalisaInterface } = require('./data/getMockMonalisaInterface');
-const { monalisaSynchronizer } = require('../../../../lib/server/monalisaSynchronization/MonalisaSynchronizer');
+const { getMockMonALISAInterface } = require('./data/getMockMonALISAInterface.js');
+const { monALISASynchronizer } = require('../../../../lib/server/MonALISASynchronization/MonALISASynchronizer.js');
 const { repositories: { DataPassRepository, LhcPeriodRepository } } = require('../../../../lib/database');
+const { dataSource } = require('../../../../lib/database/DataSource.js');
 
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod');
 
@@ -22,15 +23,17 @@ const YEAR_LOWER_LIMIT = 2023;
 
 module.exports = () => {
     it('Should get data with respect to given year limit and in correct format', async () => {
-        const monalisaInterface = getMockMonalisaInterface(YEAR_LOWER_LIMIT);
-        const mockDataPasses = await monalisaInterface.getDataPasses();
-        monalisaSynchronizer.monalisaInterface = monalisaInterface;
+        const monALISAInterface = getMockMonALISAInterface(YEAR_LOWER_LIMIT);
+        const mockDataPasses = await monALISAInterface.getDataPasses();
+        monALISASynchronizer.monALISAInterface = monALISAInterface;
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
         // Run Synchronization
-        await monalisaSynchronizer.synchronizeDataPassesFromMonalisa();
+        await monALISASynchronizer.synchronizeDataPassesFromMonALISA();
 
-        const dataPassesDB = await DataPassRepository.findAll({ raw: true });
+        const dataPassesDB = await DataPassRepository.findAll(dataSource
+            .createQueryBuilder()
+            .include({ association: 'runs', attributes: ['runNumber'] }));
 
         // Correct amount of data
         expect(dataPassesDB).to.be.an('array');
@@ -41,7 +44,11 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name }) => name)).to.have.all.members(expectedNames);
 
         // All associated with appripriate LHC Periods
-        const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll({ raw: true, attributes: ['id', 'name'] }))
+        const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll(dataSource
+            .createQueryBuilder()
+            .set('raw', true)
+            .set('attributes', ['id', 'name']))
+        )
             .map(({ id, name }) => [name, id]));
 
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
@@ -51,5 +58,12 @@ module.exports = () => {
             const { name, outputSize, description, reconstructedEventsCount, lastRunNumber } = dataPass;
             return { name, outputSize, description, reconstructedEventsCount, lastRunNumber };
         }));
+
+        // Data Pass details are in DB
+        for (const dataPass of dataPassesDB) {
+            const { description, runs } = dataPass;
+            const { runNumbers: expectedRunNumbers } = await monALISAInterface.getDataPassDetails(description);
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
+        }
     });
 };

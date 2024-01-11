@@ -11,9 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const { MonALISAInterface } = require('../../../../../lib/server/monalisaSynchronization/MonALISAInterface.js');
+const { MonALISAInterface } = require('../../../../../lib/server/MonALISASynchronization/MonALISAInterface.js');
 
 const mockDataPasses = require('./mockDataPasses.json');
+const mockDescriptionToDataPassDetails = require('./mockDescriptionToDataPassDetails.json');
 
 exports.getMockMonALISAInterface = (yearLowerLimit) => {
     if (!yearLowerLimit) {
@@ -21,8 +22,10 @@ exports.getMockMonALISAInterface = (yearLowerLimit) => {
     }
     const instance = new MonALISAInterface({
         dataPassesUrl: 'https://some.mock.url.com',
+        dataPassDetailsUrl: 'https://some.other.mock.url.com',
         yearLowerLimit,
     });
     instance.fetchDataPasses = async () => mockDataPasses;
+    instance.fetchDataPassDetails = async (description) => mockDescriptionToDataPassDetails[description];
     return instance;
 };

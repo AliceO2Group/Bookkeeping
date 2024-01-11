@@ -14,7 +14,7 @@
 const UtilitiesSuite = require('./utilities/index.js');
 const ServicesSuite = require('./services/index.js');
 const MiddlewareSuite = require('./middleware/index.js');
-const MonalisaSynchronizationSuite = require('./monalisaSynchronization/index.js');
+const MonalisaSynchronizationSuite = require('./MonALISASynchronization/index.js');
 
 module.exports = () => {
     describe('Utilities', UtilitiesSuite);
