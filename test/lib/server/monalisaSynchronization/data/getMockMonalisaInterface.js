@@ -16,6 +16,9 @@ const { MonalisaInterface } = require('../../../../../lib/server/monalisaSynchro
 const mockDataPasses = require('./mockDataPasses.json');
 
 module.exports.getMockMonalisaInterface = (yearLowerLimit) => {
+    if (!yearLowerLimit) {
+        throw new Error('Year limit not specified');
+    }
     const instance = new MonalisaInterface({
         dataPassesUrl: 'https://some.mock.url.com',
         yearLowerLimit,
