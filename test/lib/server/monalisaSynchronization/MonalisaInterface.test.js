@@ -15,7 +15,7 @@ const { expect } = require('chai');
 const { getMockMonalisaInterface } = require('./data/getMockMonalisaInterface');
 
 const sampleDataPass = {
-    name: 'LHC22g_npass1',
+    name: 'LHC10g_npass1',
     reconstructedEventsCount: 834213929,
     description: 'd PASS random f f random data data',
     outputSize: 93862653102692,
