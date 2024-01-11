@@ -11,10 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const MoanlisaInterfaceSuite = require('./MonalisaInterface.test.js');
-const MonalisaSynchronizerSuite = require('./MonalisaSynchronizer.test.js');
+const MonALISAInterfaceSuite = require('./MonALISAInterface.test.js');
+const MonALISASynchronizerSuite = require('./MonALISASynchronizer.test.js');
 
 module.exports = () => {
-    describe('Monalisa Interface Suite', MoanlisaInterfaceSuite);
-    describe('Monalisa Synchronizer Suite', MonalisaSynchronizerSuite);
+    describe('MonALISA Interface Suite', MonALISAInterfaceSuite);
+    describe('MonALISA Synchronizer Suite', MonALISASynchronizerSuite);
 };

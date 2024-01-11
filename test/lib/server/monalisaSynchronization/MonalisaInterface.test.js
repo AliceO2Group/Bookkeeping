@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getMockMonalisaInterface } = require('./data/getMockMonalisaInterface');
+const { getMockMonALISAInterface } = require('./data/getMockMonALISAInterface.js');
 
 const sampleDataPass = {
     name: 'LHC10g_npass1',
@@ -24,8 +24,8 @@ const sampleDataPass = {
 
 module.exports = () => {
     it('Should get data with respect to given year limit (2022) and in correct format', async () => {
-        const monalisaInterface = getMockMonalisaInterface(2022);
-        const dataPasses = await monalisaInterface.getDataPasses();
+        const monALISAInterface = getMockMonALISAInterface(2022);
+        const dataPasses = await monALISAInterface.getDataPasses();
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(79);
         dataPasses.forEach((dataPass) => expect(Object.keys(dataPass)).to.has.all.members(Object.keys(sampleDataPass)));
@@ -34,8 +34,8 @@ module.exports = () => {
     });
 
     it('Should get data with respect to given year limit (2023) and in correct format', async () => {
-        const monalisaInterface = getMockMonalisaInterface(2023);
-        const dataPasses = await monalisaInterface.getDataPasses();
+        const monALISAInterface = getMockMonALISAInterface(2023);
+        const dataPasses = await monALISAInterface.getDataPasses();
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(24);
         dataPasses.forEach((dataPass) => expect(Object.keys(dataPass)).to.has.all.members(Object.keys(sampleDataPass)));
