@@ -151,10 +151,9 @@ module.exports = () => {
                     done();
                 });
         });
-        });
-        it('should succefully filter on beamTypes', (done) => {
+        it('should succefully filter on lhcPeriodIds', (done) => {
             request(server)
-                .get('/api/dataPasses?filter[beamTypes][]=XeXe')
+                .get('/api/dataPasses?filter[lhcPeriodIds][]=2')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -162,10 +161,10 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.eql(lhcPeriod_LHC22b);
+                    const { data: dataPasses } = res.body;
+                    expect(dataPasses).to.be.an('array');
+                    expect(dataPasses).to.be.lengthOf(2);
+                    expect(dataPasses).to.have.deep.members([LHC22b_apass2, LHC22b_apass1]);
                     done();
                 });
         });
@@ -179,21 +178,21 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: lhcPeriods } = res.body;
-                    expect(lhcPeriods).to.be.an('array');
-                    expect(lhcPeriods).to.be.lengthOf(3);
-                    expect(lhcPeriods).to.have.ordered.deep.members([
-                        lhcPeriod_LHC23f,
-                        lhcPeriod_LHC22b,
-                        lhcPeriod_LHC22a,
+                    const { data: dataPasses } = res.body;
+                    expect(dataPasses).to.be.an('array');
+                    expect(dataPasses).to.be.lengthOf(3);
+                    expect(dataPasses).to.have.ordered.deep.members([
+                        LHC22a_apass1,
+                        LHC22b_apass2,
+                        LHC22b_apass1,
                     ]);
 
                     done();
                 });
         });
-        it('should successfuly sort on year', (done) => {
+        it('should successfuly sort on outputSize', (done) => {
             request(server)
-                .get('/api/dataPasses?sort[year]=DESC')
+                .get('/api/dataPasses?sort[outputSize]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -201,29 +200,10 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: lhcPeriods } = res.body;
-                    expect(lhcPeriods).to.be.an('array');
-                    expect(lhcPeriods).to.be.lengthOf(3);
-                    expect(lhcPeriods[0]).to.be.eql(lhcPeriod_LHC23f);
-                    expect(lhcPeriods.slice(1)).to.have.deep.members([lhcPeriod_LHC22a, lhcPeriod_LHC22b]);
-
-                    done();
-                });
-        });
-        it('should successfuly sort on beamType', (done) => {
-            request(server)
-                .get('/api/dataPasses?sort[beamType]=DESC')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data: lhcPeriods } = res.body;
-                    expect(lhcPeriods).to.be.an('array');
-                    expect(lhcPeriods).to.be.lengthOf(3);
-                    expect(lhcPeriods).to.have.deep.ordered.members([lhcPeriod_LHC22b, lhcPeriod_LHC22a, lhcPeriod_LHC23f]);
+                    const { data: dataPasses } = res.body;
+                    expect(dataPasses).to.be.an('array');
+                    expect(dataPasses).to.be.lengthOf(3);
+                    expect(dataPasses).to.have.deep.ordered.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
                     done();
                 });
         });
@@ -237,11 +217,11 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: lhcPeriods } = res.body;
-                    expect(lhcPeriods).to.be.an('array');
-                    expect(lhcPeriods).to.have.ordered.deep.members([
-                        lhcPeriod_LHC22b,
-                        lhcPeriod_LHC22a,
+                    const { data: dataPasses } = res.body;
+                    expect(dataPasses).to.be.an('array');
+                    expect(dataPasses).to.have.ordered.deep.members([
+                        LHC22b_apass2,
+                        LHC22b_apass1,
                     ]);
 
                     done();
@@ -292,56 +272,6 @@ module.exports = () => {
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
                     expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
-                    done();
-                });
-        });
-    });
-
-    describe('GET /api/dataPasses/:lhcPeriodId', () => {
-        it('should successfuly fetch period with given id 1', (done) => {
-            request(server)
-                .get('/api/dataPasses/1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data).to.be.eql(lhcPeriod_LHC22a);
-                    done();
-                });
-        });
-
-        it('should successfuly fetch period with given id 2', (done) => {
-            request(server)
-                .get('/api/dataPasses/2')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data).to.be.eql(lhcPeriod_LHC22b);
-                    done();
-                });
-        });
-
-        it('should return 404 if lhc period could not be found', (done) => {
-            request(server)
-                .get('/api/dataPasses/9999')
-                .expect(404)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.errors[0].title).to.equal('Not found');
-                    expect(res.body.errors[0].detail).to.equal('LHC Period with this id (9999) could not be found');
                     done();
                 });
         });
