@@ -108,7 +108,7 @@ module.exports = () => {
         };
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.be.lengthOf(2);
-        expect(dataPasses).to.have.members([LHC22b_apass1, LHC22b_apass2]);
+        expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
     });
 
     it('should succesfully sort data passes by names', async () => {
@@ -120,19 +120,19 @@ module.exports = () => {
             },
         };
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-        expect(dataPasses).to.have.ordered.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
+        expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
     });
 
-    it('should succesfully sort data passes by reconstrutedEventsCount', async () => {
+    it('should succesfully sort data passes by reconstructedEventsCount', async () => {
         const dto = {
             query: {
                 sort: {
-                    reconstrutedEventsCount: 'DESC',
+                    reconstructedEventsCount: 'DESC',
                 },
             },
         };
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-        expect(dataPasses).to.have.ordered.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
+        expect(dataPasses).to.have.ordered.deep.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
     });
 
     it('should succesfully sort data passes by outputSize', async () => {
@@ -144,6 +144,6 @@ module.exports = () => {
             },
         };
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-        expect(dataPasses).to.have.ordered.members([LHC22a_apass1, LHC22b_apass2, LHC22b_apass1]);
+        expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass2, LHC22b_apass1]);
     });
 };
