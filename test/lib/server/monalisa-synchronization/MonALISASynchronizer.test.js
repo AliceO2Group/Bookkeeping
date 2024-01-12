@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getMockMonALISAInterface } = require('./data/getMockMonALISAInterface.js');
+const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
 const { monALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
 const { repositories: { DataPassRepository, LhcPeriodRepository } } = require('../../../../lib/database');
 const { dataSource } = require('../../../../lib/database/DataSource.js');
@@ -23,7 +23,7 @@ const YEAR_LOWER_LIMIT = 2023;
 
 module.exports = () => {
     it('Should get data with respect to given year limit and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAInterface(YEAR_LOWER_LIMIT);
+        const monALISAInterface = getMockMonALISAClient(YEAR_LOWER_LIMIT);
         const mockDataPasses = await monALISAInterface.getDataPasses();
         monALISASynchronizer.monALISAInterface = monALISAInterface;
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
