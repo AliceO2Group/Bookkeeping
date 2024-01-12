@@ -25,7 +25,7 @@ exports.getMockMonALISAClient = (yearLowerLimit) => {
         dataPassDetailsUrl: 'https://some.other.mock.url.com',
         yearLowerLimit,
     });
-    instance.fetchDataPasses = async () => mockDataPasses;
-    instance.fetchDataPassDetails = async (description) => mockDescriptionToDataPassDetails[description];
+    instance._fetchDataPasses = async () => mockDataPasses;
+    instance._fetchDataPassDetails = async (description) => mockDescriptionToDataPassDetails[description];
     return instance;
 };
