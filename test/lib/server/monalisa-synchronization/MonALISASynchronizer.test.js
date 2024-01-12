@@ -13,7 +13,7 @@
 
 const { expect } = require('chai');
 const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
-const { monALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
+const { MonALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
 const { repositories: { DataPassRepository, LhcPeriodRepository } } = require('../../../../lib/database');
 const { dataSource } = require('../../../../lib/database/DataSource.js');
 
@@ -23,9 +23,9 @@ const YEAR_LOWER_LIMIT = 2023;
 
 module.exports = () => {
     it('Should get data with respect to given year limit and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAClient(YEAR_LOWER_LIMIT);
-        const mockDataPasses = await monALISAInterface.getDataPasses();
-        monALISASynchronizer.monALISAInterface = monALISAInterface;
+        const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
+        const mockDataPasses = await monALISAClient.getDataPasses();
+        const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
         // Run Synchronization
@@ -62,7 +62,7 @@ module.exports = () => {
         // Data Pass details are in DB
         for (const dataPass of dataPassesDB) {
             const { description, runs } = dataPass;
-            const { runNumbers: expectedRunNumbers } = await monALISAInterface.getDataPassDetails(description);
+            const { runNumbers: expectedRunNumbers } = await monALISAClient.getDataPassDetails(description);
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
         }
     });
