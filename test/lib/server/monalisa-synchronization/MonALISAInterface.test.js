@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getMockMonALISAInterface } = require('./data/getMockMonALISAInterface.js');
+const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
 
 const sampleDataPass = {
     name: 'LHC10g_npass1',
@@ -24,7 +24,7 @@ const sampleDataPass = {
 
 module.exports = () => {
     it('Should get data with respect to given year limit (2022) and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAInterface(2022);
+        const monALISAInterface = getMockMonALISAClient(2022);
         const dataPasses = await monALISAInterface.getDataPasses();
 
         expect(dataPasses).to.be.an('array');
@@ -35,7 +35,7 @@ module.exports = () => {
     });
 
     it('Should get data with respect to given year limit (2023) and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAInterface(2023);
+        const monALISAInterface = getMockMonALISAClient(2023);
         const dataPasses = await monALISAInterface.getDataPasses();
 
         expect(dataPasses).to.be.an('array');
