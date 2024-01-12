@@ -103,9 +103,6 @@ message Run {
   int64 updatedAt = 30;
   // A string that marks the period of the lhc
   string lhcPeriod = 31;
-  // Optional users that stopped or started the run (can also be undefined)
-  optional User user_o2_start = 32;
-  optional User user_o2_stop = 33;
 }
 
 message LHCFill {

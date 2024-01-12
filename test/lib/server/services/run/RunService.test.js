@@ -467,4 +467,148 @@ module.exports = () => {
         expect(run.eorReasons[0].category).to.equal(eorReasons[2].category);
         expect(run.eorReasons[0].title).to.equal(eorReasons[2].title);
     });
+
+    it('should successfully create run with only userO2Start', async () => {
+        const runNumber = ++lastRunNumber;
+        const userO2Start = {
+            externalId: 1000,
+            name: 'test',
+        };
+
+        const run = await runService.create(
+            // Run
+            {
+                runNumber: runNumber,
+            },
+            // Relations
+            {
+                userO2Start: userO2Start,
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
+    });
+
+    it('should successfully create run with only userO2Stop', async () => {
+        const runNumber = ++lastRunNumber;
+        const userO2Stop = {
+            externalId: 1001,
+            name: 'test',
+        };
+
+        const run = await runService.create(
+            // Run
+            {
+                runNumber: runNumber,
+            },
+            // Relations
+            {
+                userO2Stop: userO2Stop,
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
+    });
+
+    it('should successfully create run with userO2Start and userO2Stop', async () => {
+        const runNumber = ++lastRunNumber;
+        const userO2Start = {
+            externalId: 1002,
+            name: 'test',
+        };
+        const userO2Stop = {
+            externalId: 1003,
+            name: 'test',
+        };
+
+        const run = await runService.create(
+            // Run
+            {
+                runNumber: runNumber,
+            },
+            // Relations
+            {
+                userO2Start: userO2Start,
+                userO2Stop: userO2Stop,
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
+    });
+
+    it('should successfully update run with only userO2Start', async () => {
+        const runNumber = 1;
+        const userO2Start = {
+            externalId: 1000,
+            name: 'test',
+        };
+
+        const run = await runService.update(
+            { runNumber },
+            {
+                relations: {
+                    userO2Start: userO2Start,
+                },
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
+    });
+
+    it('should successfully update run with only userO2Stop', async () => {
+        const runNumber = 1;
+        const userO2Stop = {
+            externalId: 1000,
+            name: 'test',
+        };
+
+        const run = await runService.update(
+            { runNumber },
+            {
+                relations: {
+                    userO2Stop: userO2Stop,
+                },
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
+    });
+
+    it('should successfully update run with userO2Start and userO2Stop', async () => {
+        const runNumber = 1;
+        const userO2Start = {
+            externalId: 1002,
+            name: 'test',
+        };
+        const userO2Stop = {
+            externalId: 1003,
+            name: 'test',
+        };
+
+        const run = await runService.update(
+            { runNumber },
+            {
+                relations: {
+                    userO2Start: userO2Start,
+                    userO2Stop: userO2Stop,
+                },
+            },
+        );
+
+        // Run and user should exist
+        expect(run).to.not.be.null;
+        expect(run.userIdO2Start).to.not.be.null;
+        expect(run.userIdO2Stop).to.not.be.null;
+    });
 };

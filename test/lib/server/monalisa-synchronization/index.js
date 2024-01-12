@@ -11,14 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const UtilitiesSuite = require('./utilities/index.js');
-const ServicesSuite = require('./services/index.js');
-const MiddlewareSuite = require('./middleware/index.js');
-const MonALISASynchronizationSuite = require('./monalisa-synchronization/index.js');
+const MonALISAClientSuite = require('./MonALISAClient.test.js');
+const MonALISASynchronizerSuite = require('./MonALISASynchronizer.test.js');
 
 module.exports = () => {
-    describe('Utilities', UtilitiesSuite);
-    describe('Services', ServicesSuite);
-    describe('Middlewares', MiddlewareSuite);
-    describe('External Services Synchronization', MonALISASynchronizationSuite);
+    describe('MonALISA Interface Suite', MonALISAClientSuite);
+    describe('MonALISA Synchronizer Suite', MonALISASynchronizerSuite);
 };
