@@ -203,6 +203,15 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
 
+        it ('should succefully filter on data pass id', async () => {
+            const response = await request(server).get('/api/runs?filter[dataPassIds]=3,2');
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            expect(data).to.lengthOf(7);
+            expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
+        });
+
         it('should return 400 if o2start "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
