@@ -331,9 +331,9 @@ module.exports = () => {
         });
         expect(historyOccurrences).to.lengthOf(3);
         expect(historyOccurrences).to.eql([
-            { environments: 'STANDBY,ERROR', count: 1 },
-            { environments: 'STANDBY,DEPLOYED,ERROR,DESTROYED', count: 1 },
-            { environments: 'CONFIGURED,RUNNING,STOPPED,DESTROYED', count: 1 },
+            { statusHistory: 'STANDBY,ERROR', count: 1 },
+            { statusHistory: 'STANDBY,DEPLOYED,ERROR,DESTROYED', count: 1 },
+            { statusHistory: 'CONFIGURED,RUNNING,STOPPED,DESTROYED', count: 1 },
         ]);
     });
 
@@ -344,7 +344,7 @@ module.exports = () => {
                 to: new Date('2019/08/09 14:40:00').getTime(),
             });
             expect(historyOccurrences).to.lengthOf(1);
-            expect(historyOccurrences).to.eql([{ environments: 'DESTROYED', count: 1 }]);
+            expect(historyOccurrences).to.eql([{ statusHistory: 'DESTROYED', count: 1 }]);
         }
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
@@ -359,15 +359,15 @@ module.exports = () => {
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
                 from: new Date('2019/08/09 14:15:00').getTime(),
-                to: new Date('2019/08/09 14:30:00').getTime(),
+                to: new Date('2019/08/09 14:30:01').getTime(),
             });
             expect(historyOccurrences).to.lengthOf(1);
-            expect(historyOccurrences).to.eql([{ environments: 'DESTROYED', count: 1 }]);
+            expect(historyOccurrences).to.eql([{ statusHistory: 'DESTROYED', count: 1 }]);
         }
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
                 from: new Date('2019/08/09 14:15:00').getTime(),
-                to: new Date('2019/08/09 14:29:59').getTime(),
+                to: new Date('2019/08/09 14:30:00').getTime(),
             });
             expect(historyOccurrences).to.lengthOf(0);
         }
