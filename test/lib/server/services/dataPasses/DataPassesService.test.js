@@ -15,7 +15,7 @@ const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
-const { dataPassesService } = require('../../../../../lib/server/services/dataPasses/DataPassesService.js');
+const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassesService.js');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -48,23 +48,23 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     it('should succesfully get by id', async () => {
-        const lhcPeriod = await dataPassesService.getByIdentifier({ id: 1 });
+        const lhcPeriod = await dataPassService.getByIdentifier({ id: 1 });
         expect(lhcPeriod).to.be.eql(LHC22b_apass1);
     });
 
     it('should succesfully get by name', async () => {
-        const lhcPeriod = await dataPassesService.getByIdentifier({ name: 'LHC22a_apass1' });
+        const lhcPeriod = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
         expect(lhcPeriod).to.be.eql(LHC22a_apass1);
     });
 
     it('should succesfully get all data', async () => {
-        const { rows: dataPasses } = await dataPassesService.getAll();
+        const { rows: dataPasses } = await dataPassService.getAll();
         expect(dataPasses).to.be.lengthOf(3);
     });
 
     it('should fail when no Data Pass with given id', async () => {
         await assert.rejects(
-            () => dataPassesService.getOneOrFail({ id: 99999 }),
+            () => dataPassService.getOneOrFail({ id: 99999 }),
             new NotFoundError('Data Pass with this id (99999) could not be found'),
         );
     });
@@ -77,7 +77,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: dataPasses } = await dataPassesService.getAll(dto.query);
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.be.lengthOf(1);
         expect(dataPasses[0]).to.be.eql(LHC22b_apass1);
     });
@@ -90,12 +90,12 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: dataPasses } = await dataPassesService.getAll(dto.query);
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.be.lengthOf(2);
     });
 
     it('should return null when no Data Pass with given id', async () => {
-        expect(await dataPassesService.getByIdentifier({ id: 99999 })).to.be.null;
+        expect(await dataPassService.getByIdentifier({ id: 99999 })).to.be.null;
     });
 
     it('should succesfully filter data passes on lhc petriods ids', async () => {
@@ -106,7 +106,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: dataPasses } = await dataPassesService.getAll(dto.query);
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.be.lengthOf(2);
         expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
     });
@@ -119,7 +119,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: dataPasses } = await dataPassesService.getAll(dto.query);
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
     });
 
@@ -131,7 +131,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: dataPasses } = await dataPassesService.getAll(dto.query);
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.have.ordered.deep.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
     });
 
@@ -143,7 +143,7 @@ module.exports = () => {
                 },
             },
         };
-        const { rows: dataPasses } = await dataPassesService.getAll(dto.query);
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass2, LHC22b_apass1]);
     });
 };
