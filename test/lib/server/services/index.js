@@ -24,6 +24,7 @@ const RunTypeSuite = require('./runType/index.js');
 const ShiftSuite = require('./shift/index.js');
 const StatisticsSuite = require('./statistics/index.js');
 const LhcPeriodSuite = require('./lhcPeriod');
+const UserSuite = require('./user/index.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
@@ -44,4 +45,5 @@ module.exports = () => {
     describe('Shift', ShiftSuite);
     describe('Statistics', StatisticsSuite);
     describe('LhcPeriod', LhcPeriodSuite);
+    describe('User', UserSuite);
 };

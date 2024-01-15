@@ -11,18 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
+const MonALISAClientSuite = require('./MonALISAClient.test.js');
+const MonALISASynchronizerSuite = require('./MonALISASynchronizer.test.js');
 
-/**
- * Returns the author filter component
- * @param {LogModel} logModel the log model object
- * @return {vnode} A text box that lets the user look for logs with a specific author
- */
-const authorFilter = ({ authorFilter }) => h('input.w-75.mt1', {
-    type: 'text',
-    id: 'authorFilterText',
-    value: authorFilter.raw,
-    oninput: (e) => authorFilter.update(e.target.value),
-}, '');
-
-export default authorFilter;
+module.exports = () => {
+    describe('MonALISA Interface Suite', MonALISAClientSuite);
+    describe('MonALISA Synchronizer Suite', MonALISASynchronizerSuite);
+};
