@@ -203,8 +203,8 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
 
-        it ('should succefully filter on data pass id', async () => {
-            const response = await request(server).get('/api/runs?filter[dataPassIds]=3,2');
+        it ('should succefully filter on data pass name', async () => {
+            const response = await request(server).get('/api/runs?filter[dataPasses]=LHC22b_apass2,LHC22a_apass1');
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
