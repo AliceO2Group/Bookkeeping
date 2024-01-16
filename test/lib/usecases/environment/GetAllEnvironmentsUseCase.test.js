@@ -28,4 +28,34 @@ module.exports = () => {
             .execute(getAllEnvsDto);
         expect(result.environments).to.be.an('array');
     });
+
+    it('should only contain SomeId environment', async () => {
+        getAllEnvsDto.query = { filter: { ids: 'SomeId' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.be.equal('SomeId');
+    });
+
+    it('should only contain SomeId, newId, CmCvjNbg', async () => {
+        getAllEnvsDto.query = { filter: { ids: 'SomeId, newId, CmCvjNbg' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(3);
+        expect(environments[0].id).to.be.equal('SomeId');
+        expect(environments[1].id).to.be.equal('newId');
+        expect(environments[2].id).to.be.equal('CmCvjNbg');
+    });
+
+    it('should allow for non existing filter', async () => {
+        getAllEnvsDto.query = { filter: { ids: 'SomeId, nonExistingIdEnv, newId' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments[0].id).to.be.equal('SomeId');
+        expect(environments[1].id).to.be.equal('newId');
+    });
 };
