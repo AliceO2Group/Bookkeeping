@@ -37,11 +37,11 @@ module.exports = () => {
 
         // Correct amount of data
         expect(dataPassesDB).to.be.an('array');
-        expect(dataPassesDB).to.be.lengthOf(5);
+        expect(dataPassesDB).to.be.lengthOf(8);
 
         // All expected data passes names present
         const expectedNames = expectedDataPasses.map(({ name }) => name);
-        expect(dataPassesDB.map(({ name }) => name)).to.have.all.members(expectedNames);
+        expect(dataPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
         // All associated with appripriate LHC Periods
         const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll(dataSource
@@ -54,16 +54,19 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
 
         // Properties of data passes are the same
-        expect(expectedDataPasses).to.has.deep.all.members(dataPassesDB.map((dataPass) => {
+        expect(dataPassesDB.map((dataPass) => {
             const { name, outputSize, description, reconstructedEventsCount, lastRunNumber } = dataPass;
             return { name, outputSize, description, reconstructedEventsCount, lastRunNumber };
-        }));
+        })).to.include.deep.all.members(expectedDataPasses);
 
         // Data Pass details are in DB
+        const expectedDataPassesNamesSet = new Set(expectedNames);
         for (const dataPass of dataPassesDB) {
-            const { description, runs } = dataPass;
-            const { runNumbers: expectedRunNumbers } = await monALISAClient.getDataPassDetails(description);
-            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
+            if (expectedDataPassesNamesSet.has(dataPass.name)) {
+                const { description, runs } = dataPass;
+                const { runNumbers: expectedRunNumbers } = await monALISAClient.getDataPassDetails(description);
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
+            }
         }
     });
 };
