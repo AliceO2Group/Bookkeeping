@@ -58,4 +58,7 @@ module.exports = () => {
         expect(environments[0].id).to.be.equal('SomeId');
         expect(environments[1].id).to.be.equal('newId');
     });
+
+    // TODO: create tests for the new filter on current status
+    // Statusses: RUNNING, DEPLOYED, DESTROYED, STOPPED, CONFIGURED, ERROR, STANDBY
 };
