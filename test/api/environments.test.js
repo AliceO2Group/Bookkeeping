@@ -35,6 +35,15 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should successfully apply filter for environments ids', async () => {
+            const response = await request(server).get('/api/environments?filter[ids]=8E4aZTjY');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(1);
+            expect(environments[0].id).to.equal('8E4aZTjY');
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {
