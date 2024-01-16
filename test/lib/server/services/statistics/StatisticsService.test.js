@@ -323,4 +323,53 @@ module.exports = () => {
             expect(eorReasonsOccurrences).to.lengthOf(0);
         }
     });
+
+    it('should successfully extract history occurrences for environments in a given period', async () => {
+        const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
+            from: new Date('2019/08/09 15:00:00').getTime(),
+            to: new Date('2019/08/09 17:00:00').getTime(),
+        });
+        expect(historyOccurrences).to.lengthOf(3);
+        expect(historyOccurrences).to.eql([
+            { statusHistory: 'STANDBY,ERROR', count: 1 },
+            { statusHistory: 'STANDBY,DEPLOYED,ERROR,DESTROYED', count: 1 },
+            { statusHistory: 'CONFIGURED,RUNNING,STOPPED,DESTROYED', count: 1 },
+        ]);
+    });
+
+    it('should successfully filter out environment history before a date (included) for history occurences', async () => {
+        {
+            const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
+                from: new Date('2019/08/09 14:30:00').getTime(),
+                to: new Date('2019/08/09 14:40:00').getTime(),
+            });
+            expect(historyOccurrences).to.lengthOf(1);
+            expect(historyOccurrences).to.eql([{ statusHistory: 'DESTROYED', count: 1 }]);
+        }
+        {
+            const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
+                from: new Date('2019/08/09 14:30:01').getTime(),
+                to: new Date('2019/08/09 14:40:00').getTime(),
+            });
+            expect(historyOccurrences).to.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter out environment history after a date (excluded) for history occurences', async () => {
+        {
+            const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
+                from: new Date('2019/08/09 14:15:00').getTime(),
+                to: new Date('2019/08/09 14:30:01').getTime(),
+            });
+            expect(historyOccurrences).to.lengthOf(1);
+            expect(historyOccurrences).to.eql([{ statusHistory: 'DESTROYED', count: 1 }]);
+        }
+        {
+            const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
+                from: new Date('2019/08/09 14:15:00').getTime(),
+                to: new Date('2019/08/09 14:30:00').getTime(),
+            });
+            expect(historyOccurrences).to.lengthOf(0);
+        }
+    });
 };
