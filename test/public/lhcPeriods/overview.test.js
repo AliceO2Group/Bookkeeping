@@ -192,23 +192,29 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
+        const counts = {
+            LHC22b: 1,
+            LHC22a: 3,
+            LHC23f: 0,
+        };
+
         /**
          * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
          * @param {string[]} periodNames list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nruns`);
+        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nruns[${counts[p]}]`);
 
-        let allLhcPeriodNames = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNames).to.has.all.deep.members(appendButtonsText(['LHC22a']));
+        let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
+        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a']));
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
-        allLhcPeriodNames = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNames).to.has.all.deep.members(appendButtonsText(['LHC22a', 'LHC22b', 'LHC23f']));
+        allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
+        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a', 'LHC22b', 'LHC23f']));
     });
 
     it('should successfuly apply lhc period year filter', async () => {
