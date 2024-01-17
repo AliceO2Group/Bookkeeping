@@ -18,7 +18,7 @@ const { createOrUpdateUser } = require('../../../../../lib/server/services/user/
 
 module.exports = () => {
     it('should successfully get the existing user with getOrCreate function', async () => {
-        const externalId = 1001;
+        const externalId = 2001;
         const name = 'testUser';
 
         // Create user in db
@@ -36,7 +36,7 @@ module.exports = () => {
     });
 
     it('should successfully create the non-existing user with getOrCreate function', async () => {
-        const externalId = 1002;
+        const externalId = 2002;
         const name = 'testUser';
 
         // Before creation it should be null
