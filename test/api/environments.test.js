@@ -36,6 +36,16 @@ module.exports = () => {
                 });
         });
 
+        it('should successfully show all environments without filter', async () => {
+            const response = await request(server).get('/api/environments');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(9);
+            // Check if the environment list is valid by checking the first one only
+            expect(environments[0].id).to.equal('CmCvjNbg');
+        });
+
         it('should successfully apply filter for environments ids', async () => {
             const response = await request(server).get('/api/environments?filter[ids]=8E4aZTjY');
 
@@ -43,6 +53,17 @@ module.exports = () => {
             const environments = response.body.data;
             expect(environments).to.lengthOf(1);
             expect(environments[0].id).to.equal('8E4aZTjY');
+        });
+
+        it('should successfully filter environments on a list of ids', async () => {
+            const response = await request(server).get('/api/environments?filter[ids]=CmCvjNbg, TDI59So3d, EIDO13i3D');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(3);
+            expect(environments[0].id).to.equal('CmCvjNbg');
+            expect(environments[1].id).to.equal('TDI59So3d');
+            expect(environments[2].id).to.equal('EIDO13i3D');
         });
     });
     describe('POST /api/environments', () => {
