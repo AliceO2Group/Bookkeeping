@@ -15,7 +15,7 @@ const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
-const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassesService.js');
+const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 
 const LHC22b_apass1 = {
     id: 1,
