@@ -110,7 +110,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForTimeout(100);
 
@@ -154,7 +154,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForTimeout(100);
 
@@ -193,7 +193,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForNetworkIdle();
         await page.waitForTimeout(100);
@@ -208,7 +208,7 @@ module.exports = () => {
         // Increase the amount of items displayed to see logs count difference above 10
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 20;
+            model.logs.overviewModel.pagination.itemsPerPage = 20;
         });
         await page.waitForTimeout(500);
 
@@ -256,7 +256,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
     });
 
@@ -324,7 +324,7 @@ module.exports = () => {
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Insert some text into the filter
-        await fillInput(page, '#environments', '8E4aZTjY');
+        await fillInput(page, '.environments-filter input', '8E4aZTjY');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the (new) total number of rows to be less than the original number of rows
@@ -335,7 +335,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
 
@@ -345,7 +345,7 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
 
         // Filter on a non-existent environment ID
-        await fillInput(page, '#environments', 'abcdefgh');
+        await fillInput(page, '.environments-filter input', 'abcdefgh');
         await waitForNetworkIdleAndRedraw(page);
 
         // Expect the table to be empty
@@ -357,7 +357,7 @@ module.exports = () => {
         // Clear again the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
     });
@@ -365,7 +365,7 @@ module.exports = () => {
     it('can search for tag in the dropdown', async () => {
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await page.waitForTimeout(20);
 
@@ -414,7 +414,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
 
@@ -436,7 +436,7 @@ module.exports = () => {
         // Clear again the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
     });
@@ -465,7 +465,7 @@ module.exports = () => {
         // Clear the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
 
@@ -487,7 +487,7 @@ module.exports = () => {
         // Clear again the filters
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.reset();
+            model.logs.overviewModel.reset();
         });
         await waitForNetworkIdleAndRedraw(page);
     });
@@ -678,7 +678,7 @@ module.exports = () => {
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 1;
+            model.logs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -699,7 +699,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 10;
+            model.logs.overviewModel.pagination.itemsPerPage = 10;
         });
     });
 
@@ -722,7 +722,7 @@ module.exports = () => {
          */
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 200;
+            model.logs.overviewModel.pagination.itemsPerPage = 200;
         });
         await page.waitForTimeout(100);
 
@@ -733,7 +733,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 10;
+            model.logs.overviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -761,7 +761,7 @@ module.exports = () => {
         // Override the amount of logs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.logs.pagination.itemsPerPage = 1;
+            model.logs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -770,7 +770,7 @@ module.exports = () => {
         await secondPageButton.evaluate((button) => button.click());
         await page.waitForTimeout(500);
         // Expect the pagination to still be on page two
-        let currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
+        let currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
 
         // Navigate to a log detail page via href
@@ -789,7 +789,7 @@ module.exports = () => {
         const currentLocation = await page.url();
         expect(currentLocation).to.equal(`${url}/?page=log-overview`);
         // Expect the pagination to still be on page two
-        currentPageSelected = await page.evaluate(() => window.model.logs.pagination.currentPage);
+        currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
     });
 
@@ -809,13 +809,17 @@ module.exports = () => {
         // Insert some text into the filter
         await page.waitForSelector('#titleFilterText');
         await fillInput(page, '#titleFilterText', log119Title);
+
+        // Close filter toggle
+        await pressElement(page, '#openFilterToggle');
+
         await page.waitForSelector('#row119-runs a');
         await pressElement(page, '#row119-runs a');
 
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=2');
+        expect(urlParameters).to.contain('runNumber=2');
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
@@ -833,7 +837,7 @@ module.exports = () => {
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
 
-        await waitForNetworkIdleAndRedraw(page);
+        // Await waitForNetworkIdleAndRedraw(page);
         await page.waitForSelector('#row119-lhcFills a');
         await pressElement(page, '#row119-lhcFills a');
 

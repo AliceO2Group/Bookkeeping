@@ -87,7 +87,7 @@ const customizedShiftLeaderEosReport = {
         runs: {
             COMMISSIONING: [
                 {
-                    id: 108,
+                    id: 110,
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                     timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
                     runDuration: (3600 + 2 * 60 + 3) * 1000,
@@ -114,7 +114,7 @@ const customizedShiftLeaderEosReport = {
             ],
             TECHNICAL: [
                 {
-                    id: 109,
+                    id: 111,
                     runNumber: 201,
                     runQuality: 'good',
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
@@ -144,7 +144,7 @@ const customizedShiftLeaderEosReport = {
                         },
                     ],
                 }, {
-                    id: 110,
+                    id: 112,
                     runNumber: 202,
                     runQuality: 'bad',
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
@@ -215,11 +215,11 @@ const formattedCustomizedShiftLeaderEosReportTypeSpecific = `
 ## Runs
 
 ### COMMISSIONING (1)
-- [200](http://localhost:4000?page=run-detail&id=108)
+- [200](http://localhost:4000?page=run-detail&runNumber=200)
 
 ### TECHNICAL (2)
-- [201](http://localhost:4000?page=run-detail&id=109)
-- [202](http://localhost:4000?page=run-detail&id=110)
+- [201](http://localhost:4000?page=run-detail&runNumber=201)
+- [202](http://localhost:4000?page=run-detail&runNumber=202)
 `;
 
 exports.formattedCustomizedShiftLeaderEosReport = genericFormattedCustomizedEosReport(

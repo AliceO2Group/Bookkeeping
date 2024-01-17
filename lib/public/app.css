@@ -2,6 +2,7 @@ html, body {
     scroll-behavior: smooth;
 
     --ui-component-medium: 550px;
+    --ui-component-large: 850px;
 }
 
 .cell-xs { max-width: 2rem; }
@@ -19,6 +20,9 @@ html, body {
 .b-danger { border-color: var(--color-danger); }
 .b-success { border-color: var(--color-success); }
 .b-primary { border-color: var(--color-primary); }
+
+.b-underline-good { border-bottom: 4px solid var(--color-success); }
+.b-underline-bad { border-bottom: 4px dashed var(--color-danger); }
 
 .overflow {
     height: 1.5rem;
@@ -41,6 +45,7 @@ html, body {
 .cell-xs:last-child .resizeWidth, .cell-s:last-child .resizeWidth, .cell-m:last-child .resizeWidth, .cell-l:last-child .resizeWidth, .cell-xl:last-child .resizeWidth { visibility: hidden; }
 
 /* width scale */
+.w-l { width: var(--ui-component-large) }
 .w-2   { width:   2.5%; }
 .w-5   { width:   5%; }
 .w-7   { width:   7.5%; }
@@ -122,6 +127,10 @@ html, body {
     gap: var(--space-xl)
 }
 
+.flex-grid {
+    display: grid;
+}
+
 /* Float */
 .float-right { float: right }
 
@@ -179,12 +188,21 @@ th.text-center, td.text-center {
 
 /* buttons */
 
+.btn-pill {
+    border-radius: 50%;
+    padding: var(--space-s);
+    font-size: 0.65em;
+}
+
 a.btn, a.btn:hover, a.btn.active {
     text-decoration: none;
 }
 
 /* form */
 
+label {
+    margin: unset;
+}
 .label {
     cursor: pointer;
 }
@@ -206,11 +224,6 @@ a.btn, a.btn:hover, a.btn.active {
 
 .v-resize {
     resize: vertical;
-}
-
-.dropdown-container {
-    position: relative;
-    line-height: inherit;
 }
 
 .dropdown-trigger {
@@ -244,6 +257,10 @@ a.btn, a.btn:hover, a.btn.active {
 
 .dropdown-options-head {
     border-bottom: 1px solid var(--color-gray);
+}
+
+.dropdown-option {
+    cursor: pointer;
 }
 
 .dropdown-option:hover {
@@ -462,7 +479,7 @@ a.btn, a.btn:hover, a.btn.active {
     top: 0;
     left: 0;
     z-index: 1002;
-    max-width: var(--ui-component-medium);
+    max-width: var(--ui-component-large);
 }
 
 .no-events {
@@ -607,6 +624,17 @@ a.btn, a.btn:hover, a.btn.active {
     stroke: var(--color-gray-darker);
     stroke-width: 0.5px;
 }
+
+/* Custom styles */
+.time-range-selector .month-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.time-range-selector .month-option:nth-last-child(-n+3), .time-range-selector .dropdown-option:last-child {
+    border-bottom: 1px solid var(--color-gray-dark);
+}
+
 
 /**
  * Breakpoints :

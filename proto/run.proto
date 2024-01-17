@@ -40,6 +40,9 @@ message RunCreationRequest {
   string epnTopology = 10;
   optional string odcTopologyFullName = 11;
   repeated Detector detectors = 12;
+  // Optional users that stopped or started the run (can also be undefined)
+  optional User userO2Start = 13;
+  optional User userO2Stop = 14;
 }
 
 message RunUpdateRequest {
@@ -57,6 +60,10 @@ message RunUpdateRequest {
   optional string pdpWorkflowParameters = 13;
   optional string pdpBeamType = 14;
   optional string readoutCfgUri = 15;
+  repeated EorReason eorReasons = 16;
+  // Optional users that stopped or started the run (can also be undefined)
+  optional User userO2Start = 17;
+  optional User userO2Stop = 18;
 }
 
 // Enums

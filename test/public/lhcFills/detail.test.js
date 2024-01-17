@@ -170,8 +170,7 @@ module.exports = () => {
     it('should successfully navigate to run detail page', async () => {
         const row = await page.$('#runs tbody tr');
         expect(row).to.be.not.null;
-        // Remove "row" prefix to get fill number
-        const runId = await row.evaluate((element) => element.id.slice(3));
+        const expectedRunNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
 
         await row.$eval('td:first-of-type a', (link) => link.click());
         await page.waitForNetworkIdle();
@@ -180,7 +179,7 @@ module.exports = () => {
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`id=${runId}`);
+        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
 
     it('should successfully expose a button to create a new log related to the displayed fill', async () => {

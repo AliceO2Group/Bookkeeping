@@ -180,7 +180,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(6);
+            expect(data).to.have.lengthOf(8);
         });
 
         it('should successfully return 400 if the given definitions are not valid', async () => {
@@ -272,7 +272,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
 
-            expect(data).to.have.lengthOf(12);
+            expect(data).to.have.lengthOf(14);
         });
 
         it('should successfully filter on updatedAt', async () => {
@@ -287,7 +287,7 @@ module.exports = () => {
             const { data } = response.body;
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(8);
+            expect(data).to.have.lengthOf(10);
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
@@ -326,7 +326,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(5);
+            expect(data.length).to.equal(7);
         });
 
         it('should return 400 if "runQuality" is invalid', async () => {
@@ -357,7 +357,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(46);
+            expect(data).to.have.lengthOf(48);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -428,8 +428,8 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/runs/:runId', () => {
-        it('should return 400 if the run id is not a number', (done) => {
+    describe('GET /api/runs/:runNumber', () => {
+        it('should return 400 if the run number is not a number', (done) => {
             request(server)
                 .get('/api/runs/abc')
                 .expect(400)
@@ -440,14 +440,14 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
-                    expect(titleError.detail).to.equal('"params.runId" must be a number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runNumber');
+                    expect(titleError.detail).to.equal('"params.runNumber" must be a number');
 
                     done();
                 });
         });
 
-        it('should return 400 if the run id is not positive', (done) => {
+        it('should return 400 if the run number is not positive', (done) => {
             request(server)
                 .get('/api/runs/-1')
                 .expect(400)
@@ -458,14 +458,14 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
-                    expect(titleError.detail).to.equal('"params.runId" must be a positive number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runNumber');
+                    expect(titleError.detail).to.equal('"params.runNumber" must be a positive number');
 
                     done();
                 });
         });
 
-        it('should return 400 if the run id is not a whole number', (done) => {
+        it('should return 400 if the run number is not a whole number', (done) => {
             request(server)
                 .get('/api/runs/0.5')
                 .expect(400)
@@ -476,8 +476,8 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
-                    expect(titleError.detail).to.equal('"params.runId" must be an integer');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runNumber');
+                    expect(titleError.detail).to.equal('"params.runNumber" must be an integer');
 
                     done();
                 });
@@ -493,7 +493,7 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Run with this id (999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Run with this run number (999999999) could not be found');
 
                     done();
                 });
@@ -509,7 +509,7 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data.id).to.equal(1);
+                    expect(res.body.data.runNumber).to.equal(1);
 
                     done();
                 });
@@ -611,8 +611,8 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/runs/:runId/logs', () => {
-        it('should return 400 if the run id is not a number', (done) => {
+    describe('GET /api/runs/:runNumber/logs', () => {
+        it('should return 400 if the run number is not a number', (done) => {
             request(server)
                 .get('/api/runs/abc/logs')
                 .expect(400)
@@ -623,8 +623,8 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runId');
-                    expect(titleError.detail).to.equal('"params.runId" must be a number');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/runNumber');
+                    expect(titleError.detail).to.equal('"params.runNumber" must be a number');
 
                     done();
                 });
@@ -640,7 +640,7 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Run with this id (999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Run with this run number (999999999) could not be found');
 
                     done();
                 });
@@ -705,7 +705,7 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType.id).to.be.a('number');
-                    expect(res.body.data.id).to.equal(107);
+                    expect(res.body.data.id).to.equal(109);
 
                     done();
                 });
@@ -744,8 +744,8 @@ module.exports = () => {
         });
     });
 
-    describe('PUT /api/runs/:runId', () => {
-        it('should return 200 in all other cases', (done) => {
+    describe('PUT /api/runs/:runNumber', () => {
+        it('should return 500 when run could not be found', (done) => {
             request(server)
                 .put('/api/runs/9999999999')
                 .send({
@@ -757,7 +757,7 @@ module.exports = () => {
                         done(err);
                         return;
                     }
-                    expect(res.body.errors[0].detail).to.equal('Run with this id (9999999999) could not be found');
+                    expect(res.body.errors[0].detail).to.equal('Run with this run number (9999999999) could not be found');
 
                     done();
                 });
@@ -785,7 +785,7 @@ module.exports = () => {
                 .expect(201)
                 .send({ runQuality: RunQualities.GOOD, runQualityChangeReason: 'Justification' });
             expect(body.data).to.be.an('object');
-            expect(body.data.id).to.equal(1);
+            expect(body.data.runNumber).to.equal(1);
             expect(body.data.runQuality).to.equal(RunQualities.GOOD);
         });
 
@@ -820,7 +820,7 @@ module.exports = () => {
                 .expect(201)
                 .send({ runQuality: RunQualities.GOOD });
             expect(body.data).to.be.an('object');
-            expect(body.data.id).to.equal(106);
+            expect(body.data.runNumber).to.equal(106);
             expect(body.data.runQuality).to.equal(RunQualities.GOOD);
         });
 
@@ -829,7 +829,7 @@ module.exports = () => {
                 .get('/api/runs/106')
                 .expect(200);
             expect(currentRun.body.data).to.be.an('object');
-            expect(currentRun.body.data.id).to.equal(106);
+            expect(currentRun.body.data.runNumber).to.equal(106);
             expect(currentRun.body.data.runQuality).to.equal(RunQualities.GOOD);
             expect(currentRun.body.data.eorReasons).to.have.lengthOf(0);
 
@@ -845,7 +845,7 @@ module.exports = () => {
                     ],
                 });
             expect(body.data).to.be.an('object');
-            expect(body.data.id).to.equal(106);
+            expect(body.data.runNumber).to.equal(106);
             expect(body.data.eorReasons).to.have.lengthOf(1);
             expect(body.data.eorReasons[0].description).to.equal('Some');
             expect(body.data.runQuality).to.equal(RunQualities.GOOD);
@@ -880,7 +880,7 @@ module.exports = () => {
                 });
             expect(status).to.equal(201);
             expect(body.data).to.be.an('object');
-            expect(body.data.id).to.equal(1);
+            expect(body.data.runNumber).to.equal(1);
             expect(body.data.detectorsQualities).to.lengthOf(1);
             expect(body.data.detectorsQualities[0].id).to.equal(1);
             expect(body.data.detectorsQualities[0].quality).to.equal(RunDetectorQualities.GOOD);
@@ -919,7 +919,7 @@ module.exports = () => {
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
             expect(status).to.equal(201);
             expect(body.data).to.be.an('object');
-            expect(body.data.id).to.equal(40);
+            expect(body.data.runNumber).to.equal(40);
             expect(body.data.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
         });
 

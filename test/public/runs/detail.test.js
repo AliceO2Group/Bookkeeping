@@ -226,7 +226,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
         expect(urlParameters).to.contain('panel=flps');
     });
 
@@ -236,7 +236,7 @@ module.exports = () => {
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('id=1');
+        expect(urlParameters).to.contain('runNumber=1');
         expect(urlParameters).to.contain('panel=logs');
     });
     it('should show lhc data in normal mode', async () => {
@@ -275,7 +275,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
         await page.waitForTimeout(100);
 
         const fillNumberSelector = '#lhc-fill-fillNumber a';
@@ -295,10 +295,10 @@ module.exports = () => {
 
     it('notifies if a specified run id is invalid', async () => {
         // Navigate to a run detail view with an id that cannot exist
-        await goToPage(page, 'run-detail', { queryParameters: { id: 'abc' } });
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 'abc' } });
 
         // We expect there to be an error message
-        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runId" must be a number');
+        await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runNumber" must be a number');
     });
 
     it('notifies if a specified run id is not found', async () => {
@@ -399,5 +399,17 @@ module.exports = () => {
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#run-number', (element) => element.value)).to.equal('106');
+    });
+
+    it('should not display the LHC Data when beam is not stable', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
+        await page.waitForSelector('#NoLHCDataNotStable');
+        await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
+    });
+
+    it('should display the LHC fill number when beam is stable', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
+        await page.waitForSelector('#lhc-fill-fillNumber');
+        await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 };

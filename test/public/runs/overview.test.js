@@ -35,7 +35,7 @@ module.exports = () => {
 
     let table;
     let firstRowId;
-    const runNumberInputSelector = '#runNumber';
+    const runNumberInputSelector = '.runNumber-filter input';
     const timeFilterSelectors = {
         startFrom: '#o2startFilterFromTime',
         startTo: '#o2startFilterToTime',
@@ -131,7 +131,7 @@ module.exports = () => {
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(106);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(108);
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -207,9 +207,11 @@ module.exports = () => {
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 1;
+            model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
         await page.waitForTimeout(100);
 
@@ -227,10 +229,10 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 200;
-        });
+        await goToPage(page, 'run-overview');
+        await page.waitForTimeout(100);
+        // eslint-disable-next-line no-return-assign, no-undef
+        await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -240,7 +242,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 10;
+            model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
@@ -249,9 +251,8 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.waitForTimeout(100);
         await page.waitForSelector('tbody tr');
-        const firstRow = await page.$('tbody tr');
-        const expectedRunId = await firstRow.evaluate((element) => element.id)
-            .then((id) => parseInt(id.slice('row'.length), 10));
+
+        const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
         await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
         await page.waitForTimeout(100);
@@ -260,7 +261,7 @@ module.exports = () => {
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
         expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`id=${expectedRunId}`);
+        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
 
     it('Should have balloon on detector, tags and eor column', async () => {
@@ -312,7 +313,7 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        expect(table.length).to.equal(8);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
         await page.waitForTimeout(300);
@@ -408,8 +409,10 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.pagination.itemsPerPage = 20;
+            model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
+        await page.waitForTimeout(100);
+
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
@@ -668,28 +671,27 @@ module.exports = () => {
         await checkTableRunQualities(table, ['OFF']);
     });
 
-    it('should successfully filter on a list of run ids and inform the user about it', async () => {
+    it('should successfully filter on a list of run numbers and inform the user about it', async () => {
         const inputValue = '1, 2';
         await goToPage(page, 'run-overview');
 
         /**
          * This is the sequence to test filtering the runs on run numbers.
-         * @param {string} selector Specific selector for each case
          * @return {void}
          */
-        const filterOnRun = async (selector) => {
-            expect(await page.$eval(selector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
-            await page.focus(selector);
-            await page.keyboard.type(inputValue);
+        const filterOnRun = async () => {
+            await page.waitForSelector(runNumberInputSelector);
+            expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+            await fillInput(page, runNumberInputSelector, inputValue);
             await page.waitForTimeout(500);
             // Validate amount in the table
-            table = await page.$$('tbody tr');
+            const table = await page.$$('tbody tr');
             expect(table.length).to.equal(2);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
         };
 
         // First filter validation on the main page.
-        await filterOnRun(`#runOverviewFilter > ${runNumberInputSelector}`);
+        await filterOnRun();
 
         // Validate if the filter tab value is equal to the main page value.
         await page.$eval('#openFilterToggle', (element) => element.click());
@@ -700,7 +702,7 @@ module.exports = () => {
         await page.$eval('#openFilterToggle', (element) => element.click());
 
         // Run the same test sequence on the filter tab.
-        await filterOnRun(runNumberInputSelector);
+        await filterOnRun();
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
@@ -716,7 +718,7 @@ module.exports = () => {
         await waitForNetworkIdleAndRedraw(page);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
+        expect(table.length).to.equal(6);
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
@@ -939,7 +941,7 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
-        expect(eorReasons).has.lengthOf(1);
+        expect(eorReasons).has.lengthOf(2);
         const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
         expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
 
@@ -960,7 +962,10 @@ module.exports = () => {
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+
     it('should successfully display runs export button', async () => {
+        await reloadPage(page);
+        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
         const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
         expect(runsExportButton).to.be.not.null;
     });
@@ -1001,6 +1006,8 @@ module.exports = () => {
         await page.keyboard.type('99999999999');
         await page.waitForTimeout(300);
 
+        await pressElement(page, '#openFilterToggle');
+
         expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
     });
 
@@ -1008,7 +1015,7 @@ module.exports = () => {
         await reloadPage(page);
 
         // Run 106 has a fill attached
-        const runId = 106;
+        const runId = 108;
 
         const fillNumberCellSelector = `#row${runId}-fillNumber`;
         const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);

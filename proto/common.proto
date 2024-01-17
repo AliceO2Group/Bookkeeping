@@ -121,7 +121,18 @@ message User {
   // The unique CERN identifier of this user.
   int32 externalId = 1;
   // The unique identifier of this entity.
-  int32 id = 2;
+  optional int32 id = 2;
   // Name of the user.
   string name = 3;
+}
+
+// End of run reason
+message EorReason {
+  // The unique identifier
+  optional int32 id = 1;
+  // Category of the eor (as described in reason_types table)
+  string category = 2;
+  // Title of the eor (as described in reason_types table)
+  string title = 3;
+  optional string description = 4;
 }

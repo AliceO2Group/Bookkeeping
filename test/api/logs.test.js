@@ -95,6 +95,110 @@ module.exports = () => {
                 });
         });
 
+        it('should support exclusion filtering by author', (done) => {
+            request(server)
+                .get('/api/logs?filter[author]=!John')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.greaterThan(1);
+
+                    for (const data of res.body.data) {
+                        if (data.author && data.author.name) {
+                            expect(data.author.name).to.not.include('John');
+                        }
+                    }
+
+                    done();
+                });
+        });
+
+        it('should support filtering by multiple authors', (done) => {
+            request(server)
+                .get('/api/logs?filter[author]=Jan,John')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.greaterThan(1);
+
+                    for (const data of res.body.data) {
+                        if (data.author && data.author.name) {
+                            expect(['Jan', 'John'].some((substring) => data.author.name.includes(substring))).to.be.true;
+                        }
+                    }
+
+                    done();
+                });
+        });
+
+        it('should support simultaneous inclusion and exclusion filtering by author', (done) => {
+            request(server)
+                .get('/api/logs?filter[author]=Jan,!John')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.greaterThan(1);
+
+                    for (const data of res.body.data) {
+                        if (data.author && data.author.name) {
+                            expect(data.author.name).to.not.include('John');
+                            expect(data.author.name).to.include('Jan');
+                        }
+                    }
+
+                    done();
+                });
+        });
+
+        it('should prioritize exclusion filtering over inclusion filtering', (done) => {
+            request(server)
+                .get('/api/logs?filter[author]=!John,John')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.equal(0);
+
+                    done();
+                });
+        });
+
+        it('should return all for empty exclusion filter', (done) => {
+            request(server)
+                .get('/api/logs?filter[author]=!')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+                    expect(res.body.data.length).to.be.greaterThan(1);
+
+                    done();
+                });
+        });
+
         it('should successfully filter by run number', async () => {
             const response = await request(server).get('/api/logs?filter[run][values]=1,2&filter[run][operation]=and');
             expect(response.status).to.equal(200);
