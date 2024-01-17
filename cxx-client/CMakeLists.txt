@@ -122,11 +122,6 @@ configure_package_config_file(cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
   INSTALL_DESTINATION
   "${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}")
 
-#configure_package_config_file(cmake/BookkeepingProtoApiConfig.cmake.in
-#    "${CMAKE_CURRENT_BINARY_DIR}/BookkeepingProtoApiConfig.cmake"
-#    INSTALL_DESTINATION
-#    "${CMAKE_INSTALL_LIBDIR}/cmake/BookkeepingProtoApi")
-
 ### INSTALL
 
 # Install proto files
@@ -141,13 +136,6 @@ install(TARGETS BookkeepingApi BookkeepingProtoApi
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-#install(TARGETS BookkeepingProtoApi
-#    EXPORT BookkeepingProtoApiTargets
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#)
-
 # Install headers
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/BookkeepingApi
   DESTINATION "include")
@@ -156,19 +144,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
 
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BookkeepingProtoApiConfig.cmake
-#    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BookkeepingProtoApiConfig)
-
 # Export targets
 install(EXPORT BookkeepingApiTargets
   FILE BookkeepingApiTargets.cmake
   NAMESPACE AliceO2::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BookkeepingApi
 )
-
-#install(EXPORT BookkeepingProtoApiTargets
-#    FILE BookkeepingProtoApiTargets.cmake
-#    NAMESPACE AliceO2::
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BookkeepingProtoApi
-#)
