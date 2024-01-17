@@ -122,6 +122,25 @@ module.exports = () => {
             expect(withChar[0].id).to.be.equal(withoutChar[0].id);
             expect(withChar[1].id).to.be.equal(withoutChar[1].id);
         });
+
+        it('should successfully filter environments on one run number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+        });
+
+        it('should successfully filter environments on multiple run numbers', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103,96');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+            expect(environments[1].id).to.be.equal('EIDO13i3D');
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {
