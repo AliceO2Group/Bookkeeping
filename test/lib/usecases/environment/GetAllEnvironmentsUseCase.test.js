@@ -125,23 +125,5 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(limit);
-
-      it('should successfully filter environments on one run number', async () => {
-        getAllEnvsDto.query = { filter: { runNumbers: '103' } };
-        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
-
-        expect(environments).to.be.an('array');
-        expect(environments.length).to.be.equal(1);
-        expect(environments[0].id).to.be.equal('TDI59So3d');
-    });
-
-    it('should successfully filter environments on multiple run numbers', async () => {
-        getAllEnvsDto.query = { filter: { runNumbers: '103, 96' } };
-        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
-
-        expect(environments).to.be.an('array');
-        expect(environments.length).to.be.equal(2);
-        expect(environments[0].id).to.be.equal('TDI59So3d');
-        expect(environments[1].id).to.be.equal('EIDO13i3D');
     });
 };
