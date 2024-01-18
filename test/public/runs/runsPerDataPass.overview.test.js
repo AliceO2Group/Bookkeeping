@@ -120,8 +120,8 @@ module.exports = () => {
         await page.waitForTimeout(1000);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -169,7 +169,7 @@ module.exports = () => {
         await reloadPage(page);
         await page.waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
+        await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForTimeout(100);
 
         // We expect there to be a fitting error message
@@ -179,7 +179,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
+            model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 10;
         });
         await page.waitForTimeout(100);
     });
