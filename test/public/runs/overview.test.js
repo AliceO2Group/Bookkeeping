@@ -705,8 +705,8 @@ module.exports = () => {
         await filterOnRun();
     });
 
-    it('should successfully filter on a specified run number and inform the user about it', async () => {
-        const inputValue = '9';
+    it('should successfully filter on a single run number and inform the user about it', async () => {
+        const inputValue = '10';
         await goToPage(page, 'run-overview');
 
         /**
@@ -720,9 +720,9 @@ module.exports = () => {
             await page.waitForTimeout(500);
             // Validate amount in the table
             const table = await page.$$('tbody tr');
-            expect(table.length).to.equal(2);
+            expect(table.length).to.equal(10);
 
-            const expectedRows = ['row99', 'row89', 'row79', 'row69', 'row59', 'row49', 'row39', 'row29', 'row19', 'row9'];
+            const expectedRows = ['row108', '107', 'row106', 'row105', 'row104', 'row103', 'row102', 'row101', 'row100', 'row10'];
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedRows);
         };
 
