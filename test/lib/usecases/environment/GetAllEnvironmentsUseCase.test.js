@@ -145,4 +145,13 @@ module.exports = () => {
         expect(environments[0].id).to.be.equal('TDI59So3d');
         expect(environments[1].id).to.be.equal('EIDO13i3D');
     });
+
+    it('should successfully filter environments run numbers with limit', async () => {
+        const limit = 1;
+        getAllEnvsDto.query = { page: { limit: limit }, filter: { runNumbers: '103, 96' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(limit);
+    });
 };
