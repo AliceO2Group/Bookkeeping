@@ -718,12 +718,21 @@ module.exports = () => {
             expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
             await fillInput(page, runNumberInputSelector, inputValue);
             await page.waitForTimeout(500);
-            // Validate amount in the table
-            const table = await page.$$('tbody tr');
-            expect(table.length).to.equal(10);
+            // Validate amount in the first page table
+            const firstPageTable = await page.$$('tbody tr');
+            expect(firstPageTable.length).to.equal(8);
 
-            const expectedRows = ['row108', '107', 'row106', 'row105', 'row104', 'row103', 'row102', 'row101', 'row100', 'row10'];
-            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedRows);
+            const firstPageRows = ['row108', 'row107', 'row106', 'row105', 'row104', 'row103', 'row102', 'row101'];
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(firstPageRows);
+
+            await page.$eval('#pageMoveRight', (element) => element.click());
+
+            // Validate amount in the second page table
+            const secondPageTable = await page.$$('tbody tr');
+            expect(secondPageTable.length).to.equal(2);
+
+            const secondPageRows = ['row100', 'row10'];
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(secondPageRows);
         };
 
         // First filter validation on the main page.
