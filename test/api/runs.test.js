@@ -141,7 +141,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on single specified run number', async () => {
-            const response = await request(server).get(`/api/runs?filter[runNumbers]=5`);
+            const response = await request(server).get('/api/runs?filter[runNumbers]=5');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -149,7 +149,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on multiple specified run numbers', async () => {
-            const response = await request(server).get(`/api/runs?filter[runNumbers]=17,18`);
+            const response = await request(server).get('/api/runs?filter[runNumbers]=17,18');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;

@@ -705,6 +705,42 @@ module.exports = () => {
         await filterOnRun();
     });
 
+    it('should successfully filter on a specified run number and inform the user about it', async () => {
+        const inputValue = '9';
+        await goToPage(page, 'run-overview');
+
+        /**
+         * This is the sequence to test filtering the runs on run numbers.
+         * @return {void}
+         */
+        const filterOnRun = async () => {
+            await page.waitForSelector(runNumberInputSelector);
+            expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+            await fillInput(page, runNumberInputSelector, inputValue);
+            await page.waitForTimeout(500);
+            // Validate amount in the table
+            const table = await page.$$('tbody tr');
+            expect(table.length).to.equal(2);
+
+            const expectedRows = ['row99', 'row89', 'row79', 'row69', 'row59', 'row49', 'row39', 'row29', 'row19', 'row9'];
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedRows);
+        };
+
+        // First filter validation on the main page.
+        await filterOnRun();
+
+        // Validate if the filter tab value is equal to the main page value.
+        await page.$eval('#openFilterToggle', (element) => element.click());
+        expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
+
+        // Test if it works in the filter tab.
+        await reloadPage(page);
+        await page.$eval('#openFilterToggle', (element) => element.click());
+
+        // Run the same test sequence on the filter tab.
+        await filterOnRun();
+    });
+
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
         await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
