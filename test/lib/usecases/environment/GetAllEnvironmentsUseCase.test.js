@@ -82,4 +82,13 @@ module.exports = () => {
         expect(environments[4].id).to.be.equal('8E4aZTjY');
         expect(environments[5].id).to.be.equal('Dxi029djX');
     });
+
+    it('should successfully filter environments with limit', async () => {
+        const limit = 2;
+        getAllEnvsDto.query = { page: { limit: limit }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(limit);
+    });
 };

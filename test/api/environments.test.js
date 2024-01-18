@@ -65,7 +65,7 @@ module.exports = () => {
             expect(environments[1].id).to.equal('TDI59So3d');
             expect(environments[2].id).to.equal('EIDO13i3D');
         });
-      
+
         it('should successfully filter environments on one current status', async () => {
             const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING');
 
@@ -86,6 +86,14 @@ module.exports = () => {
             expect(environments[1].id).to.be.equal('EIDO13i3D');
             expect(environments[2].id).to.be.equal('8E4aZTjY');
             expect(environments[3].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING, ERROR&page[limit]=2');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
         });
     });
     describe('POST /api/environments', () => {
