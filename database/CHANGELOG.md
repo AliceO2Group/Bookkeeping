@@ -1,3 +1,8 @@
+## [0.76.0]
+* Changes made to the database
+  * Added unique constraint to column name of data_passes table
+  * Run entity now has optional user_o2_start and user_o2_stop, both of type Integer.
+
 ## [0.53.0]
 * Changes made to the database:
   * `tags.description` is a new property of tags which is limited to 100 characters
