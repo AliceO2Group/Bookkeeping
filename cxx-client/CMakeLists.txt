@@ -68,6 +68,8 @@ target_include_directories(BookkeepingApi
 
 target_link_libraries(BookkeepingApi
         PRIVATE BookkeepingProtos
+        PRIVATE protobuf::libprotobuf
+        PRIVATE gRPC::grpc++
 )
 
 target_compile_features(BookkeepingApi PUBLIC cxx_std_17)
@@ -88,6 +90,8 @@ target_include_directories(BookkeepingProtoApi
 
 target_link_libraries(BookkeepingProtoApi
         PUBLIC BookkeepingProtos
+        PUBLIC protobuf::libprotobuf
+        PRIVATE gRPC::grpc++
 )
 
 target_compile_features(BookkeepingProtoApi PUBLIC cxx_std_17)
@@ -122,6 +126,14 @@ configure_package_config_file(cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
         "${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}")
 
 ### INSTALL
+install(FILES
+        ${PROTO_OUT_DIR}/common.pb.h
+        ${PROTO_OUT_DIR}/flp.pb.h
+        ${PROTO_OUT_DIR}/run.pb.h
+        ${PROTO_OUT_DIR}/dplProcessExecution.pb.h
+        DESTINATION "include"
+)
+
 install(TARGETS BookkeepingProtos BookkeepingApi BookkeepingProtoApi
         EXPORT BookkeepingApiTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
