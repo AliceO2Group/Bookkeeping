@@ -117,4 +117,13 @@ module.exports = () => {
         expect(withChar.environments[0].id).to.be.equal(withoutChar.environments[0].id);
         expect(withChar.environments[1].id).to.be.equal(withoutChar.environments[1].id);
     });
+
+    it('should successfully filter environments status history with limit', async () => {
+        const limit = 1;
+        getAllEnvsDto.query = { page: { limit: limit }, filter: { statusHistory: 'SE' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(limit);
+    });
 };

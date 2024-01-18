@@ -122,6 +122,14 @@ module.exports = () => {
             expect(withChar[0].id).to.be.equal(withoutChar[0].id);
             expect(withChar[1].id).to.be.equal(withoutChar[1].id);
         });
+
+        it('should successfully filter environments status history with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=SE&page[limit]=1');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {
