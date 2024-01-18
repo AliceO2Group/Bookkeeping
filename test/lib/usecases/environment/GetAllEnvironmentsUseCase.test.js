@@ -125,8 +125,9 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(limit);
+    });
 
-      it('should successfully filter environments on one run number', async () => {
+    it('should successfully filter environments on one run number', async () => {
         getAllEnvsDto.query = { filter: { runNumbers: '103' } };
         const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
 

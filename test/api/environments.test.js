@@ -125,7 +125,11 @@ module.exports = () => {
 
         it('should successfully filter environments status history with limit', async () => {
             const response = await request(server).get('/api/environments?filter[statusHistory]=SE&page[limit]=1');
-          
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+        });
+
         it('should successfully filter environments on one run number', async () => {
             const response = await request(server).get('/api/environments?filter[runNumbers]=103');
 
@@ -143,7 +147,6 @@ module.exports = () => {
             expect(environments.length).to.be.equal(2);
             expect(environments[0].id).to.be.equal('TDI59So3d');
             expect(environments[1].id).to.be.equal('EIDO13i3D');
-
         });
     });
     describe('POST /api/environments', () => {
