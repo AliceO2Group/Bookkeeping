@@ -25,6 +25,7 @@ const lhcPeriod_LHC22b = {
         id: 2,
         name: 'LHC22b',
     },
+    runsCount: 1,
 };
 
 const lhcPeriod_LHC22a = {
@@ -39,6 +40,7 @@ const lhcPeriod_LHC22a = {
         id: 1,
         name: 'LHC22a',
     },
+    runsCount: 3,
 };
 
 const lhcPeriod_LHC23f = {
@@ -50,6 +52,7 @@ const lhcPeriod_LHC23f = {
         id: 3,
         name: 'LHC23f',
     },
+    runsCount: 0,
 };
 
 module.exports = () => {
