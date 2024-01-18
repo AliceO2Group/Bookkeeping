@@ -8,3 +8,8 @@
 !.sequelizerc
 !.nycrc
 !package*.json
+!cxx-client/cmake/
+!cxx-client/example/
+!cxx-client/include/
+!cxx-client/src/
+!cxx-client/CMakeLists.txt
