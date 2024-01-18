@@ -197,7 +197,7 @@ module.exports = () => {
          * @param {string[]} periodNames list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nruns`);
+        const appendButtonsText = (periodNames) => periodNames.map((name) => `${name}\nruns`);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
