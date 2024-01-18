@@ -65,7 +65,7 @@ module.exports = () => {
             expect(environments[1].id).to.equal('TDI59So3d');
             expect(environments[2].id).to.equal('EIDO13i3D');
         });
-
+      
         it('should successfully filter environments on one current status', async () => {
             const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING');
 
