@@ -192,12 +192,17 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
+        const runsCountsPerDataPass = {
+            LHC22a_apass1: 4,
+            LHC22b_apass2: 1,
+        };
+
         /**
          * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
          * @param {string[]} periodNames list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((name) => `${name}\nruns`);
+        const appendButtonsText = (periodNames) => periodNames.map((name) => `${name}\nruns[${runsCountsPerDataPass[name] ?? 0}]`);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
