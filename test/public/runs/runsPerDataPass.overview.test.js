@@ -65,7 +65,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassName: 'LHC22a' } });
+        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassName: 'LHC22a_apass1' } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -120,8 +120,8 @@ module.exports = () => {
         await page.waitForTimeout(1000);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
     });
 
     it('successfully switch to raw timestamp display', async () => {
