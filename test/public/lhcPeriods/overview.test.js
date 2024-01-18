@@ -192,7 +192,13 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
-        const counts = {
+        const runsCountsPerLhcPeriod = {
+            LHC22b: 1,
+            LHC22a: 3,
+            LHC23f: 0,
+        };
+
+        const dataPassesCountsPerLHcPeriod = {
             LHC22b: 2,
             LHC22a: 1,
             LHC23f: 0,
@@ -203,18 +209,19 @@ module.exports = () => {
          * @param {string[]} periodNames list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nruns\ndata passes[${counts[p]}]`);
+        const appendButtonsText = (periodNames) =>
+            periodNames.map((name) => `${name}\nruns[${runsCountsPerLhcPeriod[name]}]\ndata passes[${dataPassesCountsPerLHcPeriod[name]}]`);
 
-        let allLhcPeriodNames = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNames).to.has.all.deep.members(appendButtonsText(['LHC22a']));
+        let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
+        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a']));
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
-        allLhcPeriodNames = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNames).to.has.all.deep.members(appendButtonsText(['LHC22a', 'LHC22b', 'LHC23f']));
+        allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
+        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a', 'LHC22b', 'LHC23f']));
     });
 
     it('should successfuly apply lhc period year filter', async () => {
