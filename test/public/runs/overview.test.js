@@ -726,6 +726,7 @@ module.exports = () => {
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(firstPageRows);
 
             await page.$eval('#pageMoveRight', (element) => element.click());
+            await page.waitForTimeout(500);
 
             // Validate amount in the second page table
             const secondPageTable = await page.$$('tbody tr');
