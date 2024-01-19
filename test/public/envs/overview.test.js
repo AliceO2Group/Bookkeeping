@@ -102,11 +102,9 @@ module.exports = () => {
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(11);
     });
 
-    it('Should have balloon on status message and runs columns', async () => {
+    it('Should have balloon on runs column', async () => {
         await goToPage(page, 'env-overview');
         await page.waitForTimeout(100);
-
-        await checkColumnBalloon(page, 1, 5);
         await checkColumnBalloon(page, 1, 6);
     });
 
