@@ -65,6 +65,79 @@ module.exports = () => {
             expect(environments[1].id).to.equal('TDI59So3d');
             expect(environments[2].id).to.equal('EIDO13i3D');
         });
+
+        it('should successfully filter environments on one current status', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('CmCvjNbg');
+            expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments on multiple current statusses', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING, ERROR');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(4);
+            expect(environments[0].id).to.be.equal('CmCvjNbg');
+            expect(environments[1].id).to.be.equal('EIDO13i3D');
+            expect(environments[2].id).to.be.equal('8E4aZTjY');
+            expect(environments[3].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments on status history with - input', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=S-E');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('EIDO13i3D');
+            expect(environments[1].id).to.be.equal('8E4aZTjY');
+        });
+
+        it('should successfully filter environments current status with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING, ERROR&page[limit]=2');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+        });
+
+        it('should successfully filter environments on status history without - input', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=SE');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('EIDO13i3D');
+            expect(environments[1].id).to.be.equal('8E4aZTjY');
+        });
+
+        it('should successfully filter environments on status history with equal input with -', async () => {
+            const responseWithChar = await request(server).get('/api/environments?filter[statusHistory]=SE');
+            const responseWithoutChar = await request(server).get('/api/environments?filter[statusHistory]=S-E');
+            const withChar = responseWithChar.body.data;
+            const withoutChar = responseWithoutChar.body.data;
+
+            expect(withChar).to.be.an('array');
+            expect(withChar.length).to.be.equal(2);
+            expect(withoutChar).to.be.an('array');
+            expect(withoutChar.length).to.be.equal(2);
+            // Results need to be the same
+            expect(withChar[0].id).to.be.equal(withoutChar[0].id);
+            expect(withChar[1].id).to.be.equal(withoutChar[1].id);
+        });
+
+        it('should successfully filter environments status history with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=SE&page[limit]=1');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {
