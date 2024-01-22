@@ -157,6 +157,17 @@ module.exports = () => {
             const environments = response.body.data;
             expect(environments.length).to.be.equal(1);
         });
+
+        it('should successfully filter environments on one run number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=10');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            // Should include all environments with run numbers containing the substring 10
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+            expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {
