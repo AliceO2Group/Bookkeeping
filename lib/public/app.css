@@ -493,18 +493,6 @@ label {
     border-bottom-left-radius: 0;
 }
 
-/* Choose file */
-
-.attachment-label {
-    display: flex;
-    align-items: center;
-    width: -webkit-fill-available;
-}
-
-.attachment-input {
-    visibility: hidden;
-}
-
 /* File preview (popover) */
 
 .preview-window {
