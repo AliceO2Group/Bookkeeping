@@ -126,4 +126,13 @@ module.exports = () => {
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(limit);
     });
+
+    it('should successfully filter environments current status with limit', async () => {
+        const limit = 2;
+        getAllEnvsDto.query = { page: { limit: limit }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(limit);
+    });
 };
