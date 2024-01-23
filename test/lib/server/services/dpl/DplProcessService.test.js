@@ -48,7 +48,7 @@ module.exports = () => {
                 { runNumber: 106 },
                 { dplDetectorId: 1 },
             );
-            expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
+            expect(processes.map(({ id }) => id)).to.eql([1, 3, 2]);
             expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
@@ -56,7 +56,7 @@ module.exports = () => {
                 { runId: 106 },
                 { dplDetectorId: 1 },
             );
-            expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
+            expect(processes.map(({ id }) => id)).to.eql([1, 3, 2]);
             expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
         {
@@ -64,7 +64,7 @@ module.exports = () => {
                 { runNumber: 106 },
                 { dplDetectorName: 'CPV' },
             );
-            expect(processes.map(({ id }) => id)).to.eql([1, 2, 3]);
+            expect(processes.map(({ id }) => id)).to.eql([1, 3, 2]);
             expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
         }
     });
