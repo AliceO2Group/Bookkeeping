@@ -35,6 +35,147 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should successfully show all environments without filter', async () => {
+            const response = await request(server).get('/api/environments');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(9);
+            // Check if the environment list is valid by checking the first one only
+            expect(environments[0].id).to.equal('CmCvjNbg');
+        });
+
+        it('should successfully apply filter for environments ids', async () => {
+            const response = await request(server).get('/api/environments?filter[ids]=8E4aZTjY');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(1);
+            expect(environments[0].id).to.equal('8E4aZTjY');
+        });
+
+        it('should successfully filter environments on a list of ids', async () => {
+            const response = await request(server).get('/api/environments?filter[ids]=CmCvjNbg, TDI59So3d, EIDO13i3D');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(3);
+            expect(environments[0].id).to.equal('CmCvjNbg');
+            expect(environments[1].id).to.equal('TDI59So3d');
+            expect(environments[2].id).to.equal('EIDO13i3D');
+        });
+
+        it('should successfully filter environments on one current status', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('CmCvjNbg');
+            expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments on multiple current statusses', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING, ERROR');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(4);
+            expect(environments[0].id).to.be.equal('CmCvjNbg');
+            expect(environments[1].id).to.be.equal('EIDO13i3D');
+            expect(environments[2].id).to.be.equal('8E4aZTjY');
+            expect(environments[3].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments on status history with - input', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=S-E');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('EIDO13i3D');
+            expect(environments[1].id).to.be.equal('8E4aZTjY');
+        });
+
+        it('should successfully filter environments current status with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING, ERROR&page[limit]=2');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+        });
+
+        it('should successfully filter environments on status history without - input', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=SE');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('EIDO13i3D');
+            expect(environments[1].id).to.be.equal('8E4aZTjY');
+        });
+
+        it('should successfully filter environments on status history with equal input with -', async () => {
+            const responseWithChar = await request(server).get('/api/environments?filter[statusHistory]=SE');
+            const responseWithoutChar = await request(server).get('/api/environments?filter[statusHistory]=S-E');
+            const withChar = responseWithChar.body.data;
+            const withoutChar = responseWithoutChar.body.data;
+
+            expect(withChar).to.be.an('array');
+            expect(withChar.length).to.be.equal(2);
+            expect(withoutChar).to.be.an('array');
+            expect(withoutChar.length).to.be.equal(2);
+            // Results need to be the same
+            expect(withChar[0].id).to.be.equal(withoutChar[0].id);
+            expect(withChar[1].id).to.be.equal(withoutChar[1].id);
+        });
+
+        it('should successfully filter environments status history with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=SE&page[limit]=1');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+        });
+
+        it('should successfully filter environments on one run number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+        });
+
+        it('should successfully filter environments on multiple run numbers', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103,96');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+            expect(environments[1].id).to.be.equal('EIDO13i3D');
+        });
+
+        it('should successfully filter environments run numbers with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103,96&page[limit]=1');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+        });
+
+        it('should successfully filter environments with substring query on one run number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=10');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            // Should include all environments with run numbers containing the substring 10
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+            expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', (done) => {

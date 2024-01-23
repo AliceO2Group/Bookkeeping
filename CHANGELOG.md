@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.76.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.76.0)
+* Notable changes for users:
+  * Overview of runs now show quality by using a line under them in green/red
+  * The link to details page from run overview page do not include all the run info anymore
+  * Environment id is now written in white in the environment overview
+  * Fixed links of attachment in log tree
+  * Added a button in runs overview to filter on PHYSICS
+  * Added the possibility to filter logs to remove anonymous
+  * Fixed LHC info that disappeared after saving the run in RunDetail
+  * Added counts of runs associated with given LHC Periods on LHC Periods page
+  * The statistics page now contains a histogram which displays the most frequent environment history combinations and their occurrences within a given timeframe
+  * Changed existing environment status acronyms in accordance to the RMreportW29_2023
+* Notable change for developers:
+  * Added possibility in run update proto request to specify user that started and user that stopped the run
+  * The GetAllLogsUseCase now supports simultaneous inclusion and exclusion filter parameters for the author filter
+  * Added Data Pass Service (MonALISA)
+  * Added a service to fetch data passes from MonALISA
+  * Added a few new env variables in config.ServicesConfig
+  * Added a service to schedule processes and applied it to the existing handling of lost envs and runs
+  * Created a reusable overview page model and applied it on LHC fills page
+  * Fixed race condition on c++ API on RHEL 8
+  * Added filters on environment API to filter on ID
+  * Use scheduled process manager for synchronisation with MonALISA
+
 ## [0.75.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.75.0)
 * Notable changes for users:
   * Added run per Period view
