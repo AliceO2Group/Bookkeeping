@@ -672,7 +672,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of run numbers and inform the user about it', async () => {
-        const inputValue = '1, 2';
+        const inputValue = '101, 102';
         await goToPage(page, 'run-overview');
 
         /**
@@ -687,7 +687,53 @@ module.exports = () => {
             // Validate amount in the table
             const table = await page.$$('tbody tr');
             expect(table.length).to.equal(2);
-            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row2', 'row1']);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row102', 'row101']);
+        };
+
+        // First filter validation on the main page.
+        await filterOnRun();
+
+        // Validate if the filter tab value is equal to the main page value.
+        await page.$eval('#openFilterToggle', (element) => element.click());
+        expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
+
+        // Test if it works in the filter tab.
+        await reloadPage(page);
+        await page.$eval('#openFilterToggle', (element) => element.click());
+
+        // Run the same test sequence on the filter tab.
+        await filterOnRun();
+    });
+
+    it('should successfully filter on a single run number and inform the user about it', async () => {
+        const inputValue = '10';
+        await goToPage(page, 'run-overview');
+
+        /**
+         * This is the sequence to test filtering the runs on run numbers.
+         * @return {void}
+         */
+        const filterOnRun = async () => {
+            await page.waitForSelector(runNumberInputSelector);
+            expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
+            await fillInput(page, runNumberInputSelector, inputValue);
+            await page.waitForTimeout(500);
+            // Validate amount in the first page table
+            const firstPageTable = await page.$$('tbody tr');
+            expect(firstPageTable.length).to.equal(8);
+
+            const firstPageRows = ['row108', 'row107', 'row106', 'row105', 'row104', 'row103', 'row102', 'row101'];
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(firstPageRows);
+
+            await page.$eval('#pageMoveRight', (element) => element.click());
+            await page.waitForTimeout(500);
+
+            // Validate amount in the second page table
+            const secondPageTable = await page.$$('tbody tr');
+            expect(secondPageTable.length).to.equal(2);
+
+            const secondPageRows = ['row100', 'row10'];
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(secondPageRows);
         };
 
         // First filter validation on the main page.
