@@ -127,6 +127,34 @@ module.exports = () => {
         expect(environments.length).to.be.equal(limit);
     });
 
+    it('should successfully filter environments on one run number', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '103' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+    });
+
+    it('should successfully filter environments on multiple run numbers', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '103, 96' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+        expect(environments[1].id).to.be.equal('EIDO13i3D');
+    });
+
+    it('should successfully filter environments run numbers with limit', async () => {
+        const limit = 1;
+        getAllEnvsDto.query = { page: { limit: limit }, filter: { runNumbers: '103, 96' } };
+
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(limit);
+    });
+
     it('should successfully filter environments current status with limit', async () => {
         const limit = 2;
         getAllEnvsDto.query = { page: { limit: limit }, filter: { currentStatus: 'RUNNING, ERROR' } };
@@ -134,5 +162,16 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(limit);
+    });
+
+    it('should successfully filter environments with substring query on one run number', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '10' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        // Should include all environments with run numbers containing the substring 10
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+        expect(environments[1].id).to.be.equal('Dxi029djX');
     });
 };
