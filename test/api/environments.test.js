@@ -166,7 +166,7 @@ module.exports = () => {
             expect(environments.length).to.be.equal(1);
         });
 
-        it('should successfully filter environments on one run number', async () => {
+        it('should successfully filter environments with substring query on one run number', async () => {
             const response = await request(server).get('/api/environments?filter[runNumbers]=10');
 
             expect(response.status).to.equal(200);
