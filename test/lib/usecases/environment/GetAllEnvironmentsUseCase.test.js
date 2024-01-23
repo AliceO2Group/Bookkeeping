@@ -149,6 +149,15 @@ module.exports = () => {
     it('should successfully filter environments run numbers with limit', async () => {
         const limit = 1;
         getAllEnvsDto.query = { page: { limit: limit }, filter: { runNumbers: '103, 96' } };
+
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(limit);
+    });
+  
+    it('should successfully filter environments current status with limit', async () => {
+        const limit = 2;
+        getAllEnvsDto.query = { page: { limit: limit }, filter: { currentStatus: 'RUNNING, ERROR' } };
         const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
 
         expect(environments).to.be.an('array');

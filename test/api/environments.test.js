@@ -98,6 +98,14 @@ module.exports = () => {
             expect(environments[1].id).to.be.equal('8E4aZTjY');
         });
 
+        it('should successfully filter environments current status with limit', async () => {
+            const response = await request(server).get('/api/environments?filter[currentStatus]=RUNNING, ERROR&page[limit]=2');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+        });
+
         it('should successfully filter environments on status history without - input', async () => {
             const response = await request(server).get('/api/environments?filter[statusHistory]=SE');
 
