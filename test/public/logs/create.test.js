@@ -197,7 +197,7 @@ module.exports = () => {
         // Ensure that both file attachments were received
         const attachmentNames = await page.$('#attachmentNames');
         const attachmentNamesText = await page.evaluate((element) => element.innerText, attachmentNames);
-        expect(attachmentNamesText).to.equal(`${file1},\n\n${file2}`);
+        expect(attachmentNamesText).to.equal(`${file1},\n${file2}`);
 
         // Create the new log
         const buttonSend = await page.$('button#send');
