@@ -21,6 +21,13 @@ html, body {
 .b-success { border-color: var(--color-success); }
 .b-primary { border-color: var(--color-primary); }
 
+.b-underline-good { border-bottom: 4px solid var(--color-success); }
+.b-underline-bad { border-bottom: 4px dashed var(--color-danger); }
+
+.bg-light-blue {
+    background-color: var(--color-light-blue) !important;
+}
+
 .overflow {
     height: 1.5rem;
     overflow: hidden;

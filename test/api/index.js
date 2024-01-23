@@ -29,6 +29,7 @@ const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
 const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
+const DataPassesSuite = require('./dataPasses.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -50,4 +51,5 @@ module.exports = () => {
     describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
+    describe('DataPassesSuite API', DataPassesSuite);
 };

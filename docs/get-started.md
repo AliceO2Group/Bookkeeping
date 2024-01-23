@@ -26,7 +26,7 @@ Use the npm script (the `docker-compose` command must be available to npm)
 npm run docker-run
 ```
 
-You will then see in this tabs the server's log
+You will then see in these tabs the server's log
 
 ### Run seeders
 
