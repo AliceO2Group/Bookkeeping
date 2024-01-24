@@ -140,6 +140,22 @@ module.exports = () => {
             expect(calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
         });
 
+        it('should successfully filter on single specified run number', async () => {
+            const response = await request(server).get('/api/runs?filter[runNumbers]=5');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(20);
+        });
+
+        it('should successfully filter on multiple specified run numbers', async () => {
+            const response = await request(server).get('/api/runs?filter[runNumbers]=17,18');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(2);
+        });
+
         it('should return 400 if the calibration status filter is invalid', async () => {
             {
                 const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
@@ -329,6 +345,7 @@ module.exports = () => {
 
             expect(data.length).to.equal(20);
         });
+
         it('should filter runs on the odc topology value', async () => {
             const response = await request(server)
                 .get('/api/runs?filter[odcTopologyFullName]=hash');
