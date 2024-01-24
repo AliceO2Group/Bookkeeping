@@ -18,10 +18,12 @@ const { repositories: { DataPassRepository, LhcPeriodRepository } } = require('.
 const { dataSource } = require('../../../../lib/database/DataSource.js');
 
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod');
+const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
 module.exports = () => {
+    after(async () => await resetDatabaseContent());
     it('Should get data with respect to given year limit and in correct format', async () => {
         const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
         const mockDataPasses = await monALISAClient.getDataPasses();
