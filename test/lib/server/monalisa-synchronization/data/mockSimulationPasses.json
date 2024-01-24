@@ -5,6 +5,7 @@
     "jiraID": "ALIROOT-1770",
     "PWG": "PWGYRXX",
     "requested_events": 1573545,
+    "generated_events": 1234,
     "output_size": 8563300361449,
     "anchor_production": "LHC22a",
     "anchor_pass": "epass3, npass8, dpass7"
@@ -15,6 +16,7 @@
     "jiraID": "ALIROOT-9460",
     "PWG": "PWGLPXX",
     "requested_events": 1075985,
+    "generated_events": 1234,
     "output_size": 4134746727217,
     "anchor_production": "LHC22b",
     "anchor_pass": "spass4"
@@ -25,6 +27,7 @@
     "jiraID": "ALIROOT-6882",
     "PWG": "PWGARXX",
     "requested_events": 1616462,
+    "generated_events": 1234,
     "output_size": 4641538401955,
     "anchor_production": "LHC23f",
     "anchor_pass": "npass5"
@@ -35,6 +38,7 @@
     "jiraID": "ALIROOT-7424",
     "PWG": "PWGYNXX",
     "requested_events": 1298604,
+    "generated_events": 1234,
     "output_size": 8348734999715,
     "anchor_production": "LHC22b",
     "anchor_pass": "apass4"
@@ -45,6 +49,7 @@
     "jiraID": "ALIROOT-7367",
     "PWG": "PWGLCXX",
     "requested_events": 1850622,
+    "generated_events": 1234,
     "output_size": 3861055929746,
     "anchor_production": "LHC22a",
     "anchor_pass": "apass6"
@@ -55,6 +60,7 @@
     "jiraID": "ALIROOT-3857",
     "PWG": "PWGVVXX",
     "requested_events": 1245748,
+    "generated_events": 1234,
     "output_size": 6434220920498,
     "anchor_production": "LHC22a",
     "anchor_pass": "epass3"
@@ -65,6 +71,7 @@
     "jiraID": "ALIROOT-4367",
     "PWG": "PWGLNXX",
     "requested_events": 1440179,
+    "generated_events": 1234,
     "output_size": 5776057770096,
     "anchor_production": "LHC23f",
     "anchor_pass": "epass4"
@@ -75,6 +82,7 @@
     "jiraID": "ALIROOT-8605",
     "PWG": "PWGAQXX",
     "requested_events": 1748283,
+    "generated_events": 1234,
     "output_size": 3164294324982,
     "anchor_production": "LHC22a",
     "anchor_pass": "npass8"
@@ -85,6 +93,7 @@
     "jiraID": "ALIROOT-7074",
     "PWG": "PWGURXX",
     "requested_events": 1577953,
+    "generated_events": 1234,
     "output_size": 8233164716499,
     "anchor_production": "LHC22a",
     "anchor_pass": "npass8"
@@ -95,6 +104,7 @@
     "jiraID": "ALIROOT-8281",
     "PWG": "PWGTCXX",
     "requested_events": 1550347,
+    "generated_events": 1234,
     "output_size": 5858348228639,
     "anchor_production": "LHC22a",
     "anchor_pass": "dpass7"

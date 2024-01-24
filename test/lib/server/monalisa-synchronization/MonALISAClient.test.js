@@ -25,9 +25,9 @@ const sampleDataPass = {
 const sampleSimulationPass = {
     name: 'LHC23k6d',
     jiraID: 'ALIROOT-9999',
-    // lhcPeriods: ['LHC23zzf'],
-    // dataPassesSuffixes: ['apass2'],
-    // runNumbers: [544000, 11111],
+    lhcPeriods: ['LHC23zzf'],
+    dataPassesSuffixes: ['apass2'],
+    runNumbers: [544000, 11111],
     description: ' Some random description',
     PWG: 'PWGXX',
     requestedEvents: 2743544,
@@ -64,7 +64,8 @@ module.exports = () => {
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(10);
         dataPasses.forEach((simulationPass) => expect(Object.keys(simulationPass)).to.has.all.members(Object.keys(sampleSimulationPass)));
+        dataPasses.forEach((simulationPass) => console.log(Object.entries(simulationPass).map(([k, value]) => [k, typeof value])))
         dataPasses.forEach((simulationPass) => expect(Object.values(simulationPass).map((value) => typeof value))
-            .to.has.all.members(Object.values(sampleDataPass).map((value) => typeof value)));
+            .to.has.all.members(Object.values(sampleSimulationPass).map((value) => typeof value)));
     });
 };
