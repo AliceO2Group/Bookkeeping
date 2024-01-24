@@ -13,26 +13,29 @@
 
 const { expect } = require('chai');
 const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
+const Joi = require('joi');
 
-const sampleDataPass = {
-    name: 'LHC10g_npass1',
-    reconstructedEventsCount: 834213929,
-    description: 'd PASS random f f random data data',
-    outputSize: 93862653102692,
-    lastRunNumber: 505946,
-};
+const dataPassSchema = Joi.object({
+    name: Joi.string(),
+    reconstructedEventsCount: Joi.number(),
+    description: Joi.string(),
+    outputSize: Joi.number(),
+    lastRunNumber: Joi.number(),
 
-const sampleSimulationPass = {
-    name: 'LHC23k6d',
-    jiraID: 'ALIROOT-9999',
-    lhcPeriods: ['LHC23zzf'],
-    dataPassesSuffixes: ['apass2'],
-    runNumbers: [544000, 11111],
-    description: ' Some random description',
-    PWG: 'PWGXX',
-    requestedEvents: 2743544,
-    generatedEvents: 2149900,
-};
+});
+
+const simulationPassSchema = Joi.object({
+    name: Joi.string(),
+    jiraID: Joi.string(),
+    lhcPeriods: Joi.array().items(Joi.string()),
+    dataPassesSuffixes: Joi.array().items(Joi.string()),
+    runNumbers: Joi.array().items(Joi.number()),
+    description: Joi.string(),
+    PWG: Joi.string(),
+    requestedEvents: Joi.number(),
+    generatedEvents: Joi.number(),
+
+});
 
 module.exports = () => {
     it('Should get data passes with respect to given year limit (2022) and in correct format', async () => {
@@ -41,9 +44,9 @@ module.exports = () => {
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(12);
-        dataPasses.forEach((dataPass) => expect(Object.keys(dataPass)).to.has.all.members(Object.keys(sampleDataPass)));
-        dataPasses.forEach((dataPass) => expect(Object.values(dataPass).map((value) => typeof value))
-            .to.has.all.members(Object.values(sampleDataPass).map((value) => typeof value)));
+        for (const dataPass of dataPasses) {
+            await dataPassSchema.validateAsync(dataPass);
+        }
     });
 
     it('Should get data passes with respect to given year limit (2023) and in correct format', async () => {
@@ -52,19 +55,19 @@ module.exports = () => {
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(5);
-        dataPasses.forEach((dataPass) => expect(Object.keys(dataPass)).to.has.all.members(Object.keys(sampleDataPass)));
-        dataPasses.forEach((dataPass) => expect(Object.values(dataPass).map((value) => typeof value))
-            .to.has.all.members(Object.values(sampleDataPass).map((value) => typeof value)));
+        for (const dataPass of dataPasses) {
+            await dataPassSchema.validateAsync(dataPass);
+        }
     });
 
     it('Should get simultion passes with respect to given year limit (2022) and in correct format', async () => {
         const monALISAInterface = getMockMonALISAClient(2022);
-        const dataPasses = await monALISAInterface.getSimulationPasses();
+        const simulationPasses = await monALISAInterface.getSimulationPasses();
 
-        expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(10);
-        dataPasses.forEach((simulationPass) => expect(Object.keys(simulationPass)).to.has.all.members(Object.keys(sampleSimulationPass)));
-        dataPasses.forEach((simulationPass) => expect(Object.values(simulationPass).map((value) => typeof value))
-            .to.has.all.members(Object.values(sampleSimulationPass).map((value) => typeof value)));
+        expect(simulationPasses).to.be.an('array');
+        expect(simulationPasses).to.be.lengthOf(10);
+        for (const simulationPass of simulationPasses) {
+            await simulationPassSchema.validateAsync(simulationPass);
+        }
     });
 };
