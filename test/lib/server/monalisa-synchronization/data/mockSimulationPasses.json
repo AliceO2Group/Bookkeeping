@@ -1,0 +1,102 @@
+{
+  "LHC22bb1": {
+    "runList": "46, 39, 38, 56, 99",
+    "generator": "CARLO monte random",
+    "jiraID": "ALIROOT-1770",
+    "PWG": "PWGYRXX",
+    "requested_events": 1573545,
+    "output_size": 8563300361449,
+    "anchor_production": "LHC22a",
+    "anchor_pass": "epass3, npass8, dpass7"
+  },
+  "LHC23ac9": {
+    "runList": "78, 33, 32, 94, 64, 3",
+    "generator": "monte monte random SOME random production CARLO random",
+    "jiraID": "ALIROOT-9460",
+    "PWG": "PWGLPXX",
+    "requested_events": 1075985,
+    "output_size": 4134746727217,
+    "anchor_production": "LHC22b",
+    "anchor_pass": "spass4"
+  },
+  "LHC23ad7": {
+    "runList": "92, 97, 52, 6",
+    "generator": "production SOME FOR SOME SOME SOME production",
+    "jiraID": "ALIROOT-6882",
+    "PWG": "PWGARXX",
+    "requested_events": 1616462,
+    "output_size": 4641538401955,
+    "anchor_production": "LHC23f",
+    "anchor_pass": "npass5"
+  },
+  "LHC22va2": {
+    "runList": "6, 2",
+    "generator": "FOR SOME production production CARLO SOME",
+    "jiraID": "ALIROOT-7424",
+    "PWG": "PWGYNXX",
+    "requested_events": 1298604,
+    "output_size": 8348734999715,
+    "anchor_production": "LHC22b",
+    "anchor_pass": "apass4"
+  },
+  "LHC23bc2": {
+    "runList": "11, 9, 62, 50, 7, 29, 86",
+    "generator": "production monte  DESCRIPTION FOR SOME production",
+    "jiraID": "ALIROOT-7367",
+    "PWG": "PWGLCXX",
+    "requested_events": 1850622,
+    "output_size": 3861055929746,
+    "anchor_production": "LHC22a",
+    "anchor_pass": "apass6"
+  },
+  "LHC22cb3": {
+    "runList": "82, 17",
+    "generator": "FOR monte random FOR FOR monte monte",
+    "jiraID": "ALIROOT-3857",
+    "PWG": "PWGVVXX",
+    "requested_events": 1245748,
+    "output_size": 6434220920498,
+    "anchor_production": "LHC22a",
+    "anchor_pass": "epass3"
+  },
+  "LHC23ad5": {
+    "runList": "9",
+    "generator": " DESCRIPTION SOME production random monte random SOME random",
+    "jiraID": "ALIROOT-4367",
+    "PWG": "PWGLNXX",
+    "requested_events": 1440179,
+    "output_size": 5776057770096,
+    "anchor_production": "LHC23f",
+    "anchor_pass": "epass4"
+  },
+  "LHC23ac7": {
+    "runList": "94, 1, 75, 64, 69, 85, 6, 63",
+    "generator": " DESCRIPTION random SOME random",
+    "jiraID": "ALIROOT-8605",
+    "PWG": "PWGAQXX",
+    "requested_events": 1748283,
+    "output_size": 3164294324982,
+    "anchor_production": "LHC22a",
+    "anchor_pass": "npass8"
+  },
+  "LHC23zx3": {
+    "runList": "91, 63, 93, 15, 5, 31, 39",
+    "generator": " DESCRIPTION FOR  DESCRIPTION FOR CARLO  DESCRIPTION  DESCRIPTION",
+    "jiraID": "ALIROOT-7074",
+    "PWG": "PWGURXX",
+    "requested_events": 1577953,
+    "output_size": 8233164716499,
+    "anchor_production": "LHC22a",
+    "anchor_pass": "npass8"
+  },
+  "LHC23gv1": {
+    "runList": "32, 96",
+    "generator": " DESCRIPTION monte CARLO  DESCRIPTION",
+    "jiraID": "ALIROOT-8281",
+    "PWG": "PWGTCXX",
+    "requested_events": 1550347,
+    "output_size": 5858348228639,
+    "anchor_production": "LHC22a",
+    "anchor_pass": "dpass7"
+  }
+}
