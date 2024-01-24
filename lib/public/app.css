@@ -103,7 +103,6 @@ html, body {
 .mbauto { margin-bottom: auto; }
 .pl2 { padding-left: var(--space-s); }
 .pr2 { padding-right: var(--space-s); }
-.pl2 { padding-left: var(--space-s); }
 .pt0 { padding-top: 0; }
 
 .lh1 { line-height: 1em; }
@@ -165,12 +164,6 @@ html, body {
 
 th.text-center, td.text-center {
     text-align: center;
-}
-
-/* radius */
-
-.rounded-1 {
-    border-radius: 0.25rem;
 }
 
 /* alerts */
