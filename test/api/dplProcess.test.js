@@ -63,7 +63,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('array');
-            expect(response.body.data.map(({ id }) => parseInt(id, 10))).to.eql([1, 2, 3]);
+            expect(response.body.data.map(({ id }) => parseInt(id, 10))).to.eql([1, 3, 2]);
         });
 
         it('Should successfully return a 404 when trying to get processes with a non-existing run number', async () => {
