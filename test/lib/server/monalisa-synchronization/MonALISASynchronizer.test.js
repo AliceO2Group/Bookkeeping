@@ -14,7 +14,7 @@
 const { expect } = require('chai');
 const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
 const { MonALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
-const { repositories: { DataPassRepository, LhcPeriodRepository } } = require('../../../../lib/database');
+const { repositories: { DataPassRepository, LhcPeriodRepository, SimulationPassRepository } } = require('../../../../lib/database');
 const { dataSource } = require('../../../../lib/database/DataSource.js');
 
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod');
@@ -25,7 +25,7 @@ const YEAR_LOWER_LIMIT = 2023;
 module.exports = () => {
     after(async () => resetDatabaseContent());
 
-    it('Should get data with respect to given year limit and in correct format', async () => {
+    it('Should synchronize Data Passes with respect to given year limit and in correct format', async () => {
         const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
         const mockDataPasses = await monALISAClient.getDataPasses();
         const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
@@ -71,5 +71,55 @@ module.exports = () => {
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
+    });
+
+    it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
+        const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
+        const expectedSimulationPasses = await monALISAClient.getSimulationPasses();
+        const nameToSimulationPass = Object.fromEntries(expectedSimulationPasses
+            .map((simulationPass) => [simulationPass.name, simulationPass]));
+        const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
+
+        // Run Synchronization
+        await monALISASynchronizer.synchronizeDataPassesFromMonALISA();
+
+        const simulationPassesDB = await SimulationPassRepository.findAll(dataSource
+            .createQueryBuilder()
+            .include({ association: 'runs', attributes: ['runNumber'] }))
+            .include({ association: 'dataPass', attributes: ['id', 'name'] });
+
+        // Correct amount of data
+        expect(simulationPassesDB).to.be.an('array');
+        expect(simulationPassesDB).to.be.lengthOf(2);
+
+        // All expected data passes names present
+        const expectedNames = expectedSimulationPasses.map(({ name }) => name);
+        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
+
+        // All associated with appropriate Data Passes
+        expect(simulationPassesDB.map(({ name }) =>
+            ({ name,
+                dataPasses:
+                nameToSimulationPass[name].lhcPeriods
+                    .map((lhcPeriod) => nameToSimulationPass[name].dataPassesSuffixes
+                        .map((suffix) => `${lhcPeriod}_${suffix}`)) })))
+
+            .to.have.deep.all.members(simulationPassesDB.map(({ name, dataPass }) => ({ name, dataPasses: dataPass.map(({ name }) => name) })));
+
+        // Properties of data passes are the same
+        // expect(simulationPassesDB.map((dataPass) => {
+        //     const { name, outputSize, description, reconstructedEventsCount, lastRunNumber } = dataPass;
+        //     return { name, outputSize, description, reconstructedEventsCount, lastRunNumber };
+        // })).to.include.deep.all.members(expectedSimulationPasses);
+
+        // Data Pass details are in DB
+        // const expectedDataPassesNamesSet = new Set(expectedNames);
+        // for (const dataPass of simulationPassesDB) {
+        //     if (expectedDataPassesNamesSet.has(dataPass.name)) {
+        //         const { description, runs } = dataPass;
+        //         const { runNumbers: expectedRunNumbers } = await monALISAClient.getDataPassDetails(description);
+        //         expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
+        //     }
+        // }
     });
 };
