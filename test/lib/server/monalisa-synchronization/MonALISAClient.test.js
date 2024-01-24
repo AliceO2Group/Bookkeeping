@@ -63,7 +63,7 @@ module.exports = () => {
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(10);
-        dataPasses.forEach((simulationPass) => expect(Object.keys(simulationPass)).to.has.all.members(Object.keys(sampleDataPass)));
+        dataPasses.forEach((simulationPass) => expect(Object.keys(simulationPass)).to.has.all.members(Object.keys(sampleSimulationPass)));
         dataPasses.forEach((simulationPass) => expect(Object.values(simulationPass).map((value) => typeof value))
             .to.has.all.members(Object.values(sampleDataPass).map((value) => typeof value)));
     });
