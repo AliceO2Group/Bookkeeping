@@ -92,11 +92,11 @@ module.exports = () => {
         expect(simulationPassesDB).to.be.an('array');
         expect(simulationPassesDB).to.be.lengthOf(2);
 
-        // All expected simulation passes names present
-        const expectedNames = expectedSimulationPasses.map(({ properties: { name } }) => name);
-        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
+        // All expected Simulation Passes names present
+        const expectedSimulationPassesNames = expectedSimulationPasses.map(({ properties: { name } }) => name);
+        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(expectedSimulationPassesNames);
 
-        // Properties of simulation passes are the same
+        // Properties of Simulation Passes are the same
         expect(simulationPassesDB.map((simulationPass) => {
             const { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize } = simulationPass;
             return { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize };
@@ -112,14 +112,10 @@ module.exports = () => {
 
             .to.have.deep.all.members(simulationPassesDB.map(({ name, dataPass }) => ({ name, dataPasses: dataPass.map(({ name }) => name) })));
 
-        // Data Pass details are in DB
-        // const expectedDataPassesNamesSet = new Set(expectedNames);
-        // for (const dataPass of simulationPassesDB) {
-        //     if (expectedDataPassesNamesSet.has(dataPass.name)) {
-        //         const { description, runs } = dataPass;
-        //         const { runNumbers: expectedRunNumbers } = await monALISAClient.getDataPassDetails(description);
-        //         expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
-        //     }
-        // }
+        // Runs of Simulation Pass are in DB
+        for (const simulationPassDB of simulationPassesDB) {
+            const { name, runs } = simulationPassDB;
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(nameToSimulationPass[name].associations.runNumbers);
+        }
     });
 };
