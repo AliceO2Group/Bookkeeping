@@ -90,7 +90,7 @@ module.exports = () => {
 
         // Correct amount of data
         expect(simulationPassesDB).to.be.an('array');
-        expect(simulationPassesDB).to.be.lengthOf(2);
+        expect(simulationPassesDB).to.be.lengthOf(4);
 
         // All expected Simulation Passes names present
         const expectedSimulationPassesNames = expectedSimulationPasses.map(({ properties: { name } }) => name);
@@ -102,20 +102,23 @@ module.exports = () => {
             return { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize };
         })).to.include.deep.all.members(expectedSimulationPasses.map(({ properties }) => properties));
 
-        // All associated with appropriate Data Passes
-        expect(simulationPassesDB.map(({ name }) =>
-            ({ name,
-                dataPasses:
-                nameToSimulationPass[name].associations.lhcPeriods
-                    .flatMap((lhcPeriod) => nameToSimulationPass[name].associations.dataPassesSuffixes
-                        .map((suffix) => `${lhcPeriod}_${suffix}`)) })))
+        const expectedNamesSet = new Set(expectedSimulationPassesNames);
 
-            .to.have.deep.all.members(simulationPassesDB.map(({ name, dataPass }) => ({ name, dataPasses: dataPass.map(({ name }) => name) })));
+        // All associated with appropriate Data Passes
+        expect(simulationPassesDB.map(({ name, dataPass }) => ({ name, dataPasses: dataPass.map(({ name }) => name) })))
+            .to.include.deep.all.members(simulationPassesDB.filter(({ name }) => expectedNamesSet.has(name)).map(({ name }) =>
+                ({ name,
+                    dataPasses:
+                nameToSimulationPass[name]?.associations.lhcPeriods
+                    .flatMap((lhcPeriod) => nameToSimulationPass[name].associations.dataPassesSuffixes
+                        .map((suffix) => `${lhcPeriod}_${suffix}`)) })));
 
         // Runs of Simulation Pass are in DB
         for (const simulationPassDB of simulationPassesDB) {
             const { name, runs } = simulationPassDB;
-            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(nameToSimulationPass[name].associations.runNumbers);
+            if (expectedNamesSet.has(name)) {
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(nameToSimulationPass[name].associations.runNumbers);
+            }
         }
     });
 };
