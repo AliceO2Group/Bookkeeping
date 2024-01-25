@@ -253,7 +253,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b]);
+                    expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c]);
 
                     done();
                 });

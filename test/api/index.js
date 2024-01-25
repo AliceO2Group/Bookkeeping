@@ -30,6 +30,7 @@ const TagsSuite = require('./tags.test.js');
 const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
 const DataPassesSuite = require('./dataPasses.test.js');
+const SimulationPassesSuite = require('./simulationPasses.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -52,4 +53,5 @@ module.exports = () => {
     describe('Tags API', TagsSuite);
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
     describe('DataPassesSuite API', DataPassesSuite);
+    describe('SimulationPassesSuite API', SimulationPassesSuite);
 };
