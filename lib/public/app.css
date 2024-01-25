@@ -72,6 +72,7 @@ html, body {
 .w-90  { width:  90%; }
 .w-95  { width:  95%; }
 .w-100 { width: 100%; }
+.mw-100 { max-width: 100%; }
 .w-30rem { width: 30rem; }
 .w-inherit {
     width: inherit !important;
@@ -498,32 +499,6 @@ label {
 .btn-group-item:not(.first-item) {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-}
-
-/* File preview (popover) */
-
-.preview-window {
-    margin: var(--space-xs);
-    max-height: 99%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.preview-header {
-    margin-bottom: var(--space-xs);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.preview-content {
-    overflow: auto;
-}
-
-.preview-file-content {
-    margin: 0;
-    width: 100%;
 }
 
 /* Modal */
