@@ -25,15 +25,20 @@ const dataPassSchema = Joi.object({
 });
 
 const simulationPassSchema = Joi.object({
-    name: Joi.string(),
-    jiraId: Joi.string(),
-    lhcPeriods: Joi.array().items(Joi.string()),
-    dataPassesSuffixes: Joi.array().items(Joi.string()),
-    runNumbers: Joi.array().items(Joi.number()),
-    description: Joi.string(),
-    PWG: Joi.string(),
-    requestedEvents: Joi.number(),
-    generatedEvents: Joi.number(),
+    properties: Joi.object({
+        name: Joi.string(),
+        jiraId: Joi.string(),
+        description: Joi.string(),
+        pwg: Joi.string(),
+        requestedEventsCount: Joi.number(),
+        generatedEventsCount: Joi.number(),
+        outputSize: Joi.number(),
+    }),
+    associations: Joi.object({
+        runNumbers: Joi.array().items(Joi.number()),
+        dataPassesSuffixes: Joi.array().items(Joi.string()),
+        lhcPeriods: Joi.array().items(Joi.string()),
+    }),
 
 });
 
