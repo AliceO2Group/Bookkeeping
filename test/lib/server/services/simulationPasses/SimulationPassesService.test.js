@@ -17,31 +17,26 @@ const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { simulationPassService } = require('../../../../../lib/server/services/simulationPasses/SimulationPassService.js');
 
-const LHC22b_apass1 = {
+const LHC23k6c = {
     id: 1,
-    name: 'LHC22b_apass1',
-    description: 'Some random desc',
-    reconstructedEventsCount: 50948694,
-    outputSize: 56875682112600,
-    lastRunNumber: 108,
+    name: 'LHC23k6c',
+    jiraId: 'SIMTICKET-1',
+    description: 'Some Random general purpose for LHC23k6c',
+    pwg: 'PWGX2',
+    requestedEventsCount: 1345555,
+    generatedEventsCount: 4316450,
+    outputSize: 14013600611699,
 };
 
-const LHC22b_apass2 = {
+const LHC23k6b = {
     id: 2,
-    name: 'LHC22b_apass2',
-    description: 'Some random desc',
-    reconstructedEventsCount: 50848604,
-    outputSize: 55765671112610,
-    lastRunNumber: 55,
-};
-
-const LHC22a_apass1 = {
-    id: 3,
-    name: 'LHC22a_apass1',
-    description: 'Some random desc for apass 1',
-    reconstructedEventsCount: 50848111,
-    outputSize: 55761110122610,
-    lastRunNumber: 105,
+    name: 'LHC23k6b',
+    jiraId: 'SIMTICKET-1',
+    description: 'Some Random general purpose for LHC23k6b',
+    pwg: 'PWGX1',
+    requestedEventsCount: 2345555,
+    generatedEventsCount: 54800,
+    outputSize: 157000310748,
 };
 
 module.exports = () => {
@@ -49,17 +44,17 @@ module.exports = () => {
 
     it('should succesfully get by id', async () => {
         const simulationPass = await simulationPassService.getByIdentifier({ id: 1 });
-        expect(simulationPass).to.be.eql(LHC22b_apass1);
+        expect(simulationPass).to.be.eql(LHC23k6c);
     });
 
     it('should succesfully get by name', async () => {
-        const simulationPass = await simulationPassService.getByIdentifier({ name: 'LHC22a_apass1' });
-        expect(simulationPass).to.be.eql(LHC22a_apass1);
+        const simulationPass = await simulationPassService.getByIdentifier({ name: 'LHC23k6b' });
+        expect(simulationPass).to.be.eql(LHC23k6b);
     });
 
     it('should succesfully get all data', async () => {
         const { rows: simulationPasses } = await simulationPassService.getAll();
-        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.be.lengthOf(2);
     });
 
     it('should fail when no Simulation Pass with given id', async () => {
@@ -73,13 +68,13 @@ module.exports = () => {
         const dto = {
             query: {
                 filter: {
-                    names: ['LHC22b_apass1'],
+                    names: ['LHC23k6b'],
                 },
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
         expect(simulationPasses).to.be.lengthOf(1);
-        expect(simulationPasses[0]).to.be.eql(LHC22b_apass1);
+        expect(simulationPasses[0]).to.be.eql(LHC23k6b);
     });
 
     it('should succesfully filter simulation passes on ids', async () => {
@@ -98,17 +93,30 @@ module.exports = () => {
         expect(await simulationPassService.getByIdentifier({ id: 99999 })).to.be.null;
     });
 
-    it('should succesfully filter simulation passes on lhc petriods ids', async () => {
+    it('should succesfully filter simulation passes on lhc periods ids', async () => {
         const dto = {
             query: {
                 filter: {
-                    lhcPeriodIds: ['2'],
+                    lhcPeriodIds: ['1'],
                 },
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.be.lengthOf(2);
-        expect(simulationPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
+        expect(simulationPasses).to.be.lengthOf(1);
+        expect(simulationPasses).to.have.deep.members([LHC23k6b]);
+    });
+
+    it('should succesfully filter simulation passes on Sata Pass ids', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    dataPassIds: ['1'],
+                },
+            },
+        };
+        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        expect(simulationPasses).to.be.lengthOf(1);
+        expect(simulationPasses).to.have.deep.members([LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by names', async () => {
@@ -120,19 +128,31 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
     });
 
-    it('should succesfully sort simulation passes by reconstructedEventsCount', async () => {
+    it('should succesfully sort simulation passes by generatedEventsCount', async () => {
         const dto = {
             query: {
                 sort: {
-                    reconstructedEventsCount: 'DESC',
+                    generatedEventsCount: 'DESC',
                 },
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b]);
+    });
+
+    it('should succesfully sort simulation passes by requestedEventsCount', async () => {
+        const dto = {
+            query: {
+                sort: {
+                    requestedEventsCount: 'DESC',
+                },
+            },
+        };
+        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by outputSize', async () => {
@@ -144,6 +164,6 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass2, LHC22b_apass1]);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
     });
 };
