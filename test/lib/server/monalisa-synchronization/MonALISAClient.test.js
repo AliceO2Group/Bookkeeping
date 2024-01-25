@@ -26,7 +26,7 @@ const dataPassSchema = Joi.object({
 
 const simulationPassSchema = Joi.object({
     name: Joi.string(),
-    jiraID: Joi.string(),
+    jiraId: Joi.string(),
     lhcPeriods: Joi.array().items(Joi.string()),
     dataPassesSuffixes: Joi.array().items(Joi.string()),
     runNumbers: Joi.array().items(Joi.number()),
