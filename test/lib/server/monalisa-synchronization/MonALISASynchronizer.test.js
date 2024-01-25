@@ -96,6 +96,12 @@ module.exports = () => {
         const expectedNames = expectedSimulationPasses.map(({ properties: { name } }) => name);
         expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
+        // Properties of simulation passes are the same
+        expect(simulationPassesDB.map((simulationPass) => {
+            const { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize } = simulationPass;
+            return { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize };
+        })).to.include.deep.all.members(expectedSimulationPasses.map(({ properties }) => properties));
+
         // All associated with appropriate Data Passes
         expect(simulationPassesDB.map(({ name }) =>
             ({ name,
@@ -105,12 +111,6 @@ module.exports = () => {
                         .map((suffix) => `${lhcPeriod}_${suffix}`)) })))
 
             .to.have.deep.all.members(simulationPassesDB.map(({ name, dataPass }) => ({ name, dataPasses: dataPass.map(({ name }) => name) })));
-
-        // Properties of data passes are the same
-        expect(simulationPassesDB.map((simulationPass) => {
-            const { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize } = simulationPass;
-            return { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize };
-        })).to.include.deep.all.members(expectedSimulationPasses.map(({ properties }) => properties));
 
         // Data Pass details are in DB
         // const expectedDataPassesNamesSet = new Set(expectedNames);
