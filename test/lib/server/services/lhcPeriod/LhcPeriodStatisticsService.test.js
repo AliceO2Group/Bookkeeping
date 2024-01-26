@@ -32,7 +32,7 @@ const lhcPeriod_LHC22b = {
 
 const lhcPeriod_LHC22a = {
     id: 1,
-    beamType: 'pp',
+    beamType: 'PbPb,pp',
     avgCenterOfMassEnergy: 99.52079923444215,
     distinctEnergies: [
         23.21,
