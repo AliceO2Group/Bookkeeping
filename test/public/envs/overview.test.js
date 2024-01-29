@@ -106,7 +106,7 @@ module.exports = () => {
         await goToPage(page, 'env-overview');
         await page.waitForTimeout(100);
 
-        await checkColumnBalloon(page, 1, 5);
+        await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });
 
