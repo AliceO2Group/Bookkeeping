@@ -112,7 +112,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
+        expect(tableRows.length - 1).to.equal(1);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -143,7 +143,7 @@ module.exports = () => {
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
-    it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
+    it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#requestedEventsCount');
@@ -158,6 +158,24 @@ module.exports = () => {
 
         // Expect the year to be in order
         const firstReconstructedEventsCounts = await getAllDataFields(page, 'requestedEventsCount');
+        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
+    });
+
+    it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        // Expect a sorting preview to appear when hovering over a column header
+        await page.hover('th#generatedEventsCount');
+        await page.waitForTimeout(100);
+        const sortingPreviewIndicator = await page.$('#generatedEventsCount-sort-preview');
+        expect(Boolean(sortingPreviewIndicator)).to.be.true;
+
+        // Sort by year in an ascending manner
+        const generatedEventsCountHeader = await page.$('th#generatedEventsCount');
+        await generatedEventsCountHeader.evaluate((button) => button.click());
+        await page.waitForTimeout(300);
+
+        // Expect the year to be in order
+        const firstReconstructedEventsCounts = await getAllDataFields(page, 'generatedEventsCount');
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
 
@@ -179,33 +197,38 @@ module.exports = () => {
         expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
     });
 
-    it('should successfuly apply data pass name filter', async () => {
+    it('should successfuly apply simulation pass name filter', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         await page.waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6c');
 
         await page.waitForTimeout(100);
 
         /**
-         * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
-         * @param {string[]} periodNames list of names
+         * As @see getAllDataFields returns innerText from cells, in case of simulationPass.name column, text from inner buttons is also taken.
+         * @param {string[]} simulationPassName list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}`);
+        const appendButtonsText = (simulationPassName) => simulationPassName.map((p) => `${p}`);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
+        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC23k6c']));
+
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6b');
+        await page.waitForTimeout(100);
+        allDataPassesNames = await getAllDataFields(page, 'name');
+        expect(allDataPassesNames).to.be.lengthOf(0);
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
 
         allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1', 'LHC22b_apass2']));
+        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC23k6c']));
     });
 };
