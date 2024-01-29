@@ -203,7 +203,7 @@ module.exports = () => {
          * @param {string[]} periodNames list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((name) => `${name}\nRuns[${countsPerLhcPeriod[name]}]\nData Passes`);
+        const appendButtonsText = (periodNames) => periodNames.map((name) => `${name}\nRuns(${countsPerLhcPeriod[name]})\nData Passes`);
 
         let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a']));
