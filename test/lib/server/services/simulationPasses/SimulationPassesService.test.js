@@ -31,7 +31,7 @@ const LHC23k6c = {
 const LHC23k6b = {
     id: 2,
     name: 'LHC23k6b',
-    jiraId: 'SIMTICKET-1',
+    jiraId: 'SIMTICKET-2',
     description: 'Some Random general purpose for LHC23k6b',
     pwg: 'PWGX1',
     requestedEventsCount: 2345555,
@@ -165,5 +165,29 @@ module.exports = () => {
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+    });
+
+    it('should succesfully sort simulation passes by pwg', async () => {
+        const dto = {
+            query: {
+                sort: {
+                    pwg: 'ASC',
+                },
+            },
+        };
+        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+    });
+
+    it('should succesfully sort simulation passes by jiraId', async () => {
+        const dto = {
+            query: {
+                sort: {
+                    jiraId: 'ASC',
+                },
+            },
+        };
+        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b]);
     });
 };
