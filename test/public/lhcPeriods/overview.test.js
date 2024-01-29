@@ -100,7 +100,7 @@ module.exports = () => {
         const amountSelectorButton = await page.$('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
         await page.waitForTimeout(300);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
@@ -210,7 +210,7 @@ module.exports = () => {
          * @return {string[]} cells content
          */
         const appendButtonsText = (periodNames) =>
-            periodNames.map((name) => `${name}\nRuns[${runsCountsPerLhcPeriod[name]}]\nData Passes(${dataPassesCountsPerLHcPeriod[name]})`);
+            periodNames.map((name) => `${name}\nRuns(${runsCountsPerLhcPeriod[name]})\nData Passes(${dataPassesCountsPerLHcPeriod[name]})`);
 
         let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a']));
