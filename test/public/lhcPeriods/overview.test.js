@@ -53,7 +53,7 @@ module.exports = () => {
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
             year: (year) => !isNaN(year),
-            beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
+            beamType: (beamTypes) => beamTypes.split(',').every((beamType) => allowedBeamTypesDisplayes.has(beamType)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
                 .split(',')
