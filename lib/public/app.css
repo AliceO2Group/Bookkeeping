@@ -316,10 +316,6 @@ label {
     cursor: default;
 }
 
-.not-allowed {
-    cursor: not-allowed;
-}
-
 .nav-tabs {
     border-bottom: 1px solid #dee2e6;
 }
