@@ -12,7 +12,9 @@
  */
 
 const PerLhcPeriodOverviewSuite = require('./overviewPerLhcPeriod.test');
+const PerDataPassOverviewSuite = require('./overviewPerDataPass.test');
 
 module.exports = () => {
     describe('Per LHC Period Overview Page', PerLhcPeriodOverviewSuite);
+    describe('Per Data Pass Overview Page', PerDataPassOverviewSuite);
 };
