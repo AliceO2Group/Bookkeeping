@@ -37,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        const response = await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -85,7 +85,7 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await page.waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
@@ -94,7 +94,7 @@ module.exports = () => {
     });
 
     it('can set how many data passes is available per page', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorButton = await page.$('.dropup button');
@@ -128,7 +128,7 @@ module.exports = () => {
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#name');
         await page.waitForTimeout(100);
@@ -146,7 +146,7 @@ module.exports = () => {
     });
 
     it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#reconstructedEventsCount');
         await page.waitForTimeout(100);
@@ -164,7 +164,7 @@ module.exports = () => {
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#outputSize');
         await page.waitForTimeout(100);
@@ -182,7 +182,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply data pass name filter', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await page.waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
@@ -194,10 +194,10 @@ module.exports = () => {
 
         /**
          * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
-         * @param {string[]} periodNames list of names
+         * @param {string[]} dataPassName list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nAnchored`);
+        const appendButtonsText = (dataPassName) => dataPassName.map((p) => `${p}\nAnchored`);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
