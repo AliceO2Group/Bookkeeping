@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const OverviewSuite = require('./overview.test');
+const OverviewSuite = require('./overviewPerLhcPeriod.test');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
