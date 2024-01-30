@@ -52,6 +52,8 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
+            associatedRuns: (display) => /Runs\(\d+\)/.test(display),
+            associatedDataPasses: (display) => /Data Passes\(\d+\)/.test(display),
             year: (year) => !isNaN(year),
             beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
@@ -192,28 +194,8 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
-        const runsCountsPerLhcPeriod = {
-            LHC22b: 1,
-            LHC22a: 3,
-            LHC23f: 0,
-        };
-
-        const dataPassesCountsPerLHcPeriod = {
-            LHC22b: 2,
-            LHC22a: 1,
-            LHC23f: 0,
-        };
-
-        /**
-         * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
-         * @param {string[]} periodNames list of names
-         * @return {string[]} cells content
-         */
-        const appendButtonsText = (periodNames) =>
-            periodNames.map((name) => `${name}\nRuns(${runsCountsPerLhcPeriod[name]})\nData Passes(${dataPassesCountsPerLHcPeriod[name]})`);
-
         let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a']));
+        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a']);
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
@@ -221,7 +203,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(appendButtonsText(['LHC22a', 'LHC22b', 'LHC23f']));
+        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
     });
 
     it('should successfuly apply lhc period year filter', async () => {
