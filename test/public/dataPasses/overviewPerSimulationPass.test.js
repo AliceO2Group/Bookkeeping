@@ -37,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        const response = await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -85,16 +85,16 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
         await page.waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(1);
     });
 
     it('can set how many data passes is available per page', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
         await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorButton = await page.$('.dropup button');
@@ -114,7 +114,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
+        expect(tableRows.length - 1).to.equal(1);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -128,7 +128,7 @@ module.exports = () => {
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#name');
         await page.waitForTimeout(100);
@@ -146,7 +146,7 @@ module.exports = () => {
     });
 
     it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#reconstructedEventsCount');
         await page.waitForTimeout(100);
@@ -164,7 +164,7 @@ module.exports = () => {
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#outputSize');
         await page.waitForTimeout(100);
@@ -182,7 +182,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply data pass name filter', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 2 } });
         await page.waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
@@ -202,12 +202,18 @@ module.exports = () => {
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
 
+        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass2');
+        await page.waitForTimeout(100);
+        allDataPassesNames = await getAllDataFields(page, 'name');
+        expect(allDataPassesNames).to.be.lengthOf(0);
+
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
         await page.waitForTimeout(100);
 
         allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1', 'LHC22b_apass2']));
+        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
     });
 };
