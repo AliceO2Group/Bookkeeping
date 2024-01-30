@@ -213,7 +213,7 @@ module.exports = () => {
          * @param {string[]} simulationPassName list of names
          * @return {string[]} cells content
          */
-        const appendButtonsText = (simulationPassName) => simulationPassName.map((p) => `${p}`);
+        const appendButtonsText = (simulationPassName) => simulationPassName.map((p) => `${p}\nAnchorage`);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC23k6c']));
