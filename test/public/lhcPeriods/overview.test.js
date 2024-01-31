@@ -52,8 +52,8 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /Runs\(\d+\)/.test(display),
-            associatedDataPasses: (display) => /Data Passes\(\d+\)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
+            associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
             year: (year) => !isNaN(year),
             beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
