@@ -999,6 +999,7 @@ module.exports = () => {
                     mattermost: 'food',
                     archived: false,
                     archivedAt: null,
+                    color: null,
                 },
                 {
                     id: 2,
@@ -1008,6 +1009,7 @@ module.exports = () => {
                     mattermost: 'marathon',
                     archived: false,
                     archivedAt: null,
+                    color: null,
                 },
             ]);
             expect(response.body.data.rootLogId).to.equal(1);
