@@ -670,3 +670,8 @@ label {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+.x-scrollable {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
