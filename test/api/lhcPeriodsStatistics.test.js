@@ -26,6 +26,7 @@ const lhcPeriod_LHC22b = {
         name: 'LHC22b',
     },
     runsCount: 1,
+    dataPassesCount: 2,
 };
 
 const lhcPeriod_LHC22a = {
@@ -41,6 +42,8 @@ const lhcPeriod_LHC22a = {
         name: 'LHC22a',
     },
     runsCount: 3,
+    dataPassesCount: 1,
+
 };
 
 const lhcPeriod_LHC23f = {
@@ -52,6 +55,7 @@ const lhcPeriod_LHC23f = {
         id: 3,
         name: 'LHC23f',
     },
+    dataPassesCount: 0,
     runsCount: 0,
 };
 
