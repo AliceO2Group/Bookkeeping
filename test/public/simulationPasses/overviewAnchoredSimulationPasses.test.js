@@ -37,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        const response = await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -83,7 +83,7 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         await page.waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
@@ -92,7 +92,7 @@ module.exports = () => {
     });
 
     it('can set how many data passes is available per page', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         await page.waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorButton = await page.$('.dropup button');
@@ -126,7 +126,7 @@ module.exports = () => {
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#name');
         await page.waitForTimeout(100);
@@ -144,7 +144,7 @@ module.exports = () => {
     });
 
     it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#requestedEventsCount');
         await page.waitForTimeout(100);
@@ -162,7 +162,7 @@ module.exports = () => {
     });
 
     it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#generatedEventsCount');
         await page.waitForTimeout(100);
@@ -180,7 +180,7 @@ module.exports = () => {
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#outputSize');
         await page.waitForTimeout(100);
@@ -198,7 +198,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply simulation pass name filter', async () => {
-        await goToPage(page, 'simulation-passes-per-data-pass-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         await page.waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
