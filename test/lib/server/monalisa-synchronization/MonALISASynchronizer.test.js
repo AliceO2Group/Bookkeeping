@@ -44,10 +44,10 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
         // All associated with appripriate LHC Periods
-        const lhcPeriodNameToId = Object.fromEntries(await LhcPeriodRepository.findAll({
+        const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll({
             raw: true,
             attributes: ['id', 'name'],
-        }).map(({ id, name }) => [name, id]));
+        })).map(({ id, name }) => [name, id]));
 
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
 
@@ -81,7 +81,7 @@ module.exports = () => {
         const simulationPassesDB = await SimulationPassRepository.findAll({
             include: [
                 { association: 'runs', attributes: ['runNumber'] },
-                { association: 'dataPass', attributes: ['id', 'name'] },
+                { association: 'dataPasses', attributes: ['id', 'name'] },
             ],
         });
 
@@ -107,7 +107,8 @@ module.exports = () => {
                     .flatMap((lhcPeriod) => nameToSimulationPass[name].associations.dataPassesSuffixes
                         .map((suffix) => `${lhcPeriod}_${suffix}`)) })))
 
-            .to.have.deep.all.members(simulationPassesDB.map(({ name, dataPass }) => ({ name, dataPasses: dataPass.map(({ name }) => name) })));
+            .to.have.deep.all.members(simulationPassesDB
+                .map(({ name, dataPasses }) => ({ name, dataPasses: dataPasses.map(({ name }) => name) })));
 
         // Runs of Simulation Pass are in DB
         for (const simulationPassDB of simulationPassesDB) {
