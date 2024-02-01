@@ -196,7 +196,7 @@ Concerning the **Update mode** of the fields:
 | `id`            | Environment id                                        | `Dxi029djX`, `EIDO13i3D`                                                          | AT COE          | `id`           | Insert          |
 | `createdAt`     | When the environment is created                       |                                                                                   | AT COE          | `id`           | Insert          |
 | `toredownAt`    | When the environment is stopped                       |                                                                                   | AT EOE          | `id`           | Update          |
-| `status`        | Actual status of the envrionment                      | `STOPPED`, `STARTED`                                                              |                 | `id`           | Update          |
+| `status`        | Actual status of the envrionment                      | `DEPLOYED`, `STARTED`                                                             |                 | `id`           | Update          |
 | `statusMessage` | A bigger message to show more detail about the status | `Environment sucessfully closed`, `Error creating envrionment: bad configuration` |                 | `id`           | Update          |
 
 ### LhcFills
