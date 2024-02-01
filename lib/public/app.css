@@ -15,14 +15,14 @@ html, body {
 
 .b1 { border-style: solid; border-width: 1px; }
 .bt1 { border-top: 1px solid }
+.bb3 { border-bottom: 3px solid }
 .b-gray-light { border-color: var(--color-gray-light) }
 .b-warning { border-color: var(--color-warning); }
 .b-danger { border-color: var(--color-danger); }
 .b-success { border-color: var(--color-success); }
 .b-primary { border-color: var(--color-primary); }
-
-.b-underline-good { border-bottom: 4px solid var(--color-success); }
-.b-underline-bad { border-bottom: 4px dashed var(--color-danger); }
+.b-good { border-color: var(--color-success); }
+.b-bad { border-color: var(--color-danger); border-style: dashed }
 
 .bg-light-blue {
     background-color: var(--color-light-blue) !important;
@@ -72,6 +72,8 @@ html, body {
 .w-90  { width:  90%; }
 .w-95  { width:  95%; }
 .w-100 { width: 100%; }
+.mw-100 { max-width: 100%; }
+.mh-100 { max-height: 100%; }
 .w-30rem { width: 30rem; }
 .w-inherit {
     width: inherit !important;
