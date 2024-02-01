@@ -57,7 +57,7 @@ module.exports = () => {
         expect(historyItems).to.have.lengthOf(4);
         expect(await historyItems[0].$eval('.badge', (element) => element.innerText)).to.equal('CONFIGURED');
         expect(await historyItems[1].$eval('.badge', (element) => element.innerText)).to.equal('RUNNING');
-        expect(await historyItems[2].$eval('.badge', (element) => element.innerText)).to.equal('STOPPED');
+        expect(await historyItems[2].$eval('.badge', (element) => element.innerText)).to.equal('DEPLOYED');
         expect(await historyItems[3].$eval('.badge', (element) => element.innerText)).to.equal('DESTROYED');
     });
 
