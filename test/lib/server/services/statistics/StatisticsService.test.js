@@ -333,7 +333,7 @@ module.exports = () => {
         expect(historyOccurrences).to.eql([
             { statusHistory: 'STANDBY,ERROR', count: 1 },
             { statusHistory: 'STANDBY,DEPLOYED,ERROR,DESTROYED', count: 1 },
-            { statusHistory: 'CONFIGURED,RUNNING,STOPPED,DESTROYED', count: 1 },
+            { statusHistory: 'CONFIGURED,RUNNING,DEPLOYED,DESTROYED', count: 1 },
         ]);
     });
 
