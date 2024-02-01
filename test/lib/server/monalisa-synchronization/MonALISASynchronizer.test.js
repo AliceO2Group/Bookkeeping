@@ -15,7 +15,6 @@ const { expect } = require('chai');
 const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
 const { MonALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
 const { repositories: { DataPassRepository, LhcPeriodRepository, SimulationPassRepository } } = require('../../../../lib/database');
-const { dataSource } = require('../../../../lib/database/DataSource.js');
 
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
@@ -34,9 +33,7 @@ module.exports = () => {
         // Run Synchronization
         await monALISASynchronizer.synchronizeDataPassesFromMonALISA();
 
-        const dataPassesDB = await DataPassRepository.findAll(dataSource
-            .createQueryBuilder()
-            .include({ association: 'runs', attributes: ['runNumber'] }));
+        const dataPassesDB = await DataPassRepository.findAll({ include: { association: 'runs', attributes: ['runNumber'] } });
 
         // Correct amount of data
         expect(dataPassesDB).to.be.an('array');
@@ -47,12 +44,10 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
         // All associated with appripriate LHC Periods
-        const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll(dataSource
-            .createQueryBuilder()
-            .set('raw', true)
-            .set('attributes', ['id', 'name']))
-        )
-            .map(({ id, name }) => [name, id]));
+        const lhcPeriodNameToId = Object.fromEntries(await LhcPeriodRepository.findAll({
+            raw: true,
+            attributes: ['id', 'name'],
+        }).map(({ id, name }) => [name, id]));
 
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
 
@@ -83,10 +78,12 @@ module.exports = () => {
         // Run Synchronization
         await monALISASynchronizer.synchronizeSimulationPassesFromMonALISA();
 
-        const simulationPassesDB = await SimulationPassRepository.findAll(dataSource
-            .createQueryBuilder()
-            .include({ association: 'runs', attributes: ['runNumber'] })
-            .include({ association: 'dataPass', attributes: ['id', 'name'] }));
+        const simulationPassesDB = await SimulationPassRepository.findAll({
+            include: [
+                { association: 'runs', attributes: ['runNumber'] },
+                { association: 'dataPass', attributes: ['id', 'name'] },
+            ],
+        });
 
         // Correct amount of data
         expect(simulationPassesDB).to.be.an('array');
