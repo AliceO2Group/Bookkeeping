@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.77.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.77.0)
+* Notable changes for users:
+  * Uniformized LHC fill number column (in LHC fill overview) to be uniform with other tables and provide links to infologgers
+  * Improved filtering on run number in runs overview to use like if there is only one run number (`45` will match `45` but also `345`, `456`, `3456` and so on, but `45,46` will match exactly `45` and `46`)
+  * The DPL tasks tree will now display "NO DETECTOR" when no detector has been found, and tasks are ordered alphabetically
+  * Task type information is now displayed after the process type name in the DPL tasks tree
+  * Added a new table "LHC Fills" providing information about stable beams to the home page
+  * Logs table in the home page now displays exclusively non-anonymous logs
+  * Optimized the amount of information displayed in each table of the home page
+  * Added page to display Data Passes Per LHC Period
+  * Fixed the environments overview page crash
+  * Improved the columns width and order in the environment overview
+  * LHC period page styles has been unified with other pages
+  * Fixed popover balloon being displayed on every detectors list in runs
+  * Fixed the border for detector quality being cropped by overflow hidden
+  * Added possibility to specify a color for tag, which is applied where tag badge is displayed
+  * Added file preview to attachments in log display and creation for some specific files types (images and text-based files)
+  * An info icon with legend has been added to overview table to explain environment history acronyms
+  * Display data passes counts on LHC Periods page
+* Notable change for developers:
+  * Use generic overview page model in LHC Periods model
+  * Removed dead code from chart library
+  * Added filtering on environment fetching API: current status, status history and related runs
+  * Overflow balloon now also trigger on vertical overflow
+
 ## [0.76.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.76.0)
 * Notable changes for users:
   * Overview of runs now show quality by using a line under them in green/red
