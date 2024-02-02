@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const OverviewSuite = require('./overview.test');
+const OverviewSuite = require('./overviewPerLhcPeriod.test.js');
 
 module.exports = () => {
-    describe('Overview Page', OverviewSuite);
+    describe('Overview Per LHC Period Page', OverviewSuite);
 };

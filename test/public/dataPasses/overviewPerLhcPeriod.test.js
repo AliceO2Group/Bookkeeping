@@ -48,16 +48,14 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        const allowedBeamTypesDisplayes = new Set(['-', 'XeXe', 'PbPb', 'pp']);
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
-            year: (year) => !isNaN(year),
-            beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
-            avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
-            distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
-                .split(',')
-                .every((energy) => !isNaN(energy)),
+            associatedRuns: (display) => display === 'Runs',
+            description: (description) => /(-)|(.+)/.test(description),
+            reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
+                || reconstructedEventsCount === '-',
+            outputSize: (outputSize) => !isNaN(outputSize.replace(/,/g, '')) || outputSize === '-',
         };
 
         // We find the headers matching the datatype keys
