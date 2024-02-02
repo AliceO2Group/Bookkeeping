@@ -191,7 +191,7 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members('LHC22b_apass1');
+        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
