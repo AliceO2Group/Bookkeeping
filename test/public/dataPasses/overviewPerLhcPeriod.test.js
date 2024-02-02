@@ -51,7 +51,7 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => display === 'Runs',
+            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
