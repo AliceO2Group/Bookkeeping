@@ -84,7 +84,7 @@ module.exports = () => {
         const header = await page.$eval('.f3', (element) => element.textContent);
         expect(header).to.equal('Reply to: First entry');
 
-        await pressElement(page, '#show-collapse-1');
+        await pressElement(page, '.log-display-action-buttons button:nth-of-type(2)');
         await page.waitForTimeout(20);
 
         await expectInnerText(page, 'span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
