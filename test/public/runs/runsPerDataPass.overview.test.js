@@ -65,7 +65,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassName: 'LHC22a_apass1' } });
+        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
