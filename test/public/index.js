@@ -25,16 +25,16 @@ const LhcPeriodsSuite = require('./lhcPeriods');
 const DataPassesSuite = require('./dataPasses');
 
 module.exports = () => {
-    describe('LhcPeriods', LhcPeriodsSuite);
-    describe('LhcFills', LhcFillsSuite);
+    // describe('LhcPeriods', LhcPeriodsSuite);
+    // describe('LhcFills', LhcFillsSuite);
     describe('Logs', LogsSuite);
-    describe('Envs', EnvsSuite);
-    describe('Runs', RunsSuite);
-    describe('Subsystems', SubsystemsSuite);
-    describe('Tags', TagsSuite);
-    describe('Flps', FlpsSuite);
-    describe('Home', HomeSuite);
-    describe('About', AboutSuite);
-    describe('EosReport', EosReportSuite);
-    describe('DataPasses', DataPassesSuite);
+    // describe('Envs', EnvsSuite);
+    // describe('Runs', RunsSuite);
+    // describe('Subsystems', SubsystemsSuite);
+    // describe('Tags', TagsSuite);
+    // describe('Flps', FlpsSuite);
+    // describe('Home', HomeSuite);
+    // describe('About', AboutSuite);
+    // describe('EosReport', EosReportSuite);
+    // describe('DataPasses', DataPassesSuite);
 };

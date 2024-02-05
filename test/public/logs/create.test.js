@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText } = require('../defaults.js');
+const { pressElement, expectInnerText, takeScreenshot } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -64,7 +64,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Wait for the button to not be disabled
         await page.waitForTimeout(50);
@@ -103,7 +104,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Create check disabled button
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
@@ -122,7 +124,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Expect no TEST-TAG-27 tag to be there, because it is archived, but expect tag TEST-TAG-31
         let testTag27Found = false;
@@ -185,7 +188,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Add both the file attachments to the input field
         const attachmentsInput = await page.$('#attachments');
@@ -252,7 +256,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
@@ -280,7 +285,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
         await page.type('#run-number', runNumbersStr);
@@ -309,7 +315,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the environments string to the input
         await page.type('#environments', environmentsStr);
@@ -335,7 +342,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the environments string to the input
         await page.type('#environments', environmentsStr);
@@ -364,7 +372,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
         await page.type('#lhc-fills', lhcFillNumbersStr);
