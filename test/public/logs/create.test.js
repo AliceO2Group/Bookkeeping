@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, takeScreenshot } = require('../defaults.js');
+const { pressElement, expectInnerText } = require('../defaults.js');
 
 const { expect } = chai;
 
