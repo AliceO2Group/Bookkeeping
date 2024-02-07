@@ -11,6 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
+const path = require('path');
+const fs = require('fs');
 const chai = require('chai');
 const {
     defaultBefore,
@@ -1055,6 +1057,49 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
+    });
+
+    it('should successfully export filtered runs', async () => {
+        await goToPage(page, 'run-overview');
+
+        const downloadPath = path.resolve('./download');
+        // Check accessibility on frontend
+        const client = await page.target().createCDPSession();
+        await client .send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: downloadPath,
+        });
+
+        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const badFilterSelector = `${filterInputSelectorPrefix}bad`;
+
+        // Open filter toggle
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForTimeout(200);
+
+        await page.$eval(badFilterSelector, (element) => element.click());
+        await page.waitForTimeout(300);
+
+        ///// Download
+
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForTimeout(100);
+        const exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.not.be.null;
+
+        await page.select('#fields', 'runQuality', 'runNumber');
+        await page.waitForTimeout(100);
+        await page.$eval('#send', (button) => button.click());
+        await page.waitForTimeout(500);
+
+        // Check download
+
+        const dowloadFilesNames = fs.readdirSync(downloadPath);
+        const targetName = 'runs.json';
+        expect(dowloadFilesNames.filter((name) => name == targetName)).to.be.lengthOf(1);
+        const runs = require(path.resolve(downloadPath, targetName));
+
+        expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
