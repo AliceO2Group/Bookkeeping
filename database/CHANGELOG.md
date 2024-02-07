@@ -1,3 +1,8 @@
+## [0.77.0]
+* Changes made to the database
+  * Added missing key to the environments history items table
+  * Added column to tags to store the color
+
 ## [0.76.0]
 * Changes made to the database
   * Added unique constraint to column name of data_passes table
