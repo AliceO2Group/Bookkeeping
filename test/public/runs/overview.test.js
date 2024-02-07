@@ -1087,7 +1087,7 @@ module.exports = () => {
         const exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
 
-        await page.select('#fields', 'runQuality', 'runNumber');
+        await page.select('.form-control', 'runQuality', 'runNumber');
         await page.waitForTimeout(100);
         await page.$eval('#send', (button) => button.click());
         await page.waitForTimeout(500);
