@@ -1066,18 +1066,42 @@ module.exports = () => {
 
         // Check accessibility on frontend
         const client = await page.target().createCDPSession();
-        await client .send('Page.setDownloadBehavior', {
+        await client.send('Page.setDownloadBehavior', {
             behavior: 'allow',
             downloadPath: downloadPath,
         });
 
-        // Open modal in order to prepare to page runs for export
+        let downloadFilesNames;
+        const targetFileName = 'runs.json';
+        let runs;
+        let exportModal;
+
+        // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
         await page.waitForTimeout(100);
-        let exportModal = await page.$('#export-runs-modal');
+        exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
+
+        await page.select('.form-control', 'runQuality', 'runNumber');
+        await page.waitForTimeout(100);
+        await page.$eval('#send', (button) => button.click());
+        await page.waitForTimeout(500);
+
+        // Check download
+        downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+
+        expect(runs).to.be.lengthOf(100);
+        expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
+            runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
+        downloadFilesNames = fs.readdirSync(downloadPath);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        downloadFilesNames = fs.readdirSync(downloadPath);
+
+        // Second export
 
         // Apply filtering
         const filterInputSelectorPrefix = '#runQualityCheckbox';
@@ -1101,11 +1125,9 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Check download
-        const dowloadFilesNames = fs.readdirSync(downloadPath);
-        const targetName = 'runs.json';
-        expect(dowloadFilesNames.filter((name) => name == targetName)).to.be.lengthOf(1);
-        const runs = require(path.resolve(downloadPath, targetName));
-
+        downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
         expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
     });
 
