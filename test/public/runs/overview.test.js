@@ -1063,6 +1063,7 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
 
         const downloadPath = path.resolve('./download');
+
         // Check accessibility on frontend
         const client = await page.target().createCDPSession();
         await client .send('Page.setDownloadBehavior', {
@@ -1070,10 +1071,18 @@ module.exports = () => {
             downloadPath: downloadPath,
         });
 
+        // Open modal in order to prepare to page runs for export
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForTimeout(100);
+        let exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.not.be.null;
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        // Apply filtering
         const filterInputSelectorPrefix = '#runQualityCheckbox';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
 
-        // Open filter toggle
         await pressElement(page, '#openFilterToggle');
         await page.waitForTimeout(200);
 
@@ -1081,10 +1090,9 @@ module.exports = () => {
         await page.waitForTimeout(300);
 
         ///// Download
-
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
         await page.waitForTimeout(100);
-        const exportModal = await page.$('#export-runs-modal');
+        exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
 
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -1093,7 +1101,6 @@ module.exports = () => {
         await page.waitForTimeout(500);
 
         // Check download
-
         const dowloadFilesNames = fs.readdirSync(downloadPath);
         const targetName = 'runs.json';
         expect(dowloadFilesNames.filter((name) => name == targetName)).to.be.lengthOf(1);
