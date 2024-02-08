@@ -11,6 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
+const path = require('path');
+const fs = require('fs');
 const chai = require('chai');
 const {
     defaultBefore,
@@ -26,6 +28,7 @@ const {
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
+const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
 
@@ -1055,6 +1058,79 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
+    });
+
+    it('should successfully export filtered runs', async () => {
+        await goToPage(page, 'run-overview');
+
+        const downloadPath = path.resolve('./download');
+
+        // Check accessibility on frontend
+        const session = await page.target().createCDPSession();
+        await session.send('Browser.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: downloadPath,
+            eventsEnabled: true,
+        });
+
+        let downloadFilesNames;
+        const targetFileName = 'runs.json';
+        let runs;
+        let exportModal;
+
+        // First export
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForSelector('#export-runs-modal');
+        exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.not.be.null;
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        await page.select('.form-control', 'runQuality', 'runNumber');
+        await page.$eval('#send', (button) => button.click());
+
+        await waitForDownload(session);
+
+        // Check download
+        downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+
+        expect(runs).to.be.lengthOf(100);
+        expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
+            runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
+        downloadFilesNames = fs.readdirSync(downloadPath);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        downloadFilesNames = fs.readdirSync(downloadPath);
+
+        // Second export
+
+        // Apply filtering
+        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const badFilterSelector = `${filterInputSelectorPrefix}bad`;
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector(badFilterSelector);
+        await page.$eval(badFilterSelector, (element) => element.click());
+        await page.waitForSelector('div.atom-spinner');
+        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
+
+        ///// Download
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForSelector('#export-runs-modal');
+        exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.not.be.null;
+
+        await page.select('.form-control', 'runQuality', 'runNumber');
+        await page.$eval('#send', (button) => button.click());
+
+        await waitForDownload(session);
+
+        // Check download
+        downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+        expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
