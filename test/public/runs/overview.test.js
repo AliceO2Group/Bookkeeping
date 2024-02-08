@@ -28,6 +28,7 @@ const {
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
+const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
 
@@ -1065,10 +1066,11 @@ module.exports = () => {
         const downloadPath = path.resolve('./download');
 
         // Check accessibility on frontend
-        const client = await page.target().createCDPSession();
-        await client.send('Page.setDownloadBehavior', {
+        const session = await page.target().createCDPSession();
+        await session.send('Browser.setDownloadBehavior', {
             behavior: 'allow',
             downloadPath: downloadPath,
+            eventsEnabled: true,
         });
 
         let downloadFilesNames;
@@ -1078,16 +1080,16 @@ module.exports = () => {
 
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForSelector('#export-runs-modal');
         exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForTimeout(100);
         await page.$eval('#send', (button) => button.click());
-        await page.waitForTimeout(500);
+
+        await waitForDownload(session);
 
         // Check download
         downloadFilesNames = fs.readdirSync(downloadPath);
@@ -1108,21 +1110,21 @@ module.exports = () => {
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
-
+        await page.waitForSelector(badFilterSelector);
         await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await page.waitForSelector('div.atom-spinner');
+        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForTimeout(100);
+        await page.waitForSelector('#export-runs-modal');
         exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
 
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForTimeout(100);
         await page.$eval('#send', (button) => button.click());
-        await page.waitForTimeout(500);
+
+        await waitForDownload(session);
 
         // Check download
         downloadFilesNames = fs.readdirSync(downloadPath);
