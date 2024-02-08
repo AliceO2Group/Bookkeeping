@@ -10,7 +10,8 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
+const fs = require('fs');
+const path = require('path');
 const chai = require('chai');
 const {
     defaultBefore,
@@ -22,6 +23,7 @@ const {
     reloadPage,
 } = require('../defaults');
 const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
+const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
 
@@ -199,5 +201,47 @@ module.exports = () => {
 
         expect(urlParameters).to.contain('page=run-detail');
         expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
+    });
+
+    it('should successfully export filtered runs per data pass', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        const downloadPath = path.resolve('./download');
+
+        // Check accessibility on frontend
+        const session = await page.target().createCDPSession();
+        await session.send('Browser.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: downloadPath,
+            eventsEnabled: true,
+        });
+
+        const targetFileName = 'runs.json';
+
+        // Export
+        await page.waitForSelector('table');
+        await page.waitForSelector('#export-runs-trigger');
+        await page.$eval('#export-runs-trigger', (button) => button.click());
+        await page.waitForSelector('#export-runs-modal');
+        const exportModal = await page.$('#export-runs-modal');
+        expect(exportModal).to.not.be.null;
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        await page.select('.form-control', 'runNumber', 'fillNumber');
+        await page.$eval('#send', (button) => button.click());
+
+        await waitForDownload(session);
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+        expect(runs).to.have.all.deep.members([
+            { runNumber: 56, fillNumber: 6 },
+            { runNumber: 49, fillNumber: 6 },
+            { runNumber: 54, fillNumber: 6 },
+        ]);
+
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };
