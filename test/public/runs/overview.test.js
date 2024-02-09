@@ -150,7 +150,7 @@ module.exports = () => {
 
     it('can switch to infinite mode in amountSelector', async () => {
         const INFINITE_SCROLL_CHUNK = 19;
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
 
         // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
         await page.waitForSelector('table tbody tr:nth-child(2)');
@@ -180,7 +180,7 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
 
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
@@ -701,7 +701,7 @@ module.exports = () => {
         expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
 
         // Test if it works in the filter tab.
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
         await page.$eval('#openFilterToggle', (element) => element.click());
 
         // Run the same test sequence on the filter tab.
@@ -747,7 +747,7 @@ module.exports = () => {
         expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
 
         // Test if it works in the filter tab.
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
         await page.$eval('#openFilterToggle', (element) => element.click());
 
         // Run the same test sequence on the filter tab.
@@ -771,7 +771,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
         await page.$eval('#openFilterToggle', (element) => element.click());
@@ -1013,7 +1013,7 @@ module.exports = () => {
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
     it('should successfully display runs export button', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
         await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
         const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
         expect(runsExportButton).to.be.not.null;
@@ -1031,7 +1031,7 @@ module.exports = () => {
     });
 
     it('should successfully display information when export will be truncated', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
         await page.waitForTimeout(200);
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
@@ -1150,7 +1150,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
 
         // Run 106 has a fill attached
         const runId = 108;
