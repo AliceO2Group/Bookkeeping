@@ -52,11 +52,11 @@ module.exports = () => {
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
             anchoredSimulationPasses: (display) => display === 'Anchored',
+            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
             outputSize: (outputSize) => !isNaN(outputSize.replace(/,/g, '')) || outputSize === '-',
-
         };
 
         // We find the headers matching the datatype keys
@@ -191,15 +191,8 @@ module.exports = () => {
 
         await page.waitForTimeout(100);
 
-        /**
-         * As @see getAllDataFields returns innerText from cells, in case of lhcPeriod.name column, text from inner buttons is also taken.
-         * @param {string[]} periodNames list of names
-         * @return {string[]} cells content
-         */
-        const appendButtonsText = (periodNames) => periodNames.map((p) => `${p}\nAnchored`);
-
         let allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1']));
+        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
@@ -207,6 +200,6 @@ module.exports = () => {
         await page.waitForTimeout(100);
 
         allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(appendButtonsText(['LHC22b_apass1', 'LHC22b_apass2']));
+        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
     });
 };
