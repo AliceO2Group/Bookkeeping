@@ -1082,11 +1082,8 @@ module.exports = () => {
         await page.waitForSelector('#export-runs-modal');
         exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
-        let exportButtonText = await page.$eval('#send', (button) => button.innerText);
-        if (exportButtonText !== 'Export') {
-            await page.waitForSelector('#send:enabled');
-            exportButtonText = await page.$eval('#send', (button) => button.innerText);
-        }
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
         await page.select('.form-control', 'runQuality', 'runNumber');
