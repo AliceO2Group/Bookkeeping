@@ -1082,7 +1082,11 @@ module.exports = () => {
         await page.waitForSelector('#export-runs-modal');
         exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
-        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        let exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        if (exportButtonText !== 'Export') {
+            await page.waitForSelector('#send:enabled');
+            exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        }
         expect(exportButtonText).to.be.eql('Export');
 
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -1111,7 +1115,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector(badFilterSelector);
         await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForSelector('div.atom-spinner');
+        await page.waitForSelector('tbody tr:nth-child(2)');
         await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
         ///// Download
@@ -1120,7 +1124,9 @@ module.exports = () => {
         exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
 
+        await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
+        await page.waitForSelector('#send:enabled');
         await page.$eval('#send', (button) => button.click());
 
         await waitForDownload(session);
