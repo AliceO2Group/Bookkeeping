@@ -22,7 +22,6 @@ const {
     getFirstRow,
     goToPage,
     checkColumnBalloon,
-    reloadPage,
     waitForNetworkIdleAndRedraw,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
