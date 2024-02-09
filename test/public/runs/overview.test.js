@@ -1061,7 +1061,7 @@ module.exports = () => {
     });
 
     it('should successfully export filtered runs', async () => {
-        const c = 0;
+        let c = 0;
         // eslint-disable-next-line require-jsdoc, no-const-assign, no-console
         const ci = () => console.log('TOBECERTAIN', c++);
 
