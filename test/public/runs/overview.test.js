@@ -1060,13 +1060,7 @@ module.exports = () => {
     });
 
     it('should successfully export filtered runs', async () => {
-        let c = 0;
-        // eslint-disable-next-line require-jsdoc, no-const-assign, no-console
-        const ci = () => console.log('TOBECERTAIN', c++);
-
-        ci();
         await goToPage(page, 'run-overview');
-        ci();
 
         const downloadPath = path.resolve('./download');
 
@@ -1077,7 +1071,6 @@ module.exports = () => {
             downloadPath: downloadPath,
             eventsEnabled: true,
         });
-        ci();
 
         let downloadFilesNames;
         const targetFileName = 'runs.json';
@@ -1091,20 +1084,16 @@ module.exports = () => {
         expect(exportModal).to.not.be.null;
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
-        ci();
 
         await page.select('.form-control', 'runQuality', 'runNumber');
         await page.$eval('#send', (button) => button.click());
-        ci();
 
         await waitForDownload(session);
-        ci();
 
         // Check download
         downloadFilesNames = fs.readdirSync(downloadPath);
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
-        ci();
 
         expect(runs).to.be.lengthOf(100);
         expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
@@ -1112,7 +1101,6 @@ module.exports = () => {
         downloadFilesNames = fs.readdirSync(downloadPath);
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
         downloadFilesNames = fs.readdirSync(downloadPath);
-        ci();
 
         // Second export
 
@@ -1125,7 +1113,6 @@ module.exports = () => {
         await page.$eval(badFilterSelector, (element) => element.click());
         await page.waitForSelector('div.atom-spinner');
         await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-        ci();
 
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
@@ -1135,17 +1122,14 @@ module.exports = () => {
 
         await page.select('.form-control', 'runQuality', 'runNumber');
         await page.$eval('#send', (button) => button.click());
-        ci();
 
         await waitForDownload(session);
-        ci();
 
         // Check download
         downloadFilesNames = fs.readdirSync(downloadPath);
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
         expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
-        ci();
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
