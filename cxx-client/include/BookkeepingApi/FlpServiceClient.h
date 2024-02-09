@@ -17,6 +17,7 @@
 #define CXX_CLIENT_BOOKKEEPINGAPI_FLPSERVICECLIENT_H_
 
 #include <string>
+#include <cstdint>
 
 namespace o2::bkp::api
 {
