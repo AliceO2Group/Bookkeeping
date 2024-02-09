@@ -21,9 +21,9 @@ async function waitForDownload(session) {
     return new Promise((resolve, reject) => {
         session.on('Browser.downloadProgress', (event) => {
             if (event.state === 'completed') {
-                resolve();
+                resolve('download completed');
             } else if (event.state === 'canceled') {
-                reject();
+                reject('download canceled');
             }
         });
     });
