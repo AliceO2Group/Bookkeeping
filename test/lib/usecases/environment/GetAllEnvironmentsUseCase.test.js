@@ -44,9 +44,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(3);
-        expect(environments[0].id).to.be.equal('SomeId');
-        expect(environments[1].id).to.be.equal('newId');
-        expect(environments[2].id).to.be.equal('CmCvjNbg');
+        expect(environments.map(({ id }) => id)).to.eql(['SomeId', 'newId', 'CmCvjNbg']);
     });
 
     it('should successfully filter environments on a list of ids with a non existing id', async () => {
@@ -55,8 +53,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments[0].id).to.be.equal('SomeId');
-        expect(environments[1].id).to.be.equal('newId');
+        expect(environments.map(({ id }) => id)).to.eql(['SomeId', 'newId']);
     });
 
     it('should successfully filter environments on one current status', async () => {
@@ -65,8 +62,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments[0].id).to.be.equal('CmCvjNbg');
-        expect(environments[1].id).to.be.equal('Dxi029djX');
+        expect(environments.map(({ id }) => id)).to.eql(['CmCvjNbg', 'Dxi029djX']);
     });
 
     it('should successfully filter environments on multiple current statusses', async () => {
@@ -75,12 +71,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(6);
-        expect(environments[0].id).to.be.equal('SomeId');
-        expect(environments[1].id).to.be.equal('newId');
-        expect(environments[2].id).to.be.equal('CmCvjNbg');
-        expect(environments[3].id).to.be.equal('EIDO13i3D');
-        expect(environments[4].id).to.be.equal('8E4aZTjY');
-        expect(environments[5].id).to.be.equal('Dxi029djX');
+        expect(environments.map(({ id }) => id)).to.eql(['SomeId', 'newId', 'CmCvjNbg', 'EIDO13i3D', '8E4aZTjY', 'Dxi029djX']);
     });
 
     it('should successfully filter environments on status history with - input', async () => {
@@ -89,8 +80,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments[0].id).to.be.equal('EIDO13i3D');
-        expect(environments[1].id).to.be.equal('8E4aZTjY');
+        expect(environments.map(({ id }) => id)).to.eql(['EIDO13i3D', '8E4aZTjY']);
     });
 
     it('should successfully filter environments on status history without - input', async () => {
@@ -99,8 +89,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments[0].id).to.be.equal('EIDO13i3D');
-        expect(environments[1].id).to.be.equal('8E4aZTjY');
+        expect(environments.map(({ id }) => id)).to.eql(['EIDO13i3D', '8E4aZTjY']);
     });
 
     it('should successfully filter environments on status history with equal input with -', async () => {
@@ -142,8 +131,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments[0].id).to.be.equal('TDI59So3d');
-        expect(environments[1].id).to.be.equal('EIDO13i3D');
+        expect(environments.map(({ id }) => id)).to.eql(['EIDO13i3D', 'TDI59So3d']);
     });
 
     it('should successfully filter environments run numbers with limit', async () => {
@@ -171,7 +159,6 @@ module.exports = () => {
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
         // Should include all environments with run numbers containing the substring 10
-        expect(environments[0].id).to.be.equal('TDI59So3d');
-        expect(environments[1].id).to.be.equal('Dxi029djX');
+        expect(environments.map(({ id }) => id)).to.eql(['TDI59So3d', 'Dxi029djX']);
     });
 };
