@@ -1044,7 +1044,7 @@ module.exports = () => {
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-overview');
         await page.waitForTimeout(200);
 
         await pressElement(page, '#openFilterToggle');

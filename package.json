@@ -10,7 +10,7 @@
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
-    "test": "mocha --exit --timeout 0 --grep 'Runs Overview Page should successfully export filtered runs'",
+    "test": "mocha --exit --timeout 0 --grep 'Runs Overview Page should successfully export filtered runs|Runs Overview Page should successfully display disabled runs export button when there is no runs available'",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
     "docker-update": "node scripts/update-dockerfile.js"
