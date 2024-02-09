@@ -11,6 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
+const path = require('path');
+const fs = require('fs');
 const chai = require('chai');
 const {
     defaultBefore,
@@ -22,6 +24,7 @@ const {
     reloadPage,
 } = require('../defaults');
 const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
+const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
 
@@ -203,5 +206,46 @@ module.exports = () => {
 
         expect(urlParameters).to.contain('page=run-detail');
         expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
+    });
+
+    it('should successfully export runs', async () => {
+        await goToPage(page, 'run-overview');
+        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+
+        const downloadPath = path.resolve('./download');
+
+        // Check accessibility on frontend
+        const session = await page.target().createCDPSession();
+        await session.send('Browser.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: downloadPath,
+            eventsEnabled: true,
+        });
+
+        const targetFileName = 'runs.json';
+
+        // First export
+        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runQuality', 'runNumber');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        await page.$eval('#send', (button) => button.click());
+
+        await waitForDownload(session);
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+
+        expect(runs).to.be.lengthOf(100);
+        expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
+            runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };
