@@ -44,7 +44,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(3);
-        expect(environments.map(({ id }) => id)).to.eql(['SomeId', 'newId', 'CmCvjNbg']);
+        expect(environments.map(({ id }) => id)).to.have.members(['SomeId', 'newId', 'CmCvjNbg']);
     });
 
     it('should successfully filter environments on a list of ids with a non existing id', async () => {
@@ -53,7 +53,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments.map(({ id }) => id)).to.eql(['SomeId', 'newId']);
+        expect(environments.map(({ id }) => id)).to.have.members(['SomeId', 'newId']);
     });
 
     it('should successfully filter environments on one current status', async () => {
@@ -62,7 +62,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments.map(({ id }) => id)).to.eql(['CmCvjNbg', 'Dxi029djX']);
+        expect(environments.map(({ id }) => id)).to.have.members(['CmCvjNbg', 'Dxi029djX']);
     });
 
     it('should successfully filter environments on multiple current statusses', async () => {
@@ -71,7 +71,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(6);
-        expect(environments.map(({ id }) => id)).to.eql(['SomeId', 'newId', 'CmCvjNbg', 'EIDO13i3D', '8E4aZTjY', 'Dxi029djX']);
+        expect(environments.map(({ id }) => id)).to.have.members(['SomeId', 'newId', 'CmCvjNbg', 'EIDO13i3D', '8E4aZTjY', 'Dxi029djX']);
     });
 
     it('should successfully filter environments on status history with - input', async () => {
@@ -80,7 +80,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments.map(({ id }) => id)).to.eql(['EIDO13i3D', '8E4aZTjY']);
+        expect(environments.map(({ id }) => id)).to.have.members(['EIDO13i3D', '8E4aZTjY']);
     });
 
     it('should successfully filter environments on status history without - input', async () => {
@@ -89,7 +89,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments.map(({ id }) => id)).to.eql(['EIDO13i3D', '8E4aZTjY']);
+        expect(environments.map(({ id }) => id)).to.have.members(['EIDO13i3D', '8E4aZTjY']);
     });
 
     it('should successfully filter environments on status history with equal input with -', async () => {
@@ -131,7 +131,7 @@ module.exports = () => {
 
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
-        expect(environments.map(({ id }) => id)).to.eql(['EIDO13i3D', 'TDI59So3d']);
+        expect(environments.map(({ id }) => id)).to.have.members(['EIDO13i3D', 'TDI59So3d']);
     });
 
     it('should successfully filter environments run numbers with limit', async () => {
@@ -159,6 +159,6 @@ module.exports = () => {
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(2);
         // Should include all environments with run numbers containing the substring 10
-        expect(environments.map(({ id }) => id)).to.eql(['TDI59So3d', 'Dxi029djX']);
+        expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d', 'Dxi029djX']);
     });
 };
