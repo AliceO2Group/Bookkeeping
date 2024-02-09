@@ -1099,9 +1099,7 @@ module.exports = () => {
         expect(runs).to.be.lengthOf(100);
         expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
             runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
-        downloadFilesNames = fs.readdirSync(downloadPath);
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
-        downloadFilesNames = fs.readdirSync(downloadPath);
 
         // Second export
 
