@@ -1080,13 +1080,13 @@ module.exports = () => {
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
         await page.waitForSelector('#export-runs-modal');
-        exportModal = await page.$('#export-runs-modal');
-        expect(exportModal).to.not.be.null;
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runQuality', 'runNumber');
         await page.waitForSelector('#send:enabled');
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
-        await page.select('.form-control', 'runQuality', 'runNumber');
         await page.$eval('#send', (button) => button.click());
 
         await waitForDownload(session);
@@ -1118,7 +1118,6 @@ module.exports = () => {
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
         await page.waitForSelector('#export-runs-modal');
-        exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.not.be.null;
 
         await page.waitForSelector('.form-control');
