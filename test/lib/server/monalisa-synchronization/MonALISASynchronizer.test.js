@@ -88,7 +88,7 @@ module.exports = () => {
 
         // Correct amount of data
         expect(simulationPassesDB).to.be.an('array');
-        expect(simulationPassesDB).to.be.lengthOf(4);
+        expect(simulationPassesDB).to.be.lengthOf(5);
 
         // All expected Simulation Passes names present
         const potentiallyInsertedSimulationPassesNames = potentiallyInsertedSimulationPasses.map(({ properties: { name } }) => name);
