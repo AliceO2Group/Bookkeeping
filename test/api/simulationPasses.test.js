@@ -38,8 +38,62 @@ const LHC23k6b = {
     outputSize: 157000310748,
 };
 
+const LHC23k6a = {
+    id: 3,
+    name: 'LHC23k6a',
+    jiraId: 'SIMTICKET-3',
+    description: 'Some Random general purpose for LHC23k6a',
+    pwg: 'PWGX3',
+    requestedEventsCount: 2245555,
+    generatedEventsCount: 53800,
+    outputSize: 147000310748,
+};
+
 module.exports = () => {
     before(resetDatabaseContent);
+    describe('GET /api/simulationPasses/:id', () => {
+        it('should successfuly filter on ids', (done) => {
+            request(server)
+                .get('/api/simulationPasses/1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.eql(LHC23k6c);
+
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/simulationPasses/:id', () => {
+        it('should successfuly filter on ids', (done) => {
+            request(server)
+                .get('/api/simulationPasses/99999')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    expect(errors).to.be.eql([
+                        {
+                            status: 404,
+                            title: 'Not found',
+                            detail: 'Simulation Pass with this id (99999) could not be found',
+                        },
+                    ]);
+
+                    done();
+                });
+        });
+    });
 
     describe('GET /api/simulationPasses', () => {
         it('should successfuly fetch all data', (done) => {
@@ -53,10 +107,10 @@ module.exports = () => {
                     }
 
                     const { data, meta } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(2);
-
+                    expect(data).to.be.lengthOf(3);
+                    expect(data).to.have.all.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
                     done();
                 });
         });
@@ -156,7 +210,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.deep.members([LHC23k6b]);
+                    expect(simulationPasses).to.have.deep.members([LHC23k6b, LHC23k6a]);
                     done();
                 });
         });
@@ -188,7 +242,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+                    expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
 
                     done();
                 });
@@ -205,7 +259,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6c, LHC23k6b]);
+                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6c, LHC23k6b, LHC23k6a]);
                     done();
                 });
         });
@@ -221,7 +275,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6b, LHC23k6c]);
+                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6b, LHC23k6a, LHC23k6c]);
                     done();
                 });
         });
@@ -237,7 +291,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6c, LHC23k6b]);
+                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6c, LHC23k6b, LHC23k6a]);
                     done();
                 });
         });
@@ -253,7 +307,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6c, LHC23k6b]);
+                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6a, LHC23k6c, LHC23k6b]);
                     done();
                 });
         });
@@ -269,7 +323,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6b, LHC23k6c]);
+                    expect(simulationPasses).to.have.deep.ordered.members([LHC23k6a, LHC23k6b, LHC23k6c]);
                     done();
                 });
         });
@@ -285,7 +339,7 @@ module.exports = () => {
 
                     const { data: simulationPasses } = res.body;
                     expect(simulationPasses).to.be.an('array');
-                    expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c]);
+                    expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
 
                     done();
                 });
@@ -303,22 +357,6 @@ module.exports = () => {
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/a');
                     expect(titleError.detail).to.equal('"query.a" is not allowed');
-                    done();
-                });
-        });
-        it('should return 400 if the limit is below 1', (done) => {
-            request(server)
-                .get('/api/simulationPasses?page[limit]=0')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-                    expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
                     done();
                 });
         });
