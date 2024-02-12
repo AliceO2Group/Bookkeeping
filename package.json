@@ -53,11 +53,15 @@
   },
   "bundleDependencies": [
     "@aliceo2/web-ui",
+    "@grpc/grpc-js",
+    "@grpc/proto-loader",
     "cls-hooked",
+    "d3",
     "deepmerge",
     "joi",
     "mariadb",
     "multer",
+    "node-fetch",
     "sequelize",
     "umzug"
   ]
