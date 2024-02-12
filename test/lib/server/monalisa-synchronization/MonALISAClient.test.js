@@ -21,7 +21,6 @@ const dataPassSchema = Joi.object({
     description: Joi.string(),
     outputSize: Joi.number(),
     lastRunNumber: Joi.number(),
-
 });
 
 const simulationPassSchema = Joi.object({
