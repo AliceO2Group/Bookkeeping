@@ -80,7 +80,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the log-reply form', async () => {
-        await goToPage(page, 'log-create&parentLogId=1');
+        await goToPage(page, 'log-reply&parentLogId=1');
 
         const header = await page.$eval('.f3', (element) => element.textContent);
         expect(header).to.equal('Reply to: First entry');
@@ -260,7 +260,7 @@ module.exports = () => {
         await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
-        await page.type('#run-number', runNumbersStr);
+        await page.type('#run-numbers', runNumbersStr);
 
         // Create the new log
         const buttonSend = await page.$('button#send');
@@ -289,7 +289,7 @@ module.exports = () => {
         await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
-        await page.type('#run-number', runNumbersStr);
+        await page.type('#run-numbers', runNumbersStr);
 
         // Wait for the button to not be disabled
         await page.waitForTimeout(50);
