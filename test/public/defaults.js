@@ -244,7 +244,7 @@ module.exports.getInnerText = getInnerText;
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {string} innerText Text to search for.
- * @return {void}
+ * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
     await page.waitForSelector(selector);
