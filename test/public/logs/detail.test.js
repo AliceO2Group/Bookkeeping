@@ -173,7 +173,7 @@ module.exports = () => {
         await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
 
         const text = 'Test the reply button';
 
@@ -201,7 +201,7 @@ module.exports = () => {
         await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
 
         const text = 'Test the reply log creation with no title';
 

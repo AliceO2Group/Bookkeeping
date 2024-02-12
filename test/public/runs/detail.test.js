@@ -390,7 +390,7 @@ module.exports = () => {
         expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
     });
 
-    it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
+    it('should successfully expose a button to create a new log related to the displayed environment', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
 
         await pressElement(page, '#create-log');
@@ -398,7 +398,7 @@ module.exports = () => {
         expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106' })).to.eql({});
 
         await page.waitForSelector('input#environments');
-        expect(await page.$eval('input#run-number', (element) => element.value)).to.equal('106');
+        expect(await page.$eval('input#run-numbers', (element) => element.value)).to.equal('106');
     });
 
     it('should not display the LHC Data when beam is not stable', async () => {
