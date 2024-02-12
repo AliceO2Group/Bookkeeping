@@ -74,10 +74,10 @@ module.exports = () => {
         expect(potentiallyInsertedSimulationPasses).to.be.length.greaterThan(0);
         const nameToSimulationPass = Object.fromEntries(potentiallyInsertedSimulationPasses
             .map((simulationPass) => [simulationPass.properties.name, simulationPass]));
-        const monALISASynchronizer = new MonALISASynchronizer(monAlisaClient);
+        const monAlisaSynchronizer = new MonALISASynchronizer(monAlisaClient);
 
         // Run Synchronization
-        await monALISASynchronizer.synchronizeSimulationPassesFromMonAlisa();
+        await monAlisaSynchronizer.synchronizeSimulationPassesFromMonAlisa();
 
         const simulationPassesDB = await SimulationPassRepository.findAll({
             include: [
