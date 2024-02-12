@@ -39,6 +39,17 @@ const LHC23k6b = {
     outputSize: 157000310748,
 };
 
+const LHC23k6a = {
+    id: 3,
+    name: 'LHC23k6a',
+    jiraId: 'SIMTICKET-3',
+    description: 'Some Random general purpose for LHC23k6a',
+    pwg: 'PWGX3',
+    requestedEventsCount: 2245555,
+    generatedEventsCount: 53800,
+    outputSize: 147000310748,
+};
+
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -54,7 +65,8 @@ module.exports = () => {
 
     it('should succesfully get all data', async () => {
         const { rows: simulationPasses } = await simulationPassService.getAll();
-        expect(simulationPasses).to.be.lengthOf(2);
+        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.have.all.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
     });
 
     it('should fail when no Simulation Pass with given id', async () => {
@@ -102,8 +114,8 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.be.lengthOf(1);
-        expect(simulationPasses).to.have.deep.members([LHC23k6b]);
+        expect(simulationPasses).to.be.lengthOf(2);
+        expect(simulationPasses).to.have.deep.members([LHC23k6b, LHC23k6a]);
     });
 
     it('should succesfully filter simulation passes on Sata Pass ids', async () => {
@@ -128,7 +140,8 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by generatedEventsCount', async () => {
@@ -140,7 +153,8 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b]);
+        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
     });
 
     it('should succesfully sort simulation passes by requestedEventsCount', async () => {
@@ -152,7 +166,7 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6a, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by outputSize', async () => {
@@ -164,7 +178,8 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by pwg', async () => {
@@ -176,7 +191,8 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c]);
+        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c, LHC23k6a]);
     });
 
     it('should succesfully sort simulation passes by jiraId', async () => {
@@ -188,6 +204,7 @@ module.exports = () => {
             },
         };
         const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
-        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b]);
+        expect(simulationPasses).to.be.lengthOf(3);
+        expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
     });
 };
