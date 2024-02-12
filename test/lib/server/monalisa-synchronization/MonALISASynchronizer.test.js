@@ -69,12 +69,12 @@ module.exports = () => {
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
-        const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
-        const potentiallyInsertedSimulationPasses = await monALISAClient.getSimulationPasses();
+        const monAlisaClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
+        const potentiallyInsertedSimulationPasses = await monAlisaClient.getSimulationPasses();
         expect(potentiallyInsertedSimulationPasses).to.be.length.greaterThan(0);
         const nameToSimulationPass = Object.fromEntries(potentiallyInsertedSimulationPasses
             .map((simulationPass) => [simulationPass.properties.name, simulationPass]));
-        const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
+        const monALISASynchronizer = new MonALISASynchronizer(monAlisaClient);
 
         // Run Synchronization
         await monALISASynchronizer.synchronizeSimulationPassesFromMonALISA();
