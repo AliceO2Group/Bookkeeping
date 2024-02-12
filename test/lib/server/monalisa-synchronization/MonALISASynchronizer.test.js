@@ -77,7 +77,7 @@ module.exports = () => {
         const monALISASynchronizer = new MonALISASynchronizer(monAlisaClient);
 
         // Run Synchronization
-        await monALISASynchronizer.synchronizeSimulationPassesFromMonALISA();
+        await monALISASynchronizer.synchronizeSimulationPassesFromMonAlisa();
 
         const simulationPassesDB = await SimulationPassRepository.findAll({
             include: [
