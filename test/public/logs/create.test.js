@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText } = require('../defaults.js');
+const { pressElement, expectInnerText, fillInput } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -37,8 +37,8 @@ module.exports = () => {
     before(async () => {
         [page, browser, url] = await defaultBefore();
         await page.setViewport({
-            width: 700,
-            height: 720,
+            width: 1920,
+            height: 1080,
             deviceScaleFactor: 1,
         });
     });
@@ -389,5 +389,72 @@ module.exports = () => {
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(title);
         expect(lastLog.lhcFills.map(({ fillNumber }) => fillNumber)).to.eql(lhcFillNumbers);
+    });
+
+    it('should successfully switch to on-call log template', async () => {
+        await goToPage(page, 'log-create');
+
+        // Log template is the first select of the page
+        await page.waitForSelector('select');
+        await page.select('select', 'on-call');
+
+        // Expect the inputs to be there
+        await page.waitForSelector('#shortDescription', { timeout: 500 });
+
+        const shortDescription = 'Short description of the issue';
+        await fillInput(page, '#shortDescription', shortDescription);
+
+        const detectorOrSubsystem = 'FT0';
+        await page.select('#detectorOrSubsystem', detectorOrSubsystem);
+
+        const severity = 'Severe';
+        await page.select('#severity', severity);
+
+        const issueScope = 'System commissioning';
+        await page.select('#issueScope', issueScope);
+
+        const shifterPosition = 'ECS';
+        await page.select('#shifterPosition', shifterPosition);
+
+        const beamMode = 'Beam mode';
+        await fillInput(page, '#lhcBeamMode', beamMode);
+
+        const description = 'Description\nof the issue';
+        await pressElement(page, '#issue-description ~ .CodeMirror');
+        await page.keyboard.type(description);
+
+        const reason = 'Reason\nto call on-call';
+        await pressElement(page, '#reason-to-call-on-call ~ .CodeMirror');
+        await page.keyboard.type(reason);
+
+        const actions = 'Actions\nalready taken';
+        await pressElement(page, '#actions-already-taken ~ .CodeMirror');
+        await page.keyboard.type(actions);
+
+        await pressElement(page, '#send:not([disabled])');
+
+        await page.waitForNavigation();
+        await expectInnerText(page, 'h2', `${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
+
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(`${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
+        expect(lastLog.text).to.equal(`\
+TITLE: ${shortDescription} - Call on-call for ${detectorOrSubsystem}
+
+IMPORTANCE: ${severity} for ${issueScope}
+
+SHIFTER: Anonymous - ${shifterPosition}
+
+LHC BEAM MODE: ${beamMode}
+
+DESCRIPTION:
+${description}
+
+REASON TO CALL THIS ON-CALL:
+${reason}
+
+ACTIONS ALREADY TAKEN:
+${actions}\
+`);
     });
 };
