@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.78.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.78.1)
+* Notable change for developers:
+  * All dependencies has been added to the bundle dependencies
+
 ## [0.78.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.78.0)
 * Notable changes for users:
   * Physics runs filter toggle has a more consistent behavior:
