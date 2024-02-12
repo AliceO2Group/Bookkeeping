@@ -51,13 +51,13 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     it('should succesfully get by id', async () => {
-        const dataPass = await dataPassService.getByIdentifier({ id: 1 });
-        expect(dataPass).to.be.eql(LHC22b_apass1);
+        const lhcPeriod = await dataPassService.getByIdentifier({ id: 1 });
+        expect(lhcPeriod).to.be.eql(LHC22b_apass1);
     });
 
     it('should succesfully get by name', async () => {
-        const dataPass = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
-        expect(dataPass).to.be.eql(LHC22a_apass1);
+        const lhcPeriod = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
+        expect(lhcPeriod).to.be.eql(LHC22a_apass1);
     });
 
     it('should succesfully get all data', async () => {
