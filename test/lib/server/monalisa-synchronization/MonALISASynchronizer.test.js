@@ -70,9 +70,9 @@ module.exports = () => {
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
         const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
-        const expectedSimulationPasses = await monALISAClient.getSimulationPasses();
-        expect(expectedSimulationPasses).to.be.length.greaterThan(0);
-        const nameToSimulationPass = Object.fromEntries(expectedSimulationPasses
+        const potentiallyValidSimulationPasses = await monALISAClient.getSimulationPasses();
+        expect(potentiallyValidSimulationPasses).to.be.length.greaterThan(0);
+        const nameToSimulationPass = Object.fromEntries(potentiallyValidSimulationPasses
             .map((simulationPass) => [simulationPass.properties.name, simulationPass]));
         const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
 
@@ -91,16 +91,16 @@ module.exports = () => {
         expect(simulationPassesDB).to.be.lengthOf(2);
 
         // All expected Simulation Passes names present
-        const expectedSimulationPassesNames = expectedSimulationPasses.map(({ properties: { name } }) => name);
-        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(expectedSimulationPassesNames);
+        const potentiallyValidSimulationPassesNames = potentiallyValidSimulationPasses.map(({ properties: { name } }) => name);
+        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(potentiallyValidSimulationPassesNames);
 
         // Properties of Simulation Passes are the same
         expect(simulationPassesDB.map((simulationPass) => {
             const { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize } = simulationPass;
             return { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize };
-        })).to.include.deep.all.members(expectedSimulationPasses.map(({ properties }) => properties));
+        })).to.include.deep.all.members(potentiallyValidSimulationPasses.map(({ properties }) => properties));
 
-        const expectedNamesSet = new Set(expectedSimulationPassesNames);
+        const potentiallyValidNamesSet = new Set(potentiallyValidSimulationPassesNames);
 
         // All associated with appropriate Data Passes
 
@@ -112,17 +112,17 @@ module.exports = () => {
             nameToSimulationPass[name]?.associations.lhcPeriods
                 .flatMap((lhcPeriod) => helperGetDataPassNamesPerLhcPeriodOfSimulationPass(name, lhcPeriod));
 
-        const simulationPassToDataPassAssociations = simulationPassesDB
-            .filter(({ name }) => expectedNamesSet.has(name))
+        const simulationPassToDataPassNames = simulationPassesDB
+            .filter(({ name }) => potentiallyValidNamesSet.has(name))
             .map(({ name }) => ({ name, dataPasses: helperGetDataPassNamesPerSimulationPassName(name) }));
 
         expect(simulationPassesDB.map(({ name, dataPasses }) => ({ name, dataPasses: dataPasses.map(({ name }) => name) })))
-            .to.include.deep.all.members(simulationPassToDataPassAssociations);
+            .to.include.deep.all.members(simulationPassToDataPassNames);
 
         // Runs of Simulation Pass are in DB
         for (const simulationPassDB of simulationPassesDB) {
             const { name, runs } = simulationPassDB;
-            if (expectedNamesSet.has(name)) {
+            if (potentiallyValidNamesSet.has(name)) {
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(nameToSimulationPass[name].associations.runNumbers);
             }
         }
