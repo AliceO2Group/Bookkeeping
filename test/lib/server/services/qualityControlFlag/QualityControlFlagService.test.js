@@ -196,8 +196,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
                 new BadParameterError(`
-                    Given QC flag period (${1565314200 - 50000} ${1565314200 + 15000}) 
-                    is beyond run trigger period (${1565314200 - 45000}, ${1565314200 + 45000})
+                    Given QC flag period (${1565314200 - 50000} ${1565314200 + 15000}) is beyond 
+                    run trigger period (${1565314200 - 45000}, ${1565314200 + 45000})
                 `),
             );
         });
@@ -217,7 +217,7 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
-                new BadParameterError('Parameter `timeTrgEnd` must be greater than `timeTrgStart`'),
+                new BadParameterError('Parameter `timeEnd` must be greater than `timeStart`'),
             );
         });
 
