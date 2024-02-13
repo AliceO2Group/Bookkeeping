@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.77.0",
+  "version": "0.78.1",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -53,11 +53,15 @@
   },
   "bundleDependencies": [
     "@aliceo2/web-ui",
+    "@grpc/grpc-js",
+    "@grpc/proto-loader",
     "cls-hooked",
+    "d3",
     "deepmerge",
     "joi",
     "mariadb",
     "multer",
+    "node-fetch",
     "sequelize",
     "umzug"
   ]
