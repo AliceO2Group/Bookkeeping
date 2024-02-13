@@ -97,10 +97,10 @@ module.exports = () => {
             expect(flags).to.be.lengthOf(1);
             expect(flags[0]).to.be.eql({
                 id: 4,
-                timeStart: 1647924000,
-                timeEnd: 1647924000,
+                timeStart: 1647924400000,
+                timeEnd: 1647924400000,
                 comment: 'Some qc comment 4',
-                createdAt: 1707825436000,
+                createdAt: 1707825436 * 1000,
                 dataPassId: 2,
                 runNumber: 1,
                 detectorId: 1,
@@ -112,7 +112,7 @@ module.exports = () => {
                         userId: 1,
                         user: { id: 1, externalId: 1, name: 'John Doe' },
                         comment: 'Accepted: Some qc comment 1',
-                        createdAt: 1707825436000,
+                        createdAt: 1707825436 * 1000,
                     },
                 ],
             });
@@ -163,8 +163,8 @@ module.exports = () => {
         // Run trg time middle point: 1565314200, radius: 45000
         it('should fail to create quality control flag due to user id', async () => {
             const qcFlagCreationParameters = {
-                timeStart: 1565314200 - 10,
-                timeEnd: 1565314200 + 15000,
+                timeStart: (1565314200 - 10) * 1000,
+                timeEnd: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 provenance: 'HUMAN',
                 externalUserId: 9999999, // Failing property
@@ -182,8 +182,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                timeStart: 1565314200 - 50000, // Failing property
-                timeEnd: 1565314200 + 15000,
+                timeStart: (1565314200 - 50000) * 1000, // Failing property
+                timeEnd: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 provenance: 'HUMAN',
                 externalUserId: 456,
@@ -195,17 +195,14 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
-                new BadParameterError(`
-                    Given QC flag period (${1565314200 - 50000} ${1565314200 + 15000}) is beyond 
-                    run trigger period (${1565314200 - 45000}, ${1565314200 + 45000})
-                `),
+                new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                timeStart: 1565314200 + 10000, // Failing property
-                timeEnd: 1565314200 - 15000, // Failing property
+                timeStart: (1565314200 + 10000) * 1000, // Failing property
+                timeEnd: (1565314200 - 15000) * 1000, // Failing property
                 comment: 'VERY INTERSETING REMARK',
                 provenance: 'HUMAN',
                 externalUserId: 456,
@@ -223,8 +220,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to due to no association', async () => {
             const qcFlagCreationParameters = {
-                timeStart: 1565314200 - 10,
-                timeEnd: 1565314200 + 15000,
+                timeStart: (1565314200 - 10) * 1000,
+                timeEnd: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 provenance: 'HUMAN',
                 externalUserId: 456,
@@ -245,8 +242,8 @@ module.exports = () => {
 
         it('should succesfully create quality control flag with externalUserId', async () => {
             const qcFlagCreationParameters = {
-                timeStart: 1565314200 - 10,
-                timeEnd: 1565314200 + 15000,
+                timeStart: (1565314200 - 10) * 1000,
+                timeEnd: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 provenance: 'HUMAN',
                 externalUserId: 456,
