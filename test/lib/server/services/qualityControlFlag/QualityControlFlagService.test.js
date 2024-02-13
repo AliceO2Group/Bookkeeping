@@ -59,7 +59,7 @@ module.exports = () => {
     after(resetDatabaseContent);
 
     describe('Fetching quality control flags', () => {
-        it('should succesfully fetch all flags', async () => {
+        it('should succesfuly fetch all flags', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll();
             expect(count).to.be.equal(4);
             expect(flags).to.be.an('array');
@@ -69,7 +69,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfully fetch all flags filtering with associations', async () => {
+        it('should succesfuly fetch all flags filtering with associations', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     dataPassIds: [1],
@@ -85,7 +85,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfully fetch all flags filtering with associations - 2', async () => {
+        it('should succesfuly fetch all flags filtering with associations - 2', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     dataPassIds: [2],
@@ -120,7 +120,7 @@ module.exports = () => {
             });
         });
 
-        it('should succesfully fetch all flags filtering with externalUserIds', async () => {
+        it('should succesfuly fetch all flags filtering with externalUserIds', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     externalUserIds: [1],
@@ -134,7 +134,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfully fetch all flags filtering with userNames', async () => {
+        it('should succesfuly fetch all flags filtering with userNames', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     userNames: ['Jan Jansen'],
@@ -147,7 +147,7 @@ module.exports = () => {
             expect(flags[0].user.name).to.be.equal('Jan Jansen');
         });
 
-        it('should succesfully fetch all flags filtering with ids', async () => {
+        it('should succesfuly fetch all flags filtering with ids', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     ids: [1, 4],
@@ -244,7 +244,7 @@ module.exports = () => {
             );
         });
 
-        it('should succesfully create quality control flag with externalUserId', async () => {
+        it('should succesfuly create quality control flag with externalUserId', async () => {
             const qcFlagCreationParameters = {
                 timeStart: (1565314200 - 10) * 1000,
                 timeEnd: (1565314200 + 15000) * 1000,
@@ -275,7 +275,7 @@ module.exports = () => {
         });
     });
 
-    describe('Creating Quality Control Flag', () => {
+    describe('Creating Quality Control Flag Verification', () => {
         it('should fail to create verification due to incorrect external user id', async () => {
             const verificationParamteres = {
                 qualityControlFlagId: 2,
@@ -310,6 +310,23 @@ module.exports = () => {
                 () => qualityControlFlagService.createVerification(verificationParamteres),
                 new Error('It is not possibly not verify one\'s own QC Flag (id:1)'),
             );
+        });
+
+        it('should successful create QC Flag verification', async () => {
+            const verificationParamteres = {
+                qualityControlFlagId: 2,
+                comment: 'OK',
+                externalUserId: 456,
+            };
+            await qualityControlFlagService.createVerification(verificationParamteres);
+            const { rows: [{ verifications: [createdVerification] }] } = await qualityControlFlagService.getAll({ filter: { ids: [2] } });
+            delete createdVerification.createdAt;
+            expect(createdVerification).to.be.eql({
+                id: 3,
+                userId: 2,
+                user: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                comment: 'OK',
+            });
         });
     });
 };
