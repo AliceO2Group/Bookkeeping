@@ -11,6 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
+const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
+
 const DetectorSuite = require('./detector/index.js');
 const DplSuite = require('./dpl/index.js');
 const Environment = require('./environment/index.js');
@@ -26,7 +28,7 @@ const StatisticsSuite = require('./statistics/index.js');
 const LhcPeriodSuite = require('./lhcPeriod');
 const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
-const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
+const QualityControlFlag = require('./qualityControlFlag/index.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -48,4 +50,5 @@ module.exports = () => {
     describe('LhcPeriod', LhcPeriodSuite);
     describe('User', UserSuite);
     describe('DataPasses', DataPassesSuite);
+    describe('QualityControlFlag', QualityControlFlag);
 };
