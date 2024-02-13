@@ -386,9 +386,9 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 };
 
 /**
- * @TODO convert this to not-async
  * Check the differences between the provided expected parameters and the parameters actually received
  *
+ * @TODO convert this to not-async
  * For now only handle scalar parameters
  *
  * @param {puppeteer.Page} page the puppeteer page
