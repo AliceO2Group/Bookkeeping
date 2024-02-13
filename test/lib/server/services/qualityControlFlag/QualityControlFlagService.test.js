@@ -163,7 +163,7 @@ module.exports = () => {
     describe('Creating Quality Control Flag', () => {
         /** Flags for runNumber: 106, LHC22b_apass1, CPV */
         // Run trg time middle point: 1565314200, radius: 45000 seconds
-        it('should fail to create quality control flag due to user id', async () => {
+        it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
                 timeStart: (1565314200 - 10) * 1000,
                 timeEnd: (1565314200 + 15000) * 1000,
@@ -272,6 +272,44 @@ module.exports = () => {
             for (const property in propertiesExpectedTobEqual) {
                 expect(fetchedCreatedFlag[property]).to.be.equal(qcFlagCreationParameters[property]);
             }
+        });
+    });
+
+    describe('Creating Quality Control Flag', () => {
+        it('should fail to create verification due to incorrect external user id', async () => {
+            const verificationParamteres = {
+                qualityControlFlagId: 2,
+                comment: 'Good',
+                externalUserId: 9999,
+            };
+            assert.rejects(
+                () => qualityControlFlagService.createVerification(verificationParamteres),
+                new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail if QC Flag id is incorrect', async () => {
+            const verificationParamteres = {
+                qualityControlFlagId: 9999,
+                comment: 'Treachery...',
+                externalUserId: 1,
+            };
+            assert.rejects(
+                () => qualityControlFlagService.createVerification(verificationParamteres),
+                new BadParameterError('Cannot find qc flag with id 9999'),
+            );
+        });
+
+        it('should fail if user tries to verify one\'s one flag', async () => {
+            const verificationParamteres = {
+                qualityControlFlagId: 1,
+                comment: 'Treachery...',
+                externalUserId: 1,
+            };
+            assert.rejects(
+                () => qualityControlFlagService.createVerification(verificationParamteres),
+                new Error('It is not possibly not verify one\'s own QC Flag (id:1)'),
+            );
         });
     });
 };
