@@ -64,7 +64,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Wait for the button to not be disabled
         await page.waitForTimeout(50);
@@ -79,12 +80,12 @@ module.exports = () => {
     });
 
     it('Should successfully display the log-reply form', async () => {
-        await goToPage(page, 'log-create&parentLogId=1');
+        await goToPage(page, 'log-reply&parentLogId=1');
 
         const header = await page.$eval('.f3', (element) => element.textContent);
         expect(header).to.equal('Reply to: First entry');
 
-        await pressElement(page, '#show-collapse-1');
+        await pressElement(page, '.log-display-action-buttons button:nth-of-type(2)');
         await page.waitForTimeout(20);
 
         await expectInnerText(page, 'span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
@@ -103,7 +104,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Create check disabled button
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
@@ -122,7 +124,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Expect no TEST-TAG-27 tag to be there, because it is archived, but expect tag TEST-TAG-31
         let testTag27Found = false;
@@ -185,7 +188,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Add both the file attachments to the input field
         const attachmentsInput = await page.$('#attachments');
@@ -252,10 +256,11 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
-        await page.type('#run-number', runNumbersStr);
+        await page.type('#run-numbers', runNumbersStr);
 
         // Create the new log
         const buttonSend = await page.$('button#send');
@@ -280,10 +285,11 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
-        await page.type('#run-number', runNumbersStr);
+        await page.type('#run-numbers', runNumbersStr);
 
         // Wait for the button to not be disabled
         await page.waitForTimeout(50);
@@ -309,7 +315,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the environments string to the input
         await page.type('#environments', environmentsStr);
@@ -335,7 +342,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the environments string to the input
         await page.type('#environments', environmentsStr);
@@ -364,7 +372,8 @@ module.exports = () => {
         // Select the boxes and send the values of the title and text to it
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
 
         // Send the value of the run numbers string to the input
         await page.type('#lhc-fills', lhcFillNumbersStr);
