@@ -15,6 +15,8 @@ const { qualityControlFlagService } = require('../../../../../lib/server/service
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const Joi = require('joi');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 
 const QCFlagReasonSchema = Joi.object({
     id: Joi.number(),
@@ -53,10 +55,12 @@ const QCFlagSchema = Joi.object({
 
 module.exports = () => {
     before(resetDatabaseContent);
+    after(resetDatabaseContent);
 
     describe('Fetching quality control flags', () => {
-        it('Get all Flags', async () => {
-            const flags = await qualityControlFlagService.getAll();
+        it('should succesfully fetch all flags', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll();
+            expect(count).to.be.equal(4);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(4);
             for (const flag of flags) {
@@ -64,14 +68,15 @@ module.exports = () => {
             }
         });
 
-        it('Get all Flags filtering with associations', async () => {
-            const flags = await qualityControlFlagService.getAll({
+        it('should succesfully fetch all flags filtering with associations', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     dataPassIds: [1],
                     runNumbers: [106],
                     detectorIds: [1],
                 },
             });
+            expect(count).to.be.equal(3);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(3);
             for (const flag of flags) {
@@ -79,14 +84,15 @@ module.exports = () => {
             }
         });
 
-        it('Get all Flags filtering with associations - 2', async () => {
-            const flags = await qualityControlFlagService.getAll({
+        it('should succesfully fetch all flags filtering with associations - 2', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
                     dataPassIds: [2],
                     runNumbers: [1],
                     detectorIds: [1],
                 },
             });
+            expect(count).to.be.equal(1);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(1);
             expect(flags[0]).to.be.eql({
@@ -104,12 +110,154 @@ module.exports = () => {
                     {
                         id: 2,
                         userId: 1,
-                        user: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                        user: { id: 1, externalId: 1, name: 'John Doe' },
                         comment: 'Accepted: Some qc comment 1',
                         createdAt: 1707825436000,
                     },
                 ],
             });
+        });
+
+        it('should succesfully fetch all flags filtering with externalUserIds', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll({
+                filter: {
+                    externalUserIds: [1],
+                },
+            });
+            expect(count).to.be.equal(3);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(3);
+            for (const flag of flags) {
+                await QCFlagSchema.validateAsync(flag);
+            }
+        });
+
+        it('should succesfully fetch all flags filtering with userNames', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll({
+                filter: {
+                    userNames: ['Jan Jansen'],
+                },
+            });
+            expect(count).to.be.equal(1);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(1);
+            await QCFlagSchema.validateAsync(flags[0]);
+            expect(flags[0].user.name).to.be.equal('Jan Jansen');
+        });
+
+        it('should succesfully fetch all flags filtering with ids', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll({
+                filter: {
+                    ids: [1, 4],
+                },
+            });
+            expect(count).to.be.equal(2);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(2);
+            expect(flags.map(({ id }) => id)).to.have.all.members([1, 4]);
+        });
+    });
+
+    describe('Creating Quality Control Flag', () => {
+        /** Flags for runNumber: 106, LHC22b_apass1, CPV */
+        // Run trg time middle point: 1565314200, radius: 45000
+        it('should fail to create quality control flag due to user id', async () => {
+            const qcFlagCreationParameters = {
+                timeStart: 1565314200 - 10,
+                timeEnd: 1565314200 + 15000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 9999999, // Failing property
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
+            const qcFlagCreationParameters = {
+                timeStart: 1565314200 - 50000, // Failing property
+                timeEnd: 1565314200 + 15000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                new BadParameterError(`
+                    Given QC flag period (${1565314200 - 50000} ${1565314200 + 15000}) 
+                    is beyond run trigger period (${1565314200 - 45000}, ${1565314200 + 45000})
+                `),
+            );
+        });
+
+        it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
+            const qcFlagCreationParameters = {
+                timeStart: 1565314200 + 10000, // Failing property
+                timeEnd: 1565314200 - 15000, // Failing property
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                new BadParameterError('Parameter `timeTrgEnd` must be greater than `timeTrgStart`'),
+            );
+        });
+
+        it('should fail to create quality control flag due to due to no association', async () => {
+            const qcFlagCreationParameters = {
+                timeStart: 1565314200 - 10,
+                timeEnd: 1565314200 + 15000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 9999, // Failing property
+                detectorId: 111, // Failing property
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                new BadParameterError(`
+                You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111})
+                as there is no association between them
+            `),
+            );
+        });
+
+        it('should succesfully create quality control flag with externalUserId', async () => {
+            const qcFlagCreationParameters = {
+                timeStart: 1565314200 - 10,
+                timeEnd: 1565314200 + 15000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            const flag = await qualityControlFlagService.create(qcFlagCreationParameters);
+            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
         });
     });
 };
