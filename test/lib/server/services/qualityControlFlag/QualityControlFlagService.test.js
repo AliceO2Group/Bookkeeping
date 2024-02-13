@@ -162,7 +162,7 @@ module.exports = () => {
 
     describe('Creating Quality Control Flag', () => {
         /** Flags for runNumber: 106, LHC22b_apass1, CPV */
-        // Run trg time middle point: 1565314200, radius: 45000
+        // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to user id', async () => {
             const qcFlagCreationParameters = {
                 timeStart: (1565314200 - 10) * 1000,
