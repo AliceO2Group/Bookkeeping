@@ -43,6 +43,7 @@ const QCFlagSchema = Joi.object({
     comment: Joi.string(),
     provenance: Joi.string().valid('HUMAN', 'SYNC', 'ASYNC', 'MC'),
     createdAt: Joi.number(),
+    userId: Joi.number(),
 
     dataPassId: Joi.number(),
     runNumber: Joi.number(),
@@ -104,6 +105,7 @@ module.exports = () => {
                 dataPassId: 2,
                 runNumber: 1,
                 detectorId: 1,
+                userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagReason: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
                 verifications: [
@@ -254,7 +256,20 @@ module.exports = () => {
             };
 
             const flag = await qualityControlFlagService.create(qcFlagCreationParameters);
-            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
+            const { rows: [fetchedCreatedFlag] } = await qualityControlFlagService.getAll({ filter: { ids: [flag.id] } });
+            const propertiesExpectedTobEqual = [
+                'timeStart',
+                'timeEnd',
+                'comment',
+                'provenance',
+                'flagReasonId',
+                'runNumber',
+                'dataPassId',
+                'detectorId',
+            ];
+            for (const property in propertiesExpectedTobEqual) {
+                expect(fetchedCreatedFlag[property]).to.be.equal(qcFlagCreationParameters[property]);
+            }
         });
     });
 };
