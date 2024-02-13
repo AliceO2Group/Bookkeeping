@@ -173,12 +173,13 @@ module.exports = () => {
         await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
 
         const text = 'Test the reply button';
 
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
         await page.waitForTimeout(250);
 
         // Create the new log
@@ -200,12 +201,13 @@ module.exports = () => {
         await page.waitForTimeout(1000);
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
 
         const text = 'Test the reply log creation with no title';
 
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
         await page.waitForTimeout(250);
 
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);

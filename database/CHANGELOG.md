@@ -1,3 +1,7 @@
+## [0.78.0]
+* Changes made to the database
+  * Added Simulation Passes (Monte Carlo Productions) related tables and models
+
 ## [0.77.0]
 * Changes made to the database
   * Added missing key to the environments history items table
