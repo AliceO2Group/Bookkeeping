@@ -248,9 +248,8 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
-                new BadParameterError(`
-                Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond
-                run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
@@ -288,10 +287,8 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
-                new BadParameterError(`
-                You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111})
-                as there is no association between them
-            `),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111}) as there is no association between them`),
             );
         });
 
