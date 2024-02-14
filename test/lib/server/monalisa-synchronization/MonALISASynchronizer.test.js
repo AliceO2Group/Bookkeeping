@@ -31,7 +31,7 @@ module.exports = () => {
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
         // Run Synchronization
-        await monALISASynchronizer.synchronizeDataPassesFromMonALISA();
+        await monALISASynchronizer._synchronizeDataPassesFromMonALISA();
 
         const dataPassesDB = await DataPassRepository.findAll({ include: { association: 'runs', attributes: ['runNumber'] } });
 
@@ -77,7 +77,7 @@ module.exports = () => {
         const monAlisaSynchronizer = new MonALISASynchronizer(monAlisaClient);
 
         // Run Synchronization
-        await monAlisaSynchronizer.synchronizeSimulationPassesFromMonAlisa();
+        await monAlisaSynchronizer._synchronizeSimulationPassesFromMonAlisa();
 
         const simulationPassesDB = await SimulationPassRepository.findAll({
             include: [
