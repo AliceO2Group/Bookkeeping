@@ -333,5 +333,35 @@ module.exports = () => {
         });
     });
 
-    describe('POST /api/qualityControlFlags', () => {});
+    describe('POST /api/qualityControlFlags', () => {
+        it('should successfuly create flag instance', (done) => {
+            const qcFlagCreationParameters = {
+                timeStart: (1565314200 - 10) * 1000,
+                timeEnd: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            request(server)
+                .post('/api/qualityControlFlags')
+                .send(qcFlagCreationParameters)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(Object.entries(data)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
+
+                    done();
+                });
+        });
+    });
 };
