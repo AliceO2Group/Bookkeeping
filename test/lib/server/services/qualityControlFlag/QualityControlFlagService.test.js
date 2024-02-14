@@ -346,7 +346,7 @@ module.exports = () => {
             };
             assert.rejects(
                 () => qualityControlFlagService.createVerification(verificationParamteres),
-                new Error('It is not possibly not verify one\'s own QC Flag (id:1)'),
+                new Error('It is not possibly to verify one\'s own QC Flag (id:1)'),
             );
         });
 
