@@ -366,7 +366,77 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly create flag instance', (done) => {
+        it('should fail to create quality control flag due to incorrect qc flag time period', (done) => {
+            const qcFlagCreationParameters = {
+                timeStart: (1565314200 - 50000) * 1000, // Failing property
+                timeEnd: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            // eslint-disable-next-line max-len
+            const expectedError = `Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`;
+
+            request(server)
+                .post('/api/qualityControlFlags')
+                .send(qcFlagCreationParameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                    }
+                    const { errors } = res.body;
+                    expect(errors[0]).to.be.eql({
+                        status: 400,
+                        title: 'Service unavailable',
+                        detail: expectedError,
+                    }),
+
+                    done();
+                });
+        });
+
+        it('should fail to create quality control flag due to incorrect qc flag time period', (done) => {
+            const qcFlagCreationParameters = {
+                timeStart: (1565314200 + 10000) * 1000, // Failing property
+                timeEnd: (1565314200 - 15000) * 1000, // Failing property
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                detectorId: 1,
+            };
+
+            // eslint-disable-next-line max-len
+            const expectedError = 'Parameter `timeEnd` must be greater than `timeStart`';
+
+            request(server)
+                .post('/api/qualityControlFlags')
+                .send(qcFlagCreationParameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                    }
+                    const { errors } = res.body;
+                    expect(errors[0]).to.be.eql({
+                        status: 400,
+                        title: 'Service unavailable',
+                        detail: expectedError,
+                    }),
+
+                    done();
+                });
+        });
+
+        it('should fail to create quality control flag due to due to no association', (done) => {
             const qcFlagCreationParameters = {
                 timeStart: (1565314200 - 10) * 1000,
                 timeEnd: (1565314200 + 15000) * 1000,
@@ -379,22 +449,25 @@ module.exports = () => {
                 detectorId: 111, // Failing property
             };
 
-            const expectedError = `
-            You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111})
-            as there is no association between them
-            `;
+            // eslint-disable-next-line max-len
+            const expectedError = `You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111}) as there is no association between them`;
 
             request(server)
                 .post('/api/qualityControlFlags')
                 .send(qcFlagCreationParameters)
-                .expect(201)
-                .end((err) => {
+                .expect(400)
+                .end((err, res) => {
                     if (err) {
-                        expect(err[0].tit)
-                        done();
-                    } else {
-                        done('Should reject');
+                        done(err);
                     }
+                    const { errors } = res.body;
+                    expect(errors[0]).to.be.eql({
+                        status: 400,
+                        title: 'Service unavailable',
+                        detail: expectedError,
+                    }),
+
+                    done();
                 });
         });
     });
