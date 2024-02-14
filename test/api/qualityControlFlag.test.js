@@ -471,4 +471,89 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('POST /api/qualityControlFlags/verify', () => {
+        it('should successfuly create flag instance', (done) => {
+            const qcFlagVerificationParameters = {
+                qualityControlFlagId: 1,
+                comment: 'ok',
+                externalUserId: 456,
+            };
+
+            request(server)
+                .post('/api/qualityControlFlags/verify')
+                .send(qcFlagVerificationParameters)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    delete qcFlagVerificationParameters.externalUserId;
+                    expect(Object.entries(data)).to.include.all.deep.members(Object.entries(qcFlagVerificationParameters));
+
+                    done();
+                });
+        });
+
+        it('should fail if user tries to verify one\'s one flag', (done) => {
+            const qcFlagVerificationParameters = {
+                qualityControlFlagId: 1,
+                comment: 'ok',
+                externalUserId: 456,
+            };
+
+            // eslint-disable-next-line max-len
+            const expectedError = `It is not possibly not verify one's own QC Flag (id:${qcFlagVerificationParameters.qualityControlFlagId})`;
+
+            request(server)
+                .post('/api/qualityControlFlags/verify')
+                .send(qcFlagVerificationParameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                    }
+                    const { errors } = res.body;
+                    expect(errors[0]).to.be.eql({
+                        status: 400,
+                        title: 'Service unavailable',
+                        detail: expectedError,
+                    }),
+
+                    done();
+                });
+        });
+
+        it('should fail if QC Flag id is incorrect ', (done) => {
+            const qcFlagVerificationParameters = {
+                qualityControlFlagId: 9999,
+                comment: 'ok',
+                externalUserId: 456,
+            };
+
+            // eslint-disable-next-line max-len
+            const expectedError = `Cannot find qc flag with id ${qcFlagVerificationParameters.qualityControlFlagId}`;
+
+            request(server)
+                .post('/api/qualityControlFlags/verify')
+                .send(qcFlagVerificationParameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                    }
+                    const { errors } = res.body;
+                    expect(errors[0]).to.be.eql({
+                        status: 400,
+                        title: 'Service unavailable',
+                        detail: expectedError,
+                    }),
+
+                    done();
+                });
+        });
+    });
 };
