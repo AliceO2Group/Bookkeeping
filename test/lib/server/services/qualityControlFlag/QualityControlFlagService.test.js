@@ -148,6 +148,7 @@ module.exports = () => {
                 timeStart: 1647924400000,
                 timeEnd: 1647924400000,
                 comment: 'Some qc comment 4',
+                provenance: 'HUMAN',
                 createdAt: 1707825436 * 1000,
                 dataPassId: 2,
                 runNumber: 1,
