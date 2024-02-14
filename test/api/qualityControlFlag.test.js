@@ -234,7 +234,7 @@ module.exports = () => {
         });
         it('should support sorting on timeStart', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?sort[timeStart]=ASC')
+                .get('/api/qualityControlFlags?sort[timeStart]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -244,7 +244,7 @@ module.exports = () => {
 
                     const { data: qualityControlFlags } = res.body;
                     expect(qualityControlFlags).to.be.an('array');
-                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([2, 3, 1, 4]);
+                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([4, 3, 2, 1]);
 
                     done();
                 });
