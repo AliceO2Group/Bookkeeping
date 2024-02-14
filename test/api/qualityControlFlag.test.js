@@ -20,7 +20,7 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/qualityControlFlags/reasons', () => {
-        it('should successfuly fetch all qc flag reasons', async (done) => {
+        it('should successfuly fetch all qc flag reasons', (done) => {
             request(server)
                 .get('/api/qualityControlFlags/reasons')
                 .expect(200)
@@ -32,7 +32,7 @@ module.exports = () => {
 
                     const { data } = res.body;
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(4);
+                    expect(data).to.be.lengthOf(5);
                     expect(data).to.have.deep.all.members([
                         {
                             id: 2,
@@ -70,7 +70,6 @@ module.exports = () => {
                             obsolate: false,
                         },
                     ]);
-
                     done();
                 });
         });
@@ -97,6 +96,7 @@ module.exports = () => {
                             timeStart: 1647924400000,
                             timeEnd: 1647924400000,
                             comment: 'Some qc comment 4',
+                            provenance: 'HUMAN',
                             createdAt: 1707825436 * 1000,
                             dataPassId: 2,
                             runNumber: 1,
@@ -133,7 +133,6 @@ module.exports = () => {
                     expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    console.log(data)
                     expect(Object.entries(data[0])).to.include.all.deep.members(Object.entries({
                         id: 1,
                         timeStart: (1565314200 - 10000) * 1000,
