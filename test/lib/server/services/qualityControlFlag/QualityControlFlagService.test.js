@@ -17,46 +17,96 @@ const { expect } = require('chai');
 const Joi = require('joi');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { getAllQualityControlFlagFlagReasons } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagReasons.js');
 
 const QCFlagReasonSchema = Joi.object({
-    id: Joi.number(),
-    name: Joi.string(),
-    method: Joi.string(),
-    bad: Joi.boolean(),
-    obsolate: Joi.boolean(),
+    id: Joi.number().required(),
+    name: Joi.string().required(),
+    method: Joi.string().required(),
+    bad: Joi.boolean().required(),
+    obsolate: Joi.boolean().required(),
 });
 
-const UserSchema = Joi.object({ id: Joi.number(), name: Joi.string(), externalId: Joi.number() });
+const UserSchema = Joi.object({ id: Joi.number().required(), name: Joi.string().required(), externalId: Joi.number().required() });
 
 const QCFlagVerificationSchema = Joi.object({
-    id: Joi.number(),
-    comment: Joi.string(),
-    userId: Joi.number(),
+    id: Joi.number().required(),
+    comment: Joi.string().required(),
+    userId: Joi.number().required(),
     user: UserSchema,
-    createdAt: Joi.number(),
+    createdAt: Joi.number().required(),
+    qualityControlFlagId: Joi.number().required(),
 });
 
 const QCFlagSchema = Joi.object({
-    id: Joi.number(),
-    timeStart: Joi.number(),
-    timeEnd: Joi.number(),
-    comment: Joi.string(),
-    provenance: Joi.string().valid('HUMAN', 'SYNC', 'ASYNC', 'MC'),
-    createdAt: Joi.number(),
-    userId: Joi.number(),
+    id: Joi.number().required(),
+    timeStart: Joi.number().required(),
+    timeEnd: Joi.number().required(),
+    comment: Joi.string().required(),
+    provenance: Joi.string().required().valid('HUMAN', 'SYNC', 'ASYNC', 'MC'),
+    createdAt: Joi.number().required(),
 
-    dataPassId: Joi.number(),
-    runNumber: Joi.number(),
-    detectorId: Joi.number(),
+    dataPassId: Joi.number().required(),
+    runNumber: Joi.number().required(),
+    detectorId: Joi.number().required(),
 
+    userId: Joi.number().required(),
     user: UserSchema,
+    flagReasonId: Joi.number().required(),
     flagReason: QCFlagReasonSchema,
+
     verifications: Joi.array().items(QCFlagVerificationSchema),
 });
 
 module.exports = () => {
     before(resetDatabaseContent);
     after(resetDatabaseContent);
+
+    describe('Fetching quality control flags reasons', () => {
+        it('should successfuly fetch quality control flags reasons', async () => {
+            const flagReasons = await getAllQualityControlFlagFlagReasons();
+            expect(flagReasons).to.be.an('array');
+            expect(flagReasons).to.be.lengthOf(5);
+            expect(flagReasons).to.have.all.deep.members([
+                {
+                    id: 2,
+                    name: 'UnknownQuality',
+                    method: 'Unknown Quality',
+                    bad: true,
+                    obsolate: true,
+                },
+                {
+                    id: 3,
+                    name: 'CertifiedByExpert',
+                    method: 'Certified by Expert',
+                    bad: false,
+                    obsolate: true,
+                },
+                {
+                    id: 11,
+                    name: 'LimitedAcceptance',
+                    method: 'Limited acceptance',
+                    bad: true,
+                    obsolate: true,
+                },
+                {
+                    id: 12,
+                    name: 'BadPID',
+                    method: 'Bad PID',
+                    bad: true,
+                    obsolate: true,
+                },
+                {
+                    id: 13,
+                    name: 'Bad',
+                    method: 'Bad',
+                    bad: true,
+                    obsolate: false,
+                },
+
+            ]);
+        });
+    });
 
     describe('Fetching quality control flags', () => {
         it('should succesfuly fetch all flags', async () => {
@@ -101,12 +151,14 @@ module.exports = () => {
                 timeStart: 1647924400000,
                 timeEnd: 1647924400000,
                 comment: 'Some qc comment 4',
+                provenance: 'HUMAN',
                 createdAt: 1707825436 * 1000,
                 dataPassId: 2,
                 runNumber: 1,
                 detectorId: 1,
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                flagReasonId: 13,
                 flagReason: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
                 verifications: [
                     {
@@ -115,6 +167,7 @@ module.exports = () => {
                         user: { id: 1, externalId: 1, name: 'John Doe' },
                         comment: 'Accepted: Some qc comment 1',
                         createdAt: 1707825436 * 1000,
+                        qualityControlFlagId: 4,
                     },
                 ],
             });
@@ -197,9 +250,8 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
-                new BadParameterError(`
-                Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond
-                run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
@@ -237,10 +289,8 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
-                new BadParameterError(`
-                You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111})
-                as there is no association between them
-            `),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111}) as there is no association between them`),
             );
         });
 
@@ -258,20 +308,8 @@ module.exports = () => {
             };
 
             const flag = await qualityControlFlagService.create(qcFlagCreationParameters);
-            const { rows: [fetchedCreatedFlag] } = await qualityControlFlagService.getAll({ filter: { ids: [flag.id] } });
-            const propertiesExpectedTobEqual = [
-                'timeStart',
-                'timeEnd',
-                'comment',
-                'provenance',
-                'flagReasonId',
-                'runNumber',
-                'dataPassId',
-                'detectorId',
-            ];
-            for (const property in propertiesExpectedTobEqual) {
-                expect(fetchedCreatedFlag[property]).to.be.equal(qcFlagCreationParameters[property]);
-            }
+            delete qcFlagCreationParameters.externalUserId;
+            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
         });
     });
 
@@ -308,7 +346,7 @@ module.exports = () => {
             };
             assert.rejects(
                 () => qualityControlFlagService.createVerification(verificationParamteres),
-                new Error('It is not possibly not verify one\'s own QC Flag (id:1)'),
+                new Error('It is not possibly to verify one\'s own QC Flag (id:1)'),
             );
         });
 
@@ -326,6 +364,7 @@ module.exports = () => {
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 comment: 'OK',
+                qualityControlFlagId: 2,
             });
         });
     });
