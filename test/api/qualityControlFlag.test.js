@@ -506,7 +506,7 @@ module.exports = () => {
             };
 
             // eslint-disable-next-line max-len
-            const expectedError = `It is not possibly not verify one's own QC Flag (id:${qcFlagVerificationParameters.qualityControlFlagId})`;
+            const expectedError = `It is not possibly to verify one's own QC Flag (id:${qcFlagVerificationParameters.qualityControlFlagId})`;
 
             request(server)
                 .post('/api/qualityControlFlags/verify')
