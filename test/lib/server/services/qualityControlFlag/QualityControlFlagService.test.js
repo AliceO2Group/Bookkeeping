@@ -20,38 +20,40 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 const { getAllQualityControlFlagFlagReasons } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagReasons.js');
 
 const QCFlagReasonSchema = Joi.object({
-    id: Joi.number(),
-    name: Joi.string(),
-    method: Joi.string(),
-    bad: Joi.boolean(),
-    obsolate: Joi.boolean(),
+    id: Joi.number().required(),
+    name: Joi.string().required(),
+    method: Joi.string().required(),
+    bad: Joi.boolean().required(),
+    obsolate: Joi.boolean().required(),
 });
 
-const UserSchema = Joi.object({ id: Joi.number(), name: Joi.string(), externalId: Joi.number() });
+const UserSchema = Joi.object({ id: Joi.number().required(), name: Joi.string().required(), externalId: Joi.number().required() });
 
 const QCFlagVerificationSchema = Joi.object({
-    id: Joi.number(),
-    comment: Joi.string(),
-    userId: Joi.number(),
+    id: Joi.number().required(),
+    comment: Joi.string().required(),
+    userId: Joi.number().required(),
     user: UserSchema,
-    createdAt: Joi.number(),
+    createdAt: Joi.number().required(),
 });
 
 const QCFlagSchema = Joi.object({
-    id: Joi.number(),
-    timeStart: Joi.number(),
-    timeEnd: Joi.number(),
-    comment: Joi.string(),
-    provenance: Joi.string().valid('HUMAN', 'SYNC', 'ASYNC', 'MC'),
-    createdAt: Joi.number(),
-    userId: Joi.number(),
+    id: Joi.number().required(),
+    timeStart: Joi.number().required(),
+    timeEnd: Joi.number().required(),
+    comment: Joi.string().required(),
+    provenance: Joi.string().required().valid('HUMAN', 'SYNC', 'ASYNC', 'MC'),
+    createdAt: Joi.number().required(),
 
-    dataPassId: Joi.number(),
-    runNumber: Joi.number(),
-    detectorId: Joi.number(),
+    dataPassId: Joi.number().required(),
+    runNumber: Joi.number().required(),
+    detectorId: Joi.number().required(),
 
+    userId: Joi.number().required(),
     user: UserSchema,
+    flagReasonId: Joi.number().required(),
     flagReason: QCFlagReasonSchema,
+
     verifications: Joi.array().items(QCFlagVerificationSchema),
 });
 
@@ -155,6 +157,7 @@ module.exports = () => {
                 detectorId: 1,
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                flagReasonId: 13,
                 flagReason: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
                 verifications: [
                     {
@@ -306,20 +309,8 @@ module.exports = () => {
             };
 
             const flag = await qualityControlFlagService.create(qcFlagCreationParameters);
-            const { rows: [fetchedCreatedFlag] } = await qualityControlFlagService.getAll({ filter: { ids: [flag.id] } });
-            const propertiesExpectedTobEqual = [
-                'timeStart',
-                'timeEnd',
-                'comment',
-                'provenance',
-                'flagReasonId',
-                'runNumber',
-                'dataPassId',
-                'detectorId',
-            ];
-            for (const property in propertiesExpectedTobEqual) {
-                expect(fetchedCreatedFlag[property]).to.be.equal(qcFlagCreationParameters[property]);
-            }
+            delete qcFlagCreationParameters.externalUserId;
+            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
         });
     });
 
