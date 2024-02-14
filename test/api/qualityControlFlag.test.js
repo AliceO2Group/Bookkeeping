@@ -103,6 +103,7 @@ module.exports = () => {
                             detectorId: 1,
                             userId: 2,
                             user: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                            flagReasonId: 13,
                             flagReason: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
                             verifications: [
                                 {
@@ -358,6 +359,7 @@ module.exports = () => {
                     }
 
                     const { data } = res.body;
+                    delete qcFlagCreationParameters.externalUserId;
                     expect(Object.entries(data)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
 
                     done();
