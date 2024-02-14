@@ -365,5 +365,37 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should successfuly create flag instance', (done) => {
+            const qcFlagCreationParameters = {
+                timeStart: (1565314200 - 10) * 1000,
+                timeEnd: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                provenance: 'HUMAN',
+                externalUserId: 456,
+                flagReasonId: 2,
+                runNumber: 106,
+                dataPassId: 9999, // Failing property
+                detectorId: 111, // Failing property
+            };
+
+            const expectedError = `
+            You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111})
+            as there is no association between them
+            `;
+
+            request(server)
+                .post('/api/qualityControlFlags')
+                .send(qcFlagCreationParameters)
+                .expect(201)
+                .end((err) => {
+                    if (err) {
+                        expect(err[0].tit)
+                        done();
+                    } else {
+                        done('Should reject');
+                    }
+                });
+        });
     });
 };
