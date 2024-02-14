@@ -12,7 +12,9 @@
  */
 
 const QualityControlFlagServiceSuite = require('./QualityControlFlagService.test.js');
+const GetAllFlagReasons = require('./getAllFlagReasons.test.js');
 
 module.exports = () => {
     describe('QualityControlFlagService Suite', QualityControlFlagServiceSuite);
+    describe('QualityControlFlagResons Suite', GetAllFlagReasons);
 };
