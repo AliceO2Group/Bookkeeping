@@ -179,6 +179,93 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should successfuly filter on externalUserIds', (done) => {
+            request(server)
+                .get('/api/qualityControlFlags?filter[externalUserIds][]=456')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(1);
+                    expect(data[0].id).to.be.equal(4);
+
+                    done();
+                });
+        });
+        it('should successfuly filter on userName', (done) => {
+            request(server)
+                .get('/api/qualityControlFlags?filter[userNames][]=John%20Doe')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    expect(data).to.be.an('array');
+                    expect(data).to.be.lengthOf(3);
+                    expect(data.map(({ id }) => id)).to.have.all.members([1, 2, 3]);
+
+                    done();
+                });
+        });
+        it('should support sorting on id', (done) => {
+            request(server)
+                .get('/api/qualityControlFlags?sort[id]=ASC')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: qualityControlFlags } = res.body;
+                    expect(qualityControlFlags).to.be.an('array');
+                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([1, 2, 3, 4]);
+
+                    done();
+                });
+        });
+        it('should support sorting on timeStart', (done) => {
+            request(server)
+                .get('/api/qualityControlFlags?sort[timeStart]=ASC')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: qualityControlFlags } = res.body;
+                    expect(qualityControlFlags).to.be.an('array');
+                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([2, 3, 1, 4]);
+
+                    done();
+                });
+        });
+        it('should support sorting on timeEnd', (done) => {
+            request(server)
+                .get('/api/qualityControlFlags?sort[timeEnd]=DESC')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: qualityControlFlags } = res.body;
+                    expect(qualityControlFlags).to.be.an('array');
+                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([4, 3, 2, 1]);
+
+                    done();
+                });
+        });
         it('should support pagination', (done) => {
             request(server)
                 .get('/api/qualityControlFlags?page[offset]=1&page[limit]=2&sort[id]=ASC')
@@ -245,4 +332,6 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('POST /api/qualityControlFlags', () => {});
 };
