@@ -35,6 +35,7 @@ const QCFlagVerificationSchema = Joi.object({
     userId: Joi.number().required(),
     user: UserSchema,
     createdAt: Joi.number().required(),
+    qualityControlFlagId: Joi.number().required(),
 });
 
 const QCFlagSchema = Joi.object({
@@ -166,6 +167,7 @@ module.exports = () => {
                         user: { id: 1, externalId: 1, name: 'John Doe' },
                         comment: 'Accepted: Some qc comment 1',
                         createdAt: 1707825436 * 1000,
+                        qualityControlFlagId: 4,
                     },
                 ],
             });
@@ -362,6 +364,7 @@ module.exports = () => {
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 comment: 'OK',
+                qualityControlFlagId: 2,
             });
         });
     });
