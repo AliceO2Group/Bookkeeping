@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
+const { getMockMonAlisaClient } = require('./data/getMockMonAlisaClient.js');
 const Joi = require('joi');
 
 const dataPassSchema = Joi.object({
@@ -21,7 +21,6 @@ const dataPassSchema = Joi.object({
     description: Joi.string(),
     outputSize: Joi.number(),
     lastRunNumber: Joi.number(),
-
 });
 
 const simulationPassSchema = Joi.object({
@@ -44,8 +43,8 @@ const simulationPassSchema = Joi.object({
 
 module.exports = () => {
     it('Should get data passes with respect to given year limit (2022) and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAClient(2022);
-        const dataPasses = await monALISAInterface.getDataPasses();
+        const monAlisaInterface = getMockMonAlisaClient(2022);
+        const dataPasses = await monAlisaInterface.getDataPasses();
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(12);
@@ -55,8 +54,8 @@ module.exports = () => {
     });
 
     it('Should get data passes with respect to given year limit (2023) and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAClient(2023);
-        const dataPasses = await monALISAInterface.getDataPasses();
+        const monAlisaInterface = getMockMonAlisaClient(2023);
+        const dataPasses = await monAlisaInterface.getDataPasses();
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(5);
@@ -66,8 +65,8 @@ module.exports = () => {
     });
 
     it('Should get simultion passes with respect to given year limit (2022) and in correct format', async () => {
-        const monALISAInterface = getMockMonALISAClient(2022);
-        const simulationPasses = await monALISAInterface.getSimulationPasses();
+        const monAlisaInterface = getMockMonAlisaClient(2022);
+        const simulationPasses = await monAlisaInterface.getSimulationPasses();
 
         expect(simulationPasses).to.be.an('array');
         expect(simulationPasses).to.be.lengthOf(10);

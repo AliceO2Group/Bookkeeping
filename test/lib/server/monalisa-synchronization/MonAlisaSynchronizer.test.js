@@ -12,11 +12,11 @@
  */
 
 const { expect } = require('chai');
-const { getMockMonALISAClient } = require('./data/getMockMonALISAClient.js');
-const { MonALISASynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonALISASynchronizer.js');
-const { repositories: { DataPassRepository, LhcPeriodRepository, SimulationPassRepository } } = require('../../../../lib/database');
+const { getMockMonAlisaClient } = require('./data/getMockMonAlisaClient.js');
+const { MonAlisaSynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonAlisaSynchronizer.js');
+const { repositories: { DataPassRepository, LhcPeriodRepository, SimulationPassRepository } } = require('../../../../lib/database/index.js');
 
-const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod');
+const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
 const YEAR_LOWER_LIMIT = 2023;
@@ -25,13 +25,13 @@ module.exports = () => {
     after(async () => resetDatabaseContent());
 
     it('Should synchronize Data Passes with respect to given year limit and in correct format', async () => {
-        const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
-        const mockDataPasses = await monALISAClient.getDataPasses();
-        const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
+        const monAlisaClient = getMockMonAlisaClient(YEAR_LOWER_LIMIT);
+        const mockDataPasses = await monAlisaClient.getDataPasses();
+        const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
         // Run Synchronization
-        await monALISASynchronizer.synchronizeDataPassesFromMonALISA();
+        await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
         const dataPassesDB = await DataPassRepository.findAll({ include: { association: 'runs', attributes: ['runNumber'] } });
 
@@ -62,21 +62,22 @@ module.exports = () => {
         for (const dataPass of dataPassesDB) {
             if (expectedDataPassesNamesSet.has(dataPass.name)) {
                 const { description, runs } = dataPass;
-                const { runNumbers: expectedRunNumbers } = await monALISAClient.getDataPassDetails(description);
+                const { runNumbers: expectedRunNumbers } = await monAlisaClient.getDataPassDetails(description);
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
-        const monALISAClient = getMockMonALISAClient(YEAR_LOWER_LIMIT);
-        const expectedSimulationPasses = await monALISAClient.getSimulationPasses();
-        const nameToSimulationPass = Object.fromEntries(expectedSimulationPasses
+        const monAlisaClient = getMockMonAlisaClient(YEAR_LOWER_LIMIT);
+        const potentiallyInsertedSimulationPasses = await monAlisaClient.getSimulationPasses();
+        expect(potentiallyInsertedSimulationPasses).to.be.length.greaterThan(0);
+        const nameToSimulationPass = Object.fromEntries(potentiallyInsertedSimulationPasses
             .map((simulationPass) => [simulationPass.properties.name, simulationPass]));
-        const monALISASynchronizer = new MonALISASynchronizer(monALISAClient);
+        const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
 
         // Run Synchronization
-        await monALISASynchronizer.synchronizeSimulationPassesFromMonALISA();
+        await monAlisaSynchronizer._synchronizeSimulationPassesFromMonAlisa();
 
         const simulationPassesDB = await SimulationPassRepository.findAll({
             include: [
@@ -87,33 +88,41 @@ module.exports = () => {
 
         // Correct amount of data
         expect(simulationPassesDB).to.be.an('array');
-        expect(simulationPassesDB).to.be.lengthOf(4);
+        expect(simulationPassesDB).to.be.lengthOf(5);
 
         // All expected Simulation Passes names present
-        const expectedSimulationPassesNames = expectedSimulationPasses.map(({ properties: { name } }) => name);
-        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(expectedSimulationPassesNames);
+        const potentiallyInsertedSimulationPassesNames = potentiallyInsertedSimulationPasses.map(({ properties: { name } }) => name);
+        expect(simulationPassesDB.map(({ name }) => name)).to.include.all.members(potentiallyInsertedSimulationPassesNames);
 
         // Properties of Simulation Passes are the same
         expect(simulationPassesDB.map((simulationPass) => {
             const { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize } = simulationPass;
             return { name, jiraId, description, pwg, requestedEventsCount, generatedEventsCount, outputSize };
-        })).to.include.deep.all.members(expectedSimulationPasses.map(({ properties }) => properties));
+        })).to.include.deep.all.members(potentiallyInsertedSimulationPasses.map(({ properties }) => properties));
 
-        const expectedNamesSet = new Set(expectedSimulationPassesNames);
+        const potentiallyInsertedNamesSet = new Set(potentiallyInsertedSimulationPassesNames);
 
         // All associated with appropriate Data Passes
+
+        // eslint-disable-next-line require-jsdoc
+        const helperGetDataPassNamesPerLhcPeriodOfSimulationPass = (name, lhcPeriod) =>
+            nameToSimulationPass[name].associations.dataPassesSuffixes.map((suffix) => `${lhcPeriod}_${suffix}`);
+        // eslint-disable-next-line require-jsdoc
+        const helperGetDataPassNamesPerSimulationPassName = (name) =>
+            nameToSimulationPass[name]?.associations.lhcPeriods
+                .flatMap((lhcPeriod) => helperGetDataPassNamesPerLhcPeriodOfSimulationPass(name, lhcPeriod));
+
+        const simulationPassToDataPassNames = simulationPassesDB
+            .filter(({ name }) => potentiallyInsertedNamesSet.has(name))
+            .map(({ name }) => ({ name, dataPasses: helperGetDataPassNamesPerSimulationPassName(name) }));
+
         expect(simulationPassesDB.map(({ name, dataPasses }) => ({ name, dataPasses: dataPasses.map(({ name }) => name) })))
-            .to.include.deep.all.members(simulationPassesDB.filter(({ name }) => expectedNamesSet.has(name)).map(({ name }) =>
-                ({ name,
-                    dataPasses:
-                nameToSimulationPass[name]?.associations.lhcPeriods
-                    .flatMap((lhcPeriod) => nameToSimulationPass[name].associations.dataPassesSuffixes
-                        .map((suffix) => `${lhcPeriod}_${suffix}`)) })));
+            .to.include.deep.all.members(simulationPassToDataPassNames);
 
         // Runs of Simulation Pass are in DB
         for (const simulationPassDB of simulationPassesDB) {
             const { name, runs } = simulationPassDB;
-            if (expectedNamesSet.has(name)) {
+            if (potentiallyInsertedNamesSet.has(name)) {
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(nameToSimulationPass[name].associations.runNumbers);
             }
         }

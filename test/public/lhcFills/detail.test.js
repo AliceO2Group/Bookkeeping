@@ -18,7 +18,7 @@ const {
     pressElement,
     goToPage,
     checkMismatchingUrlParam,
-    getPopoverContent,
+    getPopoverContent, waitForTimeout,
 } = require('../defaults.js');
 const { expect } = require('chai');
 
@@ -109,7 +109,7 @@ module.exports = () => {
 
     it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
         await pressElement(page, '#all-runs-tab');
-        await page.waitForTimeout(50);
+        await waitForTimeout(50);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -139,7 +139,7 @@ module.exports = () => {
 
         // Test the switch back to physics only
         await pressElement(page, '#physics-runs-tab');
-        await page.waitForTimeout(50);
+        await waitForTimeout(50);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -174,7 +174,7 @@ module.exports = () => {
 
         await row.$eval('td:first-of-type a', (link) => link.click());
         await page.waitForNetworkIdle();
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
