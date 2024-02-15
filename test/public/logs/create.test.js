@@ -439,21 +439,22 @@ module.exports = () => {
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(`${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
         expect(lastLog.text).to.equal(`\
-TITLE: ${shortDescription} - Call on-call for ${detectorOrSubsystem}
+## Importance
+${severity} for ${issueScope}
 
-IMPORTANCE: ${severity} for ${issueScope}
+## Shifter
+Anonymous - ${shifterPosition}
 
-SHIFTER: Anonymous - ${shifterPosition}
+## LHC beam mode
+${beamMode}
 
-LHC BEAM MODE: ${beamMode}
-
-DESCRIPTION:
+## Description
 ${description}
 
-REASON TO CALL THIS ON-CALL:
+## Reason to call this on-call
 ${reason}
 
-ACTIONS ALREADY TAKEN:
+## Actions already taken
 ${actions}\
 `);
     });
