@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.79.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.79.0)
+* Notable changes for users:
+  * A log template for on-call has been created
+  * Improved formatting of on-call logs
+
 ## [0.78.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.78.1)
 * Notable change for developers:
   * All dependencies has been added to the bundle dependencies
