@@ -87,6 +87,21 @@ module.exports.defaultAfter = async (page, browser) => {
 };
 
 /**
+ * Resolves after a given timeout (temporary replacement for puppeteer Page.waitForTimeout)
+ *
+ * @deprecated use an appropriate waitForSelector instead
+ *
+ * @param {number} timeout the timeout to wait (in ms)
+ * @return {Promise<void>} resolves once the timeout has been elapsed
+ */
+const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout));
+
+/**
+ * @deprecated
+ */
+module.exports.waitForTimeout = waitForTimeout;
+
+/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
@@ -115,22 +130,22 @@ module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage
 /**
  * Navigates to a specific URL and waits until everything is loaded.
  *
- * @param {Page} puppeteerPage puppeteer page object
+ * @param {puppeteer.Page} page puppeteer page object
  * @param {string} url the URL to navigate to
  * @param {object} [options] navigation options
  * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
  * @param {number} [options.redrawDuration] the estimated time to wait for the page to redraw
  * @returns {Promise} resolves with the navigation response
  */
-const goTo = async (puppeteerPage, url, options) => {
+const goTo = async (page, url, options) => {
     const { authenticate = true, redrawDuration = 20 } = options ?? {};
 
     if (authenticate) {
-        url = authenticateUrl(url, testToken);
+        url = authenticateUrl(url);
     }
 
-    const response = await puppeteerPage.goto(url, { waitUntil: 'networkidle0' });
-    await puppeteerPage.waitForTimeout(redrawDuration);
+    const response = await page.goto(url, { waitUntil: 'networkidle0' });
+    await waitForTimeout(redrawDuration);
     return response;
 };
 
@@ -164,7 +179,7 @@ module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
     const { redrawDuration = 20 } = options ?? {};
 
     await page.waitForNetworkIdle();
-    await page.waitForTimeout(redrawDuration);
+    await waitForTimeout(redrawDuration);
 };
 
 /**
