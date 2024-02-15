@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.79.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.79.0)
+* Notable changes for users:
+  * A log template for on-call has been created
+  * Improved formatting of on-call logs
+
+## [0.78.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.78.1)
+* Notable change for developers:
+  * All dependencies has been added to the bundle dependencies
+
+## [0.78.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.78.0)
+* Notable changes for users:
+  * Physics runs filter toggle has a more consistent behavior:
+    * Enabling it will set the run definition filter to PHYSICS runs only
+    * Disabling it will disable run definition filtering
+    * Enabling more than one run definition in filter or disabling all the run definition filtering will disable the toggle
+  * Fixed application of filtering to runs export
+  * Added Runs Per Data Pass view
+* Notable change for developers:
+  * Allow compiling c++ api with gcc 13.2
+  * Seeding does not throw validation error if you already visited the application before seeding
+  * Refactored RunsOverviewModel to use OverviewPageModel
+  * Fixed typedefs for RunsOverviewModel
+  * Fixed environments tests randomly failing on SQL fetch sorting
+
+
 ## [0.77.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.77.0)
 * Notable changes for users:
   * Uniformized LHC fill number column (in LHC fill overview) to be uniform with other tables and provide links to infologgers
