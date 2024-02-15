@@ -47,7 +47,7 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
         const headerBreadcrumbs = await page.$$('h2');
         expect(await headerBreadcrumbs[0].evaluate((element) => element.innerText)).to.be.equal('Monte Carlo');
-        expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC22a');
+        expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC22a_apass1');
     });
 
     it('shows correct datatypes in respective columns', async () => {
