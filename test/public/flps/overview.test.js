@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { goToPage, reloadPage, getInnerText } = require('../defaults.js');
+const { goToPage, reloadPage, getInnerText, waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -87,7 +87,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'flp-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
@@ -134,14 +134,14 @@ module.exports = () => {
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible flps to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
@@ -159,7 +159,7 @@ module.exports = () => {
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
@@ -167,7 +167,7 @@ module.exports = () => {
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
@@ -175,7 +175,7 @@ module.exports = () => {
         // The same, but for the other (right) arrow
         const nextPage = await page.$('#pageMoveRight');
         await nextPage.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const newFirstPageButton = await page.$('#page1');
         const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
         expect(newFirstPageButtonClass).to.not.include('selected');
@@ -187,7 +187,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.flps.pagination.itemsPerPage = 1;
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
@@ -197,7 +197,7 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
     });
@@ -211,7 +211,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.flps.pagination.itemsPerPage = 200;
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
@@ -222,7 +222,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.flps.pagination.itemsPerPage = 10;
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
     });
 
     /*
@@ -233,7 +233,7 @@ module.exports = () => {
      *
      *  // We expect the entry page to have the same id as the id from the flp overview
      *  await pressElement(page, `#${firstRowId}`);
-     *  await page.waitForTimeout(100);
+     *  await waitForTimeout(100);
      *  const redirectedUrl = await page.url();
      *  expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=${parsedFirstRowId}`)).to.be.true;
      * });
