@@ -36,7 +36,7 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
-    it('loads the page successfully', async () => {
+    it('loads page - simulation passes per LHC Period successfully', async () => {
         const response = await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
@@ -45,6 +45,9 @@ module.exports = () => {
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
+        const headerBreadcrumbs = await page.$$('h2');
+        expect(await headerBreadcrumbs[0].evaluate((element) => element.innerText)).to.be.equal('Monte Carlo');
+        expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC22a');
     });
 
     it('shows correct datatypes in respective columns', async () => {
