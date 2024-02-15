@@ -19,6 +19,29 @@ const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 
 const { expect } = chai;
 
+const testToken = server.http.o2TokenService.generateToken(
+    0,
+    'anonymous',
+    'Anonymous',
+    'admin',
+);
+
+/**
+ * Overrides the given URL to add authentication information to it
+ *
+ * @param {string} url the URL to authenticate
+ * @return {string} the authenticated URL
+ */
+const authenticateUrl = (url) => {
+    const authenticatedUrl = new URL(url);
+    authenticatedUrl.searchParams.set('personid', 0);
+    authenticatedUrl.searchParams.set('username', 'anonymous');
+    authenticatedUrl.searchParams.set('name', 'Anonymous');
+    authenticatedUrl.searchParams.set('access', 'admin');
+    authenticatedUrl.searchParams.set('token', testToken);
+    return authenticatedUrl.toString();
+};
+
 /**
  * Returns the URL with correct port postfixed.
  * @returns {string} URL specific to the port specified by user/host.
@@ -33,6 +56,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
 module.exports.defaultBefore = async () => {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
+
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
         page.coverage.startCSSCoverage(),
@@ -71,6 +95,7 @@ module.exports.defaultAfter = async (page, browser) => {
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
     await page.waitForSelector(selector);
+
     if (jsClick) {
         await page.$eval(selector, (element) => {
             element.click();
@@ -100,21 +125,11 @@ module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage
 const goTo = async (puppeteerPage, url, options) => {
     const { authenticate = true, redrawDuration = 20 } = options ?? {};
 
-    const queryParameters = {};
     if (authenticate) {
-        queryParameters.personid = 0;
-        queryParameters.username = 'anonymous';
-        queryParameters.name = 'Anonymous';
-        queryParameters.access = 'admin';
-        queryParameters.token = server.http.o2TokenService.generateToken(
-            queryParameters.personid,
-            queryParameters.username,
-            queryParameters.name,
-            queryParameters.access,
-        );
+        url = authenticateUrl(url, testToken);
     }
 
-    const response = await puppeteerPage.goto(buildUrl(url, queryParameters), { waitUntil: 'networkidle0' });
+    const response = await puppeteerPage.goto(url, { waitUntil: 'networkidle0' });
     await puppeteerPage.waitForTimeout(redrawDuration);
     return response;
 };
@@ -169,7 +184,7 @@ module.exports.validateElement = async (page, selector) => {
  * Debug helper function
  * This function takes a screenshot of the current screen the page is at, and saves it to
  * database/storage/screenshot.png
- * @param {*} page Puppeteer page object.
+ * @param {puppeteer.Page} page Puppeteer page object.
  * @param {string} name Name of the screenshot taken. Useful when taking multiple in a row.
  * @returns {*} None
  */
@@ -247,7 +262,7 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector);
+    await page.waitForSelector(selector, { timeout: 200 });
     expect(await getInnerText(await page.$(selector))).to.equal(innerText);
 };
 
@@ -353,7 +368,7 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
 /**
  * Fill the input at the given selector and triggers the given events on it
  *
- * @param {{evaluate: function, waitForSelector: function}} page the puppeteer's page object
+ * @param {puppeteer.Page} page the puppeteer's page object
  * @param {string} inputSelector the selector of the input to fill
  * @param {string} value the value to type in the input
  * @param {string[]} [events=['input']] the list of events to trigger on the input after typing
@@ -373,14 +388,15 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 /**
  * Check the differences between the provided expected parameters and the parameters actually received
  *
+ * @TODO convert this to not-async
  * For now only handle scalar parameters
  *
- * @param {url} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {Object} expectedUrlParameters the expected parameters as an object of key values
  * @return {Promise<Object>} the differences between the expected parameters
  */
 module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) => {
-    const [, parametersExpr] = await page.url().split('?');
+    const [, parametersExpr] = page.url().split('?');
     const urlParameters = parametersExpr.split('&');
     const ret = {};
     for (const urlParameter of urlParameters) {
