@@ -26,6 +26,8 @@ const LHC23k6c = {
     requestedEventsCount: 1345555,
     generatedEventsCount: 4316450,
     outputSize: 14013600611699,
+    dataPassesCount: 1,
+    runsCount: 0,
 };
 
 const LHC23k6b = {
@@ -37,6 +39,8 @@ const LHC23k6b = {
     requestedEventsCount: 2345555,
     generatedEventsCount: 54800,
     outputSize: 157000310748,
+    dataPassesCount: 1,
+    runsCount: 3,
 };
 
 const LHC23k6a = {
@@ -48,6 +52,8 @@ const LHC23k6a = {
     requestedEventsCount: 2245555,
     generatedEventsCount: 53800,
     outputSize: 147000310748,
+    dataPassesCount: 1,
+    runsCount: 1,
 };
 
 module.exports = () => {
