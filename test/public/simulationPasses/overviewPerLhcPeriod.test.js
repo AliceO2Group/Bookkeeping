@@ -37,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads page - simulation passes per LHC Period successfully', async () => {
-        const response = await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        const response = await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -87,7 +87,7 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         await page.waitForSelector('#firstRowIndex');
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
@@ -96,7 +96,7 @@ module.exports = () => {
     });
 
     it('can set how many simulation passes is available per page', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         await page.waitForSelector('.dropup button');
@@ -126,7 +126,7 @@ module.exports = () => {
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.waitForSelector('th#name');
         await page.hover('th#name');
@@ -144,7 +144,7 @@ module.exports = () => {
     });
 
     it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.waitForSelector('th#requestedEventsCount');
         await page.hover('th#requestedEventsCount');
@@ -162,7 +162,7 @@ module.exports = () => {
     });
 
     it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.waitForSelector('th#generatedEventsCount');
         await page.hover('th#generatedEventsCount');
@@ -180,9 +180,9 @@ module.exports = () => {
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#outputSize');§
+        await page.waitForSelector('th#outputSize');
         await page.hover('th#outputSize');
         const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
@@ -198,7 +198,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply simulation passes name filter', async () => {
-        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         await page.waitForSelector('#openFilterToggle');
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
