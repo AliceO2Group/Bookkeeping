@@ -141,7 +141,7 @@ const goTo = async (page, url, options) => {
     const { authenticate = true, redrawDuration = 20 } = options ?? {};
 
     if (authenticate) {
-        url = authenticateUrl(url, testToken);
+        url = authenticateUrl(url);
     }
 
     const response = await page.goto(url, { waitUntil: 'networkidle0' });
