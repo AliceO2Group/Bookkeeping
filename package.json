@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.76.0",
+  "version": "0.79.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -29,8 +29,8 @@
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
-    "sequelize": "6.35.0",
-    "umzug": "3.5.0"
+    "sequelize": "6.37.0",
+    "umzug": "3.6.1"
   },
   "files": [
     "lib/",
@@ -39,13 +39,13 @@
   ],
   "devDependencies": {
     "@types/d3": "7.4.0",
-    "chai": "4.3.4",
+    "chai": "4.4.1",
     "eslint": "8.56.0",
     "js-yaml": "4.1.0",
-    "mocha": "10.2.0",
+    "mocha": "10.3.0",
     "nodemon": "3.0.1",
     "nyc": "15.1.0",
-    "puppeteer": "21.6.1",
+    "puppeteer": "22.0.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "17.0.1",
@@ -53,11 +53,15 @@
   },
   "bundleDependencies": [
     "@aliceo2/web-ui",
+    "@grpc/grpc-js",
+    "@grpc/proto-loader",
     "cls-hooked",
+    "d3",
     "deepmerge",
     "joi",
     "mariadb",
     "multer",
+    "node-fetch",
     "sequelize",
     "umzug"
   ]

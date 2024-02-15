@@ -18,6 +18,7 @@ const {
     goToPage,
     getAllDataFields,
     fillInput,
+    waitForTimeout,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -51,8 +52,8 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
-            anchoredSimulationPasses: (display) => display === 'Anchored',
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
+            anchoredSimulationPasses: (display) => display === 'Anchored',
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
@@ -85,7 +86,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
@@ -94,23 +95,23 @@ module.exports = () => {
 
     it('can set how many data passes is available per page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorButton = await page.$('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(2);
@@ -122,7 +123,7 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 
@@ -130,14 +131,14 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#name');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const sortingPreviewIndicator = await page.$('#name-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by name in an ascending manner
         const nameHeader = await page.$('th#name');
         await nameHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect the names to be in alphabetical order
         const firstNames = await getAllDataFields(page, 'name');
@@ -148,14 +149,14 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#reconstructedEventsCount');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const sortingPreviewIndicator = await page.$('#reconstructedEventsCount-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by year in an ascending manner
         const reconstructedEventsCountHeader = await page.$('th#reconstructedEventsCount');
         await reconstructedEventsCountHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect the year to be in order
         const firstReconstructedEventsCounts = await getAllDataFields(page, 'reconstructedEventsCount');
@@ -166,14 +167,14 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#outputSize');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by avgCenterOfMassEnergy in an ascending manner
         const outputSizeHeader = await page.$('th#outputSize');
         await outputSizeHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
         const firstOutputSize = await getAllDataFields(page, 'outputSize');
@@ -182,14 +183,14 @@ module.exports = () => {
 
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
 
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
@@ -197,7 +198,7 @@ module.exports = () => {
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
