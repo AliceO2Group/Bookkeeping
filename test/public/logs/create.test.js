@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam } = require('../defaults.js');
+const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -177,7 +177,7 @@ module.exports = () => {
         // Expect the user to be at the tag creation screen when the URL is clicked on
         const tagCreationLink = await page.$('#tagCreateLink');
         await page.evaluate((button) => button.click(), tagCreationLink);
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=tag-create`);
     });
@@ -203,7 +203,7 @@ module.exports = () => {
         const file1Path = path.resolve(__dirname, '../..', 'assets', file1);
         const file2Path = path.resolve(__dirname, '../..', 'assets', file2);
         attachmentsInput.uploadFile(file1Path, file2Path);
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         // Ensure that both file attachments were received
         const attachmentNames = await page.$('#attachments-list');
@@ -234,7 +234,7 @@ module.exports = () => {
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
         attachmentsInput.uploadFile(path.resolve(__dirname, '../..', 'assets', '1200px-CERN_logo.png'));
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         // We expect the clear button to appear
         clearButton = await page.$('#clearAttachments');
@@ -245,7 +245,7 @@ module.exports = () => {
         expect(uploadedAttachments.endsWith('1200px-CERN_logo.png')).to.be.true;
 
         await clearButton.evaluate((clearButton) => clearButton.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
     });
@@ -296,7 +296,7 @@ module.exports = () => {
         await page.type('#run-numbers', runNumbersStr);
 
         // Wait for the button to not be disabled
-        await page.waitForTimeout(50);
+        await waitForTimeout(50);
 
         // Create the new log
         await pressElement(page, '#send:not([disabled])');
@@ -351,7 +351,7 @@ module.exports = () => {
         await page.type('#environments', environmentsStr);
 
         // Wait for the button to not be disabled
-        await page.waitForTimeout(50);
+        await waitForTimeout(50);
 
         // Create the new log
         await pressElement(page, '#send:not([disabled])');
@@ -380,7 +380,7 @@ module.exports = () => {
         await page.type('#lhc-fills', lhcFillNumbersStr);
 
         // Wait for the button to not be disabled
-        await page.waitForTimeout(50);
+        await waitForTimeout(50);
 
         // Create the new log
         await pressElement(page, '#send:not([disabled])');
