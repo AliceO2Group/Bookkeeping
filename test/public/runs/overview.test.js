@@ -26,7 +26,7 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText, waitForTimeout } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
@@ -129,7 +129,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
@@ -190,7 +190,7 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await page.waitForTimeout(600);
+        await waitForTimeout(600);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
@@ -203,19 +203,19 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
@@ -225,17 +225,17 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
     });
 
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
@@ -246,18 +246,18 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
     });
 
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         await page.waitForSelector('tbody tr');
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
         await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -268,24 +268,24 @@ module.exports = () => {
 
     it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         // Run 106 has detectors and tags that overflow
         await page.type(runNumberInputSelector, '106');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         // Run 1 has eor reasons that overflow
         await page.type(runNumberInputSelector, '1');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         await checkColumnBalloon(page, 1, 16);
     });
@@ -301,24 +301,24 @@ module.exports = () => {
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         await page.$eval('.detectors-filter .dropdown-trigger', (element) => element.click());
         await pressElement(page, '#detector-filter-dropdown-option-ITS');
         await pressElement(page, '#detector-filter-dropdown-option-FT0');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-or', (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(8);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
@@ -352,73 +352,73 @@ module.exports = () => {
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
         await checkTableRunDefinitions(table, [RunDefinition.Physics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(6);
         await checkTableRunDefinitions(table, [RunDefinition.Physics, RunDefinition.Synthetic]);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic]);
 
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmics]);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(3);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmics, RunDefinition.Technical]);
 
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
         await checkTableRunDefinitions(table, [RunDefinition.Technical]);
 
         await page.$eval(calibrationFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Technical, RunDefinition.Calibration]);
 
         await page.$eval(commissioningFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         await checkTableRunDefinitions(table, [RunDefinition.Commissioning]);
         await page.$eval(commissioningFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(10);
         await checkTableRunDefinitions(
@@ -429,10 +429,10 @@ module.exports = () => {
 
     it('should update to current date when empty and time is set', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
         let today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
         [today] = today.toISOString().split('T');
@@ -440,7 +440,7 @@ module.exports = () => {
 
         for (const selector of Object.values(timeFilterSelectors)) {
             await page.type(selector, time);
-            await page.waitForTimeout(300);
+            await waitForTimeout(300);
         }
         for (const selector of Object.values(dateFilterSelectors)) {
             const value = await page.$eval(selector, (element) => element.value);
@@ -455,41 +455,41 @@ module.exports = () => {
     });
     it('Validates date will not be set again', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
         const dateString = '03-21-2021';
         const validValue = '2021-03-21';
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
         // Set date
         for (const key in dateFilterSelectors) {
             await page.focus(dateFilterSelectors[key]);
             await page.keyboard.type(dateString);
-            await page.waitForTimeout(500);
+            await waitForTimeout(500);
             await page.focus(timeFilterSelectors[key]);
             await page.keyboard.type('00-01-AM');
-            await page.waitForTimeout(500);
+            await waitForTimeout(500);
             const value = await page.$eval(dateFilterSelectors[key], (element) => element.value);
             expect(value).to.equal(validValue);
         }
     });
     it('The max/min should be the right value when date is set to same day', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
         const dateString = '03-02-2021';
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
         // Set date to an open day
         for (const selector of Object.values(dateFilterSelectors)) {
             await page.type(selector, dateString);
-            await page.waitForTimeout(300);
+            await waitForTimeout(300);
         }
         await page.type(timeFilterSelectors.startFrom, '11:11');
         await page.type(timeFilterSelectors.startTo, '14:00');
         await page.type(timeFilterSelectors.endFrom, '11:11');
         await page.type(timeFilterSelectors.endTo, '14:00');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         // Validate if the max value is the same as the till values
         const startMax = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
@@ -506,17 +506,17 @@ module.exports = () => {
 
     it('The max should be the maximum value when having different dates', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
         const dateString = '03-20-2021';
         const maxTime = '23:59';
         const minTime = '00:00';
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
         // Set date to an open day
         for (const selector of Object.values(dateFilterSelectors)) {
             await page.type(selector, dateString);
-            await page.waitForTimeout(500);
+            await waitForTimeout(500);
         }
         const startMax = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
         const endMax = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
@@ -532,10 +532,10 @@ module.exports = () => {
 
     it('should successfully filter on duration', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         const runDurationOperatorSelector = '#duration-operator';
         const runDurationOperator = await page.$(runDurationOperatorSelector) || null;
@@ -548,10 +548,10 @@ module.exports = () => {
 
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('1500');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         await page.select(runDurationOperatorSelector, '=');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
@@ -568,10 +568,10 @@ module.exports = () => {
         });
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('3000');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         await page.select(runDurationOperatorSelector, '>=');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect only unknown
         runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
@@ -606,21 +606,21 @@ module.exports = () => {
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         await checkTableRunQualities(table, [RunQualities.BAD]);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         await checkTableRunQualities(table, [RunQualities.BAD, RunQualities.TEST]);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
         await checkTableRunQualities(table, [RunQualities.BAD]);
@@ -650,22 +650,22 @@ module.exports = () => {
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         await page.$eval(offFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
 
         expect(table.length).to.equal(8);
         await checkTableRunQualities(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         await checkTableRunQualities(table, ['OFF', 'LTU']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
 
         expect(table.length).to.equal(8);
@@ -685,7 +685,7 @@ module.exports = () => {
             await page.waitForSelector(runNumberInputSelector);
             expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
             await fillInput(page, runNumberInputSelector, inputValue);
-            await page.waitForTimeout(500);
+            await waitForTimeout(500);
             // Validate amount in the table
             const table = await page.$$('tbody tr');
             expect(table.length).to.equal(2);
@@ -719,7 +719,7 @@ module.exports = () => {
             await page.waitForSelector(runNumberInputSelector);
             expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
             await fillInput(page, runNumberInputSelector, inputValue);
-            await page.waitForTimeout(500);
+            await waitForTimeout(500);
             // Validate amount in the first page table
             const firstPageTable = await page.$$('tbody tr');
             expect(firstPageTable.length).to.equal(8);
@@ -728,7 +728,7 @@ module.exports = () => {
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(firstPageRows);
 
             await page.$eval('#pageMoveRight', (element) => element.click());
-            await page.waitForTimeout(500);
+            await waitForTimeout(500);
 
             // Validate amount in the second page table
             const secondPageTable = await page.$$('tbody tr');
@@ -787,13 +787,13 @@ module.exports = () => {
 
     it('should successfully filter on run types', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         await pressElement(page, '.runType-filter .dropdown-trigger');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         await pressElement(page, '#run-types-dropdown-option-2');
         await pressElement(page, '#run-types-dropdown-option-14');
@@ -806,10 +806,10 @@ module.exports = () => {
 
     it('should successfully filter on nDetectors', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         const nDetectorOperatorSelector = '#nDetectors-operator';
         const nDetectorOperator = await page.$(nDetectorOperatorSelector) || null;
@@ -822,9 +822,9 @@ module.exports = () => {
 
         await nDetectorLimit.focus();
         await page.keyboard.type('3');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         await page.select(nDetectorOperatorSelector, '<=');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
@@ -837,10 +837,10 @@ module.exports = () => {
 
     it('should successfully filter on nFLPs', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         const nFlpsOperatorSelector = '#nFlps-operator';
         const nFlpsOperator = await page.$(nFlpsOperatorSelector) || null;
@@ -853,9 +853,9 @@ module.exports = () => {
 
         await nFlpsLimit.focus();
         await page.keyboard.type('10');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         await page.select(nFlpsOperatorSelector, '<=');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
@@ -910,10 +910,10 @@ module.exports = () => {
 
     it('should successfully filter by EOR Reason types', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         // Expect the EOR filter to exist
         const eorCategoryDropdown = await page.$('#eorCategories');
@@ -923,7 +923,7 @@ module.exports = () => {
 
         // Select the EOR reason category DETECTORS
         await page.select('#eorCategories', 'DETECTORS');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         let detectorTitleElements = await eorTitleDropdown.$$('option');
         expect(detectorTitleElements).has.lengthOf(3);
 
@@ -946,7 +946,7 @@ module.exports = () => {
 
         // Select the EOR reason title CPV
         await page.select('#eorTitles', 'CPV');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         /*
          * The correct number of runs should be displayed in the table.
@@ -962,7 +962,7 @@ module.exports = () => {
 
         // Reset filters. There should be a single blank option in the EOR titles dropdown
         await page.click('#reset-filters');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         detectorTitleElements = await eorTitleDropdown.$$('option');
         expect(detectorTitleElements).has.lengthOf(1);
 
@@ -973,10 +973,10 @@ module.exports = () => {
 
     it('should correctly filter by EOR reason description', async () => {
         await goToPage(page, 'run-overview');
-        page.waitForTimeout(100);
+        waitForTimeout(100);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         // Expect the EOR description filter to exist
         const eorDescriptionInput = await page.$('#eorDescription');
@@ -986,7 +986,7 @@ module.exports = () => {
         await page.focus('#eorDescription');
         const descriptionInput = 'some';
         await page.keyboard.type(descriptionInput);
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
         expect(eorReasons).has.lengthOf(2);
@@ -995,13 +995,13 @@ module.exports = () => {
 
         // Assuming this result had the category DETECTORS, when we select a different category it should disappear.
         await page.select('#eorCategories', 'OTHER');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         eorReasons = await page.$$('table td[id$="eorReasons"]');
         expect(eorReasons).has.lengthOf(0);
 
         // When we reset the filters, the input field should be empty
         await page.click('#reset-filters');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         eorReasons = await page.$$('table td[id$="eorReasons"]');
         expect(eorReasons.length).to.be.greaterThan(1);
 
@@ -1023,7 +1023,7 @@ module.exports = () => {
         expect(exportModal).to.be.null;
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         exportModal = await page.$('#export-runs-modal');
 
         expect(exportModal).to.not.be.null;
@@ -1031,10 +1031,10 @@ module.exports = () => {
 
     it('should successfully display information when export will be truncated', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         const truncatedExportWarning = await page.$('#export-runs-modal #truncated-export-warning');
         expect(truncatedExportWarning).to.not.be.null;
@@ -1044,15 +1044,15 @@ module.exports = () => {
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForTimeout(200);
+        await waitForTimeout(200);
 
         // Type a fake run number to have no runs
         await page.focus(runNumberInputSelector);
         await page.keyboard.type('99999999999');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         await pressElement(page, '#openFilterToggle');
 
