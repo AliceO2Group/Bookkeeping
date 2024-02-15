@@ -130,22 +130,22 @@ module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage
 /**
  * Navigates to a specific URL and waits until everything is loaded.
  *
- * @param {Page} puppeteerPage puppeteer page object
+ * @param {puppeteer.Page} page puppeteer page object
  * @param {string} url the URL to navigate to
  * @param {object} [options] navigation options
  * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
  * @param {number} [options.redrawDuration] the estimated time to wait for the page to redraw
  * @returns {Promise} resolves with the navigation response
  */
-const goTo = async (puppeteerPage, url, options) => {
+const goTo = async (page, url, options) => {
     const { authenticate = true, redrawDuration = 20 } = options ?? {};
 
     if (authenticate) {
         url = authenticateUrl(url, testToken);
     }
 
-    const response = await puppeteerPage.goto(url, { waitUntil: 'networkidle0' });
-    await puppeteerPage.waitForTimeout(redrawDuration);
+    const response = await page.goto(url, { waitUntil: 'networkidle0' });
+    await waitForTimeout(redrawDuration);
     return response;
 };
 
