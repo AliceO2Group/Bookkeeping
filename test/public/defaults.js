@@ -87,6 +87,21 @@ module.exports.defaultAfter = async (page, browser) => {
 };
 
 /**
+ * Resolves after a given timeout (temporary replacement for puppeteer Page.waitForTimeout)
+ *
+ * @deprecated use an appropriate waitForSelector instead
+ *
+ * @param {number} timeout the timeout to wait (in ms)
+ * @return {Promise<void>} resolves once the timeout has been elapsed
+ */
+const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout));
+
+/**
+ * @deprecated
+ */
+module.exports.waitForTimeout = waitForTimeout;
+
+/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
@@ -164,7 +179,7 @@ module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
     const { redrawDuration = 20 } = options ?? {};
 
     await page.waitForNetworkIdle();
-    await page.waitForTimeout(redrawDuration);
+    await waitForTimeout(redrawDuration);
 };
 
 /**
