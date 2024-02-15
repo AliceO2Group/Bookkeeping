@@ -55,7 +55,7 @@ module.exports = () => {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
-            associatedSimulationPasses: (display) => /(No MC)|(\d+\nMC)/.test(display),
+            associatedSimulationPasses: (display) => /(No MC)|(MC)/.test(display),
             year: (year) => !isNaN(year),
             beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
