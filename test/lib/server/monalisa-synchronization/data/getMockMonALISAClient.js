@@ -15,6 +15,7 @@ const { MonALISAClient } = require('../../../../../lib/server/monalisa-synchroni
 
 const mockDataPasses = require('./mockDataPasses.json');
 const mockDescriptionToDataPassDetails = require('./mockDescriptionToDataPassDetails.json');
+const mockSimulationPasses = require('./mockSimulationPasses.json');
 
 exports.getMockMonALISAClient = (yearLowerLimit) => {
     if (!yearLowerLimit) {
@@ -27,5 +28,6 @@ exports.getMockMonALISAClient = (yearLowerLimit) => {
     });
     instance._fetchDataPasses = async () => mockDataPasses;
     instance._fetchDataPassDetails = async (description) => mockDescriptionToDataPassDetails[description];
+    instance._fetchSimulationPasses = async () => mockSimulationPasses;
     return instance;
 };
