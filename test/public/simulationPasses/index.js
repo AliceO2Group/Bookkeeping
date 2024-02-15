@@ -12,9 +12,9 @@
  */
 
 const PerLhcPeriodOverviewSuite = require('./overviewPerLhcPeriod.test');
-const PerDataPassOverviewSuite = require('./overviewPerDataPass.test');
+const AnchoredSimulationPassesOverviewSuite = require('./overviewAnchoredSimulationPasses.test');
 
 module.exports = () => {
     describe('Per LHC Period Overview Page', PerLhcPeriodOverviewSuite);
-    describe('Per Data Pass Overview Page', PerDataPassOverviewSuite);
+    describe('Anchored Simulation Passes Overview Page', AnchoredSimulationPassesOverviewSuite);
 };
