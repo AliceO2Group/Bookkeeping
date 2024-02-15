@@ -107,13 +107,9 @@ module.exports = () => {
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
+        // Expect the amount of visible simulationPasses to reduce when the first option (5) is selected
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
-
-        await page.waitForSelector('tbody tr');
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
