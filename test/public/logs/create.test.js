@@ -457,5 +457,8 @@ ${reason}
 ## Actions already taken
 ${actions}\
 `);
+        const tags = lastLog.tags.map(({ text }) => text);
+        expect(tags).to.lengthOf(3);
+        expect(tags).to.have.members(['oncall', `${shifterPosition} Shifter`, detectorOrSubsystem]);
     });
 };
