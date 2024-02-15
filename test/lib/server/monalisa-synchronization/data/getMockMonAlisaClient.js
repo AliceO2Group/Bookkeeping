@@ -11,17 +11,17 @@
  * or submit itself to any jurisdiction.
  */
 
-const { MonALISAClient } = require('../../../../../lib/server/monalisa-synchronization/MonALISAClient.js');
+const { MonAlisaClient } = require('../../../../../lib/server/monalisa-synchronization/MonAlisaClient.js');
 
 const mockDataPasses = require('./mockDataPasses.json');
 const mockDescriptionToDataPassDetails = require('./mockDescriptionToDataPassDetails.json');
 const mockSimulationPasses = require('./mockSimulationPasses.json');
 
-exports.getMockMonALISAClient = (yearLowerLimit) => {
+exports.getMockMonAlisaClient = (yearLowerLimit) => {
     if (!yearLowerLimit) {
         throw new Error('Year limit not specified');
     }
-    const instance = new MonALISAClient({
+    const instance = new MonAlisaClient({
         dataPassesUrl: 'https://some.mock.url.com',
         dataPassDetailsUrl: 'https://some.other.mock.url.com',
         yearLowerLimit,
