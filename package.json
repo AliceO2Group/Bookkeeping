@@ -29,7 +29,7 @@
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
-    "sequelize": "6.35.0",
+    "sequelize": "6.37.0",
     "umzug": "3.5.0"
   },
   "files": [
