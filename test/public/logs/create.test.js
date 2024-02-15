@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText } = require('../defaults.js');
+const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -37,8 +37,8 @@ module.exports = () => {
     before(async () => {
         [page, browser, url] = await defaultBefore();
         await page.setViewport({
-            width: 700,
-            height: 720,
+            width: 1920,
+            height: 1080,
             deviceScaleFactor: 1,
         });
     });
@@ -51,7 +51,7 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the log creation screen to be shown correctly
-        const header = await page.$('.f3');
+        const header = await page.$('h3');
         expect(Boolean(header)).to.be.true;
         const headerText = await page.evaluate((element) => element.innerText, header);
         expect(headerText).to.equal('New log');
@@ -67,12 +67,8 @@ module.exports = () => {
         await pressElement(page, '#text ~ .CodeMirror');
         await page.keyboard.type(text);
 
-        // Wait for the button to not be disabled
-        await page.waitForTimeout(50);
-
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
+        await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
         const lastLog = await getLastLog();
@@ -82,35 +78,38 @@ module.exports = () => {
     it('Should successfully display the log-reply form', async () => {
         await goToPage(page, 'log-reply&parentLogId=1');
 
-        const header = await page.$eval('.f3', (element) => element.textContent);
-        expect(header).to.equal('Reply to: First entry');
+        await expectInnerText(page, 'h3', 'Reply to: First entry');
 
         await pressElement(page, '.log-display-action-buttons button:nth-of-type(2)');
-        await page.waitForTimeout(20);
+        await expectInnerText(page, '#log-id-1 span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
 
-        await expectInnerText(page, 'span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
+        await Promise.all([
+            page.waitForNavigation({ timeout: 1500 }),
+            pressElement(page, '#parent-log-details'),
+        ]);
 
-        await pressElement(page, '#details-of-1');
-        await page.waitForTimeout(20);
-
-        expect(new URL(page.url()).search).to.equal('?page=log-detail&id=1');
+        expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
     });
 
     it('can disable submit with invalid data', async () => {
-        const title = 'A';
+        const invalidTitle = 'A';
+        const validTitle = 'A valid title';
         const text = 'Sample Text';
 
         await goToPage(page, 'log-create');
         // Select the boxes and send the values of the title and text to it
-        await page.type('#title', title);
-        // eslint-disable-next-line no-undef
+        await fillInput(page, '#title', validTitle);
         await pressElement(page, '#text ~ .CodeMirror');
         await page.keyboard.type(text);
 
-        // Create check disabled button
-        const isDisabled = await page.$eval('button#send', (button) => button.disabled);
+        // Form is valid, button should be enabled
+        await page.waitForSelector('#send:not([disabled])', { timeout: 200 });
 
-        expect(isDisabled).to.equal(true);
+        // Make the form invalid
+        await fillInput(page, '#title', invalidTitle);
+
+        // Create check disabled button
+        await page.waitForSelector('#send[disabled]', { timeout: 200 });
     });
 
     it('can create a log with linked tags', async () => {
@@ -122,7 +121,7 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // Select the boxes and send the values of the title and text to it
-        await page.type('#title', title);
+        await fillInput(page, '#title', title);
         // eslint-disable-next-line no-undef
         await pressElement(page, '#text ~ .CodeMirror');
         await page.keyboard.type(text);
@@ -135,12 +134,21 @@ module.exports = () => {
         for (const option of tagOptions) {
             const optionText = await option.evaluate((element) => element.querySelector('label').innerText);
             if (tags.includes(optionText)) {
-                await option.evaluate((element) => element.querySelector('input').click());
-                await page.waitForTimeout(100);
+                // Check the option and get the input's id at the same time
+                const inputId = await option.evaluate((element) => {
+                    // Click the option
+                    const input = element.querySelector('input');
+                    input.click();
+                    return input.id;
+                });
+                await page.waitForSelector(`#${inputId}:checked`, { timeout: 200 });
             }
             if (optionText === 'TEST-TAG-27') {
                 testTag27Found = true;
+                // Fail early
+                break;
             }
+
             if (optionText === 'TEST-TAG-31') {
                 testTag31Found = true;
             }
@@ -151,12 +159,11 @@ module.exports = () => {
 
         // Expect to have selected two options
         const tagSelectedOptions = await page.$$('.tag-option input:checked');
-        expect(Object.keys(tagSelectedOptions).length).to.equal(2);
+        expect(tagSelectedOptions).to.lengthOf(2);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitForTimeout(250);
+        await pressElement(page, '#send:not([disabled])');
+        await page.waitForNavigation();
 
         // Return the page to home
         const lastLog = await getLastLog();
@@ -204,10 +211,8 @@ module.exports = () => {
         expect(attachmentNamesText).to.equal(`${file1}\n,\n${file2}`);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        // Sizable delay to allow for file uploading
-        await page.waitForTimeout(2500);
+        await pressElement(page, '#send:not([disabled])');
+        await page.waitForNavigation();
 
         // Return the page to home
         const lastLog = await getLastLog();
@@ -263,9 +268,8 @@ module.exports = () => {
         await page.type('#run-numbers', runNumbersStr);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+        await pressElement(page, '#send:not([disabled])');
+        await page.waitForNavigation();
 
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(title);
@@ -295,8 +299,7 @@ module.exports = () => {
         await page.waitForTimeout(50);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
+        await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
         const lastLog = await getLastLog();
@@ -322,9 +325,8 @@ module.exports = () => {
         await page.type('#environments', environmentsStr);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
-        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+        await pressElement(page, '#send:not([disabled])');
+        await page.waitForNavigation();
 
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(title);
@@ -352,8 +354,7 @@ module.exports = () => {
         await page.waitForTimeout(50);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
+        await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
         const lastLog = await getLastLog();
@@ -382,12 +383,78 @@ module.exports = () => {
         await page.waitForTimeout(50);
 
         // Create the new log
-        const buttonSend = await page.$('button#send');
-        await buttonSend.evaluate((button) => button.click());
+        await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(title);
         expect(lastLog.lhcFills.map(({ fillNumber }) => fillNumber)).to.eql(lhcFillNumbers);
+    });
+
+    it('should successfully switch to on-call log template', async () => {
+        await goToPage(page, 'log-create');
+
+        // Log template is the first select of the page
+        await page.waitForSelector('select');
+        await page.select('select', 'on-call');
+
+        // Expect the inputs to be there
+        await page.waitForSelector('#shortDescription', { timeout: 500 });
+
+        const shortDescription = 'Short description of the issue';
+        await fillInput(page, '#shortDescription', shortDescription);
+
+        const detectorOrSubsystem = 'FT0';
+        await page.select('#detectorOrSubsystem', detectorOrSubsystem);
+
+        const severity = 'Severe';
+        await page.select('#severity', severity);
+
+        const issueScope = 'System commissioning';
+        await page.select('#issueScope', issueScope);
+
+        const shifterPosition = 'ECS';
+        await page.select('#shifterPosition', shifterPosition);
+
+        const beamMode = 'Beam mode';
+        await fillInput(page, '#lhcBeamMode', beamMode);
+
+        const description = 'Description\nof the issue';
+        await pressElement(page, '#issue-description ~ .CodeMirror');
+        await page.keyboard.type(description);
+
+        const reason = 'Reason\nto call on-call';
+        await pressElement(page, '#reason-to-call-on-call ~ .CodeMirror');
+        await page.keyboard.type(reason);
+
+        const actions = 'Actions\nalready taken';
+        await pressElement(page, '#actions-already-taken ~ .CodeMirror');
+        await page.keyboard.type(actions);
+
+        await pressElement(page, '#send:not([disabled])');
+
+        await page.waitForNavigation();
+        await expectInnerText(page, 'h2', `${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
+
+        const lastLog = await getLastLog();
+        expect(lastLog.title).to.equal(`${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
+        expect(lastLog.text).to.equal(`\
+TITLE: ${shortDescription} - Call on-call for ${detectorOrSubsystem}
+
+IMPORTANCE: ${severity} for ${issueScope}
+
+SHIFTER: Anonymous - ${shifterPosition}
+
+LHC BEAM MODE: ${beamMode}
+
+DESCRIPTION:
+${description}
+
+REASON TO CALL THIS ON-CALL:
+${reason}
+
+ACTIONS ALREADY TAKEN:
+${actions}\
+`);
     });
 };
