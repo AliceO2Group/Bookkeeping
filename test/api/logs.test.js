@@ -774,6 +774,49 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/logs/root', () => {
+        it('should return root logs only', (done) => {
+            request(server)
+                .get('/api/logs/root')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data.every((log) => log.parentLogId === null));
+
+                    done();
+                });
+        });
+
+        it('should return an array', (done) => {
+            request(server)
+                .get('/api/logs/root')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.be.an('array');
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the limit is below 1', async () => {
+            const response = await request(server).get('/api/logs/root?page[offset]=0&page[limit]=0');
+            expect(response.status).to.equal(400);
+
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+        });
+    });
+
     describe('POST /api/logs', () => {
         it('should return 400 if no title is provided', (done) => {
             request(server)
