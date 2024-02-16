@@ -30,6 +30,10 @@ module.exports = () => {
         const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
+        // Check whether examining data passes with last runs works correctly;
+        let lastRunNumbers = await monAlisaSynchronizer._getAllDataPassesLastRunNumber();
+        expect(mockDataPasses.every((dataPass) => monAlisaSynchronizer._doesDataPassNeedUpdate(dataPass, lastRunNumbers))).to.be.true;
+
         // Run Synchronization
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
@@ -66,6 +70,10 @@ module.exports = () => {
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
+
+        // Check whether examining data passes with last runs works correctly;
+        lastRunNumbers = await monAlisaSynchronizer._getAllDataPassesLastRunNumber();
+        expect(mockDataPasses.some((dataPass) => monAlisaSynchronizer._doesDataPassNeedUpdate(dataPass, lastRunNumbers))).to.be.false;
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
