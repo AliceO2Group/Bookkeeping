@@ -74,7 +74,6 @@ module.exports = () => {
                     definition: RunDefinition.Physics,
                 } })).map(({ runNumber }) => runNumber);
 
-                console.log(expectedRunNumbers, dataPass.name, 'TOBEC');
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
