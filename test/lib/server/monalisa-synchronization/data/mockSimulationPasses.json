@@ -22,7 +22,7 @@
     "anchor_pass": "spass4"
   },
   "LHC23ad7": {
-    "runList": "92, 97, 52, 6",
+    "runList": "92, 97, 52, 6, 49",
     "generator": "production SOME FOR SOME SOME SOME production",
     "jiraID": "ALIROOT-6882",
     "PWG": "PWGARXX",
@@ -66,7 +66,7 @@
     "anchor_pass": "epass3"
   },
   "LHC23ad5": {
-    "runList": "9",
+    "runList": "9, 54",
     "generator": " DESCRIPTION SOME production random monte random SOME random",
     "jiraID": "ALIROOT-4367",
     "PWG": "PWGLNXX",
