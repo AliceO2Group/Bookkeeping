@@ -404,7 +404,7 @@ module.exports = () => {
         const shortDescription = 'Short description of the issue';
         await fillInput(page, '#shortDescription', shortDescription);
 
-        const detectorOrSubsystem = 'FT0';
+        const detectorOrSubsystem = 'DCS';
         await page.select('#detectorOrSubsystem', detectorOrSubsystem);
 
         const severity = 'Severe';
@@ -438,7 +438,8 @@ module.exports = () => {
 
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(`${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
-        expect(lastLog.text).to.equal(`\
+        // Sometimes, browser adds \r to the request to comply with text form data encoding
+        expect(lastLog.text.replaceAll('\r', '')).to.equal(`\
 ## Importance
 ${severity} for ${issueScope}
 
