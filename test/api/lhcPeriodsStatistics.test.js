@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+
 const lhcPeriod_LHC22b = {
     id: 2,
     avgCenterOfMassEnergy: 1264.9836246503144,
