@@ -19,45 +19,45 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 
 const lhcPeriod_LHC22b = {
     id: 2,
-    beamType: 'XeXe',
     avgCenterOfMassEnergy: 1264.9836246503144,
-    distinctEnergies: [55.2],
     lhcPeriod: {
         id: 2,
         name: 'LHC22b',
+        beamType: ['XeXe'],
+        distinctEnergies: [55.2],
+        runsCount: 1,
+        dataPassesCount: 2,
     },
-    runsCount: 1,
-    dataPassesCount: 2,
 };
 
 const lhcPeriod_LHC22a = {
     id: 1,
-    beamType: 'pp',
     avgCenterOfMassEnergy: 99.52079923444215,
-    distinctEnergies: [
-        23.21,
-        56.1,
-    ],
     lhcPeriod: {
         id: 1,
         name: 'LHC22a',
+        beamType: ['PbPb', 'pp'],
+        distinctEnergies: [
+            23.21,
+            56.1,
+        ],
+        runsCount: 3,
+        dataPassesCount: 1,
     },
-    runsCount: 3,
-    dataPassesCount: 1,
 
 };
 
 const lhcPeriod_LHC23f = {
     id: 3,
-    beamType: null,
     avgCenterOfMassEnergy: null,
-    distinctEnergies: [],
     lhcPeriod: {
         id: 3,
         name: 'LHC23f',
+        beamType: null,
+        distinctEnergies: [],
+        dataPassesCount: 0,
+        runsCount: 0,
     },
-    dataPassesCount: 0,
-    runsCount: 0,
 };
 
 module.exports = () => {
