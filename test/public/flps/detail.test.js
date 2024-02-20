@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -35,7 +36,7 @@ module.exports = () => {
 
     it('can navigate to the main panel', async () => {
         await pressElement(page, '#main-tab');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=main`)).to.be.true;
     });
@@ -71,7 +72,7 @@ module.exports = () => {
         // We expect the associated run to be clickable with a valid link
         const runLink = await page.$('#Flp-run a');
         await runLink.click();
-        await page.waitForTimeout(1000);
+        await waitForTimeout(1000);
 
         // We expect the link to navigate to the correct run detail page
         const redirectedUrl = await page.url();
