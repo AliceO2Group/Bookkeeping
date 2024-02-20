@@ -14,7 +14,6 @@
 const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 const { lhcFillService } = require('../../../../../lib/server/services/lhcFill/LhcFillService.js');
 const { expect } = require('chai');
-const { LhcFillRepository } = require('../../../../../lib/database/repositories/index.js');
 
 module.exports = () => {
     it('should successfully return an LHC fill for a given fill number', async () => {
