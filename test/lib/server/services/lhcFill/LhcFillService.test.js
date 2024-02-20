@@ -44,8 +44,6 @@ module.exports = () => {
         const firstCreatedAt = new Date('2019-08-09 18:00:00');
         const secondCreatedAt = new Date('2019-08-09 20:00:00');
 
-        console.log(await LhcFillRepository.findAll());
-
         {
             const lhcFills = await lhcFillService.getAllEndedInPeriod({
                 from: firstCreatedAt.getTime(),
