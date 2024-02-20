@@ -14,6 +14,7 @@
 const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 const { lhcFillService } = require('../../../../../lib/server/services/lhcFill/LhcFillService.js');
 const { expect } = require('chai');
+const { LhcFillRepository } = require('../../../../../lib/database/repositories/index.js');
 
 module.exports = () => {
     it('should successfully return an LHC fill for a given fill number', async () => {
@@ -36,5 +37,40 @@ module.exports = () => {
         const lhcFill = await lhcFillService.getLast();
         expect(lhcFill).to.have.ownProperty('fillNumber');
         expect(lhcFill.fillNumber).to.equal(6);
+    });
+
+    it('should successfully return the list of fills ended in a given period', async () => {
+        // For the purpose of the test, create 2 fills with fixed creation date
+        const firstCreatedAt = new Date('2019-08-09 18:00:00');
+        const secondCreatedAt = new Date('2019-08-09 20:00:00');
+
+        console.log(await LhcFillRepository.findAll());
+
+        {
+            const lhcFills = await lhcFillService.getAllEndedInPeriod({
+                from: firstCreatedAt.getTime(),
+                to: secondCreatedAt.getTime(),
+            });
+            expect(lhcFills).to.lengthOf(2);
+            expect(lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([2, 3]);
+        }
+
+        {
+            const lhcFills = await lhcFillService.getAllEndedInPeriod({
+                from: firstCreatedAt.getTime() + 1000,
+                to: secondCreatedAt.getTime(),
+            });
+            expect(lhcFills).to.lengthOf(1);
+            expect(lhcFills[0].fillNumber).to.equal(3);
+        }
+
+        {
+            const lhcFills = await lhcFillService.getAllEndedInPeriod({
+                from: firstCreatedAt.getTime(),
+                to: secondCreatedAt.getTime() + 1000,
+            });
+            expect(lhcFills).to.lengthOf(3);
+            expect(lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([2, 3, 4]);
+        }
     });
 };
