@@ -22,11 +22,12 @@ const lhcPeriod_LHC22b = {
     lhcPeriod: {
         id: 2,
         name: 'LHC22b',
-        beamType: ['XeXe'],
-        distinctEnergies: [55.2],
-        runsCount: 1,
-        dataPassesCount: 2,
+
     },
+    beamType: ['XeXe'],
+    distinctEnergies: [55.2],
+    runsCount: 1,
+    dataPassesCount: 2,
 };
 
 const lhcPeriod_LHC22a = {
@@ -35,15 +36,15 @@ const lhcPeriod_LHC22a = {
     lhcPeriod: {
         id: 1,
         name: 'LHC22a',
-        beamType: ['PbPb', 'pp'],
-        distinctEnergies: [
-            23.21,
-            56.1,
-        ],
-        runsCount: 3,
-        dataPassesCount: 1,
-    },
 
+    },
+    beamType: ['PbPb', 'pp'],
+    distinctEnergies: [
+        23.21,
+        56.1,
+    ],
+    runsCount: 3,
+    dataPassesCount: 1,
 };
 
 const lhcPeriod_LHC23f = {
@@ -52,12 +53,14 @@ const lhcPeriod_LHC23f = {
     lhcPeriod: {
         id: 3,
         name: 'LHC23f',
-        beamType: [],
-        distinctEnergies: [],
-        dataPassesCount: 0,
-        runsCount: 0,
+
     },
+    beamType: [],
+    distinctEnergies: [],
+    dataPassesCount: 0,
+    runsCount: 0,
 };
+
 
 module.exports = () => {
     before(resetDatabaseContent);
