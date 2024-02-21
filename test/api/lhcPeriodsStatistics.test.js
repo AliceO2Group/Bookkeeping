@@ -61,7 +61,6 @@ const lhcPeriod_LHC23f = {
     runsCount: 0,
 };
 
-
 module.exports = () => {
     before(resetDatabaseContent);
 
