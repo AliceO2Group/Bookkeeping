@@ -56,7 +56,7 @@ module.exports = () => {
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
             year: (year) => !isNaN(year),
-            beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
+            beamType: (beamType) => beamType.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
                 .split(',')
