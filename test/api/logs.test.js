@@ -1035,7 +1035,7 @@ module.exports = () => {
                 .field('title', 'Yet another run')
                 .field('text', 'Text of yet another run')
                 .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
-                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider_(é_è).jpg'))
+                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider_`(é_è)’.jpg'))
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -1044,7 +1044,7 @@ module.exports = () => {
                     }
 
                     expect(res.body.data.attachments[0].originalName).to.equal('1200px-CERN_logo.png');
-                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider_(é_è).jpg');
+                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider_`(é_è)’.jpg');
 
                     logWithAttachmentsId = res.body.data.id;
                     attachmentId = res.body.data.attachments[0].id;
