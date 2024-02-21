@@ -27,7 +27,7 @@ const LHC23k6c = {
     generatedEventsCount: 4316450,
     outputSize: 14013600611699,
     dataPassesCount: 2,
-    runsCount: 0,
+    runsCount: 2,
 };
 
 const LHC23k6b = {
