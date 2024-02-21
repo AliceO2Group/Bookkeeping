@@ -82,7 +82,7 @@ module.exports = () => {
             if (index in headerIndices) {
                 const cellContent = await page.evaluate((element) => element.innerText, cell);
                 const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
+                expect(expectedDatatype, `${headerDatatypes[headerIndices[index]]} incorrect datatype`).to.be.true;
             }
         }
     });
