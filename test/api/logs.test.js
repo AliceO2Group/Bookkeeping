@@ -31,11 +31,19 @@ module.exports = () => {
          * So to test specific file names, store files in git under an acceptable name but rename it on the fly before the test and put it
          * back afterward
          */
-        fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'), path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'));
+        try {
+            fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'), path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'));
+        } catch (_) {
+            // File has probably been renamed in another test
+        }
     });
 
     after(async () => {
-        fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
+        try {
+            fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
+        } catch (_) {
+            // File has probably been renamed in another test
+        }
     });
 
     let logWithAttachmentsId = 0;
