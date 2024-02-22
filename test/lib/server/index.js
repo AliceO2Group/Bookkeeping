@@ -14,11 +14,11 @@
 const UtilitiesSuite = require('./utilities/index.js');
 const ServicesSuite = require('./services/index.js');
 const MiddlewareSuite = require('./middleware/index.js');
-const MonALISASynchronizationSuite = require('./monalisa-synchronization/index.js');
+const MonAlisaSynchronizationSuite = require('./monalisa-synchronization/index.js');
 
 module.exports = () => {
     describe('Utilities', UtilitiesSuite);
     describe('Services', ServicesSuite);
     describe('Middlewares', MiddlewareSuite);
-    describe('External Services Synchronization', MonALISASynchronizationSuite);
+    describe('External Services Synchronization', MonAlisaSynchronizationSuite);
 };
