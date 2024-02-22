@@ -18,9 +18,25 @@ const { repositories: { LogRepository } } = require('../../lib/database');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
 const { server } = require('../../lib/application');
+const fs = require('fs');
 
 module.exports = () => {
-    before(resetDatabaseContent);
+    const assetsDir = [__dirname, '../..', 'assets'];
+
+    before(async () => {
+        await resetDatabaseContent();
+
+        /*
+         * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
+         * So to test specific file names, store files in git under an acceptable name but rename it on the fly before the test and put it
+         * back afterward
+         */
+        fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'), path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'));
+    });
+
+    after(async () => {
+        fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
+    });
 
     let logWithAttachmentsId = 0;
     let attachmentId = 0;
@@ -1034,8 +1050,8 @@ module.exports = () => {
                 .post('/api/logs')
                 .field('title', 'Yet another run')
                 .field('text', 'Text of yet another run')
-                .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
-                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider_`(é_è)’.jpg'))
+                .attach('attachments.0', path.resolve(...assetsDir, '1200px-CERN_logo.png'))
+                .attach('attachments.1', path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'))
                 .expect(201)
                 .end((err, res) => {
                     if (err) {

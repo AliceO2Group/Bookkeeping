@@ -16,6 +16,7 @@ const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout } = require('../defaults.js');
+const fs = require('fs');
 
 const { expect } = chai;
 
@@ -33,6 +34,7 @@ module.exports = () => {
     let page;
     let browser;
     let url;
+    const assetsDir = [__dirname, '../..', 'assets'];
 
     before(async () => {
         [page, browser, url] = await defaultBefore();
@@ -41,10 +43,19 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        /*
+         * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
+         * So to test specific file names, store files in git under an acceptable name but rename it on the fly before the test and put it
+         * back afterward
+         */
+        fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'), path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'));
     });
 
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
+
+        fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
     });
 
     it('correctly loads the log creation page', async () => {
@@ -200,8 +211,8 @@ module.exports = () => {
 
         // Add both the file attachments to the input field
         const attachmentsInput = await page.$('#attachments');
-        const file1Path = path.resolve(__dirname, '../..', 'assets', file1);
-        const file2Path = path.resolve(__dirname, '../..', 'assets', file2);
+        const file1Path = path.resolve(...assetsDir, file1);
+        const file2Path = path.resolve(...assetsDir, file2);
         attachmentsInput.uploadFile(file1Path, file2Path);
         await waitForTimeout(500);
 
@@ -233,7 +244,7 @@ module.exports = () => {
 
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
-        attachmentsInput.uploadFile(path.resolve(__dirname, '../..', 'assets', '1200px-CERN_logo.png'));
+        attachmentsInput.uploadFile(path.resolve(...assetsDir, '1200px-CERN_logo.png'));
         await waitForTimeout(500);
 
         // We expect the clear button to appear
