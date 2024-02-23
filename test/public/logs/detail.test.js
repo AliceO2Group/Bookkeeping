@@ -220,8 +220,10 @@ module.exports = () => {
         expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
 
         // Expect new log to inherit title of the parent
-        const newLogId = new URL(page.url()).searchParams.get('id');
-        const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
+        const newLogId = await page.evaluate(() => window.model.router.params.id);
+        const newLogTitleId = `#log-${newLogId}-title`;
+        await page.waitForSelector(newLogTitleId);
+        const newLogTitle = await page.$eval(newLogTitleId, (element) => element.innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
         expect(newLogTitle).to.equal(`${parentLogTitle}`);
     });
