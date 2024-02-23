@@ -20,7 +20,6 @@ const { expect } = chai;
 
 module.exports = () => {
     let logMock;
-    let rootLogs;
 
     beforeEach(async () => {
         logMock = {
@@ -28,8 +27,6 @@ module.exports = () => {
             text: 'This is the text field of yet another log.',
             tags: [],
         };
-
-        rootLogs = await logService.getAllRootLogs(10, 0);
     });
 
     it('Should throw when creating a log with a non-existing parent', async () => {
@@ -51,11 +48,22 @@ module.exports = () => {
         expect(logsForFill.map(({ id }) => id)).to.eql([1, 3, 4]);
     });
 
-    it('Should successfully return the amount of root logs based off the limit', async () => {
+    it('Should successfully return the correct amount of root logs only, based off the limit', async () => {
+        const rootLogs = await logService.getAllRootLogs(10, 0);
         expect(rootLogs.logs).to.lengthOf(10);
+        rootLogs.logs.forEach((log) => expect(log.parentLogId).to.equal(log.id));
     });
 
-    it('Should successfully return only root logs', async () => {
-        rootLogs.logs.forEach((log) => expect(log.parentLogId).to.equal(log.id));
+    it('Should successfully return an empty array with limit 0', async () => {
+        const rootLogs = await logService.getAllRootLogs(0, 0);
+        expect(rootLogs.logs).to.be.empty;
+    });
+
+    it('Should successfully return the correct logs based off the offset', async () => {
+        const rootLogsFirstPage = await logService.getAllRootLogs(1, 0);
+        const rootLogsSecondPage = await logService.getAllRootLogs(1, 1);
+
+        expect(rootLogsFirstPage.logs[0].id).to.equal(1);
+        expect(rootLogsSecondPage.logs[0].id).to.equal(5);
     });
 };
