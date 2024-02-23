@@ -226,7 +226,6 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the clear button to not be visible yet
-        await page.waitForSelector('#clearAttachments');
         let clearButton = await page.$('#clearAttachments');
         expect(Boolean(clearButton)).to.be.false;
 
@@ -235,6 +234,7 @@ module.exports = () => {
         attachmentsInput.uploadFile(path.resolve(__dirname, '../..', 'assets', '1200px-CERN_logo.png'));
 
         // We expect the clear button to appear
+        await page.waitForSelector('#clearAttachments');
         clearButton = await page.$('#clearAttachments');
         expect(Boolean(clearButton)).to.be.true;
 
