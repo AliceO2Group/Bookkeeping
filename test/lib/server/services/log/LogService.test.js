@@ -20,6 +20,7 @@ const { expect } = chai;
 
 module.exports = () => {
     let logMock;
+    let rootLogs;
 
     beforeEach(async () => {
         logMock = {
@@ -27,6 +28,8 @@ module.exports = () => {
             text: 'This is the text field of yet another log.',
             tags: [],
         };
+
+        rootLogs = await logService.getAllRootLogs(10, 0);
     });
 
     it('Should throw when creating a log with a non-existing parent', async () => {
@@ -46,5 +49,13 @@ module.exports = () => {
         const logsForFill = await logService.getAllByEnvironment('8E4aZTjY');
         expect(logsForFill).to.lengthOf(3);
         expect(logsForFill.map(({ id }) => id)).to.eql([1, 3, 4]);
+    });
+
+    it('Should successfully return the amount of root logs based off the limit', async () => {
+        expect(rootLogs.logs).to.lengthOf(10);
+    });
+
+    it('Should successfully return only root logs', async () => {
+        rootLogs.logs.forEach((log) => expect(log.parentLogId).to.equal(log.id));
     });
 };
