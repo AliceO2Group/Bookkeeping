@@ -56,7 +56,7 @@ module.exports = () => {
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
             year: (year) => !isNaN(year),
-            beamType: (beamType) => beamType.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
+            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
                 .split(',')
@@ -233,7 +233,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamType');
+        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
         expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
     });
 };

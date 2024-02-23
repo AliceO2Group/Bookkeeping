@@ -25,7 +25,7 @@ const lhcPeriod_LHC22b = {
         name: 'LHC22b',
 
     },
-    beamType: ['XeXe'],
+    beamTypes: ['XeXe'],
     distinctEnergies: [55.2],
     runsCount: 1,
     dataPassesCount: 2,
@@ -39,7 +39,7 @@ const lhcPeriod_LHC22a = {
         name: 'LHC22a',
 
     },
-    beamType: ['PbPb', 'pp'],
+    beamTypes: ['PbPb', 'pp'],
     distinctEnergies: [
         23.21,
         56.1,
@@ -56,7 +56,7 @@ const lhcPeriod_LHC23f = {
         name: 'LHC23f',
 
     },
-    beamType: [],
+    beamTypes: [],
     distinctEnergies: [],
     dataPassesCount: 0,
     runsCount: 0,
@@ -155,7 +155,7 @@ module.exports = () => {
         expect(lhcPeriods[2]).to.be.eql(lhcPeriod_LHC23f);
     });
 
-    it('should succesfully filter period statistics on beamType', async () => {
+    it('should succesfully filter period statistics on beamTypes', async () => {
         const dto = {
             query: {
                 filter: {
@@ -168,11 +168,11 @@ module.exports = () => {
         expect(lhcPeriods).to.have.deep.members([lhcPeriod_LHC22b]);
     });
 
-    it('should succesfully sort period statistics on beamType', async () => {
+    it('should succesfully sort period statistics on beamTypes', async () => {
         const dto = {
             query: {
                 sort: {
-                    beamType: 'ASC',
+                    beamTypes: 'ASC',
                 },
             },
         };

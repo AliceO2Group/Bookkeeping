@@ -24,7 +24,7 @@ const lhcPeriod_LHC22b = {
         name: 'LHC22b',
 
     },
-    beamType: ['XeXe'],
+    beamTypes: ['XeXe'],
     distinctEnergies: [55.2],
     runsCount: 1,
     dataPassesCount: 2,
@@ -38,7 +38,7 @@ const lhcPeriod_LHC22a = {
         name: 'LHC22a',
 
     },
-    beamType: ['PbPb', 'pp'],
+    beamTypes: ['PbPb', 'pp'],
     distinctEnergies: [
         23.21,
         56.1,
@@ -55,7 +55,7 @@ const lhcPeriod_LHC23f = {
         name: 'LHC23f',
 
     },
-    beamType: [],
+    beamTypes: [],
     distinctEnergies: [],
     dataPassesCount: 0,
     runsCount: 0,
@@ -244,9 +244,9 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on beamType', (done) => {
+        it('should successfuly sort on beamTypes', (done) => {
             request(server)
-                .get('/api/lhcPeriodsStatistics?sort[beamType]=DESC')
+                .get('/api/lhcPeriodsStatistics?sort[beamTypes]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
