@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-const { waitForTimeout } = require('../defaults.js');
+const { waitForTimeout, waitForNavigation } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -170,8 +170,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one log in this log entry
-        await pressElement(page, `#reply-to-${parentLogId}`);
-        await waitForTimeout(1000);
+        await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
@@ -198,8 +197,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one post in this log entry
-        await pressElement(page, `#reply-to-${parentLogId}`);
-        await waitForTimeout(1000);
+        await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
@@ -215,8 +213,7 @@ module.exports = () => {
         expect(isDisabled).to.equal(false);
 
         const button = await page.$('button#send');
-        await button.evaluate((button) => button.click());
-        await waitForTimeout(1000);
+        await waitForNavigation(page, () => button.evaluate((button) => button.click()));
 
         // Expect to be redirected to the new log
         const postSendUrl = await page.url();
@@ -224,7 +221,9 @@ module.exports = () => {
 
         // Expect new log to inherit title of the parent
         const newLogId = await page.evaluate(() => window.model.router.params.id);
-        const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
+        const newLogTitleId = `#log-${newLogId}-title`;
+        await page.waitForSelector(newLogTitleId);
+        const newLogTitle = await page.$eval(newLogTitleId, (element) => element.innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
         expect(newLogTitle).to.equal(`${parentLogTitle}`);
     });
