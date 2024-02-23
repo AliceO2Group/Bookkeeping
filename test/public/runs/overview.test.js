@@ -23,10 +23,11 @@ const {
     goToPage,
     checkColumnBalloon,
     waitForNetworkIdleAndRedraw,
+    waitForNavigation,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent, getInnerText, waitForTimeout } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
@@ -129,8 +130,8 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(108);
@@ -190,9 +191,9 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTimeout(600);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
+        await page.waitForSelector('tbody tr');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
 
@@ -203,21 +204,20 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
+        await page.waitForSelector(amountSelectorId);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
         await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
-        await waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
+        await page.waitForSelector('#pageSelector');
         const pageFiveButton = await page.$('#page5');
         expect(Boolean(pageFiveButton)).to.be.true;
         const pageSixButton = await page.$('#page6');
@@ -225,20 +225,19 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await waitForTimeout(100);
+        await page.waitForSelector('#page5');
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
     });
 
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
-        await waitForTimeout(100);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+        await page.waitForSelector('.alert-danger');
         await expectInnerText(page, '.alert-danger', expectedMessage);
 
         // Revert changes for next test
@@ -246,20 +245,17 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
     });
 
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
         await page.waitForSelector('tbody tr');
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
+        await waitForNavigation(page, () => page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click()));
 
+        const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
         expect(urlParameters).to.contain('page=run-detail');
@@ -268,25 +264,20 @@ module.exports = () => {
 
     it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
 
         // Run 106 has detectors and tags that overflow
         await page.type(runNumberInputSelector, '106');
-        await waitForTimeout(500);
 
+        await page.waitForSelector('tbody tr');
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
 
-        await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
-
         // Run 1 has eor reasons that overflow
         await page.type(runNumberInputSelector, '1');
-        await waitForTimeout(500);
-
+        await page.waitForSelector('tbody tr');
         await checkColumnBalloon(page, 1, 16);
     });
 
@@ -300,26 +291,26 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
 
         // Open filter toggle
+        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
 
         await page.$eval('.detectors-filter .dropdown-trigger', (element) => element.click());
         await pressElement(page, '#detector-filter-dropdown-option-ITS');
         await pressElement(page, '#detector-filter-dropdown-option-FT0');
-        await waitForTimeout(300);
 
+        await page.waitForSelector('tbody tr');
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-or', (element) => element.click());
-        await waitForTimeout(300);
 
+        await page.waitForSelector('tbody tr');
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(8);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
-        await waitForTimeout(300);
 
+        await page.waitForSelector('tbody tr');
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
     });
