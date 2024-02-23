@@ -22,7 +22,6 @@ const {
     reloadPage,
 } = require('../defaults');
 const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
-const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -119,6 +118,8 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
+        await page.waitForSelector('#firstRowIndex');
+
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
@@ -127,6 +128,8 @@ module.exports = () => {
     it('successfully switch to raw timestamp display', async () => {
         await reloadPage(page);
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
+        await page.waitForSelector(rawTimestampToggleSelector);
+        await page.waitForSelector('tbody tr');
         expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
         expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
         await page.$eval(rawTimestampToggleSelector, (element) => element.click());
@@ -141,6 +144,7 @@ module.exports = () => {
 
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
+        await page.waitForSelector(amountSelectorButtonSelector);
         await pressElement(page, amountSelectorButtonSelector);
 
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
@@ -148,9 +152,9 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTimeout(600);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
+        await page.waitForSelector('tbody tr');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(3);
 
@@ -161,19 +165,18 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
+        await page.waitForSelector(amountSelectorId);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('notifies if table loading returned an error', async () => {
         await reloadPage(page);
-        await waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
-        await waitForTimeout(100);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+        await page.waitForSelector('.alert-danger');
         await expectInnerText(page, '.alert-danger', expectedMessage);
 
         // Revert changes for next test
@@ -181,18 +184,15 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
     });
 
     it('can navigate to a run detail page', async () => {
         await reloadPage(page);
-        await waitForTimeout(100);
-        await page.waitForSelector('tbody tr');
 
+        await page.waitForSelector('tbody tr');
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
         await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        await waitForTimeout(100);
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
