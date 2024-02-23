@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
+
 const LHC23k6c = {
     id: 1,
     name: 'LHC23k6c',
@@ -26,7 +27,7 @@ const LHC23k6c = {
     generatedEventsCount: 4316450,
     outputSize: 14013600611699,
     dataPassesCount: 2,
-    runsCount: 0,
+    runsCount: 2,
 };
 
 const LHC23k6b = {
