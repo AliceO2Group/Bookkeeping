@@ -20,6 +20,7 @@ const {
     getFirstRow,
     goToPage,
     reloadPage,
+    waitForNavigation,
 } = require('../defaults');
 const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
 
@@ -192,9 +193,9 @@ module.exports = () => {
         await page.waitForSelector('tbody tr');
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        const redirectedUrl = await page.url();
+        await waitForNavigation(page, () => page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click()));
 
+        const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
         expect(urlParameters).to.contain('page=run-detail');
