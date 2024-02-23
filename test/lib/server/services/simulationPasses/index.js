@@ -11,16 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-/**
- * @typedef SequelizeSimulationPass
- *
- * @property {string} name
- * @property {string} jiraId
- * @property {string} description
- * @property {string} pwg physicist working group
- * @property {number} requestedEventsCount
- * @property {number} generatedEventsCount
- * @property {number} outputSize
- * @property {number} dataPassesCount
- * @property {number} runsCount
- */
+const SimulationPassesService = require('./SimulationPassesService.test.js');
+
+module.exports = () => {
+    describe('SimulationPassesService', SimulationPassesService);
+};
