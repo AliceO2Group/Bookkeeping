@@ -23,6 +23,7 @@ const LHC22b_apass1 = {
     reconstructedEventsCount: 50948694,
     outputSize: 56875682112600,
     lastRunNumber: 108,
+    runsCount: 3,
 };
 
 const LHC22b_apass2 = {
@@ -32,6 +33,7 @@ const LHC22b_apass2 = {
     reconstructedEventsCount: 50848604,
     outputSize: 55765671112610,
     lastRunNumber: 55,
+    runsCount: 1,
 };
 
 const LHC22a_apass1 = {
@@ -41,6 +43,7 @@ const LHC22a_apass1 = {
     reconstructedEventsCount: 50848111,
     outputSize: 55761110122610,
     lastRunNumber: 105,
+    runsCount: 3,
 };
 
 module.exports = () => {

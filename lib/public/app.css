@@ -71,7 +71,8 @@ html, body {
 .w-85  { width:  85%; }
 .w-90  { width:  90%; }
 .w-95  { width:  95%; }
-.w-100 { width: 100%; }
+.mw-100 { max-width: 100%; }
+.mh-100 { max-height: 100%; }
 .w-30rem { width: 30rem; }
 .w-inherit {
     width: inherit !important;
@@ -79,6 +80,9 @@ html, body {
 .w-unset {
     width: unset;
 }
+
+/* cursors */
+.cursor-info { cursor: help; }
 
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }
@@ -636,7 +640,6 @@ label {
 .time-range-selector .month-option:nth-last-child(-n+3), .time-range-selector .dropdown-option:last-child {
     border-bottom: 1px solid var(--color-gray-dark);
 }
-
 
 /**
  * Breakpoints :

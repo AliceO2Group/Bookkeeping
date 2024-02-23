@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { waitForTimeout, waitForNavigation } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -91,7 +92,7 @@ module.exports = () => {
         // Expect the text before the click to be different after
         await expectInnerText(page, '#copy-117', 'Copy Link');
         await log117CopyBtn.click();
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
@@ -169,22 +170,22 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one log in this log entry
-        await pressElement(page, `#reply-to-${parentLogId}`);
-        await page.waitForTimeout(1000);
+        await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
 
         const text = 'Test the reply button';
 
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
-        await page.waitForTimeout(250);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
+        await waitForTimeout(250);
 
         // Create the new log
         const button = await page.$('button#send');
         await button.evaluate((button) => button.click());
-        await page.waitForTimeout(1000);
+        await waitForTimeout(1000);
 
         // Expect to be redirected to the new log
         const postSendUrl = await page.url();
@@ -196,24 +197,23 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one post in this log entry
-        await pressElement(page, `#reply-to-${parentLogId}`);
-        await page.waitForTimeout(1000);
+        await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
         const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create&parentLogId=${parentLogId}`);
+        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
 
         const text = 'Test the reply log creation with no title';
 
         // eslint-disable-next-line no-undef
-        await page.evaluate((text) => model.logs.creationModel.textEditor.setValue(text), text);
-        await page.waitForTimeout(250);
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type(text);
+        await waitForTimeout(250);
 
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
         expect(isDisabled).to.equal(false);
 
         const button = await page.$('button#send');
-        await button.evaluate((button) => button.click());
-        await page.waitForTimeout(1000);
+        await waitForNavigation(page, () => button.evaluate((button) => button.click()));
 
         // Expect to be redirected to the new log
         const postSendUrl = await page.url();
@@ -221,7 +221,9 @@ module.exports = () => {
 
         // Expect new log to inherit title of the parent
         const newLogId = await page.evaluate(() => window.model.router.params.id);
-        const newLogTitle = await page.evaluate((newLogId) => document.querySelector(`#log-${newLogId}-title`).innerText, newLogId);
+        const newLogTitleId = `#log-${newLogId}-title`;
+        await page.waitForSelector(newLogTitleId);
+        const newLogTitle = await page.$eval(newLogTitleId, (element) => element.innerText, newLogId);
         const parentLogTitle = await page.evaluate((parentLogId) => document.querySelector(`#log-${parentLogId}-title`).innerText, parentLogId);
         expect(newLogTitle).to.equal(`${parentLogTitle}`);
     });
