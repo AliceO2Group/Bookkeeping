@@ -16,7 +16,6 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
-
 const LHC23k6c = {
     id: 1,
     name: 'LHC23k6c',
