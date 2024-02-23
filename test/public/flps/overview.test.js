@@ -144,6 +144,7 @@ module.exports = () => {
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
 
+        await page.waitForSelector('tbody tr');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
     });
@@ -190,7 +191,7 @@ module.exports = () => {
             model.flps.pagination.itemsPerPage = 1;
         });
 
-        await pressElement(page, '#pageSelector');
+        await page.waitForSelector('#pageSelector');
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
@@ -198,6 +199,8 @@ module.exports = () => {
         const pageSixButton = await page.$('#page6');
         expect(Boolean(pageSixButton)).to.be.false;
 
+        await pressElement(page, '#page5');
+        await page.waitForSelector('#page1');
         // Expect the page one button to have fallen away when clicking on page five button
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
