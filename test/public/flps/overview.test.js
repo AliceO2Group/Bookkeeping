@@ -144,7 +144,7 @@ module.exports = () => {
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
     });

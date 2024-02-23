@@ -73,7 +73,7 @@ module.exports = () => {
     it('Should have balloon on title, tags and runs columns', async () => {
         await goToPage(page, 'log-overview');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         await checkColumnBalloon(page, 1, 1);
         await checkColumnBalloon(page, 1, 4);
         await checkColumnBalloon(page, 1, 5);
@@ -82,7 +82,7 @@ module.exports = () => {
     it('can filter by log title', async () => {
         await goToPage(page, 'log-overview');
         // Expect the page to have loaded enough rows to be able to test the filtering
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
@@ -96,7 +96,7 @@ module.exports = () => {
         await page.type('#titleFilterText', 'first');
 
         // Expect the (new) total number of rows to be less than the original number of rows
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstFilteredRows = await page.$$('table tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
@@ -105,7 +105,7 @@ module.exports = () => {
         await page.type('#titleFilterText', ' bogusbogusbogus');
 
         // Expect the table to be empty
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
         expect(secondFilteredNumberOfRows).to.equal(1);
@@ -118,7 +118,7 @@ module.exports = () => {
         });
 
         // Expect the total number of rows to once more equal the original total
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const unfilteredRows = await page.$$('table tr');
         const unfilteredNumberOfRows = unfilteredRows.length - 1;
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
@@ -128,7 +128,7 @@ module.exports = () => {
         await reloadPage(page);
 
         // Expect the page to have loaded enough rows to be able to test the filtering
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
@@ -142,7 +142,7 @@ module.exports = () => {
         await page.type('#contentFilterText', 'particle');
 
         // Expect the new total number of rows to be less than the original number of rows
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstFilteredRows = await page.$$('table tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
@@ -163,7 +163,7 @@ module.exports = () => {
         });
 
         // Expect the total number of rows to once more equal the original total
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const unfilteredRows = await page.$$('table tr');
         const unfilteredNumberOfRows = unfilteredRows.length - 1;
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
@@ -173,7 +173,7 @@ module.exports = () => {
         await reloadPage(page);
 
         // Expect the page to have loaded enough rows to be able to test the filtering
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
@@ -205,7 +205,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.overviewModel.reset();
         });
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         // Expect the total number of rows to once more equal the original total
         const unfilteredRows = await page.$$('table tr');
@@ -223,7 +223,7 @@ module.exports = () => {
         });
 
         // Expect the page to have loaded enough rows to be able to test the filtering
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         // Open the filters
         await page.waitForSelector('#openFilterToggle');
@@ -243,7 +243,7 @@ module.exports = () => {
             + limitDate.getFullYear();
         await page.focus('#createdFilterFrom');
         await page.keyboard.type(limit);
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$('#totalRowsCount');
@@ -253,7 +253,7 @@ module.exports = () => {
         // Insert a maximum date into the filter
         await page.focus('#createdFilterTo');
         await page.keyboard.type(limit);
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         // 10 logs are created before this test
         const secondFilteredRows = await page.$('#totalRowsCount');
@@ -263,7 +263,7 @@ module.exports = () => {
         // Insert a maximum date into the filter that is invalid
         await page.focus('#createdFilterTo');
         await page.keyboard.type('01012000');
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
         const thirdFilteredRows = await page.$('#totalRowsCount');
@@ -281,7 +281,7 @@ module.exports = () => {
         await reloadPage(page);
 
         // Update original number of rows with the new limit
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
 
@@ -296,7 +296,7 @@ module.exports = () => {
         await pressElement(page, `#${firstCheckboxId}`);
 
         // Expect the (new) total number of rows to be less than the original number of rows
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstFilteredRows = await page.$$('table tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
@@ -305,7 +305,7 @@ module.exports = () => {
         await pressElement(page, `#${firstCheckboxId}`);
 
         // Expect the total number of rows to equal the original total
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstUnfilteredRows = await page.$$('table tr');
         expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
 
@@ -316,7 +316,7 @@ module.exports = () => {
         await pressElement(page, `#${secondCheckboxId}`);
 
         // Expect the table to be empty
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const secondFilteredRows = await page.$$('table tr');
         const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
         expect(secondFilteredNumberOfRows).to.equal(1);
@@ -532,7 +532,7 @@ module.exports = () => {
         await titleHeader.evaluate((button) => button.click());
 
         // Expect the log titles to be in alphabetical order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstTitles = await getAllDataFields(page, 'title');
         expect(firstTitles).to.deep.equal(firstTitles.sort());
 
@@ -545,7 +545,7 @@ module.exports = () => {
         await titleHeader.evaluate((button) => button.click());
 
         // Expect the log titles to be in reverse alphabetical order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const secondTitles = await getAllDataFields(page, 'title');
         expect(secondTitles).to.deep.equal(secondTitles.sort((a, b) => b.localeCompare(a)));
 
@@ -553,7 +553,7 @@ module.exports = () => {
         await titleHeader.evaluate((button) => button.click());
 
         // Expect the log titles to no longer be sorted in any way
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const thirdTitles = await getAllDataFields(page, 'title');
         expect(thirdTitles).to.not.deep.equal(firstTitles);
         expect(thirdTitles).to.not.deep.equal(secondTitles);
@@ -563,7 +563,7 @@ module.exports = () => {
         await authorHeader.evaluate((button) => button.click());
 
         // Expect the authors to be in alphabetical order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstAuthors = await getAllDataFields(page, 'author');
         expect(firstAuthors).to.deep.equal(firstAuthors.sort());
 
@@ -572,7 +572,7 @@ module.exports = () => {
         await createdAtHeader.evaluate((button) => button.click());
 
         // Expect the log author column to be unsorted
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const secondAuthors = await getAllDataFields(page, 'author');
         expect(secondAuthors).to.not.deep.equal(firstAuthors);
     });
@@ -655,7 +655,7 @@ module.exports = () => {
         await pressElement(page, amountItems5);
 
         // Expect the amount of visible logs to reduce when the first option (5) is selected
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
     });
@@ -676,7 +676,7 @@ module.exports = () => {
         const oldFirstRowId = await getFirstRow(table, page);
         const secondPage = await page.$('#page2');
         await secondPage.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
@@ -684,7 +684,7 @@ module.exports = () => {
         // Expect us to be able to do the same with the page arrows
         const prevPage = await page.$('#pageMoveLeft');
         await prevPage.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const oldFirstPageButton = await page.$('#page1');
         const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
         expect(oldFirstPageButtonClass).to.include('selected');
@@ -692,7 +692,7 @@ module.exports = () => {
         // The same, but for the other (right) arrow
         const nextPage = await page.$('#pageMoveRight');
         await nextPage.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const newFirstPageButton = await page.$('#page1');
         const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
         expect(newFirstPageButtonClass).to.not.include('selected');
@@ -707,7 +707,7 @@ module.exports = () => {
             model.logs.overviewModel.pagination.itemsPerPage = 1;
         });
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         // Expect the page five button to now be visible, but no more than that
         await page.waitForSelector('#page5');
         const pageFiveButton = await page.$('#page5');
@@ -794,7 +794,7 @@ module.exports = () => {
         await secondPageButton.evaluate((button) => button.click());
 
         // Expect the pagination to still be on page two
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         let currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);
         expect(currentPageSelected).to.equal(2);
 

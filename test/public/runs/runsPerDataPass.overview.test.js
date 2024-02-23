@@ -135,7 +135,7 @@ module.exports = () => {
         await reloadPage(page);
 
         const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
         expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
         await page.waitForSelector('#preferences-raw-timestamps');
@@ -158,7 +158,7 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
@@ -195,7 +195,7 @@ module.exports = () => {
     it('can navigate to a run detail page', async () => {
         await reloadPage(page);
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
         await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());

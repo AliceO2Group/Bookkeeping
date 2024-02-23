@@ -114,8 +114,7 @@ module.exports = () => {
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
 
-        await page.waitForSelector('table tr');
-
+        await page.waitForSelector('tbody tr:nth-of-type(2)');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(3);
 
@@ -143,7 +142,7 @@ module.exports = () => {
         await nameHeader.evaluate((button) => button.click());
 
         // Expect the names to be in alphabetical order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstNames = await getAllDataFields(page, 'name');
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
@@ -161,7 +160,7 @@ module.exports = () => {
         await yearHeader.evaluate((button) => button.click());
 
         // Expect the year to be in order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstYears = await getAllDataFields(page, 'year');
         expect(firstYears).to.have.all.deep.ordered.members(firstYears.sort());
     });
@@ -179,7 +178,7 @@ module.exports = () => {
         await avgCeneterOfMassEnergyHeader.evaluate((button) => button.click());
 
         // Expect the avgCenterOfMassEnergy to be in order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstAvgCeneterOfMassEnergies = await getAllDataFields(page, 'avgCenterOfMassEnergy');
         expect(firstAvgCeneterOfMassEnergies).to.have.all.deep.ordered.members(firstAvgCeneterOfMassEnergies.sort());
     });
@@ -194,14 +193,14 @@ module.exports = () => {
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22a');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr:nth-of-type(2)');
         let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a']);
 
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
@@ -217,7 +216,7 @@ module.exports = () => {
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', '2022');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         const allLhcPeriodYears = await getAllDataFields(page, 'year');
         expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2022']);
@@ -233,7 +232,7 @@ module.exports = () => {
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(4) input[type=text]', 'XeXe');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamType');
         expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);

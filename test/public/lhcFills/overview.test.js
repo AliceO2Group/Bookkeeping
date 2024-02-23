@@ -113,7 +113,7 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         await checkColumnBalloon(page, 1, 12);
     });
 
@@ -136,7 +136,7 @@ module.exports = () => {
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
@@ -180,7 +180,7 @@ module.exports = () => {
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'lhc-fill-overview');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         // Use the third row to have a fill with statistics
         const row = await page.$('tbody tr:nth-of-type(3)');
         expect(row).to.be.not.null;

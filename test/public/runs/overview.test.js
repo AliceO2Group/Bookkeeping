@@ -193,7 +193,7 @@ module.exports = () => {
         await pressElement(page, amountItems5);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
 
@@ -249,7 +249,7 @@ module.exports = () => {
 
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
@@ -271,13 +271,13 @@ module.exports = () => {
         // Run 106 has detectors and tags that overflow
         await page.type(runNumberInputSelector, '106');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
 
         // Run 1 has eor reasons that overflow
         await page.type(runNumberInputSelector, '1');
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         await checkColumnBalloon(page, 1, 16);
     });
 
@@ -298,20 +298,20 @@ module.exports = () => {
         await pressElement(page, '#detector-filter-dropdown-option-ITS');
         await pressElement(page, '#detector-filter-dropdown-option-FT0');
 
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(4);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-or', (element) => element.click());
 
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(8);
 
         await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
 
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
     });
 
@@ -346,59 +346,59 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(4);
         await checkTableRunDefinitions(table, [RunDefinition.Physics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(6);
         await checkTableRunDefinitions(table, [RunDefinition.Physics, RunDefinition.Synthetic]);
 
         await page.$eval(physicsFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic]);
 
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(4);
         await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
 
         await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmics]);
 
         await page.$eval(technicalFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(3);
         await checkTableRunDefinitions(table, [RunDefinition.Cosmics, RunDefinition.Technical]);
 
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(1);
         await checkTableRunDefinitions(table, [RunDefinition.Technical]);
 
         await page.$eval(calibrationFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
         await checkTableRunDefinitions(table, [RunDefinition.Technical, RunDefinition.Calibration]);
 
         await page.$eval(commissioningFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         await checkTableRunDefinitions(table, [RunDefinition.Commissioning]);
         await page.$eval(commissioningFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
@@ -409,8 +409,8 @@ module.exports = () => {
         await page.$eval(physicsFilterSelector, (element) => element.click());
         await page.$eval(syntheticFilterSelector, (element) => element.click());
         await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(10);
         await checkTableRunDefinitions(
             table,
@@ -543,7 +543,7 @@ module.exports = () => {
         await page.waitForSelector(runDurationOperatorSelector);
         await page.select(runDurationOperatorSelector, '=');
 
-        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-of-type(2)')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
         }));
@@ -562,7 +562,7 @@ module.exports = () => {
         await page.select(runDurationOperatorSelector, '>=');
 
         // Expect only unknown
-        runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+        runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-of-type(2)')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
         }));
@@ -597,19 +597,19 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
         await checkTableRunQualities(table, [RunQualities.BAD]);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         await checkTableRunQualities(table, [RunQualities.BAD, RunQualities.TEST]);
 
         await page.$eval(testFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
         await checkTableRunQualities(table, [RunQualities.BAD]);
     });
@@ -641,20 +641,20 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await page.$eval(offFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
 
         expect(table.length).to.equal(8);
         await checkTableRunQualities(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         await checkTableRunQualities(table, ['OFF', 'LTU']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
 
         expect(table.length).to.equal(8);
 
@@ -675,8 +675,8 @@ module.exports = () => {
             await fillInput(page, runNumberInputSelector, inputValue);
 
             // Validate amount in the table
-            await page.waitForSelector('tbody tr');
-            const table = await page.$$('tbody tr');
+            await page.waitForSelector('tbody tr td:nth-of-type(2)');
+            const table = await page.$$('tbody tr td:nth-of-type(2)');
             expect(table.length).to.equal(2);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['row102', 'row101']);
         };
@@ -710,8 +710,8 @@ module.exports = () => {
             await fillInput(page, runNumberInputSelector, inputValue);
 
             // Validate amount in the first page table
-            await page.waitForSelector('tbody tr');
-            const firstPageTable = await page.$$('tbody tr');
+            await page.waitForSelector('tbody tr td:nth-of-type(2)');
+            const firstPageTable = await page.$$('tbody tr td:nth-of-type(2)');
             expect(firstPageTable.length).to.equal(8);
 
             const firstPageRows = ['row108', 'row107', 'row106', 'row105', 'row104', 'row103', 'row102', 'row101'];
@@ -720,8 +720,8 @@ module.exports = () => {
             await page.$eval('#pageMoveRight', (element) => element.click());
 
             // Validate amount in the second page table
-            await page.waitForSelector('tbody tr');
-            const secondPageTable = await page.$$('tbody tr');
+            await page.waitForSelector('tbody tr td:nth-of-type(2)');
+            const secondPageTable = await page.$$('tbody tr td:nth-of-type(2)');
             expect(secondPageTable.length).to.equal(2);
 
             const secondPageRows = ['row100', 'row10'];
@@ -755,7 +755,7 @@ module.exports = () => {
         await fillInput(page, filterInputSelector, '1, 3');
         await waitForNetworkIdleAndRedraw(page);
 
-        table = await page.$$('tbody tr');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(6);
     });
 
@@ -771,7 +771,7 @@ module.exports = () => {
         await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d');
         await waitForNetworkIdleAndRedraw(page);
 
-        table = await page.$$('tbody tr');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(6);
     });
 
@@ -787,8 +787,8 @@ module.exports = () => {
         await pressElement(page, '#run-types-dropdown-option-2');
         await pressElement(page, '#run-types-dropdown-option-14');
 
-        await page.waitForSelector('tbody tr');
-        table = await page.$$('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(5);
     });
 
@@ -812,8 +812,8 @@ module.exports = () => {
         await page.waitForSelector(nDetectorOperatorSelector);
         await page.select(nDetectorOperatorSelector, '<=');
 
-        await page.waitForSelector('tbody tr');
-        const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-of-type(2)')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-detectors .nDetectors-badge`)?.innerText;
         }));
@@ -843,8 +843,8 @@ module.exports = () => {
         await page.waitForSelector(nFlpsOperatorSelector);
         await page.select(nFlpsOperatorSelector, '<=');
 
-        await page.waitForSelector('tbody tr');
-        const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
+        const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-of-type(2)')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
         }));
@@ -874,7 +874,7 @@ module.exports = () => {
         await page.select(nEpnsOperatorSelector, '<=');
         await waitForNetworkIdleAndRedraw(page);
 
-        const nEpnsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
+        const nEpnsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-of-type(2)')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
         }));
@@ -891,7 +891,7 @@ module.exports = () => {
         await pressElement(page, '#epnFilterRadioOFF');
         await waitForNetworkIdleAndRedraw(page);
 
-        const table = await page.$$('tbody tr');
+        const table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(2);
     });
 

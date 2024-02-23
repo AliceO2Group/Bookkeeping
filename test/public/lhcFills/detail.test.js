@@ -111,10 +111,10 @@ module.exports = () => {
     it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
         await pressElement(page, '#all-runs-tab');
 
-        await page.waitForSelector('#lhc-fill-timeLossAtStart');
         {
+            await page.waitForSelector('#lhc-fill-timeLossAtStart');
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
-            expect(timeLossAtStart.endsWith('02:00:00 (16.67%)')).to.be.true;
+            expect(timeLossAtStart.endsWith('02:00:00 (16.67%)'), timeLossAtStart).to.be.true;
         }
 
         const meanRunDuration = await page.$eval('#lhc-fill-meanRunDuration', (element) => element.innerText);

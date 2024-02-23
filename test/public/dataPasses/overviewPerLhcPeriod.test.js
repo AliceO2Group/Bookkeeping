@@ -109,7 +109,7 @@ module.exports = () => {
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(2);
 
@@ -154,7 +154,7 @@ module.exports = () => {
         await reconstructedEventsCountHeader.evaluate((button) => button.click());
 
         // Expect the year to be in order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstReconstructedEventsCounts = await getAllDataFields(page, 'reconstructedEventsCount');
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
@@ -172,7 +172,7 @@ module.exports = () => {
         await outputSizeHeader.evaluate((button) => button.click());
 
         // Expect the avgCenterOfMassEnergy to be in order
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const firstOutputSize = await getAllDataFields(page, 'outputSize');
         expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
     });
@@ -186,7 +186,7 @@ module.exports = () => {
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
 

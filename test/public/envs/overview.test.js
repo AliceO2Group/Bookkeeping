@@ -108,7 +108,7 @@ module.exports = () => {
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'env-overview');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });
@@ -116,7 +116,7 @@ module.exports = () => {
     it('Should have correct status color in the overview page', async () => {
         await goToPage(page, 'env-overview');
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
         await checkEnvironmentStatusColor(page, 1, 4);
         await checkEnvironmentStatusColor(page, 2, 4);
@@ -143,7 +143,7 @@ module.exports = () => {
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
 
@@ -168,7 +168,7 @@ module.exports = () => {
             model.envs.overviewModel.pagination.itemsPerPage = 1;
         });
 
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
         expect(Boolean(pageFiveButton)).to.be.true;
@@ -177,7 +177,7 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await page.waitForSelector('tbody tr');
+        await page.waitForSelector('tbody tr td:nth-of-type(2)');
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
     });
