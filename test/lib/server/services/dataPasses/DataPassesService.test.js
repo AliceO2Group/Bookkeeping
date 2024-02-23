@@ -24,7 +24,7 @@ const LHC22b_apass1 = {
     reconstructedEventsCount: 50948694,
     outputSize: 56875682112600,
     lastRunNumber: 108,
-    runsCount: 0,
+    runsCount: 3,
 };
 
 const LHC22b_apass2 = {
