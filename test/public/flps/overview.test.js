@@ -215,7 +215,7 @@ module.exports = () => {
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await page.waitForSelector('.alter-danger');
+        await page.waitForSelector('.alert-danger');
         await expectInnerText(page, '.alert-danger', expectedMessage);
 
         // Revert changes for next test

@@ -56,6 +56,7 @@ module.exports = () => {
         await goToPage(page, 'flp-detail', { queryParameters: { id: 999 } });
 
         // We expect there to be an error message
+        await page.waitForSelector('.alert');
         await expectInnerText(page, '.alert', 'Flp with this id (999) could not be found');
     });
 
