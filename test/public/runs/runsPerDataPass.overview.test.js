@@ -125,7 +125,6 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
-        await waitForTimeout(1000);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
