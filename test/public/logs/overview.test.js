@@ -22,7 +22,7 @@ const {
     getAllDataFields,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector, waitForTimeout } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -62,8 +62,8 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'log-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(138);
@@ -71,35 +71,37 @@ module.exports = () => {
 
     it('Should have balloon on title, tags and runs columns', async () => {
         await goToPage(page, 'log-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('tbody tr');
         await checkColumnBalloon(page, 1, 1);
         await checkColumnBalloon(page, 1, 4);
         await checkColumnBalloon(page, 1, 5);
     });
 
     it('can filter by log title', async () => {
+        await goToPage(page, 'log-overview');
         // Expect the page to have loaded enough rows to be able to test the filtering
+        await page.waitForSelector('tbody tr');
         const originalRows = await page.$$('table tr');
         originalNumberOfRows = originalRows.length - 1;
         expect(originalNumberOfRows).to.be.greaterThan(1);
 
         // Open the filters
+        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
 
         // Insert some text into the filter
+        await page.waitForSelector('#titleFilterText');
         await page.type('#titleFilterText', 'first');
-        await waitForTimeout(300);
 
         // Expect the (new) total number of rows to be less than the original number of rows
+        await page.waitForSelector('tbody tr');
         const firstFilteredRows = await page.$$('table tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
         expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
 
         // Insert some other text into the filter
         await page.type('#titleFilterText', ' bogusbogusbogus');
-        await waitForTimeout(300);
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
