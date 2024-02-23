@@ -206,8 +206,9 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await pressElement(page, '#row6-runs a');
-        await waitForNetworkIdleAndRedraw(page);
+        await page.waitForSelector('#row6-runs a');
+
+        await waitForNavigation(page, () => pressElement(page, '#row6-runs a'));
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
