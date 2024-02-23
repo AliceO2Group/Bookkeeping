@@ -19,6 +19,7 @@ const {
     getAllDataFields,
     fillInput,
 } = require('../defaults');
+const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -88,7 +89,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
@@ -97,23 +98,23 @@ module.exports = () => {
 
     it('can set how many lhcPeriods is available per page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await page.waitForTimeout(500);
+        await waitForTimeout(500);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorButton = await page.$('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(3);
@@ -125,7 +126,7 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 
@@ -133,14 +134,14 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#name');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const sortingPreviewIndicator = await page.$('#name-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by name in an ascending manner
         const nameHeader = await page.$('th#name');
         await nameHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect the names to be in alphabetical order
         const firstNames = await getAllDataFields(page, 'name');
@@ -151,14 +152,14 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#year');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const sortingPreviewIndicator = await page.$('#year-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by year in an ascending manner
         const yearHeader = await page.$('th#year');
         await yearHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect the year to be in order
         const firstYears = await getAllDataFields(page, 'year');
@@ -169,14 +170,14 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#avgCenterOfMassEnergy');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const sortingPreviewIndicator = await page.$('#avgCenterOfMassEnergy-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
         // Sort by avgCenterOfMassEnergy in an ascending manner
         const avgCeneterOfMassEnergyHeader = await page.$('th#avgCenterOfMassEnergy');
         await avgCeneterOfMassEnergyHeader.evaluate((button) => button.click());
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
         const firstAvgCeneterOfMassEnergies = await getAllDataFields(page, 'avgCenterOfMassEnergy');
@@ -185,14 +186,14 @@ module.exports = () => {
 
     it('should successfuly apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22a');
 
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a']);
@@ -200,7 +201,7 @@ module.exports = () => {
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
         await resetFiltersButton.evaluate((button) => button.click());
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
@@ -208,14 +209,14 @@ module.exports = () => {
 
     it('should successfuly apply lhc period year filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', '2022');
 
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         const allLhcPeriodYears = await getAllDataFields(page, 'year');
         expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2022']);
@@ -223,14 +224,14 @@ module.exports = () => {
 
     it('should successfuly apply lhc period beam type filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(4) input[type=text]', 'XeXe');
 
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
 
         const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamType');
         expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);

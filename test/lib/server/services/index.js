@@ -26,6 +26,7 @@ const StatisticsSuite = require('./statistics/index.js');
 const LhcPeriodSuite = require('./lhcPeriod');
 const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
+const SimulationPassesSuite = require('./simulationPasses/index.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
@@ -48,4 +49,5 @@ module.exports = () => {
     describe('LhcPeriod', LhcPeriodSuite);
     describe('User', UserSuite);
     describe('DataPasses', DataPassesSuite);
+    describe('SimulationPasses', SimulationPassesSuite);
 };
