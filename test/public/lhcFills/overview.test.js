@@ -20,7 +20,6 @@ const {
     checkColumnBalloon,
     waitForNavigation,
 } = require('../defaults');
-const { waitForNetworkIdleAndRedraw } = require('../defaults.js');
 
 const { expect } = chai;
 
