@@ -173,7 +173,7 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await page.waitForSelector('#page1');
+        await page.waitForSelector('#page5');
         const pageOneButton = await page.$('#page1');
         expect(pageOneButton).to.be.null;
     });
