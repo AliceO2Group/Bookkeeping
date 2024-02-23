@@ -58,7 +58,7 @@ const LHC23k6a = {
 module.exports = () => {
     before(resetDatabaseContent);
     describe('GET /api/simulationPasses/:id', () => {
-        it('should successfuly filter on ids', (done) => {
+        it('should successfuly get simulation pass by id', (done) => {
             request(server)
                 .get('/api/simulationPasses/1')
                 .expect(200)
@@ -74,10 +74,8 @@ module.exports = () => {
                     done();
                 });
         });
-    });
 
-    describe('GET /api/simulationPasses/:id', () => {
-        it('should successfuly filter on ids', (done) => {
+        it('should send error that simulation pass with given id cannot be found', (done) => {
             request(server)
                 .get('/api/simulationPasses/99999')
                 .expect(404)
