@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
+const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForNavigation } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -172,24 +172,26 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // Expect the user to be at the tag creation screen when the URL is clicked on
+        await page.waitForSelector('#tagCreateLink');
         const tagCreationLink = await page.$('#tagCreateLink');
-        await page.evaluate((button) => button.click(), tagCreationLink);
-        await waitForTimeout(500);
+
+        await waitForNavigation(page, () => page.evaluate((button) => button.click(), tagCreationLink));
+
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=tag-create`);
     });
 
     it('can create a log with file attachments', async () => {
+        await goToPage(page, 'log-create');
+
         const title = 'Shorter';
         const text = 'Sample Text';
         const file1 = '1200px-CERN_logo.png';
         // Use utf-characters to check that it is well handled, for example for French accents
         const file2 = 'hadron_collider_(é_è).jpg';
 
-        // Return to the creation page
-        await goToPage(page, 'log-create');
-
         // Select the boxes and send the values of the title and text to it
+        await page.waitForSelector('#title');
         await page.type('#title', title);
         // eslint-disable-next-line no-undef
         await pressElement(page, '#text ~ .CodeMirror');
@@ -200,16 +202,15 @@ module.exports = () => {
         const file1Path = path.resolve(__dirname, '../..', 'assets', file1);
         const file2Path = path.resolve(__dirname, '../..', 'assets', file2);
         attachmentsInput.uploadFile(file1Path, file2Path);
-        await waitForTimeout(500);
 
         // Ensure that both file attachments were received
+        await page.waitForSelector('#attachments-list');
         const attachmentNames = await page.$('#attachments-list');
         const attachmentNamesText = await page.evaluate((element) => element.innerText, attachmentNames);
         expect(attachmentNamesText).to.equal(`${file1}\n,\n${file2}`);
 
         // Create the new log
-        await pressElement(page, '#send:not([disabled])');
-        await page.waitForNavigation();
+        await waitForNavigation(page, () => pressElement(page, '#send:not([disabled])'));
 
         // Return the page to home
         const lastLog = await getLastLog();
@@ -225,13 +226,13 @@ module.exports = () => {
         await goToPage(page, 'log-create');
 
         // We expect the clear button to not be visible yet
+        await page.waitForSelector('#clearAttachments');
         let clearButton = await page.$('#clearAttachments');
         expect(Boolean(clearButton)).to.be.false;
 
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
         attachmentsInput.uploadFile(path.resolve(__dirname, '../..', 'assets', '1200px-CERN_logo.png'));
-        await waitForTimeout(500);
 
         // We expect the clear button to appear
         clearButton = await page.$('#clearAttachments');
@@ -242,7 +243,7 @@ module.exports = () => {
         expect(uploadedAttachments.endsWith('1200px-CERN_logo.png')).to.be.true;
 
         await clearButton.evaluate((clearButton) => clearButton.click());
-        await waitForTimeout(100);
+        await page.waitForSelector('#attachments-list');
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
     });
@@ -292,10 +293,8 @@ module.exports = () => {
         // Send the value of the run numbers string to the input
         await page.type('#run-numbers', runNumbersStr);
 
-        // Wait for the button to not be disabled
-        await waitForTimeout(50);
-
         // Create the new log
+        await page.waitForSelector('#send:not([disabled])');
         await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
@@ -347,10 +346,8 @@ module.exports = () => {
         // Send the value of the environments string to the input
         await page.type('#environments', environmentsStr);
 
-        // Wait for the button to not be disabled
-        await waitForTimeout(50);
-
         // Create the new log
+        await page.waitForSelector('#send:not([disabled])');
         await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
@@ -376,10 +373,8 @@ module.exports = () => {
         // Send the value of the run numbers string to the input
         await page.type('#lhc-fills', lhcFillNumbersStr);
 
-        // Wait for the button to not be disabled
-        await waitForTimeout(50);
-
         // Create the new log
+        await page.waitForSelector('#send:not([disabled])');
         await pressElement(page, '#send:not([disabled])');
         await page.waitForNavigation();
 
