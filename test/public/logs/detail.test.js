@@ -197,7 +197,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });
 
         // We expect there to be at least one post in this log entry
-        waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
+        await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);

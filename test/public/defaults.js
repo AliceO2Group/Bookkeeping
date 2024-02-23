@@ -106,14 +106,12 @@ module.exports.waitForTimeout = waitForTimeout;
  *
  * @param {puppeteer.Page} page the puppeteer page
  * @param {function} navigateFunction function to call to initiate navigation
- * @return {Promise<void>} resolves once the navigation finished
+ * @return {Promise<*>} resolves once the navigation finished
  */
-const waitForNavigation = async (page, navigateFunction) => {
-    await Promise.all([
-        page.waitForNavigation({ timeout: 1500 }),
-        navigateFunction(),
-    ]);
-};
+const waitForNavigation = (page, navigateFunction) => Promise.all([
+    page.waitForNavigation({ timeout: 1500 }),
+    navigateFunction(),
+]);
 
 exports.waitForNavigation = waitForNavigation;
 
