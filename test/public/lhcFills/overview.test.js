@@ -134,7 +134,10 @@ module.exports = () => {
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
+        await Promise.all([
+            page.waitForSelector('.atom-spinner'),
+            menuItem.evaluate((button) => button.click()),
+        ]);
 
         await page.waitForSelector('tbody tr td:nth-of-type(2)');
 
