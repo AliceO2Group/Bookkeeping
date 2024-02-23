@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-const { waitForTimeout, waitForNavigation } = require('../defaults.js');
+const { waitForNavigation } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -35,8 +35,10 @@ module.exports = () => {
     });
 
     it('can navigate to the main panel', async () => {
+        await goToPage(page, 'flp-detail', { queryParameters: { id: 1 } });
+
+        await page.waitForSelector('#main-tab');
         await pressElement(page, '#main-tab');
-        await waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=main`)).to.be.true;
     });
