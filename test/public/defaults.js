@@ -439,3 +439,5 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     }
     return ret;
 };
+
+module.exports.waitForTableSpinner = (page, triggerFunction) => Promise.all([page.waitForSelector('table .atom-spinner'), triggerFunction()]);
