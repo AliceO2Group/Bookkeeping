@@ -685,7 +685,10 @@ label {
     left: 0;
     z-index: 2;
 }
-th .first-headcol { background-color: var(--color-success); }
+.table thead tr .first-headcol { background-color: var(--color-gray-light); }
 .table tbody tr:nth-child(odd) .first-headcol { background-color: var(--color-white); }
 .table tbody tr:nth-child(even) .first-headcol { background-color: var(--color-gray-lighter); }
 
+.table-hover tbody tr:hover td.first-headcol {
+    background-color: var(--color-gray);
+}
