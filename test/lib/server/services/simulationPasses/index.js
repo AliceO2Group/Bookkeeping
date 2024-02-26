@@ -11,9 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-/**
- * @typedef LhcPeriodStatistics
- *
- * @property {number} id
- * @property {LhcPeriod} lhcPeriod
- */
+const SimulationPassesService = require('./SimulationPassesService.test.js');
+
+module.exports = () => {
+    describe('SimulationPassesService', SimulationPassesService);
+};

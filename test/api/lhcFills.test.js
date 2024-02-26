@@ -14,6 +14,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { server } = require('../../lib/application');
+const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -219,6 +220,81 @@ module.exports = () => {
             const response = await request(server).get('/api/lhcFills/6/logs');
             expect(response.status).to.equal(200);
             expect(response.body.data).to.lengthOf(2);
+        });
+    });
+
+    describe('GET /api/lhcFills/:fillNumber/runs/:runNumber', () => {
+        it('should successfully return a 200 response containing the fills that are ended in the given period', async () => {
+            const firstCreatedAt = new Date('2019-08-09 18:00:00');
+            const secondCreatedAt = new Date('2019-08-09 20:00:00');
+            const url = buildUrl('/api/lhcFills/ended-within', {
+                from: firstCreatedAt.getTime(),
+                to: secondCreatedAt.getTime(),
+            });
+            const response = await request(server).get(url);
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.lengthOf(2);
+            expect(response.body.data.map(({ fillNumber }) => fillNumber)).to.have.members([2, 3]);
+        });
+
+        it('should successfully return 400 if the given limits are not valid', async () => {
+            const createdAt = new Date('2019-08-09 20:00:00').getTime();
+
+            const baseUrl = '/api/lhcFills/ended-within';
+
+            {
+                const response = await request(server).get(baseUrl);
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.from" is required');
+            }
+
+            {
+                const url = buildUrl(baseUrl, { from: createdAt });
+                const response = await request(server).get(url);
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.to" is required');
+            }
+
+            {
+                const url = buildUrl(baseUrl, { to: createdAt });
+                const response = await request(server).get(url);
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.from" is required');
+            }
+
+            {
+                const url = buildUrl(baseUrl, {
+                    from: 'from',
+                });
+                const response = await request(server).get(url);
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.from" must be a valid date');
+            }
+
+            {
+                const url = buildUrl(baseUrl, {
+                    from: createdAt, // Put a valid date to check the to error
+                    to: 'to',
+                });
+                const response = await request(server).get(url);
+                expect(response.status).to.equal(400);
+
+                const { errors: [error] } = response.body;
+                expect(error.title).to.equal('Invalid Attribute');
+                expect(error.detail).to.equal('"query.to" must be a valid date');
+            }
         });
     });
 };

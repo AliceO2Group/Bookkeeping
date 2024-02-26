@@ -102,6 +102,20 @@ const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout
 module.exports.waitForTimeout = waitForTimeout;
 
 /**
+ * Execute the given navigation function and wait for navigation
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {function} navigateFunction function to call to initiate navigation
+ * @return {Promise<*>} resolves once the navigation finished
+ */
+const waitForNavigation = (page, navigateFunction) => Promise.all([
+    page.waitForNavigation({ timeout: 1500 }),
+    navigateFunction(),
+]);
+
+exports.waitForNavigation = waitForNavigation;
+
+/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
