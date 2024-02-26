@@ -21,7 +21,7 @@ const { server } = require('../../lib/application');
 const fs = require('fs');
 
 module.exports = () => {
-    const assetsDir = [__dirname, '../..', 'assets'];
+    const assetsDir = [__dirname, '..', 'assets'];
 
     before(async () => {
         await resetDatabaseContent();
