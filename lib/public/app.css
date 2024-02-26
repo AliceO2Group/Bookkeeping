@@ -680,7 +680,6 @@ label {
 
 .scroll-x .table.left-sticky thead tr th:first-child {
     position: sticky;
-    top: 0;
     left: 0;
     z-index: 2;
     background-color: var(--color-gray-light);
@@ -688,7 +687,6 @@ label {
 
 .scroll-x .table.left-sticky tbody tr td:first-child {
     position: sticky;
-    top: 0;
     left: 0;
     z-index: 2;
 }
