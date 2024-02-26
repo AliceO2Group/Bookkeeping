@@ -774,6 +774,62 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/logs/root', () => {
+        it('should return root logs only, ensuring no log has a parent', (done) => {
+            request(server)
+                .get('/api/logs/root')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data.every((log) => log.parentLogId === null));
+
+                    done();
+                });
+        });
+
+        it('should return root logs as an array', (done) => {
+            request(server)
+                .get('/api/logs/root')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(Array.isArray(res.body.data)).to.be.true;
+
+                    done();
+                });
+        });
+
+        it('should reject requests with a limit below 1 with a 400 status', async () => {
+            const response = await request(server).get('/api/logs/root?page[offset]=0&page[limit]=0');
+            expect(response.status).to.equal(400);
+
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+        });
+
+        it('should successfully return paginated root logs based on specified limit and offset', async () => {
+            const limit = 2;
+            const offset = 0;
+            const response = await request(server).get(`/api/logs/root?page[offset]=${offset}&page[limit]=${limit}`);
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data.length).to.equal(limit);
+
+            const expectedLogIds = [1, 5];
+            const receivedLogIds = response.body.data.map((log) => log.id);
+            expect(receivedLogIds).to.deep.equal(expectedLogIds);
+        });
+    });
+
     describe('POST /api/logs', () => {
         it('should return 400 if no title is provided', (done) => {
             request(server)
