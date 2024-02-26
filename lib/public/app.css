@@ -676,7 +676,6 @@ label {
 
 .x-scrollable {
     overflow-x: auto;
-    white-space: nowrap;
 } 
 
 .x-scrollable .table.left-sticky thead tr th:first-child {
