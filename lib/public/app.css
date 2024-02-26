@@ -679,16 +679,21 @@ label {
     white-space: nowrap;
 } 
 
-.first-headcol {
+.x-scrollable .table.left-sticky thead tr th:first-child {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background-color: var(--color-gray-light);
+}
+
+.x-scrollable .table.left-sticky tbody tr td:first-child {
     position: sticky;
     top: 0;
     left: 0;
     z-index: 2;
 }
-.table thead tr .first-headcol { background-color: var(--color-gray-light); }
-.table tbody tr:nth-child(odd) .first-headcol { background-color: var(--color-white); }
-.table tbody tr:nth-child(even) .first-headcol { background-color: var(--color-gray-lighter); }
 
-.table-hover tbody tr:hover td.first-headcol {
-    background-color: var(--color-gray);
-}
+.x-scrollable .table.left-sticky tbody tr:nth-child(odd) td:first-child { background-color: var(--color-white); }
+.x-scrollable .table.left-sticky tbody tr:nth-child(even) td:first-child  { background-color: var(--color-gray-lighter); }
+.x-scrollable .table-hover.left-sticky tbody tr:hover td:first-child { background-color: var(--color-gray); }
