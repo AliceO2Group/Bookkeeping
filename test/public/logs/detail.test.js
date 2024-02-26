@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-const { waitForTimeout, waitForNavigation } = require('../defaults.js');
+const { waitForNavigation } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -92,7 +92,7 @@ module.exports = () => {
         // Expect the text before the click to be different after
         await expectInnerText(page, '#copy-117', 'Copy Link');
         await log117CopyBtn.click();
-        await waitForTimeout(100);
+        await page.waitForSelector('#copy-117');
         await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
@@ -180,12 +180,12 @@ module.exports = () => {
         // eslint-disable-next-line no-undef
         await pressElement(page, '#text ~ .CodeMirror');
         await page.keyboard.type(text);
-        await waitForTimeout(250);
 
         // Create the new log
+        await page.waitForSelector('#send:enabled');
         const button = await page.$('button#send');
-        await button.evaluate((button) => button.click());
-        await waitForTimeout(1000);
+
+        await waitForNavigation(page, () => button.evaluate((button) => button.click()));
 
         // Expect to be redirected to the new log
         const postSendUrl = await page.url();
@@ -207,8 +207,8 @@ module.exports = () => {
         // eslint-disable-next-line no-undef
         await pressElement(page, '#text ~ .CodeMirror');
         await page.keyboard.type(text);
-        await waitForTimeout(250);
 
+        await page.waitForSelector('button#send');
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
         expect(isDisabled).to.equal(false);
 

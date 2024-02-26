@@ -100,12 +100,12 @@ module.exports = () => {
 
         await page.type(inputSelector, '-TAG-');
         await waitForTimeout(300);
-        let table = await page.$$('tbody tr');
+        let table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(34);
 
         await page.type(inputSelector, 'DO-NOT-EXIST');
         await waitForTimeout(300);
-        table = await page.$$('tbody tr');
+        table = await page.$$('tbody tr td:nth-of-type(2)');
         expect(table.length).to.equal(1);
         expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
     });

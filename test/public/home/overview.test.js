@@ -12,9 +12,8 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, getFirstRow, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, getFirstRow, goToPage, waitForNavigation } = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -91,8 +90,7 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the log overview
-        await firstButton.evaluate((ahref) => ahref.click());
-        await waitForTimeout(500);
+        await waitForNavigation(page, () => firstButton.evaluate((ahref) => ahref.click()));
 
         const redirectedUrl = await page.url();
         expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
