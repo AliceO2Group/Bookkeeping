@@ -440,4 +440,13 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     return ret;
 };
 
-module.exports.waitForTableSpinner = (page, triggerFunction) => Promise.all([page.waitForSelector('table .atom-spinner'), triggerFunction()]);
+/**
+ * Wait For table to reload data
+ * Reloaded table MUST contain at least one row of data
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {function} triggerFunction table reload trigger
+ * @return {Promise} promise
+ */
+module.exports.waitForTableDataReload = (page, triggerFunction) =>
+    Promise.all([page.waitForSelector('table .atom-spinner'), triggerFunction()])
+        .then(() => page.waitForSelector('tbody tr td:nth-child(2)'));

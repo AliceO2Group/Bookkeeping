@@ -18,7 +18,7 @@ const {
     goToPage,
     getAllDataFields,
     fillInput,
-    waitForTableSpinner,
+    waitForTableDataReload,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -138,8 +138,7 @@ module.exports = () => {
 
         // Sort by name in an ascending manner
         const nameHeader = await page.$('th#name');
-        await waitForTableSpinner(page, () => nameHeader.evaluate((button) => button.click()));
-        await page.waitForSelector('tbody tr td:nth-child(2)');
+        await waitForTableDataReload(page, () => nameHeader.evaluate((button) => button.click()));
 
         // Expect the names to be in alphabetical order
         const firstNames = await getAllDataFields(page, 'name');
@@ -157,8 +156,7 @@ module.exports = () => {
         // Sort by year in an ascending manner
         const requestedEventsCountHeader = await page.$('th#requestedEventsCount');
 
-        await waitForTableSpinner(page, () => requestedEventsCountHeader.evaluate((button) => button.click()));
-        await page.waitForSelector('tbody tr td:nth-child(2)');
+        await waitForTableDataReload(page, () => requestedEventsCountHeader.evaluate((button) => button.click()));
 
         // Expect the year to be in order
         const firstReconstructedEventsCounts = await getAllDataFields(page, 'requestedEventsCount');
@@ -176,8 +174,7 @@ module.exports = () => {
         // Sort by year in an ascending manner
         const generatedEventsCountHeader = await page.$('th#generatedEventsCount');
 
-        await waitForTableSpinner(page, () => generatedEventsCountHeader.evaluate((button) => button.click()));
-        await page.waitForSelector('tbody tr td:nth-child(2)');
+        await waitForTableDataReload(page, () => generatedEventsCountHeader.evaluate((button) => button.click()));
 
         // Expect the year to be in order
         const firstReconstructedEventsCounts = await getAllDataFields(page, 'generatedEventsCount');
@@ -195,8 +192,7 @@ module.exports = () => {
         // Sort by avgCenterOfMassEnergy in an ascending manner
         const outputSizeHeader = await page.$('th#outputSize');
 
-        await waitForTableSpinner(page, () => outputSizeHeader.evaluate((button) => button.click()));
-        await page.waitForSelector('tbody tr td:nth-child(2)');
+        await waitForTableDataReload(page, () => outputSizeHeader.evaluate((button) => button.click()));
 
         // Expect the avgCenterOfMassEnergy to be in order
         const firstOutputSize = await getAllDataFields(page, 'outputSize');
@@ -211,15 +207,13 @@ module.exports = () => {
 
         await filterToggleButton.evaluate((button) => button.click());
 
-        await waitForTableSpinner(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
-        await page.waitForSelector('tbody tr td:nth-child(2)');
+        await waitForTableDataReload(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
 
-        await waitForTableSpinner(page, () =>
+        await waitForTableDataReload(page, () =>
             fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b'));
-        await page.waitForSelector('tbody tr td:nth-child(2)');
 
         allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
