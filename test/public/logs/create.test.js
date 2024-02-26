@@ -15,7 +15,7 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout } = require('../defaults.js');
+const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
 
 const { expect } = chai;
@@ -102,10 +102,7 @@ module.exports = () => {
         await pressElement(page, '.log-display-action-buttons button:nth-of-type(2)');
         await expectInnerText(page, '#log-id-1 span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
 
-        await Promise.all([
-            page.waitForNavigation({ timeout: 1500 }),
-            pressElement(page, '#parent-log-details'),
-        ]);
+        await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
         expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
     });
