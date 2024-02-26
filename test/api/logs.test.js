@@ -22,6 +22,9 @@ const { server } = require('../../lib/application');
 module.exports = () => {
     before(resetDatabaseContent);
 
+    const logWithChildrenId = 117;
+    const logWithoutChildrenId = 122;
+
     let logWithAttachmentsId = 0;
     let attachmentId = 0;
 
@@ -1546,6 +1549,58 @@ module.exports = () => {
                     const { errors } = res.body;
                     expect(errors[0].title).to
                         .equal('Attachment with this id (999) could not be found');
+
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/logs/:logId/children', () => {
+        it('should return the correct child logs of a parent log', (done) => {
+            request(server)
+                .get(`/api/logs/${logWithChildrenId}/children`)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data.every((log) => log.parentLogId === logWithChildrenId));
+
+                    done();
+                });
+        });
+
+        it('should return 400 if the log id is not a number', (done) => {
+            request(server)
+                .get('/api/logs/abc/children')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+                    expect(titleError.detail).to.equal('"params.logId" must be a number');
+
+                    done();
+                });
+        });
+
+        it('should return 404 if the log has no children', (done) => {
+            request(server)
+                .get(`/api/logs/${logWithoutChildrenId}/children`)
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal(`Child logs of log (${logWithoutChildrenId}) could not be found`);
 
                     done();
                 });
