@@ -675,7 +675,7 @@ label {
 }
 
 .scroll-x {
-    overflow-x: auto;
+    overflow-x: auto !important;
 } 
 
 .scroll-x .table.left-sticky thead tr th:first-child {
