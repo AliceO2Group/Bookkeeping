@@ -441,12 +441,14 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
 };
 
 /**
- * Wait For table to reload data
- * Reloaded table MUST contain at least one row of data
+ * Wait for table to be reloaded.
+ * Call a trigger function, wait for the table to display a loading spinner then wait for the loading spinner to be removed.
  * @param {puppeteer.Page} page the puppeteer page
- * @param {function} triggerFunction table reload trigger
+ * @param {function} triggerFunction function called to trigger table data loading
+ * @param {boolean} [expectDataAfterReload = true] if true it will wait until table with data is rendered
+ * (so at least one row with data MUST be rendered), otherwise it does not wait for table with new data
  * @return {Promise} promise
  */
-module.exports.waitForTableDataReload = (page, triggerFunction) =>
+module.exports.waitForTableDataReload = (page, triggerFunction, expectDataAfterReload = true) =>
     Promise.all([page.waitForSelector('table .atom-spinner'), triggerFunction()])
-        .then(() => page.waitForSelector('tbody tr td:nth-child(2)'));
+        .then(() => expectDataAfterReload ? page.waitForSelector('tbody tr td:nth-child(2)') : null);
