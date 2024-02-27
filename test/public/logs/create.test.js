@@ -15,7 +15,8 @@ const chai = require('chai');
 const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout } = require('../defaults.js');
+const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
+const fs = require('fs');
 
 const { expect } = chai;
 
@@ -33,6 +34,7 @@ module.exports = () => {
     let page;
     let browser;
     let url;
+    const assetsDir = [__dirname, '../..', 'assets'];
 
     before(async () => {
         [page, browser, url] = await defaultBefore();
@@ -41,10 +43,27 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        /*
+         * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
+         * So to test specific file names, store files in git under an acceptable name but rename it on the fly before the test and put it
+         * back afterward
+         */
+        try {
+            fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'), path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'));
+        } catch (_) {
+            // File has probably been renamed in another test
+        }
     });
 
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
+
+        try {
+            fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
+        } catch (_) {
+            // File has probably been renamed in another test
+        }
     });
 
     it('correctly loads the log creation page', async () => {
@@ -83,10 +102,7 @@ module.exports = () => {
         await pressElement(page, '.log-display-action-buttons button:nth-of-type(2)');
         await expectInnerText(page, '#log-id-1 span[role="presentation"]:first-of-type', 'Power interruption due to unplugged wire.');
 
-        await Promise.all([
-            page.waitForNavigation({ timeout: 1500 }),
-            pressElement(page, '#parent-log-details'),
-        ]);
+        await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
         expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
     });
@@ -187,7 +203,7 @@ module.exports = () => {
         const text = 'Sample Text';
         const file1 = '1200px-CERN_logo.png';
         // Use utf-characters to check that it is well handled, for example for French accents
-        const file2 = 'hadron_collider_(é_è).jpg';
+        const file2 = 'hadron_collider_`(é_è)’.jpg';
 
         // Return to the creation page
         await goToPage(page, 'log-create');
@@ -200,8 +216,8 @@ module.exports = () => {
 
         // Add both the file attachments to the input field
         const attachmentsInput = await page.$('#attachments');
-        const file1Path = path.resolve(__dirname, '../..', 'assets', file1);
-        const file2Path = path.resolve(__dirname, '../..', 'assets', file2);
+        const file1Path = path.resolve(...assetsDir, file1);
+        const file2Path = path.resolve(...assetsDir, file2);
         attachmentsInput.uploadFile(file1Path, file2Path);
         await waitForTimeout(500);
 
@@ -233,7 +249,7 @@ module.exports = () => {
 
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
-        attachmentsInput.uploadFile(path.resolve(__dirname, '../..', 'assets', '1200px-CERN_logo.png'));
+        attachmentsInput.uploadFile(path.resolve(...assetsDir, '1200px-CERN_logo.png'));
         await waitForTimeout(500);
 
         // We expect the clear button to appear

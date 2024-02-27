@@ -18,43 +18,45 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 
 const lhcPeriod_LHC22b = {
     id: 2,
-    beamType: 'XeXe',
     avgCenterOfMassEnergy: 1264.9836246503144,
-    distinctEnergies: [55.2],
     lhcPeriod: {
         id: 2,
         name: 'LHC22b',
+
     },
+    beamTypes: ['XeXe'],
+    distinctEnergies: [55.2],
     runsCount: 1,
     dataPassesCount: 2,
 };
 
 const lhcPeriod_LHC22a = {
     id: 1,
-    beamType: 'pp',
     avgCenterOfMassEnergy: 99.52079923444215,
+    lhcPeriod: {
+        id: 1,
+        name: 'LHC22a',
+
+    },
+    beamTypes: ['PbPb', 'pp'],
     distinctEnergies: [
         23.21,
         56.1,
     ],
-    lhcPeriod: {
-        id: 1,
-        name: 'LHC22a',
-    },
     runsCount: 3,
     dataPassesCount: 1,
-
 };
 
 const lhcPeriod_LHC23f = {
     id: 3,
-    beamType: null,
     avgCenterOfMassEnergy: null,
-    distinctEnergies: [],
     lhcPeriod: {
         id: 3,
         name: 'LHC23f',
+
     },
+    beamTypes: [],
+    distinctEnergies: [],
     dataPassesCount: 0,
     runsCount: 0,
 };
@@ -242,9 +244,9 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on beamType', (done) => {
+        it('should successfuly sort on beamTypes', (done) => {
             request(server)
-                .get('/api/lhcPeriodsStatistics?sort[beamType]=DESC')
+                .get('/api/lhcPeriodsStatistics?sort[beamTypes]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
