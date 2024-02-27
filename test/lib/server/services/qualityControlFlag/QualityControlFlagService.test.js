@@ -97,9 +97,9 @@ module.exports = () => {
     describe('Fetching quality control flags', () => {
         it('should succesfuly fetch all flags', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll();
-            expect(count).to.be.equal(4);
+            expect(count).to.be.equal(5);
             expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(4);
+            expect(flags).to.be.lengthOf(5);
             for (const flag of flags) {
                 await QCFlagSchema.validateAsync(flag);
             }
@@ -147,6 +147,20 @@ module.exports = () => {
             });
         });
 
+        it('should succesfuly fetch all flags filtering with associations (simulation pass)', async () => {
+            const { rows: flags, count } = await qualityControlFlagService.getAll({
+                filter: {
+                    simulationPassIds: [1],
+                    runNumbers: [106],
+                    detectorIds: [1],
+                },
+            });
+            expect(count).to.be.equal(1);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(1);
+            expect(flags[0].id).to.be.eql(5);
+        });
+
         it('should succesfuly fetch all flags filtering with externalUserIds', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
@@ -167,9 +181,9 @@ module.exports = () => {
                     userNames: ['Jan Jansen'],
                 },
             });
-            expect(count).to.be.equal(1);
+            expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(1);
+            expect(flags).to.be.lengthOf(2);
             await QCFlagSchema.validateAsync(flags[0]);
             expect(flags[0].user.name).to.be.equal('Jan Jansen');
         });
