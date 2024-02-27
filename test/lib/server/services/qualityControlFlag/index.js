@@ -16,5 +16,5 @@ const GetAllFlagTypes = require('./getAllFlagTypes.test.js');
 
 module.exports = () => {
     describe('QualityControlFlagService Suite', QualityControlFlagServiceSuite);
-    describe('QualityControlFlagResons Suite', GetAllFlagTypes);
+    describe('QualityControlFlagType Suite', GetAllFlagTypes);
 };

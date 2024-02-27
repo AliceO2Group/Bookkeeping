@@ -22,7 +22,8 @@ const QCFlagTypeSchema = Joi.object({
     name: Joi.string().required(),
     method: Joi.string().required(),
     bad: Joi.boolean().required(),
-    obsolate: Joi.boolean().required(),
+    archvied: Joi.boolean().required(),
+    archviedAt: Joi.number().required(),
 });
 
 const UserSchema = Joi.object({ id: Joi.number().required(), name: Joi.string().required(), externalId: Joi.number().required() });
@@ -52,41 +53,41 @@ module.exports = () => {
             const flagTypes = await getAllQualityControlFlagFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes).to.have.all.deep.members([
+            expect(flagTypes.map(({ id, name, method, bad, archvied }) => ({ id, name, method, bad, archvied }))).to.have.all.deep.members([
                 {
                     id: 2,
                     name: 'UnknownQuality',
                     method: 'Unknown Quality',
                     bad: true,
-                    obsolate: true,
+                    archvied: false,
                 },
                 {
                     id: 3,
                     name: 'CertifiedByExpert',
                     method: 'Certified by Expert',
                     bad: false,
-                    obsolate: true,
+                    archvied: false,
                 },
                 {
                     id: 11,
                     name: 'LimitedAcceptance',
                     method: 'Limited acceptance',
                     bad: true,
-                    obsolate: true,
+                    archvied: false,
                 },
                 {
                     id: 12,
                     name: 'BadPID',
                     method: 'Bad PID',
                     bad: true,
-                    obsolate: true,
+                    archvied: false,
                 },
                 {
                     id: 13,
                     name: 'Bad',
                     method: 'Bad',
                     bad: true,
-                    obsolate: false,
+                    archvied: false,
                 },
 
             ]);
@@ -141,7 +142,7 @@ module.exports = () => {
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
-                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archvied: false },
                 createdAt: 1707825436 * 1000,
             });
         });
