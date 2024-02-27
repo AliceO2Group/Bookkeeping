@@ -449,6 +449,7 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * (so at least one row with data MUST be rendered), otherwise it does not wait for table with new data
  * @return {Promise} promise
  */
-module.exports.waitForTableDataReload = (page, triggerFunction, expectDataAfterReload = true) =>
-    Promise.all([page.waitForSelector('table .atom-spinner'), triggerFunction()])
-        .then(() => expectDataAfterReload ? page.waitForSelector('tbody tr td:nth-child(2)') : null);
+module.exports.waitForTableDataReload = (page, triggerFunction, expectDataAfterReload = true) => Promise.all([
+    page.waitForSelector('table .atom-spinner'),
+    triggerFunction(),
+]).then(() => expectDataAfterReload ? page.waitForSelector('tbody tr td:nth-child(2)') : null);
