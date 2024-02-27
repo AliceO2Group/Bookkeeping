@@ -27,24 +27,13 @@ const QCFlagTypeSchema = Joi.object({
 
 const UserSchema = Joi.object({ id: Joi.number().required(), name: Joi.string().required(), externalId: Joi.number().required() });
 
-const QCFlagVerificationSchema = Joi.object({
-    id: Joi.number().required(),
-    comment: Joi.string().required(),
-    userId: Joi.number().required(),
-    user: UserSchema,
-    createdAt: Joi.number().required(),
-    qualityControlFlagId: Joi.number().required(),
-});
-
 const QCFlagSchema = Joi.object({
     id: Joi.number().required(),
-    timeStart: Joi.number().required(),
-    timeEnd: Joi.number().required(),
+    from: Joi.number().required(),
+    to: Joi.number().required(),
     comment: Joi.string().required(),
-    provenance: Joi.string().required().valid('HUMAN', 'SYNC', 'ASYNC', 'MC'),
     createdAt: Joi.number().required(),
 
-    dataPassId: Joi.number().required(),
     runNumber: Joi.number().required(),
     detectorId: Joi.number().required(),
 
@@ -52,8 +41,6 @@ const QCFlagSchema = Joi.object({
     user: UserSchema,
     flagTypeId: Joi.number().required(),
     flagType: QCFlagTypeSchema,
-
-    verifications: Joi.array().items(QCFlagVerificationSchema),
 });
 
 module.exports = () => {
@@ -146,28 +133,16 @@ module.exports = () => {
             expect(flags).to.be.lengthOf(1);
             expect(flags[0]).to.be.eql({
                 id: 4,
-                timeStart: 1647924400000,
-                timeEnd: 1647924400000,
+                from: 1647924400000,
+                to: 1647924400000,
                 comment: 'Some qc comment 4',
-                provenance: 'HUMAN',
-                createdAt: 1707825436 * 1000,
-                dataPassId: 2,
                 runNumber: 1,
                 detectorId: 1,
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
-                verifications: [
-                    {
-                        id: 2,
-                        userId: 1,
-                        user: { id: 1, externalId: 1, name: 'John Doe' },
-                        comment: 'Accepted: Some qc comment 1',
-                        createdAt: 1707825436 * 1000,
-                        qualityControlFlagId: 4,
-                    },
-                ],
+                createdAt: 1707825436 * 1000,
             });
         });
 
