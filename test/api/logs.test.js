@@ -22,8 +22,14 @@ const { server } = require('../../lib/application');
 module.exports = () => {
     before(resetDatabaseContent);
 
-    const logWithChildrenId = 117;
-    const logWithoutChildrenId = 122;
+    const logWithChildren = {
+        id: 117,
+        expectedAmountOfChildren: 2,
+    };
+    const logWithoutChildren = {
+        id: 122,
+        expectedAmountOfChildren: 0,
+    };
 
     let logWithAttachmentsId = 0;
     let attachmentId = 0;
@@ -1558,7 +1564,7 @@ module.exports = () => {
     describe('GET /api/logs/:logId/children', () => {
         it('should return the correct child logs of a parent log', (done) => {
             request(server)
-                .get(`/api/logs/${logWithChildrenId}/children`)
+                .get(`/api/logs/${logWithChildren.id}/children`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -1566,7 +1572,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data.every((log) => log.parentLogId === logWithChildrenId));
+                    expect(res.body.data.length).to.equal(logWithChildren.expectedAmountOfChildren);
+                    expect(res.body.data.every((log) => log.parentLogId === logWithChildren.id));
 
                     done();
                 });
@@ -1592,7 +1599,7 @@ module.exports = () => {
 
         it('should return an empty array if the log has no children', (done) => {
             request(server)
-                .get(`/api/logs/${logWithoutChildrenId}/children`)
+                .get(`/api/logs/${logWithoutChildren.id}/children`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
