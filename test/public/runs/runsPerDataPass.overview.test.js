@@ -79,8 +79,8 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
 
         await page.waitForSelector('h2');
-        const viewTitle = await page.$eval('h2', (element) => element.innerText);
-        expect(viewTitle).to.have.all.ordered.members(['Physics Runs', 'LHC22a_apass1']);
+        const viewTitleElements = await Promise.all((await page.$$('h2')).map((element) => element.evaluate(({ innerText }) => innerText)));
+        expect(viewTitleElements).to.have.all.ordered.members(['Physics Runs', 'LHC22a_apass1']);
     });
 
     it('shows correct datatypes in respective columns', async () => {
