@@ -15,9 +15,9 @@ const { qualityControlFlagService } = require('../../../../../lib/server/service
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const Joi = require('joi');
-const { getAllQualityControlFlagFlagReasons } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagReasons.js');
+const { getAllQualityControlFlagFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagTypes.js');
 
-const QCFlagReasonSchema = Joi.object({
+const QCFlagTypeSchema = Joi.object({
     id: Joi.number().required(),
     name: Joi.string().required(),
     method: Joi.string().required(),
@@ -50,8 +50,8 @@ const QCFlagSchema = Joi.object({
 
     userId: Joi.number().required(),
     user: UserSchema,
-    flagReasonId: Joi.number().required(),
-    flagReason: QCFlagReasonSchema,
+    flagTypeId: Joi.number().required(),
+    flagType: QCFlagTypeSchema,
 
     verifications: Joi.array().items(QCFlagVerificationSchema),
 });
@@ -62,10 +62,10 @@ module.exports = () => {
 
     describe('Fetching quality control flags reasons', () => {
         it('should successfuly fetch quality control flags reasons', async () => {
-            const flagReasons = await getAllQualityControlFlagFlagReasons();
-            expect(flagReasons).to.be.an('array');
-            expect(flagReasons).to.be.lengthOf(5);
-            expect(flagReasons).to.have.all.deep.members([
+            const flagTypes = await getAllQualityControlFlagFlagTypes();
+            expect(flagTypes).to.be.an('array');
+            expect(flagTypes).to.be.lengthOf(5);
+            expect(flagTypes).to.have.all.deep.members([
                 {
                     id: 2,
                     name: 'UnknownQuality',
@@ -156,8 +156,8 @@ module.exports = () => {
                 detectorId: 1,
                 userId: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                flagReasonId: 13,
-                flagReason: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
+                flagTypeId: 13,
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
                 verifications: [
                     {
                         id: 2,

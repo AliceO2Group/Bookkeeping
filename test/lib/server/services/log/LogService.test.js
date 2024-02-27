@@ -47,4 +47,23 @@ module.exports = () => {
         expect(logsForFill).to.lengthOf(3);
         expect(logsForFill.map(({ id }) => id)).to.eql([1, 3, 4]);
     });
+
+    it('Should successfully return the correct amount of root logs only, based off the limit', async () => {
+        const rootLogs = await logService.getAllRootLogs(10, 0);
+        expect(rootLogs.logs).to.lengthOf(10);
+        rootLogs.logs.forEach((log) => expect(log.parentLogId).to.equal(log.id));
+    });
+
+    it('Should successfully return an empty array with limit 0', async () => {
+        const rootLogs = await logService.getAllRootLogs(0, 0);
+        expect(rootLogs.logs).to.be.empty;
+    });
+
+    it('Should successfully return the correct logs based off the offset', async () => {
+        const rootLogsFirstPage = await logService.getAllRootLogs(1, 0);
+        const rootLogsSecondPage = await logService.getAllRootLogs(1, 1);
+
+        expect(rootLogsFirstPage.logs[0].id).to.equal(1);
+        expect(rootLogsSecondPage.logs[0].id).to.equal(5);
+    });
 };

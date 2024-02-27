@@ -37,4 +37,43 @@ module.exports = () => {
         expect(lhcFill).to.have.ownProperty('fillNumber');
         expect(lhcFill.fillNumber).to.equal(6);
     });
+
+    it('should successfully return the list of fills ended in a given period including its statistics', async () => {
+        // For the purpose of the test, create 2 fills with fixed creation date
+        const firstCreatedAt = new Date('2019-08-09 18:00:00');
+        const secondCreatedAt = new Date('2019-08-09 20:00:00');
+
+        {
+            const lhcFills = await lhcFillService.getAllEndedInPeriod({
+                from: firstCreatedAt.getTime(),
+                to: secondCreatedAt.getTime(),
+            });
+            expect(lhcFills).to.lengthOf(2);
+            expect(lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([2, 3]);
+            expect(lhcFills[0].statistics).to.be.an('object');
+            expect(lhcFills[1].statistics).to.be.an('object');
+        }
+
+        {
+            const lhcFills = await lhcFillService.getAllEndedInPeriod({
+                from: firstCreatedAt.getTime() + 1000,
+                to: secondCreatedAt.getTime(),
+            });
+            expect(lhcFills).to.lengthOf(1);
+            expect(lhcFills[0].fillNumber).to.equal(3);
+            expect(lhcFills[0].statistics).to.be.an('object');
+        }
+
+        {
+            const lhcFills = await lhcFillService.getAllEndedInPeriod({
+                from: firstCreatedAt.getTime(),
+                to: secondCreatedAt.getTime() + 1000,
+            });
+            expect(lhcFills).to.lengthOf(3);
+            expect(lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([2, 3, 4]);
+            expect(lhcFills[0].statistics).to.be.an('object');
+            expect(lhcFills[1].statistics).to.be.an('object');
+            // No statistics for 4th fill which has no stable beam
+        }
+    });
 };

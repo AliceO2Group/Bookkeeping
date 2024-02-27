@@ -12,15 +12,15 @@
  */
 
 const { expect } = require('chai');
-const { getAllQualityControlFlagFlagReasons } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagReasons.js');
+const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagTypes.js');
 
 module.exports = () => {
     describe('Fetching quality control flags reasons', () => {
         it('should successfuly fetch quality control flags reasons', async () => {
-            const flagReasons = await getAllQualityControlFlagFlagReasons();
-            expect(flagReasons).to.be.an('array');
-            expect(flagReasons).to.be.lengthOf(5);
-            expect(flagReasons).to.have.all.deep.members([
+            const flagTypes = await getAllQualityControlFlagTypes();
+            expect(flagTypes).to.be.an('array');
+            expect(flagTypes).to.be.lengthOf(5);
+            expect(flagTypes).to.have.all.deep.members([
                 {
                     id: 2,
                     name: 'UnknownQuality',
