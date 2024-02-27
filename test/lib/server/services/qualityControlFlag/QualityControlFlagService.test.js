@@ -38,7 +38,7 @@ const QCFlagSchema = Joi.object({
     runNumber: Joi.number().required(),
     dplDetectorId: Joi.number().required(),
 
-    userId: Joi.number().required(),
+    createdById: Joi.number().required(),
     user: UserSchema,
     flagTypeId: Joi.number().required(),
     flagType: QCFlagTypeSchema,
@@ -139,7 +139,7 @@ module.exports = () => {
                 comment: 'Some qc comment 4',
                 runNumber: 1,
                 detectorId: 1,
-                userId: 2,
+                createdById: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archvied: false },
