@@ -15,7 +15,7 @@ const { qualityControlFlagService } = require('../../../../../lib/server/service
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const Joi = require('joi');
-const { getAllQualityControlFlagFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
+const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
 
 const QCFlagTypeSchema = Joi.object({
     id: Joi.number().required(),
@@ -36,7 +36,7 @@ const QCFlagSchema = Joi.object({
     createdAt: Joi.number().required(),
 
     runNumber: Joi.number().required(),
-    detectorId: Joi.number().required(),
+    dplDetectorId: Joi.number().required(),
 
     userId: Joi.number().required(),
     user: UserSchema,
@@ -50,7 +50,7 @@ module.exports = () => {
 
     describe('Fetching quality control flags reasons', () => {
         it('should successfuly fetch quality control flags reasons', async () => {
-            const flagTypes = await getAllQualityControlFlagFlagTypes();
+            const flagTypes = await getAllQualityControlFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
             expect(flagTypes.map(({ id, name, method, bad, archvied }) => ({ id, name, method, bad, archvied }))).to.have.all.deep.members([
