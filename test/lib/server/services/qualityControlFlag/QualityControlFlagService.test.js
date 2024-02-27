@@ -22,8 +22,8 @@ const QCFlagTypeSchema = Joi.object({
     name: Joi.string().required(),
     method: Joi.string().required(),
     bad: Joi.boolean().required(),
-    archvied: Joi.boolean().required(),
-    archviedAt: Joi.number().required(),
+    archived: Joi.boolean().required(),
+    archivedAt: Joi.number().allow(null),
 });
 
 const UserSchema = Joi.object({ id: Joi.number().required(), name: Joi.string().required(), externalId: Joi.number().required() });
@@ -53,41 +53,41 @@ module.exports = () => {
             const flagTypes = await getAllQualityControlFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes.map(({ id, name, method, bad, archvied }) => ({ id, name, method, bad, archvied }))).to.have.all.deep.members([
+            expect(flagTypes.map(({ id, name, method, bad, archived }) => ({ id, name, method, bad, archived }))).to.have.all.deep.members([
                 {
                     id: 2,
                     name: 'UnknownQuality',
                     method: 'Unknown Quality',
                     bad: true,
-                    archvied: false,
+                    archived: false,
                 },
                 {
                     id: 3,
                     name: 'CertifiedByExpert',
                     method: 'Certified by Expert',
                     bad: false,
-                    archvied: false,
+                    archived: false,
                 },
                 {
                     id: 11,
                     name: 'LimitedAcceptance',
                     method: 'Limited acceptance',
                     bad: true,
-                    archvied: false,
+                    archived: false,
                 },
                 {
                     id: 12,
                     name: 'BadPID',
                     method: 'Bad PID',
                     bad: true,
-                    archvied: false,
+                    archived: false,
                 },
                 {
                     id: 13,
                     name: 'Bad',
                     method: 'Bad',
                     bad: true,
-                    archvied: false,
+                    archived: false,
                 },
 
             ]);
@@ -138,11 +138,11 @@ module.exports = () => {
                 to: 1647924400000,
                 comment: 'Some qc comment 4',
                 runNumber: 1,
-                detectorId: 1,
+                dplDetectorId: 1,
                 createdById: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
-                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archvied: false },
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, archivedAt: null },
                 createdAt: 1707825436 * 1000,
             });
         });
