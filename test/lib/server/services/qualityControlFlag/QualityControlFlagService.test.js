@@ -15,7 +15,7 @@ const { qualityControlFlagService } = require('../../../../../lib/server/service
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const Joi = require('joi');
-const { getAllQualityControlFlagFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagTypes.js');
+const { getAllQualityControlFlagFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
 
 const QCFlagTypeSchema = Joi.object({
     id: Joi.number().required(),

@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllFlagTypes.js');
+const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
 
 module.exports = () => {
     describe('Fetching quality control flags reasons', () => {
