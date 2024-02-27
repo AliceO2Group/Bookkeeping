@@ -1590,17 +1590,17 @@ module.exports = () => {
                 });
         });
 
-        it('should return 404 if the log has no children', (done) => {
+        it('should return an empty array if the log has no children', (done) => {
             request(server)
                 .get(`/api/logs/${logWithoutChildrenId}/children`)
-                .expect(404)
+                .expect(200)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal(`Child logs of log (${logWithoutChildrenId}) could not be found`);
+                    expect(res.body.data).to.be.empty;
 
                     done();
                 });

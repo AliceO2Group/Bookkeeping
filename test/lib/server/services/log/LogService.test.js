@@ -69,8 +69,10 @@ module.exports = () => {
 
     it('Should successfully return child logs of their parent log', async () => {
         const logWithChildrenId = 117;
+        const expectedAmountOfChildren = 2;
         const { childLogs } = await logService.getChildLogsByParentId(logWithChildrenId);
 
+        expect(childLogs.length).to.equal(expectedAmountOfChildren);
         childLogs.forEach((log) => expect(log.parentLogId === logWithChildrenId));
     });
 
@@ -83,8 +85,10 @@ module.exports = () => {
 
     it('Should successfully return correct count when children are found', async () => {
         const logWithChildrenId = 117;
+        const expectedAmountOfChildren = 2;
         const { count, childLogs } = await logService.getChildLogsByParentId(logWithChildrenId);
 
+        expect(childLogs.length).to.equal(expectedAmountOfChildren);
         expect(childLogs.length).to.equal(count);
     });
 
