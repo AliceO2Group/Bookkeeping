@@ -80,7 +80,7 @@ module.exports = () => {
 
         await page.waitForSelector('h2');
         const viewTitle = await page.$eval('h2', (element) => element.innerText);
-        expect(viewTitle).to.be.eql('Good, physics runs of LHC22a_apass1');
+        expect(viewTitle).to.have.all.ordered.members(['Physics Runs', 'LHC22a_apass1']);
     });
 
     it('shows correct datatypes in respective columns', async () => {
