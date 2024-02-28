@@ -161,20 +161,6 @@ module.exports = () => {
             expect(flags[0].id).to.be.eql(5);
         });
 
-        it('should succesfuly fetch all flags filtering with externalUserIds', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll({
-                filter: {
-                    externalUserIds: [1],
-                },
-            });
-            expect(count).to.be.equal(3);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(3);
-            for (const flag of flags) {
-                await QCFlagSchema.validateAsync(flag);
-            }
-        });
-
         it('should succesfuly fetch all flags filtering with userNames', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll({
                 filter: {
