@@ -1562,55 +1562,25 @@ module.exports = () => {
     });
 
     describe('GET /api/logs/:logId/children', () => {
-        it('should return the correct child logs of a parent log', (done) => {
-            request(server)
-                .get(`/api/logs/${logWithChildren.id}/children`)
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data.length).to.equal(logWithChildren.expectedAmountOfChildren);
-                    expect(res.body.data.every((log) => log.parentLogId === logWithChildren.id));
-
-                    done();
-                });
+        it('should return the correct child logs of a parent log', async () => {
+            const response = await request(server).get(`/api/logs/${logWithChildren.id}/children`);
+            expect(response.status).to.equal(200);
+            expect(response.body.data.length).to.equal(logWithChildren.expectedAmountOfChildren);
+            expect(response.body.data.every((log) => log.parentLogId === logWithChildren.id));
         });
 
-        it('should return 400 if the log id is not a number', (done) => {
-            request(server)
-                .get('/api/logs/abc/children')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
-                    expect(titleError.detail).to.equal('"params.logId" must be a number');
-
-                    done();
-                });
+        it('should return 400 if the log id is not a number', async () => {
+            const response = await request(server).get('/api/logs/abc/children');
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+            expect(response.status).to.equal(400);
+            expect(titleError.detail).to.equal('"params.logId" must be a number');
         });
 
-        it('should return an empty array if the log has no children', (done) => {
-            request(server)
-                .get(`/api/logs/${logWithoutChildren.id}/children`)
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.be.empty;
-
-                    done();
-                });
+        it('should return an empty array if the log has no children', async () => {
+            const response = await request(server).get(`/api/logs/${logWithoutChildren.id}/children`);
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.be.empty;
         });
     });
 };
