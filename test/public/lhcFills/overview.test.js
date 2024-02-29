@@ -19,7 +19,7 @@ const {
     goToPage,
     checkColumnBalloon,
 } = require('../defaults');
-const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
+const { waitForNetworkIdleAndRedraw, waitForTimeout, expectInnerText } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -209,5 +209,13 @@ module.exports = () => {
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
+    });
+
+    it ('should successfully display some statistics', async () => {
+        await expectInnerText(page, 'tbody tr td:nth-child(6)', '41.67%');
+        await expectInnerText(page, 'tbody tr td:nth-child(7)', '03:00:00\n(25.00%)');
+        await expectInnerText(page, 'tbody tr td:nth-child(8)', '02:00:00\n(16.67%)');
+        await expectInnerText(page, 'tbody tr td:nth-child(9)', '01:40:00');
+        await expectInnerText(page, 'tbody tr td:nth-child(10)', '05:00:00');
     });
 };
