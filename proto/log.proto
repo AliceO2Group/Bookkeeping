@@ -48,7 +48,6 @@ message Log {
   int32 rootLogId = 8;
   // Array of minified Run objects.
   repeated MinimalRun runs = 9;
-  repeated Subsystem subsystems = 10;
   LogSubtype subtype = 11;
   repeated Tag tags = 12;
   string text = 14;
@@ -75,16 +74,6 @@ enum LogSubtype {
 message MinimalRun {
   int32 runNumber = 1;
   int32 id = 2;
-}
-
-message Subsystem {
-  // Unix timestamp when this entity was created.
-  int64 createdAt = 1;
-  int32 id = 2;
-  // The label value of the subsystem.
-  string name = 3;
-  // Unix timestamp when this entity was last updated.
-  int64 updatedAt = 5;
 }
 
 message Tag {
