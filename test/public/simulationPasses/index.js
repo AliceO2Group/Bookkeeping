@@ -11,9 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-/**
- * @typedef LhcPeriodStatistics
- *
- * @property {number} id
- * @property {LhcPeriod} lhcPeriod
- */
+const PerLhcPeriodOverviewSuite = require('./overviewPerLhcPeriod.test');
+
+module.exports = () => {
+    describe('Per LHC Period Overview Page', PerLhcPeriodOverviewSuite);
+};

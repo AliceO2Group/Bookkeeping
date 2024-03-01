@@ -118,15 +118,18 @@ module.exports = () => {
             };
             // Not kept : not the good tags
             await createLog(defaultLogData, [], ['EoS'], [], [], []);
-            logIds.push(await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], [], [], []));
-            // Keep the 1 log ids as it has good tags for 'Shift Leader'
+            await createLog(defaultLogData, [], ['Shift Leader', 'EoS'], [], [], []);
+            // Keep the 4 log ids as it has good tags for 'Shift Leader'
             logIds.push(await createLog(defaultLogData, [], ['Shift Leader'], [], [], []));
+            logIds.push(await createLog(defaultLogData, [], ['ECS Shifter'], [], [], []));
+            logIds.push(await createLog(defaultLogData, [], ['DCS Shifter'], [], [], []));
+            logIds.push(await createLog(defaultLogData, [], ['QC/PDP Shifter'], [], [], []));
 
             const response = await request(server).get('/api/shift-data?shiftType=SL');
 
             expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('object');
-            expect(response.body.data.issuesLogs).to.lengthOf(1);
+            expect(response.body.data.issuesLogs).to.lengthOf(4);
             expect(response.body.data.issuesLogs.every(({ id }) => logIds.includes(id))).to.be.true;
         });
     });

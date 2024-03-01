@@ -55,8 +55,9 @@ module.exports = () => {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
+            associatedSimulationPasses: (display) => /(No MC)|(MC)/.test(display),
             year: (year) => !isNaN(year),
-            beamType: (beamType) => allowedBeamTypesDisplayes.has(beamType),
+            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
                 .split(',')
@@ -82,7 +83,7 @@ module.exports = () => {
             if (index in headerIndices) {
                 const cellContent = await page.evaluate((element) => element.innerText, cell);
                 const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
+                expect(expectedDatatype, `${headerIndices[index]} <${cellContent}> incorrect datatype`).to.be.true;
             }
         }
     });
@@ -233,7 +234,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamType');
+        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
         expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
     });
 };
