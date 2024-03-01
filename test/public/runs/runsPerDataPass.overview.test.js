@@ -127,8 +127,8 @@ module.exports = () => {
         await reloadPage(page);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -159,7 +159,7 @@ module.exports = () => {
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(3);
+        expect(tableRows.length - 1).to.equal(4);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -243,8 +243,9 @@ module.exports = () => {
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
-        expect(runs).to.be.lengthOf(3);
+        expect(runs).to.be.lengthOf(4);
         expect(runs).to.have.deep.all.members([
+            { runNumber: 105, runQuality: 'test' },
             { runNumber: 56, runQuality: 'good' },
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
