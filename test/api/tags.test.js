@@ -641,7 +641,7 @@ module.exports = () => {
             expect(response.body.data.archived).to.be.true;
         });
 
-        it('should sucessfully update the given tag description', async () => {
+        it('should successfully update the given tag description', async () => {
             const response = await request(server)
                 .put(`/api/tags/${createdTag.id}?token=admin`)
                 .send({ description: 'A whole new description' });
