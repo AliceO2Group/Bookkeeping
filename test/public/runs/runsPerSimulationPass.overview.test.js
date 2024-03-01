@@ -174,7 +174,7 @@ module.exports = () => {
         await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
 
         // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
+        await page.evaluate(() => model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
 
         // We expect there to be a fitting error message
         await page.waitForSelector('.alert-danger');
@@ -184,7 +184,7 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 10;
+            model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 10;
         });
     });
 
