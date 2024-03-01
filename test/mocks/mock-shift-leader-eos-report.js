@@ -55,6 +55,21 @@ const customizedShiftLeaderEosReportLogs = [
         rootLogId: 124,
         parentLogId: 124,
     },
+    {
+        id: 126,
+        title: 'Seventh issue log',
+        tags: [{ text: 'ECS Shifter' }],
+    },
+    {
+        id: 127,
+        title: 'Eighth issue log',
+        tags: [{ text: 'QC/PDP Shifter' }],
+    },
+    {
+        id: 128,
+        title: 'Ninth issue log',
+        tags: [{ text: 'DCS Shifter' }],
+    },
 ];
 
 exports.customizedShiftLeaderEosReportLogs = customizedShiftLeaderEosReportLogs;
@@ -73,6 +88,21 @@ const customizedShiftLeaderEosReport = {
             id: 124,
             title: 'Fifth issue log',
             tags: [{ text: 'Shift Leader' }, { text: 'FLP' }],
+        },
+        {
+            id: 126,
+            title: 'Seventh issue log',
+            tags: [{ text: 'ECS Shifter' }],
+        },
+        {
+            id: 127,
+            title: 'Eighth issue log',
+            tags: [{ text: 'QC/PDP Shifter' }],
+        },
+        {
+            id: 128,
+            title: 'Ninth issue log',
+            tags: [{ text: 'DCS Shifter' }],
         },
     ],
     typeSpecific: {
@@ -182,6 +212,9 @@ const customizedShiftLeaderEosReport = {
             DCS: 1,
             SL: 1,
             FLP: 1,
+            'ECS Shifter': 1,
+            'QC/PDP Shifter': 1,
+            'DCS Shifter': 1,
         },
     },
 };
@@ -211,6 +244,9 @@ const formattedCustomizedShiftLeaderEosReportTypeSpecific = `
     - DCS (1)
     - SL (1)
     - FLP (1)
+    - ECS Shifter (1)
+    - QC/PDP Shifter (1)
+    - DCS Shifter (1)
 
 ## Runs
 
@@ -222,10 +258,17 @@ const formattedCustomizedShiftLeaderEosReportTypeSpecific = `
 - [202](http://localhost:4000?page=run-detail&runNumber=202)
 `;
 
+const formattedLog = `\
+- \\[Shift Leader\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+- \\[Shift Leader, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+- \\[ECS Shifter\\] - [Seventh issue log](http://localhost:4000?page=log-detail&id=126)
+- \\[QC/PDP Shifter\\] - [Eighth issue log](http://localhost:4000?page=log-detail&id=127)
+- \\[DCS Shifter\\] - [Ninth issue log](http://localhost:4000?page=log-detail&id=128)\
+`;
+
 exports.formattedCustomizedShiftLeaderEosReport = genericFormattedCustomizedEosReport(
     ShiftTypes.SL,
-    // eslint-disable-next-line max-len
-    '- \\[Shift Leader\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[Shift Leader, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
+    formattedLog,
     formattedCustomizedShiftLeaderEosReportTypeSpecific,
 );
 
