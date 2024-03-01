@@ -41,7 +41,6 @@ const DETECTORS = [
     'TOF',
     'TPC',
     'TRD',
-    'TST',
     'ZDC',
 ];
 

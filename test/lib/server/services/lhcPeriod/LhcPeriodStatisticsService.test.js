@@ -17,20 +17,6 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 
-const lhcPeriod_LHC22b = {
-    id: 2,
-    avgCenterOfMassEnergy: 1264.9836246503144,
-    lhcPeriod: {
-        id: 2,
-        name: 'LHC22b',
-
-    },
-    beamTypes: ['XeXe'],
-    distinctEnergies: [55.2],
-    runsCount: 1,
-    dataPassesCount: 2,
-};
-
 const lhcPeriod_LHC22a = {
     id: 1,
     avgCenterOfMassEnergy: 99.52079923444215,
@@ -46,6 +32,22 @@ const lhcPeriod_LHC22a = {
     ],
     runsCount: 3,
     dataPassesCount: 1,
+    simulationPassesCount: 2,
+};
+
+const lhcPeriod_LHC22b = {
+    id: 2,
+    avgCenterOfMassEnergy: 1264.9836246503144,
+    lhcPeriod: {
+        id: 2,
+        name: 'LHC22b',
+
+    },
+    beamTypes: ['XeXe'],
+    distinctEnergies: [55.2],
+    runsCount: 1,
+    dataPassesCount: 2,
+    simulationPassesCount: 1,
 };
 
 const lhcPeriod_LHC23f = {
@@ -60,6 +62,7 @@ const lhcPeriod_LHC23f = {
     distinctEnergies: [],
     dataPassesCount: 0,
     runsCount: 0,
+    simulationPassesCount: 0,
 };
 
 module.exports = () => {
