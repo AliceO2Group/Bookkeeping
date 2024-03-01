@@ -269,13 +269,13 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 9999, // Failing property
-                dplDetectorId: 111, // Failing property
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
                 () => qualityControlFlagService.create(qcFlagCreationParameters),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111}) as there is no association between them`),
+                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
             );
         });
 
