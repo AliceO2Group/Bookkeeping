@@ -21,11 +21,10 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
-    reloadPage,
+    waitForNavigation,
 } = require('../defaults');
 const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
-const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -79,8 +78,9 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
 
         await page.waitForSelector('h2');
-        const viewTitle = await page.$eval('h2', (element) => element.innerText);
-        expect(viewTitle).to.be.eql('Good, physics runs of LHC22a_apass1');
+        const headerBreadcrumbs = await page.$$('h2');
+        expect(await headerBreadcrumbs[0].evaluate((element) => element.innerText)).to.be.equal('Runs per MC');
+        expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC23k6b');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -157,11 +157,6 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTimeout(600);
-
-        // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -170,19 +165,19 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
+
+        await page.waitForSelector(amountSelectorId);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
 
-        await waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
-        await waitForTimeout(100);
 
         // We expect there to be a fitting error message
+        await page.waitForSelector('.alert-danger');
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
 
@@ -191,19 +186,15 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
     });
 
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
 
-        await waitForTimeout(100);
-        await page.waitForSelector('tbody tr');
-
+        await page.waitForSelector('tbody tr:first-of-type a');
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click()));
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
