@@ -16,6 +16,8 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const { expect } = require('chai');
 const Joi = require('joi');
 const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 
 const QCFlagTypeSchema = Joi.object({
     id: Joi.number().required(),
@@ -48,8 +50,8 @@ module.exports = () => {
     before(resetDatabaseContent);
     after(resetDatabaseContent);
 
-    describe('Fetching quality control flags reasons', () => {
-        it('should successfuly fetch quality control flags reasons', async () => {
+    describe('Fetching quality control flags types', () => {
+        it('should successfuly fetch quality control flags types', async () => {
             const flagTypes = await getAllQualityControlFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
@@ -95,6 +97,19 @@ module.exports = () => {
     });
 
     describe('Fetching quality control flags', () => {
+        it('should successfully fetch quality control flag by id', async () => {
+            const qcFlag = await qualityControlFlagService.getOneOrFail(1);
+            expect(qcFlag.id).to.be.equal(1);
+            QCFlagSchema.validateAsync(qcFlag);
+        });
+
+        it('should throw error when flag with given id cannot be found', async () => {
+            await assert.rejects(
+                () => qualityControlFlagService.getOneOrFail(99999),
+                new BadParameterError('Quality Control Flag with this id (99999) could not be found'),
+            );
+        });
+
         it('should succesfuly fetch all flags', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll();
             expect(count).to.be.equal(5);
