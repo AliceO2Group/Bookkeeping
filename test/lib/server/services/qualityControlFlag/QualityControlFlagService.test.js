@@ -48,8 +48,8 @@ module.exports = () => {
     before(resetDatabaseContent);
     after(resetDatabaseContent);
 
-    describe('Fetching quality control flags reasons', () => {
-        it('should successfuly fetch quality control flags reasons', async () => {
+    describe('Fetching quality control flags types', () => {
+        it('should successfuly fetch quality control flags types', async () => {
             const flagTypes = await getAllQualityControlFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
@@ -95,6 +95,17 @@ module.exports = () => {
     });
 
     describe('Fetching quality control flags', () => {
+        it('should successfully fetch quality control flag by id', async () => {
+            const qcFlag = await qualityControlFlagService.getOneOrFail(1);
+            expect(qcFlag.id).to.be.equal(1);
+            QCFlagSchema.validateAsync(qcFlag);
+        });
+
+        it('should throw error when flag with fiven id cannot be found', async () => {
+            
+            const qcFlag = await qualityControlFlagService.getOneOrFail(99999);
+        });
+
         it('should succesfuly fetch all flags', async () => {
             const { rows: flags, count } = await qualityControlFlagService.getAll();
             expect(count).to.be.equal(5);
