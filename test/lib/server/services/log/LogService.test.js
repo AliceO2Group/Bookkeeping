@@ -66,4 +66,28 @@ module.exports = () => {
         expect(rootLogsFirstPage.logs[0].id).to.equal(1);
         expect(rootLogsSecondPage.logs[0].id).to.equal(5);
     });
+
+    it('Should successfully return child logs of their parent log', async () => {
+        const logWithChildrenId = 117;
+        const expectedAmountOfChildren = 2;
+        const childLogs = await logService.getChildLogsByParentId(logWithChildrenId);
+
+        expect(childLogs.length).to.equal(expectedAmountOfChildren);
+        childLogs.forEach((log) => expect(log.parentLogId === logWithChildrenId));
+    });
+
+    it('Should successfully return an empty array if parent has no children', async () => {
+        const logWithoutChildrenId = 122;
+        const childLogs = await logService.getChildLogsByParentId(logWithoutChildrenId);
+
+        expect(childLogs).to.be.empty;
+    });
+
+    it('Should successfully return correct count when children are not found', async () => {
+        const logWithoutChildrenId = 122;
+        const expectedAmountOfChildren = 0;
+        const childLogs = await logService.getChildLogsByParentId(logWithoutChildrenId);
+
+        expect(childLogs.length).to.equal(expectedAmountOfChildren);
+    });
 };

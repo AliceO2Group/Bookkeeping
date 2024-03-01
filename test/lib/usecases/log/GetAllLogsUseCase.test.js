@@ -96,7 +96,7 @@ module.exports = () => {
         }
     });
 
-    it('should sucessfully filter on log content', async () => {
+    it('should successfully filter on log content', async () => {
         const content = 'particle';
         getAllLogsDto.query = { filter: { content } };
 
