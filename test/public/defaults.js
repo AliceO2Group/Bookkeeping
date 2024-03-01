@@ -459,3 +459,14 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     }
     return ret;
 };
+
+/**
+ * Call a trigger function, wait for the table to display a loading spinner then wait for the loading spinner to be removed.
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {function} triggerFunction function called to trigger table data loading
+ * @return {Promise} promise
+ */
+module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
+    page.waitForSelector('table .atom-spinner'),
+    triggerFunction(),
+]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
