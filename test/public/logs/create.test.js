@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, expectInputValue } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
@@ -105,6 +105,14 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
         expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
+    });
+
+    it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
+        await goToPage(page, 'log-reply&parentLogId=119');
+
+        await expectInputValue(page, 'input#run-numbers', '2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22');
+        await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
+        await expectInputValue(page, 'input#lhc-fills', '1, 4, 6');
     });
 
     it('can disable submit with invalid data', async () => {

@@ -415,6 +415,26 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 };
 
 /**
+ * Evaluate and return the value content of a given element handler
+ * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @returns {Promise<XPathResult>} the html content
+ */
+const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+
+/**
+ * Expect an element to have a given value
+ *
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {string} value value to search for.
+ * @return {Promise<void>} resolves once the value has been checked
+ */
+module.exports.expectInputValue = async (page, selector, value) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    expect(await getInputValue(await page.$(selector))).to.equal(value);
+};
+
+/**
  * Check the differences between the provided expected parameters and the parameters actually received
  *
  * @TODO convert this to not-async
