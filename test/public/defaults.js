@@ -416,12 +416,10 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 
 /**
  * Evaluate and return the value content of a given element handler
- * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
+ * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
  * @returns {Promise<XPathResult>} the html content
  */
-const getInnerValue = async (elementHandler) => await elementHandler.evaluate((element) => element.value);
-
-module.exports.getInnerValue = getInnerValue;
+const getValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
 
 /**
  * Expect an element to have a given value
@@ -433,7 +431,7 @@ module.exports.getInnerValue = getInnerValue;
  */
 module.exports.expectInputValue = async (page, selector, value) => {
     await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInnerValue(await page.$(selector))).to.equal(value);
+    expect(await getValue(await page.$(selector))).to.equal(value);
 };
 
 /**
