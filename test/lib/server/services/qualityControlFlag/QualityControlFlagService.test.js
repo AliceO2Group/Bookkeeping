@@ -211,7 +211,7 @@ module.exports = () => {
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 externalUserId: 9999999, // Failing property
-                flagReasonId: 2,
+                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -229,7 +229,7 @@ module.exports = () => {
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 externalUserId: 456,
-                flagReasonId: 2,
+                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -248,7 +248,7 @@ module.exports = () => {
                 toTime: (1565314200 - 15000) * 1000, // Failing property
                 comment: 'VERY INTERSETING REMARK',
                 externalUserId: 456,
-                flagReasonId: 2,
+                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -266,7 +266,7 @@ module.exports = () => {
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 externalUserId: 456,
-                flagReasonId: 2,
+                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 9999, // Failing property
                 dplDetectorId: 111, // Failing property
@@ -285,7 +285,7 @@ module.exports = () => {
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
                 externalUserId: 456,
-                flagReasonId: 2,
+                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
