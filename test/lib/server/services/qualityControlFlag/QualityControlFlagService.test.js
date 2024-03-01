@@ -125,7 +125,7 @@ module.exports = () => {
                 filter: {
                     dataPassIds: [1],
                     runNumbers: [106],
-                    detectorIds: [1],
+                    dplDetectorIds: [1],
                 },
             });
             expect(count).to.be.equal(3);
@@ -141,7 +141,7 @@ module.exports = () => {
                 filter: {
                     dataPassIds: [2],
                     runNumbers: [1],
-                    detectorIds: [1],
+                    dplDetectorIds: [1],
                 },
             });
             expect(count).to.be.equal(1);
@@ -167,7 +167,7 @@ module.exports = () => {
                 filter: {
                     simulationPassIds: [1],
                     runNumbers: [106],
-                    detectorIds: [1],
+                    dplDetectorIds: [1],
                 },
             });
             expect(count).to.be.equal(1);
