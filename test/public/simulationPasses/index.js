@@ -11,15 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-import { h } from '/js/src/index.js';
-import { formatEorReason } from './formatEorReason.js';
+const PerLhcPeriodOverviewSuite = require('./overviewPerLhcPeriod.test');
 
-/**
- * Display a list of EOR reasons
- * @param {EorReason[]} eorReasons the list of EOR reasons to display
- * @return {Component} the display component
- */
-export const displayRunEorReasonsOverview = (eorReasons) => eorReasons.length
-    ? eorReasons.flatMap((eorReason) => [h('br'), formatEorReason(eorReason)])
-        .slice(1)
-    : '-';
+module.exports = () => {
+    describe('Per LHC Period Overview Page', PerLhcPeriodOverviewSuite);
+};
