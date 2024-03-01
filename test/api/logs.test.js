@@ -18,9 +18,33 @@ const { repositories: { LogRepository } } = require('../../lib/database');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
 const { server } = require('../../lib/application');
+const fs = require('fs');
 
 module.exports = () => {
-    before(resetDatabaseContent);
+    const assetsDir = [__dirname, '..', 'assets'];
+
+    before(async () => {
+        await resetDatabaseContent();
+
+        /*
+         * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
+         * So to test specific file names, store files in git under an acceptable name but rename it on the fly before the test and put it
+         * back afterward
+         */
+        try {
+            fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'), path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'));
+        } catch (_) {
+            // File has probably been renamed in another test
+        }
+    });
+
+    after(async () => {
+        try {
+            fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
+        } catch (_) {
+            // File has probably been renamed in another test
+        }
+    });
 
     let logWithAttachmentsId = 0;
     let attachmentId = 0;
@@ -774,6 +798,62 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/logs/root', () => {
+        it('should return root logs only, ensuring no log has a parent', (done) => {
+            request(server)
+                .get('/api/logs/root')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data.every((log) => log.parentLogId === null));
+
+                    done();
+                });
+        });
+
+        it('should return root logs as an array', (done) => {
+            request(server)
+                .get('/api/logs/root')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(Array.isArray(res.body.data)).to.be.true;
+
+                    done();
+                });
+        });
+
+        it('should reject requests with a limit below 1 with a 400 status', async () => {
+            const response = await request(server).get('/api/logs/root?page[offset]=0&page[limit]=0');
+            expect(response.status).to.equal(400);
+
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
+            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+        });
+
+        it('should successfully return paginated root logs based on specified limit and offset', async () => {
+            const limit = 2;
+            const offset = 0;
+            const response = await request(server).get(`/api/logs/root?page[offset]=${offset}&page[limit]=${limit}`);
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data.length).to.equal(limit);
+
+            const expectedLogIds = [1, 5];
+            const receivedLogIds = response.body.data.map((log) => log.id);
+            expect(receivedLogIds).to.deep.equal(expectedLogIds);
+        });
+    });
+
     describe('POST /api/logs', () => {
         it('should return 400 if no title is provided', (done) => {
             request(server)
@@ -1034,8 +1114,8 @@ module.exports = () => {
                 .post('/api/logs')
                 .field('title', 'Yet another run')
                 .field('text', 'Text of yet another run')
-                .attach('attachments.0', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'))
-                .attach('attachments.1', path.resolve(__dirname, '..', 'assets', 'hadron_collider_(é_è).jpg'))
+                .attach('attachments.0', path.resolve(...assetsDir, '1200px-CERN_logo.png'))
+                .attach('attachments.1', path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'))
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -1044,7 +1124,7 @@ module.exports = () => {
                     }
 
                     expect(res.body.data.attachments[0].originalName).to.equal('1200px-CERN_logo.png');
-                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider_(é_è).jpg');
+                    expect(res.body.data.attachments[1].originalName).to.equal('hadron_collider_`(é_è)’.jpg');
 
                     logWithAttachmentsId = res.body.data.id;
                     attachmentId = res.body.data.attachments[0].id;
