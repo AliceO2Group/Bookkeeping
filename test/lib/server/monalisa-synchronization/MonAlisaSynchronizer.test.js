@@ -14,10 +14,12 @@
 const { expect } = require('chai');
 const { getMockMonAlisaClient } = require('./data/getMockMonAlisaClient.js');
 const { MonAlisaSynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonAlisaSynchronizer.js');
-const { repositories: { DataPassRepository, LhcPeriodRepository, SimulationPassRepository } } = require('../../../../lib/database/index.js');
-
+const { repositories:
+    { DataPassRepository, LhcPeriodRepository, SimulationPassRepository, RunRepository } } = require('../../../../lib/database/index.js');
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
+const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
+const { Op } = require('sequelize');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -29,6 +31,10 @@ module.exports = () => {
         const mockDataPasses = await monAlisaClient.getDataPasses();
         const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
         const expectedDataPasses = mockDataPasses.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
+
+        // Check whether examining data passes with last runs works correctly;
+        let lastRunNumbers = await monAlisaSynchronizer._getAllDataPassesLastRunNumber();
+        expect(mockDataPasses.every((dataPass) => monAlisaSynchronizer._doesDataPassNeedUpdate(dataPass, lastRunNumbers))).to.be.true;
 
         // Run Synchronization
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
@@ -57,15 +63,24 @@ module.exports = () => {
             return { name, outputSize, description, reconstructedEventsCount, lastRunNumber };
         })).to.include.deep.all.members(expectedDataPasses);
 
-        // Data Pass details are in DB
+        // Data Pass details are in DB (runs are associated)
         const expectedDataPassesNamesSet = new Set(expectedNames);
         for (const dataPass of dataPassesDB) {
             if (expectedDataPassesNamesSet.has(dataPass.name)) {
                 const { description, runs } = dataPass;
-                const { runNumbers: expectedRunNumbers } = await monAlisaClient.getDataPassDetails(description);
+                const { runNumbers: potentiallyExpectedRunNumbers } = await monAlisaClient.getDataPassDetails(description);
+                const expectedRunNumbers = (await RunRepository.findAll({ where: {
+                    runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
+                    definition: RunDefinition.Physics,
+                } })).map(({ runNumber }) => runNumber);
+
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
+
+        // Check whether examining data passes with last runs works correctly;
+        lastRunNumbers = await monAlisaSynchronizer._getAllDataPassesLastRunNumber();
+        expect(mockDataPasses.some((dataPass) => !monAlisaSynchronizer._doesDataPassNeedUpdate(dataPass, lastRunNumbers))).to.be.true;
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
@@ -123,7 +138,12 @@ module.exports = () => {
         for (const simulationPassDB of simulationPassesDB) {
             const { name, runs } = simulationPassDB;
             if (potentiallyInsertedNamesSet.has(name)) {
-                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(nameToSimulationPass[name].associations.runNumbers);
+                const expectedRunNumbers = (await RunRepository.findAll({ where: {
+                    runNumber: { [Op.in]: nameToSimulationPass[name].associations.runNumbers },
+                    definition: RunDefinition.Physics,
+                } })).map(({ runNumber }) => runNumber);
+
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
     });
