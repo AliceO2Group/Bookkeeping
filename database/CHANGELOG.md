@@ -1,3 +1,7 @@
+## [0.80.0]
+* Changes made to the database
+  * Refactor Data Passes fetching from MonALISA test - use Joi
+
 ## [0.78.0]
 * Changes made to the database
   * Added Simulation Passes (Monte Carlo Productions) related tables and models
