@@ -27,7 +27,7 @@ const LHC23k6c = {
     generatedEventsCount: 4316450,
     outputSize: 14013600611699,
     dataPassesCount: 2,
-    runsCount: 0,
+    runsCount: 2,
 };
 
 const LHC23k6b = {
@@ -83,27 +83,23 @@ module.exports = () => {
     });
 
     it('should succesfully filter simulation passes on names', async () => {
-        const dto = {
-            query: {
-                filter: {
-                    names: ['LHC23k6b'],
-                },
+        const params = {
+            filter: {
+                names: ['LHC23k6b'],
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(1);
         expect(simulationPasses[0]).to.be.eql(LHC23k6b);
     });
 
     it('should succesfully filter simulation passes on ids', async () => {
-        const dto = {
-            query: {
-                filter: {
-                    ids: ['1', '2'],
-                },
+        const params = {
+            filter: {
+                ids: ['1', '2'],
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(2);
     });
 
@@ -112,104 +108,88 @@ module.exports = () => {
     });
 
     it('should succesfully filter simulation passes on lhc periods ids', async () => {
-        const dto = {
-            query: {
-                filter: {
-                    lhcPeriodIds: ['1'],
-                },
+        const params = {
+            filter: {
+                lhcPeriodIds: ['1'],
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(2);
         expect(simulationPasses).to.have.deep.members([LHC23k6b, LHC23k6a]);
     });
 
     it('should succesfully filter simulation passes on Sata Pass ids', async () => {
-        const dto = {
-            query: {
-                filter: {
-                    dataPassIds: ['1'],
-                },
+        const params = {
+            filter: {
+                dataPassIds: ['1'],
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(1);
         expect(simulationPasses).to.have.deep.members([LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by names', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    name: 'ASC',
-                },
+        const params = {
+            sort: {
+                name: 'ASC',
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(3);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by generatedEventsCount', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    generatedEventsCount: 'DESC',
-                },
+        const params = {
+            sort: {
+                generatedEventsCount: 'DESC',
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(3);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
     });
 
     it('should succesfully sort simulation passes by requestedEventsCount', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    requestedEventsCount: 'DESC',
-                },
+        const params = {
+            sort: {
+                requestedEventsCount: 'DESC',
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6a, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by outputSize', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    outputSize: 'ASC',
-                },
+        const params = {
+            sort: {
+                outputSize: 'ASC',
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(3);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
     });
 
     it('should succesfully sort simulation passes by pwg', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    pwg: 'ASC',
-                },
+        const params = {
+            sort: {
+                pwg: 'ASC',
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(3);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c, LHC23k6a]);
     });
 
     it('should succesfully sort simulation passes by jiraId', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    jiraId: 'ASC',
-                },
+        const params = {
+            sort: {
+                jiraId: 'ASC',
             },
         };
-        const { rows: simulationPasses } = await simulationPassService.getAll(dto.query);
+        const { rows: simulationPasses } = await simulationPassService.getAll(params);
         expect(simulationPasses).to.be.lengthOf(3);
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
     });

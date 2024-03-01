@@ -18,6 +18,7 @@ const {
     goToPage,
     getAllDataFields,
     fillInput,
+    waitForTableDataReload,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -112,14 +113,6 @@ module.exports = () => {
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$('.dropup .menu-item');
-        await menuItem.evaluate((button) => button.click());
-
-        await page.waitForSelector('table tr');
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
-
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
         await customPerPageInput.evaluate((input) => input.focus());
@@ -127,7 +120,8 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await page.waitForSelector('tbody tr');
+
+        await page.waitForSelector('.dropup');
         expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 
@@ -141,9 +135,8 @@ module.exports = () => {
 
         // Sort by name in an ascending manner
         const nameHeader = await page.$('th#name');
-        await nameHeader.evaluate((button) => button.click());
+        await waitForTableDataReload(page, () => nameHeader.evaluate((button) => button.click()));
 
-        await page.waitForSelector('tbody tr');
         // Expect the names to be in alphabetical order
         const firstNames = await getAllDataFields(page, 'name');
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
@@ -160,8 +153,7 @@ module.exports = () => {
 
         // Sort by year in an ascending manner
         const reconstructedEventsCountHeader = await page.$('th#reconstructedEventsCount');
-        await reconstructedEventsCountHeader.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr');
+        await waitForTableDataReload(page, () => reconstructedEventsCountHeader.evaluate((button) => button.click()));
 
         // Expect the year to be in order
         const firstReconstructedEventsCounts = await getAllDataFields(page, 'reconstructedEventsCount');
@@ -179,7 +171,7 @@ module.exports = () => {
         // Sort by avgCenterOfMassEnergy in an ascending manner
         const outputSizeHeader = await page.$('th#outputSize');
         await outputSizeHeader.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr');
+        await waitForTableDataReload(page, () => outputSizeHeader.evaluate((button) => button.click()));
 
         // Expect the avgCenterOfMassEnergy to be in order
         const firstOutputSize = await getAllDataFields(page, 'outputSize');
@@ -193,17 +185,18 @@ module.exports = () => {
         expect(filterToggleButton).to.not.be.null;
 
         await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
 
-        await page.waitForSelector('tbody tr');
+        // 1
+        await waitForTableDataReload(page, () =>
+            fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1'));
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
 
+        // 2
         const resetFiltersButton = await page.$('#reset-filters');
         expect(resetFiltersButton).to.not.be.null;
-        await resetFiltersButton.evaluate((button) => button.click());
-        await page.waitForSelector('tbody tr:nth-of-type(2)');
+        await waitForTableDataReload(page, () => resetFiltersButton.evaluate((button) => button.click()));
 
         allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);

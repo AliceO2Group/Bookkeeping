@@ -102,6 +102,20 @@ const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout
 module.exports.waitForTimeout = waitForTimeout;
 
 /**
+ * Execute the given navigation function and wait for navigation
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {function} navigateFunction function to call to initiate navigation
+ * @return {Promise<*>} resolves once the navigation finished
+ */
+const waitForNavigation = (page, navigateFunction) => Promise.all([
+    page.waitForNavigation({ timeout: 1500 }),
+    navigateFunction(),
+]);
+
+exports.waitForNavigation = waitForNavigation;
+
+/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
@@ -425,3 +439,14 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     }
     return ret;
 };
+
+/**
+ * Call a trigger function, wait for the table to display a loading spinner then wait for the loading spinner to be removed.
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {function} triggerFunction function called to trigger table data loading
+ * @return {Promise} promise
+ */
+module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
+    page.waitForSelector('table .atom-spinner'),
+    triggerFunction(),
+]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
