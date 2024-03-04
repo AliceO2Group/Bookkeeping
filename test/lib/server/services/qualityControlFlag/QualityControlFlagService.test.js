@@ -203,7 +203,7 @@ module.exports = () => {
         });
     });
 
-    describe('Creating Quality Control Flag', () => {
+    describe('Creating Quality Control Flag for data pass', () => {
         /** Flags for runNumber: 106, LHC22b_apass1, CPV */
         // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
@@ -314,6 +314,120 @@ module.exports = () => {
                 },
             });
             expect(createFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+        });
+    });
+
+    describe('Creating Quality Control Flag for simulation pass', () => {
+        /** Flags for runNumber: 106, LHC22b_apass1, CPV */
+        // Run trg time middle point: 1565314200, radius: 45000 seconds
+        it('should fail to create quality control flag due to incorrect external user id', async () => {
+            const qcFlagCreationParameters = {
+                fromTime: (1565314200 - 10) * 1000,
+                toTime: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                externalUserId: 9999999, // Failing property
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.createForSimulationPass(qcFlagCreationParameters),
+                new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
+            const qcFlagCreationParameters = {
+                fromTime: (1565314200 - 50000) * 1000, // Failing property
+                toTime: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                externalUserId: 456,
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.createForSimulationPass(qcFlagCreationParameters),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+            );
+        });
+
+        it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
+            const qcFlagCreationParameters = {
+                fromTime: (1565314200 + 10000) * 1000, // Failing property
+                toTime: (1565314200 - 15000) * 1000, // Failing property
+                comment: 'VERY INTERSETING REMARK',
+                externalUserId: 456,
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.createForSimulationPass(qcFlagCreationParameters),
+                new BadParameterError('Parameter `toTime` must be greater than `fromTime`'),
+            );
+        });
+
+        it('should fail to create quality control flag due to due to no association', async () => {
+            const qcFlagCreationParameters = {
+                fromTime: (1565314200 - 10) * 1000,
+                toTime: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                externalUserId: 456,
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 9999, // Failing property
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qualityControlFlagService.createForSimulationPass(qcFlagCreationParameters),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
+            );
+        });
+
+        it('should succesfuly create quality control flag with externalUserId', async () => {
+            const qcFlagCreationParameters = {
+                fromTime: (1565314200 - 10) * 1000,
+                toTime: (1565314200 + 15000) * 1000,
+                comment: 'VERY INTERSETING REMARK',
+                externalUserId: 456,
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const flag = await qualityControlFlagService.createForSimulationPass(qcFlagCreationParameters);
+            delete qcFlagCreationParameters.externalUserId;
+            const { fromTime, toTime } = qcFlagCreationParameters;
+            delete qcFlagCreationParameters.fromTime;
+            delete qcFlagCreationParameters.toTime;
+            const { simulationPassId } = qcFlagCreationParameters;
+            delete qcFlagCreationParameters.simulationPassId;
+            const expectedPoperties = {
+                ...qcFlagCreationParameters,
+                from: fromTime,
+                to: toTime,
+            };
+
+            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(expectedPoperties));
+
+            const createFlagWithSimulationPass = await QualityControlFlagRepository.findOne({
+                include: [{ association: 'simulationPasses' }],
+                where: {
+                    id: flag.id,
+                },
+            });
+            expect(createFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
         });
     });
 };
