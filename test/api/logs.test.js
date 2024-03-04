@@ -46,6 +46,15 @@ module.exports = () => {
         }
     });
 
+    const logWithChildren = {
+        id: 117,
+        expectedAmountOfChildren: 2,
+    };
+    const logWithoutChildren = {
+        id: 122,
+        expectedAmountOfChildren: 0,
+    };
+
     let logWithAttachmentsId = 0;
     let attachmentId = 0;
 
@@ -1573,6 +1582,29 @@ module.exports = () => {
 
                     done();
                 });
+        });
+    });
+
+    describe('GET /api/logs/:logId/children', () => {
+        it('should return the correct child logs of a parent log', async () => {
+            const response = await request(server).get(`/api/logs/${logWithChildren.id}/children`);
+            expect(response.status).to.equal(200);
+            expect(response.body.data.length).to.equal(logWithChildren.expectedAmountOfChildren);
+            expect(response.body.data.every((log) => log.parentLogId === logWithChildren.id));
+        });
+
+        it('should return 400 if the log id is not a number', async () => {
+            const response = await request(server).get('/api/logs/abc/children');
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/params/logId');
+            expect(response.status).to.equal(400);
+            expect(titleError.detail).to.equal('"params.logId" must be a number');
+        });
+
+        it('should return an empty array if the log has no children', async () => {
+            const response = await request(server).get(`/api/logs/${logWithoutChildren.id}/children`);
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.be.empty;
         });
     });
 };
