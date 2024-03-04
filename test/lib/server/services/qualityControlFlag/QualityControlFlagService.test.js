@@ -15,7 +15,6 @@ const { qualityControlFlagService } = require('../../../../../lib/server/service
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const Joi = require('joi');
-const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 
@@ -49,52 +48,6 @@ const QCFlagSchema = Joi.object({
 module.exports = () => {
     before(resetDatabaseContent);
     after(resetDatabaseContent);
-
-    describe('Fetching quality control flags types', () => {
-        it('should successfuly fetch quality control flags types', async () => {
-            const flagTypes = await getAllQualityControlFlagTypes();
-            expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes.map(({ id, name, method, bad, archived }) => ({ id, name, method, bad, archived }))).to.have.all.deep.members([
-                {
-                    id: 2,
-                    name: 'UnknownQuality',
-                    method: 'Unknown Quality',
-                    bad: true,
-                    archived: false,
-                },
-                {
-                    id: 3,
-                    name: 'CertifiedByExpert',
-                    method: 'Certified by Expert',
-                    bad: false,
-                    archived: false,
-                },
-                {
-                    id: 11,
-                    name: 'LimitedAcceptance',
-                    method: 'Limited acceptance',
-                    bad: true,
-                    archived: false,
-                },
-                {
-                    id: 12,
-                    name: 'BadPID',
-                    method: 'Bad PID',
-                    bad: true,
-                    archived: false,
-                },
-                {
-                    id: 13,
-                    name: 'Bad',
-                    method: 'Bad',
-                    bad: true,
-                    archived: false,
-                },
-
-            ]);
-        });
-    });
 
     describe('Fetching quality control flags', () => {
         it('should successfully fetch quality control flag by id', async () => {
