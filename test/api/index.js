@@ -54,6 +54,6 @@ module.exports = () => {
     describe('Tags API', TagsSuite);
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
     describe('DataPassesSuite API', DataPassesSuite);
-    describe('QualityControlFlags API', QualityControlFlagsSuite);
     describe('SimulationPassesSuite API', SimulationPassesSuite);
+    describe('QualityControlFlags API', QualityControlFlagsSuite);
 };
