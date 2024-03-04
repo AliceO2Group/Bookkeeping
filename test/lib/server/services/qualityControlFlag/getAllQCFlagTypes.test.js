@@ -30,6 +30,8 @@ module.exports = () => {
                     name: 'UnknownQuality',
                     method: 'Unknown Quality',
                     bad: true,
+                    color: null,
+
                     archived: false,
                     archivedAt: null,
 
@@ -43,6 +45,8 @@ module.exports = () => {
                     name: 'CertifiedByExpert',
                     method: 'Certified by Expert',
                     bad: false,
+                    color: null,
+
                     archived: false,
                     archivedAt: null,
 
@@ -56,6 +60,8 @@ module.exports = () => {
                     name: 'LimitedAcceptance',
                     method: 'Limited acceptance',
                     bad: true,
+                    color: '#FFFF00',
+
                     archived: false,
                     archivedAt: null,
 
@@ -69,6 +75,8 @@ module.exports = () => {
                     name: 'BadPID',
                     method: 'Bad PID',
                     bad: true,
+                    color: null,
+
                     archived: false,
                     archivedAt: null,
 
@@ -82,6 +90,8 @@ module.exports = () => {
                     name: 'Bad',
                     method: 'Bad',
                     bad: true,
+                    color: null,
+
                     archived: false,
                     archivedAt: null,
 
