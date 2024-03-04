@@ -20,7 +20,11 @@ module.exports = () => {
             const flagTypes = await getAllQualityControlFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes).to.have.all.deep.members([
+            expect(flagTypes.map((qcFlagType) => {
+                delete qcFlagType.createdAt;
+                delete qcFlagType.updatedAt;
+                return qcFlagType;
+            })).to.have.all.deep.members([
                 {
                     id: 2,
                     name: 'UnknownQuality',
@@ -28,6 +32,11 @@ module.exports = () => {
                     bad: true,
                     archived: false,
                     archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
                 },
                 {
                     id: 3,
@@ -36,6 +45,11 @@ module.exports = () => {
                     bad: false,
                     archived: false,
                     archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
                 },
                 {
                     id: 11,
@@ -44,6 +58,11 @@ module.exports = () => {
                     bad: true,
                     archived: false,
                     archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
                 },
                 {
                     id: 12,
@@ -52,6 +71,11 @@ module.exports = () => {
                     bad: true,
                     archived: false,
                     archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
                 },
                 {
                     id: 13,
@@ -60,6 +84,11 @@ module.exports = () => {
                     bad: true,
                     archived: false,
                     archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
                 },
             ]);
         });
