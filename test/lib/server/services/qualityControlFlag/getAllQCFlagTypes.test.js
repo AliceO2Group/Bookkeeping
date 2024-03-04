@@ -12,12 +12,12 @@
  */
 
 const { expect } = require('chai');
-const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
+const { getAllQCFlagTypes } = require('../../../../../lib/server/services/qcFlag/getAllQCFlagTypes.js');
 
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
         it('should successfuly fetch quality control flags types', async () => {
-            const flagTypes = await getAllQualityControlFlagTypes();
+            const flagTypes = await getAllQCFlagTypes();
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
             expect(flagTypes.map((qcFlagType) => {

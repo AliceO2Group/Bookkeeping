@@ -19,10 +19,10 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/qualityControlFlags/types', () => {
+    describe('GET /api/qcFlags/types', () => {
         it('should successfuly fetch all qc flag types', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types')
+                .get('/api/qcFlags/types')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {

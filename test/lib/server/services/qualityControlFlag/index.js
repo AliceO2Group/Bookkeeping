@@ -14,5 +14,5 @@
 const GetAllQCFlagTypes = require('./getAllQCFlagTypes.test.js');
 
 module.exports = () => {
-    describe('QualityControlFlagType Suite', GetAllQCFlagTypes);
+    describe('QCFlagType Suite', GetAllQCFlagTypes);
 };
