@@ -18,6 +18,7 @@ const Joi = require('joi');
 const { getAllQualityControlFlagTypes } = require('../../../../../lib/server/services/qualityControlFlag/getAllQualityControlFlagTypes.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const QualityControlFlagRepository = require('../../../../../lib/database/repositories/QualityControlFlagRepository.js');
 
 const QCFlagTypeSchema = Joi.object({
     id: Joi.number().required(),
@@ -218,7 +219,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                () => qualityControlFlagService.createForDataPass(qcFlagCreationParameters),
                 new BadParameterError('User with this external id (9999999) could not be found'),
             );
         });
@@ -236,7 +237,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                () => qualityControlFlagService.createForDataPass(qcFlagCreationParameters),
                 // eslint-disable-next-line max-len
                 new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
@@ -255,7 +256,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                () => qualityControlFlagService.createForDataPass(qcFlagCreationParameters),
                 new BadParameterError('Parameter `toTime` must be greater than `fromTime`'),
             );
         });
@@ -273,7 +274,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qualityControlFlagService.create(qcFlagCreationParameters),
+                () => qualityControlFlagService.createForDataPass(qcFlagCreationParameters),
                 // eslint-disable-next-line max-len
                 new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
             );
@@ -291,9 +292,28 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const flag = await qualityControlFlagService.create(qcFlagCreationParameters);
+            const flag = await qualityControlFlagService.createForDataPass(qcFlagCreationParameters);
             delete qcFlagCreationParameters.externalUserId;
-            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
+            const { fromTime, toTime } = qcFlagCreationParameters;
+            delete qcFlagCreationParameters.fromTime;
+            delete qcFlagCreationParameters.toTime;
+            const { dataPassId } = qcFlagCreationParameters;
+            delete qcFlagCreationParameters.dataPassId;
+            const expectedPoperties = {
+                ...qcFlagCreationParameters,
+                from: fromTime,
+                to: toTime,
+            };
+
+            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(expectedPoperties));
+
+            const createFlagWithDataPass = await QualityControlFlagRepository.findOne({
+                include: [{ association: 'dataPasses' }],
+                where: {
+                    id: flag.id,
+                },
+            });
+            expect(createFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
         });
     });
 };
