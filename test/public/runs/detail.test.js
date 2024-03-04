@@ -391,11 +391,11 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 106, lhcFillNumbers: '1' } });
 
         await pressElement(page, '#create-log');
 
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106' })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' })).to.eql({});
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#run-numbers', (element) => element.value)).to.equal('106');
