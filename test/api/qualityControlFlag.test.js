@@ -30,49 +30,79 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(5);
-                    expect(data).to.have.deep.all.members([
+                    const { data: flagTypes } = res.body;
+                    expect(flagTypes).to.be.an('array');
+                    expect(flagTypes).to.be.lengthOf(5);
+
+                    expect(flagTypes.map((qcFlagType) => {
+                        delete qcFlagType.createdAt;
+                        delete qcFlagType.updatedAt;
+                        return qcFlagType;
+                    })).to.have.all.deep.members([
                         {
                             id: 2,
                             name: 'UnknownQuality',
                             method: 'Unknown Quality',
                             bad: true,
-                            archvied: false,
-                            archviedAt: null,
+                            archived: false,
+                            archivedAt: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
                         },
                         {
                             id: 3,
                             name: 'CertifiedByExpert',
                             method: 'Certified by Expert',
                             bad: false,
-                            archvied: false,
-                            archviedAt: null,
+                            archived: false,
+                            archivedAt: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
                         },
                         {
                             id: 11,
                             name: 'LimitedAcceptance',
                             method: 'Limited acceptance',
                             bad: true,
-                            archvied: false,
-                            archviedAt: null,
+                            archived: false,
+                            archivedAt: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
                         },
                         {
                             id: 12,
                             name: 'BadPID',
                             method: 'Bad PID',
                             bad: true,
-                            archvied: false,
-                            archviedAt: null,
+                            archived: false,
+                            archivedAt: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
                         },
                         {
                             id: 13,
                             name: 'Bad',
                             method: 'Bad',
                             bad: true,
-                            archvied: false,
-                            archviedAt: null,
+                            archived: false,
+                            archivedAt: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
                         },
                     ]);
                     done();
