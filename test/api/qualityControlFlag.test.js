@@ -19,10 +19,10 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/qualityControlFlags/reasons', () => {
-        it('should successfuly fetch all qc flag reasons', (done) => {
+    describe('GET /api/qualityControlFlags/types', () => {
+        it('should successfuly fetch all qc flag types', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/reasons')
+                .get('/api/qualityControlFlags/types')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -87,33 +87,22 @@ module.exports = () => {
                     }
 
                     const { data, meta } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 4, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(4);
+                    expect(data).to.be.lengthOf(5);
                     expect(data).to.include.deep.members([
                         {
                             id: 4,
-                            timeStart: 1647924400000,
-                            timeEnd: 1647924400000,
+                            from: 1647924400000,
+                            to: 1647924400000,
                             comment: 'Some qc comment 4',
-                            provenance: 'HUMAN',
                             createdAt: 1707825436 * 1000,
-                            dataPassId: 2,
                             runNumber: 1,
-                            detectorId: 1,
-                            userId: 2,
+                            dplDetectorId: 1,
+                            createdById: 2,
                             user: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                            flagReasonId: 13,
-                            flagReason: { id: 13, name: 'Bad', method: 'Bad', bad: true, obsolate: false },
-                            verifications: [
-                                {
-                                    id: 2,
-                                    userId: 1,
-                                    user: { id: 1, externalId: 1, name: 'John Doe' },
-                                    comment: 'Accepted: Some qc comment 1',
-                                    createdAt: 1707825436 * 1000,
-                                },
-                            ],
+                            flagTypeId: 13,
+                            flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, archivedAt: null },
                         },
                     ]);
 
@@ -136,18 +125,17 @@ module.exports = () => {
                     expect(data).to.be.lengthOf(1);
                     expect(Object.entries(data[0])).to.include.all.deep.members(Object.entries({
                         id: 1,
-                        timeStart: (1565314200 - 10000) * 1000,
-                        timeEnd: (1565314200 + 10000) * 1000,
+                        from: (1565314200 - 10000) * 1000,
+                        to: (1565314200 + 10000) * 1000,
                         comment: 'Some qc comment 1',
-                        provenance: 'HUMAN',
                     }));
 
                     done();
                 });
         });
-        it('should successfuly filter on dataPassIds, runNumbers, detectorIds', (done) => {
+        it('should successfuly filter on dataPassIds, runNumbers, dplDetectorIds', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[detectorIds][]=1')
+                .get('/api/qualityControlFlags/?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -176,24 +164,6 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(0);
-
-                    done();
-                });
-        });
-        it('should successfuly filter on externalUserIds', (done) => {
-            request(server)
-                .get('/api/qualityControlFlags?filter[externalUserIds][]=456')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(1);
-                    expect(data[0].id).to.be.equal(4);
 
                     done();
                 });
@@ -233,9 +203,9 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should support sorting on timeStart', (done) => {
+        it('should support sorting on from', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?sort[timeStart]=DESC')
+                .get('/api/qualityControlFlags?sort[from]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -250,9 +220,9 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should support sorting on timeEnd', (done) => {
+        it('should support sorting on to', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?sort[timeEnd]=DESC')
+                .get('/api/qualityControlFlags?sort[to]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -329,229 +299,6 @@ module.exports = () => {
                     const { errors } = res.body;
                     const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
                     expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
-                    done();
-                });
-        });
-    });
-
-    describe('POST /api/qualityControlFlags', () => {
-        it('should successfuly create flag instance', (done) => {
-            const qcFlagCreationParameters = {
-                timeStart: (1565314200 - 10) * 1000,
-                timeEnd: (1565314200 + 15000) * 1000,
-                comment: 'VERY INTERSETING REMARK',
-                provenance: 'HUMAN',
-                externalUserId: 456,
-                flagReasonId: 2,
-                runNumber: 106,
-                dataPassId: 1,
-                detectorId: 1,
-            };
-
-            request(server)
-                .post('/api/qualityControlFlags')
-                .send(qcFlagCreationParameters)
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    delete qcFlagCreationParameters.externalUserId;
-                    expect(Object.entries(data)).to.include.all.deep.members(Object.entries(qcFlagCreationParameters));
-
-                    done();
-                });
-        });
-
-        it('should fail to create quality control flag due to incorrect qc flag time period', (done) => {
-            const qcFlagCreationParameters = {
-                timeStart: (1565314200 - 50000) * 1000, // Failing property
-                timeEnd: (1565314200 + 15000) * 1000,
-                comment: 'VERY INTERSETING REMARK',
-                provenance: 'HUMAN',
-                externalUserId: 456,
-                flagReasonId: 2,
-                runNumber: 106,
-                dataPassId: 1,
-                detectorId: 1,
-            };
-
-            // eslint-disable-next-line max-len
-            const expectedError = `Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`;
-
-            request(server)
-                .post('/api/qualityControlFlags')
-                .send(qcFlagCreationParameters)
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                    }
-                    const { errors } = res.body;
-                    expect(errors[0]).to.be.eql({
-                        status: 400,
-                        title: 'Service unavailable',
-                        detail: expectedError,
-                    }),
-
-                    done();
-                });
-        });
-
-        it('should fail to create quality control flag due to incorrect qc flag time period', (done) => {
-            const qcFlagCreationParameters = {
-                timeStart: (1565314200 + 10000) * 1000, // Failing property
-                timeEnd: (1565314200 - 15000) * 1000, // Failing property
-                comment: 'VERY INTERSETING REMARK',
-                provenance: 'HUMAN',
-                externalUserId: 456,
-                flagReasonId: 2,
-                runNumber: 106,
-                dataPassId: 1,
-                detectorId: 1,
-            };
-
-            // eslint-disable-next-line max-len
-            const expectedError = 'Parameter `timeEnd` must be greater than `timeStart`';
-
-            request(server)
-                .post('/api/qualityControlFlags')
-                .send(qcFlagCreationParameters)
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                    }
-                    const { errors } = res.body;
-                    expect(errors[0]).to.be.eql({
-                        status: 400,
-                        title: 'Service unavailable',
-                        detail: expectedError,
-                    }),
-
-                    done();
-                });
-        });
-
-        it('should fail to create quality control flag due to due to no association', (done) => {
-            const qcFlagCreationParameters = {
-                timeStart: (1565314200 - 10) * 1000,
-                timeEnd: (1565314200 + 15000) * 1000,
-                comment: 'VERY INTERSETING REMARK',
-                provenance: 'HUMAN',
-                externalUserId: 456,
-                flagReasonId: 2,
-                runNumber: 106,
-                dataPassId: 9999, // Failing property
-                detectorId: 111, // Failing property
-            };
-
-            // eslint-disable-next-line max-len
-            const expectedError = `You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (id:${111}) as there is no association between them`;
-
-            request(server)
-                .post('/api/qualityControlFlags')
-                .send(qcFlagCreationParameters)
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                    }
-                    const { errors } = res.body;
-                    expect(errors[0]).to.be.eql({
-                        status: 400,
-                        title: 'Service unavailable',
-                        detail: expectedError,
-                    }),
-
-                    done();
-                });
-        });
-    });
-
-    describe('POST /api/qualityControlFlags/verify', () => {
-        it('should successfuly create flag instance', (done) => {
-            const qcFlagVerificationParameters = {
-                qualityControlFlagId: 1,
-                comment: 'ok',
-                externalUserId: 456,
-            };
-
-            request(server)
-                .post('/api/qualityControlFlags/verify')
-                .send(qcFlagVerificationParameters)
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    delete qcFlagVerificationParameters.externalUserId;
-                    expect(Object.entries(data)).to.include.all.deep.members(Object.entries(qcFlagVerificationParameters));
-
-                    done();
-                });
-        });
-
-        it('should fail if user tries to verify one\'s one flag', (done) => {
-            const qcFlagVerificationParameters = {
-                qualityControlFlagId: 1,
-                comment: 'ok',
-                externalUserId: 456,
-            };
-
-            // eslint-disable-next-line max-len
-            const expectedError = `It is not possibly to verify one's own QC Flag (id:${qcFlagVerificationParameters.qualityControlFlagId})`;
-
-            request(server)
-                .post('/api/qualityControlFlags/verify')
-                .send(qcFlagVerificationParameters)
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                    }
-                    const { errors } = res.body;
-                    expect(errors[0]).to.be.eql({
-                        status: 400,
-                        title: 'Service unavailable',
-                        detail: expectedError,
-                    }),
-
-                    done();
-                });
-        });
-
-        it('should fail if QC Flag id is incorrect ', (done) => {
-            const qcFlagVerificationParameters = {
-                qualityControlFlagId: 9999,
-                comment: 'ok',
-                externalUserId: 456,
-            };
-
-            // eslint-disable-next-line max-len
-            const expectedError = `Cannot find qc flag with id ${qcFlagVerificationParameters.qualityControlFlagId}`;
-
-            request(server)
-                .post('/api/qualityControlFlags/verify')
-                .send(qcFlagVerificationParameters)
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                    }
-                    const { errors } = res.body;
-                    expect(errors[0]).to.be.eql({
-                        status: 400,
-                        title: 'Service unavailable',
-                        detail: expectedError,
-                    }),
-
                     done();
                 });
         });
