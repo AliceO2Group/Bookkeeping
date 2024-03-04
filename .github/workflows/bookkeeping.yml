@@ -41,6 +41,8 @@ jobs:
         run: docker cp $(docker ps -aqlf "name=bookkeeping_application"):/usr/src/app/coverage/coverage-final.json .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   linter:
     runs-on: ubuntu-latest
