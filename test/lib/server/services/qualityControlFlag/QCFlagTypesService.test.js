@@ -19,7 +19,7 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
         it ('should successfuly fetch QC Flag Type by id', async () => {
-            const qcFlagType = await qcFlagTypesService.getByIdentifier({ id: 1 });
+            const qcFlagType = await qcFlagTypesService.getByIdentifier({ id: 2 });
             delete qcFlagType.createdAt;
             delete qcFlagType.updatedAt;
             expect(qcFlagType).to.be.eql({
@@ -169,7 +169,7 @@ module.exports = () => {
         });
 
         it('should successfuly filter QC flags types by name', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { names: 'UnknownQuality' } });
+            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { names: ['UnknownQuality'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(1);
@@ -177,7 +177,7 @@ module.exports = () => {
         });
 
         it('should successfuly filter QC flags types by name pattern', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { names: { like: 'Bad' } } });
+            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { names: { like: ['Bad'] } } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
@@ -185,7 +185,7 @@ module.exports = () => {
         });
 
         it('should successfuly filter QC flags types by method', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { methods: 'LimitedAcceptance' } });
+            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { methods: ['Limited acceptance'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(1);
@@ -193,7 +193,7 @@ module.exports = () => {
         });
 
         it('should successfuly filter QC flags types by method pattern', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { methods: { like: 'Bad' } } });
+            const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ filter: { methods: { like: ['Bad'] } } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
@@ -213,7 +213,7 @@ module.exports = () => {
             expect(count).to.be.equal(5);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([2, 3, 11, 12, 13]);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([13, 12, 11, 3, 2]);
         });
 
         it('should successfuly sort by name', async () => {
@@ -221,7 +221,7 @@ module.exports = () => {
             expect(count).to.be.equal(5);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([
+            expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'UnknownQuality',
                 'LimitedAcceptance',
                 'CertifiedByExpert',
@@ -235,7 +235,7 @@ module.exports = () => {
             expect(count).to.be.equal(5);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(5);
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([
+            expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Bad',
                 'BadPID',
                 'CertifiedByExpert',
@@ -246,10 +246,10 @@ module.exports = () => {
 
         it('should successfuly apply pagination', async () => {
             const { count, rows: flagTypes } = await qcFlagTypesService.getAll({ offset: 2, limit: 3, sort: { id: 'ASC' } });
-            expect(count).to.be.equal(1);
+            expect(count).to.be.equal(5);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(1);
-            expect(flagTypes.map(({ id }) => id)).to.have.all.members([11, 12, 13]);
+            expect(flagTypes).to.be.lengthOf(3);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12, 13]);
         });
     });
 };
