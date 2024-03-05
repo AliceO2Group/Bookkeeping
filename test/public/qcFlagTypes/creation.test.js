@@ -55,7 +55,7 @@ module.exports = () => {
 
         await fillInput(page, 'input#name', 'LimitedAcceptance');
         await fillInput(page, 'input#method', 'Limited acceptance');
-        await pressElement('button#submit');
+        await pressElement(page, 'button#submit');
         await page.waitForSelector('.alert.alert-danger');
         await expectInnerText(page, '.alert', 'Service unavailable: Validation error');
     });
@@ -69,11 +69,11 @@ module.exports = () => {
         await fillInput(page, 'input[type=color]', '#F000F0');
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
 
-        await waitForNavigation(page, () => pressElement('button#submit'));
+        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         const currentPageUrl = new URL(page.url());
         expect(currentPageUrl.searchParams.get('page')).to.be.equal('qc-flag-types-overview');
 
-        const newNameCell = await page.waitForSelector('[style*="rbg(240, 0, 240)"]');
+        const newNameCell = await page.waitForSelector('[style*="rgb(240, 0, 240)"]');
         expect(newNameCell).not.to.be.null;
         expect(await newNameCell.evaluate(({ innerText }) => innerText)).to.be.equal('AAA+');
     });
