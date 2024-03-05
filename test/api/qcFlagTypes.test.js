@@ -406,11 +406,11 @@ module.exports = () => {
                 method: 'AA+',
                 bad: false,
                 color: '#FFAA00',
-                externalUserId: 1,
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types')
+                .post('/api/qualityControlFlags/types?token=admin')
+                .send(parameters)
                 .expect(201)
                 .end((err, res) => {
                     if (err) {
@@ -419,7 +419,6 @@ module.exports = () => {
                     }
 
                     const { data: newQCFlag } = res.body;
-                    delete parameters.externalUserId;
                     expectObjectToBeSuperset(newQCFlag, parameters);
                     done();
                 });
