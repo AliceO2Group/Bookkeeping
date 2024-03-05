@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { expectObjectToBeSuperset } = require('../utilities/expectObjectToBeSuperset');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -393,6 +394,33 @@ module.exports = () => {
                     expect(flagTypes).to.be.lengthOf(2);
 
                     expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12]);
+                    done();
+                });
+        });
+    });
+
+    describe('POST /api/qualityControlFlags/types', () => {
+        it('should successfuly create QC Flag Type', async (done) => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+
+            request(server)
+                .post('/api/qualityControlFlags/types')
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: newQCFlag } = res.body;
+                    delete parameters.externalUserId;
+                    expectObjectToBeSuperset(newQCFlag, parameters);
                     done();
                 });
         });
