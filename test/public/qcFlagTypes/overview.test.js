@@ -37,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads page - simulation passes per LHC Period successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-types');
+        const response = await goToPage(page, 'qc-flag-types-overview');
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -50,7 +50,7 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await page.waitForSelector('#firstRowIndex');
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
@@ -59,22 +59,22 @@ module.exports = () => {
     });
 
     it('can sort by name column in ascending manner', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await testTableAscendingSortingByColumn(page, 'name');
     });
 
     it('can sort by method column in ascending manner', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await testTableAscendingSortingByColumn(page, 'method');
     });
 
     it('can sort by bad column in ascending manner', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await testTableAscendingSortingByColumn(page, 'bad');
     });
 
     it('should successfuly apply QC flag type names filter', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await page.waitForSelector('#openFilterToggle');
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
@@ -88,7 +88,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await page.waitForSelector('#openFilterToggle');
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
@@ -102,7 +102,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
-        await goToPage(page, 'qc-flag-types');
+        await goToPage(page, 'qc-flag-types-overview');
         await page.waitForSelector('#openFilterToggle');
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
