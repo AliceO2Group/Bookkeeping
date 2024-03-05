@@ -400,7 +400,7 @@ module.exports = () => {
     });
 
     describe('POST /api/qualityControlFlags/types', () => {
-        it('should successfuly create QC Flag Type', async (done) => {
+        it('should successfuly create QC Flag Type', (done) => {
             const parameters = {
                 name: 'A',
                 method: 'AA+',
@@ -424,7 +424,7 @@ module.exports = () => {
                 });
         });
 
-        it('should fail when no name is provided', async (done) => {
+        it('should fail when no name is provided', (done) => {
             const parameters = {
                 method: 'AA+',
                 bad: false,
@@ -442,14 +442,14 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/name');
                     expect(titleError.detail).to.equal('"body.name" is required');
 
                     done();
                 });
         });
 
-        it('should fail when no method is provided', async (done) => {
+        it('should fail when no method is provided', (done) => {
             const parameters = {
                 name: 'A',
                 bad: false,
@@ -467,14 +467,14 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/method');
                     expect(titleError.detail).to.equal('"body.method" is required');
 
                     done();
                 });
         });
 
-        it('should fail when no bad info is provided', async (done) => {
+        it('should fail when no bad info is provided', (done) => {
             const parameters = {
                 name: 'A',
                 method: 'A++',
@@ -492,7 +492,7 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/bad');
                     expect(titleError.detail).to.equal('"body.bad" is required');
 
                     done();
