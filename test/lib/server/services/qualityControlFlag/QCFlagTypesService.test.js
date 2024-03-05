@@ -255,7 +255,7 @@ module.exports = () => {
     });
 
     describe('Creating QC Flag Type', () => {
-        it('should successfult create QC Flag Type', async () => {
+        it('should successfuly create QC Flag Type', async () => {
             const parameters = {
                 name: 'A',
                 method: 'AA+',
