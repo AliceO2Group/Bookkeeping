@@ -68,7 +68,7 @@ module.exports = () => {
         it ('should reject when no QC Flag type with given id was found', async () => {
             await assert.rejects(
                 () => qcFlagTypesService.getOneOrFail({ id: 99999 }),
-                new NotFoundError('Quality Control Flag with this id (99999) could not be found'),
+                new NotFoundError('Quality Control Flag Type with this id (99999) could not be found'),
             );
         });
 
