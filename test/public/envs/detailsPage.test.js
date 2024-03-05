@@ -70,7 +70,7 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d', runNumbers: '103,104,105' } });
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
 
         await pressElement(page, '#create-log');
 

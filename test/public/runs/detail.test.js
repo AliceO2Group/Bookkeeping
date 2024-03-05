@@ -391,7 +391,7 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 106, lhcFillNumbers: '1' } });
+        await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
 
         await pressElement(page, '#create-log');
 
