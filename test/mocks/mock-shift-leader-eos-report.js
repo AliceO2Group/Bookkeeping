@@ -109,8 +109,8 @@ const customizedShiftLeaderEosReport = {
         magnets: {
             start: { solenoid: '30kA +452mT', dipole: '6kA +681mT' },
             intermediates: [
-                { timestamp: '14:30:37', magnetConfiguration: { solenoid: '17kA +654mT', dipole: '4kA +131mT' } },
-                { timestamp: '08:13:18', magnetConfiguration: { solenoid: '19kA +108mT', dipole: '1kA +901mT' } },
+                { timestamp: '14:30:37', magnetsConfiguration: { solenoid: '17kA +654mT', dipole: '4kA +131mT' } },
+                { timestamp: '08:13:18', magnetsConfiguration: { solenoid: '19kA +108mT', dipole: '1kA +901mT' } },
             ],
             end: { solenoid: '25kA -134mT', dipole: '8kA +734mT' },
         },
