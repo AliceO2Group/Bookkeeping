@@ -53,8 +53,8 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-type-creation');
         await page.waitForSelector('button#submit[disabled]');
 
-        await fillInput('#name input', 'LimitedAcceptance');
-        await fillInput('#method input', 'Limited acceptance');
+        await fillInput(page, 'input#name', 'LimitedAcceptance');
+        await fillInput(page, 'input#method', 'Limited acceptance');
         await pressElement('button#submit');
         await page.waitForSelector('.alert.alert-danger');
         await expectInnerText(page, '.alert', 'Service unavailable: Validation error');
@@ -64,9 +64,9 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-type-creation');
         await page.waitForSelector('button#submit[disabled]');
 
-        await fillInput('#name input', 'AAA+');
-        await fillInput('#method input', 'A+A+A');
-        await fillInput('input[type=color]', '#F000F0');
+        await fillInput(page, 'input#name', 'AAA+');
+        await fillInput(page, 'input#method', 'A+A+A');
+        await fillInput(page, 'input[type=color]', '#F000F0');
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
 
         await waitForNavigation(page, () => pressElement('button#submit'));
