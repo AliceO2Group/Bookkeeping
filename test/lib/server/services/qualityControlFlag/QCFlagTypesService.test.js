@@ -267,5 +267,45 @@ module.exports = () => {
             delete parameters.externalUserId;
             expectObjectToBeSuperset(newQCFlag, parameters);
         });
+
+        it('should fail when no name is provided', async () => {
+            const parameters = {
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            await assert.rejects(() => qcFlagTypesService.create(parameters));
+        });
+
+        it('should fail when no method is provided', async () => {
+            const parameters = {
+                name: 'A',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            await assert.rejects(() => qcFlagTypesService.create(parameters));
+        });
+
+        it('should fail when no bad is provided', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            await assert.rejects(() => qcFlagTypesService.create(parameters));
+        });
+
+        it('should fail when no user info is provided', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+            await assert.rejects(() => qcFlagTypesService.create(parameters));
+        });
     });
 };
