@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const { qcFlagTypesService } = require('../../../../../lib/server/services/qualityControlFlag/QCFlagTypesService');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
+const { expectObjectToBeSuperset } = require('../../../../utilities/expectObjectToBeSuperset');
 
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
@@ -250,6 +251,21 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(3);
             expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12, 13]);
+        });
+    });
+
+    describe('Creating QC Flag Type', () => {
+        it('should successfult create QC Flag Type', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            const newQCFlag = await qcFlagTypesService.create(parameters);
+            delete parameters.externalUserId;
+            expectObjectToBeSuperset(newQCFlag, parameters);
         });
     });
 };
