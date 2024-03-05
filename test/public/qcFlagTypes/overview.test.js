@@ -17,6 +17,9 @@ const {
     defaultAfter,
     goToPage,
     testTableAscendingSortingByColumn,
+    waitForTableDataReload,
+    fillInput,
+    getAllDataFields,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -70,23 +73,47 @@ module.exports = () => {
         await testTableAscendingSortingByColumn(page, 'bad');
     });
 
-    // it('should successfuly apply simulation passes name filter', async () => {
-    //     await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-    //     await page.waitForSelector('#openFilterToggle');
-    //     const filterToggleButton = await page.$('#openFilterToggle');
-    //     expect(filterToggleButton).to.not.be.null;
+    it('should successfuly apply QC flag type names filter', async () => {
+        await goToPage(page, 'qc-flag-types');
+        await page.waitForSelector('#openFilterToggle');
+        const filterToggleButton = await page.$('#openFilterToggle');
+        expect(filterToggleButton).to.not.be.null;
 
-    //     await filterToggleButton.evaluate((button) => button.click());
+        await filterToggleButton.evaluate((button) => button.click());
 
-    //     await waitForTableDataReload(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
+        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'bad'));
 
-    //     let allDataPassesNames = await getAllDataFields(page, 'name');
-    //     expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
+        const allQCFlagTypeNames = await getAllDataFields(page, 'name');
+        expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
+    });
 
-    //     await waitForTableDataReload(page, () =>
-    //         fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b'));
+    it('should successfuly apply QC flag type method filter', async () => {
+        await goToPage(page, 'qc-flag-types');
+        await page.waitForSelector('#openFilterToggle');
+        const filterToggleButton = await page.$('#openFilterToggle');
+        expect(filterToggleButton).to.not.be.null;
 
-    //     allDataPassesNames = await getAllDataFields(page, 'name');
-    //     expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
-    // });
-}
+        await filterToggleButton.evaluate((button) => button.click());
+
+        await waitForTableDataReload(page, () => fillInput(page, '.method-filter input[type=text]', 'bad'));
+
+        const allQCFlagTypeNames = await getAllDataFields(page, 'method');
+        expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
+    });
+
+    it('should successfuly apply QC flag type bad filter', async () => {
+        await goToPage(page, 'qc-flag-types');
+        await page.waitForSelector('#openFilterToggle');
+        const filterToggleButton = await page.$('#openFilterToggle');
+        expect(filterToggleButton).to.not.be.null;
+
+        await filterToggleButton.evaluate((button) => button.click());
+
+        await waitForTableDataReload(page, () =>
+            page.$('.bad-filter input[type=checkbox]')
+                .then((element) => element.evaluate((checkbox) => checkbox.click())));
+
+        const allQCFlagTypeNames = await getAllDataFields(page, 'bad');
+        expect(allQCFlagTypeNames.every((bad) => bad === 'Yes'), allQCFlagTypeNames).to.be.true;
+    });
+};
