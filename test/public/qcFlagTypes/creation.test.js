@@ -16,10 +16,10 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    testTableAscendingSortingByColumn,
-    waitForTableDataReload,
     fillInput,
-    getAllDataFields,
+    pressElement,
+    expectInnerText,
+    waitForNavigation,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -47,5 +47,34 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
         const header = await page.$('h2');
         expect(await header.evaluate((element) => element.innerText)).to.be.equal('QC Flag Type Creation');
+    });
+
+    it('should fail if attempt to create QC Flag Type with already existing name', async () => {
+        await goToPage(page, 'qc-flag-type-creation');
+        await page.waitForSelector('button#submit[disabled]');
+
+        await fillInput('#name input', 'LimitedAcceptance');
+        await fillInput('#method input', 'Limited acceptance');
+        await pressElement('button#submit');
+        await page.waitForSelector('.alert.alert-danger');
+        await expectInnerText(page, '.alert', 'Service unavailable: Validation error');
+    });
+
+    it('should succesfully create QC Flag Type', async () => {
+        await goToPage(page, 'qc-flag-type-creation');
+        await page.waitForSelector('button#submit[disabled]');
+
+        await fillInput('#name input', 'AAA+');
+        await fillInput('#method input', 'A+A+A');
+        await fillInput('input[type=color]', '#F000F0');
+        await page.waitForSelector('button#submit[disabled]', { hidden: true });
+
+        await waitForNavigation(page, () => pressElement('button#submit'));
+        const currentPageUrl = new URL(page.url());
+        expect(currentPageUrl.searchParams.get('page')).to.be.equal('qc-flag-types-overview');
+
+        const newNameCell = await page.waitForSelector('[style*="rbg(240, 0, 240)"]');
+        expect(newNameCell).not.to.be.null;
+        expect(await newNameCell.evaluate(({ innerText }) => innerText)).to.be.equal('AAA+');
     });
 };

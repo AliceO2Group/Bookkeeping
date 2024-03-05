@@ -12,7 +12,9 @@
  */
 
 const QCFlagTypesOverviewSuite = require('./overview.test');
+const QCFlagTypeCreationSuite = require('./creation.test');
 
 module.exports = () => {
     describe('QCFlagTypesOverview Suite', QCFlagTypesOverviewSuite);
+    describe('QCFlagTypeCreation Suite', QCFlagTypeCreationSuite);
 };
