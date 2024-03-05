@@ -423,5 +423,80 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should fail when no name is provided', async (done) => {
+            const parameters = {
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qualityControlFlags/types?token=admin')
+                .send(parameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail).to.equal('"body.name" is required');
+
+                    done();
+                });
+        });
+
+        it('should fail when no method is provided', async (done) => {
+            const parameters = {
+                name: 'A',
+                bad: false,
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qualityControlFlags/types?token=admin')
+                .send(parameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail).to.equal('"body.method" is required');
+
+                    done();
+                });
+        });
+
+        it('should fail when no bad info is provided', async (done) => {
+            const parameters = {
+                name: 'A',
+                method: 'A++',
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qualityControlFlags/types?token=admin')
+                .send(parameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/text');
+                    expect(titleError.detail).to.equal('"body.bad" is required');
+
+                    done();
+                });
+        });
     });
 };
