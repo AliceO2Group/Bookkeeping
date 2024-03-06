@@ -17,6 +17,7 @@ const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
 const { expectObjectToBeSuperset } = require('../../../../utilities/expectObjectToBeSuperset');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
@@ -269,6 +270,19 @@ module.exports = () => {
             expectObjectToBeSuperset(newQCFlag, parameters);
         });
 
+        it('should fail when QC Flag type with name provide already exists', async () => {
+            const parameters = {
+                name: 'BadPID',
+                method: 'Bad PID',
+                bad: false,
+                externalUserId: 1,
+            };
+            await assert.rejects(
+                () => qcFlagTypesService.create(parameters),
+                new ConflictError('name must be unique'),
+            );
+        });
+
         it('should fail when no name is provided', async () => {
             const parameters = {
                 method: 'AA+',
@@ -276,7 +290,10 @@ module.exports = () => {
                 color: '#FFAA00',
                 externalUserId: 1,
             };
-            await assert.rejects(() => qcFlagTypesService.create(parameters));
+            await assert.rejects(
+                () => qcFlagTypesService.create(parameters),
+                new ConflictError('QCFlagType.name cannot be null'),
+            );
         });
 
         it('should fail when no method is provided', async () => {
@@ -286,7 +303,10 @@ module.exports = () => {
                 color: '#FFAA00',
                 externalUserId: 1,
             };
-            await assert.rejects(() => qcFlagTypesService.create(parameters));
+            await assert.rejects(
+                () => qcFlagTypesService.create(parameters),
+                new ConflictError('QCFlagType.method cannot be null'),
+            );
         });
 
         it('should fail when no bad is provided', async () => {
@@ -296,7 +316,10 @@ module.exports = () => {
                 color: '#FFAA00',
                 externalUserId: 1,
             };
-            await assert.rejects(() => qcFlagTypesService.create(parameters));
+            await assert.rejects(
+                () => qcFlagTypesService.create(parameters),
+                new ConflictError('QCFlagType.bad cannot be null'),
+            );
         });
 
         it('should fail when no user info is provided', async () => {
@@ -306,7 +329,10 @@ module.exports = () => {
                 bad: false,
                 color: '#FFAA00',
             };
-            await assert.rejects(() => qcFlagTypesService.create(parameters));
+            await assert.rejects(
+                () => qcFlagTypesService.create(parameters),
+                new BadParameterError('Can not find without id or external id'),
+            );
         });
     });
 
