@@ -499,4 +499,100 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('PUT /api/qualityControlFlags/types/:id', () => {
+        it('should reject when existing name provided', (done) => {
+            const qcFlagTypeId = 13;
+
+            const patch = {
+                name: 'BadPID',
+            };
+
+            request(server)
+                .post(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .send(patch)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.title === 'Data validation error');
+                    expect(titleError.detail).to.equal('name must be unique');
+
+                    done();
+                });
+        });
+
+        it('should reject when existing method provided', (done) => {
+            const qcFlagTypeId = 13;
+
+            const patch = {
+                method: 'Bad PID',
+            };
+
+            request(server)
+                .post(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .send(patch)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.title === 'Data validation error');
+                    expect(titleError.detail).to.equal('method must be unique');
+
+                    done();
+                });
+        });
+
+        it('should reject when existing name provided', (done) => {
+            const qcFlagTypeId = 13;
+
+            const patch = {
+                name: 'BadPID',
+            };
+
+            request(server)
+                .post(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .send(patch)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.title === 'Data validation error');
+                    expect(titleError.detail).to.equal('name must be unique');
+
+                    done();
+                });
+        });
+
+        it('should reject when no QC flag type to be updated found', () => {
+            assert.rejects(() => qcFlagTypesService.update(99999, { color: '#aaaaaa', userId: 1 }));
+        });
+
+        it('should reject when no user is found', () => {
+            assert.rejects(() => qcFlagTypesService.update(10, { color: '#aaaaaa', userId: 999 }));
+        });
+
+        it('should successfuly update one QC Flag Type', async () => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypesService.update(13, { ...patch, userId });
+            const fetchedFlagType = await qcFlagTypesService.getOneOrFail({ id: 13 });
+
+            expectObjectToBeSuperset(fetchedFlagType, { ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
+        });
+    });
 };
