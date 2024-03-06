@@ -308,4 +308,10 @@ module.exports = () => {
             await assert.rejects(() => qcFlagTypesService.create(parameters));
         });
     });
+
+    describe('Updating QC Flag Type', () => {
+        it('should reject when provding incorrect data', () => {
+            
+        });
+    });
 };
