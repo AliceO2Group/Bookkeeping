@@ -509,9 +509,9 @@ module.exports = () => {
             };
 
             request(server)
-                .post(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .put(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
                 .send(patch)
-                .expect(201)
+                .expect(409)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -519,7 +519,7 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.title === 'Data validation error');
+                    const titleError = errors.find((err) => err.title === 'Conflict in data');
                     expect(titleError.detail).to.equal('name must be unique');
 
                     done();
@@ -534,9 +534,9 @@ module.exports = () => {
             };
 
             request(server)
-                .post(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .put(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
                 .send(patch)
-                .expect(201)
+                .expect(409)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -544,22 +544,44 @@ module.exports = () => {
                     }
 
                     const { errors } = res.body;
-                    const titleError = errors.find((err) => err.title === 'Data validation error');
+                    const titleError = errors.find((err) => err.title === 'Conflict in data');
                     expect(titleError.detail).to.equal('method must be unique');
 
                     done();
                 });
         });
 
-        it('should reject when existing name provided', (done) => {
+        it('should reject when incorrect color provided', (done) => {
             const qcFlagTypeId = 13;
 
             const patch = {
-                name: 'BadPID',
+                color: '#qweraa',
             };
 
             request(server)
-                .post(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .put(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
+                .send(patch)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.title === 'Service unavailable');
+                    expect(titleError.detail).to.equal('Incorrect format of the color provided (#qweraa)');
+
+                    done();
+                });
+        });
+
+        it('should successfuly update one QC Flag Type', (done) => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const qcFlagTypeId = 13;
+
+            request(server)
+                .put(`/api/qualityControlFlags/types/${qcFlagTypeId}?token=admin`)
                 .send(patch)
                 .expect(201)
                 .end((err, res) => {
@@ -568,31 +590,10 @@ module.exports = () => {
                         return;
                     }
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.title === 'Data validation error');
-                    expect(titleError.detail).to.equal('name must be unique');
-
+                    const { data: fetchedFlagType } = res.body;
+                    expectObjectToBeSuperset(fetchedFlagType, patch);
                     done();
                 });
-        });
-
-        it('should reject when no QC flag type to be updated found', () => {
-            assert.rejects(() => qcFlagTypesService.update(99999, { color: '#aaaaaa', userId: 1 }));
-        });
-
-        it('should reject when no user is found', () => {
-            assert.rejects(() => qcFlagTypesService.update(10, { color: '#aaaaaa', userId: 999 }));
-        });
-
-        it('should successfuly update one QC Flag Type', async () => {
-            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
-            const userId = 1;
-
-            const updatedFlagType = await qcFlagTypesService.update(13, { ...patch, userId });
-            const fetchedFlagType = await qcFlagTypesService.getOneOrFail({ id: 13 });
-
-            expectObjectToBeSuperset(fetchedFlagType, { ...patch, lastUpdatedById: userId });
-            expect(updatedFlagType).to.be.eql(fetchedFlagType);
         });
     });
 };
