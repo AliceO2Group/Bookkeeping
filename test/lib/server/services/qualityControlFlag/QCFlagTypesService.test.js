@@ -16,6 +16,7 @@ const { qcFlagTypesService } = require('../../../../../lib/server/services/quali
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
 const { expectObjectToBeSuperset } = require('../../../../utilities/expectObjectToBeSuperset');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
@@ -310,8 +311,44 @@ module.exports = () => {
     });
 
     describe('Updating QC Flag Type', () => {
-        it('should reject when provding incorrect data', () => {
-            
+        it('should reject when existing name provided', () => {
+            assert.rejects(
+                () => qcFlagTypesService.update(12, { name: 'Bad', userId: 1 }),
+                new BadParameterError('name must be unique'),
+            );
+        });
+
+        it('should reject when existing method provided', () => {
+            assert.rejects(
+                () => qcFlagTypesService.update(12, { method: 'Bad', userId: 1 }),
+                new BadParameterError('method must be unique'),
+            );
+        });
+
+        it('should reject when bad color format provided', () => {
+            assert.rejects(
+                () => qcFlagTypesService.update(12, { color: '#qweras', userId: 1 }),
+                new BadParameterError('Incorrect format of the color provided (#qweras)'),
+            );
+        });
+
+        it('should reject when no QC flag type to be updated found', () => {
+            assert.rejects(() => qcFlagTypesService.update(99999, { color: '#aaaaaa', userId: 1 }));
+        });
+
+        it('should reject when no user is found', () => {
+            assert.rejects(() => qcFlagTypesService.update(10, { color: '#aaaaaa', userId: 999 }));
+        });
+
+        it('should successfuly update one QC Flag Type', async () => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypesService.update(13, { ...patch, userId });
+            const fetchedFlagType = await qcFlagTypesService.getOneOrFail({ id: 13 });
+
+            expectObjectToBeSuperset(fetchedFlagType, { ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
         });
     });
 };
