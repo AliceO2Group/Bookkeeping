@@ -12,14 +12,14 @@
  */
 
 const { expect } = require('chai');
-const { getAllDplDetectors } = require('../../../../../lib/server/services/dpl/getAllDplDetectors');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent');
+const { dplDetectorsService } = require('../../../../../lib/server/services/dpl/DplDetectorsService');
 
 module.exports = () => {
     before(resetDatabaseContent);
 
     it('should get all DPL Detectors', async () => {
-        const detectors = await getAllDplDetectors();
+        const detectors = await dplDetectorsService.getAll();
         expect(detectors).to.be.an('array');
         expect(detectors).to.be.lengthOf(20);
         expect(detectors.map(({ id, name }) => ({ id, name }))).to.have.all.deep.members([
