@@ -21,6 +21,7 @@ const {
     waitForTableDataReload,
     validateTableData,
     pressElement,
+    testTableAscendingSortingByColumn,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -110,73 +111,22 @@ module.exports = () => {
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#name');
-        await page.hover('th#name');
-        const sortingPreviewIndicator = await page.$('#name-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by name in an ascending manner
-        const nameHeader = await page.$('th#name');
-        await waitForTableDataReload(page, () => nameHeader.evaluate((button) => button.click()));
-
-        // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        testTableAscendingSortingByColumn(page, 'name');
     });
 
     it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#requestedEventsCount');
-        await page.hover('th#requestedEventsCount');
-        const sortingPreviewIndicator = await page.$('#requestedEventsCount-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by year in an ascending manner
-        const requestedEventsCountHeader = await page.$('th#requestedEventsCount');
-        await requestedEventsCountHeader.evaluate((button) => button.click());
-        await waitForTableDataReload(page, () => requestedEventsCountHeader.evaluate((button) => button.click()));
-
-        // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'requestedEventsCount');
-        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
+        testTableAscendingSortingByColumn(page, 'requestedEventsCount');
     });
 
     it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#generatedEventsCount');
-        await page.hover('th#generatedEventsCount');
-        const sortingPreviewIndicator = await page.$('#generatedEventsCount-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by year in an ascending manner
-        const generatedEventsCountHeader = await page.$('th#generatedEventsCount');
-        await generatedEventsCountHeader.evaluate((button) => button.click());
-        await waitForTableDataReload(page, () => generatedEventsCountHeader.evaluate((button) => button.click()));
-
-        // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'generatedEventsCount');
-        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
+        testTableAscendingSortingByColumn(page, 'generatedEventsCount');
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#outputSize');
-        await page.hover('th#outputSize');
-        const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by avgCenterOfMassEnergy in an ascending manner
-        const outputSizeHeader = await page.$('th#outputSize');
-        await outputSizeHeader.evaluate((button) => button.click());
-        await waitForTableDataReload(page, () => outputSizeHeader.evaluate((button) => button.click()));
-
-        // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getAllDataFields(page, 'outputSize');
-        expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
+        testTableAscendingSortingByColumn(page, 'outputSize');
     });
 
     it('should successfuly apply simulation passes name filter', async () => {

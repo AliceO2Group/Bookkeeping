@@ -472,6 +472,30 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
 ]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
 
 /**
+ * Tests whether sorting of main table by column with given id works properly
+ * It required there are a least two rows in the table
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} columnId subject column id
+ * @return {Promise<void>} promise
+ */
+module.exports.testTableAscendingSortingByColumn = async (page, columnId) => {
+    // Expect a sorting preview to appear when hovering over a column header
+    await page.waitForSelector(`th#${columnId}`);
+    await page.hover(`th#${columnId}`);
+    const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
+    expect(Boolean(sortingPreviewIndicator)).to.be.true;
+
+    // Sort by name in an ascending manner
+    const columnHeader = await page.$(`th#${columnId}`);
+    await this.waitForTableDataReload(page, () => columnHeader.evaluate((button) => button.click()));
+
+    // Expect the names to be in alphabetical order
+    const subjectColumnValues = await this.getAllDataFields(page, columnId);
+    expect(subjectColumnValues).to.be.length.greaterThan(1);
+    expect(subjectColumnValues).to.have.all.deep.ordered.members(subjectColumnValues.sort());
+};
+
+/**
  * Validate content of table body
  * @param {puppeteer.Page} page the puppeteer page
  * @param {object<string, function<string>, boolean>} validators mapping of column names to cell data validator,
@@ -482,6 +506,7 @@ module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
     for (const columnName in validators) {
         const columnData = await this.getAllDataFields(page, columnName);
+        expect(columnData).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validators[columnName](cellData)),
             `Incorrect data in column ${columnName}: (${columnData})`,
