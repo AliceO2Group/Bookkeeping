@@ -19,7 +19,8 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     it('should get all DPL Detectors', async () => {
-        const detectors = await dplDetectorsService.getAll();
+        const detectors = await dplDetectorsService.getAll
+        ();
         expect(detectors).to.be.an('array');
         expect(detectors).to.be.lengthOf(20);
         expect(detectors.map(({ id, name }) => ({ id, name }))).to.have.all.deep.members([

@@ -13,10 +13,10 @@
 
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const DplProcessServiceTest = require('./DplProcessService.test.js');
-const GetDplDetectorsTest = require('./getAllDplDetectors.test.js');
+const DplDetectorsServiceSuite = require('./DplDetectorsService.test.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
     describe('DplProcessService', DplProcessServiceTest);
-    describe('Get All DplDetectors', GetDplDetectorsTest);
+    describe('DplDetectorsService', DplDetectorsServiceSuite);
 };
