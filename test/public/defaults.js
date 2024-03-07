@@ -491,7 +491,7 @@ module.exports.testTableAscendingSortingByColumn = async (page, columnId) => {
 
     // Expect the names to be in alphabetical order
     const subjectColumnValues = await this.getAllDataFields(page, columnId);
-    expect(subjectColumnValues).to.be.length.greaterThan(1);
+    expect(subjectColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(subjectColumnValues).to.have.all.deep.ordered.members(subjectColumnValues.sort());
 };
 
@@ -504,12 +504,12 @@ module.exports.testTableAscendingSortingByColumn = async (page, columnId) => {
  */
 module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
-    for (const columnName in validators) {
-        const columnData = await this.getAllDataFields(page, columnName);
-        expect(columnData).to.be.length.greaterThan(0);
+    for (const columnId in validators) {
+        const columnData = await this.getAllDataFields(page, columnId);
+        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
-            columnData.every((cellData) => validators[columnName](cellData)),
-            `Incorrect data in column ${columnName}: (${columnData})`,
+            columnData.every((cellData) => validators[columnId](cellData)),
+            `Incorrect data in column ${columnId}: (${columnData})`,
         ).to.be.true;
     }
 };

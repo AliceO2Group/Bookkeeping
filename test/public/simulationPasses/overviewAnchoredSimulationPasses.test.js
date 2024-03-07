@@ -54,17 +54,21 @@ module.exports = () => {
         expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC22a_apass1');
     });
 
-    it('shows correct datatypes in respective columns', async () => {
+    it('shows SM correct datatypes in respective columns', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
 
+        const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         // Expectations of header texts being of a certain datatype
         const tableValidators = {
             name: (name) => periodNameRegex.test(name),
-            year: (year) => !isNaN(year),
+            jiraId: (jiraId) => /[A-Z][A-Z0-9]+-[0-9]+/.test(jiraId),
             pwg: (pwg) => /PWG.+/.test(pwg),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
             generatedEventsCount: (generatedEventsCount) => !isNaN(generatedEventsCount.replace(/,/g, '')),
-            outpuSize: (outpuSize) => !isNaN(outpuSize),
+            outputSize: (outpuSize) => {
+                const [number, unit] = outpuSize.split(' ');
+                return !isNaN(number) && dataSizeUnits.has(unit.trim());
+            },
         };
 
         await validateTableData(page, tableValidators);
