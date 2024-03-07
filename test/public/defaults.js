@@ -292,7 +292,12 @@ module.exports.getInnerText = getInnerText;
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
     await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+    const actualInnerText = await getInnerText(await page.$(selector));
+    if (innerText instanceof String) {
+        expect(actualInnerText).to.equal(innerText);
+    } else if (innerText instanceof Function) {
+        expect(innerText(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
+    }
 };
 
 /**
