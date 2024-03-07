@@ -20,6 +20,7 @@ const {
     fillInput,
     waitForTableDataReload,
     validateTableData,
+    pressElement,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -180,23 +181,13 @@ module.exports = () => {
 
     it('should successfuly apply simulation passes name filter', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
-
-        // 1
-        await filterToggleButton.evaluate((button) => button.click());
-        await waitForTableDataReload(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
+        await pressElement(page, '#openFilterToggle');
+        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'LHC23k6a'));
 
         let allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
 
-        // 2
-        await waitForTableDataReload(page, () => fillInput(
-            page,
-            'div.flex-row.items-baseline:nth-of-type(2) input[type=text]',
-            'LHC23k6a, LHC23k6b',
-        ));
+        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b'));
 
         allDataPassesNames = await getAllDataFields(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
