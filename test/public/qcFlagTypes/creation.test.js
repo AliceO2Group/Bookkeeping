@@ -38,15 +38,11 @@ module.exports = () => {
 
     it('loads page - QC Flag Types overview successfully', async () => {
         const response = await goToPage(page, 'qc-flag-type-creation');
-
-        // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
 
-        // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
-        const header = await page.$('h2');
-        expect(await header.evaluate((element) => element.innerText)).to.be.equal('QC Flag Type Creation');
+        await expectInnerText(page, 'h2', 'QC Flag Type Creation');
     });
 
     it('should fail if attempt to create QC Flag Type with already existing name', async () => {
@@ -56,8 +52,7 @@ module.exports = () => {
         await fillInput(page, 'input#name', 'LimitedAcceptance');
         await fillInput(page, 'input#method', 'Limited acceptance');
         await pressElement(page, 'button#submit');
-        await page.waitForSelector('.alert.alert-danger');
-        await expectInnerText(page, '.alert', 'Service unavailable: Validation error');
+        await expectInnerText(page, '.alert.alert-danger', 'Service unavailable: Validation error');
     });
 
     it('should succesfully create QC Flag Type', async () => {
