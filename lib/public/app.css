@@ -674,23 +674,19 @@ label {
     }
 }
 
-.scroll-x {
-    overflow-x: auto !important;
-} 
-
-.scroll-x .table.left-sticky thead tr th:first-child {
+.scroll-auto .table.left-sticky thead tr th:first-child {
     position: sticky;
     left: 0;
     z-index: 2;
     background-color: var(--color-gray-light);
 }
 
-.scroll-x .table.left-sticky tbody tr td:first-child {
+.scroll-auto .table.left-sticky tbody tr td:first-child {
     position: sticky;
     left: 0;
     z-index: 2;
 }
 
-.scroll-x .table.left-sticky tbody tr:nth-child(odd) td:first-child { background-color: var(--color-white); }
-.scroll-x .table.left-sticky tbody tr:nth-child(even) td:first-child  { background-color: var(--color-gray-lighter); }
-.scroll-x .table-hover.left-sticky tbody tr:hover td:first-child { background-color: var(--color-gray); }
+.scroll-auto .table.left-sticky tbody tr:nth-child(odd) td:first-child { background-color: var(--color-white); }
+.scroll-auto .table.left-sticky tbody tr:nth-child(even) td:first-child  { background-color: var(--color-gray-lighter); } */
+.scroll-auto .table-hover.left-sticky tbody tr:hover td:first-child { background-color: var(--color-gray); }
