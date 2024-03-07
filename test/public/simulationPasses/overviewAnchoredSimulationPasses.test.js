@@ -19,6 +19,7 @@ const {
     getAllDataFields,
     fillInput,
     waitForTableDataReload,
+    validateTableData,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -52,39 +53,19 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
+
         // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
+        const tableValidators = {
             name: (name) => periodNameRegex.test(name),
             year: (year) => !isNaN(year),
             pwg: (pwg) => /PWG.+/.test(pwg),
-            requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount),
-            generatedEventsCount: (generatedEventsCount) => !isNaN(generatedEventsCount),
+            requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
+            generatedEventsCount: (generatedEventsCount) => !isNaN(generatedEventsCount.replace(/,/g, '')),
             outpuSize: (outpuSize) => !isNaN(outpuSize),
         };
 
-        // We find the headers matching the datatype keys
-        await page.waitForSelector('th');
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-
-        // Use the third row because it is where statistics are present
-        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (index in headerIndices) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, tableValidators);
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {

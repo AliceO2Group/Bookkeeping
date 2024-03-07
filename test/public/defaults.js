@@ -470,3 +470,21 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
     page.waitForSelector('table .atom-spinner'),
     triggerFunction(),
 ]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
+
+/**
+ * Validate content of table body
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {object<string, function<string>, boolean>} validators mapping of column names to cell data validator,
+ * each validator must return value `true` if content is ok, false otherwise
+ * @return {Promise<void>} promise
+ */
+module.exports.validateTableData = async (page, validators) => {
+    await page.waitForSelector('table tbody');
+    for (const columnName in validators) {
+        const columnData = await this.getAllDataFields(page, columnName);
+        expect(
+            columnData.every((cellData) => validators[columnName](cellData)),
+            `Incorrect data in column ${columnName}: (${columnData})`,
+        ).to.be.true;
+    }
+};
