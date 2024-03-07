@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.80.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.80.0)
+* Notable changes for users:
+  * Fixed run quality being sent in patch even if it has not been updated
+  * Display errors when update run fails
+  * Unicode characters are now properly handled as file attachment
+  * SL EoS report now include the three shifter's logs
+  * Added Simulation Passes per LHC Period view
+  * Remove TST detector from Runs Per Data Pass and LHC Period views
+  * All PHYSICS runs are displayed on Runs Per Data Pass view, regardless of their online quality
+  * When replying to a log, the environment id and lhcFill numbers are autofilled from their parent
+  * Automatically add tags when filling on-call template
+* Notable change for developers:
+  * Add procedure for fetching and storing in DB Simulation Passes from MonALISA
+  * Removed wait for timeout longer than 1s from tests
+  * Add constraint on inserting data from MonALISA - only PHYSICS runs association are stored now
+  * Added Simulation Passes API
+  * Added new endpoint for fetching root logs only
+  * Added new endpoint to fetch fills ended in the given period has been added
+  * Added new endpoint that uses a log id to fetch it's child logs
+  * Refactor LhcPeriodStatisticsService and DataPassesService in order to remove subqueries
+  * Added waitForTableDataReload method for testing with puppeteer
+  * Use breadcrumbs for Runs Per Data Pass page title and tooltip to display error
+  * New default method expectInputValue, does the same as expectInnerText but then for values instead of innerHTML
+
 ## [0.79.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.79.0)
 * Notable changes for users:
   * A log template for on-call has been created

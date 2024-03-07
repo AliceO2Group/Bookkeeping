@@ -23,6 +23,7 @@ const EnvsSuite = require('./envs');
 const EosReportSuite = require('./eosReport');
 const LhcPeriodsSuite = require('./lhcPeriods');
 const DataPassesSuite = require('./dataPasses');
+const SimulationPassesSuite = require('./simulationPasses');
 
 module.exports = () => {
     describe('LhcPeriods', LhcPeriodsSuite);
@@ -37,4 +38,5 @@ module.exports = () => {
     describe('About', AboutSuite);
     describe('EosReport', EosReportSuite);
     describe('DataPasses', DataPassesSuite);
+    describe('SimulationPasses', SimulationPassesSuite);
 };
