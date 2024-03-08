@@ -68,7 +68,7 @@ module.exports = () => {
             },
         };
 
-        await validateTableData(page, tableDataValidators);
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {

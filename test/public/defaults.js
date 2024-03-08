@@ -487,26 +487,26 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
 
 /**
  * Tests whether sorting of main table by column with given id works properly
- * It required there are a least two rows in the table
+ * It is required there are a least two rows in the table
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} columnId subject column id
  * @return {Promise<void>} promise
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
-    // Expect a sorting preview to appear when hovering over a column header
+    // Expect a sorting preview to appear when hovering over column header
     await page.waitForSelector(`th#${columnId}`);
     await page.hover(`th#${columnId}`);
     const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
     expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
-    // Sort by name in an ASCENDING manner
+    // Sort in ASCENDING manner
     await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
 
     let targetColumnValues = await this.getAllDataFields(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
 
-    // Sort by name in an DESCSENDING manner
+    // Sort in DESCSENDING manner
     await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
 
     targetColumnValues = await this.getAllDataFields(page, columnId);
@@ -517,17 +517,17 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
 /**
  * Validate content of table body
  * @param {puppeteer.Page} page the puppeteer page
- * @param {object<string, function<string>, boolean>} validators mapping of column names to cell data validator,
+ * @param {Map<string, function<string, boolean>>} validators mapping of column names to cell data validator,
  * each validator must return value `true` if content is ok, false otherwise
  * @return {Promise<void>} promise
  */
 module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
-    for (const columnId in validators) {
+    for (const [columnId, validator] of validators) {
         const columnData = await this.getAllDataFields(page, columnId);
         expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
-            columnData.every((cellData) => validators[columnId](cellData)),
+            columnData.every((cellData) => validator(cellData)),
             `Invalid data in column ${columnId}: (${columnData})`,
         ).to.be.true;
     }
