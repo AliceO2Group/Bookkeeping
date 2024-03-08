@@ -19,8 +19,7 @@ const {
     fillInput,
     pressElement,
     expectInnerText,
-    waitForNavigation,
-    expectInputValue,
+    validateDetiailsList,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -38,7 +37,7 @@ module.exports = () => {
     });
 
     it('loads page - QC Flag Types overview successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-type-details', { id: 11 });
+        const response = await goToPage(page, 'qc-flag-type-details', { queryParameters: { id: 11 } });
         expect(response.status()).to.equal(200);
 
         const title = await page.title();
@@ -47,28 +46,52 @@ module.exports = () => {
     });
 
     it('should dispay correct data', async () => {
-        await goToPage(page, 'qc-flag-type-details', { id: 11 });
-        const detailsContainerId = 'qc-flag-type';
-        const detailsContent = [
+        await goToPage(page, 'qc-flag-type-details', { queryParameters: { id: 11 } });
+        const detailsContentValidators = [
             ['ID', '11'],
             ['Name', 'LimitedAcceptance'],
             ['Method', 'Limited acceptance'],
             ['Bad', 'Yes'],
-            ['Last modified', (d) => String(new Date(d)) !== 'Invalid Date'],
+            ['Last modified', '-'],
             ['Last modified by', '-'],
             ['Created at', (d) => String(new Date(d)) !== 'Invalid Date'],
             ['Created by', 'Anonymous'],
             ['Archived', 'No'],
             ['Color', '#cbce2c'],
         ];
-        for (const positionInDiv in detailsContent) {
-            const [propertyName, value] = detailsContent[positionInDiv];
-            await expectInnerText(`#${detailsContainerId} div:nth-of-type(${positionInDiv})`, );
-        }
+        await validateDetiailsList(page, '#qc-flag-type', detailsContentValidators);
     });
 
     it('should succesfully update QC Flag Type', async () => {
-        await goToPage(page, 'qc-flag-type-details', { id: 11 });
-        
+        await goToPage(page, 'qc-flag-type-details', { queryParameters: { id: 11 } });
+
+        await pressElement(page, '#edit');
+        await page.waitForSelector('#edit', { hidden: true });
+        await page.waitForSelector('#confirm-edit.button.btn');
+        await page.waitForSelector('#cancel-edit.button.btn');
+
+        const detailsContainerSelector = '#qc-flag-type';
+        await fillInput(page, `${detailsContainerSelector} > div:nth-of-type(2) input`, 'LimAc');
+        await fillInput(page, `${detailsContainerSelector} > div:nth-of-type(3) input`, 'Lim Ac');
+        await fillInput(page, `${detailsContainerSelector} > div:nth-of-type(4) input`, false);
+        await fillInput(page, `${detailsContainerSelector} > div:nth-of-type(9) input`, true);
+        await fillInput(page, `${detailsContainerSelector} > div:nth-of-type(10) input`, '#aabb00');
+
+        await pressElement(page, '#confirm-edit.button.btn');
+        await page.waitForSelector('#edit');
+
+        const detailsContentValidators = [
+            ['ID', '11'],
+            ['Name', 'LimAc'],
+            ['Method', 'Lim Ac'],
+            ['Bad', 'No'],
+            ['Last modified', (d) => String(new Date(d)) !== 'Invalid Date'],
+            ['Last modified by', 'Anonymous'],
+            ['Created at', (d) => String(new Date(d)) !== 'Invalid Date'],
+            ['Created by', 'Anonymous'],
+            ['Archived', 'Yes'],
+            ['Color', '#aabb00'],
+        ];
+        await validateDetiailsList(page, '#qc-flag-type', detailsContentValidators);
     });
 };

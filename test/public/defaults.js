@@ -292,7 +292,12 @@ module.exports.getInnerText = getInnerText;
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
     await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+    const actualInnerText = await getInnerText(await page.$(selector));
+    if (innerText instanceof String) {
+        expect(actualInnerText).to.equal(innerText);
+    } else if (innerText instanceof Function) {
+        expect(innerText(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
+    }
 };
 
 /**
@@ -491,6 +496,62 @@ module.exports.testTableAscendingSortingByColumn = async (page, columnId) => {
 
     // Expect the names to be in alphabetical order
     const subjectColumnValues = await this.getAllDataFields(page, columnId);
-    expect(subjectColumnValues).to.be.length.greaterThan(1);
+    expect(subjectColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(subjectColumnValues).to.have.all.deep.ordered.members(subjectColumnValues.sort());
+};
+
+/**
+ * Validate content of table body
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {object<string, function<string, boolean>>} validators mapping of column names to cell data validator,
+ * each validator must return value `true` if content is ok, false otherwise
+ * @return {Promise<void>} promise
+ */
+module.exports.validateTableData = async (page, validators) => {
+    await page.waitForSelector('table tbody');
+    for (const columnId in validators) {
+        const columnData = await this.getAllDataFields(page, columnId);
+        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
+        expect(
+            columnData.every((cellData) => validators[columnId](cellData)),
+            `Incorrect data in column ${columnId}: (${columnData})`,
+        ).to.be.true;
+    }
+};
+
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Validate details list data
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} detailsContainerSelector selector of component wrapping details list
+ * @param {([string, string|function<string, boolean>]|null)[]} validators list of properties names and their values validators
+ * It is expected that each detials entry (name, value) is wrapped with separate div element and those divs' order
+ * match order of validators, checking some property can be omitted by passing null value into appropriate position in validators list
+ * @return {Promise<void>} promise
+ */
+module.exports.validateDetiailsList = async (page, detailsContainerSelector, validators) => {
+    for (const id in validators) {
+        const positionInDiv = Number(id) + 1;
+        if (validators[positionInDiv]) {
+            const [expectedPropertyName, expectedValue] = validators[positionInDiv];
+            if (expectedValue instanceof Function) {
+                await this.expectInnerText(
+                    page,
+                    `${detailsContainerSelector} div:nth-of-type(${positionInDiv + 1})`,
+                    (innerText) => {
+                        const [actualPropertyName, actualValue] = innerText.split(':\n');
+                        expect(actualPropertyName).to.be.equal(expectedPropertyName);
+                        expect(expectedValue(actualValue)).to.be.true;
+                        return true;
+                    },
+                );
+            } else {
+                await this.expectInnerText(
+                    page,
+                    `${detailsContainerSelector} div:nth-of-type(${positionInDiv + 1})`,
+                    `${expectedPropertyName}:\n${expectedValue}`,
+                );
+            }
+        }
+    }
 };

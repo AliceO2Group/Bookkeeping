@@ -13,8 +13,10 @@
 
 const QCFlagTypesOverviewSuite = require('./overview.test');
 const QCFlagTypeCreationSuite = require('./creation.test');
+const QCFlagTypeDetailsSuite = require('./details.test');
 
 module.exports = () => {
     describe('QCFlagTypesOverview Suite', QCFlagTypesOverviewSuite);
     describe('QCFlagTypeCreation Suite', QCFlagTypeCreationSuite);
+    describe('QCFlagTypeDetails Suite', QCFlagTypeDetailsSuite);
 };
