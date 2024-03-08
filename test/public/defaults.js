@@ -499,6 +499,8 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
     expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
+    const notOrderData = await this.getAllDataFields(page, columnId);
+
     // Sort in ASCENDING manner
     await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
 
@@ -512,6 +514,10 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     targetColumnValues = await this.getAllDataFields(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
+
+    // Revoke sorting
+    targetColumnValues = await this.getAllDataFields(page, columnId);
+    expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
 };
 
 /**
