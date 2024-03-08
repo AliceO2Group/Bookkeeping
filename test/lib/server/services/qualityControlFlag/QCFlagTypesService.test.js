@@ -120,7 +120,7 @@ module.exports = () => {
                     name: 'LimitedAcceptance',
                     method: 'Limited acceptance',
                     bad: true,
-                    color: '#FFFF00',
+                    color: '#cbce2c',
 
                     archived: false,
                     archivedAt: null,

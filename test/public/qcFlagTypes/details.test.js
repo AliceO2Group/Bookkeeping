@@ -20,6 +20,7 @@ const {
     pressElement,
     expectInnerText,
     waitForNavigation,
+    expectInputValue,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -47,8 +48,23 @@ module.exports = () => {
 
     it('should dispay correct data', async () => {
         await goToPage(page, 'qc-flag-type-details', { id: 11 });
-        await page.waitForSelector('button#submit[disabled]');
-
+        const detailsContainerId = 'qc-flag-type';
+        const detailsContent = [
+            ['ID', '11'],
+            ['Name', 'LimitedAcceptance'],
+            ['Method', 'Limited acceptance'],
+            ['Bad', 'Yes'],
+            ['Last modified', (d) => String(new Date(d)) !== 'Invalid Date'],
+            ['Last modified by', '-'],
+            ['Created at', (d) => String(new Date(d)) !== 'Invalid Date'],
+            ['Created by', 'Anonymous'],
+            ['Archived', 'No'],
+            ['Color', '#cbce2c'],
+        ];
+        for (const positionInDiv in detailsContent) {
+            const [propertyName, value] = detailsContent[positionInDiv];
+            await expectInnerText(`#${detailsContainerId} div:nth-of-type(${positionInDiv})`, );
+        }
     });
 
     it('should succesfully update QC Flag Type', async () => {
