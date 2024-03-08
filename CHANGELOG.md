@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.81.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.81.0)
+* Notable changes for users:
+  * Fixed fill statistics not being displayed in fill overview
+  * Environments are now linked to eos reports
+  * Added simulation passes counts to MC buttons on LHC Periods overview page
+  * Autofill environments when creating a log from either the environments or runs page
+  * Added an easy to reach no-anonymous toggle in logs overview
+  * Added Simulation Passes per Data Pass view
+  * Magnets input in SL EoS report now require date
+  * Spurious title has been removed from overview tables
+  * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
+* Notable change for developers:
+  * Extracted a state-full controlled date input component, to simplify its use and make its model optional
+  * Add endpoint serving DPL Detectors list
+  * Extracted a magnet filling input
+  * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
+
 ## [0.80.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.80.0)
 * Notable changes for users:
   * Fixed run quality being sent in patch even if it has not been updated
