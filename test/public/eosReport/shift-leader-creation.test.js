@@ -83,10 +83,10 @@ module.exports = () => {
         const { formatTimestampForDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
 
         const magnet1Timestamp = currentShift.start + 3600 * 4 * 1000;
-        const { date: magnet1Date, time: magnet1Time } = formatTimestampForDateTimeInput(magnet1Timestamp);
+        const { date: magnet1Date, time: magnet1Time } = formatTimestampForDateTimeInput(magnet1Timestamp, true);
 
         const magnet2Timestamp = currentShift.start + 3600 * 2 * 1000;
-        const { date: magnet2Date, time: magnet2Time } = formatTimestampForDateTimeInput(magnet2Timestamp);
+        const { date: magnet2Date, time: magnet2Time } = formatTimestampForDateTimeInput(magnet2Timestamp, true);
 
         const magnetEnd = formatShiftDate(currentShift.end, { time: true });
 
