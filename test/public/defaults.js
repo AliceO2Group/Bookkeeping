@@ -492,21 +492,26 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
  * @param {string} columnId subject column id
  * @return {Promise<void>} promise
  */
-module.exports.testTableAscendingSortingByColumn = async (page, columnId) => {
+module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over a column header
     await page.waitForSelector(`th#${columnId}`);
     await page.hover(`th#${columnId}`);
     const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
     expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
-    // Sort by name in an ascending manner
-    const columnHeader = await page.$(`th#${columnId}`);
-    await this.waitForTableDataReload(page, () => columnHeader.evaluate((button) => button.click()));
+    // Sort by name in an ASCENDING manner
+    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
 
-    // Expect the names to be in alphabetical order
-    const subjectColumnValues = await this.getAllDataFields(page, columnId);
-    expect(subjectColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
-    expect(subjectColumnValues).to.have.all.deep.ordered.members(subjectColumnValues.sort());
+    let targetColumnValues = await this.getAllDataFields(page, columnId);
+    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
+    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
+
+    // Sort by name in an DESCSENDING manner
+    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+
+    targetColumnValues = await this.getAllDataFields(page, columnId);
+    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
+    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
 };
 
 /**
@@ -523,7 +528,7 @@ module.exports.validateTableData = async (page, validators) => {
         expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validators[columnId](cellData)),
-            `Incorrect data in column ${columnId}: (${columnData})`,
+            `Invalid data in column ${columnId}: (${columnData})`,
         ).to.be.true;
     }
 };

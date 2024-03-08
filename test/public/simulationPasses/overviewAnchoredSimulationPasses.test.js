@@ -21,7 +21,7 @@ const {
     waitForTableDataReload,
     validateTableData,
     pressElement,
-    testTableAscendingSortingByColumn,
+    testTableSortingByColumn: testTableAscendingSortingByColumn,
     expectInnerText,
     expectInnerTextTo,
 } = require('../defaults');
