@@ -21,7 +21,7 @@ const {
     waitForTableDataReload,
     validateTableData,
     pressElement,
-    testTableSortingByColumn: testTableAscendingSortingByColumn,
+    testTableSortingByColumn,
     expectInnerText,
     expectInnerTextTo,
 } = require('../defaults');
@@ -92,22 +92,22 @@ module.exports = () => {
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableAscendingSortingByColumn(page, 'name');
+        testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableAscendingSortingByColumn(page, 'requestedEventsCount');
+        testTableSortingByColumn(page, 'requestedEventsCount');
     });
 
     it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableAscendingSortingByColumn(page, 'generatedEventsCount');
+        testTableSortingByColumn(page, 'generatedEventsCount');
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableAscendingSortingByColumn(page, 'outputSize');
+        testTableSortingByColumn(page, 'outputSize');
     });
 
     it('should successfuly apply simulation passes name filter', async () => {

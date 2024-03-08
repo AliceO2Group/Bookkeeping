@@ -310,6 +310,19 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
 };
 
 /**
+ * Expect an element to have a text valid against givne validator
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @return {Promise<void>} resolves once the text has been checked
+ */
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
+};
+
+/**
  * Evaluate and return the html content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
  * @returns {Promise<XPathResult>} the html content
