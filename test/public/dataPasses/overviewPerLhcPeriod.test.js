@@ -53,6 +53,7 @@ module.exports = () => {
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
+            anchoredSimulationPasses: (display) => display === 'Anchored',
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
