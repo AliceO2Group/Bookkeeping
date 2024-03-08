@@ -292,7 +292,21 @@ module.exports.getInnerText = getInnerText;
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
     await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(actualInnerText).to.equal(innerText);
+};
+
+/**
+ * Expect an element to have a text valid against givne validator
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @return {Promise<void>} resolves once the text has been checked
+ */
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
 /**
@@ -415,6 +429,26 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 };
 
 /**
+ * Evaluate and return the value content of a given element handler
+ * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @returns {Promise<XPathResult>} the html content
+ */
+const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+
+/**
+ * Expect an element to have a given value
+ *
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {string} value value to search for.
+ * @return {Promise<void>} resolves once the value has been checked
+ */
+module.exports.expectInputValue = async (page, selector, value) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    expect(await getInputValue(await page.$(selector))).to.equal(value);
+};
+
+/**
  * Check the differences between the provided expected parameters and the parameters actually received
  *
  * @TODO convert this to not-async
@@ -450,3 +484,57 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
     page.waitForSelector('table .atom-spinner'),
     triggerFunction(),
 ]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
+
+/**
+ * Tests whether sorting of main table by column with given id works properly
+ * It is required there are a least two rows in the table
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} columnId subject column id
+ * @return {Promise<void>} promise
+ */
+module.exports.testTableSortingByColumn = async (page, columnId) => {
+    // Expect a sorting preview to appear when hovering over column header
+    await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
+    await page.hover(`th#${columnId}`);
+    const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
+    expect(Boolean(sortingPreviewIndicator)).to.be.true;
+
+    const notOrderData = await this.getAllDataFields(page, columnId);
+
+    // Sort in ASCENDING manner
+    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+
+    let targetColumnValues = await this.getAllDataFields(page, columnId);
+    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
+    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
+
+    // Sort in DESCSENDING manner
+    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+
+    targetColumnValues = await this.getAllDataFields(page, columnId);
+    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
+    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
+
+    // Revoke sorting
+    targetColumnValues = await this.getAllDataFields(page, columnId);
+    expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
+};
+
+/**
+ * Validate content of table body
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {Map<string, function<string, boolean>>} validators mapping of column names to cell data validator,
+ * each validator must return value `true` if content is ok, false otherwise
+ * @return {Promise<void>} promise
+ */
+module.exports.validateTableData = async (page, validators) => {
+    await page.waitForSelector('table tbody');
+    for (const [columnId, validator] of validators) {
+        const columnData = await this.getAllDataFields(page, columnId);
+        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
+        expect(
+            columnData.every((cellData) => validator(cellData)),
+            `Invalid data in column ${columnId}: (${columnData})`,
+        ).to.be.true;
+    }
+};
