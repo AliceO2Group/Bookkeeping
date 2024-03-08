@@ -13,11 +13,13 @@ All notable changes to this project will be documented in this file. See [standa
   * Magnets input in SL EoS report now require date
   * Spurious title has been removed from overview tables
   * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
+  * Fixed statistics input displaying error with valid values
 * Notable change for developers:
   * Extracted a state-full controlled date input component, to simplify its use and make its model optional
   * Add endpoint serving DPL Detectors list
   * Extracted a magnet filling input
   * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
+  * Fixed setting value of date time input with minutes granularity
 
 ## [0.80.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.80.0)
 * Notable changes for users:
