@@ -23,6 +23,7 @@ const {
     pressElement,
     testTableAscendingSortingByColumn,
     expectInnerText,
+    expectInnerTextTo,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -80,13 +81,13 @@ module.exports = () => {
     it('can set how many simulation passes is available per page', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
 
-        await expectInnerText(page, '.dropup button', (text) => text.trim().endsWith('9'));
+        await expectInnerTextTo(page, '.dropup button', (text) => text.trim().endsWith('9'));
         await pressElement(page, '.dropup button');
         await pressElement(page, '.dropup .menu-item');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await fillInput(page, '.dropup input[type=number]', '1111');
-        await page.waitForSelector('.dropup input:invalid');
+        await page.waitForSelector('.dropup input:invalid', { timeout: 250 });
     });
 
     it('can sort by name column in ascending and descending manners', async () => {

@@ -303,7 +303,7 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
  * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
-module.exports.expectInnerText = async (page, selector, validator) => {
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
     await page.waitForSelector(selector, { timeout: 200 });
     const actualInnerText = await getInnerText(await page.$(selector));
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
