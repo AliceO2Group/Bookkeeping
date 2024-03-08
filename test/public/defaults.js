@@ -292,8 +292,7 @@ module.exports.getInnerText = getInnerText;
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
     await page.waitForSelector(selector, { timeout: 200 });
-    const actualInnerText = await getInnerText(await page.$(selector));
-    expect(actualInnerText).to.equal(innerText);
+    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
 };
 
 /**
