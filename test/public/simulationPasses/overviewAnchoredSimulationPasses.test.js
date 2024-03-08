@@ -52,7 +52,7 @@ module.exports = () => {
         await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22a_apass1');
     });
 
-    it('shows SM correct datatypes in respective columns', async () => {
+    it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
 
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);

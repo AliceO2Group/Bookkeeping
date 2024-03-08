@@ -494,7 +494,7 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
-    await page.waitForSelector(`th#${columnId}`);
+    await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
     await page.hover(`th#${columnId}`);
     const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
     expect(Boolean(sortingPreviewIndicator)).to.be.true;
