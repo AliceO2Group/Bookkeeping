@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, expectInputValue } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
@@ -105,6 +105,70 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
         expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
+    });
+
+    it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
+        await goToPage(page, 'log-reply&parentLogId=119');
+
+        await expectInputValue(page, 'input#run-numbers', '2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22');
+        await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
+        await expectInputValue(page, 'input#lhc-fills', '1, 4, 6');
+    });
+
+    it('Should verify that form autofills all inputs with provided full parameters.', async () => {
+        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+    });
+
+    it('Should verify that form autofills runNumbers only when leaving other parameters empty.', async () => {
+        await goToPage(page, 'log-create&runNumbers=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '');
+    });
+
+    it('Should verify that form autofills environmentIds only when leaving other parameters empty.', async () => {
+        await goToPage(page, 'log-create&environmentIds=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '');
+    });
+
+    it('Should verify that form autofills the lhcFillNumbers only when leaving other parameters empty.', async () => {
+        await goToPage(page, 'log-create&lhcFillNumbers=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+    });
+
+    it('Should verify that form autofills the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
+        await goToPage(page, 'log-create&runNumbers=1,2,3&environmentIds=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '');
+    });
+
+    it('Should verify that form autofills the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
+        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+    });
+
+    it('Should verify that form autofills the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
+        await goToPage(page, 'log-create&environmentIds=1,2,3&lhcFillNumbers=1,2,3');
+
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
     it('can disable submit with invalid data', async () => {
@@ -420,7 +484,7 @@ module.exports = () => {
         const shortDescription = 'Short description of the issue';
         await fillInput(page, '#shortDescription', shortDescription);
 
-        const detectorOrSubsystem = 'FT0';
+        const detectorOrSubsystem = 'DCS';
         await page.select('#detectorOrSubsystem', detectorOrSubsystem);
 
         const severity = 'Severe';
@@ -454,7 +518,8 @@ module.exports = () => {
 
         const lastLog = await getLastLog();
         expect(lastLog.title).to.equal(`${shortDescription} - Call on-call for ${detectorOrSubsystem}`);
-        expect(lastLog.text).to.equal(`\
+        // Sometimes, browser adds \r to the request to comply with text form data encoding
+        expect(lastLog.text.replaceAll('\r', '')).to.equal(`\
 ## Importance
 ${severity} for ${issueScope}
 
@@ -473,5 +538,8 @@ ${reason}
 ## Actions already taken
 ${actions}\
 `);
+        const tags = lastLog.tags.map(({ text }) => text);
+        expect(tags).to.lengthOf(3);
+        expect(tags).to.have.members(['oncall', `${shifterPosition} Shifter`, detectorOrSubsystem]);
     });
 };

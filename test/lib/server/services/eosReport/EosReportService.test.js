@@ -56,6 +56,7 @@ const { getShiftFromTimestamp, SHIFT_DURATION } = require('../../../../../lib/se
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {
         const expectedRunNumbers = [];
+        const expectedEnvironmentIds = [];
 
         // Create the expected logs and runs
         for (const environment of customizedECSEosReport.typeSpecific.environments) {
@@ -66,6 +67,9 @@ module.exports = () => {
                 updatedAt: environment.updatedAt,
                 environmentId: environment.id,
             });
+
+            expectedEnvironmentIds.push(environment.id);
+
             for (const run of environment.runs) {
                 const runId = await createRun(run);
                 expectedRunNumbers.push(run.runNumber);
@@ -105,6 +109,7 @@ module.exports = () => {
         expect(log.title).to.equal(eosEcsReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.ECS));
         expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.environments.map(({ id }) => id)).to.eql(expectedEnvironmentIds);
         expect(log.author.id).to.equal(1);
     });
 
@@ -121,6 +126,7 @@ module.exports = () => {
     it('should successfully create a log containing QC/PDP EoS report', async () => {
         await resetDatabaseContent();
         const expectedRunNumbers = [];
+        const expectedEnvironmentIds = [];
 
         // Create the expected logs and runs
         for (const runs of Object.values(customizedQcPdpEosReport.typeSpecific.runs)) {
@@ -134,6 +140,10 @@ module.exports = () => {
                     );
                 }
                 expectedRunNumbers.push(run.runNumber);
+
+                if (Object.hasOwn(run, 'envId')) {
+                    expectedEnvironmentIds.push(run.envId);
+                }
 
                 // Create the expected EOR
                 const eorReasons = [];
@@ -170,6 +180,7 @@ module.exports = () => {
         expect(log.title).to.equal(eosQcPdpReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.QC_PDP));
         expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.environments.map(({ id }) => id).sort).to.eql(expectedEnvironmentIds.sort);
         expect(log.author.id).to.equal(1);
     });
 
@@ -221,6 +232,7 @@ module.exports = () => {
     it('should successfully create a log containing SL EoS report', async () => {
         await resetDatabaseContent();
         const expectedRunNumbers = [];
+        const expectedEnvironmentIds = [];
 
         // Create the expected logs and runs
         for (const runs of Object.values(customizedShiftLeaderEosReport.typeSpecific.runs)) {
@@ -234,6 +246,9 @@ module.exports = () => {
                     );
                 }
                 expectedRunNumbers.push(run.runNumber);
+                if (Object.hasOwn(run, 'envId')) {
+                    expectedEnvironmentIds.push(run.envId);
+                }
             }
         }
 
@@ -261,6 +276,7 @@ module.exports = () => {
         expect(log.title).to.equal(eosShiftLeaderReportTitle);
         expect(log.tags.map(({ text }) => text)).to.have.members(getEosReportTagsByType(ShiftTypes.SL));
         expect(log.runs.map(({ runNumber }) => runNumber)).to.eql(expectedRunNumbers);
+        expect(log.environments.map(({ id }) => id).sort).to.eql(expectedEnvironmentIds.sort);
         expect(log.author.id).to.equal(1);
     });
 
