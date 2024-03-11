@@ -206,7 +206,7 @@ module.exports = () => {
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
-    it('should successfully export all runs', async () => {
+    it('should successfully export all runs per lhc Period', async () => {
         await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
         const downloadPath = path.resolve('./download');
