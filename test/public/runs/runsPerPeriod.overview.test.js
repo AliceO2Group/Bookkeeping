@@ -243,9 +243,9 @@ module.exports = () => {
         const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
         expect(runs).to.be.lengthOf(3);
+        expect(runs.every(({ runNumber }) => runNumber)).to.have.all.members([49, 54, 56]);
         expect(runs.every(({ runQuality }) => runQuality === RunQualities.GOOD)).to.be.true;
         expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
-        expect(runs.every(({ runNumber }) => runNumber)).to.be.true;
         expect(runs.every(({ lhcPeriod }) => lhcPeriod === 'LHC22a')).to.be.true;
         expect(runs.every(({ runNumber: _, definition: __, runQuality: ___, lhcPeriod: ____, ...otherProps }) =>
             Object.entries(otherProps).length === 0)).to.be.true;
