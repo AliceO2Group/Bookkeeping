@@ -22,6 +22,8 @@ const {
     getFirstRow,
     goToPage,
     reloadPage,
+    waitForTableDataReload,
+    fillInput,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
@@ -210,6 +212,11 @@ module.exports = () => {
         await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
         const downloadPath = path.resolve('./download');
+
+        await waitForTableDataReload(page, () => page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+        }));
 
         // Check accessibility on frontend
         const session = await page.target().createCDPSession();
