@@ -14,7 +14,6 @@ All notable changes to this project will be documented in this file. See [standa
   * Spurious title has been removed from overview tables
   * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
   * Fixed statistics input displaying error with valid values
-  * Fixed bug of runs export of Run Per LHC Period page
 * Notable change for developers:
   * Extracted a state-full controlled date input component, to simplify its use and make its model optional
   * Add endpoint serving DPL Detectors list
