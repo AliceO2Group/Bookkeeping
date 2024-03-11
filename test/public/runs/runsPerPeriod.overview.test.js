@@ -223,8 +223,8 @@ module.exports = () => {
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('.form-control', { timeout: 200 });
-        await page.select('.form-control', 'runQuality', 'runNumber', 'definition');
+        await page.waitForSelector('select.form-control', { timeout: 200 });
+        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition');
         await expectInnerText(page, '#send:enabled', 'Export');
         await pressElement(page, '#send:enabled');
 
