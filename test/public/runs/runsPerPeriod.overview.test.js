@@ -23,7 +23,6 @@ const {
     goToPage,
     reloadPage,
     waitForTableDataReload,
-    fillInput,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
