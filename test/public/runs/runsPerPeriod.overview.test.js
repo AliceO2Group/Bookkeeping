@@ -224,7 +224,7 @@ module.exports = () => {
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('select.form-control', { timeout: 200 });
-        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition');
+        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
         await pressElement(page, '#send:enabled');
 
@@ -239,6 +239,7 @@ module.exports = () => {
         expect(runs.every(({ runQuality }) => runQuality === RunQualities.GOOD)).to.be.true;
         expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         expect(runs.every(({ runNumber }) => runNumber)).to.be.true;
+        expect(runs.every(({ lhcPeriod }) => lhcPeriod === 'LHC22a')).to.be.true;
         expect(runs.every(({ runNumber: _, definition: __, runQuality: ___, ...otherProps }) =>
             Object.entries(otherProps).length === 0)).to.be.true;
 
