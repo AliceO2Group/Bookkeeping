@@ -22,7 +22,6 @@ const {
     getFirstRow,
     goToPage,
     reloadPage,
-    waitForTableDataReload,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
@@ -212,10 +211,10 @@ module.exports = () => {
 
         const downloadPath = path.resolve('./download');
 
-        await waitForTableDataReload(page, () => page.evaluate(() => {
+        await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        }));
+        });
 
         // Check accessibility on frontend
         const session = await page.target().createCDPSession();
@@ -242,13 +241,26 @@ module.exports = () => {
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
-        expect(runs).to.be.lengthOf(3);
-        expect(runs.every(({ runNumber }) => runNumber)).to.have.all.members([49, 54, 56]);
-        expect(runs.every(({ runQuality }) => runQuality === RunQualities.GOOD)).to.be.true;
-        expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
-        expect(runs.every(({ lhcPeriod }) => lhcPeriod === 'LHC22a')).to.be.true;
-        expect(runs.every(({ runNumber: _, definition: __, runQuality: ___, lhcPeriod: ____, ...otherProps }) =>
-            Object.entries(otherProps).length === 0)).to.be.true;
+        expect(runs).to.have.all.deep.members([
+            {
+                runNumber: 49,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.Physics,
+                lhcPeriod: 'LHC22a',
+            },
+            {
+                runNumber: 54,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.Physics,
+                lhcPeriod: 'LHC22a',
+            },
+            {
+                runNumber: 56,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.Physics,
+                lhcPeriod: 'LHC22a',
+            },
+        ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
