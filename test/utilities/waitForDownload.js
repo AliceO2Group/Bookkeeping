@@ -15,7 +15,7 @@
  * Create promise which is resolved when last initiated download is completed and rejected when canceled
  * @param {CDPSession} session puppetear CDP session
  * @param {object} options options altering behaviour
- * @param {number} [options.timeout] timeout to reject if not downloaded
+ * @param {number} [options.timeout = 5000] timeout (ms) to reject if not downloaded
  * @return {Promise} promise
  * !!! Downloading requires to set 'Browser.setDownloadBehavior' behaviour on the given CDP session
  */
