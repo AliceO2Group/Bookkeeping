@@ -20,6 +20,7 @@ const {
     waitForTableDataReload,
     fillInput,
     getAllDataFields,
+    pressElement,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -109,9 +110,7 @@ module.exports = () => {
 
         await filterToggleButton.evaluate((button) => button.click());
 
-        await waitForTableDataReload(page, () =>
-            page.$('.bad-filter input[type=checkbox]')
-                .then((element) => element.evaluate((checkbox) => checkbox.click())));
+        await waitForTableDataReload(page, () => pressElement('.bad-filter input[type=checkbox]'));
 
         const allQCFlagTypeNames = await getAllDataFields(page, 'bad');
         expect(allQCFlagTypeNames.every((bad) => bad === 'Yes'), allQCFlagTypeNames).to.be.true;
