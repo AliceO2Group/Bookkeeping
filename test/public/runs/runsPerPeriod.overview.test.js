@@ -211,6 +211,11 @@ module.exports = () => {
 
         const downloadPath = path.resolve('./download');
 
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+        });
+
         // Check accessibility on frontend
         const session = await page.target().createCDPSession();
         await session.send('Browser.setDownloadBehavior', {
@@ -223,24 +228,39 @@ module.exports = () => {
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('.form-control', { timeout: 200 });
-        await page.select('.form-control', 'runQuality', 'runNumber', 'definition');
+        await page.waitForSelector('select.form-control', { timeout: 200 });
+        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
-        await pressElement(page, '#send:enabled');
-
-        await waitForDownload(session);
+        await Promise.all([
+            waitForDownload(session),
+            pressElement(page, '#send:enabled'),
+        ]);
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
-        expect(runs).to.be.lengthOf(3);
-        expect(runs.every(({ runQuality }) => runQuality === RunQualities.GOOD)).to.be.true;
-        expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
-        expect(runs.every(({ runNumber }) => runNumber)).to.be.true;
-        expect(runs.every(({ runNumber: _, definition: __, runQuality: ___, ...otherProps }) =>
-            Object.entries(otherProps).length === 0)).to.be.true;
+        expect(runs).to.have.all.deep.members([
+            {
+                runNumber: 49,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.Physics,
+                lhcPeriod: 'LHC22a',
+            },
+            {
+                runNumber: 54,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.Physics,
+                lhcPeriod: 'LHC22a',
+            },
+            {
+                runNumber: 56,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.Physics,
+                lhcPeriod: 'LHC22a',
+            },
+        ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
