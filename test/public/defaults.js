@@ -310,7 +310,7 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
 };
 
 /**
- * Expect an element to have a text valid against givne validator
+ * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
