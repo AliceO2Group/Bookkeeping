@@ -19,10 +19,10 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/qualityControlFlags/types/:id', () => {
+    describe('GET /api/qcFlags/types/:id', () => {
         it('should successfuly fetch one QC flag type', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types/13')
+                .get('/api/qcFlags/types/13')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -54,7 +54,7 @@ module.exports = () => {
 
         it('should send error that QC flag type with given id cannot be found', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types/99999')
+                .get('/api/qcFlags/types/99999')
                 .expect(404)
                 .end((err, res) => {
                     if (err) {
