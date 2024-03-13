@@ -19,6 +19,7 @@ const {
     getAllDataFields,
     fillInput,
     waitForTimeout,
+    validateTableData,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -49,8 +50,9 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+
+        const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
@@ -60,28 +62,26 @@ module.exports = () => {
             outputSize: (outputSize) => !isNaN(outputSize.replace(/,/g, '')) || outputSize === '-',
         };
 
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-
-        // Use the third row because it is where statistics are present
-        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (index in headerIndices) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        const names = await getAllDataFields(page, 'name');
+        const runs = await getAllDataFields(page, 'associatedRuns');
+        const anchoreds = await getAllDataFields(page, 'anchoredSimulationPasses');
+        expect(names.map((name, index) => ({
+            name,
+            runsCount: Number(runs[index].split('\n')[0]) || 0,
+            simulationPassesCount: Number(anchoreds[index].split('\n')[0]) || 0,
+        }))).to.have.all.deep.members([
+            {
+                name: 'LHC22b_apass2',
+                runsCount: 3,
+                simulationPassesCount: 1,
+            },
+            {
+                name: 'LHC22b_apass1',
+                runsCount: 3,
+                simulationPassesCount: 1,
+            },
+        ]);
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
