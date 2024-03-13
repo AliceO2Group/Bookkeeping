@@ -12,9 +12,9 @@
  */
 
 const { expect } = require('chai');
-const { qcFlagTypesService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypesService');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
+const { qcFlagTypesService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
 
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
