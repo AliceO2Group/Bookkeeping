@@ -20,6 +20,8 @@ const {
     fillInput,
     waitForTimeout,
     validateTableData,
+    waitForNavigation,
+    pressElement,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -82,6 +84,22 @@ module.exports = () => {
                 simulationPassesCount: 1,
             },
         ]);
+    });
+
+    it('can navigate to runs per data pass page', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2)'));
+        const url = new URL(page.url());
+        expect(url.searchParams.get('page')).to.be.equal('runs-per-data-pass');
+        expect(url.searchParams.get('dataPassId')).to.be.a('Number');
+    });
+
+    it('can navigate to acnhored simulation passes per data pass page', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3)'));
+        const url = new URL(page.url());
+        expect(url.searchParams.get('page')).to.be.equal('anchored-simulation-passes-overview');
+        expect(url.searchParams.get('dataPassId')).to.be.a('Number');
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
