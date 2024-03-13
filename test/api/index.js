@@ -31,7 +31,7 @@ const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
 const DataPassesSuite = require('./dataPasses.test.js');
 const SimulationPassesSuite = require('./simulationPasses.test.js');
-const QCFlagTypesSuite = require('./qcFlagTypes.test.js');
+const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
 const DplDetectorsSuite = require('./dplDetectors.test.js');
 
 module.exports = () => {
@@ -57,5 +57,5 @@ module.exports = () => {
     describe('DataPassesSuite API', DataPassesSuite);
     describe('SimulationPassesSuite API', SimulationPassesSuite);
     describe('DplDetectors API', DplDetectorsSuite);
-    describe('QCFlagTypes API', QCFlagTypesSuite);
+    describe('QcFlagTypes API', QcFlagTypesSuite);
 };
