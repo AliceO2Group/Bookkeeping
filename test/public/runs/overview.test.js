@@ -23,6 +23,7 @@ const {
     goToPage,
     checkColumnBalloon,
     waitForNetworkIdleAndRedraw,
+    waitForTableDataReload,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
@@ -1009,54 +1010,39 @@ module.exports = () => {
         expect(inputText).to.equal('');
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+    const EXPORT_MODAL_TRIGGER_ID = '#export-trigger';
 
     it('should successfully display runs export button', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-        const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
+        await page.waitForSelector(EXPORT_MODAL_TRIGGER_ID);
+        const runsExportButton = await page.$(EXPORT_MODAL_TRIGGER_ID);
         expect(runsExportButton).to.be.not.null;
     });
 
     it('should successfully display runs export modal on click on export button', async () => {
-        let exportModal = await page.$('#export-runs-modal');
-        expect(exportModal).to.be.null;
-
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await waitForTimeout(100);
-        exportModal = await page.$('#export-runs-modal');
-
-        expect(exportModal).to.not.be.null;
+        await goToPage(page, 'run-overview');
+        await page.waitForSelector('#export-modal', { hidden: true, timeout: 250 });
+        await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
+        await page.waitForSelector('#export-modal', { timeout: 250 });
     });
 
     it('should successfully display information when export will be truncated', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(200);
-
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await waitForTimeout(100);
-
-        const truncatedExportWarning = await page.$('#export-runs-modal #truncated-export-warning');
-        expect(truncatedExportWarning).to.not.be.null;
-        expect(await truncatedExportWarning.evaluate((warning) => warning.innerText)).to
-            .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
+        await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
+        await expectInnerText(
+            page,
+            '#export-modal #truncated-export-warning',
+            'The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)',
+        );
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(200);
-
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
-
         // Type a fake run number to have no runs
-        await page.focus(runNumberInputSelector);
-        await page.keyboard.type('99999999999');
-        await waitForTimeout(300);
-
+        await waitForTableDataReload(page, () => fillInput(page, runNumberInputSelector, '99999999999'));
         await pressElement(page, '#openFilterToggle');
-
-        expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
+        await page.waitForSelector(`${EXPORT_MODAL_TRIGGER_ID}[disabled]`, { timeout: 250 });
     });
 
     it('should successfully export filtered runs', async () => {
@@ -1073,23 +1059,19 @@ module.exports = () => {
         });
 
         let downloadFilesNames;
-        const targetFileName = 'runs.json';
+        let targetFileName = 'runs.json';
         let runs;
-        let exportModal;
 
         // First export
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
-        await page.waitForSelector('#send:disabled');
-        await page.waitForSelector('.form-control');
+        await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
+        await page.waitForSelector('#download-export:disabled', { timeout: 250 });
+        await expectInnerText(page, '#download-export', 'Export');
+        await page.waitForSelector('.form-control', { timeout: 250 });
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForSelector('#send:enabled');
-        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
-        expect(exportButtonText).to.be.eql('Export');
+        await page.waitForSelector('#download-export:enabled');
+        await expectInnerText(page, '#download-export', 'Export');
 
-        await page.$eval('#send', (button) => button.click());
-
-        await waitForDownload(session);
+        await waitForDownload(session, () => pressElement(page, '#download-export'));
 
         // Check download
         downloadFilesNames = fs.readdirSync(downloadPath);
@@ -1104,27 +1086,20 @@ module.exports = () => {
         // Second export
 
         // Apply filtering
-        const filterInputSelectorPrefix = '#runQualityCheckbox';
-        const badFilterSelector = `${filterInputSelectorPrefix}bad`;
-
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector(badFilterSelector);
-        await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForSelector('.atom-spinner');
-        await page.waitForSelector('tbody tr:nth-child(2)');
-        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
+        await waitForTableDataReload(page, async () => {
+            await pressElement(page, '#openFilterToggle');
+            await pressElement('#runQualityCheckboxbad');
+        });
 
         ///// Download
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
-        expect(exportModal).to.not.be.null;
-
-        await page.waitForSelector('.form-control');
+        await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
+        await page.waitForSelector('#export-modal', { timeout: 250 });
+        await page.waitForSelector('.form-control', { timeout: 250 });
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForSelector('#send:enabled');
-        await page.$eval('#send', (button) => button.click());
+        await fillInput(page, '#export-name', 'filtered-runs');
+        targetFileName = 'filtered-runs.json';
 
-        await waitForDownload(session);
+        await waitForDownload(session, () => pressElement(page, '#download-export'));
 
         // Check download
         downloadFilesNames = fs.readdirSync(downloadPath);

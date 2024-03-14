@@ -209,7 +209,8 @@ module.exports = () => {
 
     it('should successfully export runs', async () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+
+        const EXPORT_MODAL_TRIGGER_ID = '#export-trigger';
 
         const downloadPath = path.resolve('./download');
 
@@ -224,18 +225,15 @@ module.exports = () => {
         const targetFileName = 'runs.json';
 
         // First export
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
-        await page.waitForSelector('#send:disabled');
-        await page.waitForSelector('.form-control');
+        await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
+        await page.waitForSelector('#download-export:disabled', { timeout: 250 });
+        await expectInnerText(page, '#download-export', 'Export');
+        await page.waitForSelector('.form-control', { timeout: 250 });
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForSelector('#send:enabled');
-        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
-        expect(exportButtonText).to.be.eql('Export');
+        await page.waitForSelector('#download-export:enabled');
+        await expectInnerText(page, '#download-export', 'Export');
 
-        await page.$eval('#send', (button) => button.click());
-
-        await waitForDownload(session);
+        await waitForDownload(session, () => pressElement(page, '#download-export'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);

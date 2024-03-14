@@ -204,17 +204,12 @@ module.exports = () => {
         expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
-
     it('should successfully export all runs per lhc Period', async () => {
         await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
-        const downloadPath = path.resolve('./download');
+        const EXPORT_MODAL_TRIGGER_ID = '#export-trigger';
 
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        });
+        const downloadPath = path.resolve('./download');
 
         // Check accessibility on frontend
         const session = await page.target().createCDPSession();
@@ -227,14 +222,15 @@ module.exports = () => {
         const targetFileName = 'runs.json';
 
         // First export
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('select.form-control', { timeout: 200 });
-        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
-        await expectInnerText(page, '#send:enabled', 'Export');
-        await Promise.all([
-            waitForDownload(session),
-            pressElement(page, '#send:enabled'),
-        ]);
+        await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
+        await page.waitForSelector('#download-export:disabled', { timeout: 250 });
+        await expectInnerText(page, '#download-export', 'Export');
+        await page.waitForSelector('.form-control', { timeout: 250 });
+        await page.select('.form-control', 'runQuality', 'runNumber');
+        await page.waitForSelector('#download-export:enabled');
+        await expectInnerText(page, '#download-export', 'Export');
+
+        await waitForDownload(session, () => pressElement(page, '#download-export'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
