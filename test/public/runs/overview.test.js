@@ -1032,7 +1032,7 @@ module.exports = () => {
         await expectInnerText(
             page,
             '#export-modal #truncated-export-warning',
-            'The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)',
+            'The items export is limited to 100 entries, only the last items will be exported',
         );
     });
 
