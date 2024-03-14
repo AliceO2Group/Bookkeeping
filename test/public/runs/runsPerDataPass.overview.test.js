@@ -207,7 +207,7 @@ module.exports = () => {
         expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
     });
 
-    it('should successfully export runs', async () => {
+    it('should successfully export all runs pere data pass', async () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
 
         const EXPORT_MODAL_TRIGGER_ID = '#export-trigger';
