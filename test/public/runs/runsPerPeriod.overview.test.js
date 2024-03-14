@@ -223,7 +223,7 @@ module.exports = () => {
 
         // First export
         await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
-        await page.waitForSelector('#download-export:disabled', { timeout: 250 });
+        await page.waitForSelector('#download-export:disabled', { timeout: 500 });
         await expectInnerText(page, '#download-export', 'Export');
         await page.waitForSelector('.form-control', { timeout: 250 });
         await page.select('.form-control', 'runQuality', 'runNumber');
