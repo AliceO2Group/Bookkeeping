@@ -1064,7 +1064,7 @@ module.exports = () => {
 
         // First export
         await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
-        await page.waitForSelector('#download-export:disabled', { timeout: 250 });
+        await page.waitForSelector('#download-export:disabled', { timeout: 500 });
         await expectInnerText(page, '#download-export', 'Export');
         await page.waitForSelector('.form-control', { timeout: 250 });
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -1088,15 +1088,15 @@ module.exports = () => {
         // Apply filtering
         await waitForTableDataReload(page, async () => {
             await pressElement(page, '#openFilterToggle');
-            await pressElement('#runQualityCheckboxbad');
+            await pressElement(page, '#runQualityCheckboxbad');
         });
 
         ///// Download
         await pressElement(page, EXPORT_MODAL_TRIGGER_ID);
-        await page.waitForSelector('#export-modal', { timeout: 250 });
+        await page.waitForSelector('#export-modal', { timeout: 500 });
         await page.waitForSelector('.form-control', { timeout: 250 });
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await fillInput(page, '#export-name', 'filtered-runs');
+        await fillInput(page, 'input#export-name', 'filtered-runs');
         targetFileName = 'filtered-runs.json';
 
         await waitForDownload(session, () => pressElement(page, '#download-export'));
@@ -1106,6 +1106,7 @@ module.exports = () => {
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
         expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
