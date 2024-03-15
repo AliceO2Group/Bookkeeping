@@ -19,6 +19,10 @@ const {
     getAllDataFields,
     fillInput,
     pressElement,
+<<<<<<< Updated upstream
+=======
+    waitForTableDataReload,
+>>>>>>> Stashed changes
 } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
 
@@ -38,6 +42,8 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
+    const ALLOWED_BEAM_TYPE_DISPLAYS = new Set(['-', 'XeXe', 'PbPb', 'pp']);
+
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'lhc-period-overview');
 
@@ -50,7 +56,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        const allowedBeamTypesDisplayes = new Set(['-', 'XeXe', 'PbPb', 'pp']);
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
@@ -58,7 +63,7 @@ module.exports = () => {
             associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
             associatedSimulationPasses: (display) => /(No MC)|(\d+\nMC)/.test(display),
             year: (year) => !isNaN(year),
-            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
+            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => ALLOWED_BEAM_TYPE_DISPLAYS.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
                 .split(',')
@@ -226,16 +231,15 @@ module.exports = () => {
 
     it('should successfuly apply lhc period beam type filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
 
-        await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(4) input[type=text]', 'XeXe');
-
-        await waitForTimeout(100);
-
-        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
+        await waitForTableDataReload(page, () => fillInput(page, '.beamTypes-filter input[type=text]', 'XeXe'));
+        let allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
         expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
+
+        await waitForTableDataReload(page, () => pressElement(page, '#reset-filters'));
+        allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
+        expect([...new Set(allLhcPeriodBeamTypes)].flatMap((beamType) => beamType.split(','))).to.has
+            .all.members([...ALLOWED_BEAM_TYPE_DISPLAYS]);
     });
 };
