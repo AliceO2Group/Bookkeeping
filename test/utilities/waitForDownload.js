@@ -28,7 +28,7 @@ async function waitForDownload(session, { timeout = 5000 } = {}) {
                 reject('download canceled');
             }
         });
-        setTimeout(() => reject('Download timeout after ${timeout}'), timeout);
+        setTimeout(() => reject(`Download timeout after ${timeout} ms`), timeout);
     });
 }
 
