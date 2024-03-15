@@ -18,6 +18,7 @@ const {
     goToPage,
     getAllDataFields,
     fillInput,
+    pressElement,
 } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
 
@@ -187,7 +188,7 @@ module.exports = () => {
 
     it('should successfuly apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
+        await pressElement()
         const filterToggleButton = await page.$('#openFilterToggle');
         expect(filterToggleButton).to.not.be.null;
 
