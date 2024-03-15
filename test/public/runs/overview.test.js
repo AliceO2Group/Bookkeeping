@@ -532,10 +532,7 @@ module.exports = () => {
 
     it('should successfully filter on duration', async () => {
         await goToPage(page, 'run-overview');
-        waitForTimeout(100);
-
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
 
         const runDurationOperatorSelector = '#duration-operator';
         const runDurationOperator = await page.$(runDurationOperatorSelector) || null;
@@ -548,10 +545,7 @@ module.exports = () => {
 
         await page.focus(runDurationLimitSelector);
         await page.keyboard.type('1500');
-        await waitForTimeout(300);
-
         await page.select(runDurationOperatorSelector, '=');
-        await waitForTimeout(300);
 
         let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
