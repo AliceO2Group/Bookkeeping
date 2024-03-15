@@ -14,12 +14,12 @@
 const { expect } = require('chai');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
-const { qcFlagTypesService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
+const { qcFlagTypeService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
 
 module.exports = () => {
     describe('Fetching quality control flags types', () => {
         it ('should successfuly fetch QC Flag Type by id', async () => {
-            const qcFlagType = await qcFlagTypesService.getById(2);
+            const qcFlagType = await qcFlagTypeService.getById(2);
             delete qcFlagType.createdAt;
             delete qcFlagType.updatedAt;
             expect(qcFlagType).to.be.eql({
@@ -40,13 +40,13 @@ module.exports = () => {
         });
 
         it ('should return null when there is no QC Flag type with given id ', async () => {
-            const qcFlagType = await qcFlagTypesService.getById(9999);
+            const qcFlagType = await qcFlagTypeService.getById(9999);
             expect(qcFlagType).to.be.eql(null);
         });
 
         it ('should reject when no QC Flag type with given id was found', async () => {
             await assert.rejects(
-                () => qcFlagTypesService.getOneOrFail(99999),
+                () => qcFlagTypeService.getOneOrFail(99999),
                 new NotFoundError('Quality Control Flag Type with this id (99999) could not be found'),
             );
         });
