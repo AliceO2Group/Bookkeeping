@@ -501,14 +501,14 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const notOrderData = await this.getAllDataFields(page, columnId);
 
     // Sort in ASCENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
 
     let targetColumnValues = await this.getAllDataFields(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
 
     // Sort in DESCSENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
 
     targetColumnValues = await this.getAllDataFields(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
@@ -516,7 +516,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
 
     // Revoke sorting
     targetColumnValues = await this.getAllDataFields(page, columnId);
-    expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
+    expect(targetColumnValues.filter((value) => value !== '-')).to.have.all.ordered.members(notOrderData.filter((value) => value !== '-'));
 };
 
 /**

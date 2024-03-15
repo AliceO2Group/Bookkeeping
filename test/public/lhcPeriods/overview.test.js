@@ -172,7 +172,7 @@ module.exports = () => {
 
         await waitForTableDataReload(page, () => fillInput(page, '.year-filter input[type=text]', '2023'));
         allLhcPeriodYears = await getAllDataFields(page, 'year');
-        expect(allLhcPeriodYears).to.be.lengthOf(0);
+        expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2023']);
 
         await waitForTableDataReload(page, () => pressElement(page, '#reset-filters'));
         allLhcPeriodYears = await getAllDataFields(page, 'year');
