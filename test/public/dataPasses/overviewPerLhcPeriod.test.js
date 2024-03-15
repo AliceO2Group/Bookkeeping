@@ -19,6 +19,7 @@ const {
     getAllDataFields,
     fillInput,
     waitForTimeout,
+    validateTableData,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -49,39 +50,23 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+
+        const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
+        const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             anchoredSimulationPasses: (display) => display === 'Anchored',
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outputSize) => !isNaN(outputSize.replace(/,/g, '')) || outputSize === '-',
+            outputSize: (outpuSize) => {
+                const [number, unit] = outpuSize.split(' ');
+                return !isNaN(number) && dataSizeUnits.has(unit.trim());
+            },
         };
 
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-
-        // Use the third row because it is where statistics are present
-        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (index in headerIndices) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
