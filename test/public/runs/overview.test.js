@@ -23,6 +23,9 @@ const {
     goToPage,
     checkColumnBalloon,
     waitForNetworkIdleAndRedraw,
+    expectSelectToBe,
+    getAllDataFields,
+    waitForTableDataReload,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
@@ -534,46 +537,38 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await pressElement(page, '#openFilterToggle');
 
-        const runDurationOperatorSelector = '#duration-operator';
-        const runDurationOperator = await page.$(runDurationOperatorSelector) || null;
-        expect(runDurationOperator).to.not.be.null;
-        expect(await runDurationOperator.evaluate((element) => element.value)).to.equal('=');
+        const runDurationFilterDivSelector = '.runDuration-filter';
+        const operatorSelector = `${runDurationFilterDivSelector} select`;
+        const hoursSelector = `${runDurationFilterDivSelector} input:nth-of-type(1)`;
+        const minutesSelector = `${runDurationFilterDivSelector} input:nth-of-type(2)`;
+        await expectSelectToBe(page, operatorSelector, '=');
 
-        const runDurationLimitSelector = '#duration-limit';
-        const runDurationLimit = await page.$(runDurationLimitSelector) || null;
-        expect(runDurationLimit).to.not.be.null;
+        await waitForTableDataReload(page, () => fillInput(page, hoursSelector, 26));
+        let runDurationList = await getAllDataFields(page, 'runDuration');
+        expect(runDurationList).to.be.lengthOf.greaterThan(0);
+        expect(runDurationList.every((runDuration) => runDuration === '26:00:00')).to.be.true;
 
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('1500');
-        await page.select(runDurationOperatorSelector, '=');
-
-        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
-        }));
-
-        expect(runDurationList.every((runDuration) => {
-            const time = runDuration.replace('*', '');
-            return time === '25:00:00';
-        })).to.be.true;
-
-        await page.$eval(runDurationLimitSelector, (input) => {
-            input.value = '';
+        await waitForTableDataReload(page, async () => {
+            await fillInput(page, hoursSelector, 0);
+            await fillInput(page, minutesSelector, 60);
         });
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('3000');
-        await waitForTimeout(300);
+        runDurationList = await getAllDataFields(page, 'runDuration');
+        expect(runDurationList).to.be.lengthOf.greaterThan(0);
+        expect(runDurationList.every((runDuration) => runDuration === '01:00:00')).to.be.true;
 
-        await page.select(runDurationOperatorSelector, '>=');
-        await waitForTimeout(300);
+        await waitForTableDataReload(page, () => page.select(operatorSelector, '>='));
+        runDurationList = await getAllDataFields(page, 'runDuration');
+        expect(runDurationList).to.be.lengthOf.greaterThan(0);
+        expect(runDurationList.every((runDuration) => runDuration >= '01:00:00')).to.be.true;
 
-        // Expect only unknown
-        runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
-        }));
-
-        expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
+        await waitForTableDataReload(page, async () => {
+            await page.select(operatorSelector, '<=');
+            await fillInput(page, minutesSelector, 0);
+            await fillInput(page, hoursSelector, 10);
+        });
+        runDurationList = await getAllDataFields(page, 'runDuration');
+        expect(runDurationList).to.be.lengthOf.greaterThan(0);
+        expect(runDurationList.every((runDuration) => runDuration <= '10:00:00')).to.be.true;
     });
 
     it('Should successfully filter runs by their run quality', async () => {
