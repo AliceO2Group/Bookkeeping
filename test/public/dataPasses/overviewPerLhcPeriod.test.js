@@ -20,8 +20,11 @@ const {
     fillInput,
     waitForTimeout,
     validateTableData,
+<<<<<<< HEAD
     waitForNavigation,
     pressElement,
+=======
+>>>>>>> main
 } = require('../defaults');
 
 const { expect } = chai;
@@ -61,7 +64,10 @@ module.exports = () => {
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outputSize) => !isNaN(outputSize.replace(/,/g, '')) || outputSize === '-',
+            outputSize: (outpuSize) => {
+                const [number, unit] = outpuSize.split(' ');
+                return !isNaN(number) && dataSizeUnits.has(unit.trim());
+            },
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
