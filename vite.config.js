@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable capitalized-comments */
+/* eslint-disable multiline-comment-style */
 import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
 import commonjs from 'vite-plugin-commonjs';
