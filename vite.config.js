@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable capitalized-comments */
 /* eslint-disable multiline-comment-style */
@@ -13,7 +14,9 @@ export default defineConfig({
                 '/js/src/sessionService.js',
                 '/js/src/index.js',
                 '/js/src/icons.js',
-                'api/configuration.js',
+                '/api/configuration.js',
+                // Uncommenting causes Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/css". Strict MIME type checking is enforced for module scripts per HTML spec.
+                // '/css/src/bootstrap.css',
 
                 // '/assets/SmartEditor/HyperMD/index.js',
                 // '/assets/SmartEditor/HyperMD/powerpack/hover-with-marked.js',
