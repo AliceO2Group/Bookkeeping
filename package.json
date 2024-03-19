@@ -32,6 +32,7 @@
     "deepmerge": "4.3.0",
     "emojione": "4.5.0",
     "hypermd": "0.3.11",
+    "hypermd-emojione": "0.1.0",
     "joi": "17.12.0",
     "mariadb": "3.0.0",
     "multer": "1.4.5-lts.1",
