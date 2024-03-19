@@ -16,6 +16,7 @@ export default defineConfig({
                 '/js/src/icons.js',
                 '/api/configuration.js',
                 // Uncommenting causes Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/css". Strict MIME type checking is enforced for module scripts per HTML spec.
+                // see https://github.com/vitejs/vite/issues/8976
                 // '/css/src/bootstrap.css',
 
                 // '/assets/SmartEditor/HyperMD/index.js',
