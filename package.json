@@ -30,6 +30,7 @@
     "codemirror": "5.65.16",
     "d3": "7.8.5",
     "deepmerge": "4.3.0",
+    "emojione": "4.5.0",
     "hypermd": "0.3.11",
     "joi": "17.12.0",
     "mariadb": "3.0.0",
