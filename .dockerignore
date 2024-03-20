@@ -2,9 +2,9 @@
 *
 
 # Project
+!packages/
 !lib/
 !proto/
 !test/
 !.sequelizerc
 !.nycrc
-!package*.json

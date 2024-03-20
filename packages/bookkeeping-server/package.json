@@ -4,6 +4,19 @@
   "description": "> TODO: description",
   "author": "ALICEO2",
   "homepage": "https://github.com/AliceO2Group/Bookkeeping#readme",
+  "scripts": {
+    "coverage": "nyc npm test && npm run coverage:report",
+    "coverage:report": "nyc report --reporter=html --reporter=json",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "npm run lint -- --fix",
+    "sequelize": "sequelize-cli",
+    "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
+    "start:prod": "node lib/main.js",
+    "test": "mocha --exit --timeout 0",
+    "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
+    "docker-update": "node scripts/update-dockerfile.js"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -19,8 +32,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AliceO2Group/Bookkeeping.git"
-  },
-  "scripts": {
   },
   "bugs": {
     "url": "https://github.com/AliceO2Group/Bookkeeping/issues"

@@ -8,7 +8,7 @@ services:
       NODE_ENV: development
       DATABASE_LOGGING: "${DATABASE_LOGGING-True}"
       JWT_SECRET: BOOKKEEPING-DEV
-      PUBLIC_DIRECTORIES_CONF: '/usr/src/app/public'
+      PUBLIC_DIRECTORIES_CONF: '/usr/src/app/public/dist;/usr/src/app/public/assets:assets'
     ports:
       - "4000:4000"
       - "4001:4001"

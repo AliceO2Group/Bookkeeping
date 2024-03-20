@@ -31,7 +31,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Copy package.json and package-lock.json to the container
-COPY package*.json ./
+COPY packages/bookkeeping-server/package*.json ./
 
 # Installs modules from package-lock.json, this ensures reproducible build
 RUN npm --silent ci
