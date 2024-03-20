@@ -73,9 +73,23 @@ class WebUiServer {
             });
         });
 
-        this.http.addStaticPath(path.resolve(__dirname, '..', 'public', 'assets'), 'assets');
-        this.http.addStaticPath(path.resolve(__dirname, '..', 'public', 'dist'));
+        this.addStatic();
         buildEndpoints(this.http);
+    }
+
+    // eslint-disable-next-line require-jsdoc
+    addStatic() {
+        const { PUBLIC_DIRECTORIES_CONF } = process.env;
+        if (!PUBLIC_DIRECTORIES_CONF) {
+            this.logger.warn('No public directory is specified');
+        }
+        PUBLIC_DIRECTORIES_CONF.split(';').forEach((publicDirConf) => {
+            const [localPath, uriPath] = publicDirConf.split(':');
+            if (!localPath) {
+                throw new Error(`Inccorrect public directories configuration: "${PUBLIC_DIRECTORIES_CONF}"`);
+            }
+            this.http.addStaticPath(path.resolve(localPath), uriPath);
+        });
     }
 
     /**
