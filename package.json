@@ -35,10 +35,13 @@
     "hypermd-emojione": "0.1.0",
     "joi": "17.12.0",
     "mariadb": "3.0.0",
+    "mithril": "2.2.2",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
+    "rollup-plugin-auto-named-exports": "1.0.0-beta.3",
     "sequelize": "6.37.0",
-    "umzug": "3.7.0"
+    "umzug": "3.7.0",
+    "vite-plugin-require-transform": "1.0.21"
   },
   "files": [
     "lib/",
@@ -46,6 +49,7 @@
     "proto/"
   ],
   "devDependencies": {
+    "@rollup/plugin-commonjs": "25.0.7",
     "@types/d3": "7.4.0",
     "chai": "4.4.1",
     "eslint": "8.56.0",

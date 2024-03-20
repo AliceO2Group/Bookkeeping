@@ -2,13 +2,19 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable capitalized-comments */
 /* eslint-disable multiline-comment-style */
+import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
-import commonjs from 'vite-plugin-commonjs';
+// import commonjs from 'vite-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
+
+import autoNamedExports from 'rollup-plugin-auto-named-exports';
+import requireTransform from 'vite-plugin-require-transform';
 
 export default defineConfig({
     root: 'lib/public',
     build: {
+        // commonjsOptions: { include: ['@aliceo2/web-ui'] },
         rollupOptions: {
             external: [
                 '/js/src/sessionService.js',
@@ -18,29 +24,19 @@ export default defineConfig({
                 // Uncommenting causes Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/css". Strict MIME type checking is enforced for module scripts per HTML spec.
                 // see https://github.com/vitejs/vite/issues/8976
                 // '/css/src/bootstrap.css',
-
-                // '/assets/SmartEditor/HyperMD/index.js',
-                // '/assets/SmartEditor/HyperMD/powerpack/hover-with-marked.js',
-                // '/assets/SmartEditor/HyperMD/powerpack/paste-with-turndown.js',
-                // '/assets/SmartEditor/emojione/extras/js/complete-emoji.min.js',
-                // '/assets/SmartEditor/HyperMD/powerpack/fold-emoji-with-emojione.js',
-                // '/assets/SmartEditor/codemirror/addon/fold/foldcode.min.js',
-                // '/assets/SmartEditor/codemirror/addon/fold/foldgutter.min.js',
-                // '/assets/SmartEditor/codemirror/addon/fold/markdown-fold.min.js',
-                // '/assets/SmartEditor/codemirror/addon/mode/overlay.min.js',
-                // '/assets/SmartEditor/codemirror/mode/markdown/markdown.min.js',
-                // '/assets/SmartEditor/codemirror/mode/xml/xml.min.js',
-                // '/assets/SmartEditor/codemirror/mode/meta.min.js',
-                // '/assets/SmartEditor/codemirror/mode/yaml/yaml.min.js',
-                // '/assets/SmartEditor/codemirror/mode/javascript/javascript.min.js',
-                // '/assets/SmartEditor/codemirror/mode/stex/stex.min.js',
-                // '/assets/SmartEditor/show-hint/show-hint.min.js',
-                // '/assets/SmartEditor/HyperMD/powerpack/insert-file-with-smms.js',
             ],
         },
     },
     plugins: [
         commonjs(),
+        // requireTransform({
+        //     fileRegex: /.js$/,
+        // }),
+        // autoNamedExports(),
+        // commonjs({
+        //     include: /node_modules/,
+        //     requireReturnsDefault: 'auto', // <---- this solves default issue
+        // }),
         // VitePluginNode({
         //     adapter: 'express',
         //     appPath: './lib/ser.mjs.js',
