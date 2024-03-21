@@ -34,7 +34,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 COPY package*.json ./
 
 # Installs modules from package-lock.json, this ensures reproducible build
-RUN npm --silent ci
+RUN npm --silent ci --legacy-peer-deps
 
 # Copy all files, except those ignored by .dockerignore, to the container
 COPY . .
