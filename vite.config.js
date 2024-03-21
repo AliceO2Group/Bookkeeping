@@ -5,11 +5,8 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
-// import commonjs from 'vite-plugin-commonjs';
 import commonjs from '@rollup/plugin-commonjs';
 
-import autoNamedExports from 'rollup-plugin-auto-named-exports';
-import requireTransform from 'vite-plugin-require-transform';
 
 export default defineConfig({
     root: 'lib/public',
@@ -18,9 +15,6 @@ export default defineConfig({
             '@mithril': path.join(require.resolve('mithril'), '..'),
             '@web-ui/css/src/index.js': path.join(require.resolve('@aliceo2/web-ui'), '../../', 'Frontend', 'css', 'src', 'bootstrap.css'),
             // '/mithril/mithril.min.js': path.join(require.resolve('mithril'), 'index.js'),
-            // '@': path.resolve(__dirname, './src'),
-            // '@assets': path.resolve(__dirname, './src/assets'),
-            // '@components': path.resolve(__dirname, './src/components'),
         },
     },
     optimizeDeps: {
@@ -28,18 +22,8 @@ export default defineConfig({
     },
     build: {
         // minify: true,
-        // lib: {
-        //     // Could also be a dictionary or array of multiple entry points
-        //     entry: path.join(require.resolve('mithril'), '..'),
-        //     name: 'mithril.min.js',
-        //     // the proper extensions will be added
-        //     fileName: 'my-lib',
-        // },
         // commonjsOptions: {
         //     // include: [/@aliceo2\/webui/, /node_modules/],
-        // },
-        // commonjsOptions: {
-        //     exclude: [/@aliceo2/, '@aliceo2/*', '@aliceo2/web-ui', '@aliceo2/web-ui/Frontend/js/src/index.js', '@aliceo2/web-ui/Frontend/js/src/index.js'],
         // },
         // commonjsOptions: { include: ['@aliceo2/web-ui'] },
         rollupOptions: {
@@ -56,14 +40,6 @@ export default defineConfig({
     },
     plugins: [
         // commonjs(),
-        // requireTransform({
-        //     fileRegex: /.js$/,
-        // }),
-        // autoNamedExports(),
-        // commonjs({
-        //     include: /node_modules/,
-        //     requireReturnsDefault: 'auto', // <---- this solves default issue
-        // }),
         // VitePluginNode({
         //     adapter: 'express',
         //     appPath: './lib/ser.mjs.js',
