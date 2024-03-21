@@ -26,6 +26,7 @@ export default defineConfig({
         // include: ['@aliceo2/*', '@aliceo2/web-ui'],
     },
     build: {
+        // minify: true,
         // lib: {
         //     // Could also be a dictionary or array of multiple entry points
         //     entry: path.join(require.resolve('mithril'), '..'),
