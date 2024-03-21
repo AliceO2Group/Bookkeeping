@@ -13,13 +13,24 @@ import requireTransform from 'vite-plugin-require-transform';
 
 export default defineConfig({
     root: 'lib/public',
+    optimizeDeps: {
+        include: [/@aliceo2/, '@aliceo2/*', '@aliceo2/web-ui', '@aliceo2/web-ui/Frontend', '@aliceo2/web-ui/Frontend/js/src/index.js'],
+    },
     build: {
+        // commonjsOptions: {
+        //     // include: [/@aliceo2\/webui/, /node_modules/],
+        // },
+        commonjsOptions: {
+            exclude: [/@aliceo2/, '@aliceo2/*', '@aliceo2/web-ui', '@aliceo2/web-ui/Frontend', '@aliceo2/web-ui/Frontend/js/src/index.js'],
+        },
         // commonjsOptions: { include: ['@aliceo2/web-ui'] },
         rollupOptions: {
+            // preserveEntrySignatures: 'allow-extension',
             external: [
-                '/js/src/sessionService.js',
-                '/js/src/index.js',
-                '/js/src/icons.js',
+                // '@aliceo2/webui',
+                // '/js/src/sessionService.js',
+                // '/js/src/index.js',
+                // '/js/src/icons.js',
                 '/api/configuration.js',
                 // Uncommenting causes Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/css". Strict MIME type checking is enforced for module scripts per HTML spec.
                 // see https://github.com/vitejs/vite/issues/8976
@@ -28,7 +39,7 @@ export default defineConfig({
         },
     },
     plugins: [
-        commonjs(),
+        // commonjs(),
         // requireTransform({
         //     fileRegex: /.js$/,
         // }),
