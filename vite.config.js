@@ -15,7 +15,8 @@ export default defineConfig({
     root: 'lib/public',
     resolve: {
         alias: {
-            'mithril': path.join(require.resolve('mithril'), '..'),
+            '@mithril': path.join(require.resolve('mithril'), '..'),
+            '@web-ui/css/src/index.js': path.join(require.resolve('@aliceo2/web-ui'), '../../', 'Frontend', 'css', 'src', 'bootstrap.css'),
             // '/mithril/mithril.min.js': path.join(require.resolve('mithril'), 'index.js'),
             // '@': path.resolve(__dirname, './src'),
             // '@assets': path.resolve(__dirname, './src/assets'),
@@ -45,14 +46,11 @@ export default defineConfig({
             // preserveEntrySignatures: 'allow-extension',
             // include: ['mithril/mithril.min/js'],
             external: [
-                '/mithril/mithril.min',
+                // '/mithril/mithril.min',
                 // '/js/src/sessionService.js',
                 // '/js/src/index.js',
                 // '/js/src/icons.js',
                 '/api/configuration.js',
-                // Uncommenting causes Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/css". Strict MIME type checking is enforced for module scripts per HTML spec.
-                // see https://github.com/vitejs/vite/issues/8976
-                // '/css/src/bootstrap.css',
             ],
         },
     },

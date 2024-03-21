@@ -1,3 +1,5 @@
+@import '@web-ui/css/src/index.js';
+
 html, body {
     scroll-behavior: smooth;
 
