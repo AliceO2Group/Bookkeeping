@@ -30,6 +30,7 @@
     "codemirror": "5.65.16",
     "d3": "7.8.5",
     "deepmerge": "4.3.0",
+    "ejs": "3.1.9",
     "emojione": "4.5.0",
     "hypermd": "0.3.11",
     "hypermd-emojione": "0.1.0",
