@@ -16,21 +16,31 @@ const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    getFirstRow,
     goToPage,
     checkColumnBalloon,
     checkEnvironmentStatusColor,
+    validateTableData,
+    expectInnerText,
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
+const statusToAcronym = {
+    STANDBY: 'S',
+    DEPLOYED: 'D',
+    CONFIGURED: 'C',
+    RUNNING: 'R',
+    ERROR: 'E',
+    DESTROYED: 'X',
+};
+
+const statusValues = new Set(Object.keys(statusToAcronym));
+const statusAcronyms = new Set(Object.values(statusToAcronym));
+
 module.exports = () => {
     let page;
     let browser;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -57,55 +67,30 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        await goToPage(page, 'env-overview');
 
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
-            id: (string) => typeof string == 'string',
+        const tableDataValidators = {
+            id: (id) => /[A-Za-z0-9]+/.test(id),
+            runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
             createdAt: (date) => !isNaN(Date.parse(date)),
             updatedAt: (date) => !isNaN(Date.parse(date)),
-            toredownAt: (date) => !isNaN(Date.parse(date)),
-            status: (date) => !isNaN(Date.parse(date)),
-            statusMessage: (string) => typeof string == 'string',
-            runs: (string) => typeof string == 'string',
+            status: (currentStatus) => statusValues.has(currentStatus),
+            historyItems: (history) => history.split('-').every((statusAcronym) => statusAcronyms.has(statusAcronym)),
         };
-
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-        const firstRowCells = await page.$$(`#${firstRowId} td`);
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (Object.keys(headerIndices).includes(index)) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'env-overview');
         await waitForTimeout(100);
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(11);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '10');
+        await expectInnerText(page, '#totalRowsCount', '11');
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'env-overview');
-        await waitForTimeout(100);
-
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });

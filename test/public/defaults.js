@@ -366,13 +366,14 @@ module.exports.getPopoverContent = getPopoverContent;
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
  * content is correct
  *
- * @param {{$: function}} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
  * @param {number} columnIndex the index of the column to look for balloon presence
  * @returns {Promise<void>} void promise
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const selector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
+    const cell = await this.validateElement(page, selector);
     const popoverTrigger = await cell.$('.popover-trigger');
     const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
 
