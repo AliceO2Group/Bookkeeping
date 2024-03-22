@@ -1,6 +1,7 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import filterReplace from 'vite-plugin-filter-replace';
+import { VitePluginNode } from 'vite-plugin-node';
 
 export default defineConfig({
     root: 'lib/public',
@@ -23,6 +24,11 @@ export default defineConfig({
         },
     },
     plugins: [
+        // VitePluginNode({
+        //     adapter: 'express',
+        //     exportName: 'viteApp',
+        //     appPath: './lib/vite.express.js',
+        // }),
         filterReplace([
             {
                 filter: /.*\.js$/,
