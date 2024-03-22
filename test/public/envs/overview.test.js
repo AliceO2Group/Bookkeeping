@@ -23,6 +23,7 @@ const {
     expectInnerText,
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
+const dateAndTime = require('date-and-time');
 
 const { expect } = chai;
 
@@ -69,11 +70,13 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'env-overview');
 
+        // eslint-disable-next-line require-jsdoc
+        const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
             id: (id) => /[A-Za-z0-9]+/.test(id),
             runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
-            createdAt: (date) => !isNaN(Date.parse(date)),
-            updatedAt: (date) => !isNaN(Date.parse(date)),
+            createdAt: checkDate,
+            updatedAt: checkDate,
             status: (currentStatus) => statusValues.has(currentStatus),
             historyItems: (history) => history.split('-').every((statusAcronym) => statusAcronyms.has(statusAcronym)),
         };
