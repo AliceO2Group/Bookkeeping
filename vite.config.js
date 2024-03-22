@@ -18,16 +18,30 @@ export default defineConfig({
         ],
     },
     build: {
-
         rollupOptions: {
             external: ['/api/configuration.js'],
         },
     },
+    // server: {
+        // proxy: {
+            // '/api': {
+            //     target: 'http://localhost:4000',
+            //     changeOrigin: true,
+            //     // rewrite: (path) => path.replace(/^\/api/, ''),
+            // },
+            // '/': {
+                // target: 'http://localhost:4000',
+                // changeOrigin: true,
+                // rewrite: (path) => path.replace(/^\/api/, ''),
+            // },
+        // },
+    // },
     plugins: [
         // VitePluginNode({
         //     adapter: 'express',
         //     exportName: 'viteApp',
-        //     appPath: './lib/vite.express.js',
+        //     appPath: './vite.express.js',
+        //     initAppOnBoot: true,
         // }),
         filterReplace([
             {

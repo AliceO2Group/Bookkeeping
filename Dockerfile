@@ -32,6 +32,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
+COPY vite*.js ./
 
 # Installs modules from package-lock.json, this ensures reproducible build
 RUN npm --silent ci --legacy-peer-deps
