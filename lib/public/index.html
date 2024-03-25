@@ -9,12 +9,18 @@
     <meta name="description" content="Control interface of Alice O2">
 
     <link rel="shortcut icon" href="/favicon.ico" />
+
+<% if (NODE_ENV === 'production') { %>
+    <link rel="stylesheet" href="/app.css">
+<% } else { %>
     <link rel="stylesheet" href="http://localhost:5173/app.css">
+<% } %>
+
 </head>
 
 <script src="/api/configuration.js" type="module"></script>
 <% if (NODE_ENV === 'production') { %>
-    <script type="module" src="<%= manifest['src/main.js'].file %>"></script>
+    <script type="module" src="/index.js"></script>
 <% } else { %>
     <script type="module" src="http://localhost:5173/@vite/client"></script>
     <script type="module" src="http://localhost:5173/index.js"></script>

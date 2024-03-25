@@ -1,7 +1,7 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import filterReplace from 'vite-plugin-filter-replace';
-import { VitePluginNode } from 'vite-plugin-node';
+import { ViteEjsPlugin } from 'vite-plugin-ejs';
 
 export default defineConfig({
     root: 'lib/public',
@@ -22,27 +22,8 @@ export default defineConfig({
             external: ['/api/configuration.js'],
         },
     },
-    // server: {
-        // proxy: {
-            // '/api': {
-            //     target: 'http://localhost:4000',
-            //     changeOrigin: true,
-            //     // rewrite: (path) => path.replace(/^\/api/, ''),
-            // },
-            // '/': {
-                // target: 'http://localhost:4000',
-                // changeOrigin: true,
-                // rewrite: (path) => path.replace(/^\/api/, ''),
-            // },
-        // },
-    // },
     plugins: [
-        // VitePluginNode({
-        //     adapter: 'express',
-        //     exportName: 'viteApp',
-        //     appPath: './vite.express.js',
-        //     initAppOnBoot: true,
-        // }),
+        ViteEjsPlugin(),
         filterReplace([
             {
                 filter: /.*\.js$/,
