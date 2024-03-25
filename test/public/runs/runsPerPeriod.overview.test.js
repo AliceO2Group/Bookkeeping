@@ -22,6 +22,7 @@ const {
     getFirstRow,
     goToPage,
     reloadPage,
+    expectChecked,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
@@ -263,5 +264,14 @@ module.exports = () => {
         ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('should successfully change table layout between fixed and x scroll', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await pressElement(page, '#tableOptions');
+        await expectChecked(page, '#xScrollCheck', true);
+        await page.waitForSelector('.scroll-auto > table', { timeout: 250 });
+        await pressElement(page, '#xScrollCheck');
+        await page.waitForSelector('.scroll-auto > table', { timeout: 250, hidden: true });
     });
 };

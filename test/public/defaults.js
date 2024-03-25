@@ -135,6 +135,18 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
 };
 
 /**
+ * Expect a checkbox to be checked or not
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {*} isChecked whether ckecbox is expected to be checked
+ * @return {Promise<void>} promise
+ */
+module.exports.expectChecked = async (page, selector, isChecked) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    expect(await (await page.$(selector)).evaluate(({ checked }) => checked)).to.equal(isChecked);
+};
+
+/**
  * Reload the current page and wait for it to be loaded
  * @param {Page} puppeteerPage Puppeteer page object.
  * @return {Promise} resolves when the page has loaded
