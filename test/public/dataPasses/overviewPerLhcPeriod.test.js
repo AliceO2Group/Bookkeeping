@@ -20,11 +20,8 @@ const {
     fillInput,
     waitForTimeout,
     validateTableData,
-<<<<<<< HEAD
     waitForNavigation,
     pressElement,
-=======
->>>>>>> main
 } = require('../defaults');
 
 const { expect } = chai;
@@ -57,6 +54,7 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
+        const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
