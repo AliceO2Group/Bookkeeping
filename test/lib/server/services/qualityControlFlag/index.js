@@ -11,22 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-/**
- * @typedef SequelizeQCFlagType
- *
- * @property {number} id
- * @property {string} name
- * @property {string} method
- * @property {boolean} bad
- * @property {string} color as hex
- *
- * @property {boolean} archived
- * @property {Date} archivedAt
- *
- * @property {Date} createdAt
- * @property {number} createdById
- * @property {SequelizeUser} createdBy
- * @property {Date} updatedAt
- * @property {number} lastUpdatedById
- * @property {SequelizeUser} lastUpdatedBy
- */
+const QcFlagTypesServiceTestSuite = require('./QcFlagTypeService.test.js');
+
+module.exports = () => {
+    describe('QcFlagTypesService Suite', QcFlagTypesServiceTestSuite);
+};
