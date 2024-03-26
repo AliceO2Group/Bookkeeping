@@ -1152,6 +1152,13 @@ module.exports = () => {
         expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
 
+    it('should successfully display duration without warning popover when run has trigger OFF', async () => {
+        await goToPage(page, 'run-overview');
+        const runDurationCell = await page.$('#row107-runDuration');
+        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+    });
+
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-overview');
         const runDurationCell = await page.$('#row106-runDuration');
