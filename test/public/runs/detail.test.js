@@ -12,10 +12,11 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, expectLink } = require('../defaults');
 const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam, getPopoverContent, waitForTimeout } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
+const { runService } = require('../../../lib/server/services/run/RunService');
 
 const { expect } = chai;
 
@@ -411,5 +412,26 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
         await page.waitForSelector('#lhc-fill-fillNumber');
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
+    });
+
+    it('should display links to environment in ECS if run is running', async () => {
+        // Test for not running run
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 104 } });
+        await expectInnerText(page, '#runDurationValue', '02:00:00');
+        await expectInnerText(page, '#Run-environmentId a', 'TDI59So3d');
+
+        // Create running run
+        await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1000 } });
+        await expectInnerText(page, '#runDurationValue', 'RUNNING');
+
+        await expectLink(page, '#Run-environmentId h4 a', {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
+        await expectLink(page, '#Run-environmentId div > a', {
+            href: 'http://localhost:4000/?page=env-details&environmentId=CmCvjNbg',
+            innerText: 'CmCvjNbg',
+        });
     });
 };
