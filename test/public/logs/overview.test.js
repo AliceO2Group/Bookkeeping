@@ -19,10 +19,13 @@ const {
     pressElement,
     goToPage,
     getFirstRow,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector, waitForTimeout } = require('../defaults.js');
+const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector, waitForTimeout, takeScreenshot,
+    waitForTableDataReload
+} = require(
+    '../defaults.js');
 
 const { expect } = chai;
 
@@ -202,6 +205,28 @@ module.exports = () => {
         const unfilteredRows = await page.$$('table tr');
         const unfilteredNumberOfRows = unfilteredRows.length - 1;
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+    });
+
+    it('should successfully provide an easy to access button to filter in/out anonymous logs', async () => {
+        await reloadPage(page);
+        {
+            const authors = await getColumnCellsInnerTexts(page, 'author');
+            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
+        }
+
+        await waitForTableDataReload(page, () => pressElement(page, '#main-action-bar > div:nth-child(1) .switch'));
+
+        {
+            const authors = await getColumnCellsInnerTexts(page, 'author');
+            expect(authors.every((author) => author !== 'Anonymous')).to.be.true;
+        }
+
+        await waitForTableDataReload(page, () => pressElement(page, '#main-action-bar > div:nth-child(1) .switch'));
+
+        {
+            const authors = await getColumnCellsInnerTexts(page, 'author');
+            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
+        }
     });
 
     it('can filter by creation date', async () => {
@@ -509,7 +534,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log titles to be in alphabetical order
-        const firstTitles = await getAllDataFields(page, 'title');
+        const firstTitles = await getColumnCellsInnerTexts(page, 'title');
         expect(firstTitles).to.deep.equal(firstTitles.sort());
         // Hover something else to have title sort displayed
         await page.hover('th#author');
@@ -522,7 +547,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log titles to be in reverse alphabetical order
-        const secondTitles = await getAllDataFields(page, 'title');
+        const secondTitles = await getColumnCellsInnerTexts(page, 'title');
         expect(secondTitles).to.deep.equal(secondTitles.sort((a, b) => b.localeCompare(a)));
 
         // Toggle to clear this sorting
@@ -530,7 +555,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log titles to no longer be sorted in any way
-        const thirdTitles = await getAllDataFields(page, 'title');
+        const thirdTitles = await getColumnCellsInnerTexts(page, 'title');
         expect(thirdTitles).to.not.deep.equal(firstTitles);
         expect(thirdTitles).to.not.deep.equal(secondTitles);
 
@@ -540,7 +565,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the authors to be in alphabetical order
-        const firstAuthors = await getAllDataFields(page, 'author');
+        const firstAuthors = await getColumnCellsInnerTexts(page, 'author');
         expect(firstAuthors).to.deep.equal(firstAuthors.sort());
 
         // Sort by creation date in ascending manner
@@ -549,7 +574,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log author column to be unsorted
-        const secondAuthors = await getAllDataFields(page, 'author');
+        const secondAuthors = await getColumnCellsInnerTexts(page, 'author');
         expect(secondAuthors).to.not.deep.equal(firstAuthors);
     });
 

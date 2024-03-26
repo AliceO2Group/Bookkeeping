@@ -256,22 +256,16 @@ module.exports.getFirstRow = async (table, page) => {
 };
 
 /**
- * Special method built to gather all currently visible table entities from a specific column into an array
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {string} key The key for the column to gather entities of
- * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
+ * Return the inner text of all the cells of a given column of the first table found in the page
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} key the key of the column from which data must be retrieved
+ * @return {Promise<string[]>} resolves with the list of all cells inner texts
  */
-module.exports.getAllDataFields = async (page, key) => {
-    const allData = await page.$$('td');
-    return await allData.reduce(async (accumulator, data) => {
-        const id = await page.evaluate((element) => element.id, data);
-        if (id.endsWith(`-${key}`)) {
-            const text = await page.evaluate((element) => element.innerText, data);
-            (await accumulator).push(text);
-        }
-        return accumulator;
-    }, []);
-};
+module.exports.getColumnCellsInnerTexts = async (page, key) => page.$$eval(
+    `table tbody .column-${key}`,
+    (cells) => cells.map((cell) => cell.innerText),
+);
 
 /**
  * Evaluate and return the text content of a given element handler
