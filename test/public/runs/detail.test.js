@@ -326,6 +326,13 @@ module.exports = () => {
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
+    it('should successfully display duration without warning popover when run has trigger OFF', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
+        const runDurationCell = await page.$('#runDurationValue');
+        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+    });
+
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 105 } });
         const runDurationCell = await page.$('#runDurationValue');

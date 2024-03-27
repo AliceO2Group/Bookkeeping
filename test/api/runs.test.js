@@ -343,7 +343,7 @@ module.exports = () => {
 
             const { data } = response.body;
 
-            expect(data.length).to.equal(20);
+            expect(data.length).to.equal(21);
         });
 
         it('should filter runs on the odc topology value', async () => {
