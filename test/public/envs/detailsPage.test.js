@@ -74,7 +74,7 @@ module.exports = () => {
 
         await pressElement(page, '#create-log');
 
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', environmentIds: 'TDI59So3d' })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' })).to.eql({});
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
