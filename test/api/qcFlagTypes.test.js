@@ -173,6 +173,22 @@ module.exports = () => {
                             lastUpdatedById: null,
                             lastUpdatedBy: null,
                         },
+                        {
+                            id: 20,
+                            name: 'Archived',
+                            method: 'Archived',
+                            bad: false,
+                            color: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+
+                            archived: true,
+                            archivedAt: 1710504000000,
+
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
+                        },
                     ]);
                     done();
                 });
@@ -220,7 +236,7 @@ module.exports = () => {
 
         it('should successfuly filter QC flag types by names', (done) => {
             request(server)
-                .get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=LimittedAcceptance')
+                .get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=LimitedAcceptance')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -233,7 +249,7 @@ module.exports = () => {
                     expect(flagTypes).to.be.an('array');
                     expect(flagTypes).to.be.lengthOf(2);
 
-                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'LimittedAcceptance']);
+                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'LimitedAcceptance']);
                     done();
                 });
         });
@@ -291,12 +307,12 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(1);
+                    expect(flagTypes).to.be.lengthOf(2);
 
-                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['CertifiedByExpert']);
+                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['CertifiedByExpert', 'Archived']);
                     done();
                 });
         });
@@ -389,7 +405,7 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 3 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 3 } });
 
                     expect(flagTypes).to.be.an('array');
                     expect(flagTypes).to.be.lengthOf(2);

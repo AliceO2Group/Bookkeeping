@@ -149,7 +149,7 @@ module.exports = () => {
                     createdBy: { id: 1, externalId: 1, name: 'John Doe' },
 
                     archived: true,
-                    archivedAt: 1710500400000,
+                    archivedAt: 1710504000000,
 
                     lastUpdatedById: null,
                     lastUpdatedBy: null,
