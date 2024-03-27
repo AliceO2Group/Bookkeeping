@@ -308,6 +308,11 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
+module.exports.expectSelectToBe = async (page, selector, selectedOption) => {
+    await page.waitForSelector(selector);
+    expect(await (await page.$(selector)).evaluate(({ value }) => value)).to.be.equal(selectedOption);
+};
+
 /**
  * Evaluate and return the html content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
