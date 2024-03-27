@@ -639,7 +639,7 @@ module.exports = () => {
          * @param {string[]} authorizedRunQualities  the list of valid run qualities
          * @return {void}
          */
-        const checkTableRunQualities = async (rows, authorizedRunQualities) => {
+        const checkTableTriggerValue = async (rows, authorizedRunQualities) => {
             for (const row of rows) {
                 expect(await row.evaluate((rowItem) => {
                     const rowId = rowItem.id;
@@ -657,12 +657,12 @@ module.exports = () => {
         table = await page.$$('tbody tr');
 
         expect(table.length).to.equal(8);
-        await checkTableRunQualities(table, ['OFF']);
+        await checkTableTriggerValue(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTimeout(300);
         table = await page.$$('tbody tr');
-        await checkTableRunQualities(table, ['OFF', 'LTU']);
+        await checkTableTriggerValue(table, ['OFF', 'LTU']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTimeout(300);
@@ -670,7 +670,7 @@ module.exports = () => {
 
         expect(table.length).to.equal(8);
 
-        await checkTableRunQualities(table, ['OFF']);
+        await checkTableTriggerValue(table, ['OFF']);
     });
 
     it('should successfully filter on a list of run numbers and inform the user about it', async () => {
