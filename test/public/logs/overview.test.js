@@ -22,10 +22,15 @@ const {
     getColumnCellsInnerTexts,
     checkColumnBalloon,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector, waitForTimeout, takeScreenshot,
-    waitForTableDataReload
-} = require(
-    '../defaults.js');
+const {
+    reloadPage,
+    waitForNetworkIdleAndRedraw,
+    fillInput,
+    getInnerText,
+    getPopoverSelector,
+    waitForTimeout,
+    waitForTableDataReload,
+} = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -230,6 +235,9 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
+        await pressElement(page, '#openFilterToggle');
+        await waitForTimeout(20);
+
         // Increase the amount of items displayed to see logs count difference above 10
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
