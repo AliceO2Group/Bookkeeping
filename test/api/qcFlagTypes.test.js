@@ -88,10 +88,10 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
                     expect(flagTypes.map((qcFlagType) => {
                         delete qcFlagType.createdAt;
@@ -198,29 +198,9 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly filter QC flag types by names', (done) => {
+        it('should successfuly filter QC flag types by names pattern', (done) => {
             request(server)
                 .get('/api/qcFlagTypes?filter[names][]=Bad')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
-                    expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(1);
-
-                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad']);
-                    done();
-                });
-        });
-
-        it('should successfuly filter QC flag types by names patterns', (done) => {
-            request(server)
-                .get('/api/qcFlagTypes?filter[names][like][]=Bad')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -238,7 +218,27 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly filter QC flag types by mathods', (done) => {
+        it('should successfuly filter QC flag types by names', (done) => {
+            request(server)
+                .get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=LimittedAcceptance')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { meta, data: flagTypes } = res.body;
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+                    expect(flagTypes).to.be.an('array');
+                    expect(flagTypes).to.be.lengthOf(2);
+
+                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'LimittedAcceptance']);
+                    done();
+                });
+        });
+
+        it('should successfuly filter QC flag types by mathods pattern', (done) => {
             request(server)
                 .get('/api/qcFlagTypes?filter[methods][]=Bad')
                 .expect(200)
@@ -249,19 +249,19 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(1);
+                    expect(flagTypes).to.be.lengthOf(2);
 
-                    expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad']);
+                    expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'Bad PID']);
                     done();
                 });
         });
 
         it('should successfuly filter QC flag types by methods patterns', (done) => {
             request(server)
-                .get('/api/qcFlagTypes?filter[methods][like][]=Bad')
+                .get('/api/qcFlagTypes?filter[methods][]=Bad')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -312,12 +312,12 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
-                    expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([13, 12, 11, 3, 2]);
+                    expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 3, 2]);
                     done();
                 });
         });
@@ -333,10 +333,10 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
                     expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                         'UnknownQuality',
@@ -344,6 +344,7 @@ module.exports = () => {
                         'CertifiedByExpert',
                         'BadPID',
                         'Bad',
+                        'Archived',
                     ]);
                     done();
                 });
@@ -360,12 +361,13 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
                     expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
+                        'Archived',
                         'Bad',
                         'BadPID',
                         'CertifiedByExpert',
