@@ -16,7 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     fillInput,
 } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
@@ -145,7 +145,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
+        const firstNames = await getColumnCellsInnerTexts(page, 'name');
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
@@ -163,7 +163,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the year to be in order
-        const firstYears = await getAllDataFields(page, 'year');
+        const firstYears = await getColumnCellsInnerTexts(page, 'year');
         expect(firstYears).to.have.all.deep.ordered.members(firstYears.sort());
     });
 
@@ -181,7 +181,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
-        const firstAvgCeneterOfMassEnergies = await getAllDataFields(page, 'avgCenterOfMassEnergy');
+        const firstAvgCeneterOfMassEnergies = await getColumnCellsInnerTexts(page, 'avgCenterOfMassEnergy');
         expect(firstAvgCeneterOfMassEnergies).to.have.all.deep.ordered.members(firstAvgCeneterOfMassEnergies.sort());
     });
 
@@ -196,7 +196,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
+        let allLhcPeriodNameCellsContent = await getColumnCellsInnerTexts(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a']);
 
         const resetFiltersButton = await page.$('#reset-filters');
@@ -204,7 +204,7 @@ module.exports = () => {
         await resetFiltersButton.evaluate((button) => button.click());
         await waitForTimeout(100);
 
-        allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
+        allLhcPeriodNameCellsContent = await getColumnCellsInnerTexts(page, 'name');
         expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
     });
 
@@ -219,7 +219,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        const allLhcPeriodYears = await getAllDataFields(page, 'year');
+        const allLhcPeriodYears = await getColumnCellsInnerTexts(page, 'year');
         expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2022']);
     });
 
@@ -234,7 +234,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
+        const allLhcPeriodBeamTypes = await getColumnCellsInnerTexts(page, 'beamTypes');
         expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
     });
 };

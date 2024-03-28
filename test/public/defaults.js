@@ -256,22 +256,18 @@ module.exports.getFirstRow = async (table, page) => {
 };
 
 /**
- * Special method built to gather all currently visible table entities from a specific column into an array
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {string} key The key for the column to gather entities of
- * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
+ * Return the inner text of all the cells of a given column of the first table found in the page
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} key the key of the column from which data must be retrieved
+ * @return {Promise<string[]>} resolves with the list of all cells inner texts
  */
-module.exports.getAllDataFields = async (page, key) => {
-    const allData = await page.$$('td');
-    return await allData.reduce(async (accumulator, data) => {
-        const id = await page.evaluate((element) => element.id, data);
-        if (id.endsWith(`-${key}`)) {
-            const text = await page.evaluate((element) => element.innerText, data);
-            (await accumulator).push(text);
-        }
-        return accumulator;
-    }, []);
-};
+const getColumnCellsInnerTexts = async (page, key) => page.$$eval(
+    `table tbody .column-${key}`,
+    (cells) => cells.map((cell) => cell.innerText),
+);
+
+module.exports.getColumnCellsInnerTexts = getColumnCellsInnerTexts;
 
 /**
  * Evaluate and return the text content of a given element handler
@@ -498,24 +494,24 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
     expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
-    const notOrderData = await this.getAllDataFields(page, columnId);
+    const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
     // Sort in ASCENDING manner
     await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
 
-    let targetColumnValues = await this.getAllDataFields(page, columnId);
+    let targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
 
     // Sort in DESCSENDING manner
     await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
 
-    targetColumnValues = await this.getAllDataFields(page, columnId);
+    targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
 
     // Revoke sorting
-    targetColumnValues = await this.getAllDataFields(page, columnId);
+    targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
     expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
 };
 
@@ -529,7 +525,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
 module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
     for (const [columnId, validator] of validators) {
-        const columnData = await this.getAllDataFields(page, columnId);
+        const columnData = await getColumnCellsInnerTexts(page, columnId);
         expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validator(cellData)),
