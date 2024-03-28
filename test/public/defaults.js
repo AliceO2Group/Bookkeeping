@@ -123,7 +123,7 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForSelector(selector);
+    await page.waitForSelector(selector, { timeout: 250 });
 
     if (jsClick) {
         await page.$eval(selector, (element) => {
@@ -494,9 +494,9 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise} promise
  */
 module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
-    page.waitForSelector('table .atom-spinner'),
+    page.waitForSelector('table .atom-spinner', { timeout: 750 }),
     triggerFunction(),
-]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
+]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true, timeout: 1000 }));
 
 /**
  * Tests whether sorting of main table by column with given id works properly
@@ -515,14 +515,14 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
     // Sort in ASCENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
 
     let targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
 
     // Sort in DESCSENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
+    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
 
     targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
     expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
