@@ -16,13 +16,18 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    testTableAscendingSortingByColumn,
     waitForTableDataReload,
     fillInput,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
+    pressElement,
+    expectInnerText,
+    testTableSortingByColumn,
+    validateTableData,
 } = require('../defaults');
 
 const { expect } = chai;
+
+const dateAndTime = require('date-and-time');
 
 module.exports = () => {
     let page;
@@ -45,75 +50,74 @@ module.exports = () => {
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
-        const header = await page.$('h2');
-        expect(await header.evaluate((element) => element.innerText)).to.be.equal('QC Flag Types');
+        await expectInnerText(page, 'h2', 'QC Flag Types');
+    });
+
+    it('shows correct datatypes in respective columns', async () => {
+        await goToPage(page, 'qc-flag-types-overview');
+
+        const tableDataValidators = {
+            name: (name) => name !== '-',
+            method: (method) => method !== '-',
+            bad: (isBad) => isBad === 'Yes' || isBad === 'No',
+            createdAt: (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss')),
+            updatedAt: (date) => date === '-' | !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss')),
+            createdBy: (userName) => userName !== '-',
+        };
+
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await page.waitForSelector('#firstRowIndex');
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(5);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(5);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '6');
+        await expectInnerText(page, '#totalRowsCount', '6');
     });
 
     it('can sort by name column in ascending manner', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await testTableAscendingSortingByColumn(page, 'name');
+        await testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by method column in ascending manner', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await testTableAscendingSortingByColumn(page, 'method');
+        await testTableSortingByColumn(page, 'method');
     });
 
     it('can sort by bad column in ascending manner', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await testTableAscendingSortingByColumn(page, 'bad');
+        await testTableSortingByColumn(page, 'bad');
     });
 
     it('should successfuly apply QC flag type names filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
-
-        await filterToggleButton.evaluate((button) => button.click());
+        await pressElement(page, '#openFilterToggle');
 
         await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'bad'));
 
-        const allQCFlagTypeNames = await getAllDataFields(page, 'name');
+        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
-
-        await filterToggleButton.evaluate((button) => button.click());
+        await pressElement(page, '#openFilterToggle');
 
         await waitForTableDataReload(page, () => fillInput(page, '.method-filter input[type=text]', 'bad'));
 
-        const allQCFlagTypeNames = await getAllDataFields(page, 'method');
+        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'method');
         expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
 
-        await filterToggleButton.evaluate((button) => button.click());
+        await waitForTableDataReload(page, () => pressElement(page, '.bad-filter input[type=checkbox]'));
 
-        await waitForTableDataReload(page, () =>
-            page.$('.bad-filter input[type=checkbox]')
-                .then((element) => element.evaluate((checkbox) => checkbox.click())));
-
-        const allQCFlagTypeNames = await getAllDataFields(page, 'bad');
+        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'bad');
         expect(allQCFlagTypeNames.every((bad) => bad === 'Yes'), allQCFlagTypeNames).to.be.true;
     });
 };
