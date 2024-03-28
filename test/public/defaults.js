@@ -280,13 +280,13 @@ module.exports.getAllDataFields = async (page, key) => {
  * @return {Promise<Object<string, string>>} An array containing all table partial entities of a columns, in the order displayed by the browser
  */
 module.exports.getTableDataSlice = async (page, columnKeys) => {
-    const columnsData = {};
-    for (const key of columnKeys) {
-        columnsData[key] = await this.getAllDataFields(page, key);
-    }
     const result = [];
-    for (let index = 0; index < columnsData[columnKeys[0]].length; index++) {
-        result.push(Object.fromEntries(columnKeys.map((key) => [key, columnsData[key][index]])));
+    for (const row of await page.$$('table tbody tr')) {
+        const entity = {};
+        for (const columnKey of columnKeys) {
+            entity[columnKey] = await row.$eval(`td[id$='${columnKey}']`, ({ innerText }) => innerText);
+        }
+        result.push(entity);
     }
     return result;
 };
