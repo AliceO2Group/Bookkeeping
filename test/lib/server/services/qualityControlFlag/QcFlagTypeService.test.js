@@ -315,7 +315,7 @@ module.exports = () => {
             };
             await assert.rejects(
                 () => qcFlagTypeService.create(parameters),
-                new ConflictError('QCFlagType.name cannot be null'),
+                new ConflictError('QcFlagType.name cannot be null'),
             );
         });
 
@@ -328,7 +328,7 @@ module.exports = () => {
             };
             await assert.rejects(
                 () => qcFlagTypeService.create(parameters),
-                new ConflictError('QCFlagType.method cannot be null'),
+                new ConflictError('QcFlagType.method cannot be null'),
             );
         });
 
@@ -341,7 +341,7 @@ module.exports = () => {
             };
             await assert.rejects(
                 () => qcFlagTypeService.create(parameters),
-                new ConflictError('QCFlagType.bad cannot be null'),
+                new ConflictError('QcFlagType.bad cannot be null'),
             );
         });
 
