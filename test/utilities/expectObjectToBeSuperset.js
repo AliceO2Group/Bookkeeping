@@ -14,7 +14,7 @@
 const { expect } = require('chai');
 
 /**
- * Tests whether first given object holds superset of keys of second object with the same values
+ * Tests whether first given object is superset of the other one
  * @param {*} supersetObject superset object
  * @param {*} subsetObject subset object
  * @return {void}
