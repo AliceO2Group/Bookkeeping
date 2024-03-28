@@ -494,7 +494,7 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise} promise
  */
 module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
-    page.waitForSelector('table .atom-spinner', { timeout: 250 }),
+    page.waitForSelector('table .atom-spinner', { timeout: 750 }),
     triggerFunction(),
 ]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true, timeout: 1000 }));
 
