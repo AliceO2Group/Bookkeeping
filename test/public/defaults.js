@@ -270,6 +270,24 @@ const getColumnCellsInnerTexts = async (page, key) => page.$$eval(
 module.exports.getColumnCellsInnerTexts = getColumnCellsInnerTexts;
 
 /**
+ * Special method built to gather all currently visible data from given columns into array of objects
+ * @param {puppeteer.Page} page An object representing the browser page being used by Puppeteer
+ * @param {string[]} columnKeys The keys for the columns to gather entities of
+ * @return {Promise<Object<string, string>>} An array containing all table partial entities of a columns, in the order displayed by the browser
+ */
+module.exports.getTableDataSlice = async (page, columnKeys) => {
+    const result = [];
+    for (const row of await page.$$('table tbody tr')) {
+        const entity = {};
+        for (const columnKey of columnKeys) {
+            entity[columnKey] = await row.$eval(`td.column-${columnKey}`, ({ innerText }) => innerText);
+        }
+        result.push(entity);
+    }
+    return result;
+};
+
+/**
  * Evaluate and return the text content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
  * @returns {Promise<XPathResult>} the html content
@@ -292,7 +310,7 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
 };
 
 /**
- * Expect an element to have a text valid against givne validator
+ * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
