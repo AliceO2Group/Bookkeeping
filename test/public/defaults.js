@@ -123,7 +123,7 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForSelector(selector);
+    await page.waitForSelector(selector, { timeout: 250 });
 
     if (jsClick) {
         await page.$eval(selector, (element) => {
@@ -494,9 +494,9 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise} promise
  */
 module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
-    page.waitForSelector('table .atom-spinner'),
+    page.waitForSelector('table .atom-spinner', { timeout: 250 }),
     triggerFunction(),
-]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
+]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true, timeout: 1000 }));
 
 /**
  * Tests whether sorting of main table by column with given id works properly
