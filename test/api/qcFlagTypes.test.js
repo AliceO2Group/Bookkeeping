@@ -437,7 +437,6 @@ module.exports = () => {
                     }
 
                     const { data: newQCFlag } = res.body;
-                    console.log(newQCFlag, 'TOBEC')
                     expectObjectToBeSuperset(newQCFlag, parameters);
                     done();
                 });
