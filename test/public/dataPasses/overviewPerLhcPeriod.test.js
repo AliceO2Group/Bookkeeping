@@ -16,7 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     fillInput,
     waitForTimeout,
     validateTableData,
@@ -126,7 +126,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
+        const firstNames = await getColumnCellsInnerTexts(page, 'name');
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
@@ -144,7 +144,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'reconstructedEventsCount');
+        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'reconstructedEventsCount');
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
 
@@ -162,7 +162,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getAllDataFields(page, 'outputSize');
+        const firstOutputSize = await getColumnCellsInnerTexts(page, 'outputSize');
         expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
     });
 
@@ -177,7 +177,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        let allDataPassesNames = await getAllDataFields(page, 'name');
+        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
 
         const resetFiltersButton = await page.$('#reset-filters');
@@ -185,7 +185,7 @@ module.exports = () => {
         await resetFiltersButton.evaluate((button) => button.click());
         await waitForTimeout(100);
 
-        allDataPassesNames = await getAllDataFields(page, 'name');
+        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
     });
 };

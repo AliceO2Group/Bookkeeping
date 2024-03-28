@@ -16,7 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     fillInput,
     waitForTableDataReload,
 } = require('../defaults');
@@ -141,7 +141,7 @@ module.exports = () => {
         await waitForTableDataReload(page, () => nameHeader.evaluate((button) => button.click()));
 
         // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
+        const firstNames = await getColumnCellsInnerTexts(page, 'name');
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
@@ -159,7 +159,7 @@ module.exports = () => {
         await waitForTableDataReload(page, () => requestedEventsCountHeader.evaluate((button) => button.click()));
 
         // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'requestedEventsCount');
+        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'requestedEventsCount');
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
 
@@ -177,7 +177,7 @@ module.exports = () => {
         await waitForTableDataReload(page, () => generatedEventsCountHeader.evaluate((button) => button.click()));
 
         // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'generatedEventsCount');
+        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'generatedEventsCount');
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
 
@@ -195,7 +195,7 @@ module.exports = () => {
         await waitForTableDataReload(page, () => outputSizeHeader.evaluate((button) => button.click()));
 
         // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getAllDataFields(page, 'outputSize');
+        const firstOutputSize = await getColumnCellsInnerTexts(page, 'outputSize');
         expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
     });
 
@@ -209,13 +209,13 @@ module.exports = () => {
 
         await waitForTableDataReload(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
 
-        let allDataPassesNames = await getAllDataFields(page, 'name');
+        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
 
         await waitForTableDataReload(page, () =>
             fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b'));
 
-        allDataPassesNames = await getAllDataFields(page, 'name');
+        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
     });
 };
