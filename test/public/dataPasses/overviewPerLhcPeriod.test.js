@@ -22,6 +22,7 @@ const {
     validateTableData,
     waitForNavigation,
     pressElement,
+    getTableDataSliceFields,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -69,13 +70,12 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
-        const names = await getAllDataFields(page, 'name');
-        const runs = await getAllDataFields(page, 'associatedRuns');
-        const anchoreds = await getAllDataFields(page, 'anchoredSimulationPasses');
-        expect(names.map((name, index) => ({
+
+        const tableSlice = await getTableDataSliceFields(page, ['name', 'associatedRuns', 'anchoredSimulationPasses']);
+        expect(tableSlice.map(({ name, associatedRuns, anchoredSimulationPasses }) => ({
             name,
-            runsCount: Number(runs[index].split('\n')[0]) || 0,
-            simulationPassesCount: Number(anchoreds[index].split('\n')[0]) || 0,
+            runsCount: Number(associatedRuns.split('\n')[0]),
+            simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
         }))).to.have.all.deep.members([
             {
                 name: 'LHC22b_apass2',

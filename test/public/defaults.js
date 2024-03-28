@@ -274,6 +274,24 @@ module.exports.getAllDataFields = async (page, key) => {
 };
 
 /**
+ * Special method built to gather all currently visible data from given columns into array of objects
+ * @param {puppeteer.Page} page An object representing the browser page being used by Puppeteer
+ * @param {string[]} columnKeys The keys for the columns to gather entities of
+ * @return {Promise<Object<string, string>>} An array containing all table partial entities of a columns, in the order displayed by the browser
+ */
+module.exports.getTableDataSliceFields = async (page, columnKeys) => {
+    const columnsData = {};
+    for (const key of columnKeys) {
+        columnsData[key] = await this.getAllDataFields(page, key);
+    }
+    const result = [];
+    for (let index = 0; index < columnsData[columnKeys[0]].length; index++) {
+        result.push(Object.fromEntries(columnKeys.map((key) => [key, columnsData[key][index]])));
+    }
+    return result;
+};
+
+/**
  * Evaluate and return the text content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
  * @returns {Promise<XPathResult>} the html content
