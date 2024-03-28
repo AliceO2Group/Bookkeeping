@@ -20,10 +20,10 @@ const { expectObjectToBeSuperset } = require('../utilities/expectObjectToBeSuper
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/qualityControlFlags/types/:id', () => {
+    describe('GET /api/qcFlagTypes/:id', () => {
         it('should successfuly fetch one QC flag type', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types/13')
+                .get('/api/qcFlagTypes/13')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -55,7 +55,7 @@ module.exports = () => {
 
         it('should send error that QC flag type with given id cannot be found', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types/99999')
+                .get('/api/qcFlagTypes/99999')
                 .expect(404)
                 .end((err, res) => {
                     if (err) {
@@ -77,10 +77,10 @@ module.exports = () => {
         });
     });
 
-    describe('GET /api/qualityControlFlags/types', () => {
+    describe('GET /api/qcFlagTypes', () => {
         it('should successfuly fetch all qc flag types', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types')
+                .get('/api/qcFlagTypes')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -89,10 +89,10 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
                     expect(flagTypes.map((qcFlagType) => {
                         delete qcFlagType.createdAt;
@@ -174,6 +174,22 @@ module.exports = () => {
                             lastUpdatedById: null,
                             lastUpdatedBy: null,
                         },
+                        {
+                            id: 20,
+                            name: 'Archived',
+                            method: 'Archived',
+                            bad: false,
+                            color: null,
+
+                            createdById: 1,
+                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+
+                            archived: true,
+                            archivedAt: 1710504000000,
+
+                            lastUpdatedById: null,
+                            lastUpdatedBy: null,
+                        },
                     ]);
                     done();
                 });
@@ -181,7 +197,7 @@ module.exports = () => {
 
         it('should successfuly filter QC flag types by id', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?filter[ids][]=3')
+                .get('/api/qcFlagTypes?filter[ids][]=3')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -199,29 +215,9 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly filter QC flag types by names', (done) => {
+        it('should successfuly filter QC flag types by names pattern', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?filter[names][]=Bad')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
-                    expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(1);
-
-                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad']);
-                    done();
-                });
-        });
-
-        it('should successfuly filter QC flag types by names patterns', (done) => {
-            request(server)
-                .get('/api/qualityControlFlags/types?filter[names][like][]=Bad')
+                .get('/api/qcFlagTypes?filter[names][]=Bad')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -239,9 +235,9 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly filter QC flag types by mathods', (done) => {
+        it('should successfuly filter QC flag types by names', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?filter[methods][]=Bad')
+                .get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=LimitedAcceptance')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -250,19 +246,39 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+                    expect(flagTypes).to.be.an('array');
+                    expect(flagTypes).to.be.lengthOf(2);
+
+                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'LimitedAcceptance']);
+                    done();
+                });
+        });
+
+        it('should successfuly filter QC flag types by mathods pattern', (done) => {
+            request(server)
+                .get('/api/qcFlagTypes?filter[methods][]=Bad')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { meta, data: flagTypes } = res.body;
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(1);
+                    expect(flagTypes).to.be.lengthOf(2);
 
-                    expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad']);
+                    expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'Bad PID']);
                     done();
                 });
         });
 
         it('should successfuly filter QC flag types by methods patterns', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?filter[methods][like][]=Bad')
+                .get('/api/qcFlagTypes?filter[methods][]=Bad')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -283,7 +299,7 @@ module.exports = () => {
 
         it('should successfuly filter QC flag types by whether the flag is `bad`', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?filter[bad]=false')
+                .get('/api/qcFlagTypes?filter[bad]=false')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -292,19 +308,19 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(1);
+                    expect(flagTypes).to.be.lengthOf(2);
 
-                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['CertifiedByExpert']);
+                    expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['CertifiedByExpert', 'Archived']);
                     done();
                 });
         });
 
         it('should successfuly sort QC flag types by id', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?sort[id]=DESC')
+                .get('/api/qcFlagTypes?sort[id]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -313,19 +329,19 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
-                    expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([13, 12, 11, 3, 2]);
+                    expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 3, 2]);
                     done();
                 });
         });
 
         it('should successfuly sort QC flag types by name', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?sort[name]=DESC')
+                .get('/api/qcFlagTypes?sort[name]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -334,10 +350,10 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
                     expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                         'UnknownQuality',
@@ -345,6 +361,7 @@ module.exports = () => {
                         'CertifiedByExpert',
                         'BadPID',
                         'Bad',
+                        'Archived',
                     ]);
                     done();
                 });
@@ -352,7 +369,7 @@ module.exports = () => {
 
         it('should successfuly sort QC flag types by method', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?sort[method]=ASC')
+                .get('/api/qcFlagTypes?sort[method]=ASC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -361,12 +378,13 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
 
                     expect(flagTypes).to.be.an('array');
-                    expect(flagTypes).to.be.lengthOf(5);
+                    expect(flagTypes).to.be.lengthOf(6);
 
                     expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
+                        'Archived',
                         'Bad',
                         'BadPID',
                         'CertifiedByExpert',
@@ -379,7 +397,7 @@ module.exports = () => {
 
         it('should successfuly apply pagination of QC flag types', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/types?page[limit]=2&page[offset]=2&sort[id]=ASC')
+                .get('/api/qcFlagTypes?page[limit]=2&page[offset]=2&sort[id]=ASC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -388,7 +406,7 @@ module.exports = () => {
                     }
 
                     const { meta, data: flagTypes } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 3 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 3 } });
 
                     expect(flagTypes).to.be.an('array');
                     expect(flagTypes).to.be.lengthOf(2);
@@ -399,7 +417,7 @@ module.exports = () => {
         });
     });
 
-    describe('POST /api/qualityControlFlags/types', () => {
+    describe('POST /api/qcFlagTypes', () => {
         it('should successfuly create QC Flag Type', (done) => {
             const parameters = {
                 name: 'A',
@@ -409,7 +427,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(201)
                 .end((err, res) => {
@@ -432,7 +450,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(400)
                 .end((err, res) => {
@@ -457,7 +475,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(400)
                 .end((err, res) => {
@@ -482,7 +500,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(400)
                 .end((err, res) => {

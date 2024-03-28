@@ -14,10 +14,18 @@
 const { expect } = require('chai');
 
 /**
- * Tests whether first given object holds superset of keys of second object with the same values
+ * Tests whether first given object is superset of the other one
  * @param {*} supersetObject superset object
  * @param {*} subsetObject subset object
  * @return {void}
  */
-exports.expectObjectToBeSuperset = (supersetObject, subsetObject) => expect(Object.entries(supersetObject))
-    .to.include.all.deep.members(Object.entries(subsetObject));
+exports.expectObjectToBeSuperset = (supersetObject, subsetObject) => {
+    for (const key in subsetObject) {
+        const substObjectValue = subsetObject[key];
+        const supersetObjectValue = supersetObject[key];
+        expect(
+            supersetObjectValue,
+            `difference between objects for key "${key}" (super:${supersetObjectValue}, sub:${substObjectValue})`,
+        ).to.be.eql(substObjectValue);
+    }
+};

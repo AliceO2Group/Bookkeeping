@@ -29,7 +29,7 @@ const LhcPeriodSuite = require('./lhcPeriod');
 const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
 const SimulationPassesSuite = require('./simulationPasses/index.js');
-const QCFlag = require('./qualityControlFlag/index.js');
+const QcFlags = require('./qualityControlFlag/index.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -52,5 +52,5 @@ module.exports = () => {
     describe('User', UserSuite);
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);
-    describe('QCFlag', QCFlag);
+    describe('QC Flags', QcFlags);
 };

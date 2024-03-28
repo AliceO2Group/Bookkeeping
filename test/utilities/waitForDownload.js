@@ -1,4 +1,4 @@
-/*
+/**
  *  @license
  *  Copyright CERN and copyright holders of ALICE O2. This software is
  *  distributed under the terms of the GNU General Public License v3 (GPL
@@ -14,10 +14,12 @@
 /**
  * Create promise which is resolved when last initiated download is completed and rejected when canceled
  * @param {CDPSession} session puppetear CDP session
+ * @param {object} options options altering behaviour
+ * @param {number} [options.timeout = 5000] timeout (ms) to reject if not downloaded
  * @return {Promise} promise
  * !!! Downloading requires to set 'Browser.setDownloadBehavior' behaviour on the given CDP session
  */
-async function waitForDownload(session) {
+async function waitForDownload(session, { timeout = 5000 } = {}) {
     return new Promise((resolve, reject) => {
         session.on('Browser.downloadProgress', (event) => {
             if (event.state === 'completed') {
@@ -26,6 +28,7 @@ async function waitForDownload(session) {
                 reject('download canceled');
             }
         });
+        setTimeout(() => reject(`Download timeout after ${timeout} ms`), timeout);
     });
 }
 
