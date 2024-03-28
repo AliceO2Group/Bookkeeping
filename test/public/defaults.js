@@ -280,7 +280,7 @@ module.exports.getTableDataSlice = async (page, columnKeys) => {
     for (const row of await page.$$('table tbody tr')) {
         const entity = {};
         for (const columnKey of columnKeys) {
-            entity[columnKey] = await row.$eval(`td[id$='${columnKey}']`, ({ innerText }) => innerText);
+            entity[columnKey] = await row.$eval(`td.column-${columnKey}`, ({ innerText }) => innerText);
         }
         result.push(entity);
     }
