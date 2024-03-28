@@ -14,6 +14,9 @@
 const { expect } = require('chai');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
+const { expectObjectToBeSuperset } = require('../../../../utilities/expectObjectToBeSuperset');
+const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 const { qcFlagTypeService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
 
 module.exports = () => {
@@ -273,6 +276,86 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(3);
             expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12, 13]);
+        });
+    });
+
+    describe('Creating QC Flag Type', () => {
+        it('should successfuly create QC Flag Type', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            const newQCFlag = await qcFlagTypeService.create(parameters);
+            delete parameters.externalUserId;
+            expectObjectToBeSuperset(newQCFlag, parameters);
+        });
+
+        it('should fail when QC Flag type with name provide already exists', async () => {
+            const parameters = {
+                name: 'BadPID',
+                method: 'Bad PID',
+                bad: false,
+                externalUserId: 1,
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters),
+                new ConflictError('name must be unique'),
+            );
+        });
+
+        it('should fail when no name is provided', async () => {
+            const parameters = {
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters),
+                new ConflictError('QcFlagType.name cannot be null'),
+            );
+        });
+
+        it('should fail when no method is provided', async () => {
+            const parameters = {
+                name: 'A',
+                bad: false,
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters),
+                new ConflictError('QcFlagType.method cannot be null'),
+            );
+        });
+
+        it('should fail when no bad is provided', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                color: '#FFAA00',
+                externalUserId: 1,
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters),
+                new ConflictError('QcFlagType.bad cannot be null'),
+            );
+        });
+
+        it('should fail when no user info is provided', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters),
+                new BadParameterError('Can not find without id or external id'),
+            );
         });
     });
 };
