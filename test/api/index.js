@@ -31,12 +31,8 @@ const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
 const DataPassesSuite = require('./dataPasses.test.js');
 const SimulationPassesSuite = require('./simulationPasses.test.js');
-<<<<<<< HEAD
-const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
-=======
 const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
 const DplDetectorsSuite = require('./dplDetectors.test.js');
->>>>>>> xsalonx/QCF-TYPES/O2B-1118/O2B-1183/qc-flag-types-fetching-all
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
