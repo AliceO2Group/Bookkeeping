@@ -16,7 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     fillInput,
     waitForTableDataReload,
     validateTableData,
@@ -115,12 +115,12 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'LHC23k6a'));
 
-        let allDataPassesNames = await getAllDataFields(page, 'name');
+        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
 
         await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b'));
 
-        allDataPassesNames = await getAllDataFields(page, 'name');
+        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
     });
 };
