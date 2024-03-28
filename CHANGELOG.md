@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.82.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.82.0)
+* Notable changes for users:
+  * Fixed spurious runs being marked as stopped few seconds after their creation, and same for envs
+  * Added log creation template for RC daily meeting
+  * When clicking any infologger link, only severity warn, error and fatal are displayed
+  * Added formatting to following columns in Data Passes view:
+    * Output Size 
+    * Reconstructed Events
+  * Fixed issue in which lhcPeriodName was not being saved in Bookkeeping
+* Notable change for developers:
+  * Use observable data for detectors provider
+  * Added QC flag types fetching by id endpoint
+  * Added fetch all QC flag types endpoint
+  * Added tests for no-anonymous toggle in logs overview
+  * Added column-specific class to every table cells to be used in tests to fetch the content of all the cells of one column
+
 ## [0.81.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.81.0)
 * Notable changes for users:
   * Fixed fill statistics not being displayed in fill overview
