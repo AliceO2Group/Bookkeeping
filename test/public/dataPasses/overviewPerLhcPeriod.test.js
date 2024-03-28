@@ -22,7 +22,7 @@ const {
     validateTableData,
     waitForNavigation,
     pressElement,
-    getTableDataSliceFields,
+    getTableDataSlice,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -71,7 +71,7 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
-        const tableSlice = await getTableDataSliceFields(page, ['name', 'associatedRuns', 'anchoredSimulationPasses']);
+        const tableSlice = await getTableDataSlice(page, ['name', 'associatedRuns', 'anchoredSimulationPasses']);
         expect(tableSlice.map(({ name, associatedRuns, anchoredSimulationPasses }) => ({
             name,
             runsCount: Number(associatedRuns.split('\n')[0]),

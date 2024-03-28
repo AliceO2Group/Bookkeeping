@@ -279,7 +279,7 @@ module.exports.getAllDataFields = async (page, key) => {
  * @param {string[]} columnKeys The keys for the columns to gather entities of
  * @return {Promise<Object<string, string>>} An array containing all table partial entities of a columns, in the order displayed by the browser
  */
-module.exports.getTableDataSliceFields = async (page, columnKeys) => {
+module.exports.getTableDataSlice = async (page, columnKeys) => {
     const columnsData = {};
     for (const key of columnKeys) {
         columnsData[key] = await this.getAllDataFields(page, key);
