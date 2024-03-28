@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { expectObjectToBeSuperset } = require('../utilities/expectObjectToBeSuperset');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -411,6 +412,107 @@ module.exports = () => {
                     expect(flagTypes).to.be.lengthOf(2);
 
                     expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12]);
+                    done();
+                });
+        });
+    });
+
+    describe('POST /api/qcFlagTypes', () => {
+        it('should successfuly create QC Flag Type', (done) => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qcFlagTypes?token=admin')
+                .send(parameters)
+                .expect(201)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: newQCFlag } = res.body;
+                    expectObjectToBeSuperset(newQCFlag, parameters);
+                    done();
+                });
+        });
+
+        it('should fail when no name is provided', (done) => {
+            const parameters = {
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qcFlagTypes?token=admin')
+                .send(parameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/name');
+                    expect(titleError.detail).to.equal('"body.name" is required');
+
+                    done();
+                });
+        });
+
+        it('should fail when no method is provided', (done) => {
+            const parameters = {
+                name: 'A',
+                bad: false,
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qcFlagTypes?token=admin')
+                .send(parameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/method');
+                    expect(titleError.detail).to.equal('"body.method" is required');
+
+                    done();
+                });
+        });
+
+        it('should fail when no bad info is provided', (done) => {
+            const parameters = {
+                name: 'A',
+                method: 'A++',
+                color: '#FFAA00',
+            };
+
+            request(server)
+                .post('/api/qcFlagTypes?token=admin')
+                .send(parameters)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/bad');
+                    expect(titleError.detail).to.equal('"body.bad" is required');
+
                     done();
                 });
         });
