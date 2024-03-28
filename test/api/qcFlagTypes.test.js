@@ -417,7 +417,7 @@ module.exports = () => {
         });
     });
 
-    describe('POST /api/qualityControlFlags/types', () => {
+    describe('POST /api/qcFlagTypes', () => {
         it('should successfuly create QC Flag Type', (done) => {
             const parameters = {
                 name: 'A',
@@ -427,7 +427,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(201)
                 .end((err, res) => {
@@ -450,7 +450,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(400)
                 .end((err, res) => {
@@ -475,7 +475,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(400)
                 .end((err, res) => {
@@ -500,7 +500,7 @@ module.exports = () => {
             };
 
             request(server)
-                .post('/api/qualityControlFlags/types?token=admin')
+                .post('/api/qcFlagTypes?token=admin')
                 .send(parameters)
                 .expect(400)
                 .end((err, res) => {
