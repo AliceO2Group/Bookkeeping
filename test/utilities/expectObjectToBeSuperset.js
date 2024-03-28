@@ -19,5 +19,13 @@ const { expect } = require('chai');
  * @param {*} subsetObject subset object
  * @return {void}
  */
-exports.expectObjectToBeSuperset = (supersetObject, subsetObject) => expect(Object.entries(supersetObject))
-    .to.include.all.deep.members(Object.entries(subsetObject));
+exports.expectObjectToBeSuperset = (supersetObject, subsetObject) => {
+    for (const key in subsetObject) {
+        const substObjectValue = subsetObject[key];
+        const supersetObjectValue = supersetObject[key];
+        expect(
+            supersetObjectValue,
+            `difference between objects for key "${key}" (super:${supersetObjectValue}, sub:${substObjectValue})`,
+        ).to.be.eql(substObjectValue);
+    }
+};
