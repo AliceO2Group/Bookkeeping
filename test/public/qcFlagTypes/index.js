@@ -14,5 +14,5 @@
 const QcFlagTypesOverviewSuite = require('./overview.test');
 
 module.exports = () => {
-    describe('QcFlagTypesOverview Suite', QcFlagTypesOverviewSuite);
+    describe('Overview Page', QcFlagTypesOverviewSuite);
 };
