@@ -497,10 +497,10 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise<void>} promise
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    await page.waitForFunction((columnId, expectedValues) => {
+    await page.waitForFunction((columnId, expectedInnerTextValues) => {
         // Browser context, be careful when modifying
         const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return JSON.stringify(names) === JSON.stringify(expectedValues);
+        return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
     }, { timeout: 1500 }, columnId, expectedInnerTextValues);
 };
 
@@ -547,23 +547,17 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
 
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
-    // eslint-disable-next-line require-jsdoc
-    const testSorting = (columnId, expectedData) => {
-        const values = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return values.every((e, i) => e === expectedData[i]);
-    };
-
     // Sort in ASCENDING manner
     await this.pressElement(page, `th#${columnId}`);
-    await page.waitForFunction(testSorting, { timeout: 1500 }, columnId, [...notOrderData].sort());
+    this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
     // Sort in DESCSENDING manner
     await this.pressElement(page, `th#${columnId}`);
-    await page.waitForFunction(testSorting, { timeout: 1500 }, columnId, [...notOrderData].sort().reverse());
+    this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
     // Revoke sorting
     await this.pressElement(page, `th#${columnId}`);
-    await page.waitForFunction(testSorting, { timeout: 1500 }, columnId, notOrderData);
+    this.expectColumnValues(page, columnId, notOrderData);
 };
 
 /**
