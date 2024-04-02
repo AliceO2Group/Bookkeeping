@@ -92,22 +92,22 @@ module.exports = () => {
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableSortingByColumn(page, 'name');
+        await testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableSortingByColumn(page, 'requestedEventsCount');
+        await testTableSortingByColumn(page, 'requestedEventsCount');
     });
 
     it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableSortingByColumn(page, 'generatedEventsCount');
+        await testTableSortingByColumn(page, 'generatedEventsCount');
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
-        testTableSortingByColumn(page, 'outputSize');
+        await testTableSortingByColumn(page, 'outputSize');
     });
 
     it('should successfuly apply simulation passes name filter', async () => {

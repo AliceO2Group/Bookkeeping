@@ -16,9 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    waitForTableDataReload,
     fillInput,
-    getColumnCellsInnerTexts,
     pressElement,
     expectInnerText,
     testTableSortingByColumn,
@@ -94,30 +92,31 @@ module.exports = () => {
     it('should successfuly apply QC flag type names filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
-
-        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'bad'));
-
-        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
+        await fillInput(page, '.name-filter input[type=text]', 'bad');
+        await page.waitForFunction((columnId) => {
+            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return names.every((name) => /[Bb][Aa][Dd]/.test(name));
+        }, { timeout: 1500 }, 'name');
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
-
-        await waitForTableDataReload(page, () => fillInput(page, '.method-filter input[type=text]', 'bad'));
-
-        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'method');
-        expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
+        await fillInput(page, '.method-filter input[type=text]', 'bad');
+        await page.waitForFunction((columnId) => {
+            const methods = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return methods.every((method) => /[Bb][Aa][Dd]/.test(method));
+        }, { timeout: 1500 }, 'method');
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
 
-        await waitForTableDataReload(page, () => pressElement(page, '.bad-filter input[type=checkbox]'));
-
-        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'bad');
-        expect(allQCFlagTypeNames.every((bad) => bad === 'Yes'), allQCFlagTypeNames).to.be.true;
+        await pressElement(page, '.bad-filter input[type=checkbox]');
+        await page.waitForFunction((columnId) => {
+            const isBadValues = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return isBadValues.every((isBad) => isBad === 'Yes');
+        }, { timeout: 1500 }, 'bad');
     });
 };
