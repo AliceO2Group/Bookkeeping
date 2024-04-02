@@ -16,9 +16,12 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
     fillInput,
-    waitForTableDataReload,
+    testTableSortingByColumn,
+    pressElement,
+    expectColumnValues,
+    validateTableData,
+    expectInnerText,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -53,49 +56,29 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
+        const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
+        const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => display === 'Anchored',
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outputSize) => !isNaN(outputSize.replace(/,/g, '')) || outputSize === '-',
+            outputSize: (outpuSize) => {
+                const [number, unit] = outpuSize.split(' ');
+                return !isNaN(number) && dataSizeUnits.has(unit.trim());
+            },
         };
 
-        // We find the headers matching the datatype keys
-        await page.waitForSelector('th');
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-
-        // Use the third row because it is where statistics are present
-        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (index in headerIndices) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        await page.waitForSelector('#firstRowIndex');
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many data passes is available per page', async () => {
@@ -127,78 +110,27 @@ module.exports = () => {
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('tbody tr');
-        await page.hover('th#name');
-        const sortingPreviewIndicator = await page.$('#name-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by name in an ascending manner
-        const nameHeader = await page.$('th#name');
-        await waitForTableDataReload(page, () => nameHeader.evaluate((button) => button.click()));
-
-        // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        await testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-
-        await page.waitForSelector('th#reconstructedEventsCount');
-        await page.hover('th#reconstructedEventsCount');
-        const sortingPreviewIndicator = await page.$('#reconstructedEventsCount-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by year in an ascending manner
-        const reconstructedEventsCountHeader = await page.$('th#reconstructedEventsCount');
-        await waitForTableDataReload(page, () => reconstructedEventsCountHeader.evaluate((button) => button.click()));
-
-        // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'reconstructedEventsCount');
-        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
+        await testTableSortingByColumn(page, 'reconstructedEventsCount');
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#outputSize');
-        await page.hover('th#outputSize');
-        const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by avgCenterOfMassEnergy in an ascending manner
-        const outputSizeHeader = await page.$('th#outputSize');
-        await outputSizeHeader.evaluate((button) => button.click());
-        await waitForTableDataReload(page, () => outputSizeHeader.evaluate((button) => button.click()));
-
-        // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getAllDataFields(page, 'outputSize');
-        expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
+        await testTableSortingByColumn(page, 'outputSize');
     });
 
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
 
-        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
+        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
 
-        // 1
-        await waitForTableDataReload(page, () =>
-            fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1'));
-
-        let allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
-
-        // 2
-        const resetFiltersButton = await page.$('#reset-filters');
-        expect(resetFiltersButton).to.not.be.null;
-        await waitForTableDataReload(page, () => resetFiltersButton.evaluate((button) => button.click()));
-
-        allDataPassesNames = await getAllDataFields(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
     });
 };
