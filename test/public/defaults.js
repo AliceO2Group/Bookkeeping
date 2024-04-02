@@ -487,36 +487,48 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     return ret;
 };
 
-module.exports.expectColumnValues = async (page, columnId, options = {}) => {
-    const { contentChangeTiggerFunction,
-        expectedValues,
-        expectedValuesRegex,
+/**
+ * Method to check cells of columns with given id have expected innerText
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {stirng} columnId column id
+ * @param {string[]} [expectedInnerTextValues] values expected in columns
+ *
+ * @return {Promise<void>} promise
+ */
+module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
+    await page.waitForFunction((columnId, expectedValues) => {
+        // Browser context, be careful when modifying
+        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return JSON.stringify(names) === JSON.stringify(expectedValues);
+    }, { timeout: 1500 }, columnId, expectedInnerTextValues);
+};
+
+/**
+ * Generic method to validate inner text of cells belonging column with given id.
+ * It checks exact match with given values
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} columnId column id
+ * @param {string} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
+ * @param {object} options options
+ * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
+ * @param {boolean} [options.negation] if true it's expected not to match given regex
+ *
+ * @return {Promise<void>} promise
+ */
+module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
+    const {
         valuesCheckingMode = 'every',
         negation = false,
     } = options;
-    if (!expectedValues && !expectedValuesRegex) {
-        throw new Error('Incorrect arguments');
-    }
-    if (contentChangeTiggerFunction) {
-        await contentChangeTiggerFunction;
-    }
-    if (expectedValuesRegex) {
-        await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
-            // Browser context, be careful when modifying
-            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return names.length
-                && names[valuesCheckingMode]((name) =>
-                    negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
-        }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
-    }
-
-    if (expectedValues) {
-        await page.waitForFunction((columnId, expectedValues) => {
-            // Browser context, be careful when modifying
-            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return JSON.stringify(names) === JSON.stringify(expectedValues);
-        }, { timeout: 1500 }, columnId, expectedValues);
-    }
+    await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
+        // Browser context, be careful when modifying
+        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return names.length
+            && names[valuesCheckingMode]((name) =>
+                negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
+    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
 };
 
 /**

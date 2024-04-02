@@ -21,7 +21,7 @@ const {
     expectInnerText,
     testTableSortingByColumn,
     validateTableData,
-    expectColumnValues,
+    checkColumnValuesWithRegex,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -94,26 +94,20 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.name-filter input[type=text]', 'bad');
-        await expectColumnValues(page, 'name', {
-            expectedValuesRegex: '[Bb][Aa][Dd]',
-        });
+        await checkColumnValuesWithRegex(page, 'name', '[Bb][Aa][Dd]');
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.method-filter input[type=text]', 'bad');
-        await expectColumnValues(page, 'method', {
-            expectedValuesRegex: '[Bb][Aa][Dd]',
-        });
+        await checkColumnValuesWithRegex(page, 'method', '[Bb][Aa][Dd]');
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
         await pressElement(page, '.bad-filter input[type=checkbox]');
-        await expectColumnValues(page, 'bad', {
-            expectedValuesRegex: '^Yes$',
-        });
+        await checkColumnValuesWithRegex(page, 'bad', '^Yes$');
     });
 };

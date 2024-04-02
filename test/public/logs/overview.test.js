@@ -21,7 +21,7 @@ const {
     getFirstRow,
     getColumnCellsInnerTexts,
     checkColumnBalloon,
-    expectColumnValues,
+    checkColumnValuesWithRegex,
 } = require('../defaults');
 const {
     reloadPage,
@@ -220,14 +220,12 @@ module.exports = () => {
         }
 
         await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
-        await expectColumnValues(page, 'author', {
-            expectedValuesRegex: '^Anonymous$',
+        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
             negation: true,
         });
 
         await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
-        await expectColumnValues(page, 'author', {
-            expectedValuesRegex: '^Anonymous$',
+        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
             valuesCheckingMode: 'some',
         });
     });
