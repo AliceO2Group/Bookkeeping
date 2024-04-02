@@ -20,6 +20,10 @@ const {
     fillInput,
     waitForTimeout,
     validateTableData,
+    waitForNavigation,
+    pressElement,
+    getTableDataSlice,
+    checkMismatchingUrlParam,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -56,7 +60,7 @@ module.exports = () => {
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => display === 'Anchored',
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
@@ -67,6 +71,42 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+
+        const tableSlice = await getTableDataSlice(page, ['name', 'associatedRuns', 'anchoredSimulationPasses']);
+        expect(tableSlice.map(({ name, associatedRuns, anchoredSimulationPasses }) => ({
+            name,
+            runsCount: Number(associatedRuns.split('\n')[0]),
+            simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
+        }))).to.have.all.deep.members([
+            {
+                name: 'LHC22b_apass2',
+                runsCount: 3,
+                simulationPassesCount: 1,
+            },
+            {
+                name: 'LHC22b_apass1',
+                runsCount: 3,
+                simulationPassesCount: 1,
+            },
+        ]);
+    });
+
+    it('can navigate to runs per data pass page', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2)'));
+        expect(await checkMismatchingUrlParam(page, {
+            page: 'runs-per-data-pass',
+            dataPassId: '2',
+        })).to.be.eql({});
+    });
+
+    it('can navigate to anchored simulation passes per data pass page', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3)'));
+        expect(await checkMismatchingUrlParam(page, {
+            page: 'anchored-simulation-passes-overview',
+            dataPassId: '2',
+        })).to.be.eql({});
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
