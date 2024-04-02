@@ -51,7 +51,6 @@ module.exports = () => {
     describe('Status API', StatusSuite);
     describe('Statistics suite', StatisticsSuite);
     describe('Subsystems API', SubsystemsSuite);
-    describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
     describe('DataPassesSuite API', DataPassesSuite);
