@@ -186,7 +186,7 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.have.all.deep.members([LHC22b_apass1]);
+                    expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
                     done();
                 });
         });
