@@ -38,7 +38,7 @@ jobs:
             -f docker-compose.test.yml \
             run application npm run coverage
       - name: Copy coverage from container
-        run: docker cp $(docker ps -aqlf "name=bookkeeping_application"):/usr/src/app/coverage/coverage-final.json .
+        run: docker cp $(docker ps -aqlf "name=bookkeeping-application"):/usr/src/app/coverage/coverage-final.json .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         env:
