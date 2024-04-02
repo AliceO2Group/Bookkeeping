@@ -15,25 +15,25 @@ jobs:
       - uses: actions/checkout@v4
       - name: Start database
         run: |
-          docker-compose \
+          docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             up --detach database
       - name: Build test suite
         run: |
-          docker-compose \
+          docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             build
       - name: Wait for the database
         run: |
-          docker-compose \
+          docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             run --rm application /opt/wait-for-it.sh -t 0 database:3306
       - name: Execute test suite
         run: |
-          docker-compose \
+          docker compose \
             -f docker-compose.yml \
             -f docker-compose.test.yml \
             run application npm run coverage
