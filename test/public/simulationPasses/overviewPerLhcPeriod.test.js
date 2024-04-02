@@ -19,6 +19,7 @@ const {
     fillInput,
     testTableSortingByColumn,
     pressElement,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -153,9 +154,9 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a');
-        await expect(page, 'name', ['LHC23k6a']);
+        await expectColumnValues(page, 'name', ['LHC23k6a']);
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b');
-        await expect(page, 'name', ['LHC23k6b', 'LHC23k6a']);
+        await expectColumnValues(page, 'name', ['LHC23k6b', 'LHC23k6a']);
     });
 };
