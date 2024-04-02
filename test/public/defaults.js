@@ -514,24 +514,23 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
 
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
-    // Sort in ASCENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
+    // eslint-disable-next-line require-jsdoc
+    const testSorting = (columnId, expectedData) => {
+        const values = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return values.every((e, i) => e === expectedData[i]);
+    };
 
-    let targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
-    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
-    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
+    // Sort in ASCENDING manner
+    await this.pressElement(page, `th#${columnId}`);
+    await page.waitForFunction(testSorting, { timeout: 1500 }, columnId, [...notOrderData].sort());
 
     // Sort in DESCSENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
-
-    targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
-    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
-    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
+    await this.pressElement(page, `th#${columnId}`);
+    await page.waitForFunction(testSorting, { timeout: 1500 }, columnId, [...notOrderData].sort().reverse());
 
     // Revoke sorting
-    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
-    targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
-    expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
+    await this.pressElement(page, `th#${columnId}`);
+    await page.waitForFunction(testSorting, { timeout: 1500 }, columnId, notOrderData);
 };
 
 /**
