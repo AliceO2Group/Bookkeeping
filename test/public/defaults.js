@@ -498,6 +498,28 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
     triggerFunction(),
 ]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true, timeout: 1500 }));
 
+module.exports.expectColumnValues = async (page, columnId, options) => {
+    const { contentChangeTiggerFunction, expectedValues, expectedValuesRegex } = options;
+    if (contentChangeTiggerFunction) {
+        await contentChangeTiggerFunction;
+    }
+    if (expectedValuesRegex) {
+        await page.waitForFunction((columnId, regexString) => {
+            // Browser context, note when do modification
+            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return names.length && names.every((name) => RegExp(regexString).test(name));
+        }, { timeout: 1500 }, columnId, expectedValuesRegex);
+    }
+
+    if (expectedValues) {
+        await page.waitForFunction((columnId, expectedValues) => {
+            // Browser context, note when do modification
+            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return JSON.stringify(names) === JSON.stringify(expectedValues);
+        }, { timeout: 1500 }, columnId, expectedValues);
+    }
+};
+
 /**
  * Tests whether sorting of main table by column with given id works properly
  * It is required there are a least two rows in the table

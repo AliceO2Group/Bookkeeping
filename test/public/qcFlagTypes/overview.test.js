@@ -21,6 +21,7 @@ const {
     expectInnerText,
     testTableSortingByColumn,
     validateTableData,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -93,30 +94,26 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.name-filter input[type=text]', 'bad');
-        await page.waitForFunction((columnId) => {
-            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return names.length && names.every((name) => /[Bb][Aa][Dd]/.test(name));
-        }, { timeout: 1500 }, 'name');
+        await expectColumnValues(page, 'name', {
+            expectedValuesRegex: '[Bb][Aa][Dd]',
+        });
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.method-filter input[type=text]', 'bad');
-        await page.waitForFunction((columnId) => {
-            const methods = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return methods.length && methods.every((method) => /[Bb][Aa][Dd]/.test(method));
-        }, { timeout: 1500 }, 'method');
+        await expectColumnValues(page, 'method', {
+            expectedValuesRegex: '[Bb][Aa][Dd]',
+        });
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
-
         await pressElement(page, '.bad-filter input[type=checkbox]');
-        await page.waitForFunction((columnId) => {
-            const isBadValues = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return isBadValues.values && isBadValues.every((isBad) => isBad === 'Yes');
-        }, { timeout: 1500 }, 'bad');
+        await expectColumnValues(page, 'bad', {
+            expectedValuesRegex: '^Yes$',
+        });
     });
 };
