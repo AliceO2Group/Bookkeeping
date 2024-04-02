@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/d3": "7.4.0",
     "chai": "4.4.1",
+    "date-and-time": "3.1.1",
     "eslint": "8.56.0",
     "js-yaml": "4.1.0",
     "mocha": "10.3.0",
