@@ -529,6 +529,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
 
     // Revoke sorting
+    await this.waitForTableDataReload(page, () => this.pressElement(page, `th#${columnId}`));
     targetColumnValues = await getColumnCellsInnerTexts(page, columnId);
     expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
 };
