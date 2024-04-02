@@ -1,4 +1,4 @@
-/*
+/**
  *  @license
  *  Copyright CERN and copyright holders of ALICE O2. This software is
  *  distributed under the terms of the GNU General Public License v3 (GPL
@@ -28,7 +28,7 @@ async function waitForDownload(session, { timeout = 5000 } = {}) {
                 reject('download canceled');
             }
         });
-        setTimeout(() => reject('Download timeout after ${timeout}'), timeout);
+        setTimeout(() => reject(`Download timeout after ${timeout} ms`), timeout);
     });
 }
 
