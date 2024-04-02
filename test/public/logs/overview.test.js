@@ -21,6 +21,7 @@ const {
     getFirstRow,
     getColumnCellsInnerTexts,
     checkColumnBalloon,
+    expectColumnValues,
 } = require('../defaults');
 const {
     reloadPage,
@@ -219,19 +220,17 @@ module.exports = () => {
             expect(authors.some((author) => author === 'Anonymous')).to.be.true;
         }
 
-        await waitForTableDataReload(page, () => pressElement(page, '#main-action-bar > div:nth-child(1) .switch'));
+        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await expectColumnValues(page, 'author', {
+            expectedValuesRegex: '^Anonymous$',
+            negation: true,
+        });
 
-        {
-            const authors = await getColumnCellsInnerTexts(page, 'author');
-            expect(authors.every((author) => author !== 'Anonymous')).to.be.true;
-        }
-
-        await waitForTableDataReload(page, () => pressElement(page, '#main-action-bar > div:nth-child(1) .switch'));
-
-        {
-            const authors = await getColumnCellsInnerTexts(page, 'author');
-            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
-        }
+        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await expectColumnValues(page, 'author', {
+            expectedValuesRegex: '^Anonymous$',
+            valuesCheckingMode: 'some',
+        });
     });
 
     it('can filter by creation date', async () => {

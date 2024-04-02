@@ -498,22 +498,32 @@ module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
     triggerFunction(),
 ]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true, timeout: 1500 }));
 
-module.exports.expectColumnValues = async (page, columnId, options) => {
-    const { contentChangeTiggerFunction, expectedValues, expectedValuesRegex } = options;
+module.exports.expectColumnValues = async (page, columnId, options = {}) => {
+    const { contentChangeTiggerFunction,
+        expectedValues,
+        expectedValuesRegex,
+        valuesCheckingMode = 'every',
+        negation = false,
+    } = options;
+    if (!expectedValues && !expectedValuesRegex) {
+        throw new Error('Incorrect arguments');
+    }
     if (contentChangeTiggerFunction) {
         await contentChangeTiggerFunction;
     }
     if (expectedValuesRegex) {
-        await page.waitForFunction((columnId, regexString) => {
-            // Browser context, note when do modification
+        await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
+            // Browser context, be careful when modifying
             const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return names.length && names.every((name) => RegExp(regexString).test(name));
-        }, { timeout: 1500 }, columnId, expectedValuesRegex);
+            return names.length
+                && names[valuesCheckingMode]((name) =>
+                    negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
+        }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
     }
 
     if (expectedValues) {
         await page.waitForFunction((columnId, expectedValues) => {
-            // Browser context, note when do modification
+            // Browser context, be careful when modifying
             const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
             return JSON.stringify(names) === JSON.stringify(expectedValues);
         }, { timeout: 1500 }, columnId, expectedValues);
