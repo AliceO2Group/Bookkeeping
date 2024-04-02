@@ -16,13 +16,12 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    waitForTableDataReload,
     fillInput,
-    getColumnCellsInnerTexts,
     pressElement,
     expectInnerText,
     testTableSortingByColumn,
     validateTableData,
+    checkColumnValuesWithRegex,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -94,30 +93,21 @@ module.exports = () => {
     it('should successfuly apply QC flag type names filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
-
-        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'bad'));
-
-        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
+        await fillInput(page, '.name-filter input[type=text]', 'bad');
+        await checkColumnValuesWithRegex(page, 'name', '[Bb][Aa][Dd]');
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
-
-        await waitForTableDataReload(page, () => fillInput(page, '.method-filter input[type=text]', 'bad'));
-
-        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'method');
-        expect(allQCFlagTypeNames.every((name) => /[Bb][Aa][Dd]/.test(name)), allQCFlagTypeNames).to.be.true;
+        await fillInput(page, '.method-filter input[type=text]', 'bad');
+        await checkColumnValuesWithRegex(page, 'method', '[Bb][Aa][Dd]');
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await pressElement(page, '#openFilterToggle');
-
-        await waitForTableDataReload(page, () => pressElement(page, '.bad-filter input[type=checkbox]'));
-
-        const allQCFlagTypeNames = await getColumnCellsInnerTexts(page, 'bad');
-        expect(allQCFlagTypeNames.every((bad) => bad === 'Yes'), allQCFlagTypeNames).to.be.true;
+        await pressElement(page, '.bad-filter input[type=checkbox]');
+        await checkColumnValuesWithRegex(page, 'bad', '^Yes$');
     });
 };

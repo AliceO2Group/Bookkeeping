@@ -16,9 +16,10 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getColumnCellsInnerTexts,
     fillInput,
-    waitForTableDataReload,
+    testTableSortingByColumn,
+    pressElement,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -130,92 +131,32 @@ module.exports = () => {
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#name');
-        await page.hover('th#name');
-        const sortingPreviewIndicator = await page.$('#name-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by name in an ascending manner
-        const nameHeader = await page.$('th#name');
-        await waitForTableDataReload(page, () => nameHeader.evaluate((button) => button.click()));
-
-        // Expect the names to be in alphabetical order
-        const firstNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        await testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by requestedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#requestedEventsCount');
-        await page.hover('th#requestedEventsCount');
-        const sortingPreviewIndicator = await page.$('#requestedEventsCount-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by year in an ascending manner
-        const requestedEventsCountHeader = await page.$('th#requestedEventsCount');
-
-        await waitForTableDataReload(page, () => requestedEventsCountHeader.evaluate((button) => button.click()));
-
-        // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'requestedEventsCount');
-        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
+        await testTableSortingByColumn(page, 'requestedEventsCount');
     });
 
     it('can sort by generatedEventsCount column in ascending and descending manners', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#generatedEventsCount');
-        await page.hover('th#generatedEventsCount');
-        const sortingPreviewIndicator = await page.$('#generatedEventsCount-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by year in an ascending manner
-        const generatedEventsCountHeader = await page.$('th#generatedEventsCount');
-
-        await waitForTableDataReload(page, () => generatedEventsCountHeader.evaluate((button) => button.click()));
-
-        // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'generatedEventsCount');
-        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
+        await testTableSortingByColumn(page, 'generatedEventsCount');
     });
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#outputSize');
-        await page.hover('th#outputSize');
-        const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by avgCenterOfMassEnergy in an ascending manner
-        const outputSizeHeader = await page.$('th#outputSize');
-
-        await waitForTableDataReload(page, () => outputSizeHeader.evaluate((button) => button.click()));
-
-        // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getColumnCellsInnerTexts(page, 'outputSize');
-        expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
+        await testTableSortingByColumn(page, 'outputSize');
     });
 
     it('should successfuly apply simulation passes name filter', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
 
-        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a');
+        await expectColumnValues(page, 'name', ['LHC23k6a']);
 
-        await waitForTableDataReload(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
-
-        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
-
-        await waitForTableDataReload(page, () =>
-            fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b'));
-
-        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b');
+        await expectColumnValues(page, 'name', ['LHC23k6b', 'LHC23k6a']);
     });
 };
