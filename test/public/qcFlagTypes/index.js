@@ -11,15 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-/**
- * @typedef DataPass
- *
- * @property {number} id
- * @property {string} name
- * @property {string} description
- * @property {number} outputSize
- * @property {number} reconstructedEventsCount
- * @property {number} lastRunNumber
- * @property {number} runsCount
- * @property {number} simulationPassesCount
- */
+const QcFlagTypesOverviewSuite = require('./overview.test');
+
+module.exports = () => {
+    describe('Overview Page', QcFlagTypesOverviewSuite);
+};
