@@ -16,11 +16,11 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getColumnCellsInnerTexts,
     fillInput,
-    waitForTableDataReload,
     testTableSortingByColumn,
+    pressElement,
 } = require('../defaults');
+const { JSON } = require('sequelize');
 
 const { expect } = chai;
 
@@ -151,21 +151,18 @@ module.exports = () => {
 
     it('should successfuly apply simulation passes name filter', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        await page.waitForSelector('#openFilterToggle');
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
 
-        await filterToggleButton.evaluate((button) => button.click());
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a');
+        await page.waitForFunction((columnId, expectedValues) => {
+            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return JSON.stringify(names) === JSON.stringify(expectedValues) ;
+        }, { timeout: 1500 }, 'name', ['LHC23k6a']);
 
-        await waitForTableDataReload(page, () => fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a'));
-
-        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
-
-        await waitForTableDataReload(page, () =>
-            fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b'));
-
-        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b');
+        await page.waitForFunction((columnId, expectedValues) => {
+            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return JSON.stringify(names) === JSON.stringify(expectedValues) ;
+        }, { timeout: 1500 }, 'name', ['LHC23k6b', 'LHC23k6a']);
     });
 };
