@@ -21,6 +21,7 @@ const {
     getFirstRow,
     getColumnCellsInnerTexts,
     checkColumnBalloon,
+    checkColumnValuesWithRegex,
 } = require('../defaults');
 const {
     reloadPage,
@@ -29,7 +30,6 @@ const {
     getInnerText,
     getPopoverSelector,
     waitForTimeout,
-    waitForTableDataReload,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -219,19 +219,15 @@ module.exports = () => {
             expect(authors.some((author) => author === 'Anonymous')).to.be.true;
         }
 
-        await waitForTableDataReload(page, () => pressElement(page, '#main-action-bar > div:nth-child(1) .switch'));
+        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            negation: true,
+        });
 
-        {
-            const authors = await getColumnCellsInnerTexts(page, 'author');
-            expect(authors.every((author) => author !== 'Anonymous')).to.be.true;
-        }
-
-        await waitForTableDataReload(page, () => pressElement(page, '#main-action-bar > div:nth-child(1) .switch'));
-
-        {
-            const authors = await getColumnCellsInnerTexts(page, 'author');
-            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
-        }
+        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            valuesCheckingMode: 'some',
+        });
     });
 
     it('can filter by creation date', async () => {
