@@ -20,7 +20,7 @@ module.exports = () => {
         it('should return 200 when fetching app configuration', async () => {
             const response = await request(server).get('/api/configuration');
             expect(response.status).to.equal(200);
-            expect(response.body).to.equal({
+            expect(response.body).to.eql({
                 data: {
                     FlpInfologgerUrl: 'http://localhost:8081',
                     EpnInfologgerUrl: null,
