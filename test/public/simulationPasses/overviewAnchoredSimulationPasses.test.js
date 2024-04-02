@@ -117,6 +117,6 @@ module.exports = () => {
         await expectColumnValues(page, 'name', ['LHC23k6a']);
 
         await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b');
-        await expectColumnValues(page, 'name', ['LHC23k6a', 'LHC23k6b']);
+        await expectColumnValues(page, 'name', ['LHC23k6b', 'LHC23k6a']);
     });
 };
