@@ -17,9 +17,16 @@ const { expect } = require('chai');
 
 module.exports = () => {
     describe('GET /api/configuration', () => {
-        it('should return 200 with the frontend configuration', async () => {
-            const response = await request(server).get('/api/configuration.js');
+        it('should return 200 when fetching app configuration', async () => {
+            const response = await request(server).get('/api/configuration');
             expect(response.status).to.equal(200);
+            expect(response.body).to.equal({
+                data: {
+                    FlpInfologgerUrl: 'http://localhost:8081',
+                    EpnInfologgerUrl: null,
+                    AliFlpIndexUrl: 'http://localhost:8082',
+                },
+            });
         });
     });
 };
