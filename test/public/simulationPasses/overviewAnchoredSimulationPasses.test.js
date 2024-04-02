@@ -16,14 +16,13 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getColumnCellsInnerTexts,
     fillInput,
-    waitForTableDataReload,
     validateTableData,
     pressElement,
     testTableSortingByColumn,
     expectInnerText,
     expectInnerTextTo,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -113,14 +112,11 @@ module.exports = () => {
     it('should successfuly apply simulation passes name filter', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         await pressElement(page, '#openFilterToggle');
-        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'LHC23k6a'));
 
-        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a']);
+        await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a');
+        await expectColumnValues(page, 'name', ['LHC23k6a']);
 
-        await waitForTableDataReload(page, () => fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b'));
-
-        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC23k6a', 'LHC23k6b']);
+        await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b');
+        await expectColumnValues(page, 'name', ['LHC23k6a', 'LHC23k6b']);
     });
 };
