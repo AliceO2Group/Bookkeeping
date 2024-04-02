@@ -30,7 +30,6 @@ const {
     getInnerText,
     getPopoverSelector,
     waitForTimeout,
-    waitForTableDataReload,
 } = require('../defaults.js');
 
 const { expect } = chai;
