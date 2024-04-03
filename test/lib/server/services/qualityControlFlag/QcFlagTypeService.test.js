@@ -286,10 +286,17 @@ module.exports = () => {
                 bad: false,
                 color: '#FFAA00',
             };
-            const relations = { user: { externalId: 1 } };
+            const relations = { user: { externalUserId: 1 } };
             const newQCFlag = await qcFlagTypeService.create(parameters, relations);
-            const { name, method, bad, color, createdBy: { externalId } } = newQCFlag;
-            expect({ name, method, bad, color, externalId }).to.be.eql({ ...parameters, ...relations.user });
+            {
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
+            {
+                const fetchedQCFlag = await qcFlagTypeService.getById(newQCFlag.id);
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = fetchedQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
         });
 
         it('should fail when QC Flag type with provided name already exists', async () => {
@@ -299,7 +306,7 @@ module.exports = () => {
                 bad: false,
             };
             await assert.rejects(
-                () => qcFlagTypeService.create(parameters, { user: { externalId: 1 } }),
+                () => qcFlagTypeService.create(parameters, { user: { externalUserId: 1 } }),
                 new ConflictError(`A QC flag with name ${parameters.name} or ${parameters.method} already exists`),
             );
         });

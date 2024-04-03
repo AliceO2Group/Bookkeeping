@@ -316,8 +316,8 @@ module.exports = () => {
                 expect({ name, method, bad, color }).to.be.eql(parameters);
             }
             {
-                const createdFlagType = await qcFlagTypeService.getById(newQCFlag.id);
-                const { name, method, bad, color } = createdFlagType;
+                const fetchedQcFlagType = await qcFlagTypeService.getById(newQCFlag.id);
+                const { name, method, bad, color } = fetchedQcFlagType;
                 expect({ name, method, bad, color }).to.be.eql(parameters);
             }
         });
