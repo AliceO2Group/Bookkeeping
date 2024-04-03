@@ -293,7 +293,7 @@ module.exports = () => {
             expectObjectToBeSuperset(newQCFlag, parameters);
         });
 
-        it('should fail when QC Flag type with name provide already exists', async () => {
+        it('should fail when QC Flag type with provided name already exists', async () => {
             const parameters = {
                 name: 'BadPID',
                 method: 'Bad PID',
