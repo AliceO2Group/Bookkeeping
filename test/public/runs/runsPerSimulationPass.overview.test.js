@@ -96,8 +96,8 @@ module.exports = () => {
             timeTrgStart: validateDate,
             timeTrgEnd: validateDate,
 
-            aliceL3Current: (current) => !isNaN(Number(current)),
-            aliceL3Dipole: (current) => !isNaN(Number(current)),
+            aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+            dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
@@ -117,7 +117,8 @@ module.exports = () => {
 
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
-        await pressElement(page, '#preferences-raw-timestamps');
+
+        await pressElement(page, '#preferences-raw-timestamps', true);
         await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
         await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
     });
@@ -133,14 +134,6 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-
-        // Expect the custom per page input to have red border and text color if wrong value typed
-        // const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
-        // await customPerPageInput.evaluate((input) => input.focus());
-        // await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
-        //     el.value = '1111';
-        //     el.dispatchEvent(new Event('input'));
-        // });
 
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
         await validateElement(page, amountSelectorId);
