@@ -35,8 +35,6 @@ html, body {
     word-break: break-all;
 }
 
-.nowrap { white-space: nowrap; }
-
 .show-overflow {
     height: initial;
     word-break: normal;
