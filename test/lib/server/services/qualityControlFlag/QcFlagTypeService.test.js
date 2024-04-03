@@ -288,8 +288,8 @@ module.exports = () => {
                 externalUserId: 1,
             };
             const newQCFlag = await qcFlagTypeService.create(parameters);
-            const { name, method, bad, color } = newQCFlag;
-            expect({ name, method, bad, color }).to.be.eql(parameters);
+            const { name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
+            expect({ name, method, bad, color, externalUserId }).to.be.eql(parameters);
         });
 
         it('should fail when QC Flag type with provided name already exists', async () => {
