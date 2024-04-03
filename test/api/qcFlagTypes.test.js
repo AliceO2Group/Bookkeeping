@@ -15,7 +15,6 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
-const { expectObjectToBeSuperset } = require('../utilities/expectObjectToBeSuperset');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -437,7 +436,8 @@ module.exports = () => {
                     }
 
                     const { data: newQCFlag } = res.body;
-                    expectObjectToBeSuperset(newQCFlag, parameters);
+                    const { name, method, bad, color } = newQCFlag;
+                    expect({ name, method, bad, color }).to.be.eql(parameters);
                     done();
                 });
         });

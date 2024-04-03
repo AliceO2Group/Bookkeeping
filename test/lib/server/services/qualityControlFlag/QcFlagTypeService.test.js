@@ -14,7 +14,6 @@
 const { expect } = require('chai');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
-const { expectObjectToBeSuperset } = require('../../../../utilities/expectObjectToBeSuperset');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 const { qcFlagTypeService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
@@ -289,8 +288,8 @@ module.exports = () => {
                 externalUserId: 1,
             };
             const newQCFlag = await qcFlagTypeService.create(parameters);
-            delete parameters.externalUserId;
-            expectObjectToBeSuperset(newQCFlag, parameters);
+            const { name, method, bad, color } = newQCFlag;
+            expect({ name, method, bad, color }).to.be.eql(parameters);
         });
 
         it('should fail when QC Flag type with provided name already exists', async () => {
