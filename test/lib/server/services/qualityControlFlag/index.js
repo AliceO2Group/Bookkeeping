@@ -11,10 +11,17 @@
  * or submit itself to any jurisdiction.
  */
 
+<<<<<<< HEAD
 const QualityControlFlagServiceSuite = require('./QualityControlFlagService.test.js');
 const GetAllFlagTypes = require('./getAllFlagTypes.test.js');
 
 module.exports = () => {
     describe('QualityControlFlagService Suite', QualityControlFlagServiceSuite);
     describe('QualityControlFlagType Suite', GetAllFlagTypes);
+=======
+const QcFlagTypesServiceTestSuite = require('./QcFlagTypeService.test.js');
+
+module.exports = () => {
+    describe('QcFlagTypeService Suite', QcFlagTypesServiceTestSuite);
+>>>>>>> main
 };

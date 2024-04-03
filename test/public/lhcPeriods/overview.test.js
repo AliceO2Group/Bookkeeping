@@ -16,8 +16,10 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
     fillInput,
+    testTableSortingByColumn,
+    pressElement,
+    expectColumnValues,
 } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
 
@@ -55,7 +57,7 @@ module.exports = () => {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
             associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
-            associatedSimulationPasses: (display) => /(No MC)|(MC)/.test(display),
+            associatedSimulationPasses: (display) => /(No MC)|(\d+\nMC)/.test(display),
             year: (year) => !isNaN(year),
             beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
@@ -133,108 +135,39 @@ module.exports = () => {
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'lhc-period-overview');
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.hover('th#name');
-        await waitForTimeout(100);
-        const sortingPreviewIndicator = await page.$('#name-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by name in an ascending manner
-        const nameHeader = await page.$('th#name');
-        await nameHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        await testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by year column in ascending and descending manners', async () => {
         await goToPage(page, 'lhc-period-overview');
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.hover('th#year');
-        await waitForTimeout(100);
-        const sortingPreviewIndicator = await page.$('#year-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by year in an ascending manner
-        const yearHeader = await page.$('th#year');
-        await yearHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the year to be in order
-        const firstYears = await getAllDataFields(page, 'year');
-        expect(firstYears).to.have.all.deep.ordered.members(firstYears.sort());
+        await testTableSortingByColumn(page, 'year');
     });
 
     it('can sort by avgCenterOfMassEnergy column in ascending and descending manners', async () => {
         await goToPage(page, 'lhc-period-overview');
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.hover('th#avgCenterOfMassEnergy');
-        await waitForTimeout(100);
-        const sortingPreviewIndicator = await page.$('#avgCenterOfMassEnergy-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by avgCenterOfMassEnergy in an ascending manner
-        const avgCeneterOfMassEnergyHeader = await page.$('th#avgCenterOfMassEnergy');
-        await avgCeneterOfMassEnergyHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the avgCenterOfMassEnergy to be in order
-        const firstAvgCeneterOfMassEnergies = await getAllDataFields(page, 'avgCenterOfMassEnergy');
-        expect(firstAvgCeneterOfMassEnergies).to.have.all.deep.ordered.members(firstAvgCeneterOfMassEnergies.sort());
+        await testTableSortingByColumn(page, 'avgCenterOfMassEnergy');
     });
 
     it('should successfuly apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
-
-        await filterToggleButton.evaluate((button) => button.click());
+        await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22a');
-
-        await waitForTimeout(100);
-
-        let allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a']);
-
-        const resetFiltersButton = await page.$('#reset-filters');
-        expect(resetFiltersButton).to.not.be.null;
-        await resetFiltersButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-
-        allLhcPeriodNameCellsContent = await getAllDataFields(page, 'name');
-        expect(allLhcPeriodNameCellsContent).to.has.all.deep.members(['LHC22a', 'LHC22b', 'LHC23f']);
+        await expectColumnValues(page, 'name', ['LHC22a']);
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'name', ['LHC23f', 'LHC22b', 'LHC22a']);
     });
 
     it('should successfuly apply lhc period year filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
-
-        await filterToggleButton.evaluate((button) => button.click());
+        await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', '2022');
-
-        await waitForTimeout(100);
-
-        const allLhcPeriodYears = await getAllDataFields(page, 'year');
-        expect([...new Set(allLhcPeriodYears)]).to.has.all.members(['2022']);
+        await expectColumnValues(page, 'year', ['2022', '2022']);
     });
 
     it('should successfuly apply lhc period beam type filter', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
-
-        await filterToggleButton.evaluate((button) => button.click());
+        await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(4) input[type=text]', 'XeXe');
-
-        await waitForTimeout(100);
-
-        const allLhcPeriodBeamTypes = await getAllDataFields(page, 'beamTypes');
-        expect([...new Set(allLhcPeriodBeamTypes)]).to.has.all.members(['XeXe']);
+        await expectColumnValues(page, 'beamTypes', ['XeXe']);
     });
 };

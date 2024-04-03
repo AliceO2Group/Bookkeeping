@@ -11,12 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-/**
- * @typedef QualityControlFlagType
- *
- * @param {number} id
- * @param {string} name
- * @param {string} method
- * @param {boolean} bad
- * @param {boolean} obsolate
- */
+const QcFlagTypesOverviewSuite = require('./overview.test');
+
+module.exports = () => {
+    describe('Overview Page', QcFlagTypesOverviewSuite);
+};

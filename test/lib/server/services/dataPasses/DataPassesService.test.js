@@ -25,6 +25,7 @@ const LHC22b_apass1 = {
     outputSize: 56875682112600,
     lastRunNumber: 108,
     runsCount: 3,
+    simulationPassesCount: 1,
 };
 
 const LHC22b_apass2 = {
@@ -35,6 +36,7 @@ const LHC22b_apass2 = {
     outputSize: 55765671112610,
     lastRunNumber: 55,
     runsCount: 3,
+    simulationPassesCount: 1,
 };
 
 const LHC22a_apass1 = {
@@ -45,6 +47,7 @@ const LHC22a_apass1 = {
     outputSize: 55761110122610,
     lastRunNumber: 105,
     runsCount: 4,
+    simulationPassesCount: 2,
 };
 
 module.exports = () => {
@@ -112,6 +115,18 @@ module.exports = () => {
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.be.lengthOf(2);
         expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
+    });
+
+    it('should succesfully filter data passes on simulation pass ids', async () => {
+        const dto = {
+            query: {
+                filter: {
+                    simulationPassIds: ['1'],
+                },
+            },
+        };
+        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
+        expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
     });
 
     it('should succesfully sort data passes by names', async () => {
