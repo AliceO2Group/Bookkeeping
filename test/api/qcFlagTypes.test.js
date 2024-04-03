@@ -438,7 +438,21 @@ module.exports = () => {
                     const { data: newQCFlag } = res.body;
                     const { name, method, bad, color } = newQCFlag;
                     expect({ name, method, bad, color }).to.be.eql(parameters);
-                    done();
+
+                    request(server)
+                        .get(`/api/qcFlagTypes/${newQCFlag.id}`)
+                        .expect(200)
+                        .end((err, res) => {
+                            if (err) {
+                                done(err);
+                                return;
+                            }
+
+                            const { data: newQCFlag } = res.body;
+                            const { name, method, bad, color } = newQCFlag;
+                            expect({ name, method, bad, color }).to.be.eql(parameters);
+                            done();
+                        });
                 });
         });
 
