@@ -174,6 +174,22 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should succefully filter on simulationPassIds', (done) => {
+            request(server)
+                .get('/api/dataPasses?filter[simulationPassIds][]=1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data: dataPasses } = res.body;
+                    expect(dataPasses).to.be.an('array');
+                    expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
+                    done();
+                });
+        });
         it('should successfuly sort on id and name', (done) => {
             request(server)
                 .get('/api/dataPasses?sort[id]=DESC&sort[name]=ASC')
