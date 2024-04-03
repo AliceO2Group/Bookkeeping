@@ -22,7 +22,7 @@ Service 'application' failed to build: The command '/bin/sh -c apk add --no-cach
 
 ### Base command
 ```sh
-$ docker-compose -f docker-compose.yml
+$ docker compose -f docker-compose.yml
 ```
 
 ### Starting the production environment
@@ -35,7 +35,7 @@ The `docker-compose.dev.yml` is designed to be used during development.
 
 ### Base command
 ```sh
-$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml
+$ docker compose -f docker-compose.yml -f docker-compose.dev.yml
 ```
 
 ### Starting the development environment
@@ -48,7 +48,7 @@ The `docker-compose.test.yml` is designed to include everything that is necessar
 
 ### Base command
 ```sh
-$ docker-compose -f docker-compose.yml -f docker-compose.test.yml
+$ docker compose -f docker-compose.yml -f docker-compose.test.yml
 ```
 
 ### Execute the test suite
