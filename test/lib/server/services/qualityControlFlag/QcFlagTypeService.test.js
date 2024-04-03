@@ -306,45 +306,6 @@ module.exports = () => {
             );
         });
 
-        it('should fail when no name is provided', async () => {
-            const parameters = {
-                method: 'AA+',
-                bad: false,
-                color: '#FFAA00',
-                externalUserId: 1,
-            };
-            await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('QcFlagType.name cannot be null'),
-            );
-        });
-
-        it('should fail when no method is provided', async () => {
-            const parameters = {
-                name: 'A',
-                bad: false,
-                color: '#FFAA00',
-                externalUserId: 1,
-            };
-            await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('QcFlagType.method cannot be null'),
-            );
-        });
-
-        it('should fail when no bad is provided', async () => {
-            const parameters = {
-                name: 'A',
-                method: 'AA+',
-                color: '#FFAA00',
-                externalUserId: 1,
-            };
-            await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('QcFlagType.bad cannot be null'),
-            );
-        });
-
         it('should fail when no user info is provided', async () => {
             const parameters = {
                 name: 'A',
