@@ -497,7 +497,7 @@ module.exports = () => {
         await page.select('#shifterPosition', shifterPosition);
 
         const beamMode = 'INJECTION PHYSICS BEAM';
-        await page.select(page, '#lhcBeamMode', beamMode);
+        await page.select('#lhcBeamMode', beamMode);
 
         const description = 'Description\nof the issue';
         await pressElement(page, '#issue-description ~ .CodeMirror');
