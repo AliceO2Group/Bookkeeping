@@ -14,6 +14,8 @@
 const { expect } = require('chai');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
+const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 const { qcFlagTypeService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
 
 module.exports = () => {
@@ -273,6 +275,53 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(3);
             expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12, 13]);
+        });
+    });
+
+    describe('Creating QC Flag Type', () => {
+        it('should successfuly create QC Flag Type', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+            const relations = { user: { externalUserId: 1 } };
+            const newQCFlag = await qcFlagTypeService.create(parameters, relations);
+            {
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
+            {
+                const fetchedQCFlag = await qcFlagTypeService.getById(newQCFlag.id);
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = fetchedQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
+        });
+
+        it('should fail when QC Flag type with provided name already exists', async () => {
+            const parameters = {
+                name: 'BadPID',
+                method: 'Bad PID',
+                bad: false,
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters, { user: { externalUserId: 1 } }),
+                new ConflictError(`A QC flag with name ${parameters.name} or ${parameters.method} already exists`),
+            );
+        });
+
+        it('should fail when no user info is provided', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters, {}),
+                new BadParameterError('Can not find without id or external id'),
+            );
         });
     });
 };
