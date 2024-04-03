@@ -123,10 +123,6 @@ html, body {
 
 .justify-end { justify-content: end; }
 
-.flex-grow.grow2 { flex-grow: 2; }
-.flex-ratio-6 {flex: 6 0;}
-.flex-ratio-4 {flex: 4 0;}
-
 .flex-shrink-0 { flex-shrink: 0; }
 
 .self-end {
