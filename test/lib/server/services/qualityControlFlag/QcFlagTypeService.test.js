@@ -301,7 +301,7 @@ module.exports = () => {
             };
             await assert.rejects(
                 () => qcFlagTypeService.create(parameters),
-                new ConflictError('name must be unique'),
+                new ConflictError(`A QC flag with name ${parameters.name} or ${parameters.method} already exists`),
             );
         });
 
