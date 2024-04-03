@@ -126,7 +126,7 @@ module.exports = () => {
             },
         };
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-        expect(dataPasses).to.have.all.deep.members([LHC22b_apass1]);
+        expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
     });
 
     it('should succesfully sort data passes by names', async () => {
