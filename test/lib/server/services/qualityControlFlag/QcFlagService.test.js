@@ -29,6 +29,7 @@ const qcFlagWithId1 = {
     runNumber: 106,
     dplDetectorId: 1, // CPV
     createdAt: 1707825436000,
+    updatedAt: 1707825436000,
 
     createdBy: {
         id: 1,
@@ -52,7 +53,6 @@ module.exports = () => {
     describe('Fetching quality control flags', () => {
         it('should successfully fetch quality control flag by id', async () => {
             const qcFlag = await qcFlagService.getOneOrFail(1);
-            delete qcFlag.updatedAt;
             expect(qcFlag).to.be.eql(qcFlagWithId1);
         });
 
@@ -69,7 +69,6 @@ module.exports = () => {
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(5);
             const fetchedQcFlagWithId1 = flags.find(({ id }) => id === 1);
-            delete fetchedQcFlagWithId1.updatedAt;
             expect(fetchedQcFlagWithId1).to.be.eql(qcFlagWithId1);
             expect(flags.map(({ id }) => id)).to.have.all.members([1, 2, 3, 4, 5]);
         });
@@ -100,7 +99,6 @@ module.exports = () => {
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(1);
             const [fetchedFlag] = flags;
-            delete fetchedFlag.updatedAt;
             expect(fetchedFlag).to.be.eql({
                 id: 4,
                 from: 1647924400000,
@@ -112,7 +110,8 @@ module.exports = () => {
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
-                createdAt: 1707825436000,
+                createdAt: 1707825439000,
+                updatedAt: 1707825439000,
             });
         });
 
@@ -211,7 +210,7 @@ module.exports = () => {
 
         it('should succesfuly sort by createdAt timestamp', async () => {
             const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { createdBy: 'DESC' },
+                sort: { createdAt: 'DESC' },
             });
             expect(count).to.be.equal(5);
             expect(flags).to.be.an('array');
