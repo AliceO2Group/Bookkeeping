@@ -189,7 +189,7 @@ module.exports = () => {
 
         it('should succesfuly sort by flag type name', async () => {
             const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { flagTypeName: 'DESC' },
+                sort: { flagType: 'DESC' },
             });
             expect(count).to.be.equal(5);
             expect(flags).to.be.an('array');
