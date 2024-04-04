@@ -135,7 +135,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(2);
-            expect(flags.map(({ user: name }) => name)).to.have.all.members(['Jan Jansen', 'Jan Jansen']);
+            expect(flags.map(({ user: { name } }) => name)).to.have.all.members(['Jan Jansen', 'Jan Jansen']);
         });
 
         it('should succesfuly fetch all flags filtering with ids', async () => {
