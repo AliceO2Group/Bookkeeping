@@ -14,7 +14,6 @@
 const { expect } = require('chai');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
-const { expectObjectToBeSuperset } = require('../../../../utilities/expectObjectToBeSuperset');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 const { qcFlagTypeService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
@@ -286,62 +285,29 @@ module.exports = () => {
                 method: 'AA+',
                 bad: false,
                 color: '#FFAA00',
-                externalUserId: 1,
             };
-            const newQCFlag = await qcFlagTypeService.create(parameters);
-            delete parameters.externalUserId;
-            expectObjectToBeSuperset(newQCFlag, parameters);
+            const relations = { user: { externalUserId: 1 } };
+            const newQCFlag = await qcFlagTypeService.create(parameters, relations);
+            {
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
+            {
+                const fetchedQCFlag = await qcFlagTypeService.getById(newQCFlag.id);
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = fetchedQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
         });
 
-        it('should fail when QC Flag type with name provide already exists', async () => {
+        it('should fail when QC Flag type with provided name already exists', async () => {
             const parameters = {
                 name: 'BadPID',
                 method: 'Bad PID',
                 bad: false,
-                externalUserId: 1,
             };
             await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('name must be unique'),
-            );
-        });
-
-        it('should fail when no name is provided', async () => {
-            const parameters = {
-                method: 'AA+',
-                bad: false,
-                color: '#FFAA00',
-                externalUserId: 1,
-            };
-            await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('QcFlagType.name cannot be null'),
-            );
-        });
-
-        it('should fail when no method is provided', async () => {
-            const parameters = {
-                name: 'A',
-                bad: false,
-                color: '#FFAA00',
-                externalUserId: 1,
-            };
-            await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('QcFlagType.method cannot be null'),
-            );
-        });
-
-        it('should fail when no bad is provided', async () => {
-            const parameters = {
-                name: 'A',
-                method: 'AA+',
-                color: '#FFAA00',
-                externalUserId: 1,
-            };
-            await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
-                new ConflictError('QcFlagType.bad cannot be null'),
+                () => qcFlagTypeService.create(parameters, { user: { externalUserId: 1 } }),
+                new ConflictError(`A QC flag with name ${parameters.name} or ${parameters.method} already exists`),
             );
         });
 
@@ -353,7 +319,7 @@ module.exports = () => {
                 color: '#FFAA00',
             };
             await assert.rejects(
-                () => qcFlagTypeService.create(parameters),
+                () => qcFlagTypeService.create(parameters, {}),
                 new BadParameterError('Can not find without id or external id'),
             );
         });
