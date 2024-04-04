@@ -27,22 +27,21 @@ module.exports = () => {
             expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
             expect(data).to.be.an('array');
             expect(data).to.be.lengthOf(5);
-            expect(data).to.include.deep.members([
-                {
-                    id: 4,
-                    from: (1647914400 + 10000) * 1000,
-                    to: (1647914400 + 10000) * 1000,
-                    comment: 'Some qc comment 4',
-                    createdAt: 1707825439000,
-                    updatedAt: 1707825439000,
-                    runNumber: 1,
-                    dplDetectorId: 1,
-                    createdById: 2,
-                    user: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                    flagTypeId: 13,
-                    flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
-                },
-            ]);
+            const oneFetchedFlag = data.find(({ id }) => id === 4);
+            expect(oneFetchedFlag).to.be.eql({
+                id: 4,
+                from: (1647914400 + 10000) * 1000,
+                to: (1647914400 + 10000) * 1000,
+                comment: 'Some qc comment 4',
+                createdAt: 1707825439000,
+                updatedAt: 1707825439000,
+                runNumber: 1,
+                dplDetectorId: 1,
+                createdById: 2,
+                createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                flagTypeId: 13,
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
+            });
         });
         it('should successfuly filter on ids', async () => {
             const response = await request(server).get('/api/qcFlags?filter[ids][]=1');
