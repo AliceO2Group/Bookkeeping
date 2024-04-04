@@ -55,14 +55,26 @@ module.exports = () => {
         });
         it('should successfuly filter on dataPassIds, runNumbers, dplDetectorIds', async () => {
             const response = await request(server)
-                .get('/api/qcFlags/?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1');
+                .get('/api/qcFlags?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1');
             expect(response.status).to.be.equal(200);
-            const { data, meta } = response``.body;
+            const { data, meta } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
             expect(data).to.be.an('array');
             expect(data).to.be.lengthOf(3);
             expect(data.map(({ id }) => id)).to.have.all.members([1, 2, 3]);
         });
+
+        it('should successfuly filter on simulationPassIds, runNumbers, dplDetectorIds', async () => {
+            const response = await request(server)
+                .get('/api/qcFlags?filter[simulationPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1');
+            expect(response.status).to.be.equal(200);
+            const { data, meta } = response.body;
+            expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+            expect(data).to.be.an('array');
+            expect(data).to.be.lengthOf(1);
+            expect(data[0].id).to.be.equal(5);
+        });
+
         it('should retrive no records when filtering on ids', async () => {
             const response = await request(server).get('/api/qcFlags?filter[ids][]=9999');
             expect(response.status).to.be.equal(200);
@@ -164,13 +176,6 @@ module.exports = () => {
         });
         it('should return 400 if the limit is below 1', async () => {
             const response = await request(server).get('/api/qcFlags?page[limit]=0');
-            expect(response.status).to.be.equal(400);
-            const { errors } = response.body;
-            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
-            expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
-        });
-        it('should return 400 if the limit is below 1', async () => {
-            const response = request(server).get('/api/qcFlags?page[limit]=0');
             expect(response.status).to.be.equal(400);
             const { errors } = response.body;
             const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
