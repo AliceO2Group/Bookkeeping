@@ -200,7 +200,7 @@ module.exports = () => {
 
         it('should succesfuly sort by createdBy name', async () => {
             const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { createBy: 'DESC' },
+                sort: { createdBy: 'DESC' },
             });
             expect(count).to.be.equal(5);
             expect(flags).to.be.an('array');
