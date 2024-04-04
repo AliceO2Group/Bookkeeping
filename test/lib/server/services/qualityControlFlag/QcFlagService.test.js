@@ -29,6 +29,7 @@ const qcFlagWithId1 = {
     runNumber: 106,
     dplDetectorId: 1, // CPV
     createdAt: 1707825436000,
+    updatedAt: null,
 
     createdBy: {
         id: 1,
