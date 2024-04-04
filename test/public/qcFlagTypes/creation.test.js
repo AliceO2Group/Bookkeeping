@@ -54,7 +54,11 @@ module.exports = () => {
         await fillInput(page, 'input#name', 'LimitedAcceptance');
         await fillInput(page, 'input#method', 'Limited acceptance');
         await pressElement(page, 'button#submit');
-        await expectInnerText(page, '.alert.alert-danger', 'Service unavailable: Validation error');
+        await expectInnerText(
+            page,
+            '.alert.alert-danger',
+            'The request conflicts with existing data: A QC flag with name LimitedAcceptance or Limited acceptance already exists',
+        );
     });
 
     it('should succesfully create QC Flag Type', async () => {
