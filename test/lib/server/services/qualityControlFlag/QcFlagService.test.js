@@ -14,36 +14,37 @@
 const { qualityControlFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QualityControlFlagService.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
-const Joi = require('joi');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 
-const QCFlagTypeSchema = Joi.object({
-    id: Joi.number().required(),
-    name: Joi.string().required(),
-    method: Joi.string().required(),
-    bad: Joi.boolean().required(),
-    archived: Joi.boolean().required(),
-    archivedAt: Joi.number().allow(null),
-});
+const qcFlagWithId1 = {
+    id: 1,
+    from: new Date((1565314200 - 10000) * 1000),
+    to: new Date((1565314200 + 10000) * 1000),
+    comment: 'Some qc comment 1',
 
-const UserSchema = Joi.object({ id: Joi.number().required(), name: Joi.string().required(), externalId: Joi.number().required() });
+    // Associations
+    createdById: 1,
+    flagTypeId: 11, // LimitedAcceptance
+    runNumber: 106,
+    dplDetectorId: 1, // CPV
+    createdAt: new Date(1707825436000),
 
-const QCFlagSchema = Joi.object({
-    id: Joi.number().required(),
-    from: Joi.number().required(),
-    to: Joi.number().required(),
-    comment: Joi.string().required(),
-    createdAt: Joi.number().required(),
-
-    runNumber: Joi.number().required(),
-    dplDetectorId: Joi.number().required(),
-
-    createdById: Joi.number().required(),
-    user: UserSchema,
-    flagTypeId: Joi.number().required(),
-    flagType: QCFlagTypeSchema,
-});
+    createdBy: {
+        id: 1,
+        name: 'Jhon Doe',
+        externalId: 1,
+    },
+    flagType: {
+        id: 11,
+        name: 'LimitedAcceptance',
+        method: 'Limited acceptance',
+        bad: true,
+        color: '#FFFF00',
+        archived: false,
+        archivedAt: null,
+    },
+};
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -52,8 +53,7 @@ module.exports = () => {
     describe('Fetching quality control flags', () => {
         it('should successfully fetch quality control flag by id', async () => {
             const qcFlag = await qualityControlFlagService.getOneOrFail(1);
-            expect(qcFlag.id).to.be.equal(1);
-            QCFlagSchema.validateAsync(qcFlag);
+            expect(qcFlag).to.be.eql(qcFlagWithId1);
         });
 
         it('should throw error when flag with given id cannot be found', async () => {
@@ -68,9 +68,8 @@ module.exports = () => {
             expect(count).to.be.equal(5);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(5);
-            for (const flag of flags) {
-                await QCFlagSchema.validateAsync(flag);
-            }
+            expect(flags.find(({ id }) => id === 1)).to.be.eql(qcFlagWithId1);
+            expect(flags.map(({ id }) => id)).to.have.all.members([1, 2, 3, 4, 5]);
         });
 
         it('should succesfuly fetch all flags filtering with associations', async () => {
@@ -84,9 +83,7 @@ module.exports = () => {
             expect(count).to.be.equal(3);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(3);
-            for (const flag of flags) {
-                await QCFlagSchema.validateAsync(flag);
-            }
+            expect(flags.map(({ id }) => id)).to.have.all.members([1, 2, 3]);
         });
 
         it('should succesfuly fetch all flags filtering with associations - 2', async () => {
@@ -110,8 +107,8 @@ module.exports = () => {
                 createdById: 2,
                 user: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
-                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, archivedAt: null },
-                createdAt: 1707825436 * 1000,
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, archivedAt: null, color: null },
+                createdAt: 1707825436000,
             });
         });
 
@@ -138,8 +135,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(2);
-            await QCFlagSchema.validateAsync(flags[0]);
-            expect(flags[0].user.name).to.be.equal('Jan Jansen');
+            expect(flags.map(({ user: name }) => name)).to.have.all.members(['Jan Jansen', 'Jan Jansen']);
         });
 
         it('should succesfuly fetch all flags filtering with ids', async () => {
