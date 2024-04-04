@@ -32,7 +32,7 @@ const qcFlagWithId1 = {
 
     createdBy: {
         id: 1,
-        name: 'Jhon Doe',
+        name: 'John Doe',
         externalId: 1,
     },
     flagType: {
@@ -42,7 +42,6 @@ const qcFlagWithId1 = {
         bad: true,
         color: '#FFFF00',
         archived: false,
-        archivedAt: null,
     },
 };
 
@@ -105,9 +104,9 @@ module.exports = () => {
                 runNumber: 1,
                 dplDetectorId: 1,
                 createdById: 2,
-                user: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
-                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, archivedAt: null, color: null },
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
                 createdAt: 1707825436000,
             });
         });
@@ -135,7 +134,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(2);
-            expect(flags.map(({ user: { name } }) => name)).to.have.all.members(['Jan Jansen', 'Jan Jansen']);
+            expect(flags.map(({ createdBy: { name } }) => name)).to.have.all.members(['Jan Jansen', 'Jan Jansen']);
         });
 
         it('should succesfuly fetch all flags filtering with ids', async () => {
