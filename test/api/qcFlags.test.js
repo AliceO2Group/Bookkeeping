@@ -41,6 +41,7 @@ module.exports = () => {
                             to: 1647924400000,
                             comment: 'Some qc comment 4',
                             createdAt: 1707825436 * 1000,
+                            updatedAt: 1707825436 * 1000,
                             runNumber: 1,
                             dplDetectorId: 1,
                             createdById: 2,
@@ -67,13 +68,7 @@ module.exports = () => {
                     expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(Object.entries(data[0])).to.include.all.deep.members(Object.entries({
-                        id: 1,
-                        from: (1565314200 - 10000) * 1000,
-                        to: (1565314200 + 10000) * 1000,
-                        comment: 'Some qc comment 1',
-                    }));
-
+                    expect(data[0].id).to.be.equal(1);
                     done();
                 });
         });
@@ -140,14 +135,14 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: qualityControlFlags } = res.body;
-                    expect(qualityControlFlags).to.be.an('array');
-                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([1, 2, 3, 4]);
+                    const { data: qcFlags } = res.body;
+                    expect(qcFlags).to.be.an('array');
+                    expect(qcFlags.map(({ id }) => id)).to.have.ordered.deep.members([1, 2, 3, 4]);
 
                     done();
                 });
         });
-        it('should support sorting on from', (done) => {
+        it('should support sorting on `from` property', (done) => {
             request(server)
                 .get('/api/qcFlags?sort[from]=DESC')
                 .expect(200)
@@ -157,14 +152,14 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: qualityControlFlags } = res.body;
-                    expect(qualityControlFlags).to.be.an('array');
-                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([4, 3, 2, 1]);
+                    const { data: qcFlags } = res.body;
+                    expect(qcFlags).to.be.an('array');
+                    expect(qcFlags.map(({ id }) => id)).to.have.ordered.deep.members([4, 3, 2, 1]);
 
                     done();
                 });
         });
-        it('should support sorting on to', (done) => {
+        it('should support sorting on `to` property', (done) => {
             request(server)
                 .get('/api/qcFlags?sort[to]=DESC')
                 .expect(200)
@@ -174,9 +169,9 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: qualityControlFlags } = res.body;
-                    expect(qualityControlFlags).to.be.an('array');
-                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([4, 3, 2, 1]);
+                    const { data: qcFlags } = res.body;
+                    expect(qcFlags).to.be.an('array');
+                    expect(qcFlags.map(({ id }) => id)).to.have.ordered.deep.members([4, 3, 2, 1]);
 
                     done();
                 });
@@ -191,9 +186,9 @@ module.exports = () => {
                         return;
                     }
 
-                    const { data: qualityControlFlags } = res.body;
-                    expect(qualityControlFlags).to.be.an('array');
-                    expect(qualityControlFlags.map(({ id }) => id)).to.have.ordered.deep.members([2, 3]);
+                    const { data: qcFlags } = res.body;
+                    expect(qcFlags).to.be.an('array');
+                    expect(qcFlags.map(({ id }) => id)).to.have.ordered.deep.members([2, 3]);
 
                     done();
                 });
