@@ -130,10 +130,10 @@ module.exports = () => {
             expect(flags[0].id).to.be.eql(5);
         });
 
-        it('should succesfuly fetch all flags filtering with userNames', async () => {
+        it('should succesfuly fetch all flags filtering with createdBy', async () => {
             const { rows: flags, count } = await qcFlagService.getAll({
                 filter: {
-                    userNames: ['Jan Jansen'],
+                    createdBy: ['Jan Jansen'],
                 },
             });
             expect(count).to.be.equal(2);
@@ -152,6 +152,83 @@ module.exports = () => {
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(2);
             expect(flags.map(({ id }) => id)).to.have.all.members([1, 4]);
+        });
+
+        it('should succesfuly sort by id', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { id: 'ASC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedIds = flags.map(({ id }) => id);
+            expect(fetchedIds).to.have.all.ordered.members([...fetchedIds].sort());
+        });
+
+        it('should succesfuly sort by `from` property', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { from: 'ASC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ from }) => from);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort());
+        });
+
+        it('should succesfuly sort by `to` property', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { to: 'ASC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ to }) => to);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort());
+        });
+
+        it('should succesfuly sort by flag type name', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { flagType: 'DESC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ flagType: { name } }) => name);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should succesfuly sort by createdBy name', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { createdBy: 'DESC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ createdBy: { name } }) => name);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should succesfuly sort by createdAt timestamp', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { createdBy: 'DESC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ createdAt }) => createdAt);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should succesfuly sort by updatedAt timestamp', async () => {
+            const { rows: flags, count } = await qcFlagService.getAll({
+                sort: { updatedAt: 'DESC' },
+            });
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ updatedAt }) => updatedAt);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
         });
     });
 };
