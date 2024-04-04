@@ -11,16 +11,16 @@
  * or submit itself to any jurisdiction.
  */
 
-const { qualityControlFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QualityControlFlagService.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 
 const qcFlagWithId1 = {
     id: 1,
-    from: new Date((1565314200 - 10000) * 1000),
-    to: new Date((1565314200 + 10000) * 1000),
+    from: (1565314200 - 10000) * 1000,
+    to: (1565314200 + 10000) * 1000,
     comment: 'Some qc comment 1',
 
     // Associations
@@ -28,7 +28,7 @@ const qcFlagWithId1 = {
     flagTypeId: 11, // LimitedAcceptance
     runNumber: 106,
     dplDetectorId: 1, // CPV
-    createdAt: new Date(1707825436000),
+    createdAt: 1707825436000,
 
     createdBy: {
         id: 1,
@@ -52,19 +52,19 @@ module.exports = () => {
 
     describe('Fetching quality control flags', () => {
         it('should successfully fetch quality control flag by id', async () => {
-            const qcFlag = await qualityControlFlagService.getOneOrFail(1);
+            const qcFlag = await qcFlagService.getOneOrFail(1);
             expect(qcFlag).to.be.eql(qcFlagWithId1);
         });
 
         it('should throw error when flag with given id cannot be found', async () => {
             await assert.rejects(
-                () => qualityControlFlagService.getOneOrFail(99999),
+                () => qcFlagService.getOneOrFail(99999),
                 new BadParameterError('Quality Control Flag with this id (99999) could not be found'),
             );
         });
 
         it('should succesfuly fetch all flags', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll();
+            const { rows: flags, count } = await qcFlagService.getAll();
             expect(count).to.be.equal(5);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(5);
@@ -73,7 +73,7 @@ module.exports = () => {
         });
 
         it('should succesfuly fetch all flags filtering with associations', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll({
+            const { rows: flags, count } = await qcFlagService.getAll({
                 filter: {
                     dataPassIds: [1],
                     runNumbers: [106],
@@ -87,7 +87,7 @@ module.exports = () => {
         });
 
         it('should succesfuly fetch all flags filtering with associations - 2', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll({
+            const { rows: flags, count } = await qcFlagService.getAll({
                 filter: {
                     dataPassIds: [2],
                     runNumbers: [1],
@@ -113,7 +113,7 @@ module.exports = () => {
         });
 
         it('should succesfuly fetch all flags filtering with associations (simulation pass)', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll({
+            const { rows: flags, count } = await qcFlagService.getAll({
                 filter: {
                     simulationPassIds: [1],
                     runNumbers: [106],
@@ -127,7 +127,7 @@ module.exports = () => {
         });
 
         it('should succesfuly fetch all flags filtering with userNames', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll({
+            const { rows: flags, count } = await qcFlagService.getAll({
                 filter: {
                     userNames: ['Jan Jansen'],
                 },
@@ -139,7 +139,7 @@ module.exports = () => {
         });
 
         it('should succesfuly fetch all flags filtering with ids', async () => {
-            const { rows: flags, count } = await qualityControlFlagService.getAll({
+            const { rows: flags, count } = await qcFlagService.getAll({
                 filter: {
                     ids: [1, 4],
                 },
