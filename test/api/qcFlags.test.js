@@ -18,6 +18,40 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 
 module.exports = () => {
     before(resetDatabaseContent);
+    describe('GET /api/qcFlags/:id', () => {
+        it('should successfuly fetch one QC flag type', async () => {
+            const response = await request(server).get('/api/qcFlags/4');
+            expect(response.status).to.be.equal(200);
+            const { data: qcFlag } = response.body;
+            expect(qcFlag).to.be.eql({
+                id: 4,
+                from: (1647914400 + 10000) * 1000,
+                to: (1647914400 + 10000) * 1000,
+                comment: 'Some qc comment 4',
+                createdAt: 1707825439000,
+                updatedAt: 1707825439000,
+                runNumber: 1,
+                dplDetectorId: 1,
+                createdById: 2,
+                createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                flagTypeId: 13,
+                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
+            });
+        });
+
+        it('should send error that QC flag type with given id cannot be found', async () => {
+            const response = await request(server).get('/api/qcFlags/99999');
+            expect(response.status).to.be.equal(404);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: 404,
+                    title: 'Not found',
+                    detail: 'Quality Control Flag with this id (99999) could not be found',
+                },
+            ]);
+        });
+    });
 
     describe('GET /api/qcFlags', () => {
         it('should successfuly fetch all data', async () => {
