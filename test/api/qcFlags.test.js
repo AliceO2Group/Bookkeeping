@@ -19,66 +19,10 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/qualityControlFlags/types', () => {
-        it('should successfuly fetch all qc flag types', (done) => {
-            request(server)
-                .get('/api/qualityControlFlags/types')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data } = res.body;
-                    expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(5);
-                    expect(data).to.have.deep.all.members([
-                        {
-                            id: 2,
-                            name: 'UnknownQuality',
-                            method: 'Unknown Quality',
-                            bad: true,
-                            obsolate: true,
-                        },
-                        {
-                            id: 3,
-                            name: 'CertifiedByExpert',
-                            method: 'Certified by Expert',
-                            bad: false,
-                            obsolate: true,
-                        },
-                        {
-                            id: 11,
-                            name: 'LimitedAcceptance',
-                            method: 'Limited acceptance',
-                            bad: true,
-                            obsolate: true,
-                        },
-                        {
-                            id: 12,
-                            name: 'BadPID',
-                            method: 'Bad PID',
-                            bad: true,
-                            obsolate: true,
-                        },
-                        {
-                            id: 13,
-                            name: 'Bad',
-                            method: 'Bad',
-                            bad: true,
-                            obsolate: false,
-                        },
-                    ]);
-                    done();
-                });
-        });
-    });
-
-    describe('GET /api/qualityControlFlags', () => {
+    describe('GET /api/qcFlags', () => {
         it('should successfuly fetch all data', (done) => {
             request(server)
-                .get('/api/qualityControlFlags')
+                .get('/api/qcFlags')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -111,7 +55,7 @@ module.exports = () => {
         });
         it('should successfuly filter on ids', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?filter[ids][]=1')
+                .get('/api/qcFlags?filter[ids][]=1')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -135,7 +79,7 @@ module.exports = () => {
         });
         it('should successfuly filter on dataPassIds, runNumbers, dplDetectorIds', (done) => {
             request(server)
-                .get('/api/qualityControlFlags/?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1')
+                .get('/api/qcFlags/?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -153,7 +97,7 @@ module.exports = () => {
         });
         it('should retrive no records when filtering on ids', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?filter[ids][]=9999')
+                .get('/api/qcFlags?filter[ids][]=9999')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -170,7 +114,7 @@ module.exports = () => {
         });
         it('should successfuly filter on userName', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?filter[userNames][]=John%20Doe')
+                .get('/api/qcFlags?filter[createdBy][]=John%20Doe')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -188,7 +132,7 @@ module.exports = () => {
         });
         it('should support sorting on id', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?sort[id]=ASC')
+                .get('/api/qcFlags?sort[id]=ASC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -205,7 +149,7 @@ module.exports = () => {
         });
         it('should support sorting on from', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?sort[from]=DESC')
+                .get('/api/qcFlags?sort[from]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -222,7 +166,7 @@ module.exports = () => {
         });
         it('should support sorting on to', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?sort[to]=DESC')
+                .get('/api/qcFlags?sort[to]=DESC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -239,7 +183,7 @@ module.exports = () => {
         });
         it('should support pagination', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?page[offset]=1&page[limit]=2&sort[id]=ASC')
+                .get('/api/qcFlags?page[offset]=1&page[limit]=2&sort[id]=ASC')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -256,7 +200,7 @@ module.exports = () => {
         });
         it('should return 400 when bad query paramter provided', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?a=1')
+                .get('/api/qcFlags?a=1')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -272,7 +216,7 @@ module.exports = () => {
         });
         it('should return 400 if the limit is below 1', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?page[limit]=0')
+                .get('/api/qcFlags?page[limit]=0')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -288,7 +232,7 @@ module.exports = () => {
         });
         it('should return 400 if the limit is below 1', (done) => {
             request(server)
-                .get('/api/qualityControlFlags?page[limit]=0')
+                .get('/api/qcFlags?page[limit]=0')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
