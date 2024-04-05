@@ -419,9 +419,36 @@ module.exports = () => {
                 .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
             expect(response.status).to.be.eql(201);
-            const { data: fetchedFlagType } = response.body;
-            const { name, method, color } = fetchedFlagType;
-            expect({ name, method, color }).to.be.eql(patch);
+            const { data: updatedFlagType } = response.body;
+            {
+                const { name, method, color } = updatedFlagType;
+                expect({ name, method, color }).to.be.eql(patch);
+            }
+            {
+                const fetchedFlagType = await qcFlagTypeService.getById(qcFlagTypeId);
+                const { name, method, color } = fetchedFlagType;
+                expect({ name, method, color }).to.be.eql(patch);
+            }
+        });
+
+        it('should successfuly archive one QC Flag Type', async () => {
+            const patch = { archived: true };
+            const qcFlagTypeId = 13;
+
+            const response = await request(server)
+                .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .send(patch);
+            expect(response.status).to.be.eql(201);
+            const { data: updatedFlagType } = response.body;
+            {
+                const { archived } = updatedFlagType;
+                expect({ archived }).to.be.eql(patch);
+            }
+            {
+                const fetchedFlagType = await qcFlagTypeService.getById(qcFlagTypeId);
+                const { archived } = fetchedFlagType;
+                expect({ archived }).to.be.eql(patch);
+            }
         });
     });
 };
