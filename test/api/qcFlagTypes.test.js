@@ -364,4 +364,91 @@ module.exports = () => {
             expect(titleError.detail).to.equal('"body.bad" is required');
         });
     });
+
+    describe('PATCH /api/qcFlagTypes/:id', () => {
+        it('should reject when existing name provided', async () => {
+            const qcFlagTypeId = 13;
+
+            const patch = {
+                name: 'BadPID',
+            };
+            const response = await request(server)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .send(patch);
+            expect(response.status).to.be.eql(409);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.title === 'The request conflicts with existing data');
+            expect(titleError.detail).to.equal('A QC flag with name BadPID already exists');
+        });
+
+        it('should reject when existing method provided', async () => {
+            const qcFlagTypeId = 13;
+
+            const patch = {
+                method: 'Bad PID',
+            };
+            const response = await request(server)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .send(patch);
+            expect(response.status).to.be.eql(409);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.title === 'The request conflicts with existing data');
+            expect(titleError.detail).to.equal('A QC flag with method Bad PID already exists');
+        });
+
+        it('should reject when incorrect color provided', async () => {
+            const qcFlagTypeId = 13;
+
+            const patch = {
+                color: '#aabbxx',
+            };
+            const response = await request(server)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .send(patch);
+            expect(response.status).to.be.eql(400);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.title === 'Invalid Attribute');
+            expect(titleError.detail).to.equal('"body.color" with value "#aabbxx" fails to match the required pattern: /#[0-9a-fA-F]{6}/');
+        });
+
+        it('should successfuly update one QC Flag Type', async () => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const qcFlagTypeId = 13;
+
+            const response = await request(server)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .send(patch);
+            expect(response.status).to.be.eql(201);
+            const { data: updatedFlagType } = response.body;
+            {
+                const { name, method, color } = updatedFlagType;
+                expect({ name, method, color }).to.be.eql(patch);
+            }
+            {
+                const fetchedFlagType = await qcFlagTypeService.getById(qcFlagTypeId);
+                const { name, method, color } = fetchedFlagType;
+                expect({ name, method, color }).to.be.eql(patch);
+            }
+        });
+
+        it('should successfuly archive one QC Flag Type', async () => {
+            const patch = { archived: true };
+            const qcFlagTypeId = 13;
+
+            const response = await request(server)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .send(patch);
+            expect(response.status).to.be.eql(201);
+            const { data: updatedFlagType } = response.body;
+            {
+                const { archived } = updatedFlagType;
+                expect({ archived }).to.be.eql(patch);
+            }
+            {
+                const fetchedFlagType = await qcFlagTypeService.getById(qcFlagTypeId);
+                const { archived } = fetchedFlagType;
+                expect({ archived }).to.be.eql(patch);
+            }
+        });
+    });
 };
