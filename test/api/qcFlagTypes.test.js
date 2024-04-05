@@ -418,7 +418,6 @@ module.exports = () => {
             const response = await request(server)
                 .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
-            console.log(response.body.errors)
             expect(response.status).to.be.eql(201);
             const { data: fetchedFlagType } = response.body;
             const { name, method, color } = fetchedFlagType;
