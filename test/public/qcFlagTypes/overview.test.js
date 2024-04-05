@@ -85,7 +85,7 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'method');
     });
 
-    it('can sort by bad column in ascendintest/public/qcFlagTypes/overview.test.jsg manner', async () => {
+    it('can sort by bad column in ascending manner', async () => {
         await goToPage(page, 'qc-flag-types-overview');
         await testTableSortingByColumn(page, 'bad');
     });
