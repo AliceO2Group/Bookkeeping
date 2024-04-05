@@ -19,7 +19,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
     describe('GET /api/qcFlags/:id', () => {
-        it('should successfuly fetch one QC flag type', async () => {
+        it('should successfuly fetch one QC flag', async () => {
             const response = await request(server).get('/api/qcFlags/4');
             expect(response.status).to.be.equal(200);
             const { data: qcFlag } = response.body;
@@ -39,7 +39,7 @@ module.exports = () => {
             });
         });
 
-        it('should send error that QC flag type with given id cannot be found', async () => {
+        it('should send error that QC flag with given id cannot be found', async () => {
             const response = await request(server).get('/api/qcFlags/99999');
             expect(response.status).to.be.equal(404);
             const { errors } = response.body;
