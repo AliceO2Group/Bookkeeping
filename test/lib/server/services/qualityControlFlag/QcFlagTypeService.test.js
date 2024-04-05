@@ -324,4 +324,46 @@ module.exports = () => {
             );
         });
     });
+
+    describe('Updating QC Flag Type', () => {
+        it('should reject when existing name provided', () => {
+            assert.rejects(
+                () => qcFlagTypeService.update(12, { name: 'Bad', userId: 1 }),
+                new ConflictError('name must be unique'),
+            );
+        });
+
+        it('should reject when existing method provided', () => {
+            assert.rejects(
+                () => qcFlagTypeService.update(12, { method: 'Bad', userId: 1 }),
+                new ConflictError('method must be unique'),
+            );
+        });
+
+        it('should reject when bad color format provided', () => {
+            assert.rejects(
+                () => qcFlagTypeService.update(12, { color: '#qweras', userId: 1 }),
+                new ConflictError('Incorrect format of the color provided (#qweras)'),
+            );
+        });
+
+        it('should reject when no QC flag type to be updated found', () => {
+            assert.rejects(() => qcFlagTypeService.update(99999, { color: '#aaaaaa', userId: 1 }));
+        });
+
+        it('should reject when no user is found', () => {
+            assert.rejects(() => qcFlagTypeService.update(10, { color: '#aaaaaa', userId: 999 }));
+        });
+
+        it('should successfuly update one QC Flag Type', async () => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypeService.update(13, { ...patch, userId });
+            const fetchedFlagType = await qcFlagTypeService.getOneOrFail(13);
+
+            expectObjectToBeSuperset(fetchedFlagType, { ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
+        });
+    });
 };
