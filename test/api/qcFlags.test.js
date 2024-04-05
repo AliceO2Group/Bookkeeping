@@ -76,7 +76,9 @@ module.exports = () => {
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
             });
+            expect(data.map(({ id }) => id)).to.have.all.members([1, 2, 3, 4, 5]);
         });
+
         it('should successfuly filter on ids', async () => {
             const response = await request(server).get('/api/qcFlags?filter[ids][]=1');
             expect(response.status).to.be.equal(200);
