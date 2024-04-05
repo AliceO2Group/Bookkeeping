@@ -11,10 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const QCFlagTypesOverviewSuite = require('./overview.test');
-const QCFlagTypeCreationSuite = require('./creation.test');
+const QcFlagTypesOverviewSuite = require('./overview.test');
+const QcFlagTypeCreationSuite = require('./creation.test');
 
 module.exports = () => {
-    describe('QCFlagTypesOverview Suite', QCFlagTypesOverviewSuite);
-    describe('QCFlagTypeCreation Suite', QCFlagTypeCreationSuite);
+    describe('Overview Page', QcFlagTypesOverviewSuite);
+    describe('Creation Page', QcFlagTypeCreationSuite);
 };

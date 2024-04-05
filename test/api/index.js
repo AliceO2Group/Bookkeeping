@@ -31,7 +31,12 @@ const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
 const DataPassesSuite = require('./dataPasses.test.js');
 const SimulationPassesSuite = require('./simulationPasses.test.js');
+<<<<<<< HEAD
 const QCFlagTypesSuite = require('./qcFlagTypes.test.js');
+=======
+const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
+const DplDetectorsSuite = require('./dplDetectors.test.js');
+>>>>>>> main
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -50,10 +55,14 @@ module.exports = () => {
     describe('Status API', StatusSuite);
     describe('Statistics suite', StatisticsSuite);
     describe('Subsystems API', SubsystemsSuite);
-    describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
     describe('DataPassesSuite API', DataPassesSuite);
     describe('SimulationPassesSuite API', SimulationPassesSuite);
+<<<<<<< HEAD
     describe('QCFlagTypes API', QCFlagTypesSuite);
+=======
+    describe('DplDetectors API', DplDetectorsSuite);
+    describe('QcFlagTypes API', QcFlagTypesSuite);
+>>>>>>> main
 };

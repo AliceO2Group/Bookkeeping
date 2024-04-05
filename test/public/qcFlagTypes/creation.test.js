@@ -20,6 +20,8 @@ const {
     pressElement,
     expectInnerText,
     waitForNavigation,
+    validateElement,
+    checkMismatchingUrlParam,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -47,29 +49,32 @@ module.exports = () => {
 
     it('should fail if attempt to create QC Flag Type with already existing name', async () => {
         await goToPage(page, 'qc-flag-type-creation');
-        await page.waitForSelector('button#submit[disabled]');
+        await validateElement(page, 'button#submit[disabled]');
 
         await fillInput(page, 'input#name', 'LimitedAcceptance');
         await fillInput(page, 'input#method', 'Limited acceptance');
         await pressElement(page, 'button#submit');
-        await expectInnerText(page, '.alert.alert-danger', 'Service unavailable: Validation error');
+        await expectInnerText(
+            page,
+            '.alert.alert-danger',
+            'The request conflicts with existing data: A QC flag with name LimitedAcceptance or Limited acceptance already exists',
+        );
     });
 
     it('should succesfully create QC Flag Type', async () => {
         await goToPage(page, 'qc-flag-type-creation');
-        await page.waitForSelector('button#submit[disabled]');
+        await validateElement(page, 'button#submit[disabled]');
 
         await fillInput(page, 'input#name', 'AAA+');
         await fillInput(page, 'input#method', 'A+A+A');
         await fillInput(page, 'input[type=color]', '#F000F0');
-        await page.waitForSelector('button#submit[disabled]', { hidden: true });
+
+        await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
-        const currentPageUrl = new URL(page.url());
-        expect(currentPageUrl.searchParams.get('page')).to.be.equal('qc-flag-types-overview');
+        expect(await checkMismatchingUrlParam(page, { page: 'qc-flag-types-overview' })).to.be.eql({});
 
-        const newNameCell = await page.waitForSelector('[style*="rgb(240, 0, 240)"]');
-        expect(newNameCell).not.to.be.null;
-        expect(await newNameCell.evaluate(({ innerText }) => innerText)).to.be.equal('AAA+');
+        // Expect newly created flag to appear and have correct color
+        await expectInnerText(page, '[style*="rgb(240, 0, 240)"]', 'AAA+');
     });
 };
