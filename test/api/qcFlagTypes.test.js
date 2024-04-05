@@ -366,100 +366,63 @@ module.exports = () => {
     });
 
     describe('PUT /api/qcFlagTypes/:id', () => {
-        it('should reject when existing name provided', (done) => {
+        it('should reject when existing name provided', async () => {
             const qcFlagTypeId = 13;
 
             const patch = {
                 name: 'BadPID',
             };
-
-            request(server)
+            const response = await request(server)
                 .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
-                .send(patch)
-                .expect(409)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.title === 'Conflict in data');
-                    expect(titleError.detail).to.equal('name must be unique');
-
-                    done();
-                });
+                .send(patch);
+            expect(response.status).to.be.eql(409);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.title === 'The request conflicts with existing data');
+            expect(titleError.detail).to.equal('A QC flag with name BadPID already exists');
         });
 
-        it('should reject when existing method provided', (done) => {
+        it('should reject when existing method provided', async () => {
             const qcFlagTypeId = 13;
 
             const patch = {
                 method: 'Bad PID',
             };
-
-            request(server)
+            const response = await request(server)
                 .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
-                .send(patch)
-                .expect(409)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.title === 'Conflict in data');
-                    expect(titleError.detail).to.equal('method must be unique');
-
-                    done();
-                });
+                .send(patch);
+            expect(response.status).to.be.eql(409);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.title === 'The request conflicts with existing data');
+            expect(titleError.detail).to.equal('A QC flag with method Bad PID already exists');
         });
 
-        it('should reject when incorrect color provided', (done) => {
+        it('should reject when incorrect color provided', async () => {
             const qcFlagTypeId = 13;
 
             const patch = {
-                color: '#qweraa',
+                color: '#aabbxx',
             };
-
-            request(server)
+            const response = await request(server)
                 .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
-                .send(patch)
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.title === 'Service unavailable');
-                    expect(titleError.detail).to.equal('Incorrect format of the color provided (#qweraa)');
-
-                    done();
-                });
+                .send(patch);
+            expect(response.status).to.be.eql(400);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.title === 'Invalid Attribute');
+            expect(titleError.detail).to.equal('"body.color" with value "#aabbxx" fails to match the required pattern: /#[0-9a-fA-F]{6}/');
         });
 
-        it('should successfuly update one QC Flag Type', (done) => {
+        it('should successfuly update one QC Flag Type', async () => {
             const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
             const qcFlagTypeId = 13;
 
-            request(server)
+            const response = await request(server)
                 .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
-                .send(patch)
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data: fetchedFlagType } = res.body;
-                    const { name, method, color } = fetchedFlagType;
-                    expect({ name, method, color }).to.be.eql(patch);
-                    done();
-                });
+                .send(patch);
+            console.log(response.body.errors)
+            expect(response.status).to.be.eql(201);
+            const { data: fetchedFlagType } = response.body;
+            const { name, method, color } = fetchedFlagType;
+            expect({ name, method, color }).to.be.eql(patch);
         });
     });
 };
