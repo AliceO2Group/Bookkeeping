@@ -13,6 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, pressElement, goToPage, getFirstRow } = require('../defaults');
+const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -68,7 +69,7 @@ module.exports = () => {
 
         // We expect the entry page to have the same id as the id from the tag overview
         await pressElement(page, `#${firstRowId}`);
-        await page.waitForTimeout(100);
+        await waitForTimeout(100);
         const redirectedUrl = await page.url();
         expect(String(redirectedUrl).startsWith(`${url}/?page=tag-detail&id=${parsedFirstRowId}`)).to.be.true;
     });
@@ -98,12 +99,12 @@ module.exports = () => {
         expect(await page.$eval(inputSelector, (input) => input.placeholder)).to.equal('Filter by name');
 
         await page.type(inputSelector, '-TAG-');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         let table = await page.$$('tbody tr');
-        expect(table.length).to.equal(34);
+        expect(table.length).to.equal(33);
 
         await page.type(inputSelector, 'DO-NOT-EXIST');
-        await page.waitForTimeout(300);
+        await waitForTimeout(300);
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(1);
         expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');

@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.82.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.82.0)
+* Notable changes for users:
+  * Fixed spurious runs being marked as stopped few seconds after their creation, and same for envs
+  * Added log creation template for RC daily meeting
+  * When clicking any infologger link, only severity warn, error and fatal are displayed
+  * Added formatting to following columns in Data Passes view:
+    * Output Size 
+    * Reconstructed Events
+  * Fixed issue in which lhcPeriodName was not being saved in Bookkeeping
+* Notable change for developers:
+  * Use observable data for detectors provider
+  * Added QC flag types fetching by id endpoint
+  * Added fetch all QC flag types endpoint
+  * Added tests for no-anonymous toggle in logs overview
+  * Added column-specific class to every table cells to be used in tests to fetch the content of all the cells of one column
+
+## [0.81.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.81.0)
+* Notable changes for users:
+  * Fixed fill statistics not being displayed in fill overview
+  * Environments are now linked to eos reports
+  * Added simulation passes counts to MC buttons on LHC Periods overview page
+  * Autofill environments when creating a log from either the environments or runs page
+  * Added an easy to reach no-anonymous toggle in logs overview
+  * Added Simulation Passes per Data Pass view
+  * Magnets input in SL EoS report now require date
+  * Spurious title has been removed from overview tables
+  * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
+  * Fixed statistics input displaying error with valid values
+* Notable change for developers:
+  * Extracted a state-full controlled date input component, to simplify its use and make its model optional
+  * Add endpoint serving DPL Detectors list
+  * Extracted a magnet filling input
+  * Title option has been removed from table utility, because it was used mostly to display overflowing data, now handled by overflow baloon
+  * Fixed setting value of date time input with minutes granularity
+
+## [0.80.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.80.0)
+* Notable changes for users:
+  * Fixed run quality being sent in patch even if it has not been updated
+  * Display errors when update run fails
+  * Unicode characters are now properly handled as file attachment
+  * SL EoS report now include the three shifter's logs
+  * Added Simulation Passes per LHC Period view
+  * Remove TST detector from Runs Per Data Pass and LHC Period views
+  * All PHYSICS runs are displayed on Runs Per Data Pass view, regardless of their online quality
+  * When replying to a log, the environment id and lhcFill numbers are autofilled from their parent
+  * Automatically add tags when filling on-call template
+* Notable change for developers:
+  * Add procedure for fetching and storing in DB Simulation Passes from MonALISA
+  * Removed wait for timeout longer than 1s from tests
+  * Add constraint on inserting data from MonALISA - only PHYSICS runs association are stored now
+  * Added Simulation Passes API
+  * Added new endpoint for fetching root logs only
+  * Added new endpoint to fetch fills ended in the given period has been added
+  * Added new endpoint that uses a log id to fetch it's child logs
+  * Refactor LhcPeriodStatisticsService and DataPassesService in order to remove subqueries
+  * Added waitForTableDataReload method for testing with puppeteer
+  * Use breadcrumbs for Runs Per Data Pass page title and tooltip to display error
+  * New default method expectInputValue, does the same as expectInnerText but then for values instead of innerHTML
+
+## [0.79.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.79.0)
+* Notable changes for users:
+  * A log template for on-call has been created
+  * Improved formatting of on-call logs
+
 ## [0.78.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.78.1)
 * Notable change for developers:
   * All dependencies has been added to the bundle dependencies

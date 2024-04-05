@@ -19,6 +19,29 @@ const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 
 const { expect } = chai;
 
+const testToken = server.http.o2TokenService.generateToken(
+    0,
+    'anonymous',
+    'Anonymous',
+    'admin',
+);
+
+/**
+ * Overrides the given URL to add authentication information to it
+ *
+ * @param {string} url the URL to authenticate
+ * @return {string} the authenticated URL
+ */
+const authenticateUrl = (url) => {
+    const authenticatedUrl = new URL(url);
+    authenticatedUrl.searchParams.set('personid', 0);
+    authenticatedUrl.searchParams.set('username', 'anonymous');
+    authenticatedUrl.searchParams.set('name', 'Anonymous');
+    authenticatedUrl.searchParams.set('access', 'admin');
+    authenticatedUrl.searchParams.set('token', testToken);
+    return authenticatedUrl.toString();
+};
+
 /**
  * Returns the URL with correct port postfixed.
  * @returns {string} URL specific to the port specified by user/host.
@@ -33,6 +56,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
 module.exports.defaultBefore = async () => {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
+
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
         page.coverage.startCSSCoverage(),
@@ -63,6 +87,35 @@ module.exports.defaultAfter = async (page, browser) => {
 };
 
 /**
+ * Resolves after a given timeout (temporary replacement for puppeteer Page.waitForTimeout)
+ *
+ * @deprecated use an appropriate waitForSelector instead
+ *
+ * @param {number} timeout the timeout to wait (in ms)
+ * @return {Promise<void>} resolves once the timeout has been elapsed
+ */
+const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout));
+
+/**
+ * @deprecated
+ */
+module.exports.waitForTimeout = waitForTimeout;
+
+/**
+ * Execute the given navigation function and wait for navigation
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {function} navigateFunction function to call to initiate navigation
+ * @return {Promise<*>} resolves once the navigation finished
+ */
+const waitForNavigation = (page, navigateFunction) => Promise.all([
+    page.waitForNavigation({ timeout: 1500 }),
+    navigateFunction(),
+]);
+
+exports.waitForNavigation = waitForNavigation;
+
+/**
  * Waits till selector is visible and then clicks element.
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
@@ -70,7 +123,8 @@ module.exports.defaultAfter = async (page, browser) => {
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForSelector(selector);
+    await page.waitForSelector(selector, { timeout: 250 });
+
     if (jsClick) {
         await page.$eval(selector, (element) => {
             element.click();
@@ -90,32 +144,22 @@ module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage
 /**
  * Navigates to a specific URL and waits until everything is loaded.
  *
- * @param {Page} puppeteerPage puppeteer page object
+ * @param {puppeteer.Page} page puppeteer page object
  * @param {string} url the URL to navigate to
  * @param {object} [options] navigation options
  * @param {boolean} [options.authenticate] if true, the navigation request will be authenticated with a token and test user information
  * @param {number} [options.redrawDuration] the estimated time to wait for the page to redraw
  * @returns {Promise} resolves with the navigation response
  */
-const goTo = async (puppeteerPage, url, options) => {
+const goTo = async (page, url, options) => {
     const { authenticate = true, redrawDuration = 20 } = options ?? {};
 
-    const queryParameters = {};
     if (authenticate) {
-        queryParameters.personid = 0;
-        queryParameters.username = 'anonymous';
-        queryParameters.name = 'Anonymous';
-        queryParameters.access = 'admin';
-        queryParameters.token = server.http.o2TokenService.generateToken(
-            queryParameters.personid,
-            queryParameters.username,
-            queryParameters.name,
-            queryParameters.access,
-        );
+        url = authenticateUrl(url);
     }
 
-    const response = await puppeteerPage.goto(buildUrl(url, queryParameters), { waitUntil: 'networkidle0' });
-    await puppeteerPage.waitForTimeout(redrawDuration);
+    const response = await page.goto(url, { waitUntil: 'networkidle0' });
+    await waitForTimeout(redrawDuration);
     return response;
 };
 
@@ -149,7 +193,7 @@ module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
     const { redrawDuration = 20 } = options ?? {};
 
     await page.waitForNetworkIdle();
-    await page.waitForTimeout(redrawDuration);
+    await waitForTimeout(redrawDuration);
 };
 
 /**
@@ -169,7 +213,7 @@ module.exports.validateElement = async (page, selector) => {
  * Debug helper function
  * This function takes a screenshot of the current screen the page is at, and saves it to
  * database/storage/screenshot.png
- * @param {*} page Puppeteer page object.
+ * @param {puppeteer.Page} page Puppeteer page object.
  * @param {string} name Name of the screenshot taken. Useful when taking multiple in a row.
  * @returns {*} None
  */
@@ -212,21 +256,35 @@ module.exports.getFirstRow = async (table, page) => {
 };
 
 /**
- * Special method built to gather all currently visible table entities from a specific column into an array
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {string} key The key for the column to gather entities of
- * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
+ * Return the inner text of all the cells of a given column of the first table found in the page
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} key the key of the column from which data must be retrieved
+ * @return {Promise<string[]>} resolves with the list of all cells inner texts
  */
-module.exports.getAllDataFields = async (page, key) => {
-    const allData = await page.$$('td');
-    return await allData.reduce(async (accumulator, data) => {
-        const id = await page.evaluate((element) => element.id, data);
-        if (id.endsWith(`-${key}`)) {
-            const text = await page.evaluate((element) => element.innerText, data);
-            (await accumulator).push(text);
+const getColumnCellsInnerTexts = async (page, key) => page.$$eval(
+    `table tbody .column-${key}`,
+    (cells) => cells.map((cell) => cell.innerText),
+);
+
+module.exports.getColumnCellsInnerTexts = getColumnCellsInnerTexts;
+
+/**
+ * Special method built to gather all currently visible data from given columns into array of objects
+ * @param {puppeteer.Page} page An object representing the browser page being used by Puppeteer
+ * @param {string[]} columnKeys The keys for the columns to gather entities of
+ * @return {Promise<Object<string, string>>} An array containing all table partial entities of a columns, in the order displayed by the browser
+ */
+module.exports.getTableDataSlice = async (page, columnKeys) => {
+    const result = [];
+    for (const row of await page.$$('table tbody tr')) {
+        const entity = {};
+        for (const columnKey of columnKeys) {
+            entity[columnKey] = await row.$eval(`td.column-${columnKey}`, ({ innerText }) => innerText);
         }
-        return accumulator;
-    }, []);
+        result.push(entity);
+    }
+    return result;
 };
 
 /**
@@ -247,8 +305,35 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector);
-    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+    await page.waitForSelector(selector, { timeout: 200 });
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(actualInnerText).to.equal(innerText);
+};
+
+/**
+ * Expect an element to have a text valid against givne validator
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @return {Promise<void>} resolves once the text has been checked
+ */
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
+};
+
+/**
+ * Expect an element to have a text valid against given validator
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @return {Promise<void>} resolves once the text has been checked
+ */
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
 /**
@@ -353,7 +438,7 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
 /**
  * Fill the input at the given selector and triggers the given events on it
  *
- * @param {{evaluate: function, waitForSelector: function}} page the puppeteer's page object
+ * @param {puppeteer.Page} page the puppeteer's page object
  * @param {string} inputSelector the selector of the input to fill
  * @param {string} value the value to type in the input
  * @param {string[]} [events=['input']] the list of events to trigger on the input after typing
@@ -371,16 +456,37 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 };
 
 /**
+ * Evaluate and return the value content of a given element handler
+ * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @returns {Promise<XPathResult>} the html content
+ */
+const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+
+/**
+ * Expect an element to have a given value
+ *
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {string} value value to search for.
+ * @return {Promise<void>} resolves once the value has been checked
+ */
+module.exports.expectInputValue = async (page, selector, value) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    expect(await getInputValue(await page.$(selector))).to.equal(value);
+};
+
+/**
  * Check the differences between the provided expected parameters and the parameters actually received
  *
+ * @TODO convert this to not-async
  * For now only handle scalar parameters
  *
- * @param {url} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {Object} expectedUrlParameters the expected parameters as an object of key values
  * @return {Promise<Object>} the differences between the expected parameters
  */
 module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) => {
-    const [, parametersExpr] = await page.url().split('?');
+    const [, parametersExpr] = page.url().split('?');
     const urlParameters = parametersExpr.split('&');
     const ret = {};
     for (const urlParameter of urlParameters) {
@@ -393,4 +499,96 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
         }
     }
     return ret;
+};
+
+/**
+ * Method to check cells of columns with given id have expected innerText
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {stirng} columnId column id
+ * @param {string[]} [expectedInnerTextValues] values expected in columns
+ *
+ * @return {Promise<void>} promise
+ */
+module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
+    await page.waitForFunction((columnId, expectedInnerTextValues) => {
+        // Browser context, be careful when modifying
+        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
+    }, { timeout: 1500 }, columnId, expectedInnerTextValues);
+};
+
+/**
+ * Generic method to validate inner text of cells belonging column with given id.
+ * It checks exact match with given values
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} columnId column id
+ * @param {string} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
+ * @param {object} options options
+ * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
+ * @param {boolean} [options.negation] if true it's expected not to match given regex
+ *
+ * @return {Promise<void>} promise
+ */
+module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
+    const {
+        valuesCheckingMode = 'every',
+        negation = false,
+    } = options;
+    await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
+        // Browser context, be careful when modifying
+        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return names.length
+            && names[valuesCheckingMode]((name) =>
+                negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
+    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
+};
+
+/**
+ * Tests whether sorting of main table by column with given id works properly
+ * It is required there are a least two rows in the table
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} columnId subject column id
+ * @return {Promise<void>} promise
+ */
+module.exports.testTableSortingByColumn = async (page, columnId) => {
+    // Expect a sorting preview to appear when hovering over column header
+    await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
+    await page.hover(`th#${columnId}`);
+    const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
+    expect(Boolean(sortingPreviewIndicator)).to.be.true;
+
+    const notOrderData = await getColumnCellsInnerTexts(page, columnId);
+
+    // Sort in ASCENDING manner
+    await this.pressElement(page, `th#${columnId}`);
+    this.expectColumnValues(page, columnId, [...notOrderData].sort());
+
+    // Sort in DESCSENDING manner
+    await this.pressElement(page, `th#${columnId}`);
+    this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
+
+    // Revoke sorting
+    await this.pressElement(page, `th#${columnId}`);
+    this.expectColumnValues(page, columnId, notOrderData);
+};
+
+/**
+ * Validate content of table body
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {Map<string, function<string, boolean>>} validators mapping of column names to cell data validator,
+ * each validator must return value `true` if content is ok, false otherwise
+ * @return {Promise<void>} promise
+ */
+module.exports.validateTableData = async (page, validators) => {
+    await page.waitForSelector('table tbody');
+    for (const [columnId, validator] of validators) {
+        const columnData = await getColumnCellsInnerTexts(page, columnId);
+        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
+        expect(
+            columnData.every((cellData) => validator(cellData)),
+            `Invalid data in column ${columnId}: (${columnData})`,
+        ).to.be.true;
+    }
 };

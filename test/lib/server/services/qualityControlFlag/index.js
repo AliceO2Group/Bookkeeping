@@ -11,10 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const QualityControlFlagServiceSuite = require('./QualityControlFlagService.test.js');
-const GetAllFlagReasons = require('./getAllFlagReasons.test.js');
+const QcFlagTypesServiceTestSuite = require('./QcFlagTypeService.test.js');
+const QcFlagServiceSuite = require('./QcFlagService.test.js');
 
 module.exports = () => {
-    describe('QualityControlFlagService Suite', QualityControlFlagServiceSuite);
-    describe('QualityControlFlagResons Suite', GetAllFlagReasons);
+    describe('QcFlagTypeService Suite', QcFlagTypesServiceTestSuite);
+    describe('QcFlagService Suite', QcFlagServiceSuite);
 };

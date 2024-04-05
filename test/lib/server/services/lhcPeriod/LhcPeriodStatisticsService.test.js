@@ -17,47 +17,52 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 
-const lhcPeriod_LHC22b = {
-    id: 2,
-    beamType: 'XeXe',
-    avgCenterOfMassEnergy: 1264.9836246503144,
-    distinctEnergies: [55.2],
-    lhcPeriod: {
-        id: 2,
-        name: 'LHC22b',
-    },
-    runsCount: 1,
-    dataPassesCount: 2,
-};
-
 const lhcPeriod_LHC22a = {
     id: 1,
-    beamType: 'pp',
     avgCenterOfMassEnergy: 99.52079923444215,
+    lhcPeriod: {
+        id: 1,
+        name: 'LHC22a',
+
+    },
+    beamTypes: ['PbPb', 'pp'],
     distinctEnergies: [
         23.21,
         56.1,
     ],
-    lhcPeriod: {
-        id: 1,
-        name: 'LHC22a',
-    },
     runsCount: 3,
     dataPassesCount: 1,
+    simulationPassesCount: 2,
+};
 
+const lhcPeriod_LHC22b = {
+    id: 2,
+    avgCenterOfMassEnergy: 1264.9836246503144,
+    lhcPeriod: {
+        id: 2,
+        name: 'LHC22b',
+
+    },
+    beamTypes: ['XeXe'],
+    distinctEnergies: [55.2],
+    runsCount: 1,
+    dataPassesCount: 2,
+    simulationPassesCount: 1,
 };
 
 const lhcPeriod_LHC23f = {
     id: 3,
-    beamType: null,
     avgCenterOfMassEnergy: null,
-    distinctEnergies: [],
     lhcPeriod: {
         id: 3,
         name: 'LHC23f',
+
     },
+    beamTypes: [],
+    distinctEnergies: [],
     dataPassesCount: 0,
     runsCount: 0,
+    simulationPassesCount: 0,
 };
 
 module.exports = () => {
@@ -153,7 +158,7 @@ module.exports = () => {
         expect(lhcPeriods[2]).to.be.eql(lhcPeriod_LHC23f);
     });
 
-    it('should succesfully filter period statistics on beamType', async () => {
+    it('should succesfully filter period statistics on beamTypes', async () => {
         const dto = {
             query: {
                 filter: {
@@ -166,11 +171,11 @@ module.exports = () => {
         expect(lhcPeriods).to.have.deep.members([lhcPeriod_LHC22b]);
     });
 
-    it('should succesfully sort period statistics on beamType', async () => {
+    it('should succesfully sort period statistics on beamTypes', async () => {
         const dto = {
             query: {
                 sort: {
-                    beamType: 'ASC',
+                    beamTypes: 'ASC',
                 },
             },
         };

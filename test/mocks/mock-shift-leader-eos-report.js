@@ -55,6 +55,21 @@ const customizedShiftLeaderEosReportLogs = [
         rootLogId: 124,
         parentLogId: 124,
     },
+    {
+        id: 126,
+        title: 'Seventh issue log',
+        tags: [{ text: 'ECS Shifter' }],
+    },
+    {
+        id: 127,
+        title: 'Eighth issue log',
+        tags: [{ text: 'QC/PDP Shifter' }],
+    },
+    {
+        id: 128,
+        title: 'Ninth issue log',
+        tags: [{ text: 'DCS Shifter' }],
+    },
 ];
 
 exports.customizedShiftLeaderEosReportLogs = customizedShiftLeaderEosReportLogs;
@@ -74,13 +89,28 @@ const customizedShiftLeaderEosReport = {
             title: 'Fifth issue log',
             tags: [{ text: 'Shift Leader' }, { text: 'FLP' }],
         },
+        {
+            id: 126,
+            title: 'Seventh issue log',
+            tags: [{ text: 'ECS Shifter' }],
+        },
+        {
+            id: 127,
+            title: 'Eighth issue log',
+            tags: [{ text: 'QC/PDP Shifter' }],
+        },
+        {
+            id: 128,
+            title: 'Ninth issue log',
+            tags: [{ text: 'DCS Shifter' }],
+        },
     ],
     typeSpecific: {
         magnets: {
             start: { solenoid: '30kA +452mT', dipole: '6kA +681mT' },
             intermediates: [
-                { timestamp: '14:30:37', magnetConfiguration: { solenoid: '17kA +654mT', dipole: '4kA +131mT' } },
-                { timestamp: '08:13:18', magnetConfiguration: { solenoid: '19kA +108mT', dipole: '1kA +901mT' } },
+                { timestamp: new Date('2023-01-01 13:30:37'), magnetsConfiguration: { solenoid: '17kA +654mT', dipole: '4kA +131mT' } },
+                { timestamp: new Date('2023-01-01 07:13:18'), magnetsConfiguration: { solenoid: '19kA +108mT', dipole: '1kA +901mT' } },
             ],
             end: { solenoid: '25kA -134mT', dipole: '8kA +734mT' },
         },
@@ -91,7 +121,7 @@ const customizedShiftLeaderEosReport = {
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                     timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
                     runDuration: (3600 + 2 * 60 + 3) * 1000,
-                    envId: 'ENV1',
+                    envId: 'CmCvjNbg',
                     runNumber: 200,
                     runQuality: 'good',
                     eorReasons: [],
@@ -120,6 +150,7 @@ const customizedShiftLeaderEosReport = {
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                     timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
                     runDuration: (3600 + 2 * 60 + 3) * 1000,
+                    envId: 'TDI59So3d',
                     runTypeId: 14,
                     runType: { name: 'TECHNICAL' },
                     pdpBeamType: 'technical',
@@ -150,6 +181,7 @@ const customizedShiftLeaderEosReport = {
                     timeTrgStart: new Date('2023-03-17T08:14:03Z'),
                     timeTrgEnd: new Date('2023-03-17T09:16:06Z'),
                     runDuration: (3600 + 2 * 60 + 3) * 1000,
+                    envId: 'EIDO13i3D',
                     runTypeId: 14,
                     runType: { name: 'TECHNICAL' },
                     pdpBeamType: 'technical',
@@ -182,6 +214,9 @@ const customizedShiftLeaderEosReport = {
             DCS: 1,
             SL: 1,
             FLP: 1,
+            'ECS Shifter': 1,
+            'QC/PDP Shifter': 1,
+            'DCS Shifter': 1,
         },
     },
 };
@@ -211,6 +246,9 @@ const formattedCustomizedShiftLeaderEosReportTypeSpecific = `
     - DCS (1)
     - SL (1)
     - FLP (1)
+    - ECS Shifter (1)
+    - QC/PDP Shifter (1)
+    - DCS Shifter (1)
 
 ## Runs
 
@@ -222,10 +260,17 @@ const formattedCustomizedShiftLeaderEosReportTypeSpecific = `
 - [202](http://localhost:4000?page=run-detail&runNumber=202)
 `;
 
+const formattedLog = `\
+- \\[Shift Leader\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)
+- \\[Shift Leader, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)
+- \\[ECS Shifter\\] - [Seventh issue log](http://localhost:4000?page=log-detail&id=126)
+- \\[QC/PDP Shifter\\] - [Eighth issue log](http://localhost:4000?page=log-detail&id=127)
+- \\[DCS Shifter\\] - [Ninth issue log](http://localhost:4000?page=log-detail&id=128)\
+`;
+
 exports.formattedCustomizedShiftLeaderEosReport = genericFormattedCustomizedEosReport(
     ShiftTypes.SL,
-    // eslint-disable-next-line max-len
-    '- \\[Shift Leader\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[Shift Leader, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
+    formattedLog,
     formattedCustomizedShiftLeaderEosReportTypeSpecific,
 );
 
