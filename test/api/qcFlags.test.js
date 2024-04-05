@@ -110,7 +110,7 @@ module.exports = () => {
             expect(data[0].id).to.be.equal(5);
         });
 
-        it('should retrive no records when filtering on ids', async () => {
+        it('should retrive no records when filtering on non-existing ids', async () => {
             const response = await request(server).get('/api/qcFlags?filter[ids][]=9999');
             expect(response.status).to.be.equal(200);
             const { data } = response.body;
