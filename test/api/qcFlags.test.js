@@ -25,11 +25,11 @@ module.exports = () => {
             const { data: qcFlag } = response.body;
             expect(qcFlag).to.be.eql({
                 id: 4,
-                from: (1647914400 + 10000) * 1000,
-                to: (1647914400 + 10000) * 1000,
+                from: new Date('2022-03-22 04:46:40').getTime(),
+                to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
-                createdAt: 1707825439000,
-                updatedAt: 1707825439000,
+                createdAt: new Date('2024-02-13 11:57:19').getTime(),
+                updatedAt: new Date('2024-02-13 11:57:19').getTime(),
                 runNumber: 1,
                 dplDetectorId: 1,
                 createdById: 2,
@@ -54,7 +54,7 @@ module.exports = () => {
     });
 
     describe('GET /api/qcFlags', () => {
-        it('should successfuly fetch all data', async () => {
+        it('should successfuly fetch all QC flags', async () => {
             const response = await request(server).get('/api/qcFlags');
             expect(response.status).to.be.equal(200);
             const { data, meta } = response.body;
@@ -64,11 +64,11 @@ module.exports = () => {
             const oneFetchedFlag = data.find(({ id }) => id === 4);
             expect(oneFetchedFlag).to.be.eql({
                 id: 4,
-                from: (1647914400 + 10000) * 1000,
-                to: (1647914400 + 10000) * 1000,
+                from: new Date('2022-03-22 04:46:40').getTime(),
+                to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
-                createdAt: 1707825439000,
-                updatedAt: 1707825439000,
+                createdAt: new Date('2024-02-13 11:57:19').getTime(),
+                updatedAt: new Date('2024-02-13 11:57:19').getTime(),
                 runNumber: 1,
                 dplDetectorId: 1,
                 createdById: 2,
