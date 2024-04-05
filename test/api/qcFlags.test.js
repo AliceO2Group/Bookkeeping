@@ -133,6 +133,7 @@ module.exports = () => {
             expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort());
         });
 
+        // Sorting in ASC order
         it('should support sorting by `from` property', async () => {
             const response = await request(server).get('/api/qcFlags?sort[from]=ASC');
             const { data: flags, meta: { page: { totalCount: count } } } = response.body;
@@ -191,6 +192,67 @@ module.exports = () => {
             expect(flags).to.be.lengthOf(5);
             const fetchedSortedProperties = flags.map(({ updatedAt }) => updatedAt);
             expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort());
+        });
+
+        // Sorting in DESC order
+        it('should support sorting by `from` property', async () => {
+            const response = await request(server).get('/api/qcFlags?sort[from]=DESC');
+            const { data: flags, meta: { page: { totalCount: count } } } = response.body;
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ from }) => from);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should support sorting by `to` property', async () => {
+            const response = await request(server).get('/api/qcFlags?sort[to]=DESC');
+            const { data: flags, meta: { page: { totalCount: count } } } = response.body;
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ to }) => to);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should support sorting by flag type name', async () => {
+            const response = await request(server).get('/api/qcFlags?sort[flagType]=DESC');
+            const { data: flags, meta: { page: { totalCount: count } } } = response.body;
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ flagType: { name } }) => name);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should support sorting by createdBy name', async () => {
+            const response = await request(server).get('/api/qcFlags?sort[createdBy]=DESC');
+            const { data: flags, meta: { page: { totalCount: count } } } = response.body;
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ createdBy: { name } }) => name);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should support sorting by createdAt', async () => {
+            const response = await request(server).get('/api/qcFlags?sort[createdAt]=DESC');
+            const { data: flags, meta: { page: { totalCount: count } } } = response.body;
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ createdAt }) => createdAt);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+
+        it('should support sorting by updatedAt', async () => {
+            const response = await request(server).get('/api/qcFlags?sort[updatedAt]=DESC');
+            const { data: flags, meta: { page: { totalCount: count } } } = response.body;
+            expect(count).to.be.equal(5);
+            expect(flags).to.be.an('array');
+            expect(flags).to.be.lengthOf(5);
+            const fetchedSortedProperties = flags.map(({ updatedAt }) => updatedAt);
+            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
         });
 
         it('should support pagination', async () => {
