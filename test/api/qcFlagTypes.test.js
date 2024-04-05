@@ -365,7 +365,7 @@ module.exports = () => {
         });
     });
 
-    describe('PUT /api/qcFlagTypes/:id', () => {
+    describe('PATCH /api/qcFlagTypes/:id', () => {
         it('should reject when existing name provided', async () => {
             const qcFlagTypeId = 13;
 
@@ -373,7 +373,7 @@ module.exports = () => {
                 name: 'BadPID',
             };
             const response = await request(server)
-                .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
             expect(response.status).to.be.eql(409);
             const { errors } = response.body;
@@ -388,7 +388,7 @@ module.exports = () => {
                 method: 'Bad PID',
             };
             const response = await request(server)
-                .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
             expect(response.status).to.be.eql(409);
             const { errors } = response.body;
@@ -403,7 +403,7 @@ module.exports = () => {
                 color: '#aabbxx',
             };
             const response = await request(server)
-                .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
             expect(response.status).to.be.eql(400);
             const { errors } = response.body;
@@ -416,7 +416,7 @@ module.exports = () => {
             const qcFlagTypeId = 13;
 
             const response = await request(server)
-                .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
             expect(response.status).to.be.eql(201);
             const { data: updatedFlagType } = response.body;
@@ -436,7 +436,7 @@ module.exports = () => {
             const qcFlagTypeId = 13;
 
             const response = await request(server)
-                .put(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
+                .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
                 .send(patch);
             expect(response.status).to.be.eql(201);
             const { data: updatedFlagType } = response.body;
