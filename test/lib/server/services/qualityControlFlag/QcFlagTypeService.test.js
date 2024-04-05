@@ -371,9 +371,20 @@ module.exports = () => {
 
             const updatedFlagType = await qcFlagTypeService.update(13, patch, { user: { userId } });
             const fetchedFlagType = await qcFlagTypeService.getOneOrFail(13);
-            const { archived, lastUpdatedBy: { id: lastUpdatedById } } = fetchedFlagType;
+            const { archived, archivedAt, lastUpdatedBy: { id: lastUpdatedById } } = fetchedFlagType;
             expect({ archived, lastUpdatedById }).to.be.eql({ ...patch, lastUpdatedById: userId });
             expect(updatedFlagType).to.be.eql(fetchedFlagType);
+
+            // To Archive second time should change archiveAt timestamp
+            await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const { archivedAt: archivedAtSecondTime } = await qcFlagTypeService.getOneOrFail(13);
+            expect(archivedAt).to.be.equal(archivedAtSecondTime);
+
+            // Should unarchive
+            await qcFlagTypeService.update(13, { archived: false }, { user: { userId } });
+            const { archived: archivedThirdTime, archivedAt: archivedAtThirdTime } = await qcFlagTypeService.getOneOrFail(13);
+            expect(archivedThirdTime).to.be.equal(false);
+            expect(archivedAtThirdTime).to.be.equal(null);
         });
     });
 };
