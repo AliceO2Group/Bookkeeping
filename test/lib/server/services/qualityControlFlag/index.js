@@ -11,17 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-<<<<<<< HEAD
-const QCFlagTypesServiceTestSuite = require('./QCFlagTypesService.test.js');
-
-module.exports = () => {
-    describe('QCFlagTypesService Suite', QCFlagTypesServiceTestSuite);
-=======
 const QcFlagTypesServiceTestSuite = require('./QcFlagTypeService.test.js');
 const QcFlagServiceSuite = require('./QcFlagService.test.js');
 
 module.exports = () => {
     describe('QcFlagTypeService Suite', QcFlagTypesServiceTestSuite);
     describe('QcFlagService Suite', QcFlagServiceSuite);
->>>>>>> main
 };
