@@ -236,8 +236,8 @@ module.exports = () => {
         // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 01:29:50').getTime(),
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -259,8 +259,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-08 11:36:40').getTime(), // Failing property
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -283,8 +283,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 04:16:40').getTime(), // Failing property
-                toTime: new Date('2019-08-08 21:20:00').getTime(), // Failing property
+                from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
+                to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -300,14 +300,14 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
-                new BadParameterError('Parameter `toTime` must be greater than `fromTime`'),
+                new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
             );
         });
 
         it('should fail to create quality control flag due to due to no association', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 01:29:50').getTime(),
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -330,8 +330,8 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag with externalUserId', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 01:29:50').getTime(),
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -349,8 +349,8 @@ module.exports = () => {
                 await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
 
             expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
-                from: qcFlagCreationParameters.fromTime,
-                to: qcFlagCreationParameters.toTime,
+                from: qcFlagCreationParameters.from,
+                to: qcFlagCreationParameters.to,
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
@@ -373,8 +373,8 @@ module.exports = () => {
         // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 01:29:50').getTime(),
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -396,8 +396,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-08 11:36:40').getTime(), // Failing property
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -420,8 +420,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 04:16:40').getTime(), // Failing property
-                toTime: new Date('2019-08-08 21:20:00').getTime(), // Failing property
+                from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
+                to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -437,14 +437,14 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
-                new BadParameterError('Parameter `toTime` must be greater than `fromTime`'),
+                new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
             );
         });
 
         it('should fail to create quality control flag due to due to no association', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 01:29:50').getTime(),
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -467,8 +467,8 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag with externalUserId', async () => {
             const qcFlagCreationParameters = {
-                fromTime: new Date('2019-08-09 01:29:50').getTime(),
-                toTime: new Date('2019-08-09 05:40:00').getTime(),
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -486,8 +486,8 @@ module.exports = () => {
                 await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
 
             expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
-                from: qcFlagCreationParameters.fromTime,
-                to: qcFlagCreationParameters.toTime,
+                from: qcFlagCreationParameters.from,
+                to: qcFlagCreationParameters.to,
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
