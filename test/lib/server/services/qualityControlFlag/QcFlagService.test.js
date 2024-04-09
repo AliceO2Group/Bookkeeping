@@ -19,7 +19,7 @@ const { qcFlagService } = require('../../../../../lib/server/services/qualityCon
 
 const qcFlagWithId1 = {
     id: 1,
-    from: (1565314200 - 10000) * 1000,
+    from: new Date('2019-08-08 22:43:20').getTime(),
     to: new Date('2019-08-09 04:16:40').getTime(),
     comment: 'Some qc comment 1',
 
