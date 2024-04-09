@@ -239,15 +239,17 @@ module.exports = () => {
                 fromTime: (1565314200 - 10) * 1000,
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 9999999, // Failing property
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 9999999, // Failing property
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
@@ -260,16 +262,17 @@ module.exports = () => {
                 fromTime: (1565314200 - 50000) * 1000, // Failing property
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
-                externalUserId: 456,
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 456,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
@@ -283,15 +286,17 @@ module.exports = () => {
                 fromTime: (1565314200 + 10000) * 1000, // Failing property
                 toTime: (1565314200 - 15000) * 1000, // Failing property
                 comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 456,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
@@ -304,15 +309,17 @@ module.exports = () => {
                 fromTime: (1565314200 - 10) * 1000,
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 9999, // Failing property
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 456,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
@@ -326,38 +333,38 @@ module.exports = () => {
                 fromTime: (1565314200 - 10) * 1000,
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
             };
 
-            const relations = { user: {
-                externalUserId: 456,
-            } };
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
 
-            const flag = await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
-            delete qcFlagCreationParameters.externalUserId;
-            const { fromTime, toTime } = qcFlagCreationParameters;
-            delete qcFlagCreationParameters.fromTime;
-            delete qcFlagCreationParameters.toTime;
-            const { dataPassId } = qcFlagCreationParameters;
-            delete qcFlagCreationParameters.dataPassId;
-            const expectedPoperties = {
-                ...qcFlagCreationParameters,
-                from: fromTime,
-                to: toTime,
-            };
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: qcFlagCreationParameters.fromTime,
+                to: qcFlagCreationParameters.toTime,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
 
-            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(expectedPoperties));
-
-            const createFlagWithDataPass = await QcFlagRepository.findOne({
+            const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
                 include: [{ association: 'dataPasses' }],
                 where: {
-                    id: flag.id,
+                    id,
                 },
             });
-            expect(createFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
         });
     });
 
@@ -369,15 +376,17 @@ module.exports = () => {
                 fromTime: (1565314200 - 10) * 1000,
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 9999999,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
@@ -390,16 +399,17 @@ module.exports = () => {
                 fromTime: (1565314200 - 50000) * 1000, // Failing property
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
-                externalUserId: 456,
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 456,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
@@ -413,16 +423,17 @@ module.exports = () => {
                 fromTime: (1565314200 + 10000) * 1000, // Failing property
                 toTime: (1565314200 - 15000) * 1000, // Failing property
                 comment: 'VERY INTERSETING REMARK',
-                externalUserId: 456,
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 456,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
@@ -435,16 +446,17 @@ module.exports = () => {
                 fromTime: (1565314200 - 10) * 1000,
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
-                externalUserId: 456,
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 9999, // Failing property
                 dplDetectorId: 1,
             };
-
-            const relations = { user: {
-                externalUserId: 456,
-            } };
 
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
@@ -458,39 +470,38 @@ module.exports = () => {
                 fromTime: (1565314200 - 10) * 1000,
                 toTime: (1565314200 + 15000) * 1000,
                 comment: 'VERY INTERSETING REMARK',
-                externalUserId: 456,
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
             };
 
-            const relations = { user: {
-                externalUserId: 456,
-            } };
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
 
-            const flag = await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
-            delete qcFlagCreationParameters.externalUserId;
-            const { fromTime, toTime } = qcFlagCreationParameters;
-            delete qcFlagCreationParameters.fromTime;
-            delete qcFlagCreationParameters.toTime;
-            const { simulationPassId } = qcFlagCreationParameters;
-            delete qcFlagCreationParameters.simulationPassId;
-            const expectedPoperties = {
-                ...qcFlagCreationParameters,
-                from: fromTime,
-                to: toTime,
-            };
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: qcFlagCreationParameters.fromTime,
+                to: qcFlagCreationParameters.toTime,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
 
-            expect(Object.entries(flag)).to.include.all.deep.members(Object.entries(expectedPoperties));
-
-            const createFlagWithSimulationPass = await QcFlagRepository.findOne({
+            const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
                 include: [{ association: 'simulationPasses' }],
                 where: {
-                    id: flag.id,
+                    id,
                 },
             });
-            expect(createFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
+            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
         });
     });
 };
