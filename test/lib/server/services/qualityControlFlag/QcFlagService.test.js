@@ -20,7 +20,7 @@ const { qcFlagService } = require('../../../../../lib/server/services/qualityCon
 const qcFlagWithId1 = {
     id: 1,
     from: (1565314200 - 10000) * 1000,
-    to: (1565314200 + 10000) * 1000,
+    to: new Date('2019-08-09 04:16:40').getTime(),
     comment: 'Some qc comment 1',
 
     // Associations
@@ -236,8 +236,8 @@ module.exports = () => {
         // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 10) * 1000,
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-09 01:29:50').getTime(),
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -259,8 +259,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 50000) * 1000, // Failing property
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -277,14 +277,14 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()} ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 + 10000) * 1000, // Failing property
-                toTime: (1565314200 - 15000) * 1000, // Failing property
+                fromTime: new Date('2019-08-09 04:16:40').getTime(), // Failing property
+                toTime: new Date('2019-08-08 21:20:00').getTime(), // Failing property
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -306,8 +306,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to due to no association', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 10) * 1000,
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-09 01:29:50').getTime(),
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -330,8 +330,8 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag with externalUserId', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 10) * 1000,
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-09 01:29:50').getTime(),
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -373,14 +373,14 @@ module.exports = () => {
         // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 10) * 1000,
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-09 01:29:50').getTime(),
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
             const relations = {
                 user: {
-                    externalUserId: 456,
+                    externalUserId: 9999999,
                 },
                 flagTypeId: 2,
                 runNumber: 106,
@@ -396,8 +396,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 50000) * 1000, // Failing property
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -414,14 +414,14 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${(1565314200 - 50000) * 1000} ${(1565314200 + 15000) * 1000}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()} ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
         it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 + 10000) * 1000, // Failing property
-                toTime: (1565314200 - 15000) * 1000, // Failing property
+                fromTime: new Date('2019-08-09 04:16:40').getTime(), // Failing property
+                toTime: new Date('2019-08-08 21:20:00').getTime(), // Failing property
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -443,8 +443,8 @@ module.exports = () => {
 
         it('should fail to create quality control flag due to due to no association', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 10) * 1000,
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-09 01:29:50').getTime(),
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
@@ -467,8 +467,8 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag with externalUserId', async () => {
             const qcFlagCreationParameters = {
-                fromTime: (1565314200 - 10) * 1000,
-                toTime: (1565314200 + 15000) * 1000,
+                fromTime: new Date('2019-08-09 01:29:50').getTime(),
+                toTime: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERSETING REMARK',
             };
 
