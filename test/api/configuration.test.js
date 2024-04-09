@@ -24,7 +24,8 @@ module.exports = () => {
                 data: {
                     FlpInfologgerUrl: 'http://localhost:8081',
                     EpnInfologgerUrl: null,
-                    AliFlpIndexUrl: 'http://localhost:8082',
+                    AliFlpIndexUrl: 'http://localhost:80',
+                    QcGuiUrl: 'http://localhost:8082',
                 },
             });
         });
