@@ -28,8 +28,8 @@ const qcFlagWithId1 = {
     flagTypeId: 11, // LimitedAcceptance
     runNumber: 106,
     dplDetectorId: 1, // CPV
-    createdAt: 1707825436000,
-    updatedAt: 1707825436000,
+    createdAt: new Date('2024-02-13 11:57:16').getTime(),
+    updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
     createdBy: {
         id: 1,
