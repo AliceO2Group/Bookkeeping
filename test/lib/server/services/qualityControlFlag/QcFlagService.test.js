@@ -449,7 +449,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
+                new BadParameterError(`You cannot insert flag for simulation pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
             );
         });
 
