@@ -324,4 +324,67 @@ module.exports = () => {
             );
         });
     });
+
+    describe('Updating QC Flag Type', () => {
+        it('should reject when existing name provided', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(12, { name: 'Bad' }, { user: { userId: 1 } }),
+                new ConflictError('A QC flag with name Bad already exists'),
+            );
+        });
+
+        it('should reject when existing method provided', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(12, { method: 'Bad' }, { user: { userId: 1 } }),
+                new ConflictError('A QC flag with method Bad already exists'),
+            );
+        });
+
+        it('should reject when QC flag type with given is not found', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(99999, { color: '#aaaaaa' }, { user: { userId: 1 } }),
+                new NotFoundError('Quality Control Flag Type with this id (99999) could not be found'),
+            );
+        });
+
+        it('should reject when no user is found', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(10, { color: '#aaaaaa' }, { user: { userId: 999 } }),
+                new NotFoundError('User with this id (999) could not be found'),
+            );
+        });
+
+        it('should successfuly update one QC Flag Type', async () => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const fetchedFlagType = await qcFlagTypeService.getOneOrFail(13);
+            const { name, method, color, lastUpdatedBy: { id: lastUpdatedById } } = fetchedFlagType;
+            expect({ name, method, color, lastUpdatedById }).to.be.eql({ ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
+        });
+
+        it('should successfuly archive QC Flag Type', async () => {
+            const patch = { archived: true };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const fetchedFlagType = await qcFlagTypeService.getOneOrFail(13);
+            const { archived, archivedAt, lastUpdatedBy: { id: lastUpdatedById } } = fetchedFlagType;
+            expect({ archived, lastUpdatedById }).to.be.eql({ ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
+
+            // To Archive second time should change archiveAt timestamp
+            await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const { archivedAt: archivedAtSecondTime } = await qcFlagTypeService.getOneOrFail(13);
+            expect(archivedAt).to.be.equal(archivedAtSecondTime);
+
+            // Should unarchive
+            await qcFlagTypeService.update(13, { archived: false }, { user: { userId } });
+            const { archived: archivedThirdTime, archivedAt: archivedAtThirdTime } = await qcFlagTypeService.getOneOrFail(13);
+            expect(archivedThirdTime).to.be.equal(false);
+            expect(archivedAtThirdTime).to.be.equal(null);
+        });
+    });
 };
