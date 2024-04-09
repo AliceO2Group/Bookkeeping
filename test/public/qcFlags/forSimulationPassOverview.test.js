@@ -59,7 +59,7 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
 
         await expectInnerText(page, 'h2:nth-of-type(1)', 'QC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22b_apass1');
+        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC23k6c');
         await expectInnerText(page, 'h2:nth-of-type(3)', '106');
         await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
     });
@@ -72,7 +72,7 @@ module.exports = () => {
         } });
 
         await pressElement(page, 'h2:nth-of-type(2)');
-        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-simulation-pass', simulationPassId: 1 })).to.be.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' })).to.be.eql({});
     });
 
     it('can naviagate to run details page from breadcrumbs link', async () => {
@@ -83,7 +83,7 @@ module.exports = () => {
         } });
 
         await pressElement(page, 'h2:nth-of-type(3)');
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: 106 })).to.be.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -147,7 +147,7 @@ module.exports = () => {
         } });
 
         // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
+        await page.evaluate(() => model.qcFlags.forSimulationPassOverviewModel.pagination.itemsPerPage = 200);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';

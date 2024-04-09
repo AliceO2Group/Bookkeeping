@@ -46,7 +46,7 @@ module.exports = () => {
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -66,29 +66,29 @@ module.exports = () => {
 
     it('can naviagate to runs per data pass page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
         await pressElement(page, 'h2:nth-of-type(2)');
-        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: 2 })).to.be.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
     });
 
     it('can naviagate to run details page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
         await pressElement(page, 'h2:nth-of-type(3)');
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: 106 })).to.be.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
 
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -109,7 +109,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -121,7 +121,7 @@ module.exports = () => {
 
     it('can set how many entires are available per page', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -141,13 +141,13 @@ module.exports = () => {
 
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
+            dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
         // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
+        await page.evaluate(() => model.qcFlags.forDataPassOverviewModel.pagination.itemsPerPage = 200);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
