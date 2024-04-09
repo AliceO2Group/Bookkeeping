@@ -277,7 +277,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()} ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
@@ -414,7 +414,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()} ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
