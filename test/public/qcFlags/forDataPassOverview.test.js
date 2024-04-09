@@ -21,7 +21,6 @@ const {
     validateTableData,
     fillInput,
     validateElement,
-    getInnerText,
     checkMismatchingUrlParam,
 } = require('../defaults');
 
@@ -99,8 +98,8 @@ module.exports = () => {
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
             createdBy: (userName) => userName && userName !== '-',
-            from: validateDate,
-            to: validateDate,
+            from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
             createdAt: validateDate,
             updatedAt: validateDate,
         };
@@ -120,7 +119,7 @@ module.exports = () => {
         await expectInnerText(page, '#totalRowsCount', '3');
     });
 
-    it('can set how many runs are available per page', async () => {
+    it('can set how many entires are available per page', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 2,
             runNumber: 106,
@@ -153,21 +152,5 @@ module.exports = () => {
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
-    });
-
-    it('can navigate to a run detail page', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 2,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        // const runNumberLinkCellSelector = 'tbody tr:first-of-type a';
-        // const expectedRunNumber = await getInnerText(await page.$(runNumberLinkCellSelector));
-
-        // await pressElement(page, runNumberLinkCellSelector);
-
-        // expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: expectedRunNumber }))
-        //     .to.be.eql({});
     });
 };
