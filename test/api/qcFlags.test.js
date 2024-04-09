@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
+const { repositories: { QcFlagRepository } } = require('../../lib/database');
 const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
@@ -277,6 +277,97 @@ module.exports = () => {
             const { errors } = response.body;
             const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
             expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+        });
+    });
+
+    describe('POST /api/qcFlags', () => {
+        it('should successfuly create QC flag instance for data pass', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERSETING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const response = request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlag } = response.body;
+            const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+            }
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                    include: [{ association: 'dataPasses' }],
+                    where: {
+                        id: createdQcFlag.id,
+                    },
+                });
+                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+            }
+        });
+
+        it('should successfuly create QC flag instance for simulation pass', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERSETING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const response = request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlag } = response.body;
+            const { simulationPassId, ...expectedProperties } = qcFlagCreationParameters;
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+            }
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId, simulationPasses } = await QcFlagRepository.findOne({
+                    include: [{ association: 'simulationPasses' }],
+                    where: {
+                        id: createdQcFlag.id,
+                    },
+                });
+                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                expect(simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
+            }
+        });
+
+        it('should fail to create QC flag instance when dataPass and simualtion are both specified', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERSETING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const response = request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: '422',
+                    source: {
+                        pointer: '/data/attributes/body',
+                    },
+                    title: 'Invalid Attribute',
+                    detail: '"body" contains a conflict between exclusive peers [dataPassId, simulationPassId]',
+                },
+            ]);
         });
     });
 };
