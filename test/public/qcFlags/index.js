@@ -11,9 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const QcFlagTypesOverviewSuite = require('./overview.test');
-const QcFlagTypeCreationSuite = require('./creation.test');
+const QcFlagForDataPassOverviewSuite = require('./forDataPassOverview.test');
+const QcFlagForSimulationPassOverviewSuite = require('./forSimulationPassOverview.test');
 
 module.exports = () => {
-    describe('Overview Page', QcFlagTypesOverviewSuite);
+    describe('For Data Pass Overview Page', QcFlagForDataPassOverviewSuite);
+    describe('For Simulation Pass Overview Page', QcFlagForSimulationPassOverviewSuite);
 };
