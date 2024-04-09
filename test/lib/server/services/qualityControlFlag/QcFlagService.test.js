@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { repositories: { QcFlagRepository } } = require('../../../../../lib/database');
+const { repositories: { QcFlagRepository, RunRepository } } = require('../../../../../lib/database');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const assert = require('assert');
@@ -277,7 +277,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
@@ -366,6 +366,45 @@ module.exports = () => {
             });
             expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
         });
+
+        it('should succesfuly create quality control flag without timstamps', async () => {
+            const qcFlagCreationParameters = {
+                comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
+
+            const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
+
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: startTime,
+                to: endTime,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
+
+            const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
+                include: [{ association: 'dataPasses' }],
+                where: {
+                    id,
+                },
+            });
+            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+        });
     });
 
     describe('Creating Quality Control Flag for simulation pass', () => {
@@ -414,7 +453,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is beyond run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
             );
         });
 
@@ -488,6 +527,45 @@ module.exports = () => {
             expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
                 from: qcFlagCreationParameters.from,
                 to: qcFlagCreationParameters.to,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
+
+            const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
+                include: [{ association: 'simulationPasses' }],
+                where: {
+                    id,
+                },
+            });
+            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
+        });
+
+        it('should succesfuly create quality control flag without timstamps', async () => {
+            const qcFlagCreationParameters = {
+                comment: 'VERY INTERSETING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
+
+            const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
+
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: startTime,
+                to: endTime,
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
