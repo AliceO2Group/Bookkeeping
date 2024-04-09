@@ -324,7 +324,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`You cannot insert flag for data pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
+                new BadParameterError('There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
             );
         });
 
@@ -461,7 +461,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`You cannot insert flag for simulation pass (id:${9999}), run (runNumber:${106}), detector (name:CPV) as there is no association between them`),
+                new BadParameterError('There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
             );
         });
 
