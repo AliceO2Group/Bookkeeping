@@ -302,6 +302,7 @@ module.exports = () => {
     describe('POST /api/qcFlagTypes', () => {
         it('should successfuly create QC Flag Type', async () => {
             const parameters = {
+                id: 1000,
                 name: 'A',
                 method: 'AA+',
                 bad: false,
@@ -312,18 +313,19 @@ module.exports = () => {
             expect(response.status).to.be.equal(201);
             const { data: newQCFlag } = response.body;
             {
-                const { name, method, bad, color } = newQCFlag;
-                expect({ name, method, bad, color }).to.be.eql(parameters);
+                const { id, name, method, bad, color } = newQCFlag;
+                expect({ id, name, method, bad, color }).to.be.eql(parameters);
             }
             {
                 const fetchedQcFlagType = await qcFlagTypeService.getById(newQCFlag.id);
-                const { name, method, bad, color } = fetchedQcFlagType;
-                expect({ name, method, bad, color }).to.be.eql(parameters);
+                const { id, name, method, bad, color } = fetchedQcFlagType;
+                expect({ id, name, method, bad, color }).to.be.eql(parameters);
             }
         });
 
         it('should fail when no name is provided', async () => {
             const parameters = {
+                id: 1000,
                 method: 'AA+',
                 bad: false,
                 color: '#FFAA00',
@@ -338,6 +340,7 @@ module.exports = () => {
 
         it('should fail when no method is provided', async () => {
             const parameters = {
+                id: 1000,
                 name: 'A',
                 bad: false,
                 color: '#FFAA00',
@@ -352,6 +355,7 @@ module.exports = () => {
 
         it('should fail when no bad info is provided', async () => {
             const parameters = {
+                id: 1000,
                 name: 'A',
                 method: 'A++',
                 color: '#FFAA00',
