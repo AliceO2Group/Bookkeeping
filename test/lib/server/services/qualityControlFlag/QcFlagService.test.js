@@ -16,6 +16,7 @@ const { expect } = require('chai');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
+const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 
 const qcFlagWithId1 = {
     id: 1,
@@ -591,7 +592,7 @@ module.exports = () => {
             };
             await assert.rejects(
                 () => qcFlagService.delete(id, relations),
-                new Error('You are not allowed to remove this QC flag'),
+                new AccessDeniedError('You are not allowed to remove this QC flag'),
             );
         });
         it('should succesfuly delete QC flag as admin', async () => {

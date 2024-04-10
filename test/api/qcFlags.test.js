@@ -370,4 +370,36 @@ module.exports = () => {
             ]);
         });
     });
+
+    describe('DELETE /api/qcFlags/:id', () => {
+        it('should fail to delete QC flag when being neither owner nor admin', async () => {
+            const id = 1;
+            const response = await request(server).delete(`/api/qcflags/${id}`);
+            expect(reponse.status).to.be.equal(400);
+            await assert.rejects(
+                () => qcFlagService.delete(id, relations),
+                new Error('You are not allowed to remove this QC flag'),
+            );
+        });
+        it('should succesfuly delete QC flag as admin', async () => {
+            const id = 2;
+            const relations = {
+                user: { externalUserId: 456, isAdmin: true },
+            };
+
+            await qcFlagService.delete(id, relations);
+            const fetchedQcFlag = await qcFlagService.getById(id);
+            expect(fetchedQcFlag).to.be.equal(null);
+        });
+        it('should succesfuly delete QC flag as owner', async () => {
+            const id = 1;
+            const relations = {
+                user: { externalUserId: 1 },
+            };
+
+            await qcFlagService.delete(id, relations);
+            const fetchedQcFlag = await qcFlagService.getById(id);
+            expect(fetchedQcFlag).to.be.equal(null);
+        });
+    });
 };
