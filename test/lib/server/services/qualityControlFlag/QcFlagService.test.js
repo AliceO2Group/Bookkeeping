@@ -238,7 +238,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -261,7 +261,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -285,7 +285,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -308,7 +308,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -332,7 +332,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -369,7 +369,7 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag without timstamps', async () => {
             const qcFlagCreationParameters = {
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -414,7 +414,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -437,7 +437,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -461,7 +461,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -484,7 +484,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -508,7 +508,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -545,7 +545,7 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag without timstamps', async () => {
             const qcFlagCreationParameters = {
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {

@@ -285,7 +285,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
@@ -316,7 +316,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
@@ -347,7 +347,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
