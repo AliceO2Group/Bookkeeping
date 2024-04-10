@@ -232,8 +232,6 @@ module.exports = () => {
     });
 
     describe('Creating Quality Control Flag for data pass', () => {
-        /** Flags for runNumber: 106, LHC22b_apass1, CPV */
-        // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
@@ -408,8 +406,6 @@ module.exports = () => {
     });
 
     describe('Creating Quality Control Flag for simulation pass', () => {
-        /** Flags for runNumber: 106, LHC22b_apass1, CPV */
-        // Run trg time middle point: 1565314200, radius: 45000 seconds
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
