@@ -26,7 +26,6 @@ const {
     getInnerText,
     checkMismatchingUrlParam,
 } = require('../defaults');
-const { RUN_QUALITIES } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
@@ -98,7 +97,7 @@ module.exports = () => {
 
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.equal('QC')])),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
