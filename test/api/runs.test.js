@@ -228,6 +228,14 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
+        it ('should succefully filter on simulation pass id', async () => {
+            const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([106, 107]);
+        });
+
         it('should return 400 if o2start "to" date is before "from" date', (done) => {
             request(server)
                 .get('/api/runs?filter[o2start][from]=946771200000&filter[o2start][to]=946684800000')
