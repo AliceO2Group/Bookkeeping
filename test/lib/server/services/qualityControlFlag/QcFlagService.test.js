@@ -583,7 +583,7 @@ module.exports = () => {
         });
     });
 
-    describe('Creating Quality Control Flag for simulation pass', () => {
+    describe('Delating Quality Control Flag', () => {
         it('should fail to delete QC flag when being neither owner nor admin', async () => {
             const id = 1;
             const relations = {
@@ -595,13 +595,13 @@ module.exports = () => {
             );
         });
         it('should succesfuly delete QC flag as admin', async () => {
-            const id = 1;
+            const id = 2;
             const relations = {
                 user: { externalUserId: 456, isAdmin: true },
             };
 
             await qcFlagService.delete(id, relations);
-            const fetchedQcFlag = qcFlagService.getById(id);
+            const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
         });
         it('should succesfuly delete QC flag as owner', async () => {
@@ -611,7 +611,7 @@ module.exports = () => {
             };
 
             await qcFlagService.delete(id, relations);
-            const fetchedQcFlag = qcFlagService.getById(id);
+            const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
         });
     });
