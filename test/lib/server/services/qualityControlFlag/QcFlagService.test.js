@@ -453,7 +453,7 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create quality control flag because qc flag `to` timestamp is greater than run.stopTime', async () => {
+        it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
