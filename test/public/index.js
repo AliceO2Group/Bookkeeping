@@ -25,6 +25,7 @@ const LhcPeriodsSuite = require('./lhcPeriods');
 const DataPassesSuite = require('./dataPasses');
 const SimulationPassesSuite = require('./simulationPasses');
 const QcFlagTypesSuite = require('./qcFlagTypes');
+const QcFlagsSuite = require('./qcFlags');
 
 module.exports = () => {
     describe('LhcPeriods', LhcPeriodsSuite);
@@ -41,4 +42,5 @@ module.exports = () => {
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);
     describe('QcFlagTypes', QcFlagTypesSuite);
+    describe('QcFlags', QcFlagsSuite);
 };

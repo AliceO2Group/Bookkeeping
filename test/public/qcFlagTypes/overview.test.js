@@ -56,6 +56,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-types-overview');
 
         const tableDataValidators = {
+            id: (id) => !isNaN(id),
             name: (name) => name !== '-',
             method: (method) => method !== '-',
             bad: (isBad) => isBad === 'Yes' || isBad === 'No',

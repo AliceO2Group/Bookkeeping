@@ -281,6 +281,7 @@ module.exports = () => {
     describe('Creating QC Flag Type', () => {
         it('should successfuly create QC Flag Type', async () => {
             const parameters = {
+                id: 1000,
                 name: 'A',
                 method: 'AA+',
                 bad: false,
@@ -289,30 +290,33 @@ module.exports = () => {
             const relations = { user: { externalUserId: 1 } };
             const newQCFlag = await qcFlagTypeService.create(parameters, relations);
             {
-                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
-                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+                const { id, name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
+                expect({ id, name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
             }
             {
                 const fetchedQCFlag = await qcFlagTypeService.getById(newQCFlag.id);
-                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = fetchedQCFlag;
-                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+                const { id, name, method, bad, color, createdBy: { externalId: externalUserId } } = fetchedQCFlag;
+                expect({ id, name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
             }
         });
 
         it('should fail when QC Flag type with provided name already exists', async () => {
             const parameters = {
+                id: 1000,
                 name: 'BadPID',
                 method: 'Bad PID',
                 bad: false,
             };
             await assert.rejects(
                 () => qcFlagTypeService.create(parameters, { user: { externalUserId: 1 } }),
-                new ConflictError(`A QC flag with name ${parameters.name} or ${parameters.method} already exists`),
+                // eslint-disable-next-line max-len
+                new ConflictError(`A QC flag type with id ${parameters.id} or name ${parameters.name} or method ${parameters.method} already exists`),
             );
         });
 
         it('should fail when no user info is provided', async () => {
             const parameters = {
+                id: 1000,
                 name: 'A',
                 method: 'AA+',
                 bad: false,
