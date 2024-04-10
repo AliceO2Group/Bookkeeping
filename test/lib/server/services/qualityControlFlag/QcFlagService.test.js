@@ -238,7 +238,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -257,11 +257,11 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
+        it('should fail to create quality control flag due to qc flag time period out of range of run\'s period', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -277,15 +277,15 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
             );
         });
 
-        it('should fail to create quality control flag due to incorrect qc flag time period', async () => {
+        it('should fail to create quality control flag due to qc flag time period out of range of run\'s period', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -304,11 +304,11 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create quality control flag due to due to no association', async () => {
+        it('should fail to create QC flag because there is no association between data pass, run and dpl detector', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -332,7 +332,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -369,7 +369,7 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag without timstamps', async () => {
             const qcFlagCreationParameters = {
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -414,7 +414,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -437,7 +437,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -453,7 +453,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run trigger period (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000})`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${(1565314200 - 45000) * 1000}, ${(1565314200 + 45000) * 1000}) period`),
             );
         });
 
@@ -461,7 +461,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -480,11 +480,11 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create quality control flag due to due to no association', async () => {
+        it('should fail to create QC flag because there is no association between simulation pass, run and dpl detector', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -508,7 +508,7 @@ module.exports = () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
@@ -545,7 +545,7 @@ module.exports = () => {
 
         it('should succesfuly create quality control flag without timstamps', async () => {
             const qcFlagCreationParameters = {
-                comment: 'VERY INTERSETING REMARK',
+                comment: 'VERY INTERESTING REMARK',
             };
 
             const relations = {
