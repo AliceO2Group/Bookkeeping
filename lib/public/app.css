@@ -81,6 +81,10 @@ html, body {
     width: unset;
 }
 
+.mw-large {
+    max-width: var(--ui-component-large);
+}
+
 /* cursors */
 .cursor-info { cursor: help; }
 
