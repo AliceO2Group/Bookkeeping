@@ -380,7 +380,7 @@ module.exports = () => {
             expect(errors).to.be.eql([
                 {
                     status: 403,
-                    title: 'Insufficent permission',
+                    title: 'Access Denied',
                     detail: 'You are not allowed to remove this QC flag',
                 },
             ]);
