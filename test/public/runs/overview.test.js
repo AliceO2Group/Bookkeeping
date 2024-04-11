@@ -1191,6 +1191,6 @@ module.exports = () => {
         expect(await page.$eval(
             `${popoverSelector} a:nth-child(3)`,
             ({ href }) => href,
-        )).to.equal('http://localhost:8082/?page=layoutShow&runNumber=104&definition=COMMISSIONING&pdpBeamType=cosmic');
+        )).to.equal('http://localhost:8082/?page=layoutShow&runNumber=104&definition=COMMISSIONING&pdpBeamType=cosmic&runType=COSMICS');
     });
 };

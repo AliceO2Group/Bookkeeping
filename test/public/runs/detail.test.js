@@ -418,6 +418,6 @@ module.exports = () => {
         expect(await page.$eval('.external-links a', ({ href }) => href))
             .to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
         expect(await page.$eval('.external-links a:nth-of-type(2)', ({ href }) => href))
-            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic');
+            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS');
     });
 };
