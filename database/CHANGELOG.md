@@ -1,3 +1,7 @@
+## [0.83.0]
+* Changes made to the database
+  * Added sequelize migration file for QC Flag tables creation
+
 ## [0.80.0]
 * Changes made to the database
   * Refactor Data Passes fetching from MonALISA test - use Joi

@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.83.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.83.0)
+* Notable changes for users:
+  * [BREAKING CHANGE] All the HTTP API routes are now private, thus needing a token to be accessible
+  * Added anchored MC counts to Data Pass per LHC Period view
+  * Added QC Flag Types overview page
+  * Fixed resetting of beamType filter in LHC period overview
+  * Added Data Passes per Simulation Pass page
+  * Added Runs per Simulation Pass page
+  * Added QC Flag Type creation page
+  * Fixed log creation inputs having incoherent heights
+  * Fixed log reply displaying oversize left panel
+  * Fixed LHC fill number not being filled when creating a log from run details page
+  * Links to QCG has been added to runs overview and runs details
+  * Fixed link to infologger not including run number from run details
+  * EoS report can be created at the end of night shift even if switch to/from daylight saving time has been switched during the night
+  * Added QC flag overview pages
+  * Added id input for QC flag type creation
+* Notable change for developers:
+  * Refactored DataPassService - removed sub queries
+  * Added dev dependency: 'date-and-time'
+  * Added frontend testing methods: `expectColumnValues` and `checkColumnValuesWithRegex`
+  * Merge similar errors for MonALISA Synchronizer to prevent logs flood
+  * Replaced `docker-compose` by `docker compose` everywhere
+  * Configuration endpoint is now private
+  * Moved sort model declaration to generic overview model (frontend)
+  * Removed redundant test suite call
+  * Added QC Flag types endpoints:
+    * create
+    * update
+  * Added QC Flag endpoints:
+    * create
+    * fetch by id
+    * fetch all
+
 ## [0.82.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.82.0)
 * Notable changes for users:
   * Fixed spurious runs being marked as stopped few seconds after their creation, and same for envs
