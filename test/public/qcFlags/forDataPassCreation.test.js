@@ -45,7 +45,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-for-data-pass-creation', { queryParameters: {
+        const response = await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
@@ -65,7 +65,7 @@ module.exports = () => {
     });
 
     it('can naviagate to runs per data pass page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-for-data-pass-creation', { queryParameters: {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
@@ -76,7 +76,7 @@ module.exports = () => {
     });
 
     it('can naviagate to run details page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-for-data-pass-creation', { queryParameters: {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
@@ -87,7 +87,7 @@ module.exports = () => {
     });
 
     it('should successfuly create run-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-for-data-pass-creation', { queryParameters: {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
@@ -116,7 +116,7 @@ module.exports = () => {
     });
 
     it('should successfuly create time-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-for-data-pass-creation', { queryParameters: {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
@@ -151,7 +151,7 @@ module.exports = () => {
     });
 
     it('should successfuly create run-based QC flag in case of missing', async () => {
-        await goToPage(page, 'qc-flag-for-data-pass-creation', { queryParameters: {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
