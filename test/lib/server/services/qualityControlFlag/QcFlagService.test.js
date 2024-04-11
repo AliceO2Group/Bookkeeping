@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
+const { repositories: { QcFlagRepository, RunRepository } } = require('../../../../../lib/database');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const assert = require('assert');
@@ -19,8 +19,8 @@ const { qcFlagService } = require('../../../../../lib/server/services/qualityCon
 
 const qcFlagWithId1 = {
     id: 1,
-    from: (1565314200 - 10000) * 1000,
-    to: (1565314200 + 10000) * 1000,
+    from: new Date('2019-08-08 22:43:20').getTime(),
+    to: new Date('2019-08-09 04:16:40').getTime(),
     comment: 'Some qc comment 1',
 
     // Associations
@@ -28,8 +28,8 @@ const qcFlagWithId1 = {
     flagTypeId: 11, // LimitedAcceptance
     runNumber: 106,
     dplDetectorId: 1, // CPV
-    createdAt: 1707825436000,
-    updatedAt: 1707825436000,
+    createdAt: new Date('2024-02-13 11:57:16').getTime(),
+    updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
     createdBy: {
         id: 1,
@@ -228,6 +228,354 @@ module.exports = () => {
             expect(flags).to.be.lengthOf(5);
             const fetchedSortedProperties = flags.map(({ updatedAt }) => updatedAt);
             expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+        });
+    });
+
+    describe('Creating Quality Control Flag for data pass', () => {
+        it('should fail to create quality control flag due to incorrect external user id', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 9999999, // Failing property
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
+                new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+            );
+        });
+
+        it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
+                to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
+                new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
+            );
+        });
+
+        it('should fail to create QC flag because there is no association between data pass, run and dpl detector', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 9999, // Failing property
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError('There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+            );
+        });
+
+        it('should succesfuly create quality control flag with externalUserId', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
+
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: qcFlagCreationParameters.from,
+                to: qcFlagCreationParameters.to,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
+
+            const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
+                include: [{ association: 'dataPasses' }],
+                where: {
+                    id,
+                },
+            });
+            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+        });
+
+        it('should succesfuly create quality control flag without timstamps', async () => {
+            const qcFlagCreationParameters = {
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
+
+            const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
+
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: startTime,
+                to: endTime,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
+
+            const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
+                include: [{ association: 'dataPasses' }],
+                where: {
+                    id,
+                },
+            });
+            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+        });
+    });
+
+    describe('Creating Quality Control Flag for simulation pass', () => {
+        it('should fail to create quality control flag due to incorrect external user id', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 9999999,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
+                new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+            );
+        });
+
+        it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
+                to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
+                new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
+            );
+        });
+
+        it('should fail to create QC flag because there is no association between simulation pass, run and dpl detector', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 9999, // Failing property
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError('There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+            );
+        });
+
+        it('should succesfuly create quality control flag with externalUserId', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
+
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: qcFlagCreationParameters.from,
+                to: qcFlagCreationParameters.to,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
+
+            const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
+                include: [{ association: 'simulationPasses' }],
+                where: {
+                    id,
+                },
+            });
+            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
+        });
+
+        it('should succesfuly create quality control flag without timstamps', async () => {
+            const qcFlagCreationParameters = {
+                comment: 'VERY INTERESTING REMARK',
+            };
+
+            const relations = {
+                user: {
+                    externalUserId: 456,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
+
+            const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
+
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+                from: startTime,
+                to: endTime,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: relations.flagTypeId,
+                runNumber: relations.runNumber,
+                dplDetectorId: relations.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+            });
+
+            const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
+                include: [{ association: 'simulationPasses' }],
+                where: {
+                    id,
+                },
+            });
+            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
         });
     });
 };
