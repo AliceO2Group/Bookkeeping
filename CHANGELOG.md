@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.83.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.83.0)
 * Notable changes for users:
-  * [BREAKING CHANGE] HTTP API routes will become private, thus needing a token to be accessible
+  * [BREAKING CHANGE] All the HTTP API routes are now private, thus needing a token to be accessible
   * Added anchored MC counts to Data Pass per LHC Period view
   * Added QC Flag Types overview page
   * Fixed resetting of beamType filter in LHC period overview
-  * Added Data Passes per Simulation Pass view
+  * Added Data Passes per Simulation Pass page
   * Added Runs per Simulation Pass page
   * Added QC Flag Type creation page
   * Fixed log creation inputs having incoherent heights
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Notable change for developers:
   * Refactored DataPassService - removed sub queries
   * Added dev dependency: 'date-and-time'
-  * Added test methods: `expectColumnValues` and `checkColumnValuesWithRegex`
+  * Added frontend testing methods: `expectColumnValues` and `checkColumnValuesWithRegex`
   * Merge similar errors for MonALISA Synchronizer to prevent logs flood
   * Replaced `docker-compose` by `docker compose` everywhere
   * Configuration endpoint is now private
