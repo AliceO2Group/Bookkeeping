@@ -23,7 +23,6 @@ const {
     waitForNavigation,
     getColumnCellsInnerTexts,
     fillInput,
-    getInnerText,
 } = require('../defaults');
 
 const { expect } = chai;
