@@ -301,8 +301,8 @@ module.exports = () => {
 
         it('should fail when QC Flag type with provided name already exists', async () => {
             const parameters = {
-                name: 'BadPID',
-                method: 'Bad PID',
+                name: 'Bad PID',
+                method: 'BadPID',
                 bad: false,
             };
             await assert.rejects(
