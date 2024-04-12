@@ -20,6 +20,7 @@ const {
     goToPage,
     checkMismatchingUrlParam,
     waitForNavigation,
+    validateElement,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -68,14 +69,41 @@ module.exports = () => {
             id: 1,
         } });
 
-        await expectInnerText(page, '#qc-flag-details-id', '1');
-        await expectInnerText(page, '#qc-flag-details-run', '106');
-        await expectInnerText(page, '#qc-flag-details-dplDetector', 'CPV');
-        await expectInnerText(page, '#qc-flag-details-flagType', 'Limited acceptance');
-        await expectInnerText(page, '#qc-flag-details-from', '2019-08-08, 22:43:20');
-        await expectInnerText(page, '#qc-flag-details-to', '2019-08-09, 04:16:40');
-        await expectInnerText(page, '#qc-flag-details-createdBy', 'John Doe');
-        await expectInnerText(page, '#qc-flag-details-createdAt', '2024-02-13, 11:57:16');
+        await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
+        await expectInnerText(page, '#qc-flag-details-run', 'Run:\n106');
+        await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
+        await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nLimited acceptance');
+        await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 22:43:20');
+        await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 04:16:40');
+        await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nJohn Doe');
+        await expectInnerText(page, '#qc-flag-details-createdAt', 'Created at:\n13/02/2024, 11:57:16');
         await expectInnerText(page, '.panel div', 'Some qc comment 1');
+
+        await validateElement(page, 'button#delete');
+    });
+
+    it('should successfuly delete QC flag', async () => {
+        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
+            dataPassId: 1,
+            runNumber: 106,
+            dplDetectorId: 1,
+        } });
+        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
+            dataPassId: 1,
+            runNumber: 106,
+            dplDetectorId: 1,
+        } });
+        await goToPage(page, 'qc-flag-details', { queryParameters: {
+            id: 1,
+        } });
+
+        await validateElement(page, 'button#delete');
+        await waitForNavigation(page, () => pressElement(page, 'button#delete'));
+        expect(await checkMismatchingUrlParam(page, {
+            page: 'qc-flags-for-data-pass',
+            dataPassId: '1',
+            runNumber: '106',
+            dplDetectorId: '1',
+        })).to.be.eql({});
     });
 };
