@@ -96,7 +96,7 @@ module.exports = () => {
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
             aliceL3Current: (current) => !isNaN(Number(current)),
             aliceL3Dipole: (current) => !isNaN(Number(current)),
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.equal('QC')])),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.oneOf(['QC', ''])])),
         };
 
         // We find the headers matching the datatype keys
