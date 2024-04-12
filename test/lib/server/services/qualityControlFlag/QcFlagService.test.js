@@ -16,6 +16,8 @@ const { expect } = require('chai');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
+const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
+const { BkpRoles } = require('../../../../../lib/domain/enums/BkpRoles');
 
 const qcFlagWithId1 = {
     id: 1,
@@ -588,6 +590,80 @@ module.exports = () => {
                 },
             });
             expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
+        });
+    });
+
+    describe('Delating Quality Control Flag', () => {
+        it('should fail to delete QC flag of dataPass when being neither owner nor admin', async () => {
+            const id = 1;
+            const relations = {
+                userWithRoles: { externalUserId: 456 },
+            };
+            await assert.rejects(
+                () => qcFlagService.delete(id, relations),
+                new AccessDeniedError('You are not allowed to remove this QC flag'),
+            );
+        });
+        it('should succesfuly delete QC flag of dataPass as admin', async () => {
+            const id = 2;
+            const relations = {
+                userWithRoles: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
+            };
+
+            await qcFlagService.delete(id, relations);
+            const fetchedQcFlag = await qcFlagService.getById(id);
+            expect(fetchedQcFlag).to.be.equal(null);
+        });
+        it('should succesfuly delete QC flag of dataPass as owner', async () => {
+            const id = 1;
+            const relations = {
+                userWithRoles: { externalUserId: 1 },
+            };
+
+            await qcFlagService.delete(id, relations);
+            const fetchedQcFlag = await qcFlagService.getById(id);
+            expect(fetchedQcFlag).to.be.equal(null);
+        });
+
+        it('should fail to delete QC flag of simulationPass when being neither owner nor admin', async () => {
+            const id = 5;
+            const relations = {
+                userWithRoles: { externalUserId: 1 },
+            };
+            await assert.rejects(
+                () => qcFlagService.delete(id, relations),
+                new AccessDeniedError('You are not allowed to remove this QC flag'),
+            );
+        });
+        it('should succesfuly delete QC flag of simulationPass as admin', async () => {
+            const id = 5;
+            const relations = {
+                userWithRoles: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
+            };
+
+            await qcFlagService.delete(id, relations);
+            const fetchedQcFlag = await qcFlagService.getById(id);
+            expect(fetchedQcFlag).to.be.equal(null);
+        });
+        it('should succesfuly delete QC flag of simulationPass as owner', async () => {
+            const creationRelations = {
+                user: {
+                    externalUserId: 1,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const { id } = await qcFlagService.createForSimulationPass({}, creationRelations);
+            const deleteRelations = {
+                userWithRoles: { externalUserId: 1 },
+            };
+
+            await qcFlagService.delete(id, deleteRelations);
+            const fetchedQcFlag = await qcFlagService.getById(id);
+            expect(fetchedQcFlag).to.be.equal(null);
         });
     });
 };
