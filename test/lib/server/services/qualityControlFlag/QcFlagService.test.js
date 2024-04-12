@@ -31,6 +31,8 @@ const qcFlagWithId1 = {
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
     updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
+    verifications: [],
+
     createdBy: {
         id: 1,
         name: 'John Doe',
@@ -110,6 +112,16 @@ module.exports = () => {
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
+                verifications: [
+                    {
+                        id: 1,
+                        comment: 'FLAG IS OK',
+                        flagId: 4,
+                        createdById: 1,
+                        createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                        createdAt: new Date('2024-02-13 12:57:19').getTime(),
+                    },
+                ],
                 createdAt: 1707825439000,
                 updatedAt: 1707825439000,
             });

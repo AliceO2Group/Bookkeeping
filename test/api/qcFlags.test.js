@@ -33,6 +33,16 @@ module.exports = () => {
                 runNumber: 1,
                 dplDetectorId: 1,
                 createdById: 2,
+                verifications: [
+                    {
+                        id: 1,
+                        comment: 'FLAG IS OK',
+                        flagId: 4,
+                        createdById: 1,
+                        createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                        createdAt: new Date('2024-02-13 12:57:19').getTime(),
+                    },
+                ],
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
@@ -73,6 +83,16 @@ module.exports = () => {
                 dplDetectorId: 1,
                 createdById: 2,
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                verifications: [
+                    {
+                        id: 1,
+                        comment: 'FLAG IS OK',
+                        flagId: 4,
+                        createdById: 1,
+                        createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                        createdAt: new Date('2024-02-13 12:57:19').getTime(),
+                    },
+                ],
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
             });
