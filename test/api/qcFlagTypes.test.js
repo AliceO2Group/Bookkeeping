@@ -75,8 +75,8 @@ module.exports = () => {
             })).to.have.all.deep.members([
                 {
                     id: 2,
-                    name: 'UnknownQuality',
-                    method: 'Unknown Quality',
+                    name: 'Unknown Quality',
+                    method: 'UnknownQuality',
                     bad: true,
                     color: null,
 
@@ -90,8 +90,8 @@ module.exports = () => {
                 },
                 {
                     id: 3,
-                    name: 'CertifiedByExpert',
-                    method: 'Certified by Expert',
+                    name: 'Certified by Expert',
+                    method: 'CertifiedByExpert',
                     bad: false,
                     color: null,
 
@@ -105,8 +105,8 @@ module.exports = () => {
                 },
                 {
                     id: 11,
-                    name: 'LimitedAcceptance',
-                    method: 'Limited acceptance',
+                    name: 'Limited acceptance',
+                    method: 'LimitedAcceptance',
                     bad: true,
                     color: '#FFFF00',
 
@@ -120,8 +120,8 @@ module.exports = () => {
                 },
                 {
                     id: 12,
-                    name: 'BadPID',
-                    method: 'Bad PID',
+                    name: 'Bad PID',
+                    method: 'BadPID',
                     bad: true,
                     color: null,
 
@@ -186,22 +186,22 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'BadPID']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'Bad PID']);
         });
 
         it('should successfuly filter QC flag types by names', async () => {
-            const response = await request(server).get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=LimitedAcceptance');
+            const response = await request(server).get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=Limited%20acceptance');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'LimitedAcceptance']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'Limited acceptance']);
         });
 
-        it('should successfuly filter QC flag types by mathods pattern', async () => {
-            const response = await request(server).get('/api/qcFlagTypes?filter[methods][]=Bad');
+        it('should successfuly filter QC flag types by mathods', async () => {
+            const response = await request(server).get('/api/qcFlagTypes?filter[methods][]=Bad&filter[methods][]=BadPID');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
@@ -209,7 +209,7 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'Bad PID']);
+            expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'BadPID']);
         });
 
         it('should successfuly filter QC flag types by methods patterns', async () => {
@@ -221,7 +221,7 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'Bad PID']);
+            expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'BadPID']);
         });
 
         it('should successfuly filter QC flag types by whether the flag is `bad`', async () => {
@@ -233,7 +233,7 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['CertifiedByExpert', 'Archived']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Certified by Expert', 'Archived']);
         });
 
         it('should successfuly sort QC flag types by id', async () => {
@@ -258,10 +258,10 @@ module.exports = () => {
             expect(flagTypes).to.be.lengthOf(6);
 
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
-                'UnknownQuality',
-                'LimitedAcceptance',
-                'CertifiedByExpert',
-                'BadPID',
+                'Unknown Quality',
+                'Limited acceptance',
+                'Certified by Expert',
+                'Bad PID',
                 'Bad',
                 'Archived',
             ]);
@@ -279,10 +279,10 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Archived',
                 'Bad',
-                'BadPID',
-                'CertifiedByExpert',
-                'LimitedAcceptance',
-                'UnknownQuality',
+                'Bad PID',
+                'Certified by Expert',
+                'Limited acceptance',
+                'Unknown Quality',
             ]);
         });
 
@@ -374,7 +374,7 @@ module.exports = () => {
             const qcFlagTypeId = 13;
 
             const patch = {
-                name: 'BadPID',
+                name: 'Bad PID',
             };
             const response = await request(server)
                 .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
@@ -382,14 +382,14 @@ module.exports = () => {
             expect(response.status).to.be.eql(409);
             const { errors } = response.body;
             const titleError = errors.find((err) => err.title === 'The request conflicts with existing data');
-            expect(titleError.detail).to.equal('A QC flag with name BadPID already exists');
+            expect(titleError.detail).to.equal('A QC flag with name Bad PID already exists');
         });
 
         it('should reject when existing method provided', async () => {
             const qcFlagTypeId = 13;
 
             const patch = {
-                method: 'Bad PID',
+                method: 'BadPID',
             };
             const response = await request(server)
                 .patch(`/api/qcFlagTypes/${qcFlagTypeId}?token=admin`)
@@ -397,7 +397,7 @@ module.exports = () => {
             expect(response.status).to.be.eql(409);
             const { errors } = response.body;
             const titleError = errors.find((err) => err.title === 'The request conflicts with existing data');
-            expect(titleError.detail).to.equal('A QC flag with method Bad PID already exists');
+            expect(titleError.detail).to.equal('A QC flag with method BadPID already exists');
         });
 
         it('should reject when incorrect color provided', async () => {
