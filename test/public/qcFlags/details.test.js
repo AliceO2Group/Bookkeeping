@@ -19,10 +19,7 @@ const {
     pressElement,
     goToPage,
     checkMismatchingUrlParam,
-    validateElement,
     waitForNavigation,
-    getColumnCellsInnerTexts,
-    fillInput,
 } = require('../defaults');
 
 const { expect } = chai;
