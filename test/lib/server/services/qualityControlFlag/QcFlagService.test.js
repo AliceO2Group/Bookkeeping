@@ -585,7 +585,7 @@ module.exports = () => {
         it('should fail to delete QC flag of dataPass when being neither owner nor admin', async () => {
             const id = 1;
             const relations = {
-                user: { externalUserId: 456 },
+                userWithRoles: { externalUserId: 456 },
             };
             await assert.rejects(
                 () => qcFlagService.delete(id, relations),
@@ -595,7 +595,7 @@ module.exports = () => {
         it('should succesfuly delete QC flag of dataPass as admin', async () => {
             const id = 2;
             const relations = {
-                user: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
+                userWithRoles: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
             };
 
             await qcFlagService.delete(id, relations);
@@ -605,7 +605,7 @@ module.exports = () => {
         it('should succesfuly delete QC flag of dataPass as owner', async () => {
             const id = 1;
             const relations = {
-                user: { externalUserId: 1 },
+                userWithRoles: { externalUserId: 1 },
             };
 
             await qcFlagService.delete(id, relations);
@@ -616,7 +616,7 @@ module.exports = () => {
         it('should fail to delete QC flag of simulationPass when being neither owner nor admin', async () => {
             const id = 5;
             const relations = {
-                user: { externalUserId: 1 },
+                userWithRoles: { externalUserId: 1 },
             };
             await assert.rejects(
                 () => qcFlagService.delete(id, relations),
@@ -626,7 +626,7 @@ module.exports = () => {
         it('should succesfuly delete QC flag of simulationPass as admin', async () => {
             const id = 5;
             const relations = {
-                user: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
+                userWithRoles: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
             };
 
             await qcFlagService.delete(id, relations);
@@ -646,7 +646,7 @@ module.exports = () => {
 
             const { id } = await qcFlagService.createForSimulationPass({}, creationRelations);
             const deleteRelations = {
-                user: { externalUserId: 1 },
+                userWithRoles: { externalUserId: 1 },
             };
 
             await qcFlagService.delete(id, deleteRelations);
