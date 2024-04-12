@@ -666,4 +666,49 @@ module.exports = () => {
             expect(fetchedQcFlag).to.be.equal(null);
         });
     });
+
+    describe('Verifying Quality Control Flag', () => {
+        it('should fail to verify QC flag of dataPass when being owner', async () => {
+            const id = 1;
+            const relations = {
+                userWithRoles: { externalUserId: 1 },
+            };
+            await assert.rejects(
+                () => qcFlagService.verifyFlag(id, relations),
+                new AccessDeniedError('You cannot verify QC flag created by you'),
+            );
+        });
+        it('should succesfuly verify QC flag of dataPass when not being owner', async () => {
+            const parameters = {
+                flagId: 1,
+                comment: 'Some Comment',
+            };
+
+            const relations = {
+                userWithRoles: { externalUserId: 456 },
+            };
+
+            {
+                const verifiedFlag = await qcFlagService.verifyFlag(parameters, relations);
+                const { id, verifications } = verifiedFlag;
+                expect(verifications).to.be.an('array');
+                expect(verifications).to.be.lengthOf(1);
+                const [{ createdBy, createdById, comment, flagId }] = verifications;
+                expect({ id, createdBy, createdById, comment, flagId }).to.be.eql({
+                    id: 1,
+                    flagId: 1,
+                    createdById: 2,
+                    createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                    comment,
+                });
+            }
+            {
+                const fetchedQcFlag = await qcFlagService.getById(parameters.flagId);
+                const { verifications } = fetchedQcFlag;
+                expect(verifications).to.be.equal([{
+
+                }]);
+            }
+        });
+    });
 };
