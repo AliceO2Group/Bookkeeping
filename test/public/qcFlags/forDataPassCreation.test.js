@@ -159,9 +159,9 @@ module.exports = () => {
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.qcFlags.forDataPassCreationModel._canSendTimeBasedQcFlag = false;
+            model.qcFlags.creationForDataPassModel._canSendTimeBasedQcFlag = false;
             // eslint-disable-next-line no-undef
-            model.qcFlags.forDataPassCreationModel.notify();
+            model.qcFlags.creationForDataPassModel.notify();
         });
 
         await expectInnerText(page, '.alert', 'Can send run-based QC flag only as start or stop of run is missing');
