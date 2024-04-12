@@ -112,7 +112,7 @@ module.exports = () => {
 
         await validateElement(page, 'tbody tr td:nth-of-type(2)');
         const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        expect(flagTypes[0]).to.be.equal('UnknownQuality');
+        expect(flagTypes[0]).to.be.equal('Unknown Quality');
     });
 
     it('should successfuly create time-based QC flag', async () => {
@@ -145,7 +145,7 @@ module.exports = () => {
         const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
         const fromTimestamps = await getColumnCellsInnerTexts(page, 'from');
         const toTimestamps = await getColumnCellsInnerTexts(page, 'to');
-        expect(flagTypes[0]).to.be.equal('LimitedAcceptance');
+        expect(flagTypes[0]).to.be.equal('Limited acceptance');
         expect(fromTimestamps[0]).to.be.equal('08/08/2019\n13:01:01');
         expect(toTimestamps[0]).to.be.equal('09/08/2019\n13:50:59');
     });
@@ -181,6 +181,6 @@ module.exports = () => {
 
         await validateElement(page, 'tbody tr td:nth-of-type(2)');
         const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        expect(flagTypes[0]).to.be.equal('UnknownQuality');
+        expect(flagTypes[0]).to.be.equal('Unknown Quality');
     });
 };

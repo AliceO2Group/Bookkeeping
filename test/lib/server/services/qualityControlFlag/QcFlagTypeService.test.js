@@ -26,8 +26,8 @@ module.exports = () => {
             delete qcFlagType.updatedAt;
             expect(qcFlagType).to.be.eql({
                 id: 2,
-                name: 'UnknownQuality',
-                method: 'Unknown Quality',
+                name: 'Unknown Quality',
+                method: 'UnknownQuality',
                 bad: true,
                 color: null,
 
@@ -67,8 +67,8 @@ module.exports = () => {
             })).to.have.all.deep.members([
                 {
                     id: 2,
-                    name: 'UnknownQuality',
-                    method: 'Unknown Quality',
+                    name: 'Unknown Quality',
+                    method: 'UnknownQuality',
                     bad: true,
                     color: null,
 
@@ -82,8 +82,8 @@ module.exports = () => {
                 },
                 {
                     id: 3,
-                    name: 'CertifiedByExpert',
-                    method: 'Certified by Expert',
+                    name: 'Certified by Expert',
+                    method: 'CertifiedByExpert',
                     bad: false,
                     color: null,
 
@@ -97,8 +97,8 @@ module.exports = () => {
                 },
                 {
                     id: 11,
-                    name: 'LimitedAcceptance',
-                    method: 'Limited acceptance',
+                    name: 'Limited acceptance',
+                    method: 'LimitedAcceptance',
                     bad: true,
                     color: '#FFFF00',
 
@@ -112,8 +112,8 @@ module.exports = () => {
                 },
                 {
                     id: 12,
-                    name: 'BadPID',
-                    method: 'Bad PID',
+                    name: 'Bad PID',
+                    method: 'BadPID',
                     bad: true,
                     color: null,
 
@@ -168,35 +168,35 @@ module.exports = () => {
         });
 
         it('should successfuly filter QC flags types by name pattern', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['UnknownQuality'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(1);
-            expect(flagTypes[0].name).to.be.equal('UnknownQuality');
+            expect(flagTypes[0].name).to.be.equal('Unknown Quality');
         });
 
         it('should successfuly filter QC flags types by name', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['UnknownQuality', 'LimitedAcceptance'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality', 'Limited acceptance'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['UnknownQuality', 'LimitedAcceptance']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Unknown Quality', 'Limited acceptance']);
         });
 
-        it('should successfuly filter QC flags types by namfalsee pattern', async () => {
+        it('should successfuly filter QC flags types by names pattern', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Bad'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Bad', 'BadPID']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Bad', 'Bad PID']);
         });
 
         it('should successfuly filter QC flags types by method pattern', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { methods: ['Limited acceptance'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { methods: ['LimitedAcceptance'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(1);
-            expect(flagTypes[0].name).to.be.equal('LimitedAcceptance');
+            expect(flagTypes[0].method).to.be.equal('LimitedAcceptance');
         });
 
         it('should successfuly filter QC flags types by method pattern', async () => {
@@ -204,7 +204,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ method }) => method)).to.have.all.members(['Bad', 'Bad PID']);
+            expect(flagTypes.map(({ method }) => method)).to.have.all.members(['Bad', 'BadPID']);
         });
 
         it('should successfuly filter QC flags types by whether the flag is `bad`', async () => {
@@ -212,7 +212,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['CertifiedByExpert', 'Archived']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Certified by Expert', 'Archived']);
         });
 
         it('should successfuly filter QC flags types by archived', async () => {
@@ -245,10 +245,10 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(6);
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
-                'UnknownQuality',
-                'LimitedAcceptance',
-                'CertifiedByExpert',
-                'BadPID',
+                'Unknown Quality',
+                'Limited acceptance',
+                'Certified by Expert',
+                'Bad PID',
                 'Bad',
                 'Archived',
             ]);
@@ -262,10 +262,10 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Archived',
                 'Bad',
-                'BadPID',
-                'CertifiedByExpert',
-                'LimitedAcceptance',
-                'UnknownQuality',
+                'Bad PID',
+                'Certified by Expert',
+                'Limited acceptance',
+                'Unknown Quality',
             ]);
         });
 
