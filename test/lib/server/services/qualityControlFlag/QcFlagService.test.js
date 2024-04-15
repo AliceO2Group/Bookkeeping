@@ -668,7 +668,7 @@ module.exports = () => {
     });
 
     describe('Verifying Quality Control Flag', () => {
-        it('should fail to verify QC flag of dataPass when being owner', async () => {
+        it('should fail to verify QC flag when being owner', async () => {
             const parameters = {
                 flagId: 1,
             };
@@ -680,7 +680,7 @@ module.exports = () => {
                 new AccessDeniedError('You cannot verify QC flag created by you'),
             );
         });
-        it('should succesfuly verify QC flag of dataPass when not being owner', async () => {
+        it('should succesfuly verify QC flag when not being owner', async () => {
             const parameters = {
                 flagId: 1,
                 comment: 'Some Comment',
