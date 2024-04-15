@@ -453,30 +453,29 @@ module.exports = () => {
             };
 
             const createResponse = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+
             expect(createResponse.status).to.be.equal(201);
-            const { flagId } = createResponse.body.flagId;
+            const { id: flagId } = createResponse.body.data;
 
             const response = await request(server).post(`/api/qcFlags/${flagId}/verify`);
             expect(response.status).to.be.equal(403);
         });
         it('should succesfuly verify QC flag when not being owner', async () => {
-            const flagId = 1;
+            const flagId = 5;
             const comment = 'Ok, VERIFIED';
 
             const response = await request(server).post(`/api/qcFlags/${flagId}/verify`).send({ comment });
             expect(response.status).to.be.equal(201);
-            const { body: verifiedFlag } = response;
+            const { body: { data: verifiedFlag } } = response;
             {
                 const { verifications } = verifiedFlag;
                 const [{ createdBy, createdById, comment, flagId }] = verifications;
-                expect({ createdBy, createdById, comment, flagId }).to.be.equal([
-                    {
-                        flagId: 1,
-                        createdById: 0,
-                        createdBy: { id: 0, externalId: 0, name: 'Anonymous' },
-                        comment,
-                    },
-                ]);
+                expect({ flagId, comment, createdById, createdBy }).to.be.eql({
+                    flagId: 5,
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    comment: 'Ok, VERIFIED',
+                });
             }
             {
                 const fetchedQcFlag = await qcFlagService.getById(flagId);
