@@ -152,8 +152,8 @@ module.exports = () => {
 
     it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
+            dataPassId: 3,
+            runNumber: 105,
             dplDetectorId: 1,
         } });
 
