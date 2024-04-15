@@ -669,12 +669,12 @@ module.exports = () => {
 
     describe('Verifying Quality Control Flag', () => {
         it('should fail to verify QC flag of dataPass when being owner', async () => {
-            const id = 1;
+            const flagId = 1;
             const relations = {
                 userWithRoles: { externalUserId: 1 },
             };
             await assert.rejects(
-                () => qcFlagService.verifyFlag(id, relations),
+                () => qcFlagService.verifyFlag({ flagId }, relations),
                 new AccessDeniedError('You cannot verify QC flag created by you'),
             );
         });
@@ -705,9 +705,15 @@ module.exports = () => {
             {
                 const fetchedQcFlag = await qcFlagService.getById(parameters.flagId);
                 const { verifications } = fetchedQcFlag;
-                expect(verifications).to.be.equal([{
-
-                }]);
+                const [{ createdBy, createdById, comment, flagId }] = verifications;
+                expect({ createdBy, createdById, comment, flagId }).to.be.equal([
+                    {
+                        flagId: 1,
+                        createdById: 2,
+                        createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                        comment,
+                    },
+                ]);
             }
         });
     });
