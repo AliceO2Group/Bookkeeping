@@ -51,7 +51,6 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-type-creation');
         await validateElement(page, 'button#submit[disabled]');
 
-        await fillInput(page, 'input#id', '1001');
         await fillInput(page, 'input#name', 'Limited acceptance');
         await fillInput(page, 'input#method', 'LimitedAcceptance');
         await pressElement(page, 'button#submit');
@@ -59,7 +58,7 @@ module.exports = () => {
             page,
             '.alert.alert-danger',
             // eslint-disable-next-line max-len
-            'The request conflicts with existing data: A QC flag type with id 1001 or name Limited acceptance or method LimitedAcceptance already exists',
+            'The request conflicts with existing data: A QC flag type with name Limited acceptance or method LimitedAcceptance already exists',
         );
     });
 
@@ -67,7 +66,6 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-type-creation');
         await validateElement(page, 'button#submit[disabled]');
 
-        await fillInput(page, 'input#id', '1001');
         await fillInput(page, 'input#name', 'AAA+');
         await fillInput(page, 'input#method', 'A+A+A');
         await fillInput(page, 'input[type=color]', '#F000F0');
