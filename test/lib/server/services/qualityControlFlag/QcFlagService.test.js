@@ -684,7 +684,7 @@ module.exports = () => {
                 flagId: 3,
             };
             const relations = {
-                userWithRoles: { externalUserId: 1 },
+                user: { externalUserId: 1 },
             };
             await assert.rejects(
                 () => qcFlagService.verifyFlag(parameters, relations),
@@ -698,7 +698,7 @@ module.exports = () => {
             };
 
             const relations = {
-                userWithRoles: { externalUserId: 456 },
+                user: { externalUserId: 456 },
             };
 
             {
