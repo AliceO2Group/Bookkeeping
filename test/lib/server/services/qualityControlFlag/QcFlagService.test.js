@@ -669,12 +669,14 @@ module.exports = () => {
 
     describe('Verifying Quality Control Flag', () => {
         it('should fail to verify QC flag of dataPass when being owner', async () => {
-            const flagId = 1;
+            const parameters = {
+                flagId: 1,
+            };
             const relations = {
                 userWithRoles: { externalUserId: 1 },
             };
             await assert.rejects(
-                () => qcFlagService.verifyFlag({ flagId }, relations),
+                () => qcFlagService.verifyFlag(parameters, relations),
                 new AccessDeniedError('You cannot verify QC flag created by you'),
             );
         });
