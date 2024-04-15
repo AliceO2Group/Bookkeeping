@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -436,6 +437,51 @@ module.exports = () => {
 
             fetchedQcFlag = await QcFlagRepository.findOne({ where: { id } });
             expect(fetchedQcFlag).to.be.equal(null);
+        });
+    });
+
+    describe('POST /api/qcFlags/:id/verify', () => {
+        it('should fail to verify QC flag of dataPass when being owner', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            const createResponse = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            expect(createResponse.status).to.be.equal(201);
+            const { flagId } = createResponse.body.flagId;
+
+            const response = await request(server).post(`/api/qcFlags/${flagId}/verify`);
+            expect(response.status).to.be.equal(403);
+        });
+        it('should succesfuly verify QC flag when not being owner', async () => {
+            const flagId = 1;
+            const comment = 'Ok, VERIFIED';
+
+            const response = await request(server).post(`/api/qcFlags/${flagId}/verify`).send({ comment });
+            expect(response.status).to.be.equal(201);
+            const { body: verifiedFlag } = response;
+            {
+                const { verifications } = verifiedFlag;
+                const [{ createdBy, createdById, comment, flagId }] = verifications;
+                expect({ createdBy, createdById, comment, flagId }).to.be.equal([
+                    {
+                        flagId: 1,
+                        createdById: 0,
+                        createdBy: { id: 0, externalId: 0, name: 'Anonymous' },
+                        comment,
+                    },
+                ]);
+            }
+            {
+                const fetchedQcFlag = await qcFlagService.getById(flagId);
+                expect(fetchedQcFlag).to.be.eql(verifiedFlag);
+            }
         });
     });
 };
