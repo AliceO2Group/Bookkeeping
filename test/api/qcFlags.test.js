@@ -441,7 +441,7 @@ module.exports = () => {
     });
 
     describe('POST /api/qcFlags/:id/verify', () => {
-        it('should fail to verify QC flag of dataPass when being owner', async () => {
+        it('should fail to verify QC flag when being owner', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
