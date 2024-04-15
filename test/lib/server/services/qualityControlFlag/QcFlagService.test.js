@@ -670,7 +670,7 @@ module.exports = () => {
     describe('Verifying Quality Control Flag', () => {
         it('should fail to verify QC flag when being owner', async () => {
             const parameters = {
-                flagId: 1,
+                flagId: 3,
             };
             const relations = {
                 userWithRoles: { externalUserId: 1 },
@@ -682,7 +682,7 @@ module.exports = () => {
         });
         it('should succesfuly verify QC flag when not being owner', async () => {
             const parameters = {
-                flagId: 1,
+                flagId: 3,
                 comment: 'Some Comment',
             };
 
@@ -697,8 +697,8 @@ module.exports = () => {
                 expect(verifications).to.be.lengthOf(1);
                 const [{ createdBy, createdById, comment, flagId }] = verifications;
                 expect({ id, createdBy, createdById, comment, flagId }).to.be.eql({
-                    id: 1,
-                    flagId: 1,
+                    id: 3,
+                    flagId: 3,
                     createdById: 2,
                     createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                     comment,
@@ -708,14 +708,12 @@ module.exports = () => {
                 const fetchedQcFlag = await qcFlagService.getById(parameters.flagId);
                 const { verifications } = fetchedQcFlag;
                 const [{ createdBy, createdById, comment, flagId }] = verifications;
-                expect({ createdBy, createdById, comment, flagId }).to.be.equal([
-                    {
-                        flagId: 1,
-                        createdById: 2,
-                        createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                        comment,
-                    },
-                ]);
+                expect({ createdBy, createdById, comment, flagId }).to.be.eql({
+                    flagId: 3,
+                    createdById: 2,
+                    createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                    comment,
+                });
             }
         });
     });
