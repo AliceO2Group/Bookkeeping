@@ -127,6 +127,7 @@ module.exports = () => {
         } });
 
         const amountSelectorId = '#amountSelector';
+        await page.waitForSelector(amountSelectorId, { timeout: 500 });
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
