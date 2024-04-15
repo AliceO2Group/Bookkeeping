@@ -1191,6 +1191,7 @@ module.exports = () => {
         expect(await page.$eval(
             `${popoverSelector} a:nth-child(3)`,
             ({ href }) => href,
+            // eslint-disable-next-line max-len
         )).to.equal('http://localhost:8082/?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
     });
 };
