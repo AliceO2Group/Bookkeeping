@@ -54,7 +54,7 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'QC Flag Details');
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
+    it('can naviagate to run details page', async () => {
         await goToPage(page, 'qc-flag-details', { queryParameters: {
             id: 1,
         } });
