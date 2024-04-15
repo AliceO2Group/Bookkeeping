@@ -150,7 +150,7 @@ module.exports = () => {
         expect(toTimestamps[0]).to.be.equal('09/08/2019\n13:50:59');
     });
 
-    it('should successfully create run-based QC flag in case of missing', async () => {
+    it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
