@@ -47,10 +47,7 @@ module.exports = () => {
             id: 1,
         } });
 
-        // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
-
-        // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
