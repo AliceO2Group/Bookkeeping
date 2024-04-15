@@ -167,8 +167,8 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'qc-flags-for-data-pass',
-            dataPassId: '1',
-            runNumber: '106',
+            dataPassId: '3',
+            runNumber: '105',
             dplDetectorId: '1',
         })).to.be.eql({});
 
