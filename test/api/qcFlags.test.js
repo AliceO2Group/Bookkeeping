@@ -394,7 +394,7 @@ module.exports = () => {
 
     describe('DELETE /api/qcFlags/:id', () => {
         it('should fail to delete QC flag when being neither owner nor admin', async () => {
-            const id = 4;
+            const id = 5;
             const response = await request(server).delete(`/api/qcFlags/${id}`);
             expect(response.status).to.be.equal(403);
             const { errors } = response.body;
