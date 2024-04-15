@@ -393,6 +393,19 @@ module.exports = () => {
     });
 
     describe('DELETE /api/qcFlags/:id', () => {
+        it('should fail to delete QC flag which is verified', async () => {
+            const id = 4;
+            const response = await request(server).delete(`/api/qcFlags/${id}`);
+            expect(response.status).to.be.equal(409);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: 409,
+                    title: 'The request conflicts with existing data',
+                    detail: 'Cannot delete QC flag which is verified',
+                },
+            ]);
+        });
         it('should fail to delete QC flag when being neither owner nor admin', async () => {
             const id = 5;
             const response = await request(server).delete(`/api/qcFlags/${id}`);
