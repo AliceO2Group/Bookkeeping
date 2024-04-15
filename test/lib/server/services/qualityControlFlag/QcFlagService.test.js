@@ -18,6 +18,7 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 const { BkpRoles } = require('../../../../../lib/domain/enums/BkpRoles');
+const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 
 const qcFlagWithId1 = {
     id: 1,
@@ -594,6 +595,16 @@ module.exports = () => {
     });
 
     describe('Delating Quality Control Flag', () => {
+        it('should fail to delete QC flag which is verified', async () => {
+            const id = 4;
+            const relations = {
+                userWithRoles: { externalUserId: 456 },
+            };
+            await assert.rejects(
+                () => qcFlagService.delete(id, relations),
+                new ConflictError('Cannot delete QC flag which is verified'),
+            );
+        });
         it('should fail to delete QC flag of dataPass when being neither owner nor admin', async () => {
             const id = 1;
             const relations = {
