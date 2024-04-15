@@ -157,14 +157,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.qcFlags.creationForDataPassModel._canSendTimeBasedQcFlag = false;
-            // eslint-disable-next-line no-undef
-            model.qcFlags.creationForDataPassModel.notify();
-        });
-
-        await expectInnerText(page, '.alert', 'Can send run-based QC flag only as start or stop of run is missing');
+        await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
         await validateElement(page, 'button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
         await pressElement(page, '.dropdown-option', true);
