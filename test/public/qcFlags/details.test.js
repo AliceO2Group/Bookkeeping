@@ -58,7 +58,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-details', { queryParameters: {
             id: 1,
         } });
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-run a'));
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
         expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
     it('should display correct QC flag details', async () => {
@@ -67,7 +67,7 @@ module.exports = () => {
         } });
 
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
-        await expectInnerText(page, '#qc-flag-details-run', 'Run:\n106');
+        await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
         await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nLimited acceptance');
         await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 22:43:20');
