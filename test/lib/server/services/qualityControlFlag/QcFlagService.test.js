@@ -40,8 +40,8 @@ const qcFlagWithId1 = {
     },
     flagType: {
         id: 11,
-        name: 'LimitedAcceptance',
-        method: 'Limited acceptance',
+        method: 'LimitedAcceptance',
+        name: 'Limited acceptance',
         bad: true,
         color: '#FFFF00',
         archived: false,
