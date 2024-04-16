@@ -18,6 +18,7 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 const { BkpRoles } = require('../../../../../lib/domain/enums/BkpRoles');
+const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 
 const qcFlagWithId1 = {
     id: 1,
@@ -487,6 +488,16 @@ module.exports = () => {
     });
 
     describe('Delating Quality Control Flag', () => {
+        it('should fail to delete QC flag which is verified', async () => {
+            const id = 4;
+            const relations = {
+                userWithRoles: { externalUserId: 456 },
+            };
+            await assert.rejects(
+                () => qcFlagService.delete(id, relations),
+                new ConflictError('Cannot delete QC flag which is verified'),
+            );
+        });
         it('should fail to delete QC flag of dataPass when being neither owner nor admin', async () => {
             const id = 1;
             const relations = {
@@ -557,6 +568,57 @@ module.exports = () => {
             await qcFlagService.delete(id, deleteRelations);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
+        });
+    });
+
+    describe('Verifying Quality Control Flag', () => {
+        it('should fail to verify QC flag when being owner', async () => {
+            const parameters = {
+                flagId: 3,
+            };
+            const relations = {
+                user: { externalUserId: 1 },
+            };
+            await assert.rejects(
+                () => qcFlagService.verifyFlag(parameters, relations),
+                new AccessDeniedError('You cannot verify QC flag created by you'),
+            );
+        });
+        it('should succesfuly verify QC flag when not being owner', async () => {
+            const parameters = {
+                flagId: 3,
+                comment: 'Some Comment',
+            };
+
+            const relations = {
+                user: { externalUserId: 456 },
+            };
+
+            {
+                const verifiedFlag = await qcFlagService.verifyFlag(parameters, relations);
+                const { id, verifications } = verifiedFlag;
+                expect(verifications).to.be.an('array');
+                expect(verifications).to.be.lengthOf(1);
+                const [{ createdBy, createdById, comment, flagId }] = verifications;
+                expect({ id, createdBy, createdById, comment, flagId }).to.be.eql({
+                    id: 3,
+                    flagId: 3,
+                    createdById: 2,
+                    createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                    comment,
+                });
+            }
+            {
+                const fetchedQcFlag = await qcFlagService.getById(parameters.flagId);
+                const { verifications } = fetchedQcFlag;
+                const [{ createdBy, createdById, comment, flagId }] = verifications;
+                expect({ createdBy, createdById, comment, flagId }).to.be.eql({
+                    flagId: 3,
+                    createdById: 2,
+                    createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
+                    comment,
+                });
+            }
         });
     });
 };
