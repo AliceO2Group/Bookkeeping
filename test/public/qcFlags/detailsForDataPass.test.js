@@ -64,7 +64,7 @@ module.exports = () => {
             runNumber: 106,
             dplDetectorId: 1,
         } });
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-pass a'));
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
         expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
     });
 
@@ -88,7 +88,7 @@ module.exports = () => {
         } });
 
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
-        await expectInnerText(page, '#qc-flag-details-pass', 'Data pass:\nLHC22b_apass1');
+        await expectInnerText(page, '#qc-flag-details-dataPass', 'Data pass:\nLHC22b_apass1');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
         await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nLimited acceptance');

@@ -64,7 +64,7 @@ module.exports = () => {
             runNumber: 106,
             dplDetectorId: 1,
         } });
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-pass a'));
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-simulationPass a'));
         expect(await checkMismatchingUrlParam(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' })).to.be.eql({});
     });
 
@@ -88,7 +88,7 @@ module.exports = () => {
         } });
 
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n5');
-        await expectInnerText(page, '#qc-flag-details-pass', 'Simulation pass:\nLHC23k6c');
+        await expectInnerText(page, '#qc-flag-details-simulationPass', 'Simulation pass:\nLHC23k6c');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
         await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nBad');
