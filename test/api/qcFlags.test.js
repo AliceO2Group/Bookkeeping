@@ -64,53 +64,9 @@ module.exports = () => {
     });
 
     describe('GET /api/qcFlags', () => {
-        it('should successfuly fetch all QC flags', async () => {
-            const response = await request(server).get('/api/qcFlags');
-            expect(response.status).to.be.equal(200);
-            const { data, meta } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
-            expect(data).to.be.an('array');
-            expect(data).to.be.lengthOf(5);
-            const oneFetchedFlag = data.find(({ id }) => id === 4);
-            expect(oneFetchedFlag).to.be.eql({
-                id: 4,
-                from: new Date('2022-03-22 04:46:40').getTime(),
-                to: new Date('2022-03-22 04:46:40').getTime(),
-                comment: 'Some qc comment 4',
-                createdAt: new Date('2024-02-13 11:57:19').getTime(),
-                updatedAt: new Date('2024-02-13 11:57:19').getTime(),
-                runNumber: 1,
-                dplDetectorId: 1,
-                createdById: 2,
-                createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                verifications: [
-                    {
-                        id: 1,
-                        comment: 'FLAG IS OK',
-                        flagId: 4,
-                        createdById: 1,
-                        createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                        createdAt: new Date('2024-02-13 12:57:19').getTime(),
-                    },
-                ],
-                flagTypeId: 13,
-                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
-            });
-            expect(data.map(({ id }) => id)).to.have.all.members([1, 2, 3, 4, 5]);
-        });
-
-        it('should successfuly filter on ids', async () => {
-            const response = await request(server).get('/api/qcFlags?filter[ids][]=1');
-            expect(response.status).to.be.equal(200);
-            const { data, meta } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
-            expect(data).to.be.an('array');
-            expect(data).to.be.lengthOf(1);
-            expect(data[0].id).to.be.equal(1);
-        });
-        it('should successfuly filter on dataPassIds, runNumbers, dplDetectorIds', async () => {
+        it('should successfully fecth QC flags for data passes', async () => {
             const response = await request(server)
-                .get('/api/qcFlags?filter[dataPassIds][]=1&filter[runNumbers][]=106&filter[dplDetectorIds][]=1');
+                .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&dplDetectorId=1');
             expect(response.status).to.be.equal(200);
             const { data, meta } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
