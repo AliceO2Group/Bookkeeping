@@ -14,11 +14,13 @@
 const QcFlagForDataPassOverviewSuite = require('./forDataPassOverview.test');
 const QcFlagForSimulationPassOverviewSuite = require('./forSimulationPassOverview.test');
 const QcFlagForDataPassCreationSuite = require('./forDataPassCreation.test');
-const QcFlagDetailsPageSuite = require('./details.test');
+const QcFlagDetailsForDataPassPageSuite = require('./detailsForDataPass.test');
+const QcFlagForSimulationPassCreationSuite = require('./forSimulationPassCreation.test');
 
 module.exports = () => {
     describe('For Data Pass Overview Page', QcFlagForDataPassOverviewSuite);
     describe('For Simulation Pass Overview Page', QcFlagForSimulationPassOverviewSuite);
     describe('For Data Pass Creation Page', QcFlagForDataPassCreationSuite);
-    describe('Details Page', QcFlagDetailsPageSuite);
+    describe('Details Page', QcFlagDetailsForDataPassPageSuite);
+    describe('For Simulation Pass Creation Page', QcFlagForSimulationPassCreationSuite);
 };
