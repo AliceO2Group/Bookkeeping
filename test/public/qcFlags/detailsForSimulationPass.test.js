@@ -43,9 +43,9 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
+        const response = await goToPage(page, 'qc-flag-details-for-simulation-pass', { queryParameters: {
+            id: 5,
+            simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -58,20 +58,20 @@ module.exports = () => {
     });
 
     it('can naviagate to runs per data pass page', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
+        await goToPage(page, 'qc-flag-details-for-simulation-pass', { queryParameters: {
+            id: 5,
+            simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-pass a'));
-        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' })).to.be.eql({});
     });
 
     it('can naviagate to run details page', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
+        await goToPage(page, 'qc-flag-details-for-simulation-pass', { queryParameters: {
+            id: 5,
+            simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -80,31 +80,31 @@ module.exports = () => {
     });
 
     it('should display correct QC flag details', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
+        await goToPage(page, 'qc-flag-details-for-simulation-pass', { queryParameters: {
+            id: 5,
+            simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
-        await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
-        await expectInnerText(page, '#qc-flag-details-pass', 'Pass:\nLHC22b_apass1');
+        await expectInnerText(page, '#qc-flag-details-id', 'Id:\n5');
+        await expectInnerText(page, '#qc-flag-details-pass', 'Pass:\nLHC23k6c');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
         await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
-        await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nLimited acceptance');
-        await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 22:43:20');
-        await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 04:16:40');
-        await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nJohn Doe');
-        await expectInnerText(page, '#qc-flag-details-createdAt', 'Created at:\n13/02/2024, 11:57:16');
-        await expectInnerText(page, '.panel div', 'Some qc comment 1');
+        await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nBad');
+        await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 13:46:40');
+        await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 07:50:00');
+        await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nJan Jansen');
+        await expectInnerText(page, '#qc-flag-details-createdAt', 'Created at:\n13/02/2024, 11:57:20');
+        await expectInnerText(page, '.panel div', 'Some qc comment 4');
 
         await validateElement(page, 'button#delete');
     });
 
     it('should successfuly delete QC flag', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
+        await goToPage(page, 'qc-flag-details-for-simulation-pass', { queryParameters: {
+            id: 5,
+            simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
@@ -112,8 +112,8 @@ module.exports = () => {
         await validateElement(page, 'button#delete');
         await waitForNavigation(page, () => pressElement(page, 'button#delete'));
         expect(await checkMismatchingUrlParam(page, {
-            page: 'qc-flags-for-data-pass',
-            dataPassId: '1',
+            page: 'qc-flags-for-simulation-pass',
+            simulationPassId: '1',
             runNumber: '106',
             dplDetectorId: '1',
         })).to.be.eql({});
