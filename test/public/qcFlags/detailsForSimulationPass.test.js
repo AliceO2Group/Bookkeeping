@@ -88,7 +88,7 @@ module.exports = () => {
         } });
 
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n5');
-        await expectInnerText(page, '#qc-flag-details-pass', 'Pass:\nLHC23k6c');
+        await expectInnerText(page, '#qc-flag-details-pass', 'Simulation pass:\nLHC23k6c');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
         await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nBad');
