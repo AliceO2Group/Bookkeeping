@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Added QC flag creation for simulation pass
   * Added QC flag details page
   * Added QC flag delete button
+  * Fixed QCG links to include runType and detector
 * Notable change for developers:
   * Added QC flag deletion API
   * Added verifications to QC flags API structures
