@@ -233,7 +233,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([106, 107]);
+            expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([105, 106, 107]);
         });
 
         it('should return 400 if o2start "to" date is before "from" date', (done) => {
