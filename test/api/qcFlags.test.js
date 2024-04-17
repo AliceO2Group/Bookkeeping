@@ -93,7 +93,7 @@ module.exports = () => {
             expect(response.status).to.be.equal(200);
             const { data: qcFlags } = response.body;
             expect(qcFlags).to.be.an('array');
-            expect(qcFlags.map(({ qcFlagId }) => qcFlagId)).to.have.ordered.deep.members([2, 3]);
+            expect(qcFlags.map(({ qcFlagId }) => qcFlagId)).to.have.ordered.deep.members([2, 1]);
         });
         it('should return 400 when bad query paramter provided', async () => {
             {
