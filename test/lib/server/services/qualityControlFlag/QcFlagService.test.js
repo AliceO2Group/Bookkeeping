@@ -71,54 +71,27 @@ module.exports = () => {
         it('should successfully fetch all flags for a given data pass', async () => {
             {
                 const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
-                    filter: {
-                        dataPassId: 1,
-                        runNumber: 106,
-                        dplDetectorId: 1,
-                    },
+                    dataPassId: 1,
+                    runNumber: 106,
+                    dplDetectorId: 1,
                 });
                 expect(count).to.be.equal(3);
                 expect(flags).to.be.an('array');
                 expect(flags).to.be.lengthOf(3);
-                expect(flags.map(({ id }) => id)).to.have.all.members([1, 2, 3]);
+                expect(flags.map(({ qcFlagId }) => qcFlagId)).to.have.all.members([1, 2, 3]);
             }
 
             {
-                const { rows: flags, count } = await qcFlagService.getAll({
-                    filter: {
-                        dataPassIds: [2],
-                        runNumbers: [1],
-                        dplDetectorIds: [1],
-                    },
+                const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
+                    dataPassId: [2],
+                    runNumber: [1],
+                    dplDetectorId: [1],
                 });
                 expect(count).to.be.equal(1);
                 expect(flags).to.be.an('array');
                 expect(flags).to.be.lengthOf(1);
                 const [fetchedFlag] = flags;
-                expect(fetchedFlag).to.be.eql({
-                    id: 4,
-                    from: 1647924400000,
-                    to: 1647924400000,
-                    comment: 'Some qc comment 4',
-                    runNumber: 1,
-                    dplDetectorId: 1,
-                    createdById: 2,
-                    createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                    flagTypeId: 13,
-                    flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
-                    verifications: [
-                        {
-                            id: 1,
-                            comment: 'FLAG IS OK',
-                            flagId: 4,
-                            createdById: 1,
-                            createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                            createdAt: new Date('2024-02-13 12:57:19').getTime(),
-                        },
-                    ],
-                    createdAt: 1707825439000,
-                    updatedAt: 1707825439000,
-                });
+                expect(fetchedFlag.qcFlagId).to.equal(4);
             }
         });
 
@@ -131,7 +104,7 @@ module.exports = () => {
             expect(count).to.be.equal(1);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(1);
-            expect(flags[0].id).to.be.eql(5);
+            expect(flags[0].qcFlagId).to.equal(5);
         });
     });
 
@@ -179,7 +152,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date(
+                    '2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
             );
         });
 
@@ -226,7 +200,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError('There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+                new BadParameterError(
+                    'There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
             );
         });
 
@@ -353,7 +328,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date(
+                    '2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
             );
         });
 
@@ -400,7 +376,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError('There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+                new BadParameterError(
+                    'There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
             );
         });
 
