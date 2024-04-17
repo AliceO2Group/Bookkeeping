@@ -179,8 +179,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date(
-                    '2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
             );
         });
 
@@ -227,8 +226,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(
-                    'There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+                new BadParameterError('There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
             );
         });
 
@@ -355,8 +353,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date(
-                    '2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
             );
         });
 
@@ -403,8 +400,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(
-                    'There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+                new BadParameterError('There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
             );
         });
 
