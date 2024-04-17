@@ -340,7 +340,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${period.from}, ${period.end}) is out of run (${runStart}, ${runEnd}) period`),
+                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
             );
         });
 
