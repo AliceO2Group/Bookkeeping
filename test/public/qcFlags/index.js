@@ -11,18 +11,18 @@
  * or submit itself to any jurisdiction.
  */
 
-const QcFlagForDataPassOverviewSuite = require('./forDataPassOverview.test');
-const QcFlagForSimulationPassOverviewSuite = require('./forSimulationPassOverview.test');
-const QcFlagForDataPassCreationSuite = require('./forDataPassCreation.test');
-const QcFlagForSimulationPassCreationSuite = require('./forSimulationPassCreation.test');
-const QcFlagDetailsForDataPassPageSuite = require('./detailsForDataPass.test');
-const QcFlagDetailsForSimulationPassPageSuite = require('./detailsForSimulationPass.test');
+const ForDataPassOverviewSuite = require('./forDataPassOverview.test');
+const ForSimulationPassOverviewSuite = require('./forSimulationPassOverview.test');
+const ForDataPassCreationSuite = require('./forDataPassCreation.test');
+const ForSimulationPassCreationSuite = require('./forSimulationPassCreation.test');
+const DetailsForDataPassPageSuite = require('./detailsForDataPass.test');
+const DetailsForSimulationPassPageSuite = require('./detailsForSimulationPass.test');
 
 module.exports = () => {
-    describe('For Data Pass Overview Page', QcFlagForDataPassOverviewSuite);
-    describe('For Simulation Pass Overview Page', QcFlagForSimulationPassOverviewSuite);
-    describe('For Data Pass Creation Page', QcFlagForDataPassCreationSuite);
-    describe('For Simulation Pass Creation Page', QcFlagForSimulationPassCreationSuite);
-    describe('Details For Data Pass Page', QcFlagDetailsForDataPassPageSuite);
-    describe('Details For Simulation Pass Page', QcFlagDetailsForSimulationPassPageSuite);
+    describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
+    describe('For Simulation Pass Overview Page', ForSimulationPassOverviewSuite);
+    describe('For Data Pass Creation Page', ForDataPassCreationSuite);
+    describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
+    describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
+    describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
 };

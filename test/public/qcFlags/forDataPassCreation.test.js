@@ -45,11 +45,13 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        const response = await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -65,33 +67,39 @@ module.exports = () => {
     });
 
     it('can navigate to runs per data pass page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await pressElement(page, 'h2:nth-of-type(2)');
         expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
     });
 
     it('can navigate to run details page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await pressElement(page, 'h2:nth-of-type(3)');
         expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
 
     it('should successfully create run-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await validateElement(page, 'button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
@@ -116,11 +124,13 @@ module.exports = () => {
     });
 
     it('should successfully create time-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await validateElement(page, 'button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
@@ -151,11 +161,13 @@ module.exports = () => {
     });
 
     it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 3,
-            runNumber: 105,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 3,
+                runNumber: 105,
+                dplDetectorId: 1,
+            },
+        });
 
         await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
         await validateElement(page, 'button#submit[disabled]');
