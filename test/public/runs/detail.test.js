@@ -263,7 +263,7 @@ module.exports = () => {
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELavg:\n100.1');
+        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100.1');
     });
 
     it('should show lhc data in edit mode', async () => {

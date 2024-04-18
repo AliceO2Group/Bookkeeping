@@ -1013,6 +1013,48 @@ module.exports = () => {
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
+
+        it('should successfully update inelasticInteractionRateAtStart', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(201)
+                .send({
+                    inelasticInteractionRateAtStart: 1.1,
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.inelasticInteractionRateAtStart).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAtMid', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(201)
+                .send({
+                    inelasticInteractionRateAtMid: 1.1,
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.inelasticInteractionRateAtMid).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAtEnd', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(201)
+                .send({
+                    inelasticInteractionRateAtEnd: 1.1,
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
+        });
+        it('should successfully update avgInelasticInteractionRate', async () => {
+            const { body } = await request(server)
+                .put('/api/runs/1')
+                .expect(201)
+                .send({
+                    avgInelasticInteractionRate: 100000.1,
+                });
+            expect(body.data).to.be.an('object');
+            expect(body.data.avgInelasticInteractionRate).to.equal(100000.1);
+            expect(body.data.muInelasticInteractionRate.toFixed(3)).to.equal(0.005);
+        });
     });
 
     describe('PATCH api/runs query:runNumber', () => {
