@@ -21,6 +21,7 @@ const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
+const { runService } = require('../../lib/server/services/run/RunService');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -1015,45 +1016,42 @@ module.exports = () => {
         });
 
         it('should successfully update inelasticInteractionRateAtStart', async () => {
-            const { body } = await request(server)
-                .put('/api/runs/1')
-                .expect(201)
-                .send({
-                    inelasticInteractionRateAtStart: 1.1,
-                });
-            expect(body.data).to.be.an('object');
-            expect(body.data.inelasticInteractionRateAtStart).to.equal(1.1);
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtStart: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtStart).to.equal(1.1);
         });
         it('should successfully update inelasticInteractionRateAtMid', async () => {
-            const { body } = await request(server)
-                .put('/api/runs/1')
-                .expect(201)
-                .send({
-                    inelasticInteractionRateAtMid: 1.1,
-                });
-            expect(body.data).to.be.an('object');
-            expect(body.data.inelasticInteractionRateAtMid).to.equal(1.1);
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtMid: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtMid).to.equal(1.1);
         });
         it('should successfully update inelasticInteractionRateAtEnd', async () => {
-            const { body } = await request(server)
-                .put('/api/runs/1')
-                .expect(201)
-                .send({
-                    inelasticInteractionRateAtEnd: 1.1,
-                });
-            expect(body.data).to.be.an('object');
-            expect(body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtEnd: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
         });
         it('should successfully update avgInelasticInteractionRate', async () => {
-            const { body } = await request(server)
-                .put('/api/runs/1')
-                .expect(201)
-                .send({
-                    avgInelasticInteractionRate: 100000.1,
-                });
-            expect(body.data).to.be.an('object');
-            expect(body.data.avgInelasticInteractionRate).to.equal(100000.1);
-            expect(body.data.muInelasticInteractionRate.toFixed(3)).to.equal(0.005);
+            const response = await request(server).put('/api/runs/1').send({
+                avgInelasticInteractionRate: 100000.1111,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            console.log( await runService.getOrFail({ runNumber: 1 }), 'TOBEC');
+            expect(response.body.data.avgInelasticInteractionRate).to.equal(100000.1111);
+            expect(response.body.data.muInelasticInteractionRate.toFixed(3)).to.equal(0.005);
         });
     });
 
