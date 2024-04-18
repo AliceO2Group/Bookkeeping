@@ -258,12 +258,13 @@ module.exports = () => {
     it('should successfully update avgInelasticInteractionRate of pp run', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 49 } });
         await pressElement(page, '#edit-run');
-        await fillInput(page, '#Run-avgInelasticInteractionRate input', 100.1);
+        await fillInput(page, '#Run-avgInelasticInteractionRate input', 100000);
 
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100.1');
+        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100,000');
+        await expectInnerText(page, '#Run-muInelasticInteractionRate', '\u03BC(INEL):\n0.009');
     });
 
     it('should show lhc data in edit mode', async () => {

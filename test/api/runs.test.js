@@ -1043,13 +1043,16 @@ module.exports = () => {
         });
         it('should successfully update avgInelasticInteractionRate', async () => {
             const response = await request(server).put('/api/runs/49').send({
-                avgInelasticInteractionRate: 1000.11,
+                avgInelasticInteractionRate: 100000,
             });
             expect(response.status).to.be.equal(201);
 
             expect(response.body.data).to.be.an('object');
-            expect(response.body.data.avgInelasticInteractionRate).to.equal(1000.11);
-            expect(response.body.data.muInelasticInteractionRate.toFixed(3)).to.equal(0.005);
+            expect(response.body.data.avgInelasticInteractionRate).to.equal(100000);
+            {
+                const response = await request(server).get('/api/runs/49');
+                expect(response.body.data.muInelasticInteractionRate?.toFixed(5)).to.equal('0.00868');
+            }
         });
     });
 
