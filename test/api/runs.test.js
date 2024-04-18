@@ -21,7 +21,6 @@ const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
-const { runService } = require('../../lib/server/services/run/RunService');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -1043,14 +1042,13 @@ module.exports = () => {
             expect(response.body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
         });
         it('should successfully update avgInelasticInteractionRate', async () => {
-            const response = await request(server).put('/api/runs/1').send({
-                avgInelasticInteractionRate: 100000.1111,
+            const response = await request(server).put('/api/runs/49').send({
+                avgInelasticInteractionRate: 1000.11,
             });
             expect(response.status).to.be.equal(201);
 
             expect(response.body.data).to.be.an('object');
-            console.log( await runService.getOrFail({ runNumber: 1 }), 'TOBEC');
-            expect(response.body.data.avgInelasticInteractionRate).to.equal(100000.1111);
+            expect(response.body.data.avgInelasticInteractionRate).to.equal(1000.11);
             expect(response.body.data.muInelasticInteractionRate.toFixed(3)).to.equal(0.005);
         });
     });
