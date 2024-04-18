@@ -82,7 +82,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
@@ -96,6 +96,12 @@ module.exports = () => {
             timeTrgEnd: (date) => !isNaN(Date.parse(date)),
             aliceL3Current: (current) => !isNaN(Number(current)),
             aliceL3Dipole: (current) => !isNaN(Number(current)),
+
+            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            avgInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.oneOf(['QC', ''])])),
         };
 
