@@ -97,6 +97,12 @@ module.exports = () => {
 
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+
+            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.oneOf(['QC', ''])])),
         };
 

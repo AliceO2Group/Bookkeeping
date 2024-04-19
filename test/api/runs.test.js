@@ -1052,6 +1052,47 @@ module.exports = () => {
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
+
+        it('should successfully update inelasticInteractionRateAtStart', async () => {
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtStart: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtStart).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAtMid', async () => {
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtMid: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtMid).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAtEnd', async () => {
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtEnd: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAvg', async () => {
+            const response = await request(server).put('/api/runs/49').send({
+                inelasticInteractionRateAvg: 100000,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAvg).to.equal(100000);
+            {
+                const response = await request(server).get('/api/runs/49');
+                expect(response.body.data.muInelasticInteractionRate?.toFixed(5)).to.equal('0.00868');
+            }
+        });
     });
 
     describe('PATCH api/runs query:runNumber', () => {
