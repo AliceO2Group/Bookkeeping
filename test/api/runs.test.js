@@ -1041,14 +1041,14 @@ module.exports = () => {
             expect(response.body.data).to.be.an('object');
             expect(response.body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
         });
-        it('should successfully update avgInelasticInteractionRate', async () => {
+        it('should successfully update inelasticInteractionRateAvg', async () => {
             const response = await request(server).put('/api/runs/49').send({
-                avgInelasticInteractionRate: 100000,
+                inelasticInteractionRateAvg: 100000,
             });
             expect(response.status).to.be.equal(201);
 
             expect(response.body.data).to.be.an('object');
-            expect(response.body.data.avgInelasticInteractionRate).to.equal(100000);
+            expect(response.body.data.inelasticInteractionRateAvg).to.equal(100000);
             {
                 const response = await request(server).get('/api/runs/49');
                 expect(response.body.data.muInelasticInteractionRate?.toFixed(5)).to.equal('0.00868');

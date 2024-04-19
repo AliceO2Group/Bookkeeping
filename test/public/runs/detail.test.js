@@ -211,15 +211,15 @@ module.exports = () => {
             .to.equal('DETECTORS - CPV - A new EOR reason');
     });
 
-    it('should successfully update avgInelasticInteractionRate of PbPb run', async () => {
+    it('should successfully update inelasticInteractionRateAvg of PbPb run', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
         await pressElement(page, '#edit-run');
-        await fillInput(page, '#Run-avgInelasticInteractionRate input', 100.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100.1);
 
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100.1\nHz');
     });
 
     it('should successfully update inelasticInteractionRateAtStart of PbPb run', async () => {
@@ -255,15 +255,15 @@ module.exports = () => {
         await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELend:\n100.1\nHz');
     });
 
-    it('should successfully update avgInelasticInteractionRate of pp run', async () => {
+    it('should successfully update inelasticInteractionRateAvg of pp run', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 49 } });
         await pressElement(page, '#edit-run');
-        await fillInput(page, '#Run-avgInelasticInteractionRate input', 100000);
+        await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100000);
 
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100,000\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100,000\nHz');
         await expectInnerText(page, '#Run-muInelasticInteractionRate', '\u03BC(INEL):\n0.009');
     });
 
