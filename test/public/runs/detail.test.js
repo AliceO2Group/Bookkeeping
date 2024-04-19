@@ -219,7 +219,7 @@ module.exports = () => {
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100.1');
+        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100.1\nHz');
     });
 
     it('should successfully update inelasticInteractionRateAtStart of PbPb run', async () => {
@@ -230,7 +230,7 @@ module.exports = () => {
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtStart', 'INELstart:\n100.1');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtStart', 'INELstart:\n100.1\nHz');
     });
 
     it('should successfully update inelasticInteractionRateAtMid of PbPb run', async () => {
@@ -241,7 +241,7 @@ module.exports = () => {
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtMid', 'INELmid:\n100.1');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtMid', 'INELmid:\n100.1\nHz');
     });
 
     it('should successfully update inelasticInteractionRateAtEnd of PbPb run', async () => {
@@ -252,7 +252,7 @@ module.exports = () => {
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELend:\n100.1');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELend:\n100.1\nHz');
     });
 
     it('should successfully update avgInelasticInteractionRate of pp run', async () => {
@@ -263,7 +263,7 @@ module.exports = () => {
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
-        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100,000');
+        await expectInnerText(page, '#Run-avgInelasticInteractionRate', 'INELavg:\n100,000\nHz');
         await expectInnerText(page, '#Run-muInelasticInteractionRate', '\u03BC(INEL):\n0.009');
     });
 
