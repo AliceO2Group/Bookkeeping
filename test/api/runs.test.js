@@ -199,6 +199,45 @@ module.exports = () => {
             expect(data).to.have.lengthOf(8);
         });
 
+        it('should successfully filter on tags', async () => {
+            {
+                const response = await request(server).get('/api/runs?filter[tags][operation]=and&filter[tags][values]=FOOD,RUN');
+
+                expect(response.status).to.equal(200);
+
+                const { data } = response.body;
+                expect(data).to.be.an('array');
+                expect(data).to.have.lengthOf(1);
+                expect(data.map(({ runNumber }) => runNumber)).to.eql([106]);
+            }
+
+            {
+                const response = await request(server).get('/api/runs?filter[tags][operation]=or&filter[tags][values]=FOOD,TEST-TAG-41');
+
+                expect(response.status).to.equal(200);
+
+                const { data } = response.body;
+                expect(data).to.be.an('array');
+                expect(data).to.have.lengthOf(2);
+                expect(data.map(({ runNumber }) => runNumber)).to.eql([106, 2]);
+            }
+
+            {
+                const response = await request(server)
+                    .get('/api/runs?filter[tags][operation]=none-of&filter[tags][values]=FOOD,TEST-TAG-41');
+
+                expect(response.status).to.equal(200);
+
+                const { data: runs } = response.body;
+                expect(runs).to.be.an('array');
+                expect(runs).to.have.lengthOf(100);
+
+                for (const run of runs) {
+                    expect(run.tags.every(({ text }) => text !== 'FOOD' && text !== 'TEST-TAG-41')).to.be.true;
+                }
+            }
+        });
+
         it('should successfully return 400 if the given definitions are not valid', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
             expect(response.status).to.equal(400);
@@ -219,7 +258,7 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
 
-        it ('should succefully filter on data pass id', async () => {
+        it('should succefully filter on data pass id', async () => {
             const response = await request(server).get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3');
             expect(response.status).to.equal(200);
 
@@ -228,7 +267,7 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
-        it ('should succefully filter on simulation pass id', async () => {
+        it('should succefully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
 
