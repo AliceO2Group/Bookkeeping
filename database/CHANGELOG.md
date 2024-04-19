@@ -1,3 +1,7 @@
+## [0.85.0]
+* Changes made to the database
+  * Added four columns to run table storing information about inelastic interaction rate
+
 ## [0.83.0]
 * Changes made to the database
   * Added sequelize migration file for QC Flag tables creation
