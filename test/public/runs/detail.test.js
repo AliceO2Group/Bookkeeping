@@ -211,48 +211,21 @@ module.exports = () => {
             .to.equal('DETECTORS - CPV - A new EOR reason');
     });
 
-    it('should successfully update inelasticInteractionRateAvg of PbPb run', async () => {
+    it('should successfully update inelasticInteractionRate values of PbPb run', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAtStart input', 101.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAtMid input', 102.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAtEnd input', 103.1);
 
         await page.click('#save-run');
         await page.waitForNetworkIdle();
 
         await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100.1\nHz');
-    });
-
-    it('should successfully update inelasticInteractionRateAtStart of PbPb run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
-        await pressElement(page, '#edit-run');
-        await fillInput(page, '#Run-inelasticInteractionRateAtStart input', 100.1);
-
-        await page.click('#save-run');
-        await page.waitForNetworkIdle();
-
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtStart', 'INELstart:\n100.1\nHz');
-    });
-
-    it('should successfully update inelasticInteractionRateAtMid of PbPb run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
-        await pressElement(page, '#edit-run');
-        await fillInput(page, '#Run-inelasticInteractionRateAtMid input', 100.1);
-
-        await page.click('#save-run');
-        await page.waitForNetworkIdle();
-
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtMid', 'INELmid:\n100.1\nHz');
-    });
-
-    it('should successfully update inelasticInteractionRateAtEnd of PbPb run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
-        await pressElement(page, '#edit-run');
-        await fillInput(page, '#Run-inelasticInteractionRateAtEnd input', 100.1);
-
-        await page.click('#save-run');
-        await page.waitForNetworkIdle();
-
-        await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELend:\n100.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtStart', 'INELstart:\n101.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtMid', 'INELmid:\n102.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELend:\n103.1\nHz');
     });
 
     it('should successfully update inelasticInteractionRateAvg of pp run', async () => {
