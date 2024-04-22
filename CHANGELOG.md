@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.85.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.85.0)
+* Notable changes for users:
+  * Added possibility to filter out runs that contains any of the given tags
+  * Added input inelastic interaction rate values in run details page and RCT runs overviews
+* Notable change for developers:
+  * Added possibility to set visibility of detail component configuration based on the current item 
+
+## [0.84.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.84.0)
+* Notable changes for users:
+  * Removed spurious detectors from Runs Per Data Pass and Runs Per Simulation Pass pages
+  * Removed Id input from QC flag creation page
+  * Added QC flag creation panel
+  * Minor visual improvements of QC flags creation page
+  * Added QC flag creation for simulation pass
+  * Added QC flag details page
+  * Added QC flag delete button
+  * Fixed QCG links to include runType and detector
+* Notable change for developers:
+  * Added QC flag deletion API
+  * Added verifications to QC flags API structures
+  * Added QC flag verification endpoint
+
 ## [0.83.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.83.0)
 * Notable changes for users:
   * [BREAKING CHANGE] All the HTTP API routes are now private, thus needing a token to be accessible
