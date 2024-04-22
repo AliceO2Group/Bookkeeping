@@ -57,8 +57,10 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            jiraId: (jiraId) => /[A-Z][A-Z0-9]+-[0-9]+/.test(jiraId),
+            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
+            associatedDataPasses: (display) => 'Anchorage' === display,
             pwg: (pwg) => /PWG.+/.test(pwg),
+            jiraId: (jiraId) => /[A-Z][A-Z0-9]+-[0-9]+/.test(jiraId),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
             generatedEventsCount: (generatedEventsCount) => !isNaN(generatedEventsCount.replace(/,/g, '')),
             outputSize: (outpuSize) => {
