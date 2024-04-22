@@ -26,7 +26,7 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent, getInnerText, waitForTimeout } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
@@ -322,6 +322,35 @@ module.exports = () => {
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
+    });
+
+    it('should successfully filter on tags', async () => {
+        await pressElement(page, '#reset-filters');
+
+        // Open filter toggle
+        await page.waitForSelector('.tags-filter .dropdown-trigger');
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '#tag-dropdown-option-FOOD');
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await waitForTimeout(300);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+
+        await page.$eval('#tag-filter-combination-operator-radio-button-or', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-TEST-TAG-41');
+        await page.waitForSelector('tbody tr:nth-child(2)', { timeout: 500 });
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+
+        await page.$eval('#tag-filter-combination-operator-radio-button-none-of', (element) => element.click());
+        await page.waitForSelector('tbody tr:nth-child(2)', { hidden: true, timeout: 500 });
+
+        // Multiple pages, not very representative
+        expectInnerText('#totalRowsCount', '108');
     });
 
     it('should successfully filter on definition', async () => {
@@ -1185,5 +1214,21 @@ module.exports = () => {
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
         const popoverContent = await getPopoverContent(await page.$('#row102-runDuration .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
+    });
+
+    it('should successfully display links to infologger and QC GUI', async () => {
+        await pressElement(page, '#row104-runNumber-text .popover-trigger');
+        const popoverSelector = await getPopoverSelector(await page.$('#row104-runNumber-text .popover-trigger'));
+        await page.waitForSelector(popoverSelector);
+        expect(await page.$eval(
+            `${popoverSelector} a`,
+            ({ href }) => href,
+        )).to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
+        expect(await page.$eval(
+            `${popoverSelector} a:nth-child(3)`,
+            ({ href }) => href,
+            // eslint-disable-next-line max-len
+        )).to.equal('http://localhost:8082/' +
+            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
     });
 };

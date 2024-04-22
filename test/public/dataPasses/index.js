@@ -11,8 +11,10 @@
  * or submit itself to any jurisdiction.
  */
 
-const OverviewSuite = require('./overviewPerLhcPeriod.test.js');
+const OverviewPerLhcPeriodSuite = require('./overviewPerLhcPeriod.test');
+const OverviewPerSimulationPassSuite = require('./overviewPerSimulationPass.test');
 
 module.exports = () => {
-    describe('Overview Per LHC Period Page', OverviewSuite);
+    describe('Overview Per LHC Period Page', OverviewPerLhcPeriodSuite);
+    describe('Overview Per Simulation Pass Page', OverviewPerSimulationPassSuite);
 };
