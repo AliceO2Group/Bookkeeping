@@ -57,7 +57,7 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             associatedDataPasses: (display) => 'Anchorage' === display,
             pwg: (pwg) => /PWG.+/.test(pwg),
             jiraId: (jiraId) => /[A-Z]+[A-Z0-9]+-\d+/.test(jiraId),
