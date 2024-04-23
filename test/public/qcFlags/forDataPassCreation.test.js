@@ -45,11 +45,13 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        const response = await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -64,34 +66,40 @@ module.exports = () => {
         await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
     });
 
-    it('can naviagate to runs per data pass page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+    it('can navigate to runs per data pass page from breadcrumbs link', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await pressElement(page, 'h2:nth-of-type(2)');
         expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+    it('can navigate to run details page from breadcrumbs link', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await pressElement(page, 'h2:nth-of-type(3)');
         expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
 
-    it('should successfuly create run-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+    it('should successfully create run-based QC flag', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await validateElement(page, 'button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
@@ -115,12 +123,14 @@ module.exports = () => {
         expect(flagTypes[0]).to.be.equal('Unknown Quality');
     });
 
-    it('should successfuly create time-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+    it('should successfully create time-based QC flag', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await validateElement(page, 'button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
@@ -150,21 +160,16 @@ module.exports = () => {
         expect(toTimestamps[0]).to.be.equal('09/08/2019\n13:50:59');
     });
 
-    it('should successfuly create run-based QC flag in case of missing', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.qcFlags.creationForDataPassModel._canSendTimeBasedQcFlag = false;
-            // eslint-disable-next-line no-undef
-            model.qcFlags.creationForDataPassModel.notify();
+    it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 3,
+                runNumber: 105,
+                dplDetectorId: 1,
+            },
         });
 
-        await expectInnerText(page, '.alert', 'Can send run-based QC flag only as start or stop of run is missing');
+        await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
         await validateElement(page, 'button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
         await pressElement(page, '.dropdown-option', true);
@@ -174,8 +179,8 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'qc-flags-for-data-pass',
-            dataPassId: '1',
-            runNumber: '106',
+            dataPassId: '3',
+            runNumber: '105',
             dplDetectorId: '1',
         })).to.be.eql({});
 
