@@ -29,6 +29,7 @@ module.exports = () => {
                 from: new Date('2022-03-22 04:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
+                effectivePart: 1,
                 createdAt: new Date('2024-02-13 11:57:19').getTime(),
                 updatedAt: new Date('2024-02-13 11:57:19').getTime(),
                 runNumber: 1,
@@ -44,6 +45,8 @@ module.exports = () => {
                         createdAt: new Date('2024-02-13 12:57:19').getTime(),
                     },
                 ],
+                discardedPeriods: [],
+
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
