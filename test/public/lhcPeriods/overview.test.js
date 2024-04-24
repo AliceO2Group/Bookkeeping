@@ -150,11 +150,13 @@ module.exports = () => {
 
     it('should successfuly apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
+        await page.waitForSelector('#reset-filters', { hidden: true, timeout: 250 });
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
         await expectColumnValues(page, 'name', ['LHC22a']);
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'name', ['LHC23f', 'LHC22b', 'LHC22a']);
+        await page.waitForSelector('#reset-filters', { hidden: true, timeout: 250 });
     });
 
     it('should successfuly apply lhc period year filter', async () => {
