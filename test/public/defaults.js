@@ -305,8 +305,7 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    const actualInnerText = await getInnerText(await page.$(selector));
+    const actualInnerText = await getInnerText(await page.waitForSelector(selector, { timeout: 200 }));
     expect(actualInnerText).to.equal(innerText);
 };
 
