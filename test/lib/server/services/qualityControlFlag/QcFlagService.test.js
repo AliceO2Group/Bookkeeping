@@ -35,7 +35,7 @@ const qcFlagWithId1 = {
     updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
     verifications: [],
-    discardedPeriods: [],
+    effectivePeriods: [],
 
     createdBy: {
         id: 1,
