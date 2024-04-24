@@ -324,6 +324,35 @@ module.exports = () => {
         expect(table.length).to.equal(2);
     });
 
+    it('should successfully filter on tags', async () => {
+        await pressElement(page, '#reset-filters');
+
+        // Open filter toggle
+        await page.waitForSelector('.tags-filter .dropdown-trigger');
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '#tag-dropdown-option-FOOD');
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await waitForTimeout(300);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+
+        await page.$eval('#tag-filter-combination-operator-radio-button-or', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-TEST-TAG-41');
+        await page.waitForSelector('tbody tr:nth-child(2)', { timeout: 500 });
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+
+        await page.$eval('#tag-filter-combination-operator-radio-button-none-of', (element) => element.click());
+        await page.waitForSelector('tbody tr:nth-child(2)', { hidden: true, timeout: 500 });
+
+        // Multiple pages, not very representative
+        expectInnerText('#totalRowsCount', '108');
+    });
+
     it('should successfully filter on definition', async () => {
         await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
@@ -1191,6 +1220,8 @@ module.exports = () => {
         expect(await page.$eval(
             `${popoverSelector} a:nth-child(3)`,
             ({ href }) => href,
-        )).to.equal('http://localhost:8082/?page=layoutShow&runNumber=104&definition=COMMISSIONING&pdpBeamType=cosmic');
+            // eslint-disable-next-line max-len
+        )).to.equal('http://localhost:8082/' +
+            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
     });
 };

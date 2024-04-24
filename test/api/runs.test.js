@@ -199,6 +199,45 @@ module.exports = () => {
             expect(data).to.have.lengthOf(8);
         });
 
+        it('should successfully filter on tags', async () => {
+            {
+                const response = await request(server).get('/api/runs?filter[tags][operation]=and&filter[tags][values]=FOOD,RUN');
+
+                expect(response.status).to.equal(200);
+
+                const { data } = response.body;
+                expect(data).to.be.an('array');
+                expect(data).to.have.lengthOf(1);
+                expect(data.map(({ runNumber }) => runNumber)).to.eql([106]);
+            }
+
+            {
+                const response = await request(server).get('/api/runs?filter[tags][operation]=or&filter[tags][values]=FOOD,TEST-TAG-41');
+
+                expect(response.status).to.equal(200);
+
+                const { data } = response.body;
+                expect(data).to.be.an('array');
+                expect(data).to.have.lengthOf(2);
+                expect(data.map(({ runNumber }) => runNumber)).to.eql([106, 2]);
+            }
+
+            {
+                const response = await request(server)
+                    .get('/api/runs?filter[tags][operation]=none-of&filter[tags][values]=FOOD,TEST-TAG-41');
+
+                expect(response.status).to.equal(200);
+
+                const { data: runs } = response.body;
+                expect(runs).to.be.an('array');
+                expect(runs).to.have.lengthOf(100);
+
+                for (const run of runs) {
+                    expect(run.tags.every(({ text }) => text !== 'FOOD' && text !== 'TEST-TAG-41')).to.be.true;
+                }
+            }
+        });
+
         it('should successfully return 400 if the given definitions are not valid', async () => {
             const response = await request(server).get('/api/runs?filter[definitions]=bad,definition');
             expect(response.status).to.equal(400);
@@ -219,7 +258,7 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
         });
 
-        it ('should succefully filter on data pass id', async () => {
+        it('should succefully filter on data pass id', async () => {
             const response = await request(server).get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3');
             expect(response.status).to.equal(200);
 
@@ -228,12 +267,12 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
-        it ('should succefully filter on simulation pass id', async () => {
+        it('should succefully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([106, 107]);
+            expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([105, 106, 107]);
         });
 
         it('should return 400 if o2start "to" date is before "from" date', (done) => {
@@ -1012,6 +1051,47 @@ module.exports = () => {
             expect(status).to.equal(500);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
+        });
+
+        it('should successfully update inelasticInteractionRateAtStart', async () => {
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtStart: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtStart).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAtMid', async () => {
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtMid: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtMid).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAtEnd', async () => {
+            const response = await request(server).put('/api/runs/1').send({
+                inelasticInteractionRateAtEnd: 1.1,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAtEnd).to.equal(1.1);
+        });
+        it('should successfully update inelasticInteractionRateAvg', async () => {
+            const response = await request(server).put('/api/runs/49').send({
+                inelasticInteractionRateAvg: 100000,
+            });
+            expect(response.status).to.be.equal(201);
+
+            expect(response.body.data).to.be.an('object');
+            expect(response.body.data.inelasticInteractionRateAvg).to.equal(100000);
+            {
+                const response = await request(server).get('/api/runs/49');
+                expect(response.body.data.muInelasticInteractionRate?.toFixed(5)).to.equal('0.00868');
+            }
         });
     });
 
