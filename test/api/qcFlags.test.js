@@ -26,7 +26,7 @@ module.exports = () => {
             const { data: qcFlag } = response.body;
             expect(qcFlag).to.be.eql({
                 id: 4,
-                from: new Date('2022-03-22 04:46:40').getTime(),
+                from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
                 effectivePart: 1,
