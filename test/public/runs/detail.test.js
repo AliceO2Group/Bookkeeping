@@ -463,6 +463,7 @@ module.exports = () => {
             innerText: 'CmCvjNbg',
         });
     });
+
     it('should successfully display links to infologger and QCG', async () => {
         await page.waitForSelector('.external-links');
         expect(await page.$eval('.external-links a', ({ href }) => href))
