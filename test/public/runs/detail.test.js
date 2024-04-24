@@ -211,8 +211,37 @@ module.exports = () => {
             .to.equal('DETECTORS - CPV - A new EOR reason');
     });
 
+    it('should successfully update inelasticInteractionRate values of PbPb run', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
+        await pressElement(page, '#edit-run');
+        await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAtStart input', 101.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAtMid input', 102.1);
+        await fillInput(page, '#Run-inelasticInteractionRateAtEnd input', 103.1);
+
+        await page.click('#save-run');
+        await page.waitForNetworkIdle();
+
+        await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtStart', 'INELstart:\n101.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtMid', 'INELmid:\n102.1\nHz');
+        await expectInnerText(page, '#Run-inelasticInteractionRateAtEnd', 'INELend:\n103.1\nHz');
+    });
+
+    it('should successfully update inelasticInteractionRateAvg of pp run', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 49 } });
+        await pressElement(page, '#edit-run');
+        await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100000);
+
+        await page.click('#save-run');
+        await page.waitForNetworkIdle();
+
+        await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100,000\nHz');
+        await expectInnerText(page, '#Run-muInelasticInteractionRate', '\u03BC(INEL):\n0.009');
+    });
+
     it('should show lhc data in edit mode', async () => {
-        await reloadPage(page);
+        await goToPage(page, 'run-detail', { queryParameters: { id: 1 } });
         await pressElement(page, '#edit-run');
         await waitForTimeout(100);
         const element = await page.$('#lhc-fill-fillNumber>strong');
@@ -411,5 +440,13 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
         await page.waitForSelector('#lhc-fill-fillNumber');
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
+    });
+
+    it('should successfully display links to infologger and QCG', async () => {
+        await page.waitForSelector('.external-links');
+        expect(await page.$eval('.external-links a', ({ href }) => href))
+            .to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
+        expect(await page.$eval('.external-links a:nth-of-type(2)', ({ href }) => href))
+            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS');
     });
 };
