@@ -23,6 +23,7 @@ const qcFlagWithId1 = {
     id: 1,
     from: new Date('2019-08-08 22:43:20').getTime(),
     to: new Date('2019-08-09 04:16:40').getTime(),
+    effectivePart: 1,
     comment: 'Some qc comment 1',
 
     // Associations
@@ -34,6 +35,7 @@ const qcFlagWithId1 = {
     updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
     verifications: [],
+    discardedPeriods: [],
 
     createdBy: {
         id: 1,
