@@ -58,7 +58,7 @@ module.exports = () => {
         const headerDatatypes = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
-            associatedDataPasses: (display) => 'Anchorage' === display,
+            associatedDataPasses: (display) => /(No anchorage)|(\d+)/.test(display),
             pwg: (pwg) => /PWG.+/.test(pwg),
             jiraId: (jiraId) => /[A-Z]+[A-Z0-9]+-\d+/.test(jiraId),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
