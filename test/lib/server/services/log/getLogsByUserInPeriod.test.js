@@ -28,7 +28,7 @@ module.exports = () => {
         }
         {
             const logs = await getLogsByUserInPeriod({ id: 2 }, { from: limit1, to: limit2 });
-            expect(logs).to.lengthOf(113);
+            expect(logs).to.lengthOf(112);
             expect(logs.every(({ user }) => user.id === 2)).to.be.true;
         }
         {

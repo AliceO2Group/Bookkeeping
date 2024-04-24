@@ -16,10 +16,14 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     fillInput,
     waitForTimeout,
     validateTableData,
+    waitForNavigation,
+    pressElement,
+    getTableDataSlice,
+    checkMismatchingUrlParam,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -56,7 +60,7 @@ module.exports = () => {
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => display === 'Anchored',
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
@@ -67,6 +71,42 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+
+        const tableSlice = await getTableDataSlice(page, ['name', 'associatedRuns', 'anchoredSimulationPasses']);
+        expect(tableSlice.map(({ name, associatedRuns, anchoredSimulationPasses }) => ({
+            name,
+            runsCount: Number(associatedRuns.split('\n')[0]),
+            simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
+        }))).to.have.all.deep.members([
+            {
+                name: 'LHC22b_apass2',
+                runsCount: 3,
+                simulationPassesCount: 1,
+            },
+            {
+                name: 'LHC22b_apass1',
+                runsCount: 3,
+                simulationPassesCount: 1,
+            },
+        ]);
+    });
+
+    it('can navigate to runs per data pass page', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2)'));
+        expect(await checkMismatchingUrlParam(page, {
+            page: 'runs-per-data-pass',
+            dataPassId: '2',
+        })).to.be.eql({});
+    });
+
+    it('can navigate to anchored simulation passes per data pass page', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3)'));
+        expect(await checkMismatchingUrlParam(page, {
+            page: 'anchored-simulation-passes-overview',
+            dataPassId: '2',
+        })).to.be.eql({});
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
@@ -126,7 +166,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the names to be in alphabetical order
-        const firstNames = await getAllDataFields(page, 'name');
+        const firstNames = await getColumnCellsInnerTexts(page, 'name');
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
@@ -144,7 +184,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getAllDataFields(page, 'reconstructedEventsCount');
+        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'reconstructedEventsCount');
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
 
@@ -162,7 +202,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getAllDataFields(page, 'outputSize');
+        const firstOutputSize = await getColumnCellsInnerTexts(page, 'outputSize');
         expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
     });
 
@@ -177,7 +217,7 @@ module.exports = () => {
 
         await waitForTimeout(100);
 
-        let allDataPassesNames = await getAllDataFields(page, 'name');
+        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
 
         const resetFiltersButton = await page.$('#reset-filters');
@@ -185,7 +225,7 @@ module.exports = () => {
         await resetFiltersButton.evaluate((button) => button.click());
         await waitForTimeout(100);
 
-        allDataPassesNames = await getAllDataFields(page, 'name');
+        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
         expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
     });
 };
