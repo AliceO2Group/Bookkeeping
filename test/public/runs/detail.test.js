@@ -443,6 +443,14 @@ module.exports = () => {
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 
+    it('should successfully display links to infologger and QCG', async () => {
+        await page.waitForSelector('.external-links');
+        expect(await page.$eval('.external-links a', ({ href }) => href))
+            .to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
+        expect(await page.$eval('.external-links a:nth-of-type(2)', ({ href }) => href))
+            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS');
+    });
+
     it('should display links to environment in ECS if run is running', async () => {
         // Test for not running run
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 104 } });
@@ -462,13 +470,5 @@ module.exports = () => {
             href: 'http://localhost:4000/?page=env-details&environmentId=CmCvjNbg',
             innerText: 'CmCvjNbg',
         });
-    });
-
-    it('should successfully display links to infologger and QCG', async () => {
-        await page.waitForSelector('.external-links');
-        expect(await page.$eval('.external-links a', ({ href }) => href))
-            .to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
-        expect(await page.$eval('.external-links a:nth-of-type(2)', ({ href }) => href))
-            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS');
     });
 };
