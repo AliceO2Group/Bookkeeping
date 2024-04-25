@@ -652,12 +652,12 @@ module.exports = () => {
                         effectivePart: 0.7690769230769231,
                         effectivePeriods: [
                             {
-                                from: 1565272000000,
-                                to: 1565314190000,
+                                from: new Date('2019-08-08 13:46:40').getTime(),
+                                to: new Date('2019-08-09 01:29:50').getTime(),
                             },
                             {
-                                from: 1565329200000,
-                                to: 1565337000000,
+                                from: new Date('2019-08-09 05:40:00').getTime(),
+                                to: new Date('2019-08-09 07:50:00').getTime(),
                             },
                         ],
                     });
