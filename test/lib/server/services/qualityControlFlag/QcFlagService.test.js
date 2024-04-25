@@ -602,10 +602,11 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+            const { id, from, to, effectivePart, comment, flagTypeId,
+                runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, effectivePeriods } =
                 await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
 
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId, effectivePart, effectivePeriods }).to.be.eql({
                 from: qcFlagCreationParameters.from,
                 to: qcFlagCreationParameters.to,
                 comment: qcFlagCreationParameters.comment,
@@ -613,6 +614,8 @@ module.exports = () => {
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.user.externalUserId,
+                effectivePart: 1,
+                effectivePeriods,
             });
 
             const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
