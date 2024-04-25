@@ -18,6 +18,7 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
+const { Op } = require('sequelize');
 
 const qcFlagWithId1 = {
     id: 1,
@@ -228,10 +229,11 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+            const { id, from, to, effectivePart, comment, flagTypeId, runNumber, dplDetectorId,
+                createdBy: { externalId: externalUserId }, effectivePeriods } =
                 await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
 
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId, effectivePart, effectivePeriods }).to.be.eql({
                 from: qcFlagCreationParameters.from,
                 to: qcFlagCreationParameters.to,
                 comment: qcFlagCreationParameters.comment,
@@ -239,6 +241,13 @@ module.exports = () => {
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.user.externalUserId,
+                effectivePart: 1,
+                effectivePeriods: [
+                    {
+                        from: new Date('2019-08-09 01:29:50').getTime(),
+                        to: new Date('2019-08-09 05:40:00').getTime(),
+                    },
+                ],
             });
 
             const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
@@ -248,6 +257,158 @@ module.exports = () => {
                 },
             });
             expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+
+            // Check effective periods of older flags
+            {
+                const olderFlags = await QcFlagRepository.findAll({
+                    where: {
+                        runNumber,
+                        dplDetectorId,
+                        id: { [Op.not]: id },
+                    },
+                    include: [
+                        { association: 'effectivePeriods' },
+                        {
+                            association: 'dataPasses',
+                            where: {
+                                id: relations.dataPassId,
+                            },
+                        },
+                    ],
+                    order: [['createdAt', 'ASC']],
+                });
+
+                {
+                    const [{ id, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 1,
+                        effectivePart: 0.4955,
+                        effectivePeriods: [
+                            {
+                                from: new Date('2019-08-08 22:43:20').getTime(),
+                                to: new Date('2019-08-09 01:29:50').getTime(),
+                            },
+                        ],
+                    });
+                }
+                {
+                    const [, { id, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, from, to, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 2,
+                        effectivePart: 1,
+                        effectivePeriods: [
+                            {
+                                from,
+                                to,
+                            },
+                        ],
+                    });
+                }
+
+                {
+                    const [, , { id, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, from, to, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 3,
+                        effectivePart: 1,
+                        effectivePeriods: [
+                            {
+                                from,
+                                to,
+                            },
+                        ],
+                    });
+                }
+            }
+
+            // Create new one and Check effective periods of older flags
+            {
+                const qcFlagCreationParameters = {
+                    from: new Date('2019-08-08 22:20:00').getTime(),
+                    to: new Date('2019-08-09 04:00:00').getTime(),
+                    comment: 'VERY INTERESTING REMARK',
+                };
+
+                const relations = {
+                    user: {
+                        externalUserId: 456,
+                    },
+                    flagTypeId: 2,
+                    runNumber: 106,
+                    dataPassId: 1,
+                    dplDetectorId: 1,
+                };
+
+                const { id, runNumber, dplDetectorId } =
+                    await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
+
+                const olderFlags = await QcFlagRepository.findAll({
+                    where: {
+                        runNumber,
+                        dplDetectorId,
+                        id: { [Op.not]: id },
+                    },
+                    include: [
+                        { association: 'effectivePeriods' },
+                        {
+                            association: 'dataPasses',
+                            where: {
+                                id: relations.dataPassId,
+                            },
+                        },
+                    ],
+                    order: [['createdAt', 'ASC']],
+                });
+
+                {
+                    const [{ id, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 1,
+                        effectivePart: 0,
+                        effectivePeriods: [],
+                    });
+                }
+                {
+                    const [, { id, from, to, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 2,
+                        effectivePart: 1,
+                        effectivePeriods: [
+                            {
+                                from,
+                                to,
+                            },
+                        ],
+                    });
+                }
+
+                {
+                    const [, , { id, from, to, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 3,
+                        effectivePart: 1,
+                        effectivePeriods: [
+                            {
+                                from,
+                                to,
+                            },
+                        ],
+                    });
+                }
+
+                {
+                    const [, , , { id, to, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 3,
+                        effectivePart: 0.39973351099267157,
+                        effectivePeriods: [
+                            {
+                                from: new Date('2019-08-09 04:00:00').getTime(),
+                                to,
+                            },
+                        ],
+                    });
+                }
+            }
         });
 
         it('should succesfuly create quality control flag without timstamps', async () => {
