@@ -615,7 +615,7 @@ module.exports = () => {
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.user.externalUserId,
                 effectivePart: 1,
-                effectivePeriods,
+                effectivePeriods: [{ from, to }],
             });
 
             const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
@@ -625,6 +625,44 @@ module.exports = () => {
                 },
             });
             expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
+
+            {
+                const olderFlags = (await QcFlagRepository.findAll({
+                    where: {
+                        runNumber,
+                        dplDetectorId,
+                        id: { [Op.not]: id },
+                    },
+                    include: [
+                        { association: 'effectivePeriods' },
+                        {
+                            association: 'simulationPasses',
+                            where: {
+                                id: relations.simulationPassId,
+                            },
+                        },
+                    ],
+                    order: [['createdAt', 'ASC']],
+                })).map(qcFlagAdapter.toEntity);
+
+                {
+                    const [{ id, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
+                        id: 5,
+                        effectivePart: 0.7690769230769231,
+                        effectivePeriods: [
+                            {
+                                from: 1565272000000,
+                                to: 1565314190000,
+                            },
+                            {
+                                from: 1565329200000,
+                                to: 1565337000000,
+                            },
+                        ],
+                    });
+                }
+            }
         });
 
         it('should succesfuly create quality control flag without timstamps', async () => {
@@ -700,9 +738,57 @@ module.exports = () => {
 
             const { id } = await qcFlagService.createForSimulationPass({}, creationRelations);
 
+            {
+                const olderFlags = (await QcFlagRepository.findAll({
+                    where: {
+                        runNumber: 106,
+                        dplDetectorId: 1,
+                        id: { [Op.not]: id },
+                    },
+                    include: [
+                        { association: 'effectivePeriods' },
+                        {
+                            association: 'simulationPasses',
+                            where: {
+                                id: 1,
+                            },
+                        },
+                    ],
+                    order: [['createdAt', 'ASC']],
+                })).map(qcFlagAdapter.toEntity);
+                {
+                    const { effectivePart, effectivePeriods } = olderFlags[olderFlags.length - 1];
+                    expect({ effectivePart, effectivePeriods }).to.be.eql({
+                        effectivePart: 0,
+                        effectivePeriods: [],
+                    });
+                }
+            }
+
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
+
+            {
+                const olderFlags = (await QcFlagRepository.findAll({
+                    where: {
+                        runNumber: 106,
+                        dplDetectorId: 1,
+                    },
+                    include: [
+                        { association: 'effectivePeriods' },
+                        {
+                            association: 'simulationPasses',
+                            where: { id: 1 },
+                        },
+                    ],
+                    order: [['createdAt', 'ASC']],
+                })).map(qcFlagAdapter.toEntity);
+
+                {
+                    expect(olderFlags.some(({ effectivePart }) => effectivePart === 1));
+                }
+            }
         });
     });
 
