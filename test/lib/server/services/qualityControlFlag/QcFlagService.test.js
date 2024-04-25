@@ -19,6 +19,7 @@ const { qcFlagService } = require('../../../../../lib/server/services/qualityCon
 const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { Op } = require('sequelize');
+const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 
 const qcFlagWithId1 = {
     id: 1,
@@ -260,7 +261,7 @@ module.exports = () => {
 
             // Check effective periods of older flags
             {
-                const olderFlags = await QcFlagRepository.findAll({
+                const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
                         dplDetectorId,
@@ -276,13 +277,13 @@ module.exports = () => {
                         },
                     ],
                     order: [['createdAt', 'ASC']],
-                });
+                })).map(qcFlagAdapter.toEntity);
 
                 {
                     const [{ id, effectivePart, effectivePeriods }] = olderFlags;
                     expect({ id, effectivePart, effectivePeriods }).to.be.eql({
                         id: 1,
-                        effectivePart: 0.4955,
+                        effectivePart: 0.4995,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-08 22:43:20').getTime(),
@@ -292,8 +293,8 @@ module.exports = () => {
                     });
                 }
                 {
-                    const [, { id, effectivePart, effectivePeriods }] = olderFlags;
-                    expect({ id, from, to, effectivePart, effectivePeriods }).to.be.eql({
+                    const [, { id, from, to, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
                         id: 2,
                         effectivePart: 1,
                         effectivePeriods: [
@@ -306,8 +307,8 @@ module.exports = () => {
                 }
 
                 {
-                    const [, , { id, effectivePart, effectivePeriods }] = olderFlags;
-                    expect({ id, from, to, effectivePart, effectivePeriods }).to.be.eql({
+                    const [, , { id, from, to, effectivePart, effectivePeriods }] = olderFlags;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({
                         id: 3,
                         effectivePart: 1,
                         effectivePeriods: [
@@ -341,7 +342,7 @@ module.exports = () => {
                 const { id, runNumber, dplDetectorId } =
                     await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
 
-                const olderFlags = await QcFlagRepository.findAll({
+                const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
                         dplDetectorId,
@@ -357,7 +358,7 @@ module.exports = () => {
                         },
                     ],
                     order: [['createdAt', 'ASC']],
-                });
+                })).map(qcFlagAdapter.toEntity);
 
                 {
                     const [{ id, effectivePart, effectivePeriods }] = olderFlags;
@@ -398,7 +399,7 @@ module.exports = () => {
                 {
                     const [, , , { id, to, effectivePart, effectivePeriods }] = olderFlags;
                     expect({ id, effectivePart, effectivePeriods }).to.be.eql({
-                        id: 3,
+                        id: 6,
                         effectivePart: 0.39973351099267157,
                         effectivePeriods: [
                             {
