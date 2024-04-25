@@ -449,6 +449,31 @@ module.exports = () => {
                 },
             });
             expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+
+            {
+                const olderFlags = (await QcFlagRepository.findAll({
+                    where: {
+                        runNumber,
+                        dplDetectorId,
+                        id: { [Op.not]: id },
+                    },
+                    include: [
+                        { association: 'effectivePeriods' },
+                        {
+                            association: 'dataPasses',
+                            where: {
+                                id: relations.dataPassId,
+                            },
+                        },
+                    ],
+                    order: [['createdAt', 'ASC']],
+                })).map(qcFlagAdapter.toEntity);
+
+                for (const olderFlag of olderFlags) {
+                    const { id, effectivePart, effectivePeriods } = olderFlag;
+                    expect({ id, effectivePart, effectivePeriods }).to.be.eql({ id, effectivePart: 0, effectivePeriods: [] });
+                }
+            }
         });
     });
 
