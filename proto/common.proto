@@ -64,45 +64,45 @@ enum RunType {
 
 message Run {
   int32 runNumber = 1;
-  string environmentId = 2;
-  int32 bytesReadOut = 3;
+  optional string environmentId = 2;
+  optional int32 bytesReadOut = 3;
   // Unix timestamp when this entity was created
   int64 createdAt = 4;
   int32 Id = 5;
-  int32 nDetectors = 6;
-  int32 nEpns = 7;
-  int32 nFlps = 8;
-  int32 nSubtimeframes = 9;
+  optional int32 nDetectors = 6;
+  optional int32 nEpns = 7;
+  optional int32 nFlps = 8;
+  optional int32 nSubtimeframes = 9;
   // Repository hash
-  string pdpConfigOption = 10;
+  optional string pdpConfigOption = 10;
   // Library file location of the pdp topology description
-  string pdpTopologyDescriptionLibraryFile = 11;
+  optional string pdpTopologyDescriptionLibraryFile = 11;
   // Parameters given to the pdp workflow
-  string pdpWorkflowParameters = 12;
+  optional string pdpWorkflowParameters = 12;
   // Beam type of the pdp
-  string pdpBeamType = 13;
+  optional string pdpBeamType = 13;
   // Config uri of readout.
-  string readoutCfgUri = 14;
+  optional string readoutCfgUri = 14;
   RunQuality runQuality = 15;
-  RunType runType = 16;
-  string tfbDdMode = 17;
-  int64 timeO2End = 18;
-  int64 timeO2Start = 19;
-  int64 timeTrgEnd = 20;
-  int64 timeTrgStart = 21;
+  optional RunType runType = 16;
+  optional string tfbDdMode = 17;
+  optional int64 timeO2End = 18;
+  optional int64 timeO2Start = 19;
+  optional int64 timeTrgEnd = 20;
+  optional int64 timeTrgStart = 21;
   // Trigger value
-  string triggerValue = 22;
+  optional string triggerValue = 22;
   // The full name or file location of the odcTopology
-  string odcTopologyFullName = 23;
-  bool ddFlp = 24;
-  bool dcs = 25;
-  bool epn = 26;
-  string epnTopology = 27;
+  optional string odcTopologyFullName = 23;
+  optional bool ddFlp = 24;
+  optional bool dcs = 25;
+  optional bool epn = 26;
+  optional string epnTopology = 27;
   repeated Detector detectors = 28;
   // Unix timestamp when this entity was last updated
   int64 updatedAt = 30;
   // A string that marks the period of the lhc
-  string lhcPeriod = 31;
+  optional string lhcPeriod = 31;
 }
 
 message LHCFill {
