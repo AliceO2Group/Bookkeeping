@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, expectInputValue } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, getInputValue, expectInputValue } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
@@ -555,18 +555,24 @@ ${actions}\
 
         await pressElement(page, '#magnets-add');
 
-        const { formatTimestampForDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
+        const { formatTimestampForDateTimeInput, extractTimestampFromDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
         const { getLocaleDateAndTime, formatFullDate } = await import('../../../lib/public/utilities/dateUtils.mjs');
 
         const magnetTimestamp = new Date() - 10000;
         const { date: magnetDate, time: magnetTime } = formatTimestampForDateTimeInput(magnetTimestamp, true);
 
-        await fillInput(page, '#magnets-0 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
-        await fillInput(page, '#magnets-0 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
-        await page.focus('#magnets-0 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-0');
-        await page.focus('#magnets-0 > div > input:nth-of-type(2)');
-        await page.keyboard.type('dipole-0');
+        const [magnet0Date, magnet0Time] = await Promise.all([
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(1)'),
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(2)'),
+        ]);
+        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({date: magnet0Date, time: magnet0Time}));
+
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
+        await page.focus('#magnets-1 > div > input:nth-of-type(1)');
+        await page.keyboard.type('solenoid-1');
+        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('dipole-1');
 
         const alicePlans = 'Alice\nPlans';
         await pressElement(page, '#alice-plans ~ .CodeMirror');
@@ -591,7 +597,7 @@ ${actions}\
         await expectInnerText(page, 'h2', expectedTitle);
 
         const lastLog = await getLastLog();
-        const magnetDateTime = getLocaleDateAndTime(magnetTimestamp);
+        const magnet1DateTime = getLocaleDateAndTime(magnetTimestamp);
         expect(lastLog.title).to.equal(expectedTitle);
 
         /*
@@ -645,7 +651,8 @@ ${lhcPlans}
 ### Last 24h
 
 #### Magnets
-[${magnetDateTime.date}, ${magnetDateTime.time}] L3 = solenoid-0, Dipole = dipole-0
+[${magnet0DateTime.date}, ${magnet0DateTime.time}] L3 = -, Dipole = -
+[${magnet1DateTime.date}, ${magnet1DateTime.time}] L3 = solenoid-1, Dipole = dipole-1
 
 ### Plans
 ${alicePlans}
