@@ -469,11 +469,11 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1000 } });
         await expectInnerText(page, '#runDurationValue', 'RUNNING');
 
-        await expectLink(page, '#Run-environmentId h4 a', {
+        await expectLink(page, '.external-links a:nth-of-type(3)', {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
         });
-        await expectLink(page, '#Run-environmentId div > a', {
+        await expectLink(page, '#Run-environmentId a', {
             href: 'http://localhost:4000/?page=env-details&environmentId=CmCvjNbg',
             innerText: 'CmCvjNbg',
         });
