@@ -17,7 +17,6 @@ const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
-const { BkpRoles } = require('../../../../../lib/domain/enums/BkpRoles');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 
 const qcFlagWithId1 = {
@@ -68,181 +67,43 @@ module.exports = () => {
             );
         });
 
-        it('should succesfuly fetch all flags', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll();
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedQcFlagWithId1 = flags.find(({ id }) => id === 1);
-            expect(fetchedQcFlagWithId1).to.be.eql(qcFlagWithId1);
-            expect(flags.map(({ id }) => id)).to.have.all.members([1, 2, 3, 4, 5]);
+        it('should successfully fetch all flags for a given data pass', async () => {
+            {
+                const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
+                    dataPassId: 1,
+                    runNumber: 106,
+                    dplDetectorId: 1,
+                });
+                expect(count).to.be.equal(3);
+                expect(flags).to.be.an('array');
+                expect(flags).to.be.lengthOf(3);
+                expect(flags.map(({ qcFlagId }) => qcFlagId)).to.have.all.members([1, 2, 3]);
+            }
+
+            {
+                const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
+                    dataPassId: [2],
+                    runNumber: [1],
+                    dplDetectorId: [1],
+                });
+                expect(count).to.be.equal(1);
+                expect(flags).to.be.an('array');
+                expect(flags).to.be.lengthOf(1);
+                const [fetchedFlag] = flags;
+                expect(fetchedFlag.qcFlagId).to.equal(4);
+            }
         });
 
-        it('should succesfuly fetch all flags filtering with associations', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                filter: {
-                    dataPassIds: [1],
-                    runNumbers: [106],
-                    dplDetectorIds: [1],
-                },
-            });
-            expect(count).to.be.equal(3);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(3);
-            expect(flags.map(({ id }) => id)).to.have.all.members([1, 2, 3]);
-        });
-
-        it('should succesfuly fetch all flags filtering with associations - 2', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                filter: {
-                    dataPassIds: [2],
-                    runNumbers: [1],
-                    dplDetectorIds: [1],
-                },
-            });
-            expect(count).to.be.equal(1);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(1);
-            const [fetchedFlag] = flags;
-            expect(fetchedFlag).to.be.eql({
-                id: 4,
-                from: 1647924400000,
-                to: 1647924400000,
-                comment: 'Some qc comment 4',
-                runNumber: 1,
+        it('should successfully fetch all flags for a given simulation pass', async () => {
+            const { rows: flags, count } = await qcFlagService.getAllPerSimulationPassAndRunAndDetector({
+                simulationPassId: 1,
+                runNumber: 106,
                 dplDetectorId: 1,
-                createdById: 2,
-                createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
-                flagTypeId: 13,
-                flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
-                verifications: [
-                    {
-                        id: 1,
-                        comment: 'FLAG IS OK',
-                        flagId: 4,
-                        createdById: 1,
-                        createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                        createdAt: new Date('2024-02-13 12:57:19').getTime(),
-                    },
-                ],
-                createdAt: 1707825439000,
-                updatedAt: 1707825439000,
-            });
-        });
-
-        it('should succesfuly fetch all flags filtering with associations (simulation pass)', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                filter: {
-                    simulationPassIds: [1],
-                    runNumbers: [106],
-                    dplDetectorIds: [1],
-                },
             });
             expect(count).to.be.equal(1);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(1);
-            expect(flags[0].id).to.be.eql(5);
-        });
-
-        it('should succesfuly fetch all flags filtering with createdBy', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                filter: {
-                    createdBy: ['Jan Jansen'],
-                },
-            });
-            expect(count).to.be.equal(2);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(2);
-            expect(flags.map(({ createdBy: { name } }) => name)).to.have.all.members(['Jan Jansen', 'Jan Jansen']);
-        });
-
-        it('should succesfuly fetch all flags filtering with ids', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                filter: {
-                    ids: [1, 4],
-                },
-            });
-            expect(count).to.be.equal(2);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(2);
-            expect(flags.map(({ id }) => id)).to.have.all.members([1, 4]);
-        });
-
-        it('should succesfuly sort by id', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { id: 'ASC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedIds = flags.map(({ id }) => id);
-            expect(fetchedIds).to.have.all.ordered.members([...fetchedIds].sort());
-        });
-
-        it('should succesfuly sort by `from` property', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { from: 'ASC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedSortedProperties = flags.map(({ from }) => from);
-            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort());
-        });
-
-        it('should succesfuly sort by `to` property', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { to: 'ASC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedSortedProperties = flags.map(({ to }) => to);
-            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort());
-        });
-
-        it('should succesfuly sort by flag type name', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { flagType: 'DESC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedSortedProperties = flags.map(({ flagType: { name } }) => name);
-            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
-        });
-
-        it('should succesfuly sort by createdBy name', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { createdBy: 'DESC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedSortedProperties = flags.map(({ createdBy: { name } }) => name);
-            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
-        });
-
-        it('should succesfuly sort by createdAt timestamp', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { createdAt: 'DESC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedSortedProperties = flags.map(({ createdAt }) => createdAt);
-            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
-        });
-
-        it('should succesfuly sort by updatedAt timestamp', async () => {
-            const { rows: flags, count } = await qcFlagService.getAll({
-                sort: { updatedAt: 'DESC' },
-            });
-            expect(count).to.be.equal(5);
-            expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(5);
-            const fetchedSortedProperties = flags.map(({ updatedAt }) => updatedAt);
-            expect(fetchedSortedProperties).to.have.all.ordered.members([...fetchedSortedProperties].sort().reverse());
+            expect(flags[0].qcFlagId).to.equal(5);
         });
     });
 
@@ -271,9 +132,15 @@ module.exports = () => {
         });
 
         it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
-            const qcFlagCreationParameters = {
-                from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+            const period = {
+                from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
+            };
+            const runStart = new Date('2019-08-08 13:00:00').getTime();
+            const runEnd = new Date('2019-08-09 14:00:00').getTime();
+
+            const qcFlagCreationParameters = {
+                ...period,
                 comment: 'VERY INTERESTING REMARK',
             };
 
@@ -290,7 +157,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
             );
         });
 
@@ -337,7 +204,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForDataPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError('There is not association between data pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+                new BadParameterError('There is not association between data pass with this id (9999),' +
+                    ' run with this number (106) and detector with this name (CPV)'),
             );
         });
 
@@ -445,9 +313,16 @@ module.exports = () => {
         });
 
         it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
-            const qcFlagCreationParameters = {
-                from: new Date('2019-08-08 11:36:40').getTime(), // Failing property
+            const period = {
+                from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
+            };
+
+            const runStart = new Date('2019-08-08 13:00:00').getTime();
+            const runEnd = new Date('2019-08-09 14:00:00').getTime();
+
+            const qcFlagCreationParameters = {
+                ...period,
                 comment: 'VERY INTERESTING REMARK',
             };
 
@@ -464,7 +339,7 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${new Date('2019-08-08 11:36:40').getTime()}, ${new Date('2019-08-09 05:40:00').getTime()}) is out of run (${new Date('2019-08-08 13:00:00').getTime()}, ${new Date('2019-08-09 14:00:00').getTime()}) period`),
+                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
             );
         });
 
@@ -511,7 +386,8 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations),
                 // eslint-disable-next-line max-len
-                new BadParameterError('There is not association between simulation pass with this id (9999), run with this number (106) and detector with this name (CPV)'),
+                new BadParameterError('There is not association between simulation pass with this id (9999),' +
+                    ' run with this number (106) and detector with this name (CPV)'),
             );
         });
 
@@ -605,58 +481,16 @@ module.exports = () => {
                 new ConflictError('Cannot delete QC flag which is verified'),
             );
         });
-        it('should fail to delete QC flag of dataPass when being neither owner nor admin', async () => {
+
+        it('should succesfuly delete QC flag of dataPass', async () => {
             const id = 1;
-            const relations = {
-                userWithRoles: { externalUserId: 456 },
-            };
-            await assert.rejects(
-                () => qcFlagService.delete(id, relations),
-                new AccessDeniedError('You are not allowed to remove this QC flag'),
-            );
-        });
-        it('should succesfuly delete QC flag of dataPass as admin', async () => {
-            const id = 2;
-            const relations = {
-                userWithRoles: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
-            };
 
-            await qcFlagService.delete(id, relations);
-            const fetchedQcFlag = await qcFlagService.getById(id);
-            expect(fetchedQcFlag).to.be.equal(null);
-        });
-        it('should succesfuly delete QC flag of dataPass as owner', async () => {
-            const id = 1;
-            const relations = {
-                userWithRoles: { externalUserId: 1 },
-            };
-
-            await qcFlagService.delete(id, relations);
+            await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
         });
 
-        it('should fail to delete QC flag of simulationPass when being neither owner nor admin', async () => {
-            const id = 5;
-            const relations = {
-                userWithRoles: { externalUserId: 1 },
-            };
-            await assert.rejects(
-                () => qcFlagService.delete(id, relations),
-                new AccessDeniedError('You are not allowed to remove this QC flag'),
-            );
-        });
-        it('should succesfuly delete QC flag of simulationPass as admin', async () => {
-            const id = 5;
-            const relations = {
-                userWithRoles: { externalUserId: 456, roles: [BkpRoles.ADMIN] },
-            };
-
-            await qcFlagService.delete(id, relations);
-            const fetchedQcFlag = await qcFlagService.getById(id);
-            expect(fetchedQcFlag).to.be.equal(null);
-        });
-        it('should succesfuly delete QC flag of simulationPass as owner', async () => {
+        it('should succesfuly delete QC flag of simulationPass ', async () => {
             const creationRelations = {
                 user: {
                     externalUserId: 1,
@@ -668,11 +502,8 @@ module.exports = () => {
             };
 
             const { id } = await qcFlagService.createForSimulationPass({}, creationRelations);
-            const deleteRelations = {
-                userWithRoles: { externalUserId: 1 },
-            };
 
-            await qcFlagService.delete(id, deleteRelations);
+            await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
         });

@@ -324,6 +324,35 @@ module.exports = () => {
         expect(table.length).to.equal(2);
     });
 
+    it('should successfully filter on tags', async () => {
+        await pressElement(page, '#reset-filters');
+
+        // Open filter toggle
+        await page.waitForSelector('.tags-filter .dropdown-trigger');
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '#tag-dropdown-option-FOOD');
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await waitForTimeout(300);
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(1);
+
+        await page.$eval('#tag-filter-combination-operator-radio-button-or', (element) => element.click());
+        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-TEST-TAG-41');
+        await page.waitForSelector('tbody tr:nth-child(2)', { timeout: 500 });
+
+        table = await page.$$('tbody tr');
+        expect(table.length).to.equal(2);
+
+        await page.$eval('#tag-filter-combination-operator-radio-button-none-of', (element) => element.click());
+        await page.waitForSelector('tbody tr:nth-child(2)', { hidden: true, timeout: 500 });
+
+        // Multiple pages, not very representative
+        expectInnerText('#totalRowsCount', '108');
+    });
+
     it('should successfully filter on definition', async () => {
         await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
@@ -639,7 +668,7 @@ module.exports = () => {
          * @param {string[]} authorizedRunQualities  the list of valid run qualities
          * @return {void}
          */
-        const checkTableRunQualities = async (rows, authorizedRunQualities) => {
+        const checkTableTriggerValue = async (rows, authorizedRunQualities) => {
             for (const row of rows) {
                 expect(await row.evaluate((rowItem) => {
                     const rowId = rowItem.id;
@@ -657,12 +686,12 @@ module.exports = () => {
         table = await page.$$('tbody tr');
 
         expect(table.length).to.equal(8);
-        await checkTableRunQualities(table, ['OFF']);
+        await checkTableTriggerValue(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTimeout(300);
         table = await page.$$('tbody tr');
-        await checkTableRunQualities(table, ['OFF', 'LTU']);
+        await checkTableTriggerValue(table, ['OFF', 'LTU']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTimeout(300);
@@ -670,7 +699,7 @@ module.exports = () => {
 
         expect(table.length).to.equal(8);
 
-        await checkTableRunQualities(table, ['OFF']);
+        await checkTableTriggerValue(table, ['OFF']);
     });
 
     it('should successfully filter on a list of run numbers and inform the user about it', async () => {
@@ -1152,6 +1181,13 @@ module.exports = () => {
         expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
     });
 
+    it('should successfully display duration without warning popover when run has trigger OFF', async () => {
+        await goToPage(page, 'run-overview');
+        const runDurationCell = await page.$('#row107-runDuration');
+        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+    });
+
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-overview');
         const runDurationCell = await page.$('#row106-runDuration');
@@ -1192,6 +1228,7 @@ module.exports = () => {
             `${popoverSelector} a:nth-child(3)`,
             ({ href }) => href,
             // eslint-disable-next-line max-len
-        )).to.equal('http://localhost:8082/?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
+        )).to.equal('http://localhost:8082/' +
+            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
     });
 };

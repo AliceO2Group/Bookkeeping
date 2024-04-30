@@ -111,7 +111,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfully return an array only containing runs found with tags', async () => {
+    it('should successfully filter on tags', async () => {
         {
             getAllRunsDto.query = {
                 filter: {
@@ -133,8 +133,23 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.lengthOf(2);
             for (const run of runs) {
-                const tagTexts = run.tags.map(({ text }) => text);
-                expect(tagTexts.includes('FOOD') || tagTexts.includes('TEST-TAG-41')).to.be.true;
+                expect(run.tags.some(({ text }) => text.includes('FOOD') || text.includes('TEST-TAG-41'))).to.be.true;
+            }
+
+            {
+                getAllRunsDto.query = {
+                    filter: {
+                        tags: { operation: 'none-of', values: ['FOOD', 'TEST-TAG-41'] },
+                    },
+                    page: {
+                        limit: 200,
+                    },
+                };
+                const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+                expect(runs).to.lengthOf(106);
+                for (const run of runs) {
+                    expect(run.tags.every(({ text }) => text !== 'FOOD' && text !== 'TEST-TAG-41')).to.be.true;
+                }
             }
         }
     });
@@ -574,7 +589,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(20);
+        expect(runs).to.have.lengthOf(21);
     });
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
