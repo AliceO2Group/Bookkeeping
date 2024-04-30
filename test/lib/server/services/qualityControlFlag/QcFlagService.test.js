@@ -10,7 +10,7 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-const { repositories: { QcFlagRepository, RunRepository } } = require('../../../../../lib/database');
+const { repositories: { QcFlagRepository, RunRepository, QcFlagEffectivePeriodRepository } } = require('../../../../../lib/database');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { expect } = require('chai');
 const assert = require('assert');
@@ -20,7 +20,6 @@ const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDe
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
-const { QcFlagEffectivePeriodRepository } = require('../../../../../lib/database/repositories');
 
 /**
  * Get effective part and periods of Qc flag
@@ -34,7 +33,6 @@ const qcFlagWithId1 = {
     id: 1,
     from: new Date('2019-08-08 22:43:20').getTime(),
     to: new Date('2019-08-09 04:16:40').getTime(),
-    effectivePart: 1,
     comment: 'Some qc comment 1',
 
     // Associations
@@ -58,6 +56,8 @@ const qcFlagWithId1 = {
         color: '#FFFF00',
         archived: false,
     },
+
+    verifications: [],
 };
 
 module.exports = () => {
@@ -240,14 +240,16 @@ module.exports = () => {
                 createdBy: { externalId: externalUserId } } =
                 await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
 
-            expect({ from,
+            expect({
+                from,
                 to,
                 comment,
                 flagTypeId,
                 runNumber,
                 dplDetectorId,
                 externalUserId,
-                effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
+                effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
+            }).to.be.eql({
                 from: qcFlagCreationParameters.from,
                 to: qcFlagCreationParameters.to,
                 comment: qcFlagCreationParameters.comment,
@@ -406,7 +408,7 @@ module.exports = () => {
                         id: 6,
                         effectivePeriods: [
                             {
-                                from: new Date('2019-08-09 04:00:00').getTime(),
+                                from: new Date('2019-08-09 01:29:50').getTime(),
                                 to,
                             },
                         ],
@@ -415,7 +417,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfuly create quality control flag without timstamps', async () => {
+        it('should succesfuly create quality control flag without timestamps', async () => {
             const qcFlagCreationParameters = {
                 comment: 'VERY INTERESTING REMARK',
             };
@@ -430,7 +432,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt } =
                 await qcFlagService.createForDataPass(qcFlagCreationParameters, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
@@ -458,7 +460,7 @@ module.exports = () => {
                     where: {
                         runNumber,
                         dplDetectorId,
-                        id: { [Op.not]: id },
+                        createdAt: { [Op.lt]: createdAt },
                     },
                     include: [
                         {
@@ -738,14 +740,14 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const { id } = await qcFlagService.createForSimulationPass({}, creationRelations);
+            const { id, createdAt } = await qcFlagService.createForSimulationPass({}, creationRelations);
 
             {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber: 106,
                         dplDetectorId: 1,
-                        id: { [Op.not]: id },
+                        createdAt: { [Op.lt]: createdAt },
                     },
                     include: [
                         {
@@ -776,7 +778,7 @@ module.exports = () => {
                         dplDetectorId: 1,
                     },
                     include: [
-                        { association: 'effectivePeriods ' },
+                        { association: 'effectivePeriods' },
                         {
                             association: 'simulationPasses',
                             where: { id: 1 },
@@ -787,7 +789,7 @@ module.exports = () => {
 
                 {
                     expect(olderFlags.some(({ from, to, effectivePeriods }) => {
-                        const [{ from: fetchedFrom, to: fetchedTo }] = effectivePeriods;
+                        const [{ from: fetchedFrom, to: fetchedTo } = {}] = effectivePeriods;
                         return fetchedFrom === from && fetchedTo === to;
                     }));
                 }
