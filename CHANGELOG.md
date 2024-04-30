@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.86.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.86.0)
+* Notable changes for users:
+  * Placed RCT entry point directly in navigation bar
+  * Changed QC flag delete button access to admins only
+  * Added runs counts for simulation pass overview
+  * Added data passes counts for simulation pass overview
+  * ALICE efficiency computation now uses mean weighted by stable beam duration
+  * Removed missing trigger start/stop warning if trigger is OFF
+* Notable change for developers:
+  * Run optional properties are now optional in proto file
+
 ## [0.85.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.85.0)
 * Notable changes for users:
   * Added possibility to filter out runs that contains any of the given tags
