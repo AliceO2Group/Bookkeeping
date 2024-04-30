@@ -24,6 +24,7 @@ const {
     pressElement,
     getTableDataSlice,
     checkMismatchingUrlParam,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -208,24 +209,12 @@ module.exports = () => {
 
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForTimeout(100);
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
 
-        await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
+        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
 
-        await waitForTimeout(100);
-
-        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
-
-        const resetFiltersButton = await page.$('#reset-filters');
-        expect(resetFiltersButton).to.not.be.null;
-        await resetFiltersButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-
-        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
     });
 };
