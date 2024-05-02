@@ -367,12 +367,21 @@ module.exports = () => {
         /**
          * Checks that all the rows of the given table have a valid run definition
          *
-         * @param {{evaluate: function}[]} rows the list of rows
+         * @param {number} size the expected size of the table
          * @param {string[]} authorizedRunDefinition  the list of valid run qualities
          * @return {void}
          */
-        const checkTableRunDefinitions = async (rows, authorizedRunDefinition) => {
-            for (const row of rows) {
+        const checkTableSizeAndDefinition = async (size, authorizedRunDefinition) => {
+            // Wait for the table to have the proper size
+            await Promise.all([
+                page.waitForSelector(`tbody tr:nth-child(${size})`, { timeout: 500 }),
+                page.waitForSelector(`tbody tr:nth-child(${size + 1})`, { hidden: true, timeout: 500 }),
+                page.waitForSelector('tbody tr.loading-row', { hidden: true, timeout: 500 }),
+            ]);
+
+            table = await page.$$('tbody tr');
+
+            for (const row of table) {
                 expect(await row.evaluate((rowItem) => {
                     const rowId = rowItem.id;
                     return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
@@ -382,77 +391,46 @@ module.exports = () => {
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
 
-        await page.$eval(physicsFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
-        await checkTableRunDefinitions(table, [RunDefinition.Physics]);
+        await pressElement(page, physicsFilterSelector, true);
+        await checkTableSizeAndDefinition(4, [RunDefinition.Physics]);
 
-        await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
-        await checkTableRunDefinitions(table, [RunDefinition.Physics, RunDefinition.Synthetic]);
+        await pressElement(page, syntheticFilterSelector, true);
+        await checkTableSizeAndDefinition(6, [RunDefinition.Physics, RunDefinition.Synthetic]);
 
-        await page.$eval(physicsFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
-        await checkTableRunDefinitions(table, [RunDefinition.Synthetic]);
+        await pressElement(page, physicsFilterSelector, true);
+        await checkTableSizeAndDefinition(2, [RunDefinition.Synthetic]);
 
-        await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(4);
-        await checkTableRunDefinitions(table, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
+        await pressElement(page, cosmicsFilterSelector, true);
+        await checkTableSizeAndDefinition(4, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
 
-        await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
-        await checkTableRunDefinitions(table, [RunDefinition.Cosmics]);
+        await pressElement(page, syntheticFilterSelector, true);
+        await checkTableSizeAndDefinition(2, [RunDefinition.Cosmics]);
 
-        await page.$eval(technicalFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(3);
-        await checkTableRunDefinitions(table, [RunDefinition.Cosmics, RunDefinition.Technical]);
+        await pressElement(page, technicalFilterSelector, true);
+        await checkTableSizeAndDefinition(3, [RunDefinition.Cosmics, RunDefinition.Technical]);
 
-        await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(1);
-        await checkTableRunDefinitions(table, [RunDefinition.Technical]);
+        await pressElement(page, cosmicsFilterSelector, true);
+        await checkTableSizeAndDefinition(1, [RunDefinition.Technical]);
 
-        await page.$eval(calibrationFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
-        await checkTableRunDefinitions(table, [RunDefinition.Technical, RunDefinition.Calibration]);
+        await pressElement(page, calibrationFilterSelector, true);
+        await checkTableSizeAndDefinition(2, [RunDefinition.Technical, RunDefinition.Calibration]);
 
-        await page.$eval(commissioningFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        await checkTableRunDefinitions(table, [RunDefinition.Commissioning]);
-        await page.$eval(commissioningFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
+        await pressElement(page, commissioningFilterSelector, true);
+        await checkTableSizeAndDefinition(3, [RunDefinition.Commissioning]);
+
+        await pressElement(page, commissioningFilterSelector, true);
+        await pressElement(page, physicsFilterSelector, true);
+        await pressElement(page, syntheticFilterSelector, true);
+        await pressElement(page, cosmicsFilterSelector, true);
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
-        await waitForTimeout(100);
 
-        await page.$eval(physicsFilterSelector, (element) => element.click());
-        await page.$eval(syntheticFilterSelector, (element) => element.click());
-        await page.$eval(cosmicsFilterSelector, (element) => element.click());
-        await waitForTimeout(300);
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(10);
-        await checkTableRunDefinitions(
-            table,
+        await checkTableSizeAndDefinition(
+            10,
             [RunDefinition.Cosmics, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
         );
     });
