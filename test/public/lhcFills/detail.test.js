@@ -18,7 +18,7 @@ const {
     pressElement,
     goToPage,
     checkMismatchingUrlParam,
-    getPopoverContent, waitForTimeout,
+    getPopoverContent, waitForTimeout, waitForNavigation,
 } = require('../defaults.js');
 const { expect } = require('chai');
 
@@ -185,7 +185,7 @@ module.exports = () => {
     it('should successfully expose a button to create a new log related to the displayed fill', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
 
-        await pressElement(page, '#create-log');
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
 
         expect(await checkMismatchingUrlParam(page, { page: 'log-create', lhcFillNumbers: '6' })).to.eql({});
 

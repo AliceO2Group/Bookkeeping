@@ -29,7 +29,7 @@ const {
     fillInput,
     getInnerText,
     getPopoverSelector,
-    waitForTimeout,
+    waitForTimeout, waitForNavigation,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -865,10 +865,7 @@ module.exports = () => {
 
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
-
-        // Await waitForNetworkIdleAndRedraw(page);
-        await page.waitForSelector('#row119-lhcFills a');
-        await pressElement(page, '#row119-lhcFills a');
+        await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
 
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');

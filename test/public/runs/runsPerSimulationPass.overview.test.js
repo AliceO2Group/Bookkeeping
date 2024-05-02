@@ -30,6 +30,7 @@ const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
+const { waitForNavigation } = require('../defaults.js');
 
 const DETECTORS = [
     'CPV',
@@ -161,10 +162,8 @@ module.exports = () => {
         const runNumberLinkCellSelector = 'tbody tr:first-of-type a';
         const expectedRunNumber = await getInnerText(await page.$(runNumberLinkCellSelector));
 
-        await pressElement(page, runNumberLinkCellSelector);
-
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: expectedRunNumber }))
-            .to.be.eql({});
+        await waitForNavigation(page, () => pressElement(page, runNumberLinkCellSelector));
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: expectedRunNumber })).to.be.eql({});
     });
 
     it('should successfully export runs', async () => {
@@ -207,6 +206,6 @@ module.exports = () => {
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
         ]),
-        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+            fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };
