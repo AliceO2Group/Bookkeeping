@@ -341,7 +341,7 @@ module.exports = () => {
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-RUN');
-        await pressElement(page, '#tag-dropdown-option-TEST-TAG-41');
+        await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
         await page.waitForSelector('tbody tr:nth-child(2)', { timeout: 500 });
 
         table = await page.$$('tbody tr');
