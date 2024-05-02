@@ -13,7 +13,15 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam, getPopoverContent, waitForTimeout, waitForNavigation } = require('../defaults.js');
+const {
+    reloadPage,
+    goToPage,
+    fillInput,
+    checkMismatchingUrlParam,
+    getPopoverContent,
+    waitForTimeout,
+    waitForNavigation,
+} = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
 

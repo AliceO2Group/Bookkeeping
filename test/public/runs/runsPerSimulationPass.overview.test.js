@@ -205,7 +205,7 @@ module.exports = () => {
             { runNumber: 56, runQuality: 'good' },
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
-        ]),
-            fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        ]);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };
