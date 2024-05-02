@@ -174,7 +174,7 @@ module.exports = () => {
 
         // Create the new log
         await waitForNavigation(page, () => pressElement(page, 'button#send'));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail' })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: 148 })).to.eql({});
     });
 
     it('should successfully inherit parent log title', async () => {
@@ -195,8 +195,8 @@ module.exports = () => {
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
         expect(isDisabled).to.equal(false);
 
-        await waitForNavigation(page, () => pressElement('button#send'));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail' })).to.eql({});
+        await waitForNavigation(page, () => pressElement(page, 'button#send'));
+        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: 149 })).to.eql({});
 
         // Expect new log to inherit title of the parent
         const newLogId = await page.evaluate(() => window.model.router.params.id);
