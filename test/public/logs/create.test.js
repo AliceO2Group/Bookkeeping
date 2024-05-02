@@ -104,7 +104,7 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
-        expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' })).to.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'log-details', id: '1' })).to.eql({});
     });
 
     it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
