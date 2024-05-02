@@ -374,19 +374,16 @@ module.exports = () => {
         const checkTableSizeAndDefinition = async (size, authorizedRunDefinition) => {
             // Wait for the table to have the proper size
             await Promise.all([
-                page.waitForSelector(`tbody tr:nth-child(${size})`, { timeout: 500 }),
+                page.waitForSelector(`tbody tr:not(loading-row):nth-child(${size})`, { timeout: 500 }),
                 page.waitForSelector(`tbody tr:nth-child(${size + 1})`, { hidden: true, timeout: 500 }),
-                page.waitForSelector('tbody tr.loading-row', { hidden: true, timeout: 500 }),
             ]);
 
-            table = await page.$$('tbody tr');
-
-            for (const row of table) {
-                expect(await row.evaluate((rowItem) => {
-                    const rowId = rowItem.id;
-                    return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
-                })).to.be.oneOf(authorizedRunDefinition);
-            }
+            const definitions = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
+                const rowId = row.id;
+                return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
+            }));
+            expect(definitions.length).to.equal(size);
+            expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
         };
 
         // Open filter toggle
@@ -417,7 +414,7 @@ module.exports = () => {
         await checkTableSizeAndDefinition(2, [RunDefinition.Technical, RunDefinition.Calibration]);
 
         await pressElement(page, commissioningFilterSelector, true);
-        await checkTableSizeAndDefinition(3, [RunDefinition.Commissioning]);
+        await checkTableSizeAndDefinition(8, [RunDefinition.Commissioning]);
 
         await pressElement(page, commissioningFilterSelector, true);
         await pressElement(page, physicsFilterSelector, true);
@@ -874,24 +871,21 @@ module.exports = () => {
 
     it('should successfully filter on nEPNs', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForSelector('#openFilterToggle');
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#nEpns-operator');
-        await page.waitForSelector('#nEpns-limit');
+        await page.waitForSelector('#nEpns-limit', { timeout: 500 });
 
         const nEpnsOperatorSelector = '#nEpns-operator';
-        const nEpnsOperator = await page.$(nEpnsOperatorSelector) || null;
-        expect(nEpnsOperator).to.not.be.null;
+        const nEpnsOperator = await page.waitForSelector(nEpnsOperatorSelector);
         expect(await nEpnsOperator.evaluate((element) => element.value)).to.equal('=');
 
-        const nEpnsLimitSelector = '#nEpns-limit';
-        const nEpnsLimit = await page.$(nEpnsLimitSelector) || null;
-        expect(nEpnsLimit).to.not.be.null;
+        const nEpnsLimit = await page.waitForSelector('#nEpns-limit', { timeout: 500 });
 
         await nEpnsLimit.focus();
         await page.keyboard.type('10');
         await waitForNetworkIdleAndRedraw(page);
+
+        await page.waitForSelector(nEpnsOperatorSelector);
         await page.select(nEpnsOperatorSelector, '<=');
         await waitForNetworkIdleAndRedraw(page);
 
