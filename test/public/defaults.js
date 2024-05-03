@@ -123,14 +123,12 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForSelector(selector, { timeout: 250 });
+    const elementHandler = await page.waitForSelector(selector, { timeout: 250 });
 
     if (jsClick) {
-        await page.$eval(selector, (element) => {
-            element.click();
-        });
+        await elementHandler.evaluate((element) => element.click());
     } else {
-        await page.click(selector);
+        await elementHandler.click(selector);
     }
 };
 
@@ -490,7 +488,8 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     const ret = {};
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
-        if (expectedUrlParameters[key] !== value) {
+        // Convert expected to string, if it is a number for example
+        if (`${expectedUrlParameters[key]}` !== value) {
             ret[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,
