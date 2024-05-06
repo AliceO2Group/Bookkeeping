@@ -23,9 +23,14 @@ int main(int argc, char** argv)
   }
 
   try {
+    // Test of FLP counters update
     auto client = BkpClientFactory::create(argv[1]);
     client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF);
     std::cout << "FLP counters have been successfully updated" << std::endl;
+
+
+    // Test of DPL process execution
+    client->dplProcessExecution()->registerProcessExecution(106, o2::bkp::DplProcessType::QC_CHECKER, "SECOND-HOSTNAME", "PROCESS-NAME", "", "DEFAUlT");
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);
