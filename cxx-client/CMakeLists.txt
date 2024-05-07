@@ -56,6 +56,7 @@ protobuf_generate(
 add_library(BookkeepingApi SHARED
         src/grpc/GrpcBkpClient.cxx
         src/grpc/services/GrpcFlpServiceClient.cxx
+        src/grpc/services/GrpcDplProcessExecutionClient.cxx
         src/BkpClientFactory.cxx
 )
 
