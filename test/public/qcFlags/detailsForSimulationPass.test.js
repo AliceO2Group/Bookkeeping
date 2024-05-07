@@ -128,7 +128,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await expectInnerText(page, '#qc-flag-details-verified', 'To:\nNo');
+        await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
 
         await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
         await page.waitForSelector('#cancel', { hidden: true, timeout: 250 });
@@ -153,6 +153,6 @@ module.exports = () => {
             createdAt: (date) => date,
         });
 
-        await expectInnerText(page, '#qc-flag-details-verified', 'To:\nYes');
+        await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
     });
 };
