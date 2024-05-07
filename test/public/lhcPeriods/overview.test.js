@@ -61,7 +61,7 @@ module.exports = () => {
             associatedSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             year: (year) => !isNaN(year),
             beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
-            avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
+            avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => avgCenterOfMassEnergy === '-' || !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
                 ? true
                 : distinctEnergies
