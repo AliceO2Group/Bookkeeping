@@ -21,7 +21,7 @@ const {
     checkMismatchingUrlParam,
     waitForNavigation,
     validateElement,
-    validateTableData,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -145,13 +145,14 @@ module.exports = () => {
         await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
 
         await pressElement(page, 'button#verify');
+
         await pressElement(page, '#verification-comment ~ .CodeMirror');
         const comment = 'Hello, it\'s ok';
         await page.keyboard.type(comment);
-        await validateTableData(page, {
-            createdBy: (name) => name,
-            createdAt: (date) => date,
-        });
+
+        await pressElement(page, '#submit');
+        await expectColumnValues(page, 'createdBy', ['Anonymous']);
+        await expectColumnValues(page, 'comment', [comment]);
 
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
     });
