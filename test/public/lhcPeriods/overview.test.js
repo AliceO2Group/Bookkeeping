@@ -63,8 +63,7 @@ module.exports = () => {
             beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => avgCenterOfMassEnergy === '-' || !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
-                ? true
-                : distinctEnergies
+                || distinctEnergies
                     .split(',')
                     .every((energy) => !isNaN(energy)),
         };
