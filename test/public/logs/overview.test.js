@@ -861,6 +861,6 @@ module.exports = () => {
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
         await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
-        expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', runNumber: 1 })).to.be.eql({});
+        expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', fillNumber: 1 })).to.be.eql({});
     });
 };
