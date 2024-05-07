@@ -21,6 +21,7 @@ const {
     checkMismatchingUrlParam,
     waitForNavigation,
     validateElement,
+    validateTableData,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -117,5 +118,41 @@ module.exports = () => {
             runNumber: '106',
             dplDetectorId: '1',
         })).to.be.eql({});
+    });
+
+    it('should successfuly verify flag', async () => {
+        await goToPage(page, 'qc-flag-details-for-simulation-pass', { queryParameters: {
+            id: 6,
+            simulationPassId: 1,
+            runNumber: 106,
+            dplDetectorId: 1,
+        } });
+
+        await expectInnerText(page, '#qc-flag-details-verified', 'To:\nNo');
+
+        await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#cancel', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
+
+        await pressElement(page, 'button#verify');
+        await validateElement(page, '#verification-comment');
+        await validateElement(page, '#cancel');
+        await validateElement(page, '#submit');
+
+        await pressElement(page, 'button#cancel');
+        await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#cancel', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
+
+        await pressElement(page, 'button#verify');
+        await pressElement(page, '#verification-comment ~ .CodeMirror');
+        const comment = 'Hello, it\'s ok';
+        await page.keyboard.type(comment);
+        await validateTableData(page, {
+            createdBy: (name) => name,
+            createdAt: (date) => date,
+        });
+
+        await expectInnerText(page, '#qc-flag-details-verified', 'To:\nYes');
     });
 };
