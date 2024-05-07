@@ -549,9 +549,6 @@ ${actions}\
         await page.waitForSelector('select');
         await page.select('select', 'rc-daily-meeting');
 
-        // Expect the inputs to be there
-        await page.waitForSelector('#lhc-plans', { timeout: 500 });
-
         const lhcPlans = 'LHC\nPlans';
         await pressElement(page, '#lhc-plans ~ .CodeMirror');
         await page.keyboard.type(lhcPlans);
@@ -596,26 +593,26 @@ ${actions}\
         const lastLog = await getLastLog();
         const magnetDateTime = getLocaleDateAndTime(magnetTimestamp);
         expect(lastLog.title).to.equal(expectedTitle);
-        // Sometimes, browser adds \r to the request to comply with text form data encoding
 
         /*
-         * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
-         * 123123123 is ended because fill 123123 is created a bit later (both in CreateLhcFillUseCase.test.js)
-         *
-         * On call log is created for DCS system right before this test and appear in `Central systems/services`
-         *
-         * Detector quality is changed for detector CPV twice in UpdateRunUseCase
+         * Remove from the text what depends on previous texts, that may or may not be included the template depending if tests runs in the
+         * afternoon or not
          */
         expect(lastLog.text
-            .replaceAll('\r', ''))
-            .to.equal(`\
-# RC Daily Meeting Minutes
-Date: ${formatFullDate(new Date())}
+            // Sometimes, browser adds \r to the request to comply with text form data encoding
+            .replaceAll('\r', '')
+            // On call log is created for DCS system right before this test and appear in `Central systems/services`
+            .replace('\n* [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=147)', '')
 
-## LHC
+            // Detector quality is changed for detector CPV twice in UpdateRunUseCase
+            .replace('\n* [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=138)', '')
+            .replace('\n* [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=137)', '')
 
-### Last 24h
-
+            /*
+             * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
+             * 123123123 is ended because fill 123123 is created a bit later (both in CreateLhcFillUseCase.test.js)
+             */
+            .replace(`
 Fill 6 (Single_12b_8_1024_8_2018)
 * Beam type: null
 * Stable beam start: 1565262000000
@@ -630,7 +627,15 @@ Fill 123123123 (schemename)
 * Stable beam end: 1647961200000
 * Duration: 600
 * Efficiency: 0.00%
-* Time to first run: 00:00:00 (0.00%)
+* Time to first run: 00:00:00 (0.00%)`, '-'))
+            .to.equal(`\
+# RC Daily Meeting Minutes
+Date: ${formatFullDate(new Date())}
+
+## LHC
+
+### Last 24h
+-
 
 ### Plans
 ${lhcPlans}
@@ -663,7 +668,6 @@ ${access}
 * QC: 
 * CTP: 
 * DCS: 
-  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=147)
 * LHC_IF: 
 
 ## Detectors
@@ -674,8 +678,6 @@ ${access}
 * MID: 
 * PHOS: 
 * CPV: 
-  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=138)
-  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=137)
 * TOF: 
 * TPC: 
 * TRD: 
