@@ -26,6 +26,7 @@ const {
 
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
+const { waitForNavigation } = require('../defaults.js');
 
 module.exports = () => {
     let page;
@@ -71,7 +72,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await pressElement(page, 'h2:nth-of-type(2)');
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
         expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
     });
 
@@ -82,7 +83,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await pressElement(page, 'h2:nth-of-type(3)');
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
         expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
 
