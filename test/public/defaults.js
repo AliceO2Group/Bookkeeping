@@ -123,14 +123,12 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForSelector(selector, { timeout: 250 });
+    const elementHandler = await page.waitForSelector(selector, { timeout: 250 });
 
     if (jsClick) {
-        await page.$eval(selector, (element) => {
-            element.click();
-        });
+        await elementHandler.evaluate((element) => element.click());
     } else {
-        await page.click(selector);
+        await elementHandler.click(selector);
     }
 };
 
@@ -317,8 +315,21 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
+    const actualInnerText = await getInnerText(await page.waitForSelector(selector, { timeout: 200 }));
+    expect(actualInnerText).to.equal(innerText);
+};
+
+/**
+ * Expect an element to have a text valid against givne validator
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @return {Promise<void>} resolves once the text has been checked
+ */
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
     await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
 /**
@@ -489,7 +500,8 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     const ret = {};
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
-        if (expectedUrlParameters[key] !== value) {
+        // Convert expected to string, if it is a number for example
+        if (`${expectedUrlParameters[key]}` !== value) {
             ret[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,

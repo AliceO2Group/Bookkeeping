@@ -14,6 +14,8 @@
 const { expect } = require('chai');
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError');
+const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError');
 const { qcFlagTypeService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagTypeService');
 
 module.exports = () => {
@@ -24,8 +26,8 @@ module.exports = () => {
             delete qcFlagType.updatedAt;
             expect(qcFlagType).to.be.eql({
                 id: 2,
-                name: 'UnknownQuality',
-                method: 'Unknown Quality',
+                name: 'Unknown Quality',
+                method: 'UnknownQuality',
                 bad: true,
                 color: null,
 
@@ -65,8 +67,8 @@ module.exports = () => {
             })).to.have.all.deep.members([
                 {
                     id: 2,
-                    name: 'UnknownQuality',
-                    method: 'Unknown Quality',
+                    name: 'Unknown Quality',
+                    method: 'UnknownQuality',
                     bad: true,
                     color: null,
 
@@ -80,8 +82,8 @@ module.exports = () => {
                 },
                 {
                     id: 3,
-                    name: 'CertifiedByExpert',
-                    method: 'Certified by Expert',
+                    name: 'Certified by Expert',
+                    method: 'CertifiedByExpert',
                     bad: false,
                     color: null,
 
@@ -95,8 +97,8 @@ module.exports = () => {
                 },
                 {
                     id: 11,
-                    name: 'LimitedAcceptance',
-                    method: 'Limited acceptance',
+                    name: 'Limited acceptance',
+                    method: 'LimitedAcceptance',
                     bad: true,
                     color: '#FFFF00',
 
@@ -110,8 +112,8 @@ module.exports = () => {
                 },
                 {
                     id: 12,
-                    name: 'BadPID',
-                    method: 'Bad PID',
+                    name: 'Bad PID',
+                    method: 'BadPID',
                     bad: true,
                     color: null,
 
@@ -166,35 +168,35 @@ module.exports = () => {
         });
 
         it('should successfuly filter QC flags types by name pattern', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['UnknownQuality'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(1);
-            expect(flagTypes[0].name).to.be.equal('UnknownQuality');
+            expect(flagTypes[0].name).to.be.equal('Unknown Quality');
         });
 
         it('should successfuly filter QC flags types by name', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['UnknownQuality', 'LimitedAcceptance'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality', 'Limited acceptance'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['UnknownQuality', 'LimitedAcceptance']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Unknown Quality', 'Limited acceptance']);
         });
 
-        it('should successfuly filter QC flags types by namfalsee pattern', async () => {
+        it('should successfuly filter QC flags types by names pattern', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Bad'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Bad', 'BadPID']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Bad', 'Bad PID']);
         });
 
         it('should successfuly filter QC flags types by method pattern', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { methods: ['Limited acceptance'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { methods: ['LimitedAcceptance'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(1);
-            expect(flagTypes[0].name).to.be.equal('LimitedAcceptance');
+            expect(flagTypes[0].method).to.be.equal('LimitedAcceptance');
         });
 
         it('should successfuly filter QC flags types by method pattern', async () => {
@@ -202,7 +204,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ method }) => method)).to.have.all.members(['Bad', 'Bad PID']);
+            expect(flagTypes.map(({ method }) => method)).to.have.all.members(['Bad', 'BadPID']);
         });
 
         it('should successfuly filter QC flags types by whether the flag is `bad`', async () => {
@@ -210,7 +212,7 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['CertifiedByExpert', 'Archived']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Certified by Expert', 'Archived']);
         });
 
         it('should successfuly filter QC flags types by archived', async () => {
@@ -243,10 +245,10 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(6);
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
-                'UnknownQuality',
-                'LimitedAcceptance',
-                'CertifiedByExpert',
-                'BadPID',
+                'Unknown Quality',
+                'Limited acceptance',
+                'Certified by Expert',
+                'Bad PID',
                 'Bad',
                 'Archived',
             ]);
@@ -260,10 +262,10 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Archived',
                 'Bad',
-                'BadPID',
-                'CertifiedByExpert',
-                'LimitedAcceptance',
-                'UnknownQuality',
+                'Bad PID',
+                'Certified by Expert',
+                'Limited acceptance',
+                'Unknown Quality',
             ]);
         });
 
@@ -273,6 +275,117 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(3);
             expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12, 13]);
+        });
+    });
+
+    describe('Creating QC Flag Type', () => {
+        it('should successfuly create QC Flag Type', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+            const relations = { user: { externalUserId: 1 } };
+            const newQCFlag = await qcFlagTypeService.create(parameters, relations);
+            {
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = newQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
+            {
+                const fetchedQCFlag = await qcFlagTypeService.getById(newQCFlag.id);
+                const { name, method, bad, color, createdBy: { externalId: externalUserId } } = fetchedQCFlag;
+                expect({ name, method, bad, color, externalUserId }).to.be.eql({ ...parameters, ...relations.user });
+            }
+        });
+
+        it('should fail when QC Flag type with provided name already exists', async () => {
+            const parameters = {
+                name: 'Bad PID',
+                method: 'BadPID',
+                bad: false,
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters, { user: { externalUserId: 1 } }),
+                // eslint-disable-next-line max-len
+                new ConflictError(`A QC flag type with name ${parameters.name} or method ${parameters.method} already exists`),
+            );
+        });
+
+        it('should fail when no user info is provided', async () => {
+            const parameters = {
+                name: 'A',
+                method: 'AA+',
+                bad: false,
+                color: '#FFAA00',
+            };
+            await assert.rejects(
+                () => qcFlagTypeService.create(parameters, {}),
+                new BadParameterError('Can not find without id or external id'),
+            );
+        });
+    });
+
+    describe('Updating QC Flag Type', () => {
+        it('should reject when existing name provided', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(12, { name: 'Bad' }, { user: { userId: 1 } }),
+                new ConflictError('A QC flag with name Bad already exists'),
+            );
+        });
+
+        it('should reject when existing method provided', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(12, { method: 'Bad' }, { user: { userId: 1 } }),
+                new ConflictError('A QC flag with method Bad already exists'),
+            );
+        });
+
+        it('should reject when QC flag type with given is not found', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(99999, { color: '#aaaaaa' }, { user: { userId: 1 } }),
+                new NotFoundError('Quality Control Flag Type with this id (99999) could not be found'),
+            );
+        });
+
+        it('should reject when no user is found', async () => {
+            await assert.rejects(
+                () => qcFlagTypeService.update(10, { color: '#aaaaaa' }, { user: { userId: 999 } }),
+                new NotFoundError('User with this id (999) could not be found'),
+            );
+        });
+
+        it('should successfuly update one QC Flag Type', async () => {
+            const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const fetchedFlagType = await qcFlagTypeService.getOneOrFail(13);
+            const { name, method, color, lastUpdatedBy: { id: lastUpdatedById } } = fetchedFlagType;
+            expect({ name, method, color, lastUpdatedById }).to.be.eql({ ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
+        });
+
+        it('should successfuly archive QC Flag Type', async () => {
+            const patch = { archived: true };
+            const userId = 1;
+
+            const updatedFlagType = await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const fetchedFlagType = await qcFlagTypeService.getOneOrFail(13);
+            const { archived, archivedAt, lastUpdatedBy: { id: lastUpdatedById } } = fetchedFlagType;
+            expect({ archived, lastUpdatedById }).to.be.eql({ ...patch, lastUpdatedById: userId });
+            expect(updatedFlagType).to.be.eql(fetchedFlagType);
+
+            // To Archive second time should change archiveAt timestamp
+            await qcFlagTypeService.update(13, patch, { user: { userId } });
+            const { archivedAt: archivedAtSecondTime } = await qcFlagTypeService.getOneOrFail(13);
+            expect(archivedAt).to.be.equal(archivedAtSecondTime);
+
+            // Should unarchive
+            await qcFlagTypeService.update(13, { archived: false }, { user: { userId } });
+            const { archived: archivedThirdTime, archivedAt: archivedAtThirdTime } = await qcFlagTypeService.getOneOrFail(13);
+            expect(archivedThirdTime).to.be.equal(false);
+            expect(archivedAtThirdTime).to.be.equal(null);
         });
     });
 };

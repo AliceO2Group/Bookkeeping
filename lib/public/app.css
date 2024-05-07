@@ -71,6 +71,7 @@ html, body {
 .w-85  { width:  85%; }
 .w-90  { width:  90%; }
 .w-95  { width:  95%; }
+.mw-l { max-width: var(--ui-component-large); }
 .mw-100 { max-width: 100%; }
 .mh-100 { max-height: 100%; }
 .w-30rem { width: 30rem; }
@@ -122,10 +123,6 @@ html, body {
 }
 
 .justify-end { justify-content: end; }
-
-.flex-grow.grow2 { flex-grow: 2; }
-.flex-ratio-6 {flex: 6 0;}
-.flex-ratio-4 {flex: 4 0;}
 
 .flex-shrink-0 { flex-shrink: 0; }
 
