@@ -29,7 +29,7 @@ const {
     fillInput,
     getInnerText,
     getPopoverSelector,
-    waitForTimeout, waitForNavigation,
+    waitForTimeout, waitForNavigation, checkMismatchingUrlParam,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -842,13 +842,8 @@ module.exports = () => {
         // Close filter toggle
         await pressElement(page, '#openFilterToggle');
 
-        await page.waitForSelector('#row119-runs a');
-        await pressElement(page, '#row119-runs a');
-
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('runNumber=2');
+        await waitForNavigation(page, () => pressElement(page, '#row119-runs a'));
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: 2 })).to.be.eql({});
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
@@ -866,10 +861,6 @@ module.exports = () => {
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
         await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
-
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=lhc-fill-details');
-        expect(urlParameters).to.contain('fillNumber=1');
+        expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', runNumber: 1 })).to.be.eql({});
     });
 };
