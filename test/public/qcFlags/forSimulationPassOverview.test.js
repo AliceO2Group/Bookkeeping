@@ -116,8 +116,8 @@ module.exports = () => {
         } });
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '1');
-        await expectInnerText(page, '#totalRowsCount', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many entires are available per page', async () => {
