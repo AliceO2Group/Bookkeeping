@@ -126,7 +126,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 new BadParameterError('User with this external id (9999999) could not be found'),
             );
         });
@@ -155,7 +155,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 // eslint-disable-next-line max-len
                 new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
             );
@@ -179,7 +179,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
             );
         });
@@ -202,7 +202,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 // eslint-disable-next-line max-len
                 new BadParameterError('There is not association between run with this number (106), detector with this name (CPV), data pass' +
                     ' with this id (9999)'),
@@ -226,8 +226,8 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
-                await qcFlagService.create([qcFlag], relations);
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.create(qcFlag, relations);
 
             expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
                 from: qcFlag.from,
@@ -263,8 +263,8 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
-                await qcFlagService.create([qcFlag], relations);
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.create(qcFlag, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
@@ -307,7 +307,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 new BadParameterError('User with this external id (9999999) could not be found'),
             );
         });
@@ -337,7 +337,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 // eslint-disable-next-line max-len
                 new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
             );
@@ -361,7 +361,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
             );
         });
@@ -384,7 +384,7 @@ module.exports = () => {
             };
 
             await assert.rejects(
-                () => qcFlagService.create([qcFlag], relations),
+                () => qcFlagService.create(qcFlag, relations),
                 // eslint-disable-next-line max-len
                 new BadParameterError('There is not association between run with this number (106), detector with this name (CPV),' +
                     ' simulation pass with this id (9999)'),
@@ -408,8 +408,8 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
-                await qcFlagService.create([qcFlag], relations);
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.create(qcFlag, relations);
 
             expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
                 from: qcFlag.from,
@@ -445,8 +445,8 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
-                await qcFlagService.create([qcFlagCreationParameters], relations);
+            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
+                await qcFlagService.create(qcFlagCreationParameters, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
@@ -501,7 +501,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const [{ id }] = await qcFlagService.create([{}], creationRelations);
+            const { id } = await qcFlagService.create({}, creationRelations);
 
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
