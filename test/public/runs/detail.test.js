@@ -13,7 +13,15 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam, getPopoverContent, waitForTimeout } = require('../defaults.js');
+const {
+    reloadPage,
+    goToPage,
+    fillInput,
+    checkMismatchingUrlParam,
+    getPopoverContent,
+    waitForTimeout,
+    waitForNavigation,
+} = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
 
@@ -355,6 +363,13 @@ module.exports = () => {
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
+    it('should successfully display duration without warning popover when run has trigger OFF', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
+        const runDurationCell = await page.$('#runDurationValue');
+        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+    });
+
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 105 } });
         const runDurationCell = await page.$('#runDurationValue');
@@ -422,8 +437,7 @@ module.exports = () => {
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
 
-        await pressElement(page, '#create-log');
-
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' })).to.eql({});
 
         await page.waitForSelector('input#environments');
@@ -431,14 +445,12 @@ module.exports = () => {
     });
 
     it('should not display the LHC Data when beam is not stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
-        await page.waitForSelector('#NoLHCDataNotStable');
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
         await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
 
     it('should display the LHC fill number when beam is stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
-        await page.waitForSelector('#lhc-fill-fillNumber');
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 
