@@ -93,7 +93,7 @@ module.exports = () => {
 
     it('can navigate to runs per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2) a'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
@@ -102,7 +102,7 @@ module.exports = () => {
 
     it('can navigate to anchored simulation passes per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'anchored-simulation-passes-overview',
             dataPassId: '2',
