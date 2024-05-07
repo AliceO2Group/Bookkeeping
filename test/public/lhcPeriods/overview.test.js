@@ -62,9 +62,11 @@ module.exports = () => {
             year: (year) => !isNaN(year),
             beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
-            distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
-                .split(',')
-                .every((energy) => !isNaN(energy)),
+            distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
+                ? true
+                : distinctEnergies
+                    .split(',')
+                    .every((energy) => !isNaN(energy)),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
