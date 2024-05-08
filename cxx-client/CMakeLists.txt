@@ -25,6 +25,7 @@ add_library(BookkeepingProtos OBJECT
         ${PROTO_DIR}/flp.proto
         ${PROTO_DIR}/run.proto
         ${PROTO_DIR}/dplProcessExecution.proto
+        ${PROTO_DIR}/qcFlag.proto
 )
 
 target_link_libraries(BookkeepingProtos
