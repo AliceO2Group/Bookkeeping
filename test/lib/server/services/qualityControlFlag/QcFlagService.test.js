@@ -113,13 +113,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 9999999, // Failing property
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -142,13 +142,13 @@ module.exports = () => {
             const qcFlag = {
                 ...period,
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -166,13 +166,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -189,13 +189,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 9999, // Failing property
                 dplDetectorId: 1,
@@ -214,13 +214,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -233,7 +233,7 @@ module.exports = () => {
                 from: qcFlag.from,
                 to: qcFlag.to,
                 comment: qcFlag.comment,
-                flagTypeId: relations.flagTypeId,
+                flagTypeId: qcFlag.flagTypeId,
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
@@ -251,13 +251,13 @@ module.exports = () => {
         it('should succesfuly create quality control flag without timstamps', async () => {
             const qcFlag = {
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 dplDetectorId: 1,
@@ -272,7 +272,7 @@ module.exports = () => {
                 from: startTime,
                 to: endTime,
                 comment: qcFlag.comment,
-                flagTypeId: relations.flagTypeId,
+                flagTypeId: qcFlag.flagTypeId,
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
@@ -294,13 +294,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 9999999,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
@@ -324,13 +324,13 @@ module.exports = () => {
             const qcFlag = {
                 ...period,
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
@@ -348,13 +348,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
@@ -371,13 +371,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 9999, // Failing property
                 dplDetectorId: 1,
@@ -396,13 +396,13 @@ module.exports = () => {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
@@ -415,7 +415,7 @@ module.exports = () => {
                 from: qcFlag.from,
                 to: qcFlag.to,
                 comment: qcFlag.comment,
-                flagTypeId: relations.flagTypeId,
+                flagTypeId: qcFlag.flagTypeId,
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
@@ -433,13 +433,13 @@ module.exports = () => {
         it('should succesfuly create quality control flag without timstamps', async () => {
             const qcFlagCreationParameters = {
                 comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
             };
 
             const relations = {
                 userIdentifier: {
                     externalUserId: 456,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
@@ -454,7 +454,7 @@ module.exports = () => {
                 from: startTime,
                 to: endTime,
                 comment: qcFlagCreationParameters.comment,
-                flagTypeId: relations.flagTypeId,
+                flagTypeId: qcFlagCreationParameters.flagTypeId,
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
@@ -474,7 +474,6 @@ module.exports = () => {
                 userIdentifier: {
                     externalUserId: 1,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
                 simulationPassId: 1,
@@ -513,7 +512,6 @@ module.exports = () => {
                 userIdentifier: {
                     externalUserId: 1,
                 },
-                flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
                 dplDetectorId: 1,
