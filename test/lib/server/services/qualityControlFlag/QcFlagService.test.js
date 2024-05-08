@@ -246,9 +246,9 @@ module.exports = () => {
                 externalUserId,
                 effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
             }).to.be.eql({
-                from: qcFlagCreationParameters.from,
-                to: qcFlagCreationParameters.to,
-                comment: qcFlagCreationParameters.comment,
+                from: qcFlag.from,
+                to: qcFlag.to,
+                comment: qcFlag.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
@@ -413,7 +413,7 @@ module.exports = () => {
         });
 
         it('should succesfuly create quality control flag without timestamps', async () => {
-            const qcFlagCreationParameters = {
+            const qcFlag = {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
             };
@@ -424,7 +424,6 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
             const relations = { userIdentifier: { externalUserId: 456 } };
-
 
             const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt } =
                 await qcFlagService.create(qcFlag, scope, relations);
@@ -587,11 +586,11 @@ module.exports = () => {
                 simulationPassId: 1,
                 dplDetectorId: 1,
             };
+            const relations = { userIdentifier: { externalUserId: 456 } };
 
-<<<<<<< HEAD
             const { id, from, to, comment, flagTypeId,
                 runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
-                await qcFlagService.createForSimulationPass(qcFlagCreationParameters, relations);
+                await qcFlagService.create(qcFlag, scope, relations);
 
             expect({ from,
                 to,
@@ -602,29 +601,14 @@ module.exports = () => {
                 externalUserId,
                 effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
             }).to.be.eql({
-                from: qcFlagCreationParameters.from,
-                to: qcFlagCreationParameters.to,
-                comment: qcFlagCreationParameters.comment,
+                from: qcFlag.from,
+                to: qcFlag.to,
+                comment: qcFlag.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
                 dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.user.externalUserId,
                 effectivePeriods: [{ from, to }],
-=======
-            const relations = { userIdentifier: { externalUserId: 456 } };
-
-            const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
-                await qcFlagService.create(qcFlag, scope, relations);
-
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
-                from: qcFlag.from,
-                to: qcFlag.to,
-                comment: qcFlag.comment,
-                flagTypeId: qcFlag.flagTypeId,
-                runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorId,
-                externalUserId: relations.userIdentifier.externalUserId,
->>>>>>> main
             });
 
             const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
@@ -633,7 +617,7 @@ module.exports = () => {
                     id,
                 },
             });
-<<<<<<< HEAD
+
             expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
 
             {
@@ -671,9 +655,6 @@ module.exports = () => {
                     });
                 }
             }
-=======
-            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([scope.simulationPassId]);
->>>>>>> main
         });
 
         it('should succesfuly create quality control flag without timstamps', async () => {
@@ -758,8 +739,9 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-<<<<<<< HEAD
-            const { id, createdAt } = await qcFlagService.createForSimulationPass({}, creationRelations);
+            const relations = { userIdentifier: { externalUserId: 1 } };
+
+            const { id, createdAt } = await qcFlagService.create({ flagTypeId: 2 }, scope, relations);
 
             {
                 const olderFlags = (await QcFlagRepository.findAll({
@@ -785,11 +767,6 @@ module.exports = () => {
                     });
                 }
             }
-=======
-            const relations = { userIdentifier: { externalUserId: 1 } };
-
-            const { id } = await qcFlagService.create({ flagTypeId: 2 }, scope, relations);
->>>>>>> main
 
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
