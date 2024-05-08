@@ -122,7 +122,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -151,7 +151,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -175,7 +175,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -198,7 +198,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 9999, // Failing property
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -223,7 +223,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
@@ -235,7 +235,7 @@ module.exports = () => {
                 comment: qcFlag.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
-                dplDetectorId: relations.dplDetectorIdentifier.dplDetectorId,
+                dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
             });
 
@@ -260,7 +260,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
@@ -274,7 +274,7 @@ module.exports = () => {
                 comment: qcFlag.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
-                dplDetectorId: relations.dplDetectorIdentifier.dplDetectorId,
+                dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
             });
 
@@ -303,7 +303,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -333,7 +333,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -357,7 +357,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -380,7 +380,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 9999, // Failing property
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             await assert.rejects(
@@ -405,7 +405,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
@@ -417,7 +417,7 @@ module.exports = () => {
                 comment: qcFlag.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
-                dplDetectorId: relations.dplDetectorIdentifier.dplDetectorId,
+                dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
             });
 
@@ -442,7 +442,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             const { id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } } =
@@ -456,7 +456,7 @@ module.exports = () => {
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: relations.flagTypeId,
                 runNumber: relations.runNumber,
-                dplDetectorId: relations.dplDetectorIdentifier.dplDetectorId,
+                dplDetectorId: relations.dplDetectorId,
                 externalUserId: relations.userIdentifier.externalUserId,
             });
 
@@ -498,7 +498,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                dplDetectorId: 1,
             };
 
             const { id } = await qcFlagService.create({}, creationRelations);
