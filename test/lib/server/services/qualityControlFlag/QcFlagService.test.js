@@ -249,10 +249,10 @@ module.exports = () => {
                 from: qcFlag.from,
                 to: qcFlag.to,
                 comment: qcFlag.comment,
-                flagTypeId: relations.flagTypeId,
-                runNumber: relations.runNumber,
-                dplDetectorId: relations.dplDetectorId,
-                externalUserId: relations.user.externalUserId,
+                flagTypeId: qcFlag.flagTypeId,
+                runNumber: scope.runNumber,
+                dplDetectorId: scope.dplDetectorId,
+                externalUserId: relations.userIdentifier.externalUserId,
                 effectivePeriods: [
                     {
                         from: new Date('2019-08-09 01:29:50').getTime(),
@@ -267,7 +267,7 @@ module.exports = () => {
                     id,
                 },
             });
-            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([scope.dataPassId]);
 
             // Check effective periods of older flags
             {
@@ -281,7 +281,7 @@ module.exports = () => {
                         {
                             association: 'dataPasses',
                             where: {
-                                id: relations.dataPassId,
+                                id: scope.dataPassId,
                             },
                         },
                     ],
@@ -356,9 +356,7 @@ module.exports = () => {
                     include: [
                         {
                             association: 'dataPasses',
-                            where: {
-                                id: relations.dataPassId,
-                            },
+                            where: { id: scope.dataPassId },
                         },
                     ],
                     order: [['createdAt', 'ASC']],
@@ -442,11 +440,9 @@ module.exports = () => {
 
             const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
                 include: [{ association: 'dataPasses' }],
-                where: {
-                    id,
-                },
+                where: { id },
             });
-            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([relations.dataPassId]);
+            expect(fetchedFlagWithDataPass.dataPasses.map(({ id }) => id)).to.have.all.members([scope.dataPassId]);
 
             {
                 const olderFlags = (await QcFlagRepository.findAll({
@@ -459,7 +455,7 @@ module.exports = () => {
                         {
                             association: 'dataPasses',
                             where: {
-                                id: relations.dataPassId,
+                                id: scope.dataPassId,
                             },
                         },
                     ],
@@ -604,10 +600,10 @@ module.exports = () => {
                 from: qcFlag.from,
                 to: qcFlag.to,
                 comment: qcFlag.comment,
-                flagTypeId: relations.flagTypeId,
-                runNumber: relations.runNumber,
-                dplDetectorId: relations.dplDetectorId,
-                externalUserId: relations.user.externalUserId,
+                flagTypeId: qcFlag.flagTypeId,
+                runNumber: scope.runNumber,
+                dplDetectorId: scope.dplDetectorId,
+                externalUserId: relations.userIdentifier.externalUserId,
                 effectivePeriods: [{ from, to }],
             });
 
@@ -618,7 +614,7 @@ module.exports = () => {
                 },
             });
 
-            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
+            expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([scope.simulationPassId]);
 
             {
                 const olderFlags = (await QcFlagRepository.findAll({
@@ -631,7 +627,7 @@ module.exports = () => {
                         {
                             association: 'simulationPasses',
                             where: {
-                                id: relations.simulationPassId,
+                                id: scope.simulationPassId,
                             },
                         },
                     ],
