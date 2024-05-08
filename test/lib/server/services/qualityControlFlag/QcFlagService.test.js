@@ -468,6 +468,24 @@ module.exports = () => {
             });
             expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([relations.simulationPassId]);
         });
+
+        it ('should throw when trying to create a flag with data pass and simulation pass at the same time', async () => {
+            const creationRelations = {
+                userIdentifier: {
+                    externalUserId: 1,
+                },
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await assert.rejects(
+                () => qcFlagService.create({}, creationRelations),
+                new BadParameterError('Cannot create QC flag for data pass and simulation pass simultaneously'),
+            );
+        });
     });
 
     describe('Deleting Quality Control Flag', () => {
