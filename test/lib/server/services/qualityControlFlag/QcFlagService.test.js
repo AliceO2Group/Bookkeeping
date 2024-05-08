@@ -504,7 +504,7 @@ module.exports = () => {
 
             const relations = { userIdentifier: { externalUserId: 1 } };
 
-            const { id } = await qcFlagService.create({flagTypeId: 2}, scope, relations);
+            const { id } = await qcFlagService.create({ flagTypeId: 2 }, scope, relations);
 
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
