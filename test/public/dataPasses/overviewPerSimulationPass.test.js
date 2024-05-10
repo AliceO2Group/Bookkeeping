@@ -59,8 +59,8 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',

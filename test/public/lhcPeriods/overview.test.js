@@ -21,6 +21,7 @@ const {
     pressElement,
     expectColumnValues,
     validateElement,
+    validateTableData,
 } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
 
@@ -53,42 +54,22 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         const allowedBeamTypesDisplayes = new Set(['-', 'XeXe', 'PbPb', 'pp']);
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
+
+        const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            associatedDataPasses: (display) => /(No data passes)|(\d+\nData Passes)/.test(display),
-            associatedSimulationPasses: (display) => /(No MC)|(\d+\nMC)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
+            associatedDataPasses: (display) => /(No data passes)|(\d+)/.test(display),
+            associatedSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             year: (year) => !isNaN(year),
             beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
-            avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => !isNaN(avgCenterOfMassEnergy),
-            distinctEnergies: (distinctEnergies) => (distinctEnergies === '-' ? [] : distinctEnergies)
-                .split(',')
-                .every((energy) => !isNaN(energy)),
+            avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => avgCenterOfMassEnergy === '-' || !isNaN(avgCenterOfMassEnergy),
+            distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
+                || distinctEnergies
+                    .split(',')
+                    .every((energy) => !isNaN(energy)),
         };
 
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-
-        // Use the third row because it is where statistics are present
-        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (index in headerIndices) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype, `${headerIndices[index]} <${cellContent}> incorrect datatype`).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
