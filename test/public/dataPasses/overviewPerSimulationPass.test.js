@@ -127,7 +127,7 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
         await expectColumnValues(page, 'name', ['LHC22b_apass1']);
 
         await pressElement(page, '#reset-filters');
