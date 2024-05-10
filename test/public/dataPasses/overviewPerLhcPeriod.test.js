@@ -59,8 +59,8 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
@@ -93,7 +93,7 @@ module.exports = () => {
 
     it('can navigate to runs per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2) a'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
@@ -102,7 +102,7 @@ module.exports = () => {
 
     it('can navigate to anchored simulation passes per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'anchored-simulation-passes-overview',
             dataPassId: '2',
