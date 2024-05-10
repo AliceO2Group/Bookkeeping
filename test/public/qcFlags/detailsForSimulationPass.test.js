@@ -131,20 +131,20 @@ module.exports = () => {
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
 
         await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
-        await page.waitForSelector('#cancel', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 250 });
         await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
 
-        await pressElement(page, 'button#verify');
+        await pressElement(page, 'button#verify-qc-flag');
         await validateElement(page, '#verification-comment');
-        await validateElement(page, '#cancel');
+        await validateElement(page, '#cancel-verification');
         await validateElement(page, '#submit');
 
-        await pressElement(page, 'button#cancel');
+        await pressElement(page, 'button#cancel-verification');
         await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
-        await page.waitForSelector('#cancel', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 250 });
         await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
 
-        await pressElement(page, 'button#verify');
+        await pressElement(page, 'button#verify-qc-flag');
         await pressElement(page, '#verification-comment ~ .CodeMirror');
         const comment = 'Hello, it\'s ok';
         await page.keyboard.type(comment);
