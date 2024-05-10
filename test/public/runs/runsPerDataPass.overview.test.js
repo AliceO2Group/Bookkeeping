@@ -29,6 +29,7 @@ const { waitForTimeout } = require('../defaults.js');
 const { expect } = chai;
 
 const DETECTORS = [
+    'GLO',
     'CPV',
     'EMC',
     'FDD',
@@ -102,7 +103,10 @@ module.exports = () => {
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.oneOf(['QC', ''])])),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [
+                detectorName,
+                (qualityDisplay) => /(QC)|(\d+!?)/.test(qualityDisplay),
+            ])),
         };
 
         // We find the headers matching the datatype keys
