@@ -33,7 +33,6 @@ const qcFlagWithId1 = {
     id: 1,
     from: new Date('2019-08-08 22:43:20').getTime(),
     to: new Date('2019-08-09 04:16:40').getTime(),
-    effectivePart: 1,
     comment: 'Some qc comment 1',
 
     // Associations
@@ -760,33 +759,6 @@ module.exports = () => {
                 {
                     const { id } = olderFlags[olderFlags.length - 1];
                     expect({ effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
-                        effectivePeriods: [],
-                    });
-                }
-            }
-
-            {
-                const olderFlags = (await QcFlagRepository.findAll({
-                    where: {
-                        runNumber: 106,
-                        dplDetectorId: 1,
-                        id: { [Op.not]: id },
-                    },
-                    include: [
-                        { association: 'effectivePeriods' },
-                        {
-                            association: 'simulationPasses',
-                            where: {
-                                id: 1,
-                            },
-                        },
-                    ],
-                    order: [['createdAt', 'ASC']],
-                })).map(qcFlagAdapter.toEntity);
-                {
-                    const { effectivePart, effectivePeriods } = olderFlags[olderFlags.length - 1];
-                    expect({ effectivePart, effectivePeriods }).to.be.eql({
-                        effectivePart: 0,
                         effectivePeriods: [],
                     });
                 }
