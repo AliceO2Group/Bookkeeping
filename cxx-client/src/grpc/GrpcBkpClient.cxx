@@ -12,7 +12,6 @@
 #include "GrpcBkpClient.h"
 #include <memory>
 #include <grpc++/grpc++.h>
-#include "flp.grpc.pb.h"
 
 using grpc::Channel;
 
@@ -28,15 +27,22 @@ using std::unique_ptr;
 namespace o2::bkp::api::grpc
 {
 using services::GrpcFlpServiceClient;
+using services::GrpcDplProcessExecutionClient;
 
 GrpcBkpClient::GrpcBkpClient(const string& uri)
 {
   auto channel = CreateChannel(uri, InsecureChannelCredentials());
   mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
+  mDplProcessExecutionClient = make_unique<GrpcDplProcessExecutionClient>(channel);
 }
 
 const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
 {
   return mFlpClient;
+}
+
+const std::unique_ptr<DplProcessExecutionClient>& GrpcBkpClient::dplProcessExecution() const
+{
+  return mDplProcessExecutionClient;
 }
 } // namespace o2::bkp::api::grpc
