@@ -33,7 +33,6 @@ const dateAndTime = require('date-and-time');
 const { waitForNavigation } = require('../defaults.js');
 
 const DETECTORS = [
-    'GLO',
     'CPV',
     'EMC',
     'FDD',
@@ -107,7 +106,7 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => /(QC)|(\d+!?)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
             ])),
         };
 

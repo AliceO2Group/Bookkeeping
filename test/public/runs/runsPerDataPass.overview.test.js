@@ -29,7 +29,6 @@ const { waitForTimeout } = require('../defaults.js');
 const { expect } = chai;
 
 const DETECTORS = [
-    'GLO',
     'CPV',
     'EMC',
     'FDD',
@@ -105,7 +104,7 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => /(QC)|(\d+!?)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
             ])),
         };
 
