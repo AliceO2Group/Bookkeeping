@@ -129,8 +129,19 @@ module.exports = () => {
             });
         });
 
+        it('should succsessfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 2 })).to.be.eql({
+                1: {
+                    1: {
+                        missingVerificationsCount: 0,
+                        badEffectiveRunCoverage: 0.0196,
+                    },
+                },
+            });
+        });
+
         it('should succsessfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 2 })).to.be.eql({});
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
         });
 
         it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
