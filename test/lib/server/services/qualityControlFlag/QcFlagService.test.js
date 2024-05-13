@@ -398,7 +398,7 @@ module.exports = () => {
                 {
                     const [, , , { id, to }] = olderFlags;
                     expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
-                        id: 6,
+                        id: 7,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 01:29:50').getTime(),
