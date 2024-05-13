@@ -22,6 +22,9 @@ const {
     waitForNavigation,
     validateElement,
     expectColumnValues,
+    setConfirmationDialogToBeDismissed,
+    setConfirmationDialogToBeAccepted,
+    unsetConfirmationdialogActions,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -109,8 +112,21 @@ module.exports = () => {
             runNumber: 106,
             dplDetectorId: 1,
         } });
-
         await validateElement(page, 'button#delete');
+
+        // Check that deletion is interapted when confirmation dialog is dismissed
+        setConfirmationDialogToBeDismissed(page);
+        await pressElement(page, 'button#delete');
+        expect(await checkMismatchingUrlParam(page, {
+            page: 'qc-flag-details-for-simulation-pass',
+            id: '5',
+            simulationPassId: '1',
+            runNumber: '106',
+            dplDetectorId: '1',
+        })).to.be.eql({});
+
+        // Delete
+        setConfirmationDialogToBeAccepted(page);
         await waitForNavigation(page, () => pressElement(page, 'button#delete'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'qc-flags-for-simulation-pass',
@@ -118,6 +134,7 @@ module.exports = () => {
             runNumber: '106',
             dplDetectorId: '1',
         })).to.be.eql({});
+        unsetConfirmationdialogActions(page);
     });
 
     it('should successfuly verify flag', async () => {
