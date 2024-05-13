@@ -127,6 +127,7 @@ module.exports = () => {
             runNumber: 106,
             dplDetectorId: 1,
         } });
+        await validateElement(page, '#delete');
 
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
 
@@ -155,5 +156,6 @@ module.exports = () => {
         await expectColumnValues(page, 'comment', [comment]);
 
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
+        await validateElement(page, '#delete:disabled');
     });
 };
