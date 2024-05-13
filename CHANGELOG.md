@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.87.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.87.0)
+* Notable changes for users:
+  * Log overview loading time has been improved:
+    * Before: ~5.5s to load 10 logs out of ~85000
+    * After: ~60ms to load 10 logs out of ~85000
+  * Author and tags are now included in the LHC fill details page
+  * RC daily meeting log template now have tags RC and p2info
+* Notable change for developers:
+  * Added DPL process registration to api client not exposing proto
+
 ## [0.86.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.86.0)
 * Notable changes for users:
   * Placed RCT entry point directly in navigation bar
