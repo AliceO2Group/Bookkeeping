@@ -590,3 +590,47 @@ module.exports.validateTableData = async (page, validators) => {
         ).to.be.true;
     }
 };
+
+/**
+ * Listener accepting browser confirmation dialog
+ * @param {page.dialog} dialog dialog
+ * @return {void}
+ */
+const acceptDialogEventListener = (dialog) => dialog.accept();
+
+/**
+ * Listener dismissing browser confirmation dialog
+ * @param {page.dialog} dialog dialog
+ * @return {void}
+ */
+const dismissDialogEventListener = (dialog) => dialog.dismiss();
+
+/**
+ * Set listener on dialog event to accept it
+ * @param {puppeteer.page} page page handler
+ * @return {void}
+ */
+module.exports.setConfirmationDialogToBeAccepted = (page) => {
+    page.off('dialog', dismissDialogEventListener);
+    page.on('dialog', acceptDialogEventListener);
+};
+
+/**
+ * Set listener on dialog event to dismiss it
+ * @param {puppeteer.page} page page handler
+ * @return {void}
+ */
+module.exports.setConfirmationDialogToBeDismissed = (page) => {
+    page.off('dialog', acceptDialogEventListener);
+    page.on('dialog', dismissDialogEventListener);
+};
+
+/**
+ * Unset accept and dismiss listeners from dialog event
+ * @param {puppeteer.page} page page handler
+ * @return {void}
+ */
+module.exports.unsetConfirmationdialogActions = (page) => {
+    page.off('dialog', dismissDialogEventListener);
+    page.off('dialog', acceptDialogEventListener);
+};
