@@ -24,6 +24,7 @@ const {
     pressElement,
     getTableDataSlice,
     checkMismatchingUrlParam,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -59,8 +60,8 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
@@ -93,7 +94,7 @@ module.exports = () => {
 
     it('can navigate to runs per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2) a'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
@@ -102,7 +103,7 @@ module.exports = () => {
 
     it('can navigate to anchored simulation passes per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'anchored-simulation-passes-overview',
             dataPassId: '2',
@@ -208,24 +209,12 @@ module.exports = () => {
 
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForTimeout(100);
-        const filterToggleButton = await page.$('#openFilterToggle');
-        expect(filterToggleButton).to.not.be.null;
+        await pressElement(page, '#openFilterToggle');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
 
-        await filterToggleButton.evaluate((button) => button.click());
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
+        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
 
-        await waitForTimeout(100);
-
-        let allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1']);
-
-        const resetFiltersButton = await page.$('#reset-filters');
-        expect(resetFiltersButton).to.not.be.null;
-        await resetFiltersButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-
-        allDataPassesNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(allDataPassesNames).to.has.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
     });
 };

@@ -442,7 +442,7 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector);
+    await page.waitForSelector(inputSelector, { timeout: 500 });
     await page.evaluate((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
         element.value = value;
