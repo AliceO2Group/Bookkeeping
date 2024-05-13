@@ -129,6 +129,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
+        await validateElement(page, '#delete:not([disabled])');
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
 
         await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
@@ -156,5 +157,6 @@ module.exports = () => {
         await expectColumnValues(page, 'comment', [comment]);
 
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
+        await validateElement(page, '#delete:disabled');
     });
 };
