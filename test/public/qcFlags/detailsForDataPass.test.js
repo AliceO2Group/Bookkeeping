@@ -111,6 +111,7 @@ module.exports = () => {
         } });
 
         await validateElement(page, 'button#delete');
+        page.on('dialog', (dialog) => dialog.accept());
         await waitForNavigation(page, () => pressElement(page, 'button#delete'));
         expect(await checkMismatchingUrlParam(page, {
             page: 'qc-flags-for-data-pass',
