@@ -110,10 +110,10 @@ module.exports = () => {
                 runNumber: 106,
                 dplDetectorId: 1,
             });
-            expect(count).to.be.equal(1);
+            expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
-            expect(flags).to.be.lengthOf(1);
-            expect(flags[0].qcFlagId).to.equal(5);
+            expect(flags).to.be.lengthOf(2);
+            expect(flags[0].qcFlagId).to.equal(6);
         });
     });
 
@@ -441,7 +441,7 @@ module.exports = () => {
                 {
                     const [, , , { id, to }] = olderFlags;
                     expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
-                        id: 6,
+                        id: 7,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 01:29:50').getTime(),

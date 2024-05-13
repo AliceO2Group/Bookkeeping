@@ -129,10 +129,10 @@ module.exports = () => {
                 .get('/api/qcFlags/perSimulationPass?simulationPassId=1&runNumber=106&dplDetectorId=1');
             expect(response.status).to.be.equal(200);
             const { data, meta } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+            expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
             expect(data).to.be.an('array');
-            expect(data).to.be.lengthOf(1);
-            expect(data[0].qcFlagId).to.be.equal(5);
+            expect(data).to.be.lengthOf(2);
+            expect(data[0].qcFlagId).to.be.equal(6);
         });
 
         it('should support pagination', async () => {

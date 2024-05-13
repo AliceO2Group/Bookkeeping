@@ -21,6 +21,7 @@ const {
     checkMismatchingUrlParam,
     waitForNavigation,
     validateElement,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -117,5 +118,44 @@ module.exports = () => {
             runNumber: '106',
             dplDetectorId: '1',
         })).to.be.eql({});
+    });
+
+    it('should successfuly verify flag', async () => {
+        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
+            id: 2,
+            dataPassId: 1,
+            runNumber: 106,
+            dplDetectorId: 1,
+        } });
+
+        await validateElement(page, '#delete:not([disabled])');
+        await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
+
+        await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
+
+        await pressElement(page, 'button#verify-qc-flag');
+        await validateElement(page, '#verification-comment');
+        await validateElement(page, '#cancel-verification');
+        await validateElement(page, '#submit');
+
+        await pressElement(page, 'button#cancel-verification');
+        await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
+
+        await pressElement(page, 'button#verify-qc-flag');
+
+        await pressElement(page, '#verification-comment ~ .CodeMirror');
+        const comment = 'Hello, it\'s ok';
+        await page.keyboard.type(comment);
+
+        await pressElement(page, '#submit');
+        await expectColumnValues(page, 'createdBy', ['Anonymous']);
+        await expectColumnValues(page, 'comment', [comment]);
+
+        await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
+        await validateElement(page, '#delete:disabled');
     });
 };
