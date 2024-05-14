@@ -169,7 +169,7 @@ module.exports = () => {
             const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
-            const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
+            const { dataPassId } = qcFlagCreationParameters;
             {
                 const { comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
                 expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
