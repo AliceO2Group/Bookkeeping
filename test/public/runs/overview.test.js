@@ -23,11 +23,13 @@ const {
     goToPage,
     checkColumnBalloon,
     waitForNetworkIdleAndRedraw,
+    expectLink,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
+const { runService } = require('../../../lib/server/services/run/RunService.js');
 
 const { expect } = chai;
 
@@ -1189,19 +1191,33 @@ module.exports = () => {
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 
-    it('should successfully display links to infologger and QC GUI', async () => {
+    it('should successfully display links to infologger, QC GUI and ECS', async () => {
+        await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        await goToPage(page, 'run-overview');
+
+        // Not running run
         await pressElement(page, '#row104-runNumber-text .popover-trigger');
-        const popoverSelector = await getPopoverSelector(await page.$('#row104-runNumber-text .popover-trigger'));
+        let popoverSelector = await getPopoverSelector(await page.$('#row104-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
-        expect(await page.$eval(
-            `${popoverSelector} a`,
-            ({ href }) => href,
-        )).to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
-        expect(await page.$eval(
-            `${popoverSelector} a:nth-child(3)`,
-            ({ href }) => href,
-            // eslint-disable-next-line max-len
-        )).to.equal('http://localhost:8082/' +
-            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
+
+        await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
+            href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'Infologger FLP',
+        });
+        await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
+            href: 'http://localhost:8082/' +
+            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
+            innerText: 'QCG',
+        });
+
+        // Running run
+        await pressElement(page, '#row109-runNumber-text .popover-trigger');
+        popoverSelector = await getPopoverSelector(await page.$('#row109-runNumber-text .popover-trigger'));
+        await page.waitForSelector(popoverSelector);
+
+        await expectLink(page, `${popoverSelector} a:nth-of-type(3)`, {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
     });
 };
