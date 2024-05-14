@@ -20,6 +20,8 @@ const {
     goToPage,
     checkColumnBalloon,
     checkEnvironmentStatusColor,
+    validateElement,
+    expectLink,
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
 
@@ -184,5 +186,34 @@ module.exports = () => {
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');
+    });
+
+    it('should successfully display dropdown links', async () => {
+        await goToPage(page, 'env-overview');
+
+        // Running env
+        let envId = 'CmCvjNbg';
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
+        let popover = await validateElement(page, `.popover:has(button[id='copy-${envId}'])`);
+        await expectLink(popover, 'a:nth-of-type(1)', {
+            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'Infologger FLP',
+        });
+
+        await expectLink(popover, 'a:nth-of-type(2)', {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
+
+        // Not running env
+        envId = 'EIDO13i3D';
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
+        popover = await validateElement(page, `.popover:has(button[id='copy-${envId}'])`);
+        await expectLink(popover, 'a:nth-of-type(1)', {
+            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'Infologger FLP',
+        });
+
+        expect(await popover.$('a:nth-of-type(2)')).to.be.null;
     });
 };
