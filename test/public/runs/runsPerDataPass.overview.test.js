@@ -22,6 +22,8 @@ const {
     getFirstRow,
     goToPage,
     reloadPage,
+    expectColumnValues,
+    fillInput,
 } = require('../defaults');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 const { waitForTimeout } = require('../defaults.js');
@@ -265,7 +267,7 @@ module.exports = () => {
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', '108,107');
         await expectColumnValues(page, 'runNumber,', ['108', '107']);
 
-        await pressElement(page, '#reset-filters')
+        await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'name', ['108', '107', '106']);
     });
 
@@ -278,7 +280,7 @@ module.exports = () => {
         await pressElement(page, '#tag-dropdown-option-RUN');
         await expectColumnValues(page, 'runNumber,', ['106']);
 
-        await pressElement(page, '#reset-filters')
+        await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'name', ['108', '107', '106']);
     });
 };
