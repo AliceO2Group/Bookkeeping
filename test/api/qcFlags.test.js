@@ -155,6 +155,36 @@ module.exports = () => {
             }
         });
 
+        it('should successfuly create QC flag instance for data pass with GLO detector', async () => {
+            const qcFlagCreationParameters = {
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 21,
+            };
+
+            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            console.log(response.body)
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlag } = response.body;
+            const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+            }
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                    include: [{ association: 'dataPasses' }],
+                    where: {
+                        id: createdQcFlag.id,
+                    },
+                });
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+            }
+        });
+
         it('should successfuly create QC flag instance for simulation pass', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
