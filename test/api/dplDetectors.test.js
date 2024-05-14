@@ -46,6 +46,7 @@ module.exports = () => {
                 { id: 18, name: 'CTP' },
                 { id: 19, name: 'FIT' },
                 { id: 20, name: 'QC-SPECIFIC' },
+                { id: 21, name: 'GLO' },
             ]);
         });
     });
