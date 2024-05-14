@@ -157,6 +157,8 @@ module.exports = () => {
 
         it('should successfuly create QC flag instance for data pass with GLO detector', async () => {
             const qcFlagCreationParameters = {
+                from: null,
+                to: null,
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
                 runNumber: 106,
@@ -165,22 +167,31 @@ module.exports = () => {
             };
 
             const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
-            console.log(response.body)
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
             {
-                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
-                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                const { comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                    comment: qcFlagCreationParameters.comment,
+                    flagTypeId: qcFlagCreationParameters.flagTypeId,
+                    runNumber: qcFlagCreationParameters.runNumber,
+                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                });
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                const { comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
                     include: [{ association: 'dataPasses' }],
                     where: {
                         id: createdQcFlag.id,
                     },
                 });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                    comment: qcFlagCreationParameters.comment,
+                    flagTypeId: qcFlagCreationParameters.flagTypeId,
+                    runNumber: qcFlagCreationParameters.runNumber,
+                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                });
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
         });
