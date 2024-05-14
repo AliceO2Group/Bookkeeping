@@ -309,7 +309,7 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
 
 /**
  * Expect a link to have a given text and href
- * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer page object.
+ * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer element or page object.
  * @param {string} selector css selector.
  * @param {string} [expected.href] expected href of the link
  * @param {string} [expected.innerText] expected inner text of the link
