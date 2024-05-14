@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, expectLink } = require('../defaults');
 const { goToPage, pressElement, checkMismatchingUrlParam, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -93,5 +93,20 @@ module.exports = () => {
         expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
         expect(await table[1].evaluate((row) => row.id)).to.equal('row3');
         expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
+    });
+
+    it('should successfully display FLP nad ECS links', async () => {
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'CmCvjNbg' } });
+        const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
+
+        await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
+            href:
+                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'FLP',
+        });
+        await expectLink(page, `${contatinerSelector} a:nth-of-type(2)`, {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
     });
 };
