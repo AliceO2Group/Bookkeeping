@@ -268,7 +268,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber,', ['108', '107']);
 
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'name', ['108', '107', '106']);
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
     it('should successfuly apply tags filter', async () => {
@@ -281,7 +281,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber,', ['106']);
 
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'name', ['108', '107', '106']);
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
     it('should successfuly apply timeStart filter', async () => {
@@ -292,17 +292,41 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber,', ['1']);
 
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'name', ['1', '2', '55']);
+        await expectColumnValues(page, 'runNumber', ['1', '2', '55']);
     });
 
-    it('should successfuly apply timeStart filter', async () => {
+    it('should successfuly apply timeEnd filter', async () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, '.timeO2Start-filter input[type=date]', '01/01/2021');
+        await fillInput(page, '.timeO2End-filter input[type=date]', '01/01/2021');
         await expectColumnValues(page, 'runNumber,', ['1']);
 
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'name', ['1', '2', '55']);
+        await expectColumnValues(page, 'runNumber', ['1', '2', '55']);
+    });
+
+    it('should successfuly apply duration filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await page.select('.duration-filter select', '>=');
+        await fillInput(page, '.duration-filter input[type=number]', '10');
+        await expectColumnValues(page, 'runNumber,', ['1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['1', '2', '55']);
+    });
+
+    it('should successfuly apply duration filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await page.select('.EPNs-filter select', '>=');
+        await fillInput(page, '.EPNs-filter input[type=number]', '12');
+        await expectColumnValues(page, 'runNumber,', ['55']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['1', '2', '55']);
     });
 };
