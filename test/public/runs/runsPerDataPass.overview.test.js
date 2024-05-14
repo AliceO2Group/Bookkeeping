@@ -256,4 +256,29 @@ module.exports = () => {
         ]);
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
+
+    // Filters
+    it('should successfuly apply runNumber filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', '108,107');
+        await expectColumnValues(page, 'runNumber,', ['108', '107']);
+
+        await pressElement(page, '#reset-filters')
+        await expectColumnValues(page, 'name', ['108', '107', '106']);
+    });
+
+    it('should successfuly apply tags filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await pressElement(page, 'div.flex-row.items-baseline:nth-of-type(2) .dropdown-trigger');
+        await pressElement(page, '#tag-dropdown-option-FOOD');
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await expectColumnValues(page, 'runNumber,', ['106']);
+
+        await pressElement(page, '#reset-filters')
+        await expectColumnValues(page, 'name', ['108', '107', '106']);
+    });
 };
