@@ -470,8 +470,8 @@ module.exports = () => {
         await expectInnerText(page, '#Run-environmentId a', 'TDI59So3d');
 
         // Create running run
-        await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1000 } });
+        await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1010 } });
         await expectInnerText(page, '#runDurationValue', 'RUNNING');
 
         await expectLink(page, '.external-links a:nth-of-type(3)', {
