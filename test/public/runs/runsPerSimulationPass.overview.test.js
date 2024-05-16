@@ -127,7 +127,7 @@ module.exports = () => {
 
         await reloadPage(page);
         await expectLink(page, 'tr#row56 .column-ITS a', {
-            href: 'http://localhost:4000/?page=qc-flags-for-simulation-pass&runNumber=56&simulationPassId=2&dplDetectorId=4',
+            href: 'http://localhost:4000/?page=qc-flags-for-simulation-pass&simulationPassId=2&runNumber=56&dplDetectorId=4',
             innerText: '0!',
         });
 
