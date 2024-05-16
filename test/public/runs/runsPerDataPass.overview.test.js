@@ -22,9 +22,12 @@ const {
     goToPage,
     reloadPage,
     validateTableData,
+    expectLink,
+    validateDate,
 } = require('../defaults');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 const { waitForTimeout } = require('../defaults.js');
+const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 
 const { expect } = chai;
 
@@ -82,14 +85,16 @@ module.exports = () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
         // Expectations of header texts being of a certain datatype
         const tableDataValidators = {
-            runNumber: (number) => typeof number == 'number',
-            fillNumber: (number) => typeof number == 'number',
-            timeO2Start: (date) => !isNaN(Date.parse(date)),
-            timeO2End: (date) => !isNaN(Date.parse(date)),
-            timeTrgStart: (date) => !isNaN(Date.parse(date)),
-            timeTrgEnd: (date) => !isNaN(Date.parse(date)),
-            aliceL3Current: (current) => !isNaN(Number(current)),
-            aliceL3Dipole: (current) => !isNaN(Number(current)),
+            runNumber: (number) => !isNaN(number),
+            fillNumber: (number) => number === '-' || !isNaN(number),
+
+            timeO2Start: (date) => date === '-' || validateDate(date),
+            timeO2End: (date) => date === '-' || validateDate(date),
+            timeTrgStart: (date) => date === '-' || validateDate(date),
+            timeTrgEnd: (date) => date === '-' || validateDate(date),
+
+            aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+            dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
             muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
@@ -103,6 +108,24 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        await expectLink(page, 'tr#row105 .column-CPV a', {
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=105&dataPassId=3&dplDetectorId=1',
+            innerText: 'QC',
+        });
+
+        const tmpQcFlag = await qcFlagService.create(
+            { flagTypeId: 3 },
+            { runNumber: 105, dataPassId: 3, dplDetectorId: 1 },
+            { userIdentifier: { externalUserId: 1 } }, // Create good flag
+        );
+
+        await reloadPage(page);
+        await expectLink(page, 'tr#row105 .column-CPV a', {
+            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&dataPassId=3&runNumber=105&dplDetectorId=1',
+            innerText: '100!',
+        });
+
+        await qcFlagService.delete(tmpQcFlag.id);
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {

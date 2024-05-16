@@ -16,6 +16,7 @@ const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const dateAndTime = require('date-and-time');
 
 const { expect } = chai;
 
@@ -634,3 +635,25 @@ module.exports.unsetConfirmationdialogActions = (page) => {
     page.off('dialog', dismissDialogEventListener);
     page.off('dialog', acceptDialogEventListener);
 };
+
+/**
+ * Expect a link to have a given text and href
+ * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer element or page object.
+ * @param {string} selector css selector.
+ * @param {string} [expected.href] expected href of the link
+ * @param {string} [expected.innerText] expected inner text of the link
+ * @return {Promise<void>} promise
+ */
+module.exports.expectLink = async (element, selector, { href, innerText }) => {
+    await element.waitForSelector(selector, { timeout: 200 });
+    const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
+    expect(actualLinkProperties).to.eql({ href, innerText });
+};
+
+/**
+ * Validate date string against given format
+ * @param {string} date date (time) string
+ * @param {string} [format = 'DD/MM/YYYY hh:mm:ss'] format to validate against
+ * @return {boolean} true if format is correct, false otherwise
+ */
+module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));

@@ -22,6 +22,7 @@ const {
     goToPage,
     reloadPage,
     validateTableData,
+    validateDate,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
@@ -81,14 +82,16 @@ module.exports = () => {
 
         // Expectations of header texts being of a certain datatype
         const tableDataValidators = {
-            runNumber: (number) => typeof number == 'number',
-            fillNumber: (number) => typeof number == 'number',
-            timeO2Start: (date) => !isNaN(Date.parse(date)),
-            timeO2End: (date) => !isNaN(Date.parse(date)),
-            timeTrgStart: (date) => !isNaN(Date.parse(date)),
-            timeTrgEnd: (date) => !isNaN(Date.parse(date)),
-            aliceL3Current: (current) => !isNaN(Number(current)),
-            aliceL3Dipole: (current) => !isNaN(Number(current)),
+            runNumber: (number) => !isNaN(number),
+            fillNumber: (number) => number === '-' || !isNaN(number),
+
+            timeO2Start: (date) => date === '-' || validateDate(Date),
+            timeO2End: (date) => date === '-' || validateDate(Date),
+            timeTrgStart: (date) => date === '-' || validateDate(Date),
+            timeTrgEnd: (date) => date === '-' || validateDate(Date),
+
+            aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+            dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
             muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
