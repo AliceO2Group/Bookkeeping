@@ -19,9 +19,10 @@ const {
     defaultAfter,
     expectInnerText,
     pressElement,
-    getFirstRow,
     goToPage,
     reloadPage,
+    validateTableData,
+    validateDate,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
@@ -52,9 +53,6 @@ module.exports = () => {
     let page;
     let browser;
 
-    let table;
-    let firstRowId;
-
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
@@ -81,19 +79,19 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
 
         // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
-            runNumber: (number) => typeof number == 'number',
-            fillNumber: (number) => typeof number == 'number',
-            timeO2Start: (date) => !isNaN(Date.parse(date)),
-            timeO2End: (date) => !isNaN(Date.parse(date)),
-            timeTrgStart: (date) => !isNaN(Date.parse(date)),
-            timeTrgEnd: (date) => !isNaN(Date.parse(date)),
-            aliceL3Current: (current) => !isNaN(Number(current)),
-            aliceL3Dipole: (current) => !isNaN(Number(current)),
+        const tableDataValidators = {
+            runNumber: (number) => !isNaN(number),
+            fillNumber: (number) => number === '-' || !isNaN(number),
+
+            timeO2Start: (date) => date === '-' || validateDate(date),
+            timeO2End: (date) => date === '-' || validateDate(date),
+            timeTrgStart: (date) => date === '-' || validateDate(date),
+            timeTrgEnd: (date) => date === '-' || validateDate(date),
+
+            aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+            dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
             muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
@@ -103,26 +101,7 @@ module.exports = () => {
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-        const firstRowCells = await page.$$(`#${firstRowId} td`);
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (Object.keys(headerIndices).includes(index)) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {

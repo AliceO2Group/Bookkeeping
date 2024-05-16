@@ -117,6 +117,49 @@ module.exports = () => {
         });
     });
 
+    describe('Get QC flags summary', () => {
+        it('should succsessfully get non-empty QC flag summary for data pass', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 3,
+                        badEffectiveRunCoverage: 0.8376,
+                    },
+                },
+            });
+        });
+
+        it('should succsessfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 2 })).to.be.eql({
+                1: {
+                    1: {
+                        missingVerificationsCount: 0,
+                        badEffectiveRunCoverage: 0.0196,
+                    },
+                },
+            });
+        });
+
+        it('should succsessfully get empty QC flag summary for data pass', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+        });
+
+        it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 1,
+                        badEffectiveRunCoverage: 0.9310,
+                    },
+                },
+            });
+        });
+
+        it('should succsessfully get empty QC flag summary for simulation pass', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
+        });
+    });
+
     describe('Creating Quality Control Flag for data pass', () => {
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlag = {

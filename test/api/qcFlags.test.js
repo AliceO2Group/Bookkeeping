@@ -65,6 +65,53 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/qcFlags/summary', () => {
+        it('should succsessfully get non-empty QC flag summary for data pass', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?dataPassId=1');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 3,
+                        badEffectiveRunCoverage: 0.8376,
+                    },
+                },
+            });
+        });
+
+        it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 1,
+                        badEffectiveRunCoverage: 0.9310,
+                    },
+                },
+            });
+        });
+
+        it('should return 400 when bad query paramter provided', async () => {
+            {
+                const response = await request(server).get('/api/qcFlags/summary');
+                expect(response.status).to.be.equal(400);
+                const { errors } = response.body;
+                const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
+                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId]');
+            }
+            {
+                const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1&dataPassId=1');
+                expect(response.status).to.be.equal(400);
+                const { errors } = response.body;
+                const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
+                expect(titleError.detail).to.equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId]');
+            }
+        });
+    });
+
     describe('GET /api/qcFlags/perDataPass and /api/qcFlags/perSimulationPass', () => {
         it('should successfully fetch QC flags for data pass', async () => {
             const response = await request(server)
