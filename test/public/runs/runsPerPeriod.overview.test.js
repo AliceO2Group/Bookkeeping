@@ -85,10 +85,10 @@ module.exports = () => {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
 
-            timeO2Start: (date) => date === '-' || validateDate(Date),
-            timeO2End: (date) => date === '-' || validateDate(Date),
-            timeTrgStart: (date) => date === '-' || validateDate(Date),
-            timeTrgEnd: (date) => date === '-' || validateDate(Date),
+            timeO2Start: (date) => date === '-' || validateDate(date),
+            timeO2End: (date) => date === '-' || validateDate(date),
+            timeTrgStart: (date) => date === '-' || validateDate(date),
+            timeTrgEnd: (date) => date === '-' || validateDate(date),
 
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
