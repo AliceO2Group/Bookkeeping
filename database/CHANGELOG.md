@@ -1,3 +1,8 @@
+## [0.88.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.88.0)
+* Changes made to the database
+  * Adds new table for QC flag effective period
+  * Adds new table for QC flag verification
+
 ## [0.85.0]
 * Changes made to the database
   * Added four columns to run table storing information about inelastic interaction rate

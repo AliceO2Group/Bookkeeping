@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.88.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.88.0)
+* Notable changes for users:
+  * QC Flag deletion now requires confirmation via browser prompt.
+  * QC Flag deletion button is disabled if a flag is already verified.
+  * Button to reset a filter is now always present at the top of the filter panel.
+  * Adds horizontal-scroll for table on runs-with-detectors view.
+  * Add QC Summary display for data and simulation passes.
+  * Displays DPL detectors in alphabetical order with the exception of 'GLO' always at the front.
+  * Fixes a bug in which the creation of QC flags for GLO detector was failing.
+  * Improves display of RCT links as badges.
+* Notable change for developers: N/A
+
 ## [0.87.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.87.0)
 * Notable changes for users:
   * Log overview loading time has been improved:
