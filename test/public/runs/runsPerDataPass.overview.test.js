@@ -276,7 +276,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
-        await pressElement(page, '#detector-dropdown-option-CPV');
+        await pressElement(page, '#detector-filter-dropdown-option-CPV');
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
         await pressElement(page, '#reset-filters');
@@ -324,7 +324,7 @@ module.exports = () => {
 
         await page.select('.runDuration-filter select', '>=');
         await fillInput(page, '.runDuration-filter input[type=number]', '10');
-        await expectColumnValues(page, 'runNumber', ['1']);
+        await expectColumnValues(page, 'runNumber', ['55', '1']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
