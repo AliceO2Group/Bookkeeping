@@ -109,7 +109,7 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
         await expectLink(page, 'tr#row105 .column-CPV a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=105&dataPassId=3&dplDetectorId=1',
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
             innerText: 'QC',
         });
 
@@ -121,7 +121,7 @@ module.exports = () => {
 
         await reloadPage(page);
         await expectLink(page, 'tr#row105 .column-CPV a', {
-            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&dataPassId=3&runNumber=105&dplDetectorId=1',
+            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
             innerText: '100!',
         });
 
