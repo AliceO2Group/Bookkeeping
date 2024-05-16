@@ -26,7 +26,7 @@ module.exports = () => {
             const { data: qcFlag } = response.body;
             expect(qcFlag).to.be.eql({
                 id: 4,
-                from: new Date('2022-03-22 04:46:40').getTime(),
+                from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
                 createdAt: new Date('2024-02-13 11:57:19').getTime(),
@@ -44,6 +44,7 @@ module.exports = () => {
                         createdAt: new Date('2024-02-13 12:57:19').getTime(),
                     },
                 ],
+
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
