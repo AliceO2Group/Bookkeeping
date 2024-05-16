@@ -156,6 +156,47 @@ module.exports = () => {
             }
         });
 
+        it('should successfuly create QC flag instance for data pass with GLO detector', async () => {
+            const qcFlagCreationParameters = {
+                from: null,
+                to: null,
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 21,
+            };
+
+            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlag } = response.body;
+            const { dataPassId } = qcFlagCreationParameters;
+            {
+                const { comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                    comment: qcFlagCreationParameters.comment,
+                    flagTypeId: qcFlagCreationParameters.flagTypeId,
+                    runNumber: qcFlagCreationParameters.runNumber,
+                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                });
+            }
+            {
+                const { comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                    include: [{ association: 'dataPasses' }],
+                    where: {
+                        id: createdQcFlag.id,
+                    },
+                });
+                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                    comment: qcFlagCreationParameters.comment,
+                    flagTypeId: qcFlagCreationParameters.flagTypeId,
+                    runNumber: qcFlagCreationParameters.runNumber,
+                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                });
+                expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+            }
+        });
+
         it('should successfuly create QC flag instance for simulation pass', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
