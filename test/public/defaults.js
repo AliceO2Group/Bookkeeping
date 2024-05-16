@@ -509,11 +509,19 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise<void>} promise
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    await page.waitForFunction((columnId, expectedInnerTextValues) => {
-        // Browser context, be careful when modifying
-        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
-    }, { timeout: 1500 }, columnId, expectedInnerTextValues);
+    const timeout = 1500;
+    try {
+        await page.waitForFunction((columnId, expectedInnerTextValues) => {
+            // Browser context, be careful when modifying
+            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
+        }, { timeout }, columnId, expectedInnerTextValues);
+    } catch {
+        throw new Error(`Column (${columnId}) is has incorrect values after timeout (${timeout}):
+            expected: [${expectedInnerTextValues}],
+            actual:   [${await this.getColumnCellsInnerTexts(page, columnId)}]
+        `);
+    }
 };
 
 /**

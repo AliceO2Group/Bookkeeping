@@ -265,7 +265,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.runNumber-filter input[type=text]', '108,107');
-        await expectColumnValues(page, 'runNumber,', ['108', '107']);
+        await expectColumnValues(page, 'runNumber', ['108', '107']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -277,7 +277,7 @@ module.exports = () => {
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
         await pressElement(page, '#detector-dropdown-option-CPV');
-        await expectColumnValues(page, 'runNumber,', ['2', '1']);
+        await expectColumnValues(page, 'runNumber', ['2', '1']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -290,7 +290,7 @@ module.exports = () => {
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-FOOD');
         await pressElement(page, '#tag-dropdown-option-RUN');
-        await expectColumnValues(page, 'runNumber,', ['106']);
+        await expectColumnValues(page, 'runNumber', ['106']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -300,8 +300,8 @@ module.exports = () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, '.timeO2Start-filter input[type=date]', '01/01/2021');
-        await expectColumnValues(page, 'runNumber,', ['1']);
+        await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
+        await expectColumnValues(page, 'runNumber', ['1']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
@@ -311,8 +311,8 @@ module.exports = () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, '.timeO2End-filter input[type=date]', '01/01/2021');
-        await expectColumnValues(page, 'runNumber,', ['1']);
+        await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
+        await expectColumnValues(page, 'runNumber', ['1']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
@@ -322,9 +322,9 @@ module.exports = () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
-        await page.select('.duration-filter select', '>=');
-        await fillInput(page, '.duration-filter input[type=number]', '10');
-        await expectColumnValues(page, 'runNumber,', ['1']);
+        await page.select('.runDuration-filter select', '>=');
+        await fillInput(page, '.runDuration-filter input[type=number]', '10');
+        await expectColumnValues(page, 'runNumber', ['1']);
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
