@@ -271,6 +271,18 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
+    it('should successfuly apply detectors filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await pressElement(page, '.detectors-filter .dropdown-trigger');
+        await pressElement(page, '#detector-dropdown-option-CPV');
+        await expectColumnValues(page, 'runNumber,', ['2', '1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
     it('should successfuly apply tags filter', async () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
         await pressElement(page, '#openFilterToggle');
