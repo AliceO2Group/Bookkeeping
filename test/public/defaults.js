@@ -16,6 +16,7 @@ const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const dateAndTime = require('date-and-time');
 
 const { expect } = chai;
 
@@ -394,7 +395,7 @@ module.exports.getPopoverContent = getPopoverContent;
  * @param {{$: function}} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
  * @param {number} columnIndex the index of the column to look for balloon presence
- * @returns {Promise<void>} void promise
+ * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
@@ -506,7 +507,7 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @param {stirng} columnId column id
  * @param {string[]} [expectedInnerTextValues] values expected in columns
  *
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once column values were checked
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
     await page.waitForFunction((columnId, expectedInnerTextValues) => {
@@ -527,7 +528,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation] if true it's expected not to match given regex
  *
- * @return {Promise<void>} promise
+ * @return {Promise<void>} revoled once column values were checked
  */
 module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
     const {
@@ -548,7 +549,7 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
  * It is required there are a least two rows in the table
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} columnId subject column id
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once table sorting was successfully checked
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
@@ -577,7 +578,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @param {puppeteer.Page} page the puppeteer page
  * @param {Map<string, function<string, boolean>>} validators mapping of column names to cell data validator,
  * each validator must return value `true` if content is ok, false otherwise
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
@@ -634,3 +635,25 @@ module.exports.unsetConfirmationdialogActions = (page) => {
     page.off('dialog', dismissDialogEventListener);
     page.off('dialog', acceptDialogEventListener);
 };
+
+/**
+ * Expect a link to have a given text and href
+ * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer element or page object.
+ * @param {string} selector css selector.
+ * @param {string} [expected.href] expected href of the link
+ * @param {string} [expected.innerText] expected inner text of the link
+ * @return {Promise<void>} promise
+ */
+module.exports.expectLink = async (element, selector, { href, innerText }) => {
+    await element.waitForSelector(selector, { timeout: 200 });
+    const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
+    expect(actualLinkProperties).to.eql({ href, innerText });
+};
+
+/**
+ * Validate date string against given format
+ * @param {string} date date (time) string
+ * @param {string} [format = 'DD/MM/YYYY hh:mm:ss'] format to validate against
+ * @return {boolean} true if format is correct, false otherwise
+ */
+module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
