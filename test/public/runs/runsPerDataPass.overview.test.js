@@ -324,7 +324,17 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
+
+        /**
+         * Invokation of page.select and fillInput in case of amountFilter results in two concurrent,
+         * async actions whereas a result of only one of them is saved into model.
+         * Therefore additional action is invoked in between
+         */
+        await page.select('.runDuration-filter select', '>=');
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.runDuration-filter input[type=number]', '10');
+
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
         await pressElement(page, '#reset-filters');
