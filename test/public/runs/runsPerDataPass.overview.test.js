@@ -273,7 +273,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply detectors filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
@@ -281,7 +281,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
     it('should successfuly apply tags filter', async () => {
