@@ -26,7 +26,7 @@ module.exports = () => {
             const { data: qcFlag } = response.body;
             expect(qcFlag).to.be.eql({
                 id: 4,
-                from: new Date('2022-03-22 04:46:40').getTime(),
+                from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
                 createdAt: new Date('2024-02-13 11:57:19').getTime(),
@@ -44,6 +44,7 @@ module.exports = () => {
                         createdAt: new Date('2024-02-13 12:57:19').getTime(),
                     },
                 ],
+
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', bad: true, archived: false, color: null },
@@ -64,6 +65,53 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/qcFlags/summary', () => {
+        it('should succsessfully get non-empty QC flag summary for data pass', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?dataPassId=1');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 3,
+                        badEffectiveRunCoverage: 0.8376,
+                    },
+                },
+            });
+        });
+
+        it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 1,
+                        badEffectiveRunCoverage: 0.9310,
+                    },
+                },
+            });
+        });
+
+        it('should return 400 when bad query paramter provided', async () => {
+            {
+                const response = await request(server).get('/api/qcFlags/summary');
+                expect(response.status).to.be.equal(400);
+                const { errors } = response.body;
+                const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
+                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId]');
+            }
+            {
+                const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1&dataPassId=1');
+                expect(response.status).to.be.equal(400);
+                const { errors } = response.body;
+                const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
+                expect(titleError.detail).to.equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId]');
+            }
+        });
+    });
+
     describe('GET /api/qcFlags/perDataPass and /api/qcFlags/perSimulationPass', () => {
         it('should successfully fetch QC flags for data pass', async () => {
             const response = await request(server)
@@ -81,10 +129,10 @@ module.exports = () => {
                 .get('/api/qcFlags/perSimulationPass?simulationPassId=1&runNumber=106&dplDetectorId=1');
             expect(response.status).to.be.equal(200);
             const { data, meta } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
+            expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
             expect(data).to.be.an('array');
-            expect(data).to.be.lengthOf(1);
-            expect(data[0].qcFlagId).to.be.equal(5);
+            expect(data).to.be.lengthOf(2);
+            expect(data[0].qcFlagId).to.be.equal(6);
         });
 
         it('should support pagination', async () => {
@@ -151,6 +199,47 @@ module.exports = () => {
                     },
                 });
                 expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+            }
+        });
+
+        it('should successfuly create QC flag instance for data pass with GLO detector', async () => {
+            const qcFlagCreationParameters = {
+                from: null,
+                to: null,
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 21,
+            };
+
+            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlag } = response.body;
+            const { dataPassId } = qcFlagCreationParameters;
+            {
+                const { comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                    comment: qcFlagCreationParameters.comment,
+                    flagTypeId: qcFlagCreationParameters.flagTypeId,
+                    runNumber: qcFlagCreationParameters.runNumber,
+                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                });
+            }
+            {
+                const { comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                    include: [{ association: 'dataPasses' }],
+                    where: {
+                        id: createdQcFlag.id,
+                    },
+                });
+                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                    comment: qcFlagCreationParameters.comment,
+                    flagTypeId: qcFlagCreationParameters.flagTypeId,
+                    runNumber: qcFlagCreationParameters.runNumber,
+                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                });
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
         });
