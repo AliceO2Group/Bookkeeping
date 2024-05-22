@@ -16,6 +16,7 @@ const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -42,6 +43,8 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
 
         /*
          * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
