@@ -518,10 +518,15 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
             return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
         }, { timeout }, columnId, expectedInnerTextValues);
     } catch {
-        throw new Error(`Column (${columnId}) is has incorrect values after timeout (${timeout}):
-            expected: [${expectedInnerTextValues}],
-            actual:   [${await this.getColumnCellsInnerTexts(page, columnId)}]
-        `);
+        const currentValues = await this.getColumnCellsInnerTexts(page, columnId);
+        if (JSON.stringify(expectedInnerTextValues) === JSON.stringify(currentValues)) {
+            throw new Error(`Column (${columnId}) has correct values, but only after timeout (${timeout})`);
+        } else {
+            throw new Error(`Column (${columnId}) has incorrect values after timeout (${timeout}):
+                expected: [${expectedInnerTextValues}],
+                actual:   [${currentValues}]
+            `);
+        }
     }
 };
 
