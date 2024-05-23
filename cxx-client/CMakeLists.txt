@@ -75,28 +75,6 @@ target_link_libraries(BookkeepingApi
 
 target_compile_features(BookkeepingApi PUBLIC cxx_std_17)
 
-add_library(BookkeepingProtoApi SHARED
-        src/BkpProtoClientFactory.cxx
-        src/grpc/GrpcBkpProtoClient.cxx
-        src/grpc/services/GrpcRunProtoClient.cxx
-        src/grpc/services/GrpcDplProcessExecutionProtoClient.cxx
-)
-
-target_include_directories(BookkeepingProtoApi
-        PUBLIC $<INSTALL_INTERFACE:include>    # public header once installed
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> # to build it
-        PRIVATE $<BUILD_INTERFACE:${PROTO_OUT_DIR}> # because of the proto generated files
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # private headers
-)
-
-target_link_libraries(BookkeepingProtoApi
-        PUBLIC BookkeepingProtos
-        PUBLIC protobuf::libprotobuf
-        PRIVATE gRPC::grpc++
-)
-
-target_compile_features(BookkeepingProtoApi PUBLIC cxx_std_17)
-
 ### EXAMPLES
 
 add_executable(exampleSpecificService example/exampleSpecificServices.cxx)
@@ -104,14 +82,6 @@ add_executable(exampleSpecificService example/exampleSpecificServices.cxx)
 target_link_libraries(exampleSpecificService
         PUBLIC BookkeepingApi
 )
-
-add_executable(exampleProtoService example/exampleProtoServices.cxx)
-
-target_link_libraries(exampleProtoService
-        PUBLIC BookkeepingProtoApi
-)
-
-target_include_directories(exampleProtoService PRIVATE $<BUILD_INTERFACE:${PROTO_OUT_DIR}>)
 
 # PACKAGE INFO
 
@@ -135,7 +105,7 @@ install(FILES
         DESTINATION "include"
 )
 
-install(TARGETS BookkeepingProtos BookkeepingApi BookkeepingProtoApi
+install(TARGETS BookkeepingProtos BookkeepingApi
         EXPORT BookkeepingApiTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
