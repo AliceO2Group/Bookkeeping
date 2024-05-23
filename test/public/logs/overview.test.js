@@ -833,43 +833,17 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
-
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
-
-        /*
-         * We have to filter for a specific log since the first page contains no logs with runs,
-         * Even when changing the logs per page to 20
-         */
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#titleFilterText');
-
-        // Insert some text into the filter
-        await page.waitForSelector('#titleFilterText');
-        await fillInput(page, '#titleFilterText', log119Title);
-
-        // Close filter toggle
-        await pressElement(page, '#openFilterToggle');
 
         await waitForNavigation(page, () => pressElement(page, '#row119-runs a'));
         expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: 2 })).to.be.eql({});
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
-        const log119Title = 'Another entry, with a title so long that it will probably be displayed with a balloon on it!';
-
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
-        /*
-         * We have to filter for a specific log since the first page contains no logs with runs,
-         * Even when changing the logs per page to 20
-         */
-        await pressElement(page, '#openFilterToggle');
-
-        // Insert some text into the filter
-        await fillInput(page, '#titleFilterText', log119Title);
         await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
         expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', fillNumber: 1 })).to.be.eql({});
     });
