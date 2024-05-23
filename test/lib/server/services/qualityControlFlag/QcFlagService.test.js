@@ -176,7 +176,7 @@ module.exports = () => {
             };
 
             // Failing property
-            const relations = { user: { externalUserId: 9999999 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 9999999 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -204,7 +204,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -227,7 +227,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -249,7 +249,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -280,7 +280,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             const createdQcFlags = await qcFlagService.create(qcFlags, scope, relations);
 
@@ -398,7 +398,7 @@ module.exports = () => {
                     dplDetectorIdentifier: { dplDetectorId: 1 },
                 };
 
-                const relations = { user: { externalUserId: 456 } };
+                const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
                 const [{ id, runNumber, dplDetectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
@@ -476,7 +476,7 @@ module.exports = () => {
                 dataPassIdentifier: { id: 1 },
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt }] =
                 await qcFlagService.create([qcFlag], scope, relations);
@@ -540,7 +540,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 9999999 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 9999999 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -569,7 +569,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -592,7 +592,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -614,7 +614,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -636,7 +636,7 @@ module.exports = () => {
                 simulationPassIdentifier: { id: 1 },
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
@@ -719,7 +719,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
@@ -753,7 +753,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const relations = { user: { externalUserId: 1 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 1 } };
 
             await assert.rejects(
                 () => qcFlagService.create({}, scope, relations),
@@ -786,7 +786,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { user: { externalUserId: 1 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 1 } };
 
             const [{ id, createdAt }] = await qcFlagService.create([{ flagTypeId: 2 }], scope, relations);
 
@@ -851,7 +851,7 @@ module.exports = () => {
                 flagId: 3,
             };
             const scope = {
-                user: { externalUserId: 1 },
+                user: { roles: ['admin'], externalUserId: 1 },
             };
             await assert.rejects(
                 () => qcFlagService.verifyFlag(qcFlag, scope),
@@ -864,12 +864,12 @@ module.exports = () => {
                 comment: 'Some Comment',
             };
 
-            const scope = {
-                user: { externalUserId: 456 },
+            const relations = {
+                user: { roles: ['admin'], externalUserId: 456 },
             };
 
             {
-                const verifiedFlag = await qcFlagService.verifyFlag(qcFlag, scope);
+                const verifiedFlag = await qcFlagService.verifyFlag(qcFlag, relations);
                 const { id, verifications } = verifiedFlag;
                 expect(verifications).to.be.an('array');
                 expect(verifications).to.be.lengthOf(1);
