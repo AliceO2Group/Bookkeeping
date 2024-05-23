@@ -611,4 +611,22 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf.above(3);
     });
+
+    it('should successfuly filter by aliceL3Current', async () => {
+        const limit = 1000;
+        const { runs } = await new GetAllRunsUseCase().execute({
+            query: {
+                filter: {
+                    aliceL3Current: {
+                        limit,
+                        operator: '>',
+                    },
+                },
+            },
+        });
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.greaterThan(0);
+        expect(Math.min(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
+            .to.be.greaterThan(limit);
+    });
 };

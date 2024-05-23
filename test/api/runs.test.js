@@ -485,6 +485,19 @@ module.exports = () => {
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(5);
         });
+
+        it('should successfuly filter by aliceL3Current', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[aliceL3Current][operator]=<&filter[aliceL3Current][limit]=1000');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(Math.max(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
+                .to.be.lessThan(1000);
+        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
