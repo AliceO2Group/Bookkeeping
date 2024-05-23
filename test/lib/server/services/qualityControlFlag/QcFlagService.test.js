@@ -184,6 +184,28 @@ module.exports = () => {
             );
         });
 
+        it('should fail to create quality control flag due to insufficient permission', async () => {
+            const qcFlag = {
+                from: null,
+                to: null,
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 106,
+                dataPassIdentifier: { id: 1 },
+                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+            };
+
+            // Failing property
+            const relations = { user: { roles: ['det-glo'], externalUserId: 1 } };
+
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                new BadParameterError('You have no permission to manage flags for CPV detector'),
+            );
+        });
+
         it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
@@ -476,7 +498,7 @@ module.exports = () => {
                 dataPassIdentifier: { id: 1 },
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
-            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt }] =
                 await qcFlagService.create([qcFlag], scope, relations);
@@ -545,6 +567,26 @@ module.exports = () => {
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
                 new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag due to insufficient permission', async () => {
+            const qcFlag = {
+                from: null,
+                to: null,
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 106,
+                simulationPassIdentifier: { id: 1 },
+                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+            };
+
+            const relations = { user: { roles: ['det-its'], externalUserId: 1 } };
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                new BadParameterError('You have no permission to manage flags for CPV detector'),
             );
         });
 
@@ -636,7 +678,7 @@ module.exports = () => {
                 simulationPassIdentifier: { id: 1 },
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
-            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
@@ -865,7 +907,7 @@ module.exports = () => {
             };
 
             const relations = {
-                user: { roles: ['admin'], externalUserId: 456 },
+                user: { roles: ['det-cpv'], externalUserId: 456 },
             };
 
             {
