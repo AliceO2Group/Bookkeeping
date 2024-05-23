@@ -71,7 +71,7 @@ module.exports = () => {
     it('should fail when no Data Pass with given id', async () => {
         await assert.rejects(
             () => dataPassService.getOneOrFail({ id: 99999 }),
-            new NotFoundError('Data Pass with this id (99999) could not be found'),
+            new NotFoundError('Data pass with this id (99999) could not be found'),
         );
     });
 

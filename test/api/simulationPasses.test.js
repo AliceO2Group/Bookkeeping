@@ -90,7 +90,7 @@ module.exports = () => {
                         {
                             status: 404,
                             title: 'Not found',
-                            detail: 'Simulation Pass with this id (99999) could not be found',
+                            detail: 'Simulation pass with this id (99999) could not be found',
                         },
                     ]);
 
