@@ -514,8 +514,8 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
     try {
         await page.waitForFunction((columnId, expectedInnerTextValues) => {
             // Browser context, be careful when modifying
-            const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
+            const cellsInnerTexts = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+            return JSON.stringify(cellsInnerTexts) === JSON.stringify(expectedInnerTextValues);
         }, { timeout }, columnId, expectedInnerTextValues);
     } catch {
         const currentValues = await this.getColumnCellsInnerTexts(page, columnId);
