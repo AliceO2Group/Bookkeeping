@@ -78,7 +78,7 @@ module.exports = () => {
     it('should fail when no Simulation Pass with given id', async () => {
         await assert.rejects(
             () => simulationPassService.getOneOrFail({ id: 99999 }),
-            new NotFoundError('Simulation Pass with this id (99999) could not be found'),
+            new NotFoundError('Simulation pass with this id (99999) could not be found'),
         );
     });
 
