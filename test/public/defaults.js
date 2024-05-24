@@ -510,24 +510,15 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise<void>} resolve once column values were checked
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    const timeout = 1500;
-    try {
-        await page.waitForFunction((columnId, expectedInnerTextValues) => {
-            // Browser context, be careful when modifying
-            const cellsInnerTexts = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-            return JSON.stringify(cellsInnerTexts) === JSON.stringify(expectedInnerTextValues);
-        }, { timeout }, columnId, expectedInnerTextValues);
-    } catch {
-        const currentValues = await this.getColumnCellsInnerTexts(page, columnId);
-        if (JSON.stringify(expectedInnerTextValues) === JSON.stringify(currentValues)) {
-            throw new Error(`Column (${columnId}) has correct values, but only after timeout (${timeout})`);
-        } else {
-            throw new Error(`Column (${columnId}) has incorrect values after timeout (${timeout}):
-                expected: [${expectedInnerTextValues}],
-                actual:   [${currentValues}]
-            `);
-        }
-    }
+    const size = expectedInnerTextValues.length;
+
+    await page.waitForFunction(
+        (size) => document.querySelectorAll('tbody tr:not(.loading-row)').length === size,
+        { timeout: 500 },
+        size,
+    );
+
+    expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
 };
 
 /**
