@@ -5,6 +5,7 @@ package test;
 service Service {
   rpc TestEnums(EnumsMessage) returns (EnumsMessage);
   rpc TestBigInts(BigIntMessage) returns (BigIntMessage);
+  rpc TestRepeated(RepeatedMessage) returns (RepeatedMessage);
 }
 
 message EnumsMessage {
@@ -82,4 +83,16 @@ message D {
 message BigIntMessage {
   uint64 ui = 11;
   int64 i = 12;
+}
+
+message RepeatedMessage {
+  enum AnEnum {
+    ANENUM_0 = 0;
+    ANENUM_1 = 1;
+  }
+  message Nested {
+    repeated AnEnum enum = 1;
+  }
+  repeated AnEnum enum = 1;
+  repeated Nested nested = 2;
 }
