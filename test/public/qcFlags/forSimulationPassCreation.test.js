@@ -101,7 +101,7 @@ module.exports = () => {
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
         const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option:nth-of-type(2)`, true);
+        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
