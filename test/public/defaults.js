@@ -510,11 +510,15 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @return {Promise<void>} resolve once column values were checked
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    await page.waitForFunction((columnId, expectedInnerTextValues) => {
-        // Browser context, be careful when modifying
-        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
-    }, { timeout: 1500 }, columnId, expectedInnerTextValues);
+    const size = expectedInnerTextValues.length;
+
+    await page.waitForFunction(
+        (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
+        { timeout: 500 },
+        size,
+    );
+
+    expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
 };
 
 /**

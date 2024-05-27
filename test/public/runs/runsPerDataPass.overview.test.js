@@ -21,6 +21,8 @@ const {
     pressElement,
     goToPage,
     reloadPage,
+    expectColumnValues,
+    fillInput,
     validateTableData,
     expectLink,
     validateDate,
@@ -256,5 +258,86 @@ module.exports = () => {
             { runNumber: 49, runQuality: 'good' },
         ]);
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    // Filters
+    it('should successfuly apply runNumber filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, '.runNumber-filter input[type=text]', '108,107');
+        await expectColumnValues(page, 'runNumber', ['108', '107']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
+    it('should successfuly apply detectors filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await pressElement(page, '.detectors-filter .dropdown-trigger');
+        await pressElement(page, '#detector-filter-dropdown-option-CPV');
+        await expectColumnValues(page, 'runNumber', ['2', '1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply tags filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await pressElement(page, '.tags-filter .dropdown-trigger');
+        await pressElement(page, '#tag-dropdown-option-FOOD');
+        await pressElement(page, '#tag-dropdown-option-RUN');
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
+    it('should successfuly apply timeStart filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
+        await expectColumnValues(page, 'runNumber', ['1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply timeEnd filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
+        await expectColumnValues(page, 'runNumber', ['1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply duration filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await page.select('.runDuration-filter select', '>=');
+
+        /**
+         * Invokation of page.select and fillInput in case of amountFilter results in two concurrent,
+         * async actions whereas a result of only one of them is saved into model.
+         * Therefore additional action is invoked in between
+         */
+        await page.select('.runDuration-filter select', '>=');
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle');
+        await fillInput(page, '.runDuration-filter input[type=number]', '10');
+
+        await expectColumnValues(page, 'runNumber', ['55', '1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 };
