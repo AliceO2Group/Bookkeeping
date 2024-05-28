@@ -59,6 +59,10 @@ add_library(BookkeepingApi SHARED
         src/grpc/services/GrpcFlpServiceClient.cxx
         src/grpc/services/GrpcDplProcessExecutionClient.cxx
         src/BkpClientFactory.cxx
+        include/BookkeepingApi/QcFlagServiceClient.h
+        include/BookkeepingApi/QcFlag.h
+        src/grpc/services/GrpcQcFlagServiceClient.cpp
+        src/grpc/services/GrpcQcFlagServiceClient.h
 )
 
 target_include_directories(BookkeepingApi
