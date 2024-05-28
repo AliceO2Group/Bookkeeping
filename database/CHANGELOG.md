@@ -1,3 +1,16 @@
+## [0.88.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.88.0)
+* Changes made to the database
+  * Adds new table for QC flag effective period
+  * Adds new table for QC flag verification
+
+## [0.85.0]
+* Changes made to the database
+  * Added four columns to run table storing information about inelastic interaction rate
+
+## [0.83.0]
+* Changes made to the database
+  * Added sequelize migration file for QC Flag tables creation
+
 ## [0.80.0]
 * Changes made to the database
   * Refactor Data Passes fetching from MonALISA test - use Joi

@@ -15,103 +15,93 @@ const { expect } = require('chai');
 const { getShiftFromTimestamp } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
-    const nightStart1 = new Date('2023-03-15T22:00:00Z').getTime();
-    const morningStart = new Date('2023-03-16T06:00:00Z').getTime();
-    const afternoonStart = new Date('2023-03-16T14:00:00Z').getTime();
-    const nightStart2 = new Date('2023-03-16T22:00:00Z').getTime();
-
-    const summerNightStart1 = new Date('2023-06-15T21:00:00Z').getTime();
-    const summerMorningStart = new Date('2023-06-16T05:00:00Z').getTime();
-    const summerAfternoonStart = new Date('2023-06-16T13:00:00Z').getTime();
-    const summerNightStart2 = new Date('2023-06-16T21:00:00Z').getTime();
-
-    it('should successfully recognize night shift', () => {
-        const night1 = new Date('2023-03-15T22:00:00Z');
-        expect(getShiftFromTimestamp(night1.getTime())).to.eql({
-            start: nightStart1,
-            end: morningStart,
+    it('should successfully compute night shifts in winter time', () => {
+        const expectedShift = {
+            start: new Date('2023-12-31T22:00:00Z').getTime(),
+            end: new Date('2024-01-01T06:00:00Z').getTime(),
             period: 'Night',
-        });
-
-        const night2 = new Date('2023-03-16T02:16:23Z');
-        expect(getShiftFromTimestamp(night2.getTime())).to.eql({
-            start: nightStart1,
-            end: morningStart,
-            period: 'Night',
-        });
-
-        const summerNight1 = new Date('2023-06-15T22:00:00Z');
-        expect(getShiftFromTimestamp(summerNight1.getTime())).to.eql({
-            start: summerNightStart1,
-            end: summerMorningStart,
-            period: 'Night',
-        });
-
-        const summerNight2 = new Date('2023-06-16T02:16:23Z');
-        expect(getShiftFromTimestamp(summerNight2.getTime())).to.eql({
-            start: summerNightStart1,
-            end: summerMorningStart,
-            period: 'Night',
-        });
+        };
+        expect(getShiftFromTimestamp(new Date('2023-12-31T22:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-01-01T05:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-01-01T05:59:59.999Z').getTime())).to.eql(expectedShift);
     });
 
-    it('should successfully recognize morning shift', () => {
-        const morning1 = new Date('2023-03-16T06:00:00Z');
-        expect(getShiftFromTimestamp(morning1.getTime())).to.eql({
-            start: morningStart,
-            end: afternoonStart,
+    it('should successfully compute morning shifts in winter time', () => {
+        const expectedShift = {
+            start: new Date('2024-01-01T06:00:00Z').getTime(),
+            end: new Date('2024-01-01T14:00:00Z').getTime(),
             period: 'Morning',
-        });
-
-        const morning2 = new Date('2023-03-16T10:42:10Z');
-        expect(getShiftFromTimestamp(morning2.getTime())).to.eql({
-            start: morningStart,
-            end: afternoonStart,
-            period: 'Morning',
-        });
-
-        const summerMorning1 = new Date('2023-06-16T06:00:00Z');
-        expect(getShiftFromTimestamp(summerMorning1.getTime())).to.eql({
-            start: summerMorningStart,
-            end: summerAfternoonStart,
-            period: 'Morning',
-        });
-
-        const summerMorning2 = new Date('2023-06-16T10:42:10Z');
-        expect(getShiftFromTimestamp(summerMorning2.getTime())).to.eql({
-            start: summerMorningStart,
-            end: summerAfternoonStart,
-            period: 'Morning',
-        });
+        };
+        expect(getShiftFromTimestamp(new Date('2024-01-01T06:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-01-01T13:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-01-01T13:59:59.999Z').getTime())).to.eql(expectedShift);
     });
 
-    it('should successfully recognize afternoon shift', () => {
-        const afternoon1 = new Date('2023-03-16T14:00:00Z');
-        expect(getShiftFromTimestamp(afternoon1.getTime())).to.eql({
-            start: afternoonStart,
-            end: nightStart2,
+    it('should successfully compute afternoon shifts in winter time', () => {
+        const expectedShift = {
+            start: new Date('2024-01-01T14:00:00Z').getTime(),
+            end: new Date('2024-01-01T22:00:00Z').getTime(),
             period: 'Afternoon',
-        });
+        };
+        expect(getShiftFromTimestamp(new Date('2024-01-01T14:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-01-01T21:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-01-01T21:59:59.999Z').getTime())).to.eql(expectedShift);
+    });
 
-        const afternoon2 = new Date('2023-03-16T17:19:23Z');
-        expect(getShiftFromTimestamp(afternoon2.getTime())).to.eql({
-            start: afternoonStart,
-            end: nightStart2,
-            period: 'Afternoon',
-        });
+    it('should successfully compute night shifts in summer time', () => {
+        const expectedShift = {
+            start: new Date('2024-07-31T21:00:00Z').getTime(),
+            end: new Date('2024-08-01T05:00:00Z').getTime(),
+            period: 'Night',
+        };
+        expect(getShiftFromTimestamp(new Date('2024-07-31T21:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-08-01T04:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-08-01T04:59:59.999Z').getTime())).to.eql(expectedShift);
+    });
 
-        const summerAfternoon1 = new Date('2023-06-16T14:00:00Z');
-        expect(getShiftFromTimestamp(summerAfternoon1.getTime())).to.eql({
-            start: summerAfternoonStart,
-            end: summerNightStart2,
-            period: 'Afternoon',
-        });
+    it('should successfully compute morning shifts in summer time', () => {
+        const expectedShift = {
+            start: new Date('2024-08-01T05:00:00Z').getTime(),
+            end: new Date('2024-08-01T13:00:00Z').getTime(),
+            period: 'Morning',
+        };
+        expect(getShiftFromTimestamp(new Date('2024-08-01T05:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-08-01T12:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-08-01T12:59:59.999Z').getTime())).to.eql(expectedShift);
+    });
 
-        const summerAfternoon2 = new Date('2023-06-16T17:19:23Z');
-        expect(getShiftFromTimestamp(summerAfternoon2.getTime())).to.eql({
-            start: summerAfternoonStart,
-            end: summerNightStart2,
+    it('should successfully compute afternoon shifts in summer time', () => {
+        const expectedShift = {
+            start: new Date('2024-08-01T13:00:00Z').getTime(),
+            end: new Date('2024-08-01T21:00:00Z').getTime(),
             period: 'Afternoon',
-        });
+        };
+        expect(getShiftFromTimestamp(new Date('2024-08-01T13:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-08-01T20:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-08-01T20:59:59.999Z').getTime())).to.eql(expectedShift);
+    });
+
+    it('should successfully compute night shifts moving from UTC+2 to UTC+1', () => {
+        const expectedShift = {
+            start: new Date('2023-10-28T21:00:00Z').getTime(),
+            end: new Date('2023-10-29T06:00:00Z').getTime(),
+            period: 'Night',
+        };
+        expect(getShiftFromTimestamp(new Date('2023-10-28T21:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2023-10-29T01:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2023-10-29T02:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2023-10-29T05:59:59.999Z').getTime())).to.eql(expectedShift);
+    });
+
+    it('should successfully compute night shifts moving from UTC+1 to UTC+2', () => {
+        const expectedShift = {
+            start: new Date('2024-03-30T22:00:00Z').getTime(),
+            end: new Date('2024-03-31T05:00:00Z').getTime(),
+            period: 'Night',
+        };
+        expect(getShiftFromTimestamp(new Date('2024-03-30T22:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-03-31T01:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-03-31T02:00:00Z').getTime())).to.eql(expectedShift);
+        expect(getShiftFromTimestamp(new Date('2024-03-31T04:59:59.999Z').getTime())).to.eql(expectedShift);
     });
 };

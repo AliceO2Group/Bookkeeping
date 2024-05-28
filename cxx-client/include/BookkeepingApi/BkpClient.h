@@ -14,6 +14,7 @@
 
 #include <memory>
 #include "FlpServiceClient.h"
+#include "DplProcessExecutionClient.h"
 
 namespace o2::bkp::api
 {
@@ -25,6 +26,9 @@ class BkpClient
 
   /// Return the client for FLP service
   virtual const std::unique_ptr<FlpServiceClient>& flp() const = 0;
+
+  /// Returns the implementation of the DPL process execution service defined in dpl-process-execution.proto
+  virtual const std::unique_ptr<DplProcessExecutionClient>& dplProcessExecution() const = 0;
 };
 } // namespace o2::bkp::api
 

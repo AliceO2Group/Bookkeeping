@@ -19,10 +19,18 @@ const {
     pressElement,
     goToPage,
     getFirstRow,
-    getAllDataFields,
+    getColumnCellsInnerTexts,
     checkColumnBalloon,
+    checkColumnValuesWithRegex,
 } = require('../defaults');
-const { reloadPage, waitForNetworkIdleAndRedraw, fillInput, getInnerText, getPopoverSelector, waitForTimeout } = require('../defaults.js');
+const {
+    reloadPage,
+    waitForNetworkIdleAndRedraw,
+    fillInput,
+    getInnerText,
+    getPopoverSelector,
+    waitForTimeout, waitForNavigation, checkMismatchingUrlParam,
+} = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -204,7 +212,28 @@ module.exports = () => {
         expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
     });
 
+    it('should successfully provide an easy to access button to filter in/out anonymous logs', async () => {
+        await reloadPage(page);
+        {
+            const authors = await getColumnCellsInnerTexts(page, 'author');
+            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
+        }
+
+        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            negation: true,
+        });
+
+        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            valuesCheckingMode: 'some',
+        });
+    });
+
     it('can filter by creation date', async () => {
+        await pressElement(page, '#openFilterToggle');
+        await waitForTimeout(20);
+
         // Increase the amount of items displayed to see logs count difference above 10
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
@@ -509,7 +538,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log titles to be in alphabetical order
-        const firstTitles = await getAllDataFields(page, 'title');
+        const firstTitles = await getColumnCellsInnerTexts(page, 'title');
         expect(firstTitles).to.deep.equal(firstTitles.sort());
         // Hover something else to have title sort displayed
         await page.hover('th#author');
@@ -522,7 +551,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log titles to be in reverse alphabetical order
-        const secondTitles = await getAllDataFields(page, 'title');
+        const secondTitles = await getColumnCellsInnerTexts(page, 'title');
         expect(secondTitles).to.deep.equal(secondTitles.sort((a, b) => b.localeCompare(a)));
 
         // Toggle to clear this sorting
@@ -530,7 +559,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log titles to no longer be sorted in any way
-        const thirdTitles = await getAllDataFields(page, 'title');
+        const thirdTitles = await getColumnCellsInnerTexts(page, 'title');
         expect(thirdTitles).to.not.deep.equal(firstTitles);
         expect(thirdTitles).to.not.deep.equal(secondTitles);
 
@@ -540,7 +569,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the authors to be in alphabetical order
-        const firstAuthors = await getAllDataFields(page, 'author');
+        const firstAuthors = await getColumnCellsInnerTexts(page, 'author');
         expect(firstAuthors).to.deep.equal(firstAuthors.sort());
 
         // Sort by creation date in ascending manner
@@ -549,7 +578,7 @@ module.exports = () => {
         await waitForTimeout(300);
 
         // Expect the log author column to be unsorted
-        const secondAuthors = await getAllDataFields(page, 'author');
+        const secondAuthors = await getColumnCellsInnerTexts(page, 'author');
         expect(secondAuthors).to.not.deep.equal(firstAuthors);
     });
 
@@ -813,13 +842,8 @@ module.exports = () => {
         // Close filter toggle
         await pressElement(page, '#openFilterToggle');
 
-        await page.waitForSelector('#row119-runs a');
-        await pressElement(page, '#row119-runs a');
-
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('runNumber=2');
+        await waitForNavigation(page, () => pressElement(page, '#row119-runs a'));
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: 2 })).to.be.eql({});
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
@@ -836,14 +860,7 @@ module.exports = () => {
 
         // Insert some text into the filter
         await fillInput(page, '#titleFilterText', log119Title);
-
-        // Await waitForNetworkIdleAndRedraw(page);
-        await page.waitForSelector('#row119-lhcFills a');
-        await pressElement(page, '#row119-lhcFills a');
-
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=lhc-fill-details');
-        expect(urlParameters).to.contain('fillNumber=1');
+        await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
+        expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', fillNumber: 1 })).to.be.eql({});
     });
 };

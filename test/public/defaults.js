@@ -16,6 +16,7 @@ const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const dateAndTime = require('date-and-time');
 
 const { expect } = chai;
 
@@ -123,14 +124,12 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForSelector(selector);
+    const elementHandler = await page.waitForSelector(selector, { timeout: 250 });
 
     if (jsClick) {
-        await page.$eval(selector, (element) => {
-            element.click();
-        });
+        await elementHandler.evaluate((element) => element.click());
     } else {
-        await page.click(selector);
+        await elementHandler.click(selector);
     }
 };
 
@@ -256,21 +255,35 @@ module.exports.getFirstRow = async (table, page) => {
 };
 
 /**
- * Special method built to gather all currently visible table entities from a specific column into an array
- * @param {Object} page An object representing the browser page being used by Puppeteer
- * @param {string} key The key for the column to gather entities of
- * @return {Promise<Array>} An array containing all table entities of a column, in the order displayed by the browser
+ * Return the inner text of all the cells of a given column of the first table found in the page
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} key the key of the column from which data must be retrieved
+ * @return {Promise<string[]>} resolves with the list of all cells inner texts
  */
-module.exports.getAllDataFields = async (page, key) => {
-    const allData = await page.$$('td');
-    return await allData.reduce(async (accumulator, data) => {
-        const id = await page.evaluate((element) => element.id, data);
-        if (id.endsWith(`-${key}`)) {
-            const text = await page.evaluate((element) => element.innerText, data);
-            (await accumulator).push(text);
+const getColumnCellsInnerTexts = async (page, key) => page.$$eval(
+    `table tbody .column-${key}`,
+    (cells) => cells.map((cell) => cell.innerText),
+);
+
+module.exports.getColumnCellsInnerTexts = getColumnCellsInnerTexts;
+
+/**
+ * Special method built to gather all currently visible data from given columns into array of objects
+ * @param {puppeteer.Page} page An object representing the browser page being used by Puppeteer
+ * @param {string[]} columnKeys The keys for the columns to gather entities of
+ * @return {Promise<Object<string, string>>} An array containing all table partial entities of a columns, in the order displayed by the browser
+ */
+module.exports.getTableDataSlice = async (page, columnKeys) => {
+    const result = [];
+    for (const row of await page.$$('table tbody tr')) {
+        const entity = {};
+        for (const columnKey of columnKeys) {
+            entity[columnKey] = await row.$eval(`td.column-${columnKey}`, ({ innerText }) => innerText);
         }
-        return accumulator;
-    }, []);
+        result.push(entity);
+    }
+    return result;
 };
 
 /**
@@ -291,12 +304,25 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInnerText(await page.$(selector))).to.equal(innerText);
+    const actualInnerText = await getInnerText(await page.waitForSelector(selector, { timeout: 200 }));
+    expect(actualInnerText).to.equal(innerText);
 };
 
 /**
  * Expect an element to have a text valid against givne validator
+ * @param {Object} page Puppeteer page object.
+ * @param {string} selector Css selector.
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @return {Promise<void>} resolves once the text has been checked
+ */
+module.exports.expectInnerTextTo = async (page, selector, validator) => {
+    await page.waitForSelector(selector, { timeout: 200 });
+    const actualInnerText = await getInnerText(await page.$(selector));
+    expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
+};
+
+/**
+ * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
@@ -369,7 +395,7 @@ module.exports.getPopoverContent = getPopoverContent;
  * @param {{$: function}} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
  * @param {number} columnIndex the index of the column to look for balloon presence
- * @returns {Promise<void>} void promise
+ * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
@@ -417,7 +443,7 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector);
+    await page.waitForSelector(inputSelector, { timeout: 500 });
     await page.evaluate((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
         element.value = value;
@@ -463,7 +489,8 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
     const ret = {};
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
-        if (expectedUrlParameters[key] !== value) {
+        // Convert expected to string, if it is a number for example
+        if (`${expectedUrlParameters[key]}` !== value) {
             ret[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,
@@ -474,22 +501,59 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
 };
 
 /**
- * Call a trigger function, wait for the table to display a loading spinner then wait for the loading spinner to be removed.
+ * Method to check cells of columns with given id have expected innerText
+ *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {function} triggerFunction function called to trigger table data loading
- * @return {Promise} promise
+ * @param {stirng} columnId column id
+ * @param {string[]} [expectedInnerTextValues] values expected in columns
+ *
+ * @return {Promise<void>} resolve once column values were checked
  */
-module.exports.waitForTableDataReload = (page, triggerFunction) => Promise.all([
-    page.waitForSelector('table .atom-spinner'),
-    triggerFunction(),
-]).then(() => page.waitForSelector('table .atom-spinner', { hidden: true }));
+module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
+    const size = expectedInnerTextValues.length;
+
+    await page.waitForFunction(
+        (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
+        { timeout: 500 },
+        size,
+    );
+
+    expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
+};
+
+/**
+ * Generic method to validate inner text of cells belonging column with given id.
+ * It checks exact match with given values
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} columnId column id
+ * @param {string} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
+ * @param {object} options options
+ * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
+ * @param {boolean} [options.negation] if true it's expected not to match given regex
+ *
+ * @return {Promise<void>} revoled once column values were checked
+ */
+module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
+    const {
+        valuesCheckingMode = 'every',
+        negation = false,
+    } = options;
+    await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
+        // Browser context, be careful when modifying
+        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return names.length
+            && names[valuesCheckingMode]((name) =>
+                negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
+    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
+};
 
 /**
  * Tests whether sorting of main table by column with given id works properly
  * It is required there are a least two rows in the table
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} columnId subject column id
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once table sorting was successfully checked
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
@@ -498,25 +562,19 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
     expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
-    const notOrderData = await this.getAllDataFields(page, columnId);
+    const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
     // Sort in ASCENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
-
-    let targetColumnValues = await this.getAllDataFields(page, columnId);
-    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
-    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort());
+    await this.pressElement(page, `th#${columnId}`);
+    this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
     // Sort in DESCSENDING manner
-    await this.waitForTableDataReload(page, () => this.pressElement(`th#${columnId}`));
-
-    targetColumnValues = await this.getAllDataFields(page, columnId);
-    expect(targetColumnValues, `Too few values for ${columnId} column or there is no such column`).to.be.length.greaterThan(1);
-    expect(targetColumnValues).to.have.all.deep.ordered.members(targetColumnValues.sort().reverse());
+    await this.pressElement(page, `th#${columnId}`);
+    this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
     // Revoke sorting
-    targetColumnValues = await this.getAllDataFields(page, columnId);
-    expect(targetColumnValues).to.have.all.ordered.members(notOrderData);
+    await this.pressElement(page, `th#${columnId}`);
+    this.expectColumnValues(page, columnId, notOrderData);
 };
 
 /**
@@ -524,12 +582,12 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @param {puppeteer.Page} page the puppeteer page
  * @param {Map<string, function<string, boolean>>} validators mapping of column names to cell data validator,
  * each validator must return value `true` if content is ok, false otherwise
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
     for (const [columnId, validator] of validators) {
-        const columnData = await this.getAllDataFields(page, columnId);
+        const columnData = await getColumnCellsInnerTexts(page, columnId);
         expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validator(cellData)),
@@ -537,3 +595,69 @@ module.exports.validateTableData = async (page, validators) => {
         ).to.be.true;
     }
 };
+
+/**
+ * Listener accepting browser confirmation dialog
+ * @param {page.dialog} dialog dialog
+ * @return {void}
+ */
+const acceptDialogEventListener = (dialog) => dialog.accept();
+
+/**
+ * Listener dismissing browser confirmation dialog
+ * @param {page.dialog} dialog dialog
+ * @return {void}
+ */
+const dismissDialogEventListener = (dialog) => dialog.dismiss();
+
+/**
+ * Set listener on dialog event to accept it
+ * @param {puppeteer.page} page page handler
+ * @return {void}
+ */
+module.exports.setConfirmationDialogToBeAccepted = (page) => {
+    page.off('dialog', dismissDialogEventListener);
+    page.on('dialog', acceptDialogEventListener);
+};
+
+/**
+ * Set listener on dialog event to dismiss it
+ * @param {puppeteer.page} page page handler
+ * @return {void}
+ */
+module.exports.setConfirmationDialogToBeDismissed = (page) => {
+    page.off('dialog', acceptDialogEventListener);
+    page.on('dialog', dismissDialogEventListener);
+};
+
+/**
+ * Unset accept and dismiss listeners off dialog event
+ * @param {puppeteer.page} page page handler
+ * @return {void}
+ */
+module.exports.unsetConfirmationdialogActions = (page) => {
+    page.off('dialog', dismissDialogEventListener);
+    page.off('dialog', acceptDialogEventListener);
+};
+
+/**
+ * Expect a link to have a given text and href
+ * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer element or page object.
+ * @param {string} selector css selector.
+ * @param {string} [expected.href] expected href of the link
+ * @param {string} [expected.innerText] expected inner text of the link
+ * @return {Promise<void>} promise
+ */
+module.exports.expectLink = async (element, selector, { href, innerText }) => {
+    await element.waitForSelector(selector, { timeout: 200 });
+    const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
+    expect(actualLinkProperties).to.eql({ href, innerText });
+};
+
+/**
+ * Validate date string against given format
+ * @param {string} date date (time) string
+ * @param {string} [format = 'DD/MM/YYYY hh:mm:ss'] format to validate against
+ * @return {boolean} true if format is correct, false otherwise
+ */
+module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
