@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.89.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
+* Notable changes for users:
+  * Fixed the error thrown when updating environment through gRPC API (Fix was not properly done in 0.89.1)
+
+## [0.89.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
+* Notable changes for users:
+  * Fixed the error thrown when updating environment through gRPC API
+
+## [0.89.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
+* Notable changes for users:
+  * Added filtering to Run Per Data Pass
+  * Fixed DPL detectors order
+  * Added QC summary legend to Runs Per Data/Simulation Pass overviews
+  * Allow create multiple QC flags at once
+  * Allow create QC flag specifying data pass name or simulation pass name
+* Notable change for developers:
+  * Repeated fields in proto files are now properly handled
+  * Breaking changes in c++ library:
+    * Removed proto bookkeeping API
+    * Moved DPL process registration to non-proto API
+    * Remove Get runs functions
+  * Added the gRPC API to create QC flags
+
 ## [0.88.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.88.0)
 * Notable changes for users:
   * QC Flag deletion now requires confirmation via browser prompt.
