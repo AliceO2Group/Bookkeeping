@@ -29,7 +29,7 @@ const {
     fillInput,
     getInnerText,
     getPopoverSelector,
-    waitForTimeout, waitForNavigation, checkMismatchingUrlParam,
+    waitForTimeout, waitForNavigation, checkMismatchingUrlParam, waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -81,7 +81,7 @@ module.exports = () => {
 
     it('Should have balloon on title, tags and runs columns', async () => {
         await goToPage(page, 'log-overview');
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 10, { timeout: 1500 });
+        await page.waitForSelector('tbody tr:not(.loading-row)');
 
         await checkColumnBalloon(page, 1, 1);
         await checkColumnBalloon(page, 1, 4);
@@ -101,7 +101,7 @@ module.exports = () => {
         // Insert some text into the filter
         await page.type('#titleFilterText', 'first');
         // Wait until the only log from seeder is in table
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 1, { timeout: 1500 });
+        await waitForTableLength(page, 1);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -111,7 +111,7 @@ module.exports = () => {
         // Insert some other text into the filter
         await page.type('#titleFilterText', ' bogusbogusbogus');
         // Wait until there is no row with data left in the table
-        await page.waitForFunction(() => document.querySelector('#row1') === null, { timeout: 1500 });
+        await waitForTableLength(page, 0);
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
@@ -124,7 +124,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.overviewModel.reset();
         });
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 10, { timeout: 1500 });
+        await waitForTableLength(page, 10);
 
         // Expect the total number of rows to once more equal the original total
         const unfilteredRows = await page.$$('table tr');
@@ -145,7 +145,7 @@ module.exports = () => {
 
         // Insert some text into the filter
         await fillInput(page, '#contentFilterText', 'particle');
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 2, { timeout: 1500 });
+        await waitForTableLength(page, 2);
 
         // Expect the new total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -154,7 +154,7 @@ module.exports = () => {
 
         // Insert some other text into the filter
         await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere');
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 1, { timeout: 1500 });
+        await waitForTableLength(page, 0);
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
@@ -168,7 +168,7 @@ module.exports = () => {
             model.logs.overviewModel.reset();
         });
 
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 10, { timeout: 1500 });
+        await waitForTableLength(page, 10);
 
         // Expect the total number of rows to once more equal the original total
         const unfilteredRows = await page.$$('table tr');
@@ -189,8 +189,8 @@ module.exports = () => {
 
         // Insert some text into the filter
         await page.type('#authorFilterText', 'Jane');
-        // Wait until there is only 1 row after filtering
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 1, { timeout: 1500 });
+        // Wait until there are no row after filtering
+        await waitForTableLength(page, 0);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$$('table tr');
@@ -200,7 +200,7 @@ module.exports = () => {
         // Insert some other text into the filter
         await page.type('#authorFilterText', ' DoesNotExist');
         // Wait until there is no row with data left in the table
-        await page.waitForFunction(() => document.querySelector('#row1') === null, { timeout: 1500 });
+        await page.waitForSelector('.empty-row');
 
         // Expect the table to be empty
         const secondFilteredRows = await page.$$('table tr');
@@ -214,7 +214,7 @@ module.exports = () => {
             model.logs.overviewModel.reset();
         });
         await page.waitForNetworkIdle();
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 10, { timeout: 1500 });
+        await waitForTableLength(page, 10);
 
         // Expect the total number of rows to once more equal the original total
         const unfilteredRows = await page.$$('table tr');
@@ -251,7 +251,7 @@ module.exports = () => {
             model.logs.overviewModel.pagination.itemsPerPage = 20;
         });
 
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 20, { timeout: 1500 });
+        await waitForTableLength(page, 20);
 
         // Update original number of rows with the new limit
         const originalRows = await page.$('#totalRowsCount');
@@ -264,7 +264,7 @@ module.exports = () => {
             + limitDate.getFullYear();
         await page.focus('#createdFilterFrom');
         await page.keyboard.type(limit);
-        await page.waitForFunction(() => document.querySelectorAll('table tbody tr').length === 1, { timeout: 1500 });
+        await waitForTableLength(page, 1);
 
         // Expect the (new) total number of rows to be less than the original number of rows
         const firstFilteredRows = await page.$('#totalRowsCount');
@@ -276,7 +276,6 @@ module.exports = () => {
         await page.keyboard.type(limit);
         await waitForTimeout(300);
 
-        // Only 1 log matches the date in the seeders
         const secondFilteredRows = await page.$('#totalRowsCount');
         const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
         expect(secondFilteredNumberOfRows).to.equal(1);
@@ -319,7 +318,7 @@ module.exports = () => {
 
         // Deselect the filter and wait for the changes to process
         await pressElement(page, `#${firstCheckboxId}`);
-        await waitForTimeout(300);
+        await waitForTableLength(page, 10);
 
         // Expect the total number of rows to equal the original total
         const firstUnfilteredRows = await page.$$('table tr');
@@ -445,7 +444,6 @@ module.exports = () => {
         await waitForNetworkIdleAndRedraw(page);
         await waitForTimeout(1000);
 
-        // Expect that 2 logs from the seeders contain runs 1 and 2
         const firstFilteredRows = await page.$$('table tbody tr');
         const firstFilteredNumberOfRows = firstFilteredRows.length;
         expect(firstFilteredNumberOfRows).to.be.equal(2);
