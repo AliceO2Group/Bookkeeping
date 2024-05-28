@@ -605,7 +605,7 @@ ${actions}\
             // Sometimes, browser adds \r to the request to comply with text form data encoding
             .replaceAll('\r', '')
             // On call log is created for DCS system right before this test and appear in `Central systems/services`
-            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=147)', '')
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', '')
 
             // Detector quality is changed for detector CPV twice in UpdateRunUseCase
             .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=138)', '')

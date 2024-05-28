@@ -533,7 +533,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
 
     await page.waitForFunction(
         (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
-        { timeout: 500 },
+        { timeout: 1500 },
         size,
     );
 

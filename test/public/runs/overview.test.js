@@ -26,7 +26,7 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector, waitForTableLength } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
@@ -373,10 +373,7 @@ module.exports = () => {
          */
         const checkTableSizeAndDefinition = async (size, authorizedRunDefinition) => {
             // Wait for the table to have the proper size
-            await Promise.all([
-                page.waitForSelector(`tbody tr:not(loading-row):nth-child(${size})`, { timeout: 500 }),
-                page.waitForSelector(`tbody tr:nth-child(${size + 1})`, { hidden: true, timeout: 500 }),
-            ]);
+            await waitForTableLength(page, size);
 
             const definitions = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
                 const rowId = row.id;
