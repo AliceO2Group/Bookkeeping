@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.89.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
+* Notable changes for users:
+  * Fixed the error thrown when updating environment through gRPC API (Fix was not properly done in 0.89.1)
+
 ## [0.89.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
 * Notable changes for users:
   * Fixed the error thrown when updating environment through gRPC API
