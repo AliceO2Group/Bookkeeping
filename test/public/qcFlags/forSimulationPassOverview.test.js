@@ -27,6 +27,7 @@ const {
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
 const { waitForNavigation } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -39,6 +40,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {

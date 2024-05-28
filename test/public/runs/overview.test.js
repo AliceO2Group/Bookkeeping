@@ -28,6 +28,7 @@ const { RunDefinition } = require('../../../lib/server/services/run/getRunDefini
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector, waitForTableLength } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -58,6 +59,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
