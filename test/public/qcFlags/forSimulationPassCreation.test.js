@@ -23,6 +23,7 @@ const {
     waitForNavigation,
     getColumnCellsInnerTexts,
     fillInput,
+    expectColumnValues,
 } = require('../defaults');
 
 const { expect } = chai;
@@ -172,8 +173,6 @@ module.exports = () => {
             dplDetectorId: '1',
         })).to.be.eql({});
 
-        await validateElement(page, 'tbody tr td:nth-of-type(2)');
-        const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        expect(flagTypes[0]).to.be.equal('Unknown Quality');
+        await expectColumnValues(page, 'flagType', ['Unknown Quality']);
     });
 };
