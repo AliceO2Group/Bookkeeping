@@ -555,7 +555,8 @@ ${actions}\
 
         await pressElement(page, '#magnets-add');
 
-        const { formatTimestampForDateTimeInput, extractTimestampFromDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
+        const { formatTimestampForDateTimeInput, extractTimestampFromDateTimeInput } =
+            await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
         const { getLocaleDateAndTime, formatFullDate } = await import('../../../lib/public/utilities/dateUtils.mjs');
 
         const magnetTimestamp = new Date() - 10000;
@@ -565,7 +566,7 @@ ${actions}\
             getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(1)'),
             getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(2)'),
         ]);
-        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({date: magnet0Date, time: magnet0Time}));
+        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({ date: magnet0Date, time: magnet0Time }));
 
         await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
         await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
