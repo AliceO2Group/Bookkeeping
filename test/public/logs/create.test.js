@@ -607,10 +607,6 @@ ${actions}\
             // On call log is created for DCS system right before this test and appear in `Central systems/services`
             .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', '')
 
-            // Detector quality is changed for detector CPV twice in UpdateRunUseCase
-            .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=138)', '')
-            .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=137)', '')
-
             /*
              * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
              * 123123123 is ended because fill 123123 is created a bit later (both in CreateLhcFillUseCase.test.js)

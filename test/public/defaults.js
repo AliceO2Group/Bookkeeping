@@ -103,12 +103,11 @@ const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout
 module.exports.waitForTimeout = waitForTimeout;
 
 /**
- * Waits for the number of table rows to meet the expected size, with an optional timeout parameter.
- * By default, the function will wait up to 500 milliseconds.
+ * Waits for the number of table rows to meet the expected size.
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
- * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out (default is 500ms).
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
 const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
@@ -120,6 +119,19 @@ const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
 };
 
 module.exports.waitForTableLength = waitForTableToLength;
+
+/**
+ * Waits for the table on the page to be empty.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the table is empty, or the timeout is reached.
+ */
+const waitForEmptyTable = async (page, timeout = 500) => {
+    await page.waitForSelector('table tbody tr.empty-row', { timeout: timeout });
+};
+
+module.exports.waitForEmptyTable = waitForEmptyTable;
 
 /**
  * Execute the given navigation function and wait for navigation
