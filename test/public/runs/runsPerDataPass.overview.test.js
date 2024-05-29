@@ -30,6 +30,7 @@ const {
 const { waitForDownload } = require('../../utilities/waitForDownload');
 const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -62,6 +63,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -289,8 +291,13 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
+
+        await fillInput(page, '#tag-dropdown-search-input', 'FOOD');
         await pressElement(page, '#tag-dropdown-option-FOOD');
+
+        await fillInput(page, '#tag-dropdown-search-input', 'RUN');
         await pressElement(page, '#tag-dropdown-option-RUN');
+
         await expectColumnValues(page, 'runNumber', ['106']);
 
         await pressElement(page, '#reset-filters');
