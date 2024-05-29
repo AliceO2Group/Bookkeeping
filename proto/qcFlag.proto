@@ -32,9 +32,9 @@ message SimulationPassQcFlagCreationRequest {
 message QcFlag {
   uint32 flagTypeId = 1;
   // Unix timestamp (ms) since which QC flag applies to data taken during given run
-  uint64 from = 2;
+  optional uint64 from = 2;
   // Unix timestamp (ms) until which QC flag applies to data taken during given run
-  uint64 to = 3;
+  optional uint64 to = 3;
   // string indicating why a given flag was given, providing some details about the nature of the problem
   optional string comment = 4;
   // string indicating what produced this flag.
