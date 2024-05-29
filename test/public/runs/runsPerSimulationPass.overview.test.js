@@ -34,6 +34,7 @@ const { waitForDownload } = require('../../utilities/waitForDownload');
 const { expect } = chai;
 const { waitForNavigation } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const DETECTORS = [
     'CPV',
@@ -64,6 +65,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
