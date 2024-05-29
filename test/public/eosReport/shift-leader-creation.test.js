@@ -109,9 +109,9 @@ module.exports = () => {
 
         await page.waitForSelector('#type-specific #magnets-start input:nth-of-type(1)');
         await page.focus('#type-specific #magnets-start input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-start');
-        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
         await page.keyboard.type('dipole-start');
+        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-start');
 
         await page.click('#type-specific #magnets-add');
         await page.click('#type-specific #magnets-add');
@@ -134,9 +134,9 @@ module.exports = () => {
         await page.keyboard.type('solenoid-2');
 
         await page.focus('#type-specific #magnets-end input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-end');
-        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
         await page.keyboard.type('dipole-end');
+        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-end');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
         await page.focus('#from-previous-shifter .CodeMirror textarea');
