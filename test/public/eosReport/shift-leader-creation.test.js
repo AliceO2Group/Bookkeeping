@@ -122,16 +122,16 @@ module.exports = () => {
         await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(1)', magnet1Date, ['change']);
         await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(2)', magnet1Time, ['change']);
         await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-1');
-        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-1');
+        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
 
         await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(1)', magnet2Date, ['change']);
         await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(2)', magnet2Time, ['change']);
         await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-2');
-        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-2');
+        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-2');
 
         await page.focus('#type-specific #magnets-end input:nth-of-type(1)');
         await page.keyboard.type('solenoid-end');
