@@ -28,6 +28,7 @@ const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQu
 const { waitForTimeout } = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -60,6 +61,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
