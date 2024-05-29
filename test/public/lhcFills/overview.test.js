@@ -20,6 +20,7 @@ const {
     checkColumnBalloon,
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw, waitForTimeout, expectInnerText } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -37,6 +38,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -107,8 +109,8 @@ module.exports = () => {
         await waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(8);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(6);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(6);
     });
 
     it('Should have balloon on runs column', async () => {
@@ -213,10 +215,10 @@ module.exports = () => {
 
     it ('should successfully display some statistics', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await expectInnerText(page, 'tbody tr:nth-child(3) td:nth-child(6)', '41.67%');
-        await expectInnerText(page, 'tbody tr:nth-child(3) td:nth-child(7)', '03:00:00\n(25.00%)');
-        await expectInnerText(page, 'tbody tr:nth-child(3) td:nth-child(8)', '02:00:00\n(16.67%)');
-        await expectInnerText(page, 'tbody tr:nth-child(3) td:nth-child(9)', '01:40:00');
-        await expectInnerText(page, 'tbody tr:nth-child(3) td:nth-child(10)', '05:00:00');
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
     });
 };
