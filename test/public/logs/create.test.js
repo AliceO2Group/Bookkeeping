@@ -16,6 +16,7 @@ const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -42,6 +43,8 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
 
         /*
          * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
@@ -602,11 +605,7 @@ ${actions}\
             // Sometimes, browser adds \r to the request to comply with text form data encoding
             .replaceAll('\r', '')
             // On call log is created for DCS system right before this test and appear in `Central systems/services`
-            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=147)', '')
-
-            // Detector quality is changed for detector CPV twice in UpdateRunUseCase
-            .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=138)', '')
-            .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=137)', '')
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', '')
 
             /*
              * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
