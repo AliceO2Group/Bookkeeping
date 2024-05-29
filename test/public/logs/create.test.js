@@ -652,8 +652,8 @@ ${lhcPlans}
 ### Last 24h
 
 #### Magnets
-[${magnet0DateTime.date}, ${magnet0DateTime.time}] L3 = -, Dipole = -
-[${magnet1DateTime.date}, ${magnet1DateTime.time}] L3 = solenoid-1, Dipole = dipole-1
+[${magnet0DateTime.date}, ${magnet0DateTime.time}] Dipole = -, L3 = -
+[${magnet1DateTime.date}, ${magnet1DateTime.time}] Dipole = dipole-1, L3 = solenoid-1
 
 ### Plans
 ${alicePlans}

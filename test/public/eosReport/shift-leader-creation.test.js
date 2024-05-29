@@ -173,10 +173,10 @@ module.exports = () => {
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes(`## Magnets
-- ${magnetStart} - Solenoid solenoid-start - Dipole dipole-start
-- ${formatShiftDate(magnet2Timestamp, { time: true })} - Solenoid solenoid-2 - Dipole dipole-2
-- ${formatShiftDate(magnet1Timestamp, { time: true })} - Solenoid solenoid-1 - Dipole dipole-1
-- ${magnetEnd} - Solenoid solenoid-end - Dipole dipole-end`)).to.be.true;
+- ${magnetStart} - Dipole dipole-start - Solenoid solenoid-start
+- ${formatShiftDate(magnet2Timestamp, { time: true })} - Dipole dipole-2 - Solenoid solenoid-2
+- ${formatShiftDate(magnet1Timestamp, { time: true })} - Dipole dipole-1 - Solenoid solenoid-1
+- ${magnetEnd} - Dipole dipole-end - Solenoid solenoid-end`)).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
