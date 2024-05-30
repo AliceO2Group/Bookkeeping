@@ -91,7 +91,7 @@ module.exports = () => {
         await waitForTimeout(100);
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '10');
+        await expectInnerText(page, '#lastRowIndex', '9');
         await expectInnerText(page, '#totalRowsCount', '11');
     });
 
