@@ -352,11 +352,6 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
-module.exports.expectSelectToBe = async (page, selector, selectedOption) => {
-    await page.waitForSelector(selector);
-    expect(await (await page.$(selector)).evaluate(({ value }) => value)).to.be.equal(selectedOption);
-};
-
 /**
  * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.

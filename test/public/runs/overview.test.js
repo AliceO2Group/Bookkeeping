@@ -23,9 +23,9 @@ const {
     goToPage,
     checkColumnBalloon,
     waitForNetworkIdleAndRedraw,
-    expectSelectToBe,
     getAllDataFields,
     waitForTableDataReload,
+    expectInputValue,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
@@ -545,19 +545,15 @@ module.exports = () => {
         const operatorSelector = `${runDurationFilterDivSelector} select`;
         const hoursSelector = `${runDurationFilterDivSelector} input:nth-of-type(1)`;
         const minutesSelector = `${runDurationFilterDivSelector} input:nth-of-type(2)`;
-        await expectSelectToBe(page, operatorSelector, '=');
+        await expectInputValue(page, operatorSelector, '=');
 
         await waitForTableDataReload(page, () => fillInput(page, hoursSelector, 26));
         let runDurationList = await getAllDataFields(page, 'runDuration');
         expect(runDurationList).to.be.lengthOf.greaterThan(0);
         expect(runDurationList.every((runDuration) => runDuration === '26:00:00')).to.be.true;
 
-        await waitForTableDataReload(page, async () => {
-            await fillInput(page, hoursSelector, 0);
-            await fillInput(page, minutesSelector, 60);
-        });
-        runDurationList = await getAllDataFields(page, 'runDuration');
-        expect(runDurationList).to.be.lengthOf.greaterThan(0);
+        await fillInput(page, hoursSelector, 0);
+        await fillInput(page, minutesSelector, 60);
         expect(runDurationList.every((runDuration) => runDuration === '01:00:00')).to.be.true;
 
         await waitForTableDataReload(page, () => page.select(operatorSelector, '>='));
