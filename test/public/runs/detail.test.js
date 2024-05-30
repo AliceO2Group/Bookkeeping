@@ -24,6 +24,7 @@ const {
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -52,6 +53,7 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);

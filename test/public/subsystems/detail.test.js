@@ -14,6 +14,7 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -27,7 +28,9 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
+
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
