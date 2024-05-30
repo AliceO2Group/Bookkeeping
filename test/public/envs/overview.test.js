@@ -24,6 +24,7 @@ const {
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -50,6 +51,8 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
     });
 
     after(async () => {

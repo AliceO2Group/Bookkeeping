@@ -27,6 +27,7 @@ const {
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
 const { waitForNavigation } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -39,6 +40,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -116,8 +118,8 @@ module.exports = () => {
         } });
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '1');
-        await expectInnerText(page, '#totalRowsCount', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many entires are available per page', async () => {

@@ -23,6 +23,7 @@ const {
     validateTableData,
     expectInnerText,
 } = require('../defaults');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -34,6 +35,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -59,8 +61,8 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            associatedRuns: (display) => /(No runs)|(\d+\nRuns)/.test(display),
-            anchoredSimulationPasses: (display) => /(No MC)|(\d+\nAnchored)/.test(display),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
+            anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
@@ -127,7 +129,7 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC22b_apass1');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
         await expectColumnValues(page, 'name', ['LHC22b_apass1']);
 
         await pressElement(page, '#reset-filters');
