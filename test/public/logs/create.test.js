@@ -10,13 +10,13 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, expectInputValue } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, getInputValue, expectInputValue } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -43,6 +43,8 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
 
         /*
          * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
@@ -104,7 +106,7 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
-        expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
+        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '1' })).to.eql({});
     });
 
     it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
@@ -496,8 +498,8 @@ module.exports = () => {
         const shifterPosition = 'ECS';
         await page.select('#shifterPosition', shifterPosition);
 
-        const beamMode = 'Beam mode';
-        await fillInput(page, '#lhcBeamMode', beamMode);
+        const beamMode = 'INJECTION PHYSICS BEAM';
+        await page.select('#lhcBeamMode', beamMode);
 
         const description = 'Description\nof the issue';
         await pressElement(page, '#issue-description ~ .CodeMirror');
@@ -541,5 +543,161 @@ ${actions}\
         const tags = lastLog.tags.map(({ text }) => text);
         expect(tags).to.lengthOf(3);
         expect(tags).to.have.members(['oncall', `${shifterPosition} Shifter`, detectorOrSubsystem]);
+    });
+
+    it('should successfully switch to RC daily log template', async () => {
+        await goToPage(page, 'log-create');
+
+        // Log template is the first select of the page
+        await page.waitForSelector('select');
+        await page.select('select', 'rc-daily-meeting');
+
+        const lhcPlans = 'LHC\nPlans';
+        await pressElement(page, '#lhc-plans ~ .CodeMirror');
+        await page.keyboard.type(lhcPlans);
+
+        await pressElement(page, '#magnets-add');
+
+        const { formatTimestampForDateTimeInput, extractTimestampFromDateTimeInput } =
+            await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
+        const { getLocaleDateAndTime, formatFullDate } = await import('../../../lib/public/utilities/dateUtils.mjs');
+
+        const magnetTimestamp = new Date() - 10000;
+        const { date: magnetDate, time: magnetTime } = formatTimestampForDateTimeInput(magnetTimestamp, true);
+
+        const [magnet0Date, magnet0Time] = await Promise.all([
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(1)'),
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(2)'),
+        ]);
+        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({ date: magnet0Date, time: magnet0Time }));
+
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
+        await page.focus('#magnets-1 > div > input:nth-of-type(1)');
+        await page.keyboard.type('dipole-1');
+        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
+
+        const alicePlans = 'Alice\nPlans';
+        await pressElement(page, '#alice-plans ~ .CodeMirror');
+        await page.keyboard.type(alicePlans);
+
+        const access = 'Access\nLast 24h';
+        await pressElement(page, '#access ~ .CodeMirror');
+        await page.keyboard.type(access);
+
+        const pendingRequests = 'Pending\nRequests';
+        await pressElement(page, '#pending-requests ~ .CodeMirror');
+        await page.keyboard.type(pendingRequests);
+
+        const aob = 'Any other\nBusiness';
+        await pressElement(page, '#aob ~ .CodeMirror');
+        await page.keyboard.type(aob);
+
+        await pressElement(page, '#send:not([disabled])');
+
+        await page.waitForNavigation();
+        const expectedTitle = `RC Daily Meeting Minutes ${getLocaleDateAndTime(Date.now()).date}`;
+        await expectInnerText(page, 'h2', expectedTitle);
+
+        const lastLog = await getLastLog();
+        const magnet1DateTime = getLocaleDateAndTime(magnetTimestamp);
+        expect(lastLog.title).to.equal(expectedTitle);
+
+        /*
+         * Remove from the text what depends on previous texts, that may or may not be included the template depending if tests runs in the
+         * afternoon or not
+         */
+        expect(lastLog.text
+            // Sometimes, browser adds \r to the request to comply with text form data encoding
+            .replaceAll('\r', '')
+            // On call log is created for DCS system right before this test and appear in `Central systems/services`
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', '')
+
+            /*
+             * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
+             * 123123123 is ended because fill 123123 is created a bit later (both in CreateLhcFillUseCase.test.js)
+             */
+            .replace(`
+Fill 6 (Single_12b_8_1024_8_2018)
+* Beam type: null
+* Stable beam start: 1565262000000
+* Stable beam end: 1565305200000
+* Duration: 43200
+* Efficiency: 41.67%
+* Time to first run: 03:00:00 (25.00%)
+
+Fill 123123123 (schemename)
+* Beam type: Pb-Pb
+* Stable beam start: 1647961200000
+* Stable beam end: 1647961200000
+* Duration: 600
+* Efficiency: 0.00%
+* Time to first run: 00:00:00 (0.00%)`, '-'))
+            .to.equal(`\
+# RC Daily Meeting Minutes
+Date: ${formatFullDate(new Date())}
+
+## LHC
+
+### Last 24h
+-
+
+### Plans
+${lhcPlans}
+
+## ALICE
+
+### Last 24h
+
+#### Magnets
+[${magnet0DateTime.date}, ${magnet0DateTime.time}] Dipole = -, L3 = -
+[${magnet1DateTime.date}, ${magnet1DateTime.time}] Dipole = dipole-1, L3 = solenoid-1
+
+### Plans
+${alicePlans}
+
+## Runs to be checked
+Runs | ACO | CPV | CTP | EMC | FDD | FIT | FT0 | FV0 | HMP | ITS | MCH | MFT | MID | PHS | TOF | TPC | TRD | ZDC
+--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---
+
+## Access
+${access}
+
+## Central systems/services
+* ECS and FLP: 
+* CRU: 
+* Bookkeeping: 
+* EOS: 
+* Event display: 
+* EPN: 
+* PDP: 
+* QC: 
+* CTP: 
+* DCS: 
+* LHC_IF: 
+
+## Detectors
+* FIT: 
+* ITS: 
+* MFT: 
+* MCH: 
+* MID: 
+* PHOS: 
+* CPV: 
+* TOF: 
+* TPC: 
+* TRD: 
+* ZDC: 
+
+## Pending request
+${pendingRequests}
+
+## AOB
+${aob}\
+`);
+        const tags = lastLog.tags.map(({ text }) => text);
+        expect(tags).to.lengthOf(2);
+        expect(tags).to.have.members(['p2info', 'RC']);
     });
 };
