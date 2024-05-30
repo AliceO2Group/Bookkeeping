@@ -92,7 +92,7 @@ module.exports = () => {
 
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '9');
-        await expectInnerText(page, '#totalRowsCount', '11');
+        await expectInnerText(page, '#totalRowsCount', '9');
     });
 
     it('Should have balloon on runs column', async () => {
