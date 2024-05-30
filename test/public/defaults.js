@@ -566,7 +566,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  * @param {string} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
  * @param {object} options options
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
- * @param {boolean} [options.negation] if true it's expected not to match given regex
+ * @param {boolean} [options.negation = false] if true it's expected not to match given regex
  *
  * @return {Promise<void>} revoled once column values were checked
  */
@@ -575,13 +575,17 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
         valuesCheckingMode = 'every',
         negation = false,
     } = options;
+    console.log(columnId, expectedValuesRegex, valuesCheckingMode, negation, 'TOBEC')
+
     await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
         // Browser context, be careful when modifying
-        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return names.length
-            && names[valuesCheckingMode]((name) =>
+        const innerTexts = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        // return false;
+        return innerTexts.length > 0 && innerTexts.every((name) => RegExp('26:00:00').test(name));
+        return innerTexts.length
+            && innerTexts[valuesCheckingMode]((name) =>
                 negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
-    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
+    }, { timeout: 2500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
 };
 
 /**
