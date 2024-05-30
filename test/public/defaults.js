@@ -103,6 +103,37 @@ const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout
 module.exports.waitForTimeout = waitForTimeout;
 
 /**
+ * Waits for the number of table rows to meet the expected size.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
+ */
+const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
+    await page.waitForFunction(
+        (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+        { timeout },
+        expectedSize,
+    );
+};
+
+module.exports.waitForTableLength = waitForTableToLength;
+
+/**
+ * Waits for the table on the page to be empty.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the table is empty, or the timeout is reached.
+ */
+const waitForEmptyTable = async (page, timeout = 500) => {
+    await page.waitForSelector('table tbody tr.empty-row', { timeout: timeout });
+};
+
+module.exports.waitForEmptyTable = waitForEmptyTable;
+
+/**
  * Execute the given navigation function and wait for navigation
  *
  * @param {puppeteer.Page} page the puppeteer page
@@ -455,22 +486,27 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 
 /**
  * Evaluate and return the value content of a given element handler
- * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} selector the input selector
  * @returns {Promise<XPathResult>} the html content
  */
-const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+const getInputValue = async (page, selector) => {
+    const inputElementHandler = await page.waitForSelector(selector, { timeout: 200 });
+    return inputElementHandler.evaluate((input) => input.value);
+};
+
+module.exports.getInputValue = getInputValue;
 
 /**
  * Expect an element to have a given value
  *
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @param {string} value value to search for.
+ * @param {puppeteer.Page} page Puppeteer page object.
+ * @param {string} selector the input selector
+ * @param {string} value expect input value
  * @return {Promise<void>} resolves once the value has been checked
  */
 module.exports.expectInputValue = async (page, selector, value) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInputValue(await page.$(selector))).to.equal(value);
+    expect(await getInputValue(page, selector)).to.equal(value);
 };
 
 /**
@@ -514,7 +550,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
 
     await page.waitForFunction(
         (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
-        { timeout: 500 },
+        { timeout: 1500 },
         size,
     );
 

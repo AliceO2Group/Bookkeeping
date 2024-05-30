@@ -11,11 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, expectInputValue } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, getInputValue, expectInputValue } = require('../defaults');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -42,6 +43,8 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
 
         /*
          * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
@@ -555,18 +558,25 @@ ${actions}\
 
         await pressElement(page, '#magnets-add');
 
-        const { formatTimestampForDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
+        const { formatTimestampForDateTimeInput, extractTimestampFromDateTimeInput } =
+            await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
         const { getLocaleDateAndTime, formatFullDate } = await import('../../../lib/public/utilities/dateUtils.mjs');
 
         const magnetTimestamp = new Date() - 10000;
         const { date: magnetDate, time: magnetTime } = formatTimestampForDateTimeInput(magnetTimestamp, true);
 
-        await fillInput(page, '#magnets-0 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
-        await fillInput(page, '#magnets-0 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
-        await page.focus('#magnets-0 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-0');
-        await page.focus('#magnets-0 > div > input:nth-of-type(2)');
-        await page.keyboard.type('dipole-0');
+        const [magnet0Date, magnet0Time] = await Promise.all([
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(1)'),
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(2)'),
+        ]);
+        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({ date: magnet0Date, time: magnet0Time }));
+
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
+        await page.focus('#magnets-1 > div > input:nth-of-type(1)');
+        await page.keyboard.type('dipole-1');
+        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
 
         const alicePlans = 'Alice\nPlans';
         await pressElement(page, '#alice-plans ~ .CodeMirror');
@@ -591,7 +601,7 @@ ${actions}\
         await expectInnerText(page, 'h2', expectedTitle);
 
         const lastLog = await getLastLog();
-        const magnetDateTime = getLocaleDateAndTime(magnetTimestamp);
+        const magnet1DateTime = getLocaleDateAndTime(magnetTimestamp);
         expect(lastLog.title).to.equal(expectedTitle);
 
         /*
@@ -602,11 +612,7 @@ ${actions}\
             // Sometimes, browser adds \r to the request to comply with text form data encoding
             .replaceAll('\r', '')
             // On call log is created for DCS system right before this test and appear in `Central systems/services`
-            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=147)', '')
-
-            // Detector quality is changed for detector CPV twice in UpdateRunUseCase
-            .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=138)', '')
-            .replace('\n  * [Detector(s) quality for run 1 has been changed](http://localhost:4000?page=log-detail&id=137)', '')
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', '')
 
             /*
              * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
@@ -645,7 +651,8 @@ ${lhcPlans}
 ### Last 24h
 
 #### Magnets
-[${magnetDateTime.date}, ${magnetDateTime.time}] L3 = solenoid-0, Dipole = dipole-0
+[${magnet0DateTime.date}, ${magnet0DateTime.time}] Dipole = -, L3 = -
+[${magnet1DateTime.date}, ${magnet1DateTime.time}] Dipole = dipole-1, L3 = solenoid-1
 
 ### Plans
 ${alicePlans}
