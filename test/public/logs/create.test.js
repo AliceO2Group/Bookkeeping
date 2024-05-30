@@ -574,9 +574,9 @@ ${actions}\
         await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
         await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
         await page.focus('#magnets-1 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-1');
-        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-1');
+        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
 
         const alicePlans = 'Alice\nPlans';
         await pressElement(page, '#alice-plans ~ .CodeMirror');
