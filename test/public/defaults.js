@@ -16,6 +16,7 @@ const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const dateAndTime = require('date-and-time');
 
 const { expect } = chai;
 
@@ -100,6 +101,37 @@ const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout
  * @deprecated
  */
 module.exports.waitForTimeout = waitForTimeout;
+
+/**
+ * Waits for the number of table rows to meet the expected size.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
+ */
+const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
+    await page.waitForFunction(
+        (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+        { timeout },
+        expectedSize,
+    );
+};
+
+module.exports.waitForTableLength = waitForTableToLength;
+
+/**
+ * Waits for the table on the page to be empty.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the table is empty, or the timeout is reached.
+ */
+const waitForEmptyTable = async (page, timeout = 500) => {
+    await page.waitForSelector('table tbody tr.empty-row', { timeout: timeout });
+};
+
+module.exports.waitForEmptyTable = waitForEmptyTable;
 
 /**
  * Execute the given navigation function and wait for navigation
@@ -408,7 +440,7 @@ module.exports.getPopoverContent = getPopoverContent;
  * @param {{$: function}} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
  * @param {number} columnIndex the index of the column to look for balloon presence
- * @returns {Promise<void>} void promise
+ * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
@@ -468,22 +500,27 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 
 /**
  * Evaluate and return the value content of a given element handler
- * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} selector the input selector
  * @returns {Promise<XPathResult>} the html content
  */
-const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+const getInputValue = async (page, selector) => {
+    const inputElementHandler = await page.waitForSelector(selector, { timeout: 200 });
+    return inputElementHandler.evaluate((input) => input.value);
+};
+
+module.exports.getInputValue = getInputValue;
 
 /**
  * Expect an element to have a given value
  *
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @param {string} value value to search for.
+ * @param {puppeteer.Page} page Puppeteer page object.
+ * @param {string} selector the input selector
+ * @param {string} value expect input value
  * @return {Promise<void>} resolves once the value has been checked
  */
 module.exports.expectInputValue = async (page, selector, value) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInputValue(await page.$(selector))).to.equal(value);
+    expect(await getInputValue(page, selector)).to.equal(value);
 };
 
 /**
@@ -520,14 +557,18 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
  * @param {stirng} columnId column id
  * @param {string[]} [expectedInnerTextValues] values expected in columns
  *
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once column values were checked
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    await page.waitForFunction((columnId, expectedInnerTextValues) => {
-        // Browser context, be careful when modifying
-        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return JSON.stringify(names) === JSON.stringify(expectedInnerTextValues);
-    }, { timeout: 1500 }, columnId, expectedInnerTextValues);
+    const size = expectedInnerTextValues.length;
+
+    await page.waitForFunction(
+        (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
+        { timeout: 1500 },
+        size,
+    );
+
+    expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
 };
 
 /**
@@ -541,7 +582,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation] if true it's expected not to match given regex
  *
- * @return {Promise<void>} promise
+ * @return {Promise<void>} revoled once column values were checked
  */
 module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
     const {
@@ -562,7 +603,7 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
  * It is required there are a least two rows in the table
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} columnId subject column id
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once table sorting was successfully checked
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
@@ -591,7 +632,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @param {puppeteer.Page} page the puppeteer page
  * @param {Map<string, function<string, boolean>>} validators mapping of column names to cell data validator,
  * each validator must return value `true` if content is ok, false otherwise
- * @return {Promise<void>} promise
+ * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
     await page.waitForSelector('table tbody');
@@ -648,3 +689,25 @@ module.exports.unsetConfirmationdialogActions = (page) => {
     page.off('dialog', dismissDialogEventListener);
     page.off('dialog', acceptDialogEventListener);
 };
+
+/**
+ * Expect a link to have a given text and href
+ * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer element or page object.
+ * @param {string} selector css selector.
+ * @param {string} [expected.href] expected href of the link
+ * @param {string} [expected.innerText] expected inner text of the link
+ * @return {Promise<void>} promise
+ */
+module.exports.expectLink = async (element, selector, { href, innerText }) => {
+    await element.waitForSelector(selector, { timeout: 200 });
+    const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
+    expect(actualLinkProperties).to.eql({ href, innerText });
+};
+
+/**
+ * Validate date string against given format
+ * @param {string} date date (time) string
+ * @param {string} [format = 'DD/MM/YYYY hh:mm:ss'] format to validate against
+ * @return {boolean} true if format is correct, false otherwise
+ */
+module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
