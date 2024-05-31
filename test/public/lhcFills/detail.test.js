@@ -18,9 +18,10 @@ const {
     pressElement,
     goToPage,
     checkMismatchingUrlParam,
-    getPopoverContent, waitForTimeout,
+    getPopoverContent, waitForTimeout, waitForNavigation, getTableDataSlice,
 } = require('../defaults.js');
 const { expect } = require('chai');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -28,6 +29,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore();
+        await resetDatabaseContent();
     });
 
     it('should successfully display lhc fills details page', async () => {
@@ -185,7 +187,7 @@ module.exports = () => {
     it('should successfully expose a button to create a new log related to the displayed fill', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
 
-        await pressElement(page, '#create-log');
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
 
         expect(await checkMismatchingUrlParam(page, { page: 'log-create', lhcFillNumbers: '6' })).to.eql({});
 
@@ -201,11 +203,26 @@ module.exports = () => {
         const tableSelector = '#logs-pane table tbody tr';
         await page.waitForSelector(tableSelector);
 
-        const table = await page.$$(tableSelector);
-        expect(table).to.lengthOf(2);
-
-        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
-        expect(await table[1].evaluate((row) => row.id)).to.equal('row119');
+        const tableDataSlice = await getTableDataSlice(page, ['title', 'author', 'tags', 'runs', 'environments', 'lhcFills']);
+        expect(tableDataSlice).to.lengthOf(2);
+        expect(tableDataSlice).to.deep.eql([
+            {
+                title: 'First entry',
+                author: 'John Doe',
+                tags: 'MAINTENANCE',
+                runs: '1',
+                environments: '8E4aZTjY,eZF99lH6',
+                lhcFills: '5,6',
+            },
+            {
+                title: 'Another entry, with a title so long that it will probably be displayed with a balloon on it!',
+                author: 'John Doe',
+                tags: 'TEST-TAG-36\nTEST-TAG-37\nTEST-TAG-38\nTEST-TAG-39\nTEST-TAG-40\nTEST-TAG-41',
+                runs: '2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22',
+                environments: 'Dxi029djX,eZF99lH6',
+                lhcFills: '1,4,6',
+            },
+        ]);
     });
 
     after(async () => {

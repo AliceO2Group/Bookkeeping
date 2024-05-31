@@ -15,7 +15,6 @@ service EnvironmentService {
 
 message EnvironmentCreationRequest {
   string id = 1;
-  optional int64 createdAt = 2;
   optional string status = 3;
   optional string statusMessage = 4;
 }

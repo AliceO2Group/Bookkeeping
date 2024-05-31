@@ -25,11 +25,16 @@ const {
     validateElement,
     getInnerText,
     checkMismatchingUrlParam,
+    validateDate,
+    expectLink,
+    reloadPage,
 } = require('../defaults');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
-const dateAndTime = require('date-and-time');
+const { waitForNavigation } = require('../defaults.js');
+const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const DETECTORS = [
     'CPV',
@@ -60,6 +65,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -84,16 +90,15 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-        // eslint-disable-next-line require-jsdoc
-        const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
+
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
 
-            timeO2Start: validateDate,
-            timeO2End: validateDate,
-            timeTrgStart: validateDate,
-            timeTrgEnd: validateDate,
+            timeO2Start: (date) => date === '-' || validateDate(date),
+            timeO2End: (date) => date === '-' || validateDate(date),
+            timeTrgStart: (date) => date === '-' || validateDate(date),
+            timeTrgEnd: (date) => date === '-' || validateDate(date),
 
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
@@ -103,10 +108,32 @@ module.exports = () => {
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).to.be.oneOf(['QC', ''])])),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [
+                detectorName,
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
+            ])),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+
+        await expectLink(page, 'tr#row56 .column-ITS a', {
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
+            innerText: 'QC',
+        });
+
+        const [tmpQcFlag] = await qcFlagService.create(
+            [{ flagTypeId: 2 }],
+            { runNumber: 56, simulationPassIdentifier: { id: 2 }, dplDetectorIdentifier: { dplDetectorId: 4 } },
+            { userIdentifier: { externalUserId: 1 } }, // Create bad flag
+        );
+
+        await reloadPage(page);
+        await expectLink(page, 'tr#row56 .column-ITS a', {
+            href: 'http://localhost:4000/?page=qc-flags-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
+            innerText: '0!',
+        });
+
+        await qcFlagService.delete(tmpQcFlag.id);
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
@@ -161,10 +188,8 @@ module.exports = () => {
         const runNumberLinkCellSelector = 'tbody tr:first-of-type a';
         const expectedRunNumber = await getInnerText(await page.$(runNumberLinkCellSelector));
 
-        await pressElement(page, runNumberLinkCellSelector);
-
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: expectedRunNumber }))
-            .to.be.eql({});
+        await waitForNavigation(page, () => pressElement(page, runNumberLinkCellSelector));
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: expectedRunNumber })).to.be.eql({});
     });
 
     it('should successfully export runs', async () => {
@@ -206,7 +231,7 @@ module.exports = () => {
             { runNumber: 56, runQuality: 'good' },
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
-        ]),
+        ]);
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };

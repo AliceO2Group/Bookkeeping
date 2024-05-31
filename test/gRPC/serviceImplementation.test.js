@@ -30,7 +30,7 @@ module.exports = () => {
     )).test;
     const absoluteMessagesDefinitions = extractAbsoluteMessageDefinitions(proto);
 
-    it('Should successfully bind a synchronous controller', async () => {
+    describe('Controller request/response parsing', () => {
         const gRPCEnumsMessage = {
             a: {
                 a: 'ENUM_A_1',
@@ -71,32 +71,67 @@ module.exports = () => {
             ed: '1',
         };
 
+        // Bigint can not be parsed by JSON utils so it can't be easily copied
+        // eslint-disable-next-line require-jsdoc
+        const getGRPCBigintMessage = () => ({
+            ui: Long.fromString('FEDCBA9876543210', true, 16),
+            i: Long.fromString('-76543210FEDCBA98', false, 16),
+        });
+
+        const gRPCRepeatedMessage = {
+            enum: ['AN_ENUM_0', 'AN_ENUM_1', 'AN_ENUM_0'],
+            nested: [{ enum: ['AN_ENUM_0', 'AN_ENUM_1'] }, { enum: ['AN_ENUM_1', 'AN_ENUM_0'] }],
+        };
+
+        const jsRepeatedMessage = {
+            enum: ['0', '1', '0'],
+            nested: [{ enum: ['0', '1'] }, { enum: ['1', '0'] }],
+        };
+
         const testEnumsImpl = sinon.fake.returns(jsEnumsMessage);
         const testBigIntsImpl = sinon.fake.returns({ ui: 0xFEDCBA9876543210n, i: -0x76543210FEDCBA98n });
-        const callback = sinon.fake();
+        const testRepeatedImpl = sinon.fake.returns(jsRepeatedMessage);
 
         const controller = {
             TestEnums: (...args) => testEnumsImpl(...args),
             TestBigInts: (...args) => testBigIntsImpl(...args),
+            TestRepeated: (...args) => testRepeatedImpl(...args),
         };
         const adapter = bindGRPCController(proto.Service.service, controller, absoluteMessagesDefinitions);
 
-        const expectedJsEnumsArgument = JSON.parse(JSON.stringify(jsEnumsMessage));
+        afterEach(() => {
+            sinon.restore();
+        });
 
-        await adapter.TestEnums({ request: gRPCEnumsMessage }, callback);
-        testEnumsImpl.calledWith(expectedJsEnumsArgument);
-        callback.calledWithMatch(null, gRPCEnumsMessage);
+        it('Should successfully parse bigints', async () => {
+            const callback = sinon.fake();
 
-        callback.resetHistory();
+            await adapter.TestBigInts({ request: getGRPCBigintMessage() }, callback);
+            sinon.assert.calledWithMatch(testBigIntsImpl, { ui: 0xFEDCBA9876543210n, i: -0x76543210FEDCBA98n });
+            sinon.assert.calledWithMatch(callback, null, getGRPCBigintMessage());
+        });
 
-        await adapter.TestBigInts({
-            request: {
-                ui: Long.fromString('FEDCBA9876543210', true, 16),
-                i: Long.fromString('-76543210FEDCBA98', false, 16),
-            },
-        }, callback);
-        testBigIntsImpl.calledWithMatch({ ui: 0xFEDCBA9876543210n, i: -0x76543210FEDCBA98n });
-        callback.calledWithMatch(null, gRPCEnumsMessage);
+        it('Should successfully parse enums', async () => {
+            const callback = sinon.fake();
+
+            // Copy jsEnumsMessage because it might be modified in place by the controller binding
+            const expectedJsEnumsArgument = JSON.parse(JSON.stringify(jsEnumsMessage));
+
+            await adapter.TestEnums({ request: JSON.parse(JSON.stringify(gRPCEnumsMessage)) }, callback);
+            sinon.assert.calledWithMatch(testEnumsImpl, expectedJsEnumsArgument);
+            sinon.assert.calledWithMatch(callback, null, gRPCEnumsMessage);
+        });
+
+        it('Should successfully parse repeated fields', async () => {
+            const callback = sinon.fake();
+
+            // Copy jsRepeatedMessage because it might be modified in place by the controller binding
+            const expectedJsRepeatedArgument = JSON.parse(JSON.stringify(jsRepeatedMessage));
+
+            await adapter.TestRepeated({ request: JSON.parse(JSON.stringify(gRPCRepeatedMessage)) }, callback);
+            sinon.assert.calledWithMatch(testRepeatedImpl, expectedJsRepeatedArgument);
+            sinon.assert.calledWithMatch(callback, null, gRPCRepeatedMessage);
+        });
     });
 
     it('should throw when calling a controller without return is called', async () => {
@@ -104,6 +139,7 @@ module.exports = () => {
         const controller = {
             TestEnums: (...args) => testEnumsImpl(...args),
             TestBigInts: sinon.fake(),
+            TestRepeated: sinon.fake(),
         };
         const callback = sinon.fake();
 
@@ -111,14 +147,9 @@ module.exports = () => {
 
         await adapter.TestEnums({ request: {} }, callback);
 
-        expect(testEnumsImpl.calledWith({
-            ea: undefined,
-            eb1: undefined,
-            eb11: undefined,
-            ed: undefined,
-        })).to.be.true;
+        sinon.assert.calledWithMatch(testEnumsImpl, {});
 
-        expect(callback.calledWith({
+        expect(callback.calledWithMatch({
             code: 2,
             message: 'Controller for /test.Service/TestEnums returned a null response',
         })).to.be.true;

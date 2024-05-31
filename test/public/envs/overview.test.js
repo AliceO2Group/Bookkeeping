@@ -22,6 +22,7 @@ const {
     checkEnvironmentStatusColor,
 } = require('../defaults');
 const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -39,6 +40,8 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -98,8 +101,8 @@ module.exports = () => {
         await waitForTimeout(100);
 
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(11);
+        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(9);
+        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(9);
     });
 
     it('Should have balloon on runs column', async () => {

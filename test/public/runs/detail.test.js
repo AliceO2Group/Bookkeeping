@@ -13,9 +13,18 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { reloadPage, goToPage, fillInput, checkMismatchingUrlParam, getPopoverContent, waitForTimeout } = require('../defaults.js');
+const {
+    reloadPage,
+    goToPage,
+    fillInput,
+    checkMismatchingUrlParam,
+    getPopoverContent,
+    waitForTimeout,
+    waitForNavigation,
+} = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -44,6 +53,7 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -429,8 +439,7 @@ module.exports = () => {
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
 
-        await pressElement(page, '#create-log');
-
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' })).to.eql({});
 
         await page.waitForSelector('input#environments');
@@ -438,14 +447,12 @@ module.exports = () => {
     });
 
     it('should not display the LHC Data when beam is not stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
-        await page.waitForSelector('#NoLHCDataNotStable');
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
         await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
 
     it('should display the LHC fill number when beam is stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
-        await page.waitForSelector('#lhc-fill-fillNumber');
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 

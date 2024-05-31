@@ -23,7 +23,9 @@ const {
     waitForNavigation,
     getColumnCellsInnerTexts,
     fillInput,
+    expectColumnValues,
 } = require('../defaults');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -38,6 +40,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -71,7 +74,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await pressElement(page, 'h2:nth-of-type(2)');
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
         expect(await checkMismatchingUrlParam(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' })).to.be.eql({});
     });
 
@@ -82,7 +85,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await pressElement(page, 'h2:nth-of-type(3)');
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
         expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
     });
 
@@ -172,8 +175,6 @@ module.exports = () => {
             dplDetectorId: '1',
         })).to.be.eql({});
 
-        await validateElement(page, 'tbody tr td:nth-of-type(2)');
-        const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        expect(flagTypes[0]).to.be.equal('Unknown Quality');
+        await expectColumnValues(page, 'flagType', ['Unknown Quality']);
     });
 };

@@ -9,26 +9,23 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#ifndef CXX_CLIENT_BOOKKEEPINGAPI_DPLPROCESSEXECUTIONPROTOCLIENT_H
-#define CXX_CLIENT_BOOKKEEPINGAPI_DPLPROCESSEXECUTIONPROTOCLIENT_H
+#ifndef CXX_CLIENT_BOOKKEEPINGAPI_DPLPROCESSEXECUTIONCLIENT_H
+#define CXX_CLIENT_BOOKKEEPINGAPI_DPLPROCESSEXECUTIONCLIENT_H
 
 #include <memory>
-#include "dplProcessExecution.pb.h"
+#include "DplProcessType.h"
 
-namespace o2::bkp::api::proto
+namespace o2::bkp::api
 {
-class DplProcessExecutionProtoClient
+class DplProcessExecutionClient
 {
  public:
-  virtual ~DplProcessExecutionProtoClient() = default;
-
-  /// Returns the implementation of the DPL process execution service defined in dplProcessExecution.proto
-  virtual std::shared_ptr<o2::bookkeeping::DplProcessExecution> Create(std::shared_ptr<o2::bookkeeping::DplProcessExecutionCreationRequest> request) = 0;
+  virtual ~DplProcessExecutionClient() = default;
 
   /// Register the execution fo a DPL process
   virtual void registerProcessExecution(
     int runNumber,
-    o2::bookkeeping::DplProcessType type,
+    o2::bkp::DplProcessType type,
     std::string hostname,
     std::string deviceId,
     std::string args,
@@ -37,4 +34,4 @@ class DplProcessExecutionProtoClient
 };
 } // namespace o2::bkp::api::proto
 
-#endif // CXX_CLIENT_BOOKKEEPINGAPI_DPLPROCESSEXECUTIONPROTOCLIENT_H
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_DPLPROCESSEXECUTIONCLIENT_H
