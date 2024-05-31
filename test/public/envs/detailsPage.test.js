@@ -13,7 +13,7 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
-const { goToPage, pressElement, checkMismatchingUrlParam } = require('../defaults.js');
+const { goToPage, pressElement, checkMismatchingUrlParam, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -69,11 +69,10 @@ module.exports = () => {
         expect(await runsRows[2].$eval('td:first-of-type', (element) => element.innerText)).to.equal('105');
     });
 
-    it('should successfully expose a button to create a new log related to the displayed enviroment', async () => {
+    it('should successfully expose a button to create a new log related to the displayed environment', async () => {
         await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
 
-        await pressElement(page, '#create-log');
-
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expect(await checkMismatchingUrlParam(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' })).to.eql({});
 
         await page.waitForSelector('input#environments');

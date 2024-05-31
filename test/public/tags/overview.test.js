@@ -14,6 +14,7 @@
 const chai = require('chai');
 const { defaultBefore, defaultAfter, pressElement, goToPage, getFirstRow } = require('../defaults');
 const { waitForTimeout } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -33,7 +34,9 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
+
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
@@ -101,7 +104,7 @@ module.exports = () => {
         await page.type(inputSelector, '-TAG-');
         await waitForTimeout(300);
         let table = await page.$$('tbody tr');
-        expect(table.length).to.equal(33);
+        expect(table.length).to.equal(32);
 
         await page.type(inputSelector, 'DO-NOT-EXIST');
         await waitForTimeout(300);

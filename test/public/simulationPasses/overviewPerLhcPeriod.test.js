@@ -22,6 +22,7 @@ const {
     expectColumnValues,
     validateTableData,
 } = require('../defaults');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -33,6 +34,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -137,10 +139,10 @@ module.exports = () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC23k6a');
         await expectColumnValues(page, 'name', ['LHC23k6a']);
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', 'LHC23k6a, LHC23k6b');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC23k6a, LHC23k6b');
         await expectColumnValues(page, 'name', ['LHC23k6b', 'LHC23k6a']);
     });
 };

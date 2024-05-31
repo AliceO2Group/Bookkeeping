@@ -9,34 +9,25 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#include "GrpcDplProcessExecutionProtoClient.h"
+#include "GrpcDplProcessExecutionClient.h"
 
 using grpc::ClientContext;
-using o2::bookkeeping::DplProcessType;
+using o2::bkp::DplProcessType;
 using o2::bookkeeping::DplProcessExecution;
-using o2::bookkeeping::DplProcessExecutionService;
 using o2::bookkeeping::DplProcessExecutionCreationRequest;
+using o2::bookkeeping::DplProcessExecutionService;
 
-namespace o2::bkp::api::proto::grpc::services
+namespace o2::bkp
 {
-GrpcDplProcessExecutionProtoClient::GrpcDplProcessExecutionProtoClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
+
+namespace api::grpc::services
+{
+GrpcDplProcessExecutionClient::GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
 {
   mStub = DplProcessExecutionService::NewStub(channel);
 }
 
-std::shared_ptr<DplProcessExecution> GrpcDplProcessExecutionProtoClient::Create(std::shared_ptr<DplProcessExecutionCreationRequest> request)
-{
-  ClientContext context;
-  auto response = std::make_shared<DplProcessExecution>();
-
-  auto status = mStub->Create(&context, *request, response.get());
-
-  if (!status.ok()) {
-    throw std::runtime_error(status.error_message());
-  }
-  return response;
-}
-void GrpcDplProcessExecutionProtoClient::registerProcessExecution(
+void GrpcDplProcessExecutionClient::registerProcessExecution(
   int runNumber,
   DplProcessType type,
   std::string hostname,
@@ -48,9 +39,18 @@ void GrpcDplProcessExecutionProtoClient::registerProcessExecution(
   request->set_runnumber(runNumber);
   request->set_detectorname(detector);
   request->set_processname(deviceId);
-  request->set_type(type);
+  request->set_type(static_cast<o2::bookkeeping::DplProcessType>(type));
   request->set_hostname(hostname);
 
-  Create(request);
+  ClientContext context;
+  auto response = std::make_shared<DplProcessExecution>();
+
+  auto status = mStub->Create(&context, *request, response.get());
+
+  if (!status.ok()) {
+    throw std::runtime_error(status.error_message());
+  }
 }
-} // namespace o2::bkp::api::proto::grpc::services
+} // namespace api::grpc::services
+
+} // namespace o2::bkp

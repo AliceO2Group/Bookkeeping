@@ -9,24 +9,22 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#ifndef CXX_CLIENT_BOOKKEEPINGAPI_GRPC_SERVICES_GRPCDPLPROCESSEXECUTIONPROTOCLIENT_H
-#define CXX_CLIENT_BOOKKEEPINGAPI_GRPC_SERVICES_GRPCDPLPROCESSEXECUTIONPROTOCLIENT_H
+#ifndef CXX_CLIENT_BOOKKEEPINGAPI_GRPC_SERVICES_GRPCDPLPROCESSEXECUTIONCLIENT_H
+#define CXX_CLIENT_BOOKKEEPINGAPI_GRPC_SERVICES_GRPCDPLPROCESSEXECUTIONCLIENT_H
 
-#include "BookkeepingApi/DplProcessExecutionProtoClient.h"
+#include "BookkeepingApi/DplProcessExecutionClient.h"
 #include "dplProcessExecution.grpc.pb.h"
 
-namespace o2::bkp::api::proto::grpc::services
+namespace o2::bkp::api::grpc::services
 {
-class GrpcDplProcessExecutionProtoClient : public ::o2::bkp::api::proto::DplProcessExecutionProtoClient
+class GrpcDplProcessExecutionClient : public ::o2::bkp::api::DplProcessExecutionClient
 {
  public:
-  explicit GrpcDplProcessExecutionProtoClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
-
-  std::shared_ptr<o2::bookkeeping::DplProcessExecution> Create(std::shared_ptr<o2::bookkeeping::DplProcessExecutionCreationRequest> request) override;
+  explicit GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
 
   void registerProcessExecution(
     int runNumber,
-    o2::bookkeeping::DplProcessType type,
+    o2::bkp::DplProcessType type,
     std::string hostname,
     std::string deviceId,
     std::string args,
@@ -35,6 +33,6 @@ class GrpcDplProcessExecutionProtoClient : public ::o2::bkp::api::proto::DplProc
  private:
   std::unique_ptr<o2::bookkeeping::DplProcessExecutionService::Stub> mStub;
 };
-} // namespace o2::bkp::api::proto::grpc::services
+} // namespace o2::bkp::api::grpc::services
 
-#endif // CXX_CLIENT_BOOKKEEPINGAPI_GRPC_SERVICES_GRPCDPLPROCESSEXECUTIONPROTOCLIENT_H
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_GRPC_SERVICES_GRPCDPLPROCESSEXECUTIONCLIENT_H

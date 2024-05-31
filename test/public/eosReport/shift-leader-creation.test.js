@@ -109,9 +109,9 @@ module.exports = () => {
 
         await page.waitForSelector('#type-specific #magnets-start input:nth-of-type(1)');
         await page.focus('#type-specific #magnets-start input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-start');
-        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
         await page.keyboard.type('dipole-start');
+        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-start');
 
         await page.click('#type-specific #magnets-add');
         await page.click('#type-specific #magnets-add');
@@ -122,21 +122,21 @@ module.exports = () => {
         await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(1)', magnet1Date, ['change']);
         await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(2)', magnet1Time, ['change']);
         await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-1');
-        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-1');
+        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
 
         await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(1)', magnet2Date, ['change']);
         await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(2)', magnet2Time, ['change']);
         await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-2');
-        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-2');
+        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-2');
 
         await page.focus('#type-specific #magnets-end input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-end');
-        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
         await page.keyboard.type('dipole-end');
+        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-end');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
         await page.focus('#from-previous-shifter .CodeMirror textarea');
@@ -173,10 +173,10 @@ module.exports = () => {
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes(`## Magnets
-- ${magnetStart} - Solenoid solenoid-start - Dipole dipole-start
-- ${formatShiftDate(magnet2Timestamp, { time: true })} - Solenoid solenoid-2 - Dipole dipole-2
-- ${formatShiftDate(magnet1Timestamp, { time: true })} - Solenoid solenoid-1 - Dipole dipole-1
-- ${magnetEnd} - Solenoid solenoid-end - Dipole dipole-end`)).to.be.true;
+- ${magnetStart} - Dipole dipole-start - Solenoid solenoid-start
+- ${formatShiftDate(magnet2Timestamp, { time: true })} - Dipole dipole-2 - Solenoid solenoid-2
+- ${formatShiftDate(magnet1Timestamp, { time: true })} - Dipole dipole-1 - Solenoid solenoid-1
+- ${magnetEnd} - Dipole dipole-end - Solenoid solenoid-end`)).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
