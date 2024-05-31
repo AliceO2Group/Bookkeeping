@@ -415,53 +415,55 @@ module.exports = () => {
                         },
                     ],
                     order: [['createdAt', 'ASC']],
-                })).map(qcFlagAdapter.toEntity);
+                })).map(({ id }) => id);
 
-                {
-                    const [{ id }] = olderFlags;
-                    expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
+                const effectivePeriods = await Promise.all(olderFlags.map(async (id) => ({
+                    id,
+                    effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
+                })));
+
+                expect(effectivePeriods).to.eql([
+                    {
                         id: 1,
                         effectivePeriods: [],
-                    });
-                }
-                {
-                    const [, { id, from, to }] = olderFlags;
-                    expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
+                    },
+                    {
                         id: 2,
                         effectivePeriods: [
                             {
-                                from,
-                                to,
+                                from: new Date('2019-08-09 05:40:00').getTime(),
+                                to: new Date('2019-08-09 07:03:20').getTime(),
                             },
                         ],
-                    });
-                }
-
-                {
-                    const [, , { id, from, to }] = olderFlags;
-                    expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
+                    },
+                    {
                         id: 3,
                         effectivePeriods: [
                             {
-                                from,
-                                to,
+                                from: new Date('2019-08-09 08:26:40').getTime(),
+                                to: new Date('2019-08-09 09:50:00').getTime(),
                             },
                         ],
-                    });
-                }
-
-                {
-                    const [, , , { id, to }] = olderFlags;
-                    expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({
+                    },
+                    {
                         id: 7,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 01:29:50').getTime(),
-                                to,
+                                to: new Date('2019-08-09 03:20:00').getTime(),
                             },
                         ],
-                    });
-                }
+                    },
+                    {
+                        id: 8,
+                        effectivePeriods: [
+                            {
+                                from: new Date('2019-08-09 03:20:00').getTime(),
+                                to: new Date('2019-08-09 05:40:00').getTime(),
+                            },
+                        ],
+                    },
+                ]);
             }
         });
 
