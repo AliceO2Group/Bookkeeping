@@ -23,7 +23,7 @@ const {
     validateElement,
     validateTableData,
 } = require('../defaults');
-const { waitForTimeout } = require('../defaults.js');
+const { waitForTableLength } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -76,32 +76,36 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+
+        await page.waitForSelector('#lastRowIndex');
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
+
+        await page.waitForSelector('#totalRowsCount');
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
     });
 
     it('can set how many lhcPeriods is available per page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(500);
+        await page.waitForSelector('.dropup button');
+
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorButton = await page.$('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
+        await page.waitForSelector('.dropup');
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
-        await waitForTimeout(100);
+        await waitForTableLength(page, 3);
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(3);
@@ -113,7 +117,7 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
+        await page.waitForSelector('.dropup input:invalid');
         expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 

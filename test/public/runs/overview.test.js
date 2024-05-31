@@ -26,7 +26,9 @@ const {
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector, waitForTableLength } = require('../defaults.js');
+const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector, waitForTableLength,
+    waitForNavigation,
+} = require('../defaults.js');
 const { waitForDownload } = require('../../utilities/waitForDownload');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -131,10 +133,14 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+
+        await page.waitForSelector('#lastRowIndex');
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
+
+        await page.waitForSelector('#totalRowsCount');
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(108);
     });
 
@@ -192,7 +198,7 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTimeout(600);
+        await waitForTableLength(page, 5);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         const tableRows = await page.$$('table tr');
@@ -205,19 +211,18 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
+        await page.waitForSelector('input:invalid');
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
-        await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 1;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
@@ -227,17 +232,16 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await waitForTimeout(100);
+        await page.waitForSelector('#page1', { hidden: true });
         const pageOneButton = await page.$('#page1');
         expect(Boolean(pageOneButton)).to.be.false;
     });
 
     it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
-        await waitForTimeout(100);
+        await page.waitForSelector('.alert-danger');
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
@@ -248,7 +252,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 10);
     });
 
     it('can navigate to a run detail page', async () => {

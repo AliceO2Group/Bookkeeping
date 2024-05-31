@@ -13,8 +13,8 @@
 
 const chai = require('chai');
 const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage } = require('../defaults');
-const { waitForTimeout } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { waitForNavigation } = require('../defaults.js');
 
 const { expect } = chai;
 
@@ -45,8 +45,7 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
-        await pressElement(page, `#${firstRowId} .btn-redirect`, true);
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => pressElement(page, `#${firstRowId} .btn-redirect`, true));
 
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
