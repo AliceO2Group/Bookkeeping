@@ -13,24 +13,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Start database
+      - name: Start unit test database
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
-            up --detach database
+            up --detach database-unit
       - name: Build test suite
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             build
-      - name: Wait for the database
+      - name: Wait for the unit test database
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
-            run --rm application /opt/wait-for-it.sh -t 0 database:3306
+            run --rm application /opt/wait-for-it.sh -t 0 database-unit:3306
       - name: Execute unit test suite
         run: |
           docker compose \
@@ -42,7 +42,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         env:
-            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   integration-tests:
     runs-on: ubuntu-latest
@@ -51,24 +51,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Start database
+      - name: Start integration test database
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
-            up --detach database
+            up --detach database-integration
       - name: Build test suite
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             build
-      - name: Wait for the database
+      - name: Wait for the integration test database
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
-            run --rm application /opt/wait-for-it.sh -t 0 database:3306
+            run --rm application /opt/wait-for-it.sh -t 0 database-integration:3306
       - name: Execute integration test suite
         run: |
           docker compose \
@@ -80,7 +80,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         env:
-            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   linter:
     runs-on: ubuntu-latest
