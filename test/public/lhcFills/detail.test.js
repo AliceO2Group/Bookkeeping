@@ -21,6 +21,7 @@ const {
     getPopoverContent, waitForTimeout, waitForNavigation, getTableDataSlice,
 } = require('../defaults.js');
 const { expect } = require('chai');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -28,6 +29,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore();
+        await resetDatabaseContent();
     });
 
     it('should successfully display lhc fills details page', async () => {

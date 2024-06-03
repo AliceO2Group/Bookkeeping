@@ -29,6 +29,7 @@ module.exports = () => {
                 from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
+                origin: null,
                 createdAt: new Date('2024-02-13 11:57:19').getTime(),
                 updatedAt: new Date('2024-02-13 11:57:19').getTime(),
                 runNumber: 1,
