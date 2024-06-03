@@ -23,10 +23,10 @@ const {
     reloadPage,
     validateTableData,
     validateDate,
+    waitForDownload,
 } = require('../defaults');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
-const { waitForDownload } = require('../../utilities/waitForDownload');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -196,19 +196,9 @@ module.exports = () => {
     it('should successfully export all runs per lhc Period', async () => {
         await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
-        const downloadPath = path.resolve('./download');
-
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        });
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
         });
 
         const targetFileName = 'runs.json';
@@ -218,10 +208,8 @@ module.exports = () => {
         await page.waitForSelector('select.form-control', { timeout: 200 });
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
-        await Promise.all([
-            waitForDownload(session),
-            pressElement(page, '#send:enabled'),
-        ]);
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
