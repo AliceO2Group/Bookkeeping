@@ -315,7 +315,8 @@ module.exports = () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
-        await page.select('.runDuration-filter select', '>=');
+        const runDurationFilterDivSelector = '.runDuration-filter';
+        const minutesSelector = `${runDurationFilterDivSelector} input:nth-of-type(2)`;
 
         /**
          * Invokation of page.select and fillInput in case of amountFilter results in two concurrent,
@@ -325,7 +326,7 @@ module.exports = () => {
         await page.select('.runDuration-filter select', '>=');
         await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
-        await fillInput(page, '.runDuration-filter input[type=number]', '10');
+        await fillInput(page, minutesSelector, 10);
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
