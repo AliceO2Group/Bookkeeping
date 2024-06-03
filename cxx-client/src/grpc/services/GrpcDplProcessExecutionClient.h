@@ -14,6 +14,7 @@
 
 #include "BookkeepingApi/DplProcessExecutionClient.h"
 #include "dplProcessExecution.grpc.pb.h"
+#include "BookkeepingApi/QcFlag.h"
 
 namespace o2::bkp::api::grpc::services
 {

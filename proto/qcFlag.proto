@@ -14,7 +14,7 @@ message QcFlagCreationResponse {
 }
 
 message DataPassQcFlagCreationRequest {
-  int32 runNumber = 1;
+  uint32 runNumber = 1;
   // usually apassN, cpassN, where N is a natural number
   string passName = 2;
   string detectorName = 3;
@@ -22,7 +22,7 @@ message DataPassQcFlagCreationRequest {
 }
 
 message SimulationPassQcFlagCreationRequest {
-  int32 runNumber = 1;
+  uint32 runNumber = 1;
   // Simulation Pass (production) Tag
   string productionName = 2;
   string detectorName = 3;
