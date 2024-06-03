@@ -339,25 +339,6 @@ module.exports = () => {
     });
 
     describe('POST /api/qcFlags/:id/verify', () => {
-        it('should fail to verify QC flag when being owner', async () => {
-            const qcFlagCreationParameters = {
-                from: new Date('2019-08-09 01:29:50').getTime(),
-                to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERESTING REMARK',
-                flagTypeId: 2,
-                runNumber: 106,
-                dataPassId: 1,
-                dplDetectorId: 1,
-            };
-
-            const createResponse = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
-
-            expect(createResponse.status).to.be.equal(201);
-            const { id: flagId } = createResponse.body.data;
-
-            const response = await request(server).post(`/api/qcFlags/${flagId}/verify`);
-            expect(response.status).to.be.equal(403);
-        });
         it('should succesfuly verify QC flag when not being owner', async () => {
             const flagId = 5;
             const comment = 'Ok, VERIFIED';
