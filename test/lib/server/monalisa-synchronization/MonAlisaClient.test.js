@@ -20,7 +20,7 @@ const dataPassSchema = Joi.object({
     reconstructedEventsCount: Joi.number(),
     description: Joi.string(),
     outputSize: Joi.number(),
-    lastRunNumber: Joi.number(),
+    lastSeen: Joi.number(),
 });
 
 const simulationPassSchema = Joi.object({
