@@ -34,6 +34,7 @@ const qcFlagWithId1 = {
     from: new Date('2019-08-08 22:43:20').getTime(),
     to: new Date('2019-08-09 04:16:40').getTime(),
     comment: 'Some qc comment 1',
+    origin: null,
 
     // Associations
     createdById: 1,
