@@ -17,6 +17,7 @@ const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 const dateAndTime = require('date-and-time');
+const path = require('path');
 
 const { expect } = chai;
 
@@ -85,6 +86,41 @@ module.exports.defaultAfter = async (page, browser) => {
     await browser.close();
 
     return [page, browser];
+};
+
+/**
+ * Trigger a download and wait for it to be finished
+ *
+ * @param {puppeteer.Page} page puppeteer page
+ * @param {function} trigger function to trigger the expected download
+ * @return {Promise} resolves with de download path
+ */
+exports.waitForDownload = async (page, trigger) => {
+    const downloadPath = path.resolve('./download');
+
+    // Check accessibility on frontend
+    const session = await page.createCDPSession();
+    await session.send('Browser.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath,
+        eventsEnabled: true,
+    });
+
+    await Promise.all([
+        new Promise((resolve, reject) => {
+            session.on('Browser.downloadProgress', (event) => {
+                if (event.state === 'completed') {
+                    resolve('download completed');
+                } else if (event.state === 'canceled') {
+                    reject(new Error('download canceled'));
+                }
+            });
+            setTimeout(() => reject(new Error('Download timeout after 5000 ms')), 5000);
+        }),
+        trigger(),
+    ]);
+
+    return downloadPath;
 };
 
 /**
@@ -548,11 +584,7 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
     const size = expectedInnerTextValues.length;
 
-    await page.waitForFunction(
-        (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
-        { timeout: 1500 },
-        size,
-    );
+    await waitForTableToLength(page, size);
 
     expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
 };
@@ -576,16 +608,16 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
         negation = false,
     } = options;
     console.log(columnId, expectedValuesRegex, valuesCheckingMode, negation, 'TOBEC')
-
+ 
     await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
         // Browser context, be careful when modifying
         const innerTexts = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
         // return false;
-        return innerTexts.length > 0 && innerTexts.every((name) => RegExp('26:00:00').test(name));
+        // return innerTexts.length > 0 && innerTexts.every((name) => RegExp('26:00:00').test(name));
         return innerTexts.length
             && innerTexts[valuesCheckingMode]((name) =>
                 negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
-    }, { timeout: 2500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
+    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
 };
 
 /**
