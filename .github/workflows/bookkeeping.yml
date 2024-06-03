@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  coverage:
+  unit-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -31,14 +31,52 @@ jobs:
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             run --rm application /opt/wait-for-it.sh -t 0 database:3306
-      - name: Execute test suite
+      - name: Execute unit test suite
         run: |
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.test.yml \
-            run application npm run coverage
+            run application npm run test:unit
       - name: Copy coverage from container
-        run: docker cp $(docker ps -aqlf "name=bookkeeping-application"):/usr/src/app/coverage/coverage-final.json .
+        run: docker cp $(docker ps -aqlf "name=bookkeeping-application"):/usr/src/app/coverage/coverage-unit.json .
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: unit-tests
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start database
+        run: |
+          docker compose \
+            -f docker-compose.yml \
+            -f docker-compose.coverage.yml \
+            up --detach database
+      - name: Build test suite
+        run: |
+          docker compose \
+            -f docker-compose.yml \
+            -f docker-compose.coverage.yml \
+            build
+      - name: Wait for the database
+        run: |
+          docker compose \
+            -f docker-compose.yml \
+            -f docker-compose.coverage.yml \
+            run --rm application /opt/wait-for-it.sh -t 0 database:3306
+      - name: Execute integration test suite
+        run: |
+          docker compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            run application npm run test:integration
+      - name: Copy coverage from container
+        run: docker cp $(docker ps -aqlf "name=bookkeeping-application"):/usr/src/app/coverage/coverage-integration.json .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         env:
