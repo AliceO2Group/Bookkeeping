@@ -19,7 +19,8 @@ services:
       OPENID_REDIRECT: "${OPENID_REDIRECT}"
       OPENID_WELL_KNOWN: "${OPENID_WELL_KNOWN}"
     links:
-      - database
+      - database-unit
+      - database-integration
     restart: unless-stopped
     volumes:
       - type: bind
@@ -31,7 +32,7 @@ services:
         source: ./database/storage
         target: /var/storage
 
-  database:
+  database-unit:
     image: mariadb:10.5.9
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
@@ -39,7 +40,7 @@ services:
     volumes:
       - type: bind
         read_only: false
-        source: ./database/data
+        source: ./database/data/unit
         target: /var/lib/mysql
       - type: bind
         read_only: true
@@ -49,3 +50,26 @@ services:
         read_only: true
         source: ./database/populate
         target: /docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"
+
+  database-integration:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        read_only: false
+        source: ./database/data/integration
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3308:3306"

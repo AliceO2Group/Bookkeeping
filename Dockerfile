@@ -52,15 +52,21 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "st
 # ---- Test ----
 FROM developmentdependencies as test
 
-# Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
+# Run unit tests
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database-unit:3306", "--", "npm", "run", "test:unit" ]
+
+# Run integration tests
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database-integration:3306", "--", "npm", "run", "test:integration" ]
 
 #
 # ---- Coverage ----
 FROM developmentdependencies as coverage
 
-# Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
+# Run coverage for unit tests
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database-unit:3306", "--", "npm", "run", "coverage:unit" ]
+
+# Run coverage for integration tests
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database-integration:3306", "--", "npm", "run", "coverage:integration" ]
 
 
 #

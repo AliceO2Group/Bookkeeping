@@ -3,6 +3,8 @@ version: "3.7"
 services:
   application:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: coverage
     environment:
       NODE_ENV: test
@@ -10,15 +12,36 @@ services:
       JWT_SECRET: BOOKKEEPING-TEST-SUITE
       PAGE_ITEMS_LIMIT: 100
     restart: "no"
+    links:
+      - database-unit
+      - database-integration
 
-  database:
+  database-unit:
+    image: mariadb:10.5.9
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
     restart: "no"
     volumes:
       - type: volume
         read_only: false
-        source: database-data
+        source: database-data-unit
         target: /var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  database-integration:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: "no"
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-integration
+        target: /var/lib/mysql
+    ports:
+      - "3308:3306"
+
 volumes:
-  database-data:
+  database-data-unit:
+  database-data-integration:
