@@ -595,7 +595,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  *
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} columnId column id
- * @param {string} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
+ * @param {string|RegExp} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
  * @param {object} options options
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation = false] if true it's expected not to match given regex
@@ -607,17 +607,16 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
         valuesCheckingMode = 'every',
         negation = false,
     } = options;
-    console.log(columnId, expectedValuesRegex, valuesCheckingMode, negation, 'TOBEC')
- 
+
+    const adjustedRegExp = new RegExp(expectedValuesRegex).toString().slice(1, -1);
+
     await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
         // Browser context, be careful when modifying
         const innerTexts = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        // return false;
-        // return innerTexts.length > 0 && innerTexts.every((name) => RegExp('26:00:00').test(name));
         return innerTexts.length
             && innerTexts[valuesCheckingMode]((name) =>
                 negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
-    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
+    }, { timeout: 1500 }, columnId, adjustedRegExp, valuesCheckingMode, negation);
 };
 
 /**

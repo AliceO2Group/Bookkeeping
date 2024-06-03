@@ -25,7 +25,6 @@ const {
     waitForNetworkIdleAndRedraw,
     expectInputValue,
     checkColumnValuesWithRegex,
-    getColumnCellsInnerTexts,
     waitForDownload,
     expectColumnValues,
 } = require('../defaults');
@@ -552,12 +551,6 @@ module.exports = () => {
 
         // Case 1
         await fillInput(page, hoursSelector, 26);
-        console.log(await page.evaluate(() => {
-            const { raw } = model.runs.overviewModel.runDurationFilterModel.durationInputModel;
-            const { selected } = model.runs.overviewModel.runDurationFilterModel.operatorSelectionModel;
-            return { raw, selected };
-        }), 'TOBEC dur 1');
-
         await checkColumnValuesWithRegex(page, 'runDuration', '26:00:00');
 
         // Case 2
@@ -567,18 +560,12 @@ module.exports = () => {
 
         // Case 3
         await page.select(operatorSelector, '>=');
-        console.log(await page.evaluate(() => {
-            const { raw } = model.runs.overviewModel.runDurationFilterModel.durationInputModel;
-            const { selected } = model.runs.overviewModel.runDurationFilterModel.operatorSelectionModel;
-            return { raw, selected };
-        }), 'TOBEC dur 3');
-        // await checkColumnValuesWithRegex(page, 'runDuration', /([1-9][0-9])|(0[1-9]):[0-5][0-9]:[0-5][0-9]/);
-        await checkColumnValuesWithRegex(page, 'runDuration', /[0-9:]+/);
+        await checkColumnValuesWithRegex(page, 'runDuration', /(UNKNOWN)|(([1-9][0-9])|(0[1-9]):[0-5][0-9]:[0-5][0-9])/);
 
         // Case 4
         await page.select(operatorSelector, '<=');
-        await fillInput(page, minutesSelector, 0);
         await fillInput(page, hoursSelector, 10);
+        await fillInput(page, minutesSelector, 0);
         await checkColumnValuesWithRegex(page, 'runDuration', /(10:00:00)|(0[1-9]:[0-5][0-9]:[0-5][0-9])/);
     });
 
