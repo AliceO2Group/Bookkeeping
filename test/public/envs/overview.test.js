@@ -73,7 +73,7 @@ module.exports = () => {
             createdAt: checkDate,
             updatedAt: checkDate,
             status: (currentStatus) => statusNames.has(currentStatus),
-            historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.has(statusAcronym)),
+            historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
         };
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
