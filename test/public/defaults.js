@@ -465,8 +465,7 @@ module.exports.getPopoverContent = getPopoverContent;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const selector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
-    const cell = await this.validateElement(page, selector);
+    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
     const popoverTrigger = await cell.$('.popover-trigger');
     const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
 
