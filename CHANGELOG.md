@@ -12,13 +12,13 @@ All notable changes to this project will be documented in this file. See [standa
   * Allow the creator of QC flag to verify it
   * A tooltip has been added to inform user about the expected unit in run duration filter
   * Fixed missing current environment state on overview page when error state occurred
-  * Added model and an endpoint to fetch all trigger counters for a given run
 * Notable change for developers:
   * Frontend tests suites are now independent the one from the others
   * Dependabot will not create PRs to update eslint to 9.x
   * Added c++ API for QC flags creation
   * Fixed randomness of waitForDownload in tests
   * Updated the cxx API to not mention deleted proto API
+  * Added model and an endpoint to fetch all trigger counters for a given run
 
 ## [0.89.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.2)
 * Notable changes for users:
