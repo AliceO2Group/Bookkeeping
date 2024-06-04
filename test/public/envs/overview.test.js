@@ -61,10 +61,9 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'env-overview');
 
-        const { StatusAcronyms } = await import('../../../lib/public/domain/enums/statusAcronyms.mjs');
+        const { StatusAcronym, STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronyms.mjs');
 
-        const statusValues = new Set(Object.keys(StatusAcronyms));
-        const statusAcronyms = new Set(Object.values(StatusAcronyms));
+        const statusNames = new Set(Object.keys(StatusAcronym));
 
         // eslint-disable-next-line require-jsdoc
         const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
@@ -73,8 +72,8 @@ module.exports = () => {
             runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
             createdAt: checkDate,
             updatedAt: checkDate,
-            status: (currentStatus) => statusValues.has(currentStatus),
-            historyItems: (history) => history.split('-').every((statusAcronym) => statusAcronyms.has(statusAcronym)),
+            status: (currentStatus) => statusNames.has(currentStatus),
+            historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.has(statusAcronym)),
         };
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
