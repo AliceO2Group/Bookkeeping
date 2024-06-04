@@ -124,7 +124,7 @@ module.exports = () => {
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 2 }],
             { runNumber: 56, simulationPassIdentifier: { id: 2 }, dplDetectorIdentifier: { dplDetectorId: 4 } },
-            { userIdentifier: { externalUserId: 1 } }, // Create bad flag
+            { user: { externalUserId: 1, roles: ['admin'] } }, // Create bad flag
         );
 
         await reloadPage(page);
