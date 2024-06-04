@@ -58,6 +58,8 @@ const getUrl = () => `http://localhost:${server.address().port}`;
 module.exports.defaultBefore = async () => {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
+    page.setDefaultTimeout(500);
+    page.setDefaultNavigationTimeout(2000);
 
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
@@ -68,7 +70,7 @@ module.exports.defaultBefore = async () => {
 };
 
 /**
- * Destructor to cleanup after tests are finished.
+ * Destructor to clean up after tests are finished.
  * @param {Object} page Puppeteer page object
  * @param {Object} browser Browser object to run tests on
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page and Browser.
@@ -170,6 +172,15 @@ const waitForEmptyTable = async (page, timeout = 500) => {
 module.exports.waitForEmptyTable = waitForEmptyTable;
 
 /**
+ * Wait for the first row of the page to have a given id
+ *
+ * @param {puppeteer.Page} page Puppeteer current page
+ * @param {string} id the expected id
+ * @return {Promise<puppeteer.ElementHandle>} resolves with the first row element handle once it has the right id
+ */
+module.exports.waitForFirstRowToHaveId = async (page, id) => page.waitForSelector(`tbody tr:first-child#${id}`);
+
+/**
  * Execute the given navigation function and wait for navigation
  *
  * @param {puppeteer.Page} page the puppeteer page
@@ -248,34 +259,6 @@ module.exports.goToPage = (puppeteerPage, pageKey, options) => {
 };
 
 /**
- * Wait for page network idle and add a small timeout to let the page redraw
- *
- * @param {Object} page the puppeteer page object
- * @param {Object} [options] eventual options
- * @param {number} [options.redrawDuration] duration of the page redraw (in ms)
- * @return {Promise<void>} resolves once the page is fully redraw
- */
-module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
-    const { redrawDuration = 20 } = options ?? {};
-
-    await page.waitForNetworkIdle();
-    await waitForTimeout(redrawDuration);
-};
-
-/**
- * Validates if selector is present and returns the element.
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @returns {Object} Element matching the selector.
- */
-module.exports.validateElement = async (page, selector) => {
-    await page.waitForSelector(selector);
-    const element = page.$(selector);
-    expect(Boolean(element)).to.be.true;
-    return element;
-};
-
-/**
  * Debug helper function
  * This function takes a screenshot of the current screen the page is at, and saves it to
  * database/storage/screenshot.png
@@ -289,21 +272,6 @@ module.exports.takeScreenshot = async (page, name = 'screenshot') => {
         type: 'png',
         fullPage: true,
     });
-};
-
-/**
- * Validates if selector is present and returns the element.
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @param {Object} value value that is expected at the Css selector element.
- * @returns {Object} Element matching the selector
- */
-module.exports.validateElementEqualTo = async (page, selector, value) => {
-    await page.waitForSelector(selector);
-    const element = await page.$$(selector);
-    expect(Boolean(element)).to.be.true;
-    expect(element.length).to.equal(value);
-    return element;
 };
 
 /**
@@ -510,7 +478,7 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector, { timeout: 500 });
+    await page.waitForSelector(inputSelector);
     await page.evaluate((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
         element.value = value;
@@ -546,30 +514,31 @@ module.exports.expectInputValue = async (page, selector, value) => {
 };
 
 /**
- * Check the differences between the provided expected parameters and the parameters actually received
+ * Expect the current page's URL to have exactly the given parameters (unordered)
  *
- * @TODO convert this to not-async
  * For now only handle scalar parameters
  *
  * @param {puppeteer.Page} page the puppeteer page
  * @param {Object} expectedUrlParameters the expected parameters as an object of key values
- * @return {Promise<Object>} the differences between the expected parameters
+ * @return {void}
  */
-module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) => {
+module.exports.expectUrlParams = (page, expectedUrlParameters) => {
     const [, parametersExpr] = page.url().split('?');
     const urlParameters = parametersExpr.split('&');
-    const ret = {};
+    const mismatchingUrlParams = {};
+
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
         // Convert expected to string, if it is a number for example
         if (`${expectedUrlParameters[key]}` !== value) {
-            ret[key] = {
+            mismatchingUrlParams[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,
             };
         }
     }
-    return ret;
+
+    expect(mismatchingUrlParams).to.eql({});
 };
 
 /**

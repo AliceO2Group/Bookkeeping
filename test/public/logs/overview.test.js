@@ -22,14 +22,16 @@ const {
     getColumnCellsInnerTexts,
     checkColumnBalloon,
     checkColumnValuesWithRegex,
-} = require('../defaults');
-const {
+    waitForFirstRowToHaveId,
+    expectUrlParams,
     reloadPage,
-    waitForNetworkIdleAndRedraw,
     fillInput,
     getInnerText,
     getPopoverSelector,
-    waitForTimeout, waitForNavigation, checkMismatchingUrlParam, waitForTableLength, waitForEmptyTable,
+    waitForTimeout,
+    waitForNavigation,
+    waitForTableLength,
+    waitForEmptyTable,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -169,41 +171,18 @@ module.exports = () => {
     it('can filter by log author', async () => {
         await reloadPage(page);
 
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        expect(originalNumberOfRows).to.be.greaterThan(1);
+        await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '#authorFilterText', 'Jane');
         await waitForEmptyTable(page);
 
-        // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
-        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+        await pressElement(page, '#reset-filters');
 
-        await fillInput(page, '#authorFilterText', 'DoesNotExist');
-        await page.waitForSelector('.empty-row');
-
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await page.waitForNetworkIdle();
         await waitForTableLength(page, 10);
 
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+        await fillInput(page, '#authorFilterText', 'John');
+        await waitForTableLength(page, 5);
     });
 
     it('should successfully provide an easy to access button to filter in/out anonymous logs', async () => {
@@ -333,49 +312,18 @@ module.exports = () => {
     it('can filter by environments', async () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
+        await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
 
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        expect(originalNumberOfRows).to.be.greaterThan(1);
-
         await fillInput(page, '.environments-filter input', '8E4aZTjY');
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForTableLength(page, 3);
 
-        // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
-        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForNetworkIdleAndRedraw(page);
-
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+        await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 10);
 
         await fillInput(page, '.environments-filter input', 'abcdefgh');
-        await waitForNetworkIdleAndRedraw(page);
-
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
-
-        // Clear again the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForEmptyTable(page);
     });
 
     it('can search for tag in the dropdown', async () => {
@@ -408,159 +356,77 @@ module.exports = () => {
     it('can filter by run number', async () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
+        await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
 
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        expect(originalNumberOfRows).to.be.greaterThan(1);
-
         // Insert some text into the filter
         await fillInput(page, '#runsFilterText', '1, 2');
-        await waitForNetworkIdleAndRedraw(page);
-        await waitForTimeout(1000);
+        await waitForTableLength(page, 2);
 
-        const firstFilteredRows = await page.$$('table tbody tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length;
-        expect(firstFilteredNumberOfRows).to.be.equal(2);
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForNetworkIdleAndRedraw(page);
-
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+        await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 10);
 
         await fillInput(page, '#runsFilterText', '1234567890');
-        await waitForNetworkIdleAndRedraw(page);
-
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
-
-        // Clear again the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForEmptyTable(page);
     });
 
     it('can filter by lhc fill number', async () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
+        await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
 
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        expect(originalNumberOfRows).to.be.greaterThan(1);
-
         await fillInput(page, '#lhcFillsFilter', '1, 6');
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForTableLength(page, 1);
 
-        // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
-        expect(firstFilteredNumberOfRows).to.be.equal(1);
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForNetworkIdleAndRedraw(page);
-
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+        await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 10);
 
         await fillInput(page, '#lhcFillsFilter', '1234567890');
-        await waitForNetworkIdleAndRedraw(page);
-
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
-
-        // Clear again the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForEmptyTable(page);
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
+        await pressElement(page, '#reset-filters');
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(300);
+        await waitForFirstRowToHaveId(page, 'row119');
 
+        await page.waitForSelector('th#title');
         await page.hover('th#title');
-        await waitForTimeout(100);
-        const sortingPreviewIndicator = await page.$('#title-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
+        await page.waitForSelector('#title-sort-preview');
 
         // Sort by log title in an ascending manner
-        const titleHeader = await page.$('th#title');
-        await titleHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the log titles to be in alphabetical order
-        const firstTitles = await getColumnCellsInnerTexts(page, 'title');
-        expect(firstTitles).to.deep.equal(firstTitles.sort());
+        await pressElement(page, 'th#title');
+        await waitForFirstRowToHaveId(page, 'row6');
 
         // Hover something else to have title sort displayed
         await page.hover('th#author');
-        await waitForTimeout(100);
-        const sortingIndicator = await page.$('#title-sort');
-        expect(Boolean(sortingIndicator)).to.be.true;
+        await page.waitForSelector('#title-sort');
 
         // Toggle to sort this towards reverse alphabetical order
-        await titleHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the log titles to be in reverse alphabetical order
-        const secondTitles = await getColumnCellsInnerTexts(page, 'title');
-        expect(secondTitles).to.deep.equal(secondTitles.sort((a, b) => b.localeCompare(a)));
+        await pressElement(page, 'th#title');
+        await waitForFirstRowToHaveId(page, 'row3');
 
         // Toggle to clear this sorting
-        await titleHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
+        await pressElement(page, 'th#title');
+        await waitForFirstRowToHaveId(page, 'row119');
 
-        // Expect the log titles to no longer be sorted in any way
-        const thirdTitles = await getColumnCellsInnerTexts(page, 'title');
-        expect(thirdTitles).to.not.deep.equal(firstTitles);
-        expect(thirdTitles).to.not.deep.equal(secondTitles);
+        // Sort by log author in ascending then descending manner
+        await pressElement(page, 'th#author');
+        await waitForFirstRowToHaveId(page, 'row3');
 
-        // Sort by log author in ascending manner
-        const authorHeader = await page.$('th#author');
-        await authorHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
+        await pressElement(page, 'th#author');
+        await waitForFirstRowToHaveId(page, 'row1');
 
-        // Expect the authors to be in alphabetical order
-        const firstAuthors = await getColumnCellsInnerTexts(page, 'author');
-        expect(firstAuthors).to.deep.equal(firstAuthors.sort());
+        await pressElement(page, 'th#author');
+        await waitForFirstRowToHaveId(page, 'row119');
 
-        // Sort by creation date in ascending manner
-        const createdAtHeader = await page.$('th#createdAt');
-        await createdAtHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the log author column to be unsorted
-        const secondAuthors = await getColumnCellsInnerTexts(page, 'author');
-        expect(secondAuthors).to.not.deep.equal(firstAuthors);
+        // Sort by creation date in ascending then descending manner
+        await pressElement(page, 'th#createdAt');
+        await waitForFirstRowToHaveId(page, 'row1');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -797,7 +663,7 @@ module.exports = () => {
         await page.evaluate(() => window.model.disableInputDebounce());
 
         await waitForNavigation(page, () => pressElement(page, '#row119-runs a'));
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: 2 })).to.be.eql({});
+        expectUrlParams(page, { page: 'run-detail', runNumber: 2 });
     });
 
     it('should successfully display the list of related LHC fills as hyperlinks to their details page', async () => {
@@ -805,6 +671,6 @@ module.exports = () => {
         await page.evaluate(() => window.model.disableInputDebounce());
 
         await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
-        expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', fillNumber: 1 })).to.be.eql({});
+        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
     });
 };

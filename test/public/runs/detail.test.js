@@ -12,16 +12,20 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
 const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    getFirstRow,
+    expectUrlParams,
     reloadPage,
     goToPage,
     fillInput,
-    checkMismatchingUrlParam,
     getPopoverContent,
     waitForTimeout,
     waitForNavigation,
-} = require('../defaults.js');
+} = require('../defaults');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -182,10 +186,9 @@ module.exports = () => {
         await page.click('#add-eor-reason');
         // Remove the first EOR reason
         await page.click('.remove-eor-reason');
-        await page.click('#save-run');
+        await pressElement(page, '#save-run');
 
-        await page.waitForNetworkIdle();
-
+        await page.waitForSelector('#Run-eorReasons .eor-reason');
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
@@ -210,8 +213,7 @@ module.exports = () => {
         await page.click('.remove-eor-reason');
         await page.click('#cancel-run');
 
-        await page.waitForNetworkIdle();
-
+        await page.waitForSelector('#Run-eorReasons .eor-reason');
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
@@ -229,8 +231,9 @@ module.exports = () => {
         await fillInput(page, '#Run-inelasticInteractionRateAtMid input', 102.1);
         await fillInput(page, '#Run-inelasticInteractionRateAtEnd input', 103.1);
 
-        await page.click('#save-run');
-        await page.waitForNetworkIdle();
+        await pressElement(page, '#save-run');
+        // Wait for edition mode to be gone
+        await page.waitForSelector('#edit-run');
 
         await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100.1\nHz');
         await expectInnerText(page, '#Run-inelasticInteractionRateAtStart', 'INELstart:\n101.1\nHz');
@@ -243,8 +246,9 @@ module.exports = () => {
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100000);
 
-        await page.click('#save-run');
-        await page.waitForNetworkIdle();
+        await pressElement(page, '#save-run');
+        // Wait for edition mode to be gone
+        await page.waitForSelector('#edit-run');
 
         await expectInnerText(page, '#Run-inelasticInteractionRateAvg', 'INELavg:\n100,000\nHz');
         await expectInnerText(page, '#Run-muInelasticInteractionRate', '\u03BC(INEL):\n0.009');
@@ -315,21 +319,8 @@ module.exports = () => {
 
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
-        await waitForTimeout(100);
-
-        const fillNumberSelector = '#lhc-fill-fillNumber a';
-        // Remove "row" prefix to get fill number
-        const fillNumber = await page.$eval(fillNumberSelector, (element) => element.innerText);
-
-        await page.$eval(fillNumberSelector, (link) => link.click());
-        await page.waitForNetworkIdle();
-        await waitForTimeout(100);
-
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=lhc-fill-details');
-        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
+        await waitForNavigation(page, () => pressElement(page, '#lhc-fill-fillNumber a'));
+        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
     });
 
     it('notifies if a specified run id is invalid', async () => {
@@ -440,7 +431,7 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' })).to.eql({});
+        expectUrlParams(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' });
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#run-numbers', (element) => element.value)).to.equal('106');

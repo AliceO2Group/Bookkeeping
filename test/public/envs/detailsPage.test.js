@@ -12,8 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText } = require('../defaults');
-const { goToPage, pressElement, checkMismatchingUrlParam, waitForNavigation } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, expectUrlParams, goToPage, pressElement, waitForNavigation } = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -73,7 +72,7 @@ module.exports = () => {
         await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' })).to.eql({});
+        expectUrlParams(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' });
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');

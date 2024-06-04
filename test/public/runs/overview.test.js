@@ -22,8 +22,9 @@ const {
     getFirstRow,
     goToPage,
     checkColumnBalloon,
-    waitForNetworkIdleAndRedraw,
-    waitForDownload, expectColumnValues,
+    expectInputValue,
+    waitForNavigation,
+    expectUrlParams, expectColumnValues, waitForDownload,
 } = require('../defaults');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
@@ -330,27 +331,29 @@ module.exports = () => {
 
     it('should successfully filter on tags', async () => {
         await pressElement(page, '#reset-filters');
+
+        // Open filter toggle
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '#tag-dropdown-option-FOOD');
         await pressElement(page, '#tag-dropdown-option-RUN');
 
         // Wait for table to have only one row, and the row not being loading
         await Promise.all([
-            page.waitForSelector('tbody tr:nth-child(2)', { hidden: true, timeout: 500 }),
-            page.waitForSelector('tbody tr.loading-row', { hidden: true, timeout: 500 }),
+            page.waitForSelector('tbody tr:nth-child(2)', { hidden: true }),
+            page.waitForSelector('tbody tr.loading-row', { hidden: true }),
         ]);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-RUN', true);
+        await pressElement(page, '#tag-dropdown-option-RUN');
         await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
-        await page.waitForSelector('tbody tr:nth-child(2)', { timeout: 500 });
+        await page.waitForSelector('tbody tr:nth-child(2)');
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of');
-        await page.waitForSelector('tbody tr:nth-child(3)', { timeout: 500 });
+        await page.waitForSelector('tbody tr:nth-child(3)');
 
         // Multiple pages, not very representative
         await expectInnerText(page, '#totalRowsCount', '106');
@@ -760,75 +763,49 @@ module.exports = () => {
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
         await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
+        await waitForTableLength(page, 8);
 
-        await page.$eval('#openFilterToggle', (element) => element.click());
+        await pressElement(page, '#openFilterToggle');
 
         const filterInputSelector = '#fillNumbers';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
         await fillInput(page, filterInputSelector, '1, 3');
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForTableLength(page, 6);
 
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
-        await goToPage(page, 'run-overview');
-        await page.evaluate(() => window.model.disableInputDebounce());
-
-        await page.$eval('#openFilterToggle', (element) => element.click());
+        await waitForTableLength(page, 8);
 
         const filterInputSelector = '#environmentIds';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
         await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d');
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForTableLength(page, 6);
 
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(6);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on run types', async () => {
-        await goToPage(page, 'run-overview');
-        await waitForTimeout(100);
-
-        await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(100);
+        await waitForTableLength(page, 8);
 
         await pressElement(page, '.runType-filter .dropdown-trigger');
-        await waitForTimeout(100);
-
         await pressElement(page, '#run-types-dropdown-option-2');
         await pressElement(page, '#run-types-dropdown-option-14');
+        await waitForTableLength(page, 5);
 
-        await waitForNetworkIdleAndRedraw(page);
-
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(5);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on nDetectors', async () => {
-        await goToPage(page, 'run-overview');
-        waitForTimeout(100);
+        await waitForTableLength(page, 8);
+        await expectInputValue(page, '#nDetectors-operator', '=');
 
-        await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
-
-        const nDetectorOperatorSelector = '#nDetectors-operator';
-        const nDetectorOperator = await page.$(nDetectorOperatorSelector) || null;
-        expect(nDetectorOperator).to.not.be.null;
-        expect(await nDetectorOperator.evaluate((element) => element.value)).to.equal('=');
-
-        const nDetectorLimitSelector = '#nDetectors-limit';
-        const nDetectorLimit = await page.$(nDetectorLimitSelector) || null;
-        expect(nDetectorLimit).to.not.be.null;
-
-        await nDetectorLimit.focus();
-        await page.keyboard.type('3');
-        await waitForTimeout(300);
-        await page.select(nDetectorOperatorSelector, '<=');
-        await waitForTimeout(300);
+        await page.select('#nDetectors-operator', '<=');
+        await fillInput(page, '#nDetectors-limit', '1');
+        await waitForTableLength(page, 6);
 
         const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
@@ -836,76 +813,53 @@ module.exports = () => {
         }));
 
         // The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in tests data
-        expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= 3 || nDetectors === null)).to.be.true;
+        expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= 1 || nDetectors === null)).to.be.true;
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on nFLPs', async () => {
-        await goToPage(page, 'run-overview');
-        waitForTimeout(100);
+        await waitForTableLength(page, 8);
 
-        await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
+        await expectInputValue(page, '#nFlps-operator', '=');
 
-        const nFlpsOperatorSelector = '#nFlps-operator';
-        const nFlpsOperator = await page.$(nFlpsOperatorSelector) || null;
-        expect(nFlpsOperator).to.not.be.null;
-        expect(await nFlpsOperator.evaluate((element) => element.value)).to.equal('=');
-
-        const nFlpsLimitSelector = '#nFlps-limit';
-        const nFlpsLimit = await page.$(nFlpsLimitSelector) || null;
-        expect(nFlpsLimit).to.not.be.null;
-
-        await nFlpsLimit.focus();
-        await page.keyboard.type('10');
-        await waitForTimeout(300);
-        await page.select(nFlpsOperatorSelector, '<=');
-        await waitForTimeout(300);
+        await page.select('#nFlps-operator', '<=');
+        await fillInput(page, '#nFlps-limit', '10');
+        await waitForTableLength(page, 5);
 
         const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
             const rowId = row.id;
             return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
         }));
         expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= 10)).to.be.true;
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on nEPNs', async () => {
-        await goToPage(page, 'run-overview');
+        await waitForTableLength(page, 8);
 
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#nEpns-limit', { timeout: 500 });
+        await expectInputValue(page, '#nEpns-operator', '=');
 
-        const nEpnsOperatorSelector = '#nEpns-operator';
-        const nEpnsOperator = await page.waitForSelector(nEpnsOperatorSelector);
-        expect(await nEpnsOperator.evaluate((element) => element.value)).to.equal('=');
-
+        await page.select('#nEpns-operator', '<=');
         await fillInput(page, '#nEpns-limit', '10');
+        await waitForTableLength(page, 5);
 
-        await page.waitForSelector(nEpnsOperatorSelector);
-        await page.select(nEpnsOperatorSelector, '<=');
-
-        expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
+        await expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on EPN on/off', async () => {
-        await goToPage(page, 'run-overview');
-        await page.waitForSelector('#openFilterToggle');
+        await waitForTableLength(page, 8);
 
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#epnFilterRadioOFF');
+        await pressElement(page, '#epnFilterRadioOFF', true);
+        await waitForTableLength(page, 2);
 
-        await pressElement(page, '#epnFilterRadioOFF');
-        await waitForNetworkIdleAndRedraw(page);
-
-        const table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter by EOR Reason types', async () => {
-        await goToPage(page, 'run-overview');
-        waitForTimeout(100);
-
-        await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
+        await waitForTableLength(page, 8);
 
         // Expect the EOR filter to exist
         const eorCategoryDropdown = await page.$('#eorCategories');
@@ -961,14 +915,12 @@ module.exports = () => {
         // There should be many items in the run details table
         eorReasons = await page.$$('table td[id$="eorReasons"]');
         expect(eorReasons.length).to.be.greaterThan(3);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('should correctly filter by EOR reason description', async () => {
-        await goToPage(page, 'run-overview');
-        waitForTimeout(100);
-
-        await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
+        await waitForTableLength(page, 8);
 
         // Expect the EOR description filter to exist
         const eorDescriptionInput = await page.$('#eorDescription');
@@ -999,6 +951,8 @@ module.exports = () => {
 
         const inputText = await (await eorDescriptionInput.getProperty('value')).jsonValue();
         expect(inputText).to.equal('');
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully display runs export button', async () => {
@@ -1112,20 +1066,8 @@ module.exports = () => {
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'run-overview');
 
-        // Run 106 has a fill attached
-        const runId = 108;
-
-        const fillNumberCellSelector = `#row${runId}-fillNumber`;
-        const fillNumber = await page.$eval(fillNumberCellSelector, (cell) => cell.innerText);
-
-        await page.$eval(`${fillNumberCellSelector} a`, (link) => link.click());
-        await waitForNetworkIdleAndRedraw(page);
-
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=lhc-fill-details');
-        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
+        await waitForNavigation(page, () => pressElement(page, '#row108-fillNumber a'));
+        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
     });
 
     it('should successfully display duration without warning popover when run has trigger OFF', async () => {

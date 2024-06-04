@@ -17,8 +17,11 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    checkMismatchingUrlParam,
-    getPopoverContent, waitForTimeout, waitForNavigation, getTableDataSlice,
+    getPopoverContent,
+    waitForTimeout,
+    waitForNavigation,
+    getTableDataSlice,
+    expectUrlParams,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -172,24 +175,17 @@ module.exports = () => {
     it('should successfully navigate to run detail page', async () => {
         const row = await page.$('#runs tbody tr');
         expect(row).to.be.not.null;
-        const expectedRunNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
+        const runNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
 
-        await row.$eval('td:first-of-type a', (link) => link.click());
-        await page.waitForNetworkIdle();
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
+        await waitForNavigation(page, () => pressElement(page, 'td:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber });
     });
 
     it('should successfully expose a button to create a new log related to the displayed fill', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
-
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', lhcFillNumbers: '6' })).to.eql({});
+        expectUrlParams(page, { page: 'log-create', lhcFillNumbers: '6' });
 
         await page.waitForSelector('input#lhc-fills');
         expect(await page.$eval('input#lhc-fills', (element) => element.value)).to.equal('6');

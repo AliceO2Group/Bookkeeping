@@ -12,8 +12,16 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-const { waitForTimeout, waitForNavigation, checkMismatchingUrlParam } = require('../defaults.js');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    goToPage,
+    expectUrlParams,
+    waitForTimeout,
+    waitForNavigation,
+} = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -127,7 +135,7 @@ module.exports = () => {
 
         // We expect the associated runs to be clickable with a valid link
         await waitForNavigation(page, () => pressElement(page, `#log-${logId}-runs a`));
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber })).to.eql({});
+        expectUrlParams(page, { page: 'run-detail', runNumber });
     });
 
     it('allows navigating to an associated environment', async () => {
@@ -141,7 +149,7 @@ module.exports = () => {
 
         // We expect the associated environments to be clickable with a valid link
         await waitForNavigation(page, () => pressElement(page, `#log-${logId}-environments a`));
-        expect(await checkMismatchingUrlParam(page, { page: 'env-details', environmentId })).to.eql({});
+        expectUrlParams(page, { page: 'env-details', environmentId });
     });
 
     it('allows navigating to an associated LHC fill', async () => {
@@ -155,7 +163,7 @@ module.exports = () => {
 
         // We expect the associated lhcFills to be clickable with a valid link
         await waitForNavigation(page, () => pressElement(page, `#log-${logId}-lhcFills a`));
-        expect(await checkMismatchingUrlParam(page, { page: 'lhc-fill-details', fillNumber: fillNumbers[0] })).to.eql({});
+        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: fillNumbers[0] });
     });
 
     it('should have a button to reply on a entry', async () => {
@@ -165,7 +173,7 @@ module.exports = () => {
         // We expect there to be at least one log in this log entry
         await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
-        expect(await checkMismatchingUrlParam(page, { page: 'log-reply', parentLogId })).to.eql({});
+        expectUrlParams(page, { page: 'log-reply', parentLogId });
 
         const text = 'Test the reply button';
 
@@ -176,7 +184,7 @@ module.exports = () => {
 
         // Create the new log
         await waitForNavigation(page, () => pressElement(page, 'button#send'));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: 120 })).to.eql({});
+        expectUrlParams(page, { page: 'log-detail', id: 120 });
     });
 
     it('should successfully inherit parent log title', async () => {
@@ -185,7 +193,7 @@ module.exports = () => {
 
         // We expect there to be at least one post in this log entry
         await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-reply', parentLogId })).to.eql({});
+        expectUrlParams(page, { page: 'log-reply', parentLogId });
 
         const text = 'Test the reply log creation with no title';
 
@@ -198,7 +206,7 @@ module.exports = () => {
         expect(isDisabled).to.equal(false);
 
         await waitForNavigation(page, () => pressElement(page, 'button#send'));
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: 121 })).to.eql({});
+        expectUrlParams(page, { page: 'log-detail', id: 121 });
 
         // Expect new log to inherit title of the parent
         const newLogId = await page.evaluate(() => window.model.router.params.id);

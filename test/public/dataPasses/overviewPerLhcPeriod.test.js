@@ -23,8 +23,7 @@ const {
     waitForNavigation,
     pressElement,
     getTableDataSlice,
-    checkMismatchingUrlParam,
-    expectColumnValues,
+    expectColumnValues, expectUrlParams,
 } = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -97,19 +96,19 @@ module.exports = () => {
     it('can navigate to runs per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2) a'));
-        expect(await checkMismatchingUrlParam(page, {
+        expectUrlParams(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
-        })).to.be.eql({});
+        });
     });
 
     it('can navigate to anchored simulation passes per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
-        expect(await checkMismatchingUrlParam(page, {
+        expectUrlParams(page, {
             page: 'anchored-simulation-passes-overview',
             dataPassId: '2',
-        })).to.be.eql({});
+        });
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {

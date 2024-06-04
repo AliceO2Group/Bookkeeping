@@ -21,8 +21,10 @@ const {
     checkEnvironmentStatusColor,
     validateTableData,
     expectInnerText,
+    waitForTimeout,
+    expectUrlParams,
+    waitForNavigation,
 } = require('../defaults');
-const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -162,10 +164,7 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'env-overview');
-        await pressElement(page, '#rowTDI59So3d-runs a');
-        await waitForNetworkIdleAndRedraw(page);
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 };
