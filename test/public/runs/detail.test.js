@@ -473,6 +473,8 @@ module.exports = () => {
         // Create running run
         await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1010 } });
+        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '1010' })).to.eql({});
+        await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
         await expectInnerText(page, '#runDurationValue', 'RUNNING');
 
         await expectLink(page, '.external-links a:nth-of-type(3)', {
