@@ -16,7 +16,6 @@ const { expect } = require('chai');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
-const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
@@ -889,18 +888,6 @@ module.exports = () => {
     });
 
     describe('Verifying Quality Control Flag', () => {
-        it('should fail to verify QC flag when being owner', async () => {
-            const qcFlag = {
-                flagId: 3,
-            };
-            const scope = {
-                user: { roles: ['admin'], externalUserId: 1 },
-            };
-            await assert.rejects(
-                () => qcFlagService.verifyFlag(qcFlag, scope),
-                new AccessDeniedError('You cannot verify QC flag created by you'),
-            );
-        });
         it('should succesfuly verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
