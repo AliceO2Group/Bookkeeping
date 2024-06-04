@@ -330,8 +330,6 @@ module.exports = () => {
 
     it('should successfully filter on tags', async () => {
         await pressElement(page, '#reset-filters');
-
-        // Open filter toggle
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '#tag-dropdown-option-RUN');
