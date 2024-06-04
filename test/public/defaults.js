@@ -17,6 +17,7 @@ const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 const dateAndTime = require('date-and-time');
+const path = require('path');
 
 const { expect } = chai;
 
@@ -88,6 +89,41 @@ module.exports.defaultAfter = async (page, browser) => {
 };
 
 /**
+ * Trigger a download and wait for it to be finished
+ *
+ * @param {puppeteer.Page} page puppeteer page
+ * @param {function} trigger function to trigger the expected download
+ * @return {Promise} resolves with de download path
+ */
+exports.waitForDownload = async (page, trigger) => {
+    const downloadPath = path.resolve('./download');
+
+    // Check accessibility on frontend
+    const session = await page.createCDPSession();
+    await session.send('Browser.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath,
+        eventsEnabled: true,
+    });
+
+    await Promise.all([
+        new Promise((resolve, reject) => {
+            session.on('Browser.downloadProgress', (event) => {
+                if (event.state === 'completed') {
+                    resolve('download completed');
+                } else if (event.state === 'canceled') {
+                    reject(new Error('download canceled'));
+                }
+            });
+            setTimeout(() => reject(new Error('Download timeout after 5000 ms')), 5000);
+        }),
+        trigger(),
+    ]);
+
+    return downloadPath;
+};
+
+/**
  * Resolves after a given timeout (temporary replacement for puppeteer Page.waitForTimeout)
  *
  * @deprecated use an appropriate waitForSelector instead
@@ -101,6 +137,37 @@ const waitForTimeout = (timeout) => new Promise((res) => setTimeout(res, timeout
  * @deprecated
  */
 module.exports.waitForTimeout = waitForTimeout;
+
+/**
+ * Waits for the number of table rows to meet the expected size.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
+ */
+const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
+    await page.waitForFunction(
+        (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+        { timeout },
+        expectedSize,
+    );
+};
+
+module.exports.waitForTableLength = waitForTableToLength;
+
+/**
+ * Waits for the table on the page to be empty.
+ *
+ * @param {puppeteer.Page} page - The puppeteer page where the table is located.
+ * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
+ * @return {Promise<void>} Resolves once the table is empty, or the timeout is reached.
+ */
+const waitForEmptyTable = async (page, timeout = 500) => {
+    await page.waitForSelector('table tbody tr.empty-row', { timeout: timeout });
+};
+
+module.exports.waitForEmptyTable = waitForEmptyTable;
 
 /**
  * Execute the given navigation function and wait for navigation
@@ -455,22 +522,27 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 
 /**
  * Evaluate and return the value content of a given element handler
- * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} selector the input selector
  * @returns {Promise<XPathResult>} the html content
  */
-const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+const getInputValue = async (page, selector) => {
+    const inputElementHandler = await page.waitForSelector(selector, { timeout: 200 });
+    return inputElementHandler.evaluate((input) => input.value);
+};
+
+module.exports.getInputValue = getInputValue;
 
 /**
  * Expect an element to have a given value
  *
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @param {string} value value to search for.
+ * @param {puppeteer.Page} page Puppeteer page object.
+ * @param {string} selector the input selector
+ * @param {string} value expect input value
  * @return {Promise<void>} resolves once the value has been checked
  */
 module.exports.expectInputValue = async (page, selector, value) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInputValue(await page.$(selector))).to.equal(value);
+    expect(await getInputValue(page, selector)).to.equal(value);
 };
 
 /**
@@ -512,11 +584,7 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
     const size = expectedInnerTextValues.length;
 
-    await page.waitForFunction(
-        (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
-        { timeout: 500 },
-        size,
-    );
+    await waitForTableToLength(page, size);
 
     expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
 };
