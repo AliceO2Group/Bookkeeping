@@ -468,8 +468,7 @@ module.exports = () => {
     it('should display links to environment in ECS if run is running', async () => {
         // Test for not running run
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 104 } });
-        await expectInnerText(page, '#runDurationValue', '02:00:00');
-        await expectInnerText(page, '#Run-environmentId a', 'TDI59So3d');
+        await page.waitForSelector('.external-links a:nth-of-type(3)', { hidden: true, timeout: 250 });
 
         // Create running run
         await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
