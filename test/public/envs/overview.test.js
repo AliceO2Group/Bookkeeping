@@ -61,10 +61,10 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'env-overview');
 
-        const { STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronyms.mjs');
+        const { StatusAcronyms } = await import('../../../lib/public/domain/enums/statusAcronyms.mjs');
 
-        const statusValues = new Set(Object.keys(STATUS_ACRONYMS));
-        const statusAcronyms = new Set(Object.values(STATUS_ACRONYMS));
+        const statusValues = new Set(Object.keys(StatusAcronyms));
+        const statusAcronyms = new Set(Object.values(StatusAcronyms));
 
         // eslint-disable-next-line require-jsdoc
         const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
