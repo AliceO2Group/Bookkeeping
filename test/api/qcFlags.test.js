@@ -184,7 +184,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
@@ -215,7 +215,7 @@ module.exports = () => {
                 dplDetectorId: 21,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=det-glo').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { dataPassId } = qcFlagCreationParameters;
@@ -256,7 +256,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=det-cpv').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { simulationPassId, ...expectedProperties } = qcFlagCreationParameters;
@@ -288,7 +288,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(400);
             const { errors } = response.body;
             expect(errors).to.be.eql([
@@ -351,7 +351,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const createResponse = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const createResponse = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
 
             expect(createResponse.status).to.be.equal(201);
             const { id: flagId } = createResponse.body.data;
@@ -363,7 +363,7 @@ module.exports = () => {
             const flagId = 5;
             const comment = 'Ok, VERIFIED';
 
-            const response = await request(server).post(`/api/qcFlags/${flagId}/verify`).send({ comment });
+            const response = await request(server).post(`/api/qcFlags/${flagId}/verify?token=det-cpv`).send({ comment });
             expect(response.status).to.be.equal(201);
             const { body: { data: verifiedFlag } } = response;
             {
