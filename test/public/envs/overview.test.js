@@ -61,7 +61,7 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         await goToPage(page, 'env-overview');
 
-        const { StatusAcronym, STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronyms.mjs');
+        const { StatusAcronym, STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronym.mjs');
 
         const statusNames = new Set(Object.keys(StatusAcronym));
 
