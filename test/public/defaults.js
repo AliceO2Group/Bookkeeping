@@ -706,7 +706,7 @@ module.exports.setConfirmationDialogToBeDismissed = (page) => {
  * @param {puppeteer.page} page page handler
  * @return {void}
  */
-module.exports.unsetConfirmationdialogActions = (page) => {
+module.exports.unsetConfirmationDialogActions = (page) => {
     page.off('dialog', dismissDialogEventListener);
     page.off('dialog', acceptDialogEventListener);
 };

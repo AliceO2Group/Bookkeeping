@@ -16,7 +16,6 @@ const { expect } = require('chai');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
-const { AccessDeniedError } = require('../../../../../lib/server/errors/AccessDeniedError.js');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
@@ -177,11 +176,33 @@ module.exports = () => {
             };
 
             // Failing property
-            const relations = { userIdentifier: { externalUserId: 9999999 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 9999999 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
                 new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag due to insufficient permission', async () => {
+            const qcFlag = {
+                from: null,
+                to: null,
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 106,
+                dataPassIdentifier: { id: 1 },
+                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+            };
+
+            // Failing property
+            const relations = { user: { roles: ['det-glo'], externalUserId: 1 } };
+
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                new BadParameterError('You have no permission to manage flags for CPV detector'),
             );
         });
 
@@ -205,7 +226,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -228,7 +249,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -250,7 +271,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -281,7 +302,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             const createdQcFlags = await qcFlagService.create(qcFlags, scope, relations);
 
@@ -314,7 +335,7 @@ module.exports = () => {
                     flagTypeId: qcFlag.flagTypeId,
                     runNumber: scope.runNumber,
                     dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
-                    externalUserId: relations.userIdentifier.externalUserId,
+                    externalUserId: relations.user.externalUserId,
                     effectivePeriods: [
                         {
                             from: qcFlag.from,
@@ -399,7 +420,7 @@ module.exports = () => {
                     dplDetectorIdentifier: { dplDetectorId: 1 },
                 };
 
-                const relations = { userIdentifier: { externalUserId: 456 } };
+                const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
                 const [{ id, runNumber, dplDetectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
@@ -477,7 +498,7 @@ module.exports = () => {
                 dataPassIdentifier: { id: 1 },
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt }] =
                 await qcFlagService.create([qcFlag], scope, relations);
@@ -491,7 +512,7 @@ module.exports = () => {
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
                 dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
-                externalUserId: relations.userIdentifier.externalUserId,
+                externalUserId: relations.user.externalUserId,
             });
 
             const fetchedFlagWithDataPass = await QcFlagRepository.findOne({
@@ -541,11 +562,31 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 9999999 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 9999999 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
                 new BadParameterError('User with this external id (9999999) could not be found'),
+            );
+        });
+
+        it('should fail to create quality control flag due to insufficient permission', async () => {
+            const qcFlag = {
+                from: null,
+                to: null,
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 106,
+                simulationPassIdentifier: { id: 1 },
+                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+            };
+
+            const relations = { user: { roles: ['det-its'], externalUserId: 1 } };
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                new BadParameterError('You have no permission to manage flags for CPV detector'),
             );
         });
 
@@ -570,7 +611,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -593,7 +634,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -615,7 +656,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
@@ -637,7 +678,7 @@ module.exports = () => {
                 simulationPassIdentifier: { id: 1 },
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
@@ -658,7 +699,7 @@ module.exports = () => {
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
                 dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
-                externalUserId: relations.userIdentifier.externalUserId,
+                externalUserId: relations.user.externalUserId,
                 effectivePeriods: [{ from, to }],
             });
 
@@ -720,7 +761,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 456 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
@@ -734,7 +775,7 @@ module.exports = () => {
                 flagTypeId: qcFlagCreationParameters.flagTypeId,
                 runNumber: scope.runNumber,
                 dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
-                externalUserId: relations.userIdentifier.externalUserId,
+                externalUserId: relations.user.externalUserId,
             });
 
             const fetchedFlagWithSimulationPass = await QcFlagRepository.findOne({
@@ -754,7 +795,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const relations = { userIdentifier: { externalUserId: 1 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 1 } };
 
             await assert.rejects(
                 () => qcFlagService.create({}, scope, relations),
@@ -766,11 +807,8 @@ module.exports = () => {
     describe('Deleting Quality Control Flag', () => {
         it('should fail to delete QC flag which is verified', async () => {
             const id = 4;
-            const relations = {
-                userIdentifierWithRoles: { externalUserId: 456 },
-            };
             await assert.rejects(
-                () => qcFlagService.delete(id, relations),
+                () => qcFlagService.delete(id),
                 new ConflictError('Cannot delete QC flag which is verified'),
             );
         });
@@ -790,7 +828,7 @@ module.exports = () => {
                 dplDetectorIdentifier: { dplDetectorId: 1 },
             };
 
-            const relations = { userIdentifier: { externalUserId: 1 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 1 } };
 
             const [{ id, createdAt }] = await qcFlagService.create([{ flagTypeId: 2 }], scope, relations);
 
@@ -850,30 +888,18 @@ module.exports = () => {
     });
 
     describe('Verifying Quality Control Flag', () => {
-        it('should fail to verify QC flag when being owner', async () => {
-            const qcFlag = {
-                flagId: 3,
-            };
-            const scope = {
-                user: { externalUserId: 1 },
-            };
-            await assert.rejects(
-                () => qcFlagService.verifyFlag(qcFlag, scope),
-                new AccessDeniedError('You cannot verify QC flag created by you'),
-            );
-        });
         it('should succesfuly verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
                 comment: 'Some Comment',
             };
 
-            const scope = {
-                user: { externalUserId: 456 },
+            const relations = {
+                user: { roles: ['det-cpv'], externalUserId: 456 },
             };
 
             {
-                const verifiedFlag = await qcFlagService.verifyFlag(qcFlag, scope);
+                const verifiedFlag = await qcFlagService.verifyFlag(qcFlag, relations);
                 const { id, verifications } = verifiedFlag;
                 expect(verifications).to.be.an('array');
                 expect(verifications).to.be.lengthOf(1);

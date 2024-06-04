@@ -24,6 +24,7 @@ const {
     getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
+    getPopoverSelector,
 } = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -101,7 +102,8 @@ module.exports = () => {
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
-        await pressElement(page, '.dropdown-option', true);
+        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
@@ -129,7 +131,8 @@ module.exports = () => {
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
-        await pressElement(page, '.dropdown-option:nth-of-type(2)', true);
+        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:nth-of-type(2)`, true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await pressElement(page, '.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', true);
 
@@ -163,7 +166,8 @@ module.exports = () => {
         await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
         await validateElement(page, 'button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
-        await pressElement(page, '.dropdown-option', true);
+        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await page.waitForSelector('.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', { hidden: true, timeout: 250 });
 
