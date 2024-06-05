@@ -12,8 +12,9 @@
  */
 
 const { MonAlisaClient } = require('../../../../../lib/server/monalisa-synchronization/MonAlisaClient.js');
+const fs = require('fs');
 
-const mockDataPasses = require('./mockDataPasses.json');
+const mockDataPasses = String(fs.readFileSync('./test/lib/server/monalisa-synchronization/data/mockDataPasses.txt'));
 const mockDescriptionToDataPassDetails = require('./mockDescriptionToDataPassDetails.json');
 const mockSimulationPasses = require('./mockSimulationPasses.json');
 

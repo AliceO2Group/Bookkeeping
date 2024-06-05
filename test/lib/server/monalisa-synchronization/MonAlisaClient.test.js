@@ -44,22 +44,24 @@ const simulationPassSchema = Joi.object({
 module.exports = () => {
     it('Should get data passes with respect to given year limit (2022) and in correct format', async () => {
         const monAlisaInterface = getMockMonAlisaClient(2022);
-        const dataPasses = await monAlisaInterface.getDataPasses();
+        const dataPasses = await monAlisaInterface.getDataPassesVersions();
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(12);
         for (const dataPass of dataPasses) {
+            console.log(dataPass)
             await dataPassSchema.validateAsync(dataPass);
         }
     });
 
     it('Should get data passes with respect to given year limit (2023) and in correct format', async () => {
         const monAlisaInterface = getMockMonAlisaClient(2023);
-        const dataPasses = await monAlisaInterface.getDataPasses();
+        const dataPasses = await monAlisaInterface.getDataPassesVersions();
 
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(5);
         for (const dataPass of dataPasses) {
+            console.log(dataPass)
             await dataPassSchema.validateAsync(dataPass);
         }
     });
