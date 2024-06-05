@@ -49,7 +49,6 @@ module.exports = () => {
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(12);
         for (const dataPass of dataPasses) {
-            console.log(dataPass)
             await dataPassSchema.validateAsync(dataPass);
         }
     });
@@ -61,7 +60,6 @@ module.exports = () => {
         expect(dataPasses).to.be.an('array');
         expect(dataPasses).to.be.lengthOf(5);
         for (const dataPass of dataPasses) {
-            console.log(dataPass)
             await dataPassSchema.validateAsync(dataPass);
         }
     });
