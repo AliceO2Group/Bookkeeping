@@ -109,7 +109,7 @@ module.exports = () => {
         await waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
@@ -150,10 +150,8 @@ module.exports = () => {
         await waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
-        const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
-        const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+        await page.waitForSelector('#page5');
+        await page.waitForSelector('#page6', {hidden: true});
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');

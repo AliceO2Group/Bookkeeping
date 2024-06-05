@@ -43,15 +43,15 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 5 } });
 
         // We expect to be the only log on page and opened
-        const postExists = await page.$('#log-5');
+        await page.waitForSelector('#log-5');
         const openedLogs = await page.evaluate(() => window.model.logs.treeViewModel.detailedPostsIds);
         expect(openedLogs).to.have.lengthOf(1);
         expect(openedLogs[0]).to.equal(5);
-        expect(Boolean(postExists)).to.be.true;
     });
 
     it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+        await page.waitForSelector('#log-117 .log-details-collapsed > *');
 
         // Expect other logs to be closed
         const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
@@ -67,10 +67,10 @@ module.exports = () => {
     it('should display the log title on the log card if it is the same title as the parent log', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
+        await page.waitForSelector('#log-119 #log-119-title');
+
         const log117Title = await page.$('#log-117 #log-117-title');
-        const log119Title = await page.$('#log-119 #log-119-title');
         expect(log117Title).to.not.exist;
-        expect(log119Title).to.exist;
     });
 
     it('should display a button on each log for copying the url of the log', async () => {
@@ -81,8 +81,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect the button to be there. Log 117 should be a parent to 119.
-        const log117CopyBtn = await page.$('#copy-117');
-        expect(log117CopyBtn).to.exist;
+        const log117CopyBtn = await page.waitForSelector('#copy-117');
 
         await log117CopyBtn.click();
 
@@ -96,13 +95,11 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect the button to be there. Log 117 should be a parent to 119.
-        const log117CopyBtn = await page.$('#copy-117');
-        expect(log117CopyBtn).to.exist;
+        const log117CopyBtn = await page.waitForSelector('#copy-117');
 
         // Expect the text before the click to be different after
         await expectInnerText(page, '#copy-117', 'Copy Link');
         await log117CopyBtn.click();
-        await waitForTimeout(100);
         await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
@@ -110,8 +107,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one log in this log entry
-        const postExists = await page.$('#log-1');
-        expect(Boolean(postExists)).to.be.true;
+        page.waitForSelector('#log-1');
     });
 
     it('notifies if a specified log id is invalid', async () => {

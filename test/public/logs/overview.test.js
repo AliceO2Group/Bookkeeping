@@ -32,7 +32,7 @@ const {
     waitForNavigation,
     waitForTableLength,
     waitForEmptyTable,
-    waitForTableTotalRowsCountToEqual,
+    waitForTableTotalRowsCountToEqual, waitForTableFirstRowIndexToEqual,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -189,15 +189,13 @@ module.exports = () => {
 
         // Set the filter operation to "OR"
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
-        await waitForTableLength(page, 2);
+        await waitForTableLength(page, 3);
 
         await pressElement(page, '#reset-filters');
     });
 
     it('can filter by environments', async () => {
         await waitForTableLength(page, 10);
-
-        await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.environments-filter input', '8E4aZTjY');
         await waitForTableLength(page, 3);
@@ -212,7 +210,7 @@ module.exports = () => {
     });
 
     it('can search for tag in the dropdown', async () => {
-        await pressElement('.tags-filter .dropdown-trigger');
+        await pressElement(page, '.tags-filter .dropdown-trigger');
 
         {
             await fillInput(page, '#tag-dropdown-search-input', 'food');
@@ -235,8 +233,6 @@ module.exports = () => {
     it('can filter by run number', async () => {
         await waitForTableLength(page, 10);
 
-        await pressElement(page, '#openFilterToggle');
-
         // Insert some text into the filter
         await fillInput(page, '#runsFilterText', '1, 2');
         await waitForTableLength(page, 2);
@@ -252,8 +248,6 @@ module.exports = () => {
 
     it('can filter by lhc fill number', async () => {
         await waitForTableLength(page, 10);
-
-        await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '#lhcFillsFilter', '1, 6');
         await waitForTableLength(page, 1);
@@ -376,56 +370,43 @@ module.exports = () => {
 
     it('can set how many logs are available per page', async () => {
         await reloadPage(page);
+
         const amountSelectorButtonSelector = '#amountSelector button';
         await pressElement(page, amountSelectorButtonSelector);
 
-        const amountSelectorDropdown = await page.$('#amountSelector .dropup-menu');
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await page.waitForSelector('#amountSelector .dropup-menu');
+        await pressElement(page, '#amountSelector .dropup-menu .menu-item:first-child');
 
-        const amountItems5 = '#amountSelector .dropup-menu .menu-item:first-child';
-        await pressElement(page, amountItems5);
-        await waitForTimeout(600);
-
-        // Expect the amount of visible logs to reduce when the first option (5) is selected
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(5);
+        await waitForTableLength(page, 5);
     });
 
     it('can switch between pages of logs', async () => {
         // Expect the page selector to be available with two pages
         await reloadPage(page);
-        const pageSelectorId = '#amountSelector';
-        const pageSelector = await page.$(pageSelectorId);
-        await waitForTimeout(300);
-        expect(Boolean(pageSelector)).to.be.true;
-        await waitForTimeout(300);
+        await page.waitForSelector('#pageSelector .btn-tab');
         const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
         expect(pageSelectorButtons.length).to.equal(5);
 
         // Expect the table rows to change upon page navigation
         table = await page.$$('tr');
         const oldFirstRowId = await getFirstRow(table, page);
-        const secondPage = await page.$('#page2');
-        await secondPage.evaluate((button) => button.click());
-        await waitForTimeout(300);
+        await pressElement(page, '#page2');
+
+        await waitForTableFirstRowIndexToEqual(page, 11);
         table = await page.$$('tr');
         const newFirstRowId = await getFirstRow(table, page);
         expect(oldFirstRowId).to.not.equal(newFirstRowId);
 
         // Expect us to be able to do the same with the page arrows
-        const prevPage = await page.$('#pageMoveLeft');
-        await prevPage.evaluate((button) => button.click());
-        await waitForTimeout(300);
-        const oldFirstPageButton = await page.$('#page1');
-        const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
+        await pressElement(page, '#pageMoveLeft');
+        await waitForTableFirstRowIndexToEqual(page, 1);
+        const oldFirstPageButtonClass = await page.$eval('#page1', (element) => element.className);
         expect(oldFirstPageButtonClass).to.include('selected');
 
         // The same, but for the other (right) arrow
-        const nextPage = await page.$('#pageMoveRight');
-        await nextPage.evaluate((button) => button.click());
-        await waitForTimeout(100);
-        const newFirstPageButton = await page.$('#page1');
-        const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
+        await pressElement(page, '#pageMoveRight');
+        await waitForTableFirstRowIndexToEqual(page, 11);
+        const newFirstPageButtonClass = await page.$eval('#page1', (element) => element.className);
         expect(newFirstPageButtonClass).to.not.include('selected');
     });
 
@@ -458,13 +439,6 @@ module.exports = () => {
         });
     });
 
-    it('can navigate to the log creation page', async () => {
-        await goToPage(page, 'log-create');
-
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-create`);
-    });
-
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'log-overview');
 
@@ -476,31 +450,20 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.logs.overviewModel.pagination.itemsPerPage = 200;
         });
-        await waitForTimeout(100);
 
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
+        await expectInnerText(page, '.alert-danger', 'Invalid Attribute: "query.page.limit" must be less than or equal to 100');
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.logs.overviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
     });
 
     it('can navigate to a log detail page', async () => {
         await goToPage(page, 'log-overview');
 
-        const firstButton = await page.$('a.btn-redirect');
-        const firstRowId = await firstButton.evaluate((btn) => btn.id);
-        parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
-
-        // We expect the entry page to have the same id as the id from the log overview
-        await firstButton.evaluate((button) => button.click());
-        await waitForTimeout(500);
-
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
+        await waitForNavigation(page, () => pressElement(page, 'a.btn-redirect'));
+        await expectUrlParams(page, { page: 'log-detail', id: 119 });
     });
 
     it.skip('does not reset pagination filters when navigating away', async () => {

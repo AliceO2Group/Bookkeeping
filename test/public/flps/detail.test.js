@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, expectUrlParams } = require('../defaults.js');
 const { waitForTimeout, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -61,22 +61,20 @@ module.exports = () => {
 
     it('allows navigating to an associated run', async () => {
         const flpRoleId = 1;
-        const runId = 1;
+        const runNumber = 1;
 
         // Navigate to a flp detail view
         await goToPage(page, 'flp-detail', { queryParameters: { id: flpRoleId } });
 
         // We expect the correct associated runs to be shown
-        const runField = await page.$('#Flp-run');
+        const runField = await page.waitForSelector('#Flp-run');
         const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Run:\n${runId}`);
+        expect(runText).to.equal(`Run:\n${runNumber}`);
 
         // We expect the associated run to be clickable with a valid link
-        const runLink = await page.$('#Flp-run a');
-        await waitForNavigation(page, () => runLink.click());
+        await waitForNavigation(page, () => page.waitForSelector('#Flp-run a'));
 
         // We expect the link to navigate to the correct run detail page
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&runNumber=${runId}`);
+        expectUrlParams({ page: 'run-detail', runNumber: runNumber });
     });
 };

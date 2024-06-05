@@ -41,8 +41,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the current environment\'s status', async () => {
-        const statusBadge = await page.$('#environment-status-badge');
-        expect(statusBadge).not.be.null;
+        const statusBadge = await page.waitForSelector('#environment-status-badge');
         expect(await statusBadge.evaluate((element) => element.classList.contains('badge'))).to.be.true;
         expect(await statusBadge.evaluate((element) => element.innerText)).to.equal('DESTROYED');
     });

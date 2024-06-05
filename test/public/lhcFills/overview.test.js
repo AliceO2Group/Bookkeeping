@@ -185,8 +185,9 @@ module.exports = () => {
 
     it('should successfully display ONGOING information', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        const stableBeamsDurationText = await page.$('#row5-stableBeamsDuration-text');
-        expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success')));
+        const stableBeamsDurationText = await page.waitForSelector('#row5-stableBeamsDuration-text div');
+
+        expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
         expect(await stableBeamsDurationText.evaluate((element) => element.innerText)).to.equal('ONGOING');
     });
 
@@ -198,6 +199,7 @@ module.exports = () => {
 
     it('should successfully display some statistics', async () => {
         await goToPage(page, 'lhc-fill-overview');
+
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');

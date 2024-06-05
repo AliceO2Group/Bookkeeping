@@ -149,14 +149,17 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(6)').innerText)).to.equal('08/08/2019\n13:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(7)').innerText)).to.equal('09/08/2019\n14:00:00');
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(6)').innerText)).to.equal('1565269200000');
-        expect(await page.evaluate(() => document.querySelector('#row106 td:nth-child(7)').innerText)).to.equal('1565359200000');
+        const rawTimestampToggleSelector = '';
+        await expectInnerText(page, '#row106 td:nth-child(6)', '08/08/2019\n13:00:00');
+        await expectInnerText(page, '#row106 td:nth-child(7)', '09/08/2019\n14:00:00');
+        await pressElement(page, '#preferences-raw-timestamps');
+
+        await pressElement(page, '#preferences-raw-timestamps');
+        await expectInnerText(page, '#row106 td:nth-child(6)', '1565269200000');
+        await expectInnerText(page, '#row106 td:nth-child(7)', '1565359200000');
+
         // Go back to normal
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+        await pressElement(page, '#preferences-raw-timestamps');
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
@@ -869,10 +872,8 @@ module.exports = () => {
         await waitForTableLength(page, 8);
 
         // Expect the EOR filter to exist
-        const eorCategoryDropdown = await page.$('#eorCategories');
-        expect(eorCategoryDropdown).to.exist;
-        const eorTitleDropdown = await page.$('#eorTitles');
-        expect(eorTitleDropdown).to.exist;
+        await page.waitForSelector('#eorCategories');
+        const eorTitleDropdown = await page.waitForSelector('#eorTitles');
 
         // Select the EOR reason category DETECTORS
         await page.select('#eorCategories', 'DETECTORS');

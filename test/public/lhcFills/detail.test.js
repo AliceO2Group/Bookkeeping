@@ -43,8 +43,7 @@ module.exports = () => {
     it('should successfully emphasize the fills that have a stable beams', async () => {
         // Fill #6 has a stable beam
         {
-            const stableBeamBadge = await page.$('#stable-beam-badge');
-            expect(stableBeamBadge).to.be.not.null;
+            const stableBeamBadge = await page.waitForSelector('#stable-beam-badge');
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-primary'))).to.be.true;
             expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM');
         }
@@ -52,8 +51,7 @@ module.exports = () => {
         // Fill #5 has an ongoing stable beam
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 5 } });
         {
-            const stableBeamBadge = await page.$('#stable-beam-badge');
-            expect(stableBeamBadge).to.be.not.null;
+            const stableBeamBadge = await page.waitForSelector('#stable-beam-badge');
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
             expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM - ONGOING');
         }
@@ -61,9 +59,10 @@ module.exports = () => {
 
     it('should successfully display runs statistics', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
-        const statistics = await page.$('#statistics');
-        expect(statistics).to.be.not.null;
+
+        await page.waitForSelector('#statistics');
         const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);
+
         expect(statisticsContent).to.include('Over 2 minutes');
         expect(statisticsContent).to.include('Under 2 minutes');
         expect(statisticsContent).to.include('Per quality');

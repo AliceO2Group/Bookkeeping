@@ -257,20 +257,16 @@ module.exports = () => {
     it('should show lhc data in edit mode', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 1 } });
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
-        const element = await page.$('#lhc-fill-fillNumber>strong');
-        const value = await element.evaluate((el) => el.textContent);
-        expect(value).to.equal('Fill number:');
+        await expectInnerText(page, '#lhc-fill-fillNumber>strong', 'Fill number:');
     });
 
     it('can navigate to the flp panel', async () => {
-        await pressElement(page, '#flps-tab');
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('runNumber=1');
-        expect(urlParameters).to.contain('panel=flps');
+        await waitForNavigation(page, () => pressElement(page, '#flps-tab'));
+        await expectUrlParams(page, {
+            page: 'run-detail',
+            runNumber: 1,
+            panel: 'flps',
+        });
     });
 
     it('can navigate to the logs panel', async () => {
@@ -351,40 +347,40 @@ module.exports = () => {
 
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 106 } });
-        const runDurationCell = await page.$('#runDurationValue');
+        const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display duration without warning popover when run has trigger OFF', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 107 } });
-        const runDurationCell = await page.$('#runDurationValue');
+        const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 105 } });
-        const runDurationCell = await page.$('#runDurationValue');
+        const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
     });
 
     it('should successfully display popover warning when run is missing trigger start', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 104 } });
-        const popoverContent = await getPopoverContent(await page.$('#runDurationValue .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
     });
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 103 } });
-        const popoverContent = await getPopoverContent(await page.$('#runDurationValue .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { id: 102 } });
-        const popoverContent = await getPopoverContent(await page.$('#runDurationValue .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 

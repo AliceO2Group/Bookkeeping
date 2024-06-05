@@ -174,6 +174,21 @@ module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
 };
 
 /**
+ * Wait for the first index of table items to be the expected one
+ *
+ * @param {puppeteer.Page} page the puppeteer page where the table is located
+ * @param {number} index the expected index of the first item
+ * @return {Promise<void>} resolves once the first item has the specified index
+ */
+module.exports.waitForTableFirstRowIndexToEqual = async (page, index) => {
+    await page.waitForFunction(
+        (index) => document.querySelector('#firstRowIndex').innerText === `${index}`,
+        {},
+        index,
+    );
+};
+
+/**
  * Waits for the table on the page to be empty.
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
@@ -341,7 +356,7 @@ module.exports.getTableDataSlice = async (page, columnKeys) => {
 /**
  * Evaluate and return the text content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
- * @returns {Promise<XPathResult>} the html content
+ * @returns {Promise<string>} the html content
  */
 const getInnerText = async (elementHandler) => await elementHandler.evaluate((element) => element.innerText);
 
@@ -356,8 +371,12 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    const actualInnerText = await getInnerText(await page.waitForSelector(selector, { timeout: 200 }));
-    expect(actualInnerText).to.equal(innerText);
+    await page.waitForFunction(
+        (selector, innerText) => document.querySelector(selector).innerText === innerText,
+        {},
+        selector,
+        innerText,
+    );
 };
 
 /**
@@ -368,8 +387,8 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    const actualInnerText = await getInnerText(await page.$(selector));
+    const element = await page.waitForSelector(selector);
+    const actualInnerText = await getInnerText(element);
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
@@ -381,8 +400,8 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    const actualInnerText = await getInnerText(await page.$(selector));
+    const element = await page.waitForSelector(selector);
+    const actualInnerText = await getInnerText(element);
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
@@ -450,9 +469,8 @@ module.exports.getPopoverContent = getPopoverContent;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
-    const popoverTrigger = await cell.$('.popover-trigger');
-    const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
+    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
 
     const actualContent = await getPopoverContent(popoverTrigger);
 
@@ -462,14 +480,14 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 /**
  * Check that a given cell of the given column displays the correct color depending on the status
  *
- * @param {{$: function}} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for status color
  * @param {number} columnIndex the index of the column to look for status color
  * @returns {Promise<Chai.Assertion>} void promise
  */
 module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex) => {
-    const cellStatus = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
-    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex})`);
+    const cellStatus = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex})`);
     const cellStatusContent = await getInnerHtml(cellStatus);
 
     switch (cellStatusContent) {
@@ -613,8 +631,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
     await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
     await page.hover(`th#${columnId}`);
-    const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
-    expect(Boolean(sortingPreviewIndicator)).to.be.true;
+    await page.waitForSelector(`#${columnId}-sort-preview`);
 
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
