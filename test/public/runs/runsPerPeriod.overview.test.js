@@ -24,7 +24,7 @@ const {
     validateTableData,
     validateDate,
     waitForDownload,
-} = require('../defaults');
+} = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { waitForTimeout } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition');

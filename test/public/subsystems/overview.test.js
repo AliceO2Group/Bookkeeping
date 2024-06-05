@@ -19,7 +19,7 @@ const {
     goToPage,
     waitForNavigation,
     expectUrlParams,
-} = require('../defaults');
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

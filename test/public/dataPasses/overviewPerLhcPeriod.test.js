@@ -23,8 +23,9 @@ const {
     waitForNavigation,
     pressElement,
     getTableDataSlice,
-    expectColumnValues, expectUrlParams,
-} = require('../defaults');
+    expectColumnValues,
+    expectUrlParams,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

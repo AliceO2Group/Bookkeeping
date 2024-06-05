@@ -21,7 +21,7 @@ const {
     validateTableData,
     fillInput,
     expectUrlParams,
-} = require('../defaults');
+} = require('../defaults.js');
 
 const { expect } = chai;
 const dateAndTime = require('date-and-time');

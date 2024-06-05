@@ -23,7 +23,7 @@ const {
     waitForTimeout,
     waitForNavigation,
     expectUrlParams,
-} = require('../defaults');
+} = require('../defaults.js');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
 const fs = require('fs');

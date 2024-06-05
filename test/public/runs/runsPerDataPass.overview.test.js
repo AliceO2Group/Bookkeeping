@@ -27,7 +27,7 @@ const {
     expectLink,
     validateDate,
     waitForDownload,
-} = require('../defaults');
+} = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');

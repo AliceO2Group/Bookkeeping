@@ -27,8 +27,9 @@ const {
     expectLink,
     reloadPage,
     waitForDownload,
-    waitForNavigation, expectUrlParams,
-} = require('../defaults');
+    waitForNavigation,
+    expectUrlParams,
+} = require('../defaults.js');
 
 const { expect } = chai;
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');

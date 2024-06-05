@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, getFirstRow, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, getFirstRow, goToPage } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { waitForTimeout } = require('../defaults.js');
 

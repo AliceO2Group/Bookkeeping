@@ -21,7 +21,7 @@ const {
     expectUrlParams,
     waitForTimeout,
     waitForNavigation,
-} = require('../defaults');
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

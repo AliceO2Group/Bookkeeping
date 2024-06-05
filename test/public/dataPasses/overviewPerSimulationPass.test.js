@@ -22,7 +22,7 @@ const {
     expectColumnValues,
     validateTableData,
     expectInnerText,
-} = require('../defaults');
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

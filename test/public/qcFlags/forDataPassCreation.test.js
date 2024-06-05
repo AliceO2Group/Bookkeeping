@@ -22,8 +22,10 @@ const {
     getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
-    getPopoverSelector, expectUrlParams, waitForTableLength,
-} = require('../defaults');
+    getPopoverSelector,
+    expectUrlParams,
+    waitForTableLength,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

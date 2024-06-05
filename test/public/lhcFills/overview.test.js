@@ -18,7 +18,7 @@ const {
     pressElement,
     goToPage,
     checkColumnBalloon, waitForNavigation, expectUrlParams,
-} = require('../defaults');
+} = require('../defaults.js');
 const { waitForTimeout, expectInnerText } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 

@@ -24,11 +24,18 @@ const {
     checkColumnBalloon,
     expectInputValue,
     waitForNavigation,
-    expectUrlParams, expectColumnValues, waitForDownload,
-} = require('../defaults');
+    expectUrlParams,
+    expectColumnValues,
+    waitForDownload,
+    fillInput,
+    getPopoverContent,
+    getInnerText,
+    waitForTimeout,
+    getPopoverSelector,
+    waitForTableLength,
+} = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { fillInput, getPopoverContent, getInnerText, waitForTimeout, getPopoverSelector, waitForTableLength } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

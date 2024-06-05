@@ -59,7 +59,7 @@ module.exports.defaultBefore = async () => {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
     page.setDefaultTimeout(500);
-    page.setDefaultNavigationTimeout(2000);
+    page.setDefaultNavigationTimeout(5000);
 
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),

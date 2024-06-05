@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults.js');
 const packageJson = require('../../../package.json');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 

@@ -25,7 +25,7 @@ const {
     getPopoverContent,
     waitForTimeout,
     waitForNavigation,
-} = require('../defaults');
+} = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');

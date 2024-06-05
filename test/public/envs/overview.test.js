@@ -24,7 +24,7 @@ const {
     waitForTimeout,
     expectUrlParams,
     waitForNavigation,
-} = require('../defaults');
+} = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
