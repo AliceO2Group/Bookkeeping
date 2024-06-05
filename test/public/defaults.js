@@ -215,6 +215,7 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
  * Reload the current page and wait for it to be loaded
  * @param {Page} puppeteerPage Puppeteer page object.
  * @return {Promise} resolves when the page has loaded
+ * @deprecated avoid using this function, reloading the full page is very slow
  */
 module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage.url());
 
@@ -229,14 +230,15 @@ module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage
  * @returns {Promise} resolves with the navigation response
  */
 const goTo = async (page, url, options) => {
-    const { authenticate = true, redrawDuration = 20 } = options ?? {};
+    const { authenticate = true } = options ?? {};
 
     if (authenticate) {
         url = authenticateUrl(url);
     }
 
-    const response = await page.goto(url, { waitUntil: 'networkidle0' });
-    await waitForTimeout(redrawDuration);
+    const response = await page.goto(url, { waitUntil: 'load' });
+    // Wait for navbar title to be there, which mean that a first render has been done
+    await page.waitForSelector('#navbar-title', { timeout: 5000 });
     return response;
 };
 
