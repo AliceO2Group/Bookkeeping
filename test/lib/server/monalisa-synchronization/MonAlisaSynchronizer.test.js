@@ -41,7 +41,7 @@ module.exports = () => {
 
         const dataPassesDB = await DataPassRepository.findAll({ include: [
             { association: 'runs', attributes: ['runNumber'] },
-            { association: 'vesions' }, // TODO
+            { association: 'versions' }, // TODO
         ] });
 
         // Correct amount of data
@@ -62,7 +62,7 @@ module.exports = () => {
 
         // Properties of data passes are the same
         expect(dataPassesDB.map((dataPass) => {
-            const { name, outputSize, description, reconstructedEventsCount, lastSeen } = dataPass;
+            const { name, versions: [{ outputSize, description, reconstructedEventsCount, lastSeen }] } = dataPass;
             return { name, outputSize, description, reconstructedEventsCount, lastSeen };
         })).to.include.deep.all.members(expectedDataPassesVersions);
 
