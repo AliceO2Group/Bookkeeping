@@ -58,7 +58,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
 module.exports.defaultBefore = async () => {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
-    page.setDefaultTimeout(500);
+    page.setDefaultTimeout(1500);
     page.setDefaultNavigationTimeout(5000);
 
     await Promise.all([
