@@ -148,10 +148,10 @@ module.exports.waitForTimeout = waitForTimeout;
  * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
-const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
+const waitForTableToLength = async (page, expectedSize) => {
     await page.waitForFunction(
         (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-        { timeout },
+        {},
         expectedSize,
     );
 };
