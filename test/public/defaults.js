@@ -141,7 +141,7 @@ module.exports.waitForEmptyTable = waitForEmptyTable;
  * @return {Promise<*>} resolves once the navigation finished
  */
 const waitForNavigation = (page, navigateFunction) => Promise.all([
-    page.waitForNavigation({ timeout: 1500 }),
+    page.waitForNavigation({ timeout: 5000 }),
     navigateFunction(),
 ]);
 

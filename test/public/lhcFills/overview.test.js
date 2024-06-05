@@ -19,7 +19,7 @@ const {
     goToPage,
     checkColumnBalloon,
 } = require('../defaults');
-const { waitForNetworkIdleAndRedraw, waitForTimeout, expectInnerText } = require('../defaults.js');
+const { expectInnerText, waitForTableLength, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -106,39 +106,41 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTimeout(100);
 
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
+
+        await page.waitForSelector('#lastRowIndex');
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(6);
+
+        await page.waitForSelector('#totalRowsCount');
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(6);
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTimeout(100);
+        await waitForTableLength(page, 6);
 
         await checkColumnBalloon(page, 1, 12);
     });
 
     it('can set how many lhcFills are available per page', async () => {
-        await waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
         await menuItem.evaluate((button) => button.click());
-        await waitForTimeout(100);
+        await waitForTableLength(page, 5);
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
@@ -150,7 +152,7 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
         expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
@@ -162,7 +164,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.lhcFills.overviewModel.pagination.itemsPerPage = 1;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
@@ -172,14 +174,13 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await waitForTimeout(100);
+        await page.waitForSelector('#page1', { hidden: true });
         const pageOneButton = await page.$('#page1');
         expect(pageOneButton).to.be.null;
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'lhc-fill-overview');
-        await waitForTimeout(200);
+        await waitForNavigation(page, () => goToPage(page, 'lhc-fill-overview'));
 
         // Use the third row to have a fill with statistics
         const row = await page.$('tbody tr:nth-of-type(3)');
@@ -187,9 +188,7 @@ module.exports = () => {
         // Remove "row" prefix to get fill number
         const fillNumber = await row.evaluate((element) => element.id.slice(3));
 
-        await row.$eval('td:first-of-type a', (link) => link.click());
-        await page.waitForNetworkIdle();
-        await waitForTimeout(200);
+        await waitForNavigation(page, () => row.$eval('td:first-of-type a', (link) => link.click()));
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
 
@@ -206,8 +205,7 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await pressElement(page, '#row6-runs a');
-        await waitForNetworkIdleAndRedraw(page);
+        await waitForNavigation(page, () => pressElement(page, '#row6-runs a'));
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
         expect(urlParameters).to.contain('page=run-detail');

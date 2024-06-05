@@ -19,7 +19,8 @@ const {
     fillInput,
     checkMismatchingUrlParam,
     getPopoverContent,
-    waitForNavigation, waitForTableLength,
+    waitForNavigation,
+    waitForTableLength,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
@@ -264,7 +265,7 @@ module.exports = () => {
     });
 
     it('can navigate to the logs panel', async () => {
-        await pressElement(page, '#logs-tab');
+        await waitForNavigation(page, () => pressElement(page, '#logs-tab'));
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=run-detail');
@@ -278,12 +279,12 @@ module.exports = () => {
         expect(value).to.equal('Fill number:');
     });
     it('can navigate to a log detail page', async () => {
+        await waitForTableLength(page, 5);
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
         // We expect the entry page to have the same id as the id from the run overview
-        await pressElement(page, `#${firstRowId} .btn-redirect`);
-        await page.waitForSelector('#log-1');
+        await waitForNavigation(page, () => pressElement(page, `#${firstRowId} .btn-redirect`));
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
         expect(urlParameters).to.contain('page=log-detail');
@@ -305,15 +306,14 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { id: 108 } });
+        await waitForNavigation(page, () => goToPage(page, 'run-detail', { queryParameters: { id: 108 } }));
 
         const fillNumberSelector = '#lhc-fill-fillNumber a';
         await page.waitForSelector(fillNumberSelector);
         // Remove "row" prefix to get fill number
         const fillNumber = await page.$eval(fillNumberSelector, (element) => element.innerText);
 
-        await page.$eval(fillNumberSelector, (link) => link.click());
-        await page.waitForNetworkIdle();
+        await waitForNavigation(page, () => page.$eval(fillNumberSelector, (link) => link.click()));
 
         const redirectedUrl = await page.url();
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -343,7 +343,7 @@ module.exports = () => {
         await expectInnerText(page, '.btn-primary.btn-redirect', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await pressElement(page, '.btn-primary.btn-redirect');
+        await waitForNavigation(page, () => pressElement(page, '.btn-primary.btn-redirect'));
         expect(page.url()).to.equal(`${url}/?page=run-overview`);
     });
 
