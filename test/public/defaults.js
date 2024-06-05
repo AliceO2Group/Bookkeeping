@@ -145,7 +145,6 @@ module.exports.waitForTimeout = waitForTimeout;
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
- * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
 const waitForTableToLength = async (page, expectedSize) => {
@@ -232,7 +231,7 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    const elementHandler = await page.waitForSelector(selector, { timeout: 250 });
+    const elementHandler = await page.waitForSelector(selector);
 
     if (jsClick) {
         await elementHandler.evaluate((element) => element.click());
@@ -371,6 +370,7 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
+    await page.waitForSelector(selector);
     await page.waitForFunction(
         (selector, innerText) => document.querySelector(selector).innerText === innerText,
         {},

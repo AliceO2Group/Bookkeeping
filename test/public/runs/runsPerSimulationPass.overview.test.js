@@ -184,11 +184,8 @@ module.exports = () => {
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
 
-        const runNumberLinkCellSelector = 'tbody tr:first-of-type a';
-        const expectedRunNumber = await getInnerText(await page.$(runNumberLinkCellSelector));
-
-        await waitForNavigation(page, () => pressElement(page, runNumberLinkCellSelector));
-        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 56 });
     });
 
     it('should successfully export runs', async () => {

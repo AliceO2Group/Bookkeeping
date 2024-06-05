@@ -32,7 +32,7 @@ const {
     waitForNavigation,
     waitForTableLength,
     waitForEmptyTable,
-    waitForTableTotalRowsCountToEqual, waitForTableFirstRowIndexToEqual,
+    waitForTableTotalRowsCountToEqual, waitForTableFirstRowIndexToEqual, takeScreenshot,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -94,7 +94,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#titleFilterText');
 
-        await page.type('#titleFilterText', 'first');
+        await fillInput(page, '#titleFilterText', 'first');
         await waitForTableLength(page, 1);
 
         await fillInput(page, '#titleFilterText', 'bogusbogusbogus');
@@ -446,6 +446,7 @@ module.exports = () => {
          * As an example, override the amount of logs visible per page manually
          * We know the limit is 100 as specified by the Dto
          */
+        await page.waitForSelector('table');
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.logs.overviewModel.pagination.itemsPerPage = 200;

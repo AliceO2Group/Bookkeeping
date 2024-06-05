@@ -115,15 +115,15 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await reloadPage(page);
-        const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565294400000');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('1565298000000');
+        await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
+
+        await pressElement(page, '#preferences-raw-timestamps', true);
+        await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
+
         // Go back to normal
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+        await pressElement(page, '#preferences-raw-timestamps', true);
     });
 
     it('can set how many runs are available per page', async () => {

@@ -32,7 +32,7 @@ const {
     getInnerText,
     waitForTimeout,
     getPopoverSelector,
-    waitForTableLength,
+    waitForTableLength, waitForTableTotalRowsCountToEqual,
 } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
@@ -149,17 +149,15 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        const rawTimestampToggleSelector = '';
         await expectInnerText(page, '#row106 td:nth-child(6)', '08/08/2019\n13:00:00');
         await expectInnerText(page, '#row106 td:nth-child(7)', '09/08/2019\n14:00:00');
-        await pressElement(page, '#preferences-raw-timestamps');
+        await pressElement(page, '#preferences-raw-timestamps', true);
 
-        await pressElement(page, '#preferences-raw-timestamps');
         await expectInnerText(page, '#row106 td:nth-child(6)', '1565269200000');
         await expectInnerText(page, '#row106 td:nth-child(7)', '1565359200000');
 
         // Go back to normal
-        await pressElement(page, '#preferences-raw-timestamps');
+        await pressElement(page, '#preferences-raw-timestamps', true);
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
@@ -337,36 +335,27 @@ module.exports = () => {
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(2);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on tags', async () => {
-        await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 8);
 
         // Open filter toggle
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-FOOD');
         await pressElement(page, '#tag-dropdown-option-RUN');
-
-        // Wait for table to have only one row, and the row not being loading
-        await Promise.all([
-            page.waitForSelector('tbody tr:nth-child(2)', { hidden: true }),
-            page.waitForSelector('tbody tr.loading-row', { hidden: true }),
-        ]);
+        await waitForTableLength(page, 1);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-RUN');
         await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
-        await page.waitForSelector('tbody tr:nth-child(2)');
-
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(2);
+        await waitForTableLength(page, 2);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of');
-        await page.waitForSelector('tbody tr:nth-child(3)');
-
-        // Multiple pages, not very representative
-        await expectInnerText(page, '#totalRowsCount', '106');
+        await waitForTableTotalRowsCountToEqual(page, 106);
     });
 
     it('should successfully filter on definition', async () => {
@@ -983,32 +972,25 @@ module.exports = () => {
 
     it('should successfully display information when export will be truncated', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(200);
 
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await waitForTimeout(100);
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
-        const truncatedExportWarning = await page.$('#export-runs-modal #truncated-export-warning');
-        expect(truncatedExportWarning).to.not.be.null;
-        expect(await truncatedExportWarning.evaluate((warning) => warning.innerText)).to
+        const truncatedExportWarning = await page.waitForSelector('#export-runs-modal #truncated-export-warning');
+        expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
+            .to
             .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
         await goToPage(page, 'run-overview');
-        await waitForTimeout(200);
 
         await pressElement(page, '#openFilterToggle');
-        await waitForTimeout(200);
 
         // Type a fake run number to have no runs
-        await page.focus(runNumberInputSelector);
-        await page.keyboard.type('99999999999');
-        await waitForTimeout(300);
-
+        await fillInput(page, runNumberInputSelector, '99999999999');
         await pressElement(page, '#openFilterToggle');
 
-        expect(await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.disabled)).to.be.true;
+        await page.waitForSelector(`${EXPORT_RUNS_TRIGGER_SELECTOR}:disabled`);
     });
 
     it('should successfully export filtered runs', async () => {
@@ -1080,42 +1062,42 @@ module.exports = () => {
 
     it('should successfully display duration without warning popover when run has trigger OFF', async () => {
         await goToPage(page, 'run-overview');
-        const runDurationCell = await page.$('#row107-runDuration');
+        const runDurationCell = await page.waitForSelector('#row107-runDuration');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
         await goToPage(page, 'run-overview');
-        const runDurationCell = await page.$('#row106-runDuration');
+        const runDurationCell = await page.waitForSelector('#row106-runDuration');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
-        const runDurationCell = await page.$('#row105-runDuration');
+        const runDurationCell = await page.waitForSelector('#row105-runDuration');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
     });
 
     it('should successfully display popover warning when run is missing trigger start', async () => {
-        const popoverContent = await getPopoverContent(await page.$('#row104-runDuration .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#row104-runDuration .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
     });
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
-        const popoverContent = await getPopoverContent(await page.$('#row103-runDuration .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#row103-runDuration .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
-        const popoverContent = await getPopoverContent(await page.$('#row102-runDuration .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#row102-runDuration .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 
     it('should successfully display links to infologger and QC GUI', async () => {
         await pressElement(page, '#row104-runNumber-text .popover-trigger');
-        const popoverSelector = await getPopoverSelector(await page.$('#row104-runNumber-text .popover-trigger'));
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
         expect(await page.$eval(
             `${popoverSelector} a`,
