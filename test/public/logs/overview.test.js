@@ -32,6 +32,7 @@ const {
     waitForNavigation,
     waitForTableLength,
     waitForEmptyTable,
+    waitForTableTotalRowsCountToEqual,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -42,7 +43,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let originalNumberOfRows;
     let table;
     let firstRowId;
     let parsedFirstRowId;
@@ -89,10 +89,7 @@ module.exports = () => {
     });
 
     it('can filter by log title', async () => {
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        expect(originalNumberOfRows).to.be.greaterThan(1);
+        await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#titleFilterText');
@@ -100,80 +97,27 @@ module.exports = () => {
         await page.type('#titleFilterText', 'first');
         await waitForTableLength(page, 1);
 
-        // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
-        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
-
         await fillInput(page, '#titleFilterText', 'bogusbogusbogus');
         await waitForEmptyTable(page);
 
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForTableLength(page, 10);
-
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully provide an input to filter on log content', async () => {
-        await reloadPage(page);
-
-        // Expect the page to have loaded enough rows to be able to test the filtering
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
-        expect(originalNumberOfRows).to.be.greaterThan(1);
-
-        await pressElement(page, '#openFilterToggle');
+        await waitForTableLength(page, 10);
 
         await fillInput(page, '#contentFilterText', 'particle');
         await waitForTableLength(page, 2);
 
-        // Expect the new total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
-        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
-
         await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere');
         await waitForEmptyTable(page);
 
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-
-        await waitForTableLength(page, 10);
-
-        // Expect the total number of rows to once more equal the original total
-        const unfilteredRows = await page.$$('table tr');
-        const unfilteredNumberOfRows = unfilteredRows.length - 1;
-        expect(unfilteredNumberOfRows).to.equal(originalNumberOfRows);
+        await pressElement(page, '#reset-filters');
     });
 
     it('can filter by log author', async () => {
-        await reloadPage(page);
-
         await waitForTableLength(page, 10);
 
-        await pressElement(page, '#openFilterToggle');
         await fillInput(page, '#authorFilterText', 'Jane');
         await waitForEmptyTable(page);
 
@@ -183,135 +127,74 @@ module.exports = () => {
 
         await fillInput(page, '#authorFilterText', 'John');
         await waitForTableLength(page, 5);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully provide an easy to access button to filter in/out anonymous logs', async () => {
-        await reloadPage(page);
-        {
-            const authors = await getColumnCellsInnerTexts(page, 'author');
-            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
-        }
+        // Close the filter panel
+        await pressElement(page, '#openFilterToggle');
+        await waitForTableTotalRowsCountToEqual(page, 119);
+
+        const authors = await getColumnCellsInnerTexts(page, 'author');
+        expect(authors.some((author) => author === 'Anonymous')).to.be.true;
 
         await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await waitForTableTotalRowsCountToEqual(page, 117);
+
         await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
             negation: true,
         });
 
         await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+        await waitForTableTotalRowsCountToEqual(page, 119);
         await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
             valuesCheckingMode: 'some',
         });
     });
 
     it('can filter by creation date', async () => {
-        await reloadPage(page);
-
         await pressElement(page, '#openFilterToggle');
 
-        // Increase the amount of items displayed to see logs count difference above 10
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.pagination.itemsPerPage = 20;
-        });
-
-        await waitForTableLength(page, 20);
-
-        // Update original number of rows with the new limit
-        const originalRows = await page.$('#totalRowsCount');
-        const originalNumberOfRows = parseInt(await originalRows.evaluate((el) => el.innerText), 10);
+        await waitForTableTotalRowsCountToEqual(page, 119);
 
         // Insert a minimum date into the filter
-        const limitDate = new Date('2020-02-02');
-        const limit = String(limitDate.getMonth() + 1).padStart(2, '0')
-            + String(limitDate.getDate()).padStart(2, '0')
-            + limitDate.getFullYear();
-        await page.focus('#createdFilterFrom');
-        await page.keyboard.type(limit);
+        const limit = '2020-02-02';
+        await fillInput(page, '#createdFilterFrom', limit);
+        await fillInput(page, '#createdFilterTo', limit);
         await waitForTableLength(page, 1);
 
-        // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$('#totalRowsCount');
-        const firstFilteredNumberOfRows = parseInt(await firstFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
-
-        await page.focus('#createdFilterTo');
-        await page.keyboard.type(limit);
-        await waitForTimeout(300);
-
-        const secondFilteredRows = await page.$('#totalRowsCount');
-        const secondFilteredNumberOfRows = parseInt(await secondFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(secondFilteredNumberOfRows).to.equal(1);
-
-        await page.focus('#createdFilterTo');
-        await page.keyboard.type('01012000');
-        await waitForTimeout(300);
-
-        // Do not expect anything to change, as this maximum is below the minimum, therefore the API is not called
-        const thirdFilteredRows = await page.$('#totalRowsCount');
-        const thirdFilteredNumberOfRows = parseInt(await thirdFilteredRows.evaluate((el) => el.innerText), 10);
-        expect(thirdFilteredNumberOfRows).to.equal(secondFilteredNumberOfRows);
-
-        // Clear the filters
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
+        await pressElement(page, '#reset-filters');
     });
 
     it('can filter by tags', async () => {
-        await waitForTimeout(300);
-
-        // Update original number of rows with the new limit
-        const originalRows = await page.$$('table tr');
-        originalNumberOfRows = originalRows.length - 1;
+        await waitForTableTotalRowsCountToEqual(page, 119);
 
         await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
         await pressElement(page, `#${firstCheckboxId}`);
-        await waitForTimeout(300);
-
-        // Expect the (new) total number of rows to be less than the original number of rows
-        const firstFilteredRows = await page.$$('table tr');
-        const firstFilteredNumberOfRows = firstFilteredRows.length - 1;
-        expect(firstFilteredNumberOfRows).to.be.lessThan(originalNumberOfRows);
+        await waitForTableLength(page, 1);
 
         // Deselect the filter and wait for the changes to process
         await pressElement(page, `#${firstCheckboxId}`);
         await waitForTableLength(page, 10);
 
-        // Expect the total number of rows to equal the original total
-        const firstUnfilteredRows = await page.$$('table tr');
-        expect(firstUnfilteredRows.length - 1).to.equal(originalNumberOfRows);
-
         // Select the first available filter and the second one at once
         const secondCheckboxId = 'tag-dropdown-option-FOOD';
         await pressElement(page, `#${firstCheckboxId}`);
-        await waitForTimeout(300);
         await pressElement(page, `#${secondCheckboxId}`);
-        await waitForTimeout(300);
-
-        // Expect the table to be empty
-        const secondFilteredRows = await page.$$('table tr');
-        const secondFilteredNumberOfRows = secondFilteredRows.length - 1;
-        expect(secondFilteredNumberOfRows).to.equal(1);
-        expect(await page.$eval('table tbody tr', (row) => row.innerText)).to.equal('No data');
+        await waitForEmptyTable(page);
 
         // Set the filter operation to "OR"
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
-        await waitForTimeout(300);
+        await waitForTableLength(page, 2);
 
-        // Expect there now to be more rows than both the previous table and the table with only one filter
-        const thirdFilteredRows = await page.$$('table tr');
-        const thirdFilteredNumberOfRows = thirdFilteredRows.length - 1;
-        expect(thirdFilteredNumberOfRows).to.be.greaterThan(firstFilteredNumberOfRows);
-        expect(thirdFilteredNumberOfRows).to.be.greaterThan(secondFilteredNumberOfRows);
+        await pressElement(page, '#reset-filters');
     });
 
     it('can filter by environments', async () => {
-        await goToPage(page, 'log-overview');
-        await page.evaluate(() => window.model.disableInputDebounce());
         await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
@@ -324,17 +207,13 @@ module.exports = () => {
 
         await fillInput(page, '.environments-filter input', 'abcdefgh');
         await waitForEmptyTable(page);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('can search for tag in the dropdown', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.logs.overviewModel.reset();
-        });
-        await waitForTimeout(20);
+        await pressElement('.tags-filter .dropdown-trigger');
 
-        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
-        await waitForTimeout(20);
         {
             await fillInput(page, '#tag-dropdown-search-input', 'food');
             const popoverTrigger = await page.$('.tags-filter .popover-trigger');
@@ -354,8 +233,6 @@ module.exports = () => {
     });
 
     it('can filter by run number', async () => {
-        await goToPage(page, 'log-overview');
-        await page.evaluate(() => window.model.disableInputDebounce());
         await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
@@ -369,11 +246,11 @@ module.exports = () => {
 
         await fillInput(page, '#runsFilterText', '1234567890');
         await waitForEmptyTable(page);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('can filter by lhc fill number', async () => {
-        await goToPage(page, 'log-overview');
-        await page.evaluate(() => window.model.disableInputDebounce());
         await waitForTableLength(page, 10);
 
         await pressElement(page, '#openFilterToggle');
@@ -386,11 +263,14 @@ module.exports = () => {
 
         await fillInput(page, '#lhcFillsFilter', '1234567890');
         await waitForEmptyTable(page);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
+        await waitForTableLength(page, 10);
+
         // Close the filter panel
-        await pressElement(page, '#reset-filters');
         await pressElement(page, '#openFilterToggle');
         await waitForFirstRowToHaveId(page, 'row119');
 

@@ -159,6 +159,21 @@ const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
 module.exports.waitForTableLength = waitForTableToLength;
 
 /**
+ * Wait for the total number of elements to be the expected one
+ *
+ * @param {puppeteer.Page} page The puppeteer page where the table is located
+ * @param {number} amount the expected amount of items
+ * @return {Promise<void>} resolves once the expected amount is present
+ */
+module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
+    await page.waitForFunction(
+        (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+        {},
+        amount,
+    );
+};
+
+/**
  * Waits for the table on the page to be empty.
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
