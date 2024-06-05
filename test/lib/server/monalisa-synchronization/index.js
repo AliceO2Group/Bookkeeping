@@ -16,5 +16,5 @@ const MonAlisaSynchronizerSuite = require('./MonAlisaSynchronizer.test.js');
 
 module.exports = () => {
     describe('MonAlisa Client', MonAlisaClientSuite);
-    describe('MonAlisa Synchronizer Suite', MonAlisaSynchronizerSuite);
+    describe('MonAlisa Synchronizer', MonAlisaSynchronizerSuite);
 };
