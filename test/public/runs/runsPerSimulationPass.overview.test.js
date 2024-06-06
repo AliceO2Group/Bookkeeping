@@ -28,8 +28,8 @@ const {
     validateDate,
     expectLink,
     reloadPage,
+    waitForDownload,
 } = require('../defaults');
-const { waitForDownload } = require('../../utilities/waitForDownload');
 
 const { expect } = chai;
 const { waitForNavigation } = require('../defaults.js');
@@ -124,7 +124,7 @@ module.exports = () => {
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 2 }],
             { runNumber: 56, simulationPassIdentifier: { id: 2 }, dplDetectorIdentifier: { dplDetectorId: 4 } },
-            { userIdentifier: { externalUserId: 1 } }, // Create bad flag
+            { user: { externalUserId: 1, roles: ['admin'] } }, // Create bad flag
         );
 
         await reloadPage(page);
@@ -197,16 +197,6 @@ module.exports = () => {
 
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
-        const downloadPath = path.resolve('./download');
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
-        });
-
         const targetFileName = 'runs.json';
 
         // First export
@@ -218,8 +208,7 @@ module.exports = () => {
         await validateElement(page, '#send:enabled');
         await expectInnerText(page, '#send', 'Export');
 
-        await pressElement(page, '#send');
-        await waitForDownload(session);
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);

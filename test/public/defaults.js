@@ -17,6 +17,7 @@ const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
 const { buildUrl } = require('../../lib/utilities/buildUrl.js');
 const dateAndTime = require('date-and-time');
+const path = require('path');
 
 const { expect } = chai;
 
@@ -85,6 +86,41 @@ module.exports.defaultAfter = async (page, browser) => {
     await browser.close();
 
     return [page, browser];
+};
+
+/**
+ * Trigger a download and wait for it to be finished
+ *
+ * @param {puppeteer.Page} page puppeteer page
+ * @param {function} trigger function to trigger the expected download
+ * @return {Promise} resolves with de download path
+ */
+exports.waitForDownload = async (page, trigger) => {
+    const downloadPath = path.resolve('./download');
+
+    // Check accessibility on frontend
+    const session = await page.createCDPSession();
+    await session.send('Browser.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath,
+        eventsEnabled: true,
+    });
+
+    await Promise.all([
+        new Promise((resolve, reject) => {
+            session.on('Browser.downloadProgress', (event) => {
+                if (event.state === 'completed') {
+                    resolve('download completed');
+                } else if (event.state === 'canceled') {
+                    reject(new Error('download canceled'));
+                }
+            });
+            setTimeout(() => reject(new Error('Download timeout after 5000 ms')), 5000);
+        }),
+        trigger(),
+    ]);
+
+    return downloadPath;
 };
 
 /**
@@ -423,13 +459,13 @@ module.exports.getPopoverContent = getPopoverContent;
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
  * content is correct
  *
- * @param {{$: function}} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
  * @param {number} columnIndex the index of the column to look for balloon presence
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
     const popoverTrigger = await cell.$('.popover-trigger');
     const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
 
@@ -486,22 +522,27 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 
 /**
  * Evaluate and return the value content of a given element handler
- * @param {{evaluate}} inputElementHandler the puppeteer handler of the element to inspect
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} selector the input selector
  * @returns {Promise<XPathResult>} the html content
  */
-const getInputValue = async (inputElementHandler) => await inputElementHandler.evaluate((input) => input.value);
+const getInputValue = async (page, selector) => {
+    const inputElementHandler = await page.waitForSelector(selector, { timeout: 200 });
+    return inputElementHandler.evaluate((input) => input.value);
+};
+
+module.exports.getInputValue = getInputValue;
 
 /**
  * Expect an element to have a given value
  *
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @param {string} value value to search for.
+ * @param {puppeteer.Page} page Puppeteer page object.
+ * @param {string} selector the input selector
+ * @param {string} value expect input value
  * @return {Promise<void>} resolves once the value has been checked
  */
 module.exports.expectInputValue = async (page, selector, value) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    expect(await getInputValue(await page.$(selector))).to.equal(value);
+    expect(await getInputValue(page, selector)).to.equal(value);
 };
 
 /**
@@ -543,11 +584,7 @@ module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) =>
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
     const size = expectedInnerTextValues.length;
 
-    await page.waitForFunction(
-        (size) => document.querySelectorAll('tbody tr:not(.loading-row):not(.empty-row)').length === size,
-        { timeout: 1500 },
-        size,
-    );
+    await waitForTableToLength(page, size);
 
     expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
 };
@@ -666,7 +703,7 @@ module.exports.setConfirmationDialogToBeDismissed = (page) => {
  * @param {puppeteer.page} page page handler
  * @return {void}
  */
-module.exports.unsetConfirmationdialogActions = (page) => {
+module.exports.unsetConfirmationDialogActions = (page) => {
     page.off('dialog', dismissDialogEventListener);
     page.off('dialog', acceptDialogEventListener);
 };

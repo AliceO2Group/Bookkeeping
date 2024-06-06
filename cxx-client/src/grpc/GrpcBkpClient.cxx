@@ -12,6 +12,9 @@
 #include "GrpcBkpClient.h"
 #include <memory>
 #include <grpc++/grpc++.h>
+#include "grpc/services/GrpcFlpServiceClient.h"
+#include "grpc/services/GrpcDplProcessExecutionClient.h"
+#include "grpc/services/GrpcQcFlagServiceClient.h"
 
 using grpc::Channel;
 
@@ -28,12 +31,14 @@ namespace o2::bkp::api::grpc
 {
 using services::GrpcFlpServiceClient;
 using services::GrpcDplProcessExecutionClient;
+using services::GrpcQcFlagServiceClient;
 
 GrpcBkpClient::GrpcBkpClient(const string& uri)
 {
   auto channel = CreateChannel(uri, InsecureChannelCredentials());
   mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
   mDplProcessExecutionClient = make_unique<GrpcDplProcessExecutionClient>(channel);
+  mQcFlagClient = make_unique<GrpcQcFlagServiceClient>(channel);
 }
 
 const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
@@ -44,5 +49,10 @@ const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
 const std::unique_ptr<DplProcessExecutionClient>& GrpcBkpClient::dplProcessExecution() const
 {
   return mDplProcessExecutionClient;
+}
+
+const unique_ptr<QcFlagServiceClient>& GrpcBkpClient::qcFlag() const
+{
+  return mQcFlagClient;
 }
 } // namespace o2::bkp::api::grpc

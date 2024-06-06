@@ -234,10 +234,10 @@ exports.customizedShiftLeaderEosReportRequest = {
 
 const formattedCustomizedShiftLeaderEosReportTypeSpecific = `
 ## Magnets
-- 07:00:00 - Solenoid 30kA +452mT - Dipole 6kA +681mT
-- 08:13:18 - Solenoid 19kA +108mT - Dipole 1kA +901mT
-- 14:30:37 - Solenoid 17kA +654mT - Dipole 4kA +131mT
-- 15:00:00 - Solenoid 25kA -134mT - Dipole 8kA +734mT
+- 07:00:00 - Dipole 6kA +681mT - Solenoid 30kA +452mT
+- 08:13:18 - Dipole 1kA +901mT - Solenoid 19kA +108mT
+- 14:30:37 - Dipole 4kA +131mT - Solenoid 17kA +654mT
+- 15:00:00 - Dipole 8kA +734mT - Solenoid 25kA -134mT
 
 ## Statistics of the shift
 - Bookkeeping entries per tags
@@ -292,8 +292,8 @@ exports.emptyShiftLeaderEosReport = emptyShiftLeaderEosReport;
 
 const formattedEmptyShiftLeaderEosReportTypeSpecific = `
 ## Magnets
-- 07:00:00 - Solenoid 30kA +452mT - Dipole 6kA +681mT
-- 15:00:00 - Solenoid 25kA -134mT - Dipole 8kA +734mT
+- 07:00:00 - Dipole 6kA +681mT - Solenoid 30kA +452mT
+- 15:00:00 - Dipole 8kA +734mT - Solenoid 25kA -134mT
 
 ## Statistics of the shift
 - Bookkeeping entries per tags
