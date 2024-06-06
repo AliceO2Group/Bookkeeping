@@ -1078,7 +1078,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         await waitForNavigation(page, () => pressElement(page, '#row108-fillNumber a'));
         expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });

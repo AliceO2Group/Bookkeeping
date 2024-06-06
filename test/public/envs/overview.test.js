@@ -10,7 +10,6 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
 const chai = require('chai');
 const {
     defaultBefore,
@@ -18,11 +17,11 @@ const {
     pressElement,
     goToPage,
     checkColumnBalloon,
-    checkEnvironmentStatusColor,
     validateTableData,
     expectInnerText,
     expectUrlParams,
     waitForNavigation,
+    getInnerText,
     waitForTableLength,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
@@ -103,10 +102,35 @@ module.exports = () => {
     it('Should have correct status color in the overview page', async () => {
         await waitForNavigation(page, () => goToPage(page, 'env-overview'));
 
-        await checkEnvironmentStatusColor(page, 1, 4);
-        await checkEnvironmentStatusColor(page, 2, 4);
-        await checkEnvironmentStatusColor(page, 3, 4);
-        await checkEnvironmentStatusColor(page, 4, 4);
+        /**
+         * Check that a given cell of the given column displays the correct color depending on the status
+         *
+         * @param {number} rowIndex the index of the row to look for status color
+         * @param {number} columnIndex the index of the column to look for status color
+         * @returns {Promise<Chai.Assertion>} void promise
+         */
+        const checkEnvironmentStatusColor = async (rowIndex, columnIndex) => {
+            const cellSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
+            const cell = await page.waitForSelector(cellSelector);
+            const cellContent = await getInnerText(cell);
+
+            switch (cellContent) {
+                case 'RUNNING':
+                    await page.waitForSelector(`${cellSelector}.success`);
+                    break;
+                case 'ERROR':
+                    await page.waitForSelector(`${cellSelector}.danger`);
+                    break;
+                case 'CONFIGURED':
+                    await page.waitForSelector(`${cellSelector}.warning`);
+                    break;
+            }
+        };
+
+        await checkEnvironmentStatusColor(1, 4);
+        await checkEnvironmentStatusColor(2, 4);
+        await checkEnvironmentStatusColor(3, 4);
+        await checkEnvironmentStatusColor(4, 4);
     });
 
     it('can set how many environments are available per page', async () => {

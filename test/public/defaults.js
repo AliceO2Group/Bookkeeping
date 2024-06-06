@@ -370,13 +370,17 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    await page.waitForSelector(selector);
-    await page.waitForFunction(
-        (selector, innerText) => document.querySelector(selector).innerText === innerText,
-        {},
-        selector,
-        innerText,
-    );
+    const element = await page.waitForSelector(selector);
+    try {
+        await page.waitForFunction(
+            (selector, innerText) => document.querySelector(selector).innerText === innerText,
+            {},
+            selector,
+            innerText,
+        );
+    } catch (_) {
+        throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${await getInnerText(element)}"`);
+    }
 };
 
 /**
@@ -475,32 +479,6 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const actualContent = await getPopoverContent(popoverTrigger);
 
     expect(triggerContent).to.be.equal(actualContent);
-};
-
-/**
- * Check that a given cell of the given column displays the correct color depending on the status
- *
- * @param {puppeteer.Page} page the puppeteer page
- * @param {number} rowIndex the index of the row to look for status color
- * @param {number} columnIndex the index of the column to look for status color
- * @returns {Promise<Chai.Assertion>} void promise
- */
-module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex) => {
-    const cellStatus = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
-    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex})`);
-    const cellStatusContent = await getInnerHtml(cellStatus);
-
-    switch (cellStatusContent) {
-        case 'RUNNING':
-            expect(await cell.$('.success')).to.not.be.null;
-            break;
-        case 'ERROR':
-            expect(await cell.$('.danger')).to.not.be.null;
-            break;
-        case 'CONFIGURED':
-            expect(await cell.$('.warning')).to.not.be.null;
-            break;
-    }
 };
 
 /**
