@@ -459,13 +459,13 @@ module.exports.getPopoverContent = getPopoverContent;
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
  * content is correct
  *
- * @param {{$: function}} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for balloon presence
  * @param {number} columnIndex the index of the column to look for balloon presence
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
     const popoverTrigger = await cell.$('.popover-trigger');
     const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
 
@@ -703,7 +703,7 @@ module.exports.setConfirmationDialogToBeDismissed = (page) => {
  * @param {puppeteer.page} page page handler
  * @return {void}
  */
-module.exports.unsetConfirmationdialogActions = (page) => {
+module.exports.unsetConfirmationDialogActions = (page) => {
     page.off('dialog', dismissDialogEventListener);
     page.off('dialog', acceptDialogEventListener);
 };
