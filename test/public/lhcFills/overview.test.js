@@ -17,9 +17,9 @@ const {
     defaultAfter,
     pressElement,
     goToPage,
-    checkColumnBalloon,
-} = require('../defaults');
-const { expectInnerText, waitForTableLength, waitForNavigation } = require('../defaults.js');
+    checkColumnBalloon, waitForNavigation, expectUrlParams,
+} = require('../defaults.js');
+const { waitForTimeout, expectInnerText } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -180,39 +180,28 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'lhc-fill-overview'));
-
-        // Use the third row to have a fill with statistics
-        const row = await page.$('tbody tr:nth-of-type(3)');
-        expect(row).to.be.not.null;
-        // Remove "row" prefix to get fill number
-        const fillNumber = await row.evaluate((element) => element.id.slice(3));
-
-        await waitForNavigation(page, () => row.$eval('td:first-of-type a', (link) => link.click()));
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=lhc-fill-details');
-        expect(urlParameters).to.contain(`fillNumber=${fillNumber}`);
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForNavigation(page, () => pressElement(page, 'td:first-of-type a'));
+        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: '6' });
     });
 
     it('should successfully display ONGOING information', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        const stableBeamsDurationText = await page.$('#row5-stableBeamsDuration-text');
-        expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success')));
+        const stableBeamsDurationText = await page.waitForSelector('#row5-stableBeamsDuration-text div');
+
+        expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
         expect(await stableBeamsDurationText.evaluate((element) => element.innerText)).to.equal('ONGOING');
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'lhc-fill-overview');
         await waitForNavigation(page, () => pressElement(page, '#row6-runs a'));
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
+        expectUrlParams(page, { page: 'run-detail', runNumber: '49' });
     });
 
-    it ('should successfully display some statistics', async () => {
+    it('should successfully display some statistics', async () => {
         await goToPage(page, 'lhc-fill-overview');
+
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');

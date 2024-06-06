@@ -21,9 +21,9 @@ const {
     checkEnvironmentStatusColor,
     validateTableData,
     expectInnerText,
-    waitForNetworkIdleAndRedraw,
+    waitForTimeout,
+    expectUrlParams,
     waitForNavigation,
-    waitForTableLength,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -112,7 +112,7 @@ module.exports = () => {
     it('can set how many environments are available per page', async () => {
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
@@ -152,10 +152,8 @@ module.exports = () => {
         await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
-        const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
-        const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+        await page.waitForSelector('#page5');
+        await page.waitForSelector('#page6', { hidden: true });
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
@@ -166,10 +164,7 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'env-overview');
-        await pressElement(page, '#rowTDI59So3d-runs a');
-        await waitForNetworkIdleAndRedraw(page);
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 };

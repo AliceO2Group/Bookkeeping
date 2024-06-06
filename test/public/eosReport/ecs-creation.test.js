@@ -15,9 +15,12 @@ const {
     goToPage,
     defaultBefore,
     defaultAfter,
-    checkMismatchingUrlParam,
-    waitForNetworkIdleAndRedraw,
-    reloadPage, fillInput, expectInnerText,
+    reloadPage,
+    fillInput,
+    expectInnerText,
+    waitForNavigation,
+    pressElement,
+    expectUrlParams,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -53,7 +56,7 @@ module.exports = () => {
     it('Should successfully display the ECS eos report creation page', async () => {
         const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.ECS } });
         expect(response.status()).to.equal(200);
-        expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create', shiftType: ShiftTypes.ECS })).to.eql({});
+        expectUrlParams(page, { page: 'eos-report-create', shiftType: ShiftTypes.ECS });
     });
 
     it('Should successfully create an ECS EoS report when submitting the form and redirect to the corresponding log', async () => {
@@ -134,11 +137,8 @@ module.exports = () => {
         await page.focus('#for-rm-rc .CodeMirror textarea');
         await page.keyboard.type('For RM & RC\nOn multiple lines');
 
-        await page.waitForSelector('#submit');
-        await page.click('#submit');
-
-        await waitForNetworkIdleAndRedraw(page);
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '121' })).to.eql({});
+        await waitForNavigation(page, () => pressElement(page, '#submit'));
+        expectUrlParams(page, { page: 'log-detail', id: '121' });
 
         // Fetch log manually, because it's hard to parse codemirror display
         const { text } = await getLog(121);

@@ -58,6 +58,8 @@ const getUrl = () => `http://localhost:${server.address().port}`;
 module.exports.defaultBefore = async () => {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
+    page.setDefaultTimeout(1500);
+    page.setDefaultNavigationTimeout(5000);
 
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
@@ -68,7 +70,7 @@ module.exports.defaultBefore = async () => {
 };
 
 /**
- * Destructor to cleanup after tests are finished.
+ * Destructor to clean up after tests are finished.
  * @param {Object} page Puppeteer page object
  * @param {Object} browser Browser object to run tests on
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page and Browser.
@@ -143,18 +145,47 @@ module.exports.waitForTimeout = waitForTimeout;
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
- * @param {number} [timeout=500] - Optional timeout in milliseconds before the function times out.
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
-const waitForTableToLength = async (page, expectedSize, timeout = 500) => {
+const waitForTableToLength = async (page, expectedSize) => {
     await page.waitForFunction(
         (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-        { timeout },
+        {},
         expectedSize,
     );
 };
 
 module.exports.waitForTableLength = waitForTableToLength;
+
+/**
+ * Wait for the total number of elements to be the expected one
+ *
+ * @param {puppeteer.Page} page The puppeteer page where the table is located
+ * @param {number} amount the expected amount of items
+ * @return {Promise<void>} resolves once the expected amount is present
+ */
+module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
+    await page.waitForFunction(
+        (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+        {},
+        amount,
+    );
+};
+
+/**
+ * Wait for the first index of table items to be the expected one
+ *
+ * @param {puppeteer.Page} page the puppeteer page where the table is located
+ * @param {number} index the expected index of the first item
+ * @return {Promise<void>} resolves once the first item has the specified index
+ */
+module.exports.waitForTableFirstRowIndexToEqual = async (page, index) => {
+    await page.waitForFunction(
+        (index) => document.querySelector('#firstRowIndex').innerText === `${index}`,
+        {},
+        index,
+    );
+};
 
 /**
  * Waits for the table on the page to be empty.
@@ -168,6 +199,15 @@ const waitForEmptyTable = async (page, timeout = 500) => {
 };
 
 module.exports.waitForEmptyTable = waitForEmptyTable;
+
+/**
+ * Wait for the first row of the page to have a given id
+ *
+ * @param {puppeteer.Page} page Puppeteer current page
+ * @param {string} id the expected id
+ * @return {Promise<puppeteer.ElementHandle>} resolves with the first row element handle once it has the right id
+ */
+module.exports.waitForFirstRowToHaveId = async (page, id) => page.waitForSelector(`tbody tr:first-child#${id}`);
 
 /**
  * Execute the given navigation function and wait for navigation
@@ -191,7 +231,7 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    const elementHandler = await page.waitForSelector(selector, { timeout: 250 });
+    const elementHandler = await page.waitForSelector(selector);
 
     if (jsClick) {
         await elementHandler.evaluate((element) => element.click());
@@ -204,6 +244,7 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
  * Reload the current page and wait for it to be loaded
  * @param {Page} puppeteerPage Puppeteer page object.
  * @return {Promise} resolves when the page has loaded
+ * @deprecated avoid using this function, reloading the full page is very slow
  */
 module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage.url());
 
@@ -218,14 +259,15 @@ module.exports.reloadPage = (puppeteerPage) => goTo(puppeteerPage, puppeteerPage
  * @returns {Promise} resolves with the navigation response
  */
 const goTo = async (page, url, options) => {
-    const { authenticate = true, redrawDuration = 20 } = options ?? {};
+    const { authenticate = true } = options ?? {};
 
     if (authenticate) {
         url = authenticateUrl(url);
     }
 
-    const response = await page.goto(url, { waitUntil: 'networkidle0' });
-    await waitForTimeout(redrawDuration);
+    const response = await page.goto(url, { waitUntil: 'load' });
+    // Wait for navbar title to be there, which mean that a first render has been done
+    await page.waitForSelector('#navbar-title', { timeout: 5000 });
     return response;
 };
 
@@ -248,34 +290,6 @@ module.exports.goToPage = (puppeteerPage, pageKey, options) => {
 };
 
 /**
- * Wait for page network idle and add a small timeout to let the page redraw
- *
- * @param {Object} page the puppeteer page object
- * @param {Object} [options] eventual options
- * @param {number} [options.redrawDuration] duration of the page redraw (in ms)
- * @return {Promise<void>} resolves once the page is fully redraw
- */
-module.exports.waitForNetworkIdleAndRedraw = async (page, options) => {
-    const { redrawDuration = 20 } = options ?? {};
-
-    await page.waitForNetworkIdle();
-    await waitForTimeout(redrawDuration);
-};
-
-/**
- * Validates if selector is present and returns the element.
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @returns {Object} Element matching the selector.
- */
-module.exports.validateElement = async (page, selector) => {
-    await page.waitForSelector(selector);
-    const element = page.$(selector);
-    expect(Boolean(element)).to.be.true;
-    return element;
-};
-
-/**
  * Debug helper function
  * This function takes a screenshot of the current screen the page is at, and saves it to
  * database/storage/screenshot.png
@@ -289,21 +303,6 @@ module.exports.takeScreenshot = async (page, name = 'screenshot') => {
         type: 'png',
         fullPage: true,
     });
-};
-
-/**
- * Validates if selector is present and returns the element.
- * @param {Object} page Puppeteer page object.
- * @param {string} selector Css selector.
- * @param {Object} value value that is expected at the Css selector element.
- * @returns {Object} Element matching the selector
- */
-module.exports.validateElementEqualTo = async (page, selector, value) => {
-    await page.waitForSelector(selector);
-    const element = await page.$$(selector);
-    expect(Boolean(element)).to.be.true;
-    expect(element.length).to.equal(value);
-    return element;
 };
 
 /**
@@ -356,7 +355,7 @@ module.exports.getTableDataSlice = async (page, columnKeys) => {
 /**
  * Evaluate and return the text content of a given element handler
  * @param {{evaluate}} elementHandler the puppeteer handler of the element to inspect
- * @returns {Promise<XPathResult>} the html content
+ * @returns {Promise<string>} the html content
  */
 const getInnerText = async (elementHandler) => await elementHandler.evaluate((element) => element.innerText);
 
@@ -371,8 +370,13 @@ module.exports.getInnerText = getInnerText;
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerText = async (page, selector, innerText) => {
-    const actualInnerText = await getInnerText(await page.waitForSelector(selector, { timeout: 200 }));
-    expect(actualInnerText).to.equal(innerText);
+    await page.waitForSelector(selector);
+    await page.waitForFunction(
+        (selector, innerText) => document.querySelector(selector).innerText === innerText,
+        {},
+        selector,
+        innerText,
+    );
 };
 
 /**
@@ -383,8 +387,8 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    const actualInnerText = await getInnerText(await page.$(selector));
+    const element = await page.waitForSelector(selector);
+    const actualInnerText = await getInnerText(element);
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
@@ -396,8 +400,8 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
-    await page.waitForSelector(selector, { timeout: 200 });
-    const actualInnerText = await getInnerText(await page.$(selector));
+    const element = await page.waitForSelector(selector);
+    const actualInnerText = await getInnerText(element);
     expect(validator(actualInnerText), `"${actualInnerText}" is invalid with respect of given validator`).to.be.true;
 };
 
@@ -465,9 +469,8 @@ module.exports.getPopoverContent = getPopoverContent;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
-    const popoverTrigger = await cell.$('.popover-trigger');
-    const triggerContent = await popoverTrigger.evaluate((evaluate) => evaluate.querySelector('.w-wrapped').innerHTML);
+    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
 
     const actualContent = await getPopoverContent(popoverTrigger);
 
@@ -477,14 +480,14 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
 /**
  * Check that a given cell of the given column displays the correct color depending on the status
  *
- * @param {{$: function}} page the puppeteer page
+ * @param {puppeteer.Page} page the puppeteer page
  * @param {number} rowIndex the index of the row to look for status color
  * @param {number} columnIndex the index of the column to look for status color
  * @returns {Promise<Chai.Assertion>} void promise
  */
 module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex) => {
-    const cellStatus = await page.$(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
-    const cell = await page.$(`tbody tr:nth-of-type(${rowIndex})`);
+    const cellStatus = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`);
+    const cell = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex})`);
     const cellStatusContent = await getInnerHtml(cellStatus);
 
     switch (cellStatusContent) {
@@ -510,7 +513,7 @@ module.exports.checkEnvironmentStatusColor = async (page, rowIndex, columnIndex)
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector, { timeout: 500 });
+    await page.waitForSelector(inputSelector);
     await page.evaluate((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
         element.value = value;
@@ -546,30 +549,31 @@ module.exports.expectInputValue = async (page, selector, value) => {
 };
 
 /**
- * Check the differences between the provided expected parameters and the parameters actually received
+ * Expect the current page's URL to have exactly the given parameters (unordered)
  *
- * @TODO convert this to not-async
  * For now only handle scalar parameters
  *
  * @param {puppeteer.Page} page the puppeteer page
  * @param {Object} expectedUrlParameters the expected parameters as an object of key values
- * @return {Promise<Object>} the differences between the expected parameters
+ * @return {void}
  */
-module.exports.checkMismatchingUrlParam = async (page, expectedUrlParameters) => {
+module.exports.expectUrlParams = (page, expectedUrlParameters) => {
     const [, parametersExpr] = page.url().split('?');
     const urlParameters = parametersExpr.split('&');
-    const ret = {};
+    const mismatchingUrlParams = {};
+
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
         // Convert expected to string, if it is a number for example
         if (`${expectedUrlParameters[key]}` !== value) {
-            ret[key] = {
+            mismatchingUrlParams[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,
             };
         }
     }
-    return ret;
+
+    expect(mismatchingUrlParams).to.eql({});
 };
 
 /**
@@ -627,8 +631,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
     await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
     await page.hover(`th#${columnId}`);
-    const sortingPreviewIndicator = await page.$(`#${columnId}-sort-preview`);
-    expect(Boolean(sortingPreviewIndicator)).to.be.true;
+    await page.waitForSelector(`#${columnId}-sort-preview`);
 
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 

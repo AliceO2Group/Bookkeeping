@@ -23,9 +23,9 @@ const {
     waitForNavigation,
     pressElement,
     getTableDataSlice,
-    checkMismatchingUrlParam,
     expectColumnValues,
-} = require('../defaults');
+    expectUrlParams,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -97,19 +97,19 @@ module.exports = () => {
     it('can navigate to runs per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(2) a'));
-        expect(await checkMismatchingUrlParam(page, {
+        expectUrlParams(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
-        })).to.be.eql({});
+        });
     });
 
     it('can navigate to anchored simulation passes per data pass page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
-        expect(await checkMismatchingUrlParam(page, {
+        expectUrlParams(page, {
             page: 'anchored-simulation-passes-overview',
             dataPassId: '2',
-        })).to.be.eql({});
+        });
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
@@ -129,7 +129,7 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.$('.dropup button');
+        const amountSelectorButton = await page.waitForSelector('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
         await page.waitForSelector('.dropup button');
         expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
@@ -137,34 +137,26 @@ module.exports = () => {
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector('.dropup');
-        const amountSelectorDropdown = await page.$('.dropup');
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$('.dropup .menu-item');
-        await menuItem.evaluate((button) => button.click());
+        pressElement(page, '.dropup .menu-item');
+
         await waitForTableLength(page, 2);
 
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
-
         // Expect the custom per page input to have red border and text color if wrong value typed
-        const customPerPageInput = await page.$('.dropup input[type=number]');
-        await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval('.dropup input[type=number]', (el) => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForSelector('.dropup input:invalid');
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
+        await page.waitForSelector('th#name');
         await page.hover('th#name');
-        const sortingPreviewIndicator = await page.$('#name-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
+        await page.waitForSelector('#name-sort-preview');
 
         // Sort by name in an ascending manner
         const nameHeader = await page.$('th#name');
@@ -177,11 +169,11 @@ module.exports = () => {
 
     it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+
         // Expect a sorting preview to appear when hovering over a column header
+        await page.waitForSelector('th#reconstructedEventsCount');
         await page.hover('th#reconstructedEventsCount');
-        await page.waitForSelector('#reconstructedEventsCount-sort-preview');
-        const sortingPreviewIndicator = await page.$('#reconstructedEventsCount-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
+        page.waitForSelector('#reconstructedEventsCount-sort-preview');
 
         // Sort by year in an ascending manner
         const reconstructedEventsCountHeader = await page.$('th#reconstructedEventsCount');
@@ -194,7 +186,9 @@ module.exports = () => {
 
     it('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+
         // Expect a sorting preview to appear when hovering over a column header
+        await page.waitForSelector('th#outputSize');
         await page.hover('th#outputSize');
         await page.waitForSelector('#outputSize-sort-preview');
         const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
@@ -212,6 +206,7 @@ module.exports = () => {
 
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
 

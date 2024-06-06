@@ -12,7 +12,8 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage, waitForNavigation } = require('../defaults.js');
+const { waitForTimeout } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { waitForNavigation } = require('../defaults.js');
 
@@ -82,17 +83,17 @@ module.exports = () => {
         await goToPage(page, 'tag-detail', { queryParameters: { id: 23, panel: 'logs' } });
         await pressElement(page, '#edit-tag');
         await pressElement(page, '#tag-archive-toggle');
-        await pressElement(page, '#confirm-tag-edit');
 
-        await page.waitForNetworkIdle(50);
+        await waitForNavigation(page, () => pressElement(page, '#confirm-tag-edit'));
+        await page.waitForSelector('h2');
         expect(await page.$eval('h2', (title) => title.parentNode.innerText.includes('Archived'))).to.be.true;
 
         // Do the same again to un-archive
         await pressElement(page, '#edit-tag');
         await pressElement(page, '#tag-archive-toggle');
-        await pressElement(page, '#confirm-tag-edit');
 
-        await page.waitForNetworkIdle(50);
+        await waitForNavigation(page, () => pressElement(page, '#confirm-tag-edit'));
+        await page.waitForSelector('h2');
         expect(await page.$eval('h2', (title) => title.parentNode.innerText.includes('Archived'))).to.be.false;
     });
 };
