@@ -22,7 +22,7 @@ const {
     testTableSortingByColumn,
     validateTableData,
     checkColumnValuesWithRegex,
-} = require('../defaults');
+} = require('../defaults.js');
 
 const { expect } = chai;
 
