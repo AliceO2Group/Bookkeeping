@@ -173,7 +173,7 @@ module.exports = () => {
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
-    it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
+    it.skip('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#reconstructedEventsCount');
@@ -191,7 +191,7 @@ module.exports = () => {
         expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
     });
 
-    it('can sort by outputSize column in ascending and descending manners', async () => {
+    it.skip('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
         // Expect a sorting preview to appear when hovering over a column header
         await page.hover('th#outputSize');

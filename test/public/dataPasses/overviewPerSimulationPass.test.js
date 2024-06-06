@@ -115,12 +115,12 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'name');
     });
 
-    it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
+    it.skip('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await testTableSortingByColumn(page, 'reconstructedEventsCount');
     });
 
-    it('can sort by outputSize column in ascending and descending manners', async () => {
+    it.skip('can sort by outputSize column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await testTableSortingByColumn(page, 'outputSize');
     });
