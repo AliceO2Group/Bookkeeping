@@ -12,8 +12,8 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow } = require('../defaults');
-const { goToPage, reloadPage, getInnerText, waitForTableLength } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, waitForTableLength, validateElement } = require('../defaults.js');
+const { goToPage, reloadPage, getInnerText } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -134,23 +134,14 @@ module.exports = () => {
     it('can set how many flps are available per page', async () => {
         // Expect the amount selector to currently be set to Infinite (after the previous test)
         const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
-        const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.endsWith('Infinite ')).to.be.true;
+        await expectInnerText(page, `${amountSelectorId} button`, 'Rows per page: Infinite ');
 
-        // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup-menu');
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await pressElement(page, `${amountSelectorId} button`);
+        await validateElement(page, `${amountSelectorId} .dropup-menu`);
 
         // Expect the amount of visible flps to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
+        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
-
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(5);
     });
 
     it.skip('can switch between pages of flps', async () => {

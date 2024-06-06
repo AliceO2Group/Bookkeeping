@@ -29,15 +29,17 @@ const {
     getPopoverSelector,
     waitForTableLength,
     waitForNavigation,
-    takeScreenshot,
     waitForEmptyTable,
+    waitForDownload,
+    expectColumnValues,
 } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { waitForDownload } = require('../../utilities/waitForDownload');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
+
+const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
 module.exports = () => {
     let page;
@@ -335,10 +337,8 @@ module.exports = () => {
 
     it('should successfully filter on tags', async () => {
         await pressElement(page, '#reset-filters');
-
-        // Open filter toggle
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-FOOD');
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '#tag-dropdown-option-RUN');
 
         // Wait for table to have only one row, and the row not being loading
@@ -349,7 +349,7 @@ module.exports = () => {
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-RUN', true);
         await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
         await page.waitForSelector('tbody tr:nth-child(2)', { timeout: 500 });
 
@@ -863,7 +863,6 @@ module.exports = () => {
         }));
 
         // The nDetectors can be null if the detectors' field is null but the nDetectors is not, which can be added in tests data
-        await takeScreenshot(page, 'jahahahah');
         expect(nDetectorsList.every((nDetectors) => parseInt(nDetectors, 10) <= 3 || nDetectors === null)).to.be.true;
     });
 
@@ -905,21 +904,13 @@ module.exports = () => {
         const nEpnsOperator = await page.waitForSelector(nEpnsOperatorSelector);
         expect(await nEpnsOperator.evaluate((element) => element.value)).to.equal('=');
 
-        const nEpnsLimit = await page.waitForSelector('#nEpns-limit', { timeout: 500 });
-
-        await nEpnsLimit.focus();
-        await page.keyboard.type('10');
+        await fillInput(page, '#nEpns-limit', '10');
         await waitForTableLength(page, 5);
 
         await page.waitForSelector(nEpnsOperatorSelector);
         await page.select(nEpnsOperatorSelector, '<=');
-        await waitForTableLength(page, 5);
 
-        const nEpnsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-nEpns-text`)?.innerText;
-        }));
-        expect(nEpnsList.every((nEpns) => parseInt(nEpns, 10) <= 10 || nEpns === 'OFF')).to.be.true;
+        expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
     });
 
     it('should successfully filter on EPN on/off', async () => {
@@ -1035,8 +1026,6 @@ module.exports = () => {
         expect(inputText).to.equal('');
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
-
     it('should successfully display runs export button', async () => {
         await waitForNavigation(page, () => goToPage(page, 'run-overview'));
         await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
@@ -1086,20 +1075,7 @@ module.exports = () => {
     it('should successfully export filtered runs', async () => {
         await waitForNavigation(page, () => goToPage(page, 'run-overview'));
 
-        const downloadPath = path.resolve('./download');
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
-        });
-
-        let downloadFilesNames;
         const targetFileName = 'runs.json';
-        let runs;
-        let exportModal;
 
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
@@ -1111,19 +1087,19 @@ module.exports = () => {
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
-        await page.$eval('#send', (button) => button.click());
+        {
+            const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
 
-        await waitForDownload(session);
+            // Check download
+            const downloadFilesNames = fs.readdirSync(downloadPath);
+            expect(downloadFilesNames.filter((name) => name === targetFileName)).to.be.lengthOf(1);
+            const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
-        // Check download
-        downloadFilesNames = fs.readdirSync(downloadPath);
-        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
-        runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
-
-        expect(runs).to.be.lengthOf(100);
-        expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
-            runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
-        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+            expect(runs).to.be.lengthOf(100);
+            expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
+                runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
+            fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        }
 
         // Second export
 
@@ -1141,20 +1117,19 @@ module.exports = () => {
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
         await page.waitForSelector('#export-runs-modal');
-        expect(exportModal).to.not.be.null;
 
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForSelector('#send:enabled');
-        await page.$eval('#send', (button) => button.click());
 
-        await waitForDownload(session);
+        {
+            const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled', true));
 
-        // Check download
-        downloadFilesNames = fs.readdirSync(downloadPath);
-        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
-        runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
-        expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
+            // Check download
+            const downloadFilesNames = fs.readdirSync(downloadPath);
+            expect(downloadFilesNames.filter((name) => name === targetFileName)).to.be.lengthOf(1);
+            const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+            expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
+        }
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {

@@ -34,6 +34,8 @@ updates:
   ignore:
     - dependency-name: "*"
       update-types: ["version-update:semver-patch"]
+    - dependency-name: "eslint"
+      update-types: ["version-update:semver-major"]
     - dependency-name: "chai"
       update-types: ["version-update:semver-major"]
   reviewers:

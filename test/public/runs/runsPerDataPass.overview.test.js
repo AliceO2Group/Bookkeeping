@@ -28,8 +28,8 @@ const {
     validateDate,
     waitForTableLength,
     waitForNavigation,
+    waitForDownload,
 } = require('../defaults.js');
-const { waitForDownload } = require('../../utilities/waitForDownload');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -121,7 +121,7 @@ module.exports = () => {
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 3 }],
             { runNumber: 105, dataPassIdentifier: { id: 3 }, dplDetectorIdentifier: { dplDetectorId: 1 } },
-            { userIdentifier: { externalUserId: 1 } }, // Create good flag
+            { user: { externalUserId: 1, roles: ['admin'] } }, // Create good flag
         );
 
         await reloadPage(page);
@@ -219,16 +219,6 @@ module.exports = () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
-        const downloadPath = path.resolve('./download');
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
-        });
-
         const targetFileName = 'runs.json';
 
         // First export
@@ -241,9 +231,7 @@ module.exports = () => {
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
-        await page.$eval('#send', (button) => button.click());
-
-        await waitForDownload(session);
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
@@ -277,7 +265,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
-        await pressElement(page, '#detector-filter-dropdown-option-CPV');
+        await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
         await pressElement(page, '#reset-filters');
@@ -290,11 +278,8 @@ module.exports = () => {
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
 
-        await fillInput(page, '#tag-dropdown-search-input', 'FOOD');
-        await pressElement(page, '#tag-dropdown-option-FOOD');
-
-        await fillInput(page, '#tag-dropdown-search-input', 'RUN');
-        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '#tag-dropdown-option-RUN', true);
 
         await expectColumnValues(page, 'runNumber', ['106']);
 

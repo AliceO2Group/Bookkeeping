@@ -24,7 +24,7 @@ const {
     expectColumnValues,
     setConfirmationDialogToBeDismissed,
     setConfirmationDialogToBeAccepted,
-    unsetConfirmationdialogActions,
+    unsetConfirmationDialogActions,
 } = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -137,7 +137,7 @@ module.exports = () => {
             dplDetectorId: '1',
         })).to.be.eql({});
 
-        unsetConfirmationdialogActions(page);
+        unsetConfirmationDialogActions(page);
     });
 
     it('should successfuly verify flag', async () => {
@@ -170,8 +170,9 @@ module.exports = () => {
         await pressElement(page, '#verification-comment ~ .CodeMirror');
         const comment = 'Hello, it\'s ok';
         await page.keyboard.type(comment);
-
+        await setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#submit');
+        await unsetConfirmationDialogActions(page);
         await expectColumnValues(page, 'createdBy', ['Anonymous']);
         await expectColumnValues(page, 'comment', [comment]);
 
