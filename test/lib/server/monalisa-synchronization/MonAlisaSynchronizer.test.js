@@ -70,12 +70,20 @@ module.exports = () => {
         const expectedDataPassesNamesSet = new Set(expectedNames);
         for (const dataPass of dataPassesDB) {
             if (expectedDataPassesNamesSet.has(dataPass.name)) {
-                const { description, runs } = dataPass;
-                const { runNumbers: potentiallyExpectedRunNumbers } = await monAlisaClient.getDataPassVersionDetails(description);
-                const expectedRunNumbers = (await RunRepository.findAll({ where: {
-                    runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
-                    definition: RunDefinition.Physics,
-                } })).map(({ runNumber }) => runNumber);
+                const { runs } = dataPass;
+                let expectedRunNumbers = [];
+                for (const version of dataPass.versions) {
+                    const { description } = version;
+                    const { runNumbers: potentiallyExpectedRunNumbers } = await monAlisaClient.getDataPassVersionDetails(description);
+
+                    expectedRunNumbers = [
+                        ...(await RunRepository.findAll({ where: {
+                            runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
+                            definition: RunDefinition.Physics,
+                        } })).map(({ runNumber }) => runNumber),
+                        ...expectedRunNumbers,
+                    ];
+                }
 
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
@@ -83,7 +91,7 @@ module.exports = () => {
 
         // Check whether examining data passes with last runs works correctly;
         lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
-        expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassNeedUpdate(dataPass, lastSeens))).to.be.true;
+        expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
