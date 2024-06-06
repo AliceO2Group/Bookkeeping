@@ -443,12 +443,12 @@ module.exports = () => {
     it('notifies if table loading returned an error', async () => {
         await goToPage(page, 'log-overview');
 
-        /*
-         * As an example, override the amount of logs visible per page manually
-         * We know the limit is 100 as specified by the Dto
-         */
-        await page.waitForSelector('table');
+        await waitForTableLength(page, 10);
         await page.evaluate(() => {
+            /*
+             * As an example, override the amount of logs visible per page manually
+             * We know the limit is 100 as specified by the Dto
+             */
             // eslint-disable-next-line no-undef
             model.logs.overviewModel.pagination.itemsPerPage = 200;
         });
