@@ -83,7 +83,7 @@ module.exports = () => {
         await goToPage(page, 'env-overview');
         await waitForTimeout(100);
 
-        await expectInnerText(page, '#firstRowIndex', 'Hello world');
+        await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '9');
         await expectInnerText(page, '#totalRowsCount', '9');
     });
