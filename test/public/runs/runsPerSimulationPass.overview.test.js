@@ -22,7 +22,6 @@ const {
     goToPage,
     validateTableData,
     fillInput,
-    getInnerText,
     validateDate,
     expectLink,
     reloadPage,

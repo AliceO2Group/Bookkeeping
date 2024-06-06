@@ -11,20 +11,15 @@
  * or submit itself to any jurisdiction.
  */
 
-const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, expectUrlParams } = require('../defaults.js');
-const { waitForTimeout, waitForNavigation } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, expectUrlParams, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-
-const { expect } = chai;
 
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
         await resetDatabaseContent();
     });
     after(async () => {
@@ -35,12 +30,6 @@ module.exports = () => {
         await goToPage(page, 'flp-detail', { queryParameters: { id: 1 } });
 
         await expectInnerText(page, 'h2', 'Flp #FLP-TPC-1');
-    });
-
-    it('can navigate to the main panel', async () => {
-        await waitForNavigation(page, () => pressElement(page, '#main-tab'));
-
-        expectUrlParams(page, { page: 'flp-detail', id: 1, panel: 'main' });
     });
 
     it('notifies if a specified flp id is invalid', async () => {

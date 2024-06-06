@@ -24,7 +24,7 @@ const {
     fillInput,
     getPopoverContent,
     waitForTimeout,
-    waitForNavigation, takeScreenshot,
+    waitForNavigation,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');

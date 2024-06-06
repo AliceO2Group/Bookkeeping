@@ -151,7 +151,7 @@ module.exports = () => {
 
         // Expect the page five button to now be visible, but no more than that
         await page.waitForSelector('#page5');
-        await page.waitForSelector('#page6', {hidden: true});
+        await page.waitForSelector('#page6', { hidden: true });
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');

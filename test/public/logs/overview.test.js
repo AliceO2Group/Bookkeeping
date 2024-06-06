@@ -32,7 +32,8 @@ const {
     waitForNavigation,
     waitForTableLength,
     waitForEmptyTable,
-    waitForTableTotalRowsCountToEqual, waitForTableFirstRowIndexToEqual, takeScreenshot,
+    waitForTableTotalRowsCountToEqual,
+    waitForTableFirstRowIndexToEqual,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
