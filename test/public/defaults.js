@@ -335,6 +335,27 @@ const getColumnCellsInnerTexts = async (page, key) => page.$$eval(
 module.exports.getColumnCellsInnerTexts = getColumnCellsInnerTexts;
 
 /**
+ * Return the content of a table as an array (rows) of array (cells)
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @return {Promise<array<string[]>>} resolves with the table content
+ */
+module.exports.getTableContent = async (page) => {
+    await page.waitForSelector('table');
+    return JSON.parse(await page.evaluate(() => {
+        const rowsContent = [];
+        for (const row of document.querySelectorAll('table tbody tr')) {
+            const cellsContent = [];
+            rowsContent.push(cellsContent);
+            for (const cell of row.querySelectorAll('td')) {
+                cellsContent.push(cell.innerText);
+            }
+        }
+        return JSON.stringify(rowsContent);
+    }));
+};
+
+/**
  * Special method built to gather all currently visible data from given columns into array of objects
  * @param {puppeteer.Page} page An object representing the browser page being used by Puppeteer
  * @param {string[]} columnKeys The keys for the columns to gather entities of
