@@ -22,17 +22,15 @@ const {
     goToPage,
     validateTableData,
     fillInput,
-    validateElement,
-    getInnerText,
-    checkMismatchingUrlParam,
     validateDate,
     expectLink,
     reloadPage,
-} = require('../defaults');
-const { waitForDownload } = require('../../utilities/waitForDownload');
+    waitForDownload,
+    waitForNavigation,
+    expectUrlParams,
+} = require('../defaults.js');
 
 const { expect } = chai;
-const { waitForNavigation } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -124,7 +122,7 @@ module.exports = () => {
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 2 }],
             { runNumber: 56, simulationPassIdentifier: { id: 2 }, dplDetectorIdentifier: { dplDetectorId: 4 } },
-            { userIdentifier: { externalUserId: 1 } }, // Create bad flag
+            { user: { externalUserId: 1, roles: ['admin'] } }, // Create bad flag
         );
 
         await reloadPage(page);
@@ -162,13 +160,13 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
-        await validateElement(page, `${amountSelectorId} .dropup-menu`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
 
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
-        await validateElement(page, amountSelectorId);
+        await page.waitForSelector(amountSelectorId);
     });
 
     it('notifies if table loading returned an error', async () => {
@@ -185,11 +183,8 @@ module.exports = () => {
     it('can navigate to a run detail page', async () => {
         await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
 
-        const runNumberLinkCellSelector = 'tbody tr:first-of-type a';
-        const expectedRunNumber = await getInnerText(await page.$(runNumberLinkCellSelector));
-
-        await waitForNavigation(page, () => pressElement(page, runNumberLinkCellSelector));
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: expectedRunNumber })).to.be.eql({});
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 56 });
     });
 
     it('should successfully export runs', async () => {
@@ -197,29 +192,18 @@ module.exports = () => {
 
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
-        const downloadPath = path.resolve('./download');
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
-        });
-
         const targetFileName = 'runs.json';
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await validateElement(page, '#export-runs-modal');
-        await validateElement(page, '#send:disabled');
-        await validateElement(page, '.form-control');
+        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
-        await validateElement(page, '#send:enabled');
+        await page.waitForSelector('#send:enabled');
         await expectInnerText(page, '#send', 'Export');
 
-        await pressElement(page, '#send');
-        await waitForDownload(session);
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);

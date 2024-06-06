@@ -20,9 +20,8 @@ const {
     pressElement,
     expectInnerText,
     waitForNavigation,
-    validateElement,
-    checkMismatchingUrlParam,
-} = require('../defaults');
+    expectUrlParams,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -51,7 +50,7 @@ module.exports = () => {
 
     it('should fail if attempt to create QC Flag Type with already existing name', async () => {
         await goToPage(page, 'qc-flag-type-creation');
-        await validateElement(page, 'button#submit[disabled]');
+        await page.waitForSelector('button#submit[disabled]');
 
         await fillInput(page, 'input#name', 'Limited acceptance');
         await fillInput(page, 'input#method', 'LimitedAcceptance');
@@ -66,7 +65,7 @@ module.exports = () => {
 
     it('should succesfully create QC Flag Type', async () => {
         await goToPage(page, 'qc-flag-type-creation');
-        await validateElement(page, 'button#submit[disabled]');
+        await page.waitForSelector('button#submit[disabled]');
 
         await fillInput(page, 'input#name', 'AAA+');
         await fillInput(page, 'input#method', 'A+A+A');
@@ -75,7 +74,7 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
-        expect(await checkMismatchingUrlParam(page, { page: 'qc-flag-types-overview' })).to.be.eql({});
+        expectUrlParams(page, { page: 'qc-flag-types-overview' });
 
         // Expect newly created flag to appear and have correct color
         await expectInnerText(page, '[style*="rgb(240, 0, 240)"]', 'AAA+');

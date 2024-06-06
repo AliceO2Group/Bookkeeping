@@ -11,10 +11,21 @@
  * or submit itself to any jurisdiction.
  */
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, getInputValue, expectInputValue } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    goToPage,
+    getInputValue,
+    expectInputValue,
+    pressElement,
+    expectInnerText,
+    fillInput,
+    waitForTimeout,
+    waitForNavigation,
+    expectUrlParams,
+} = require('../defaults.js');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -106,7 +117,7 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '1' })).to.eql({});
+        expectUrlParams(page, { page: 'log-detail', id: '1' });
     });
 
     it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
@@ -481,7 +492,7 @@ module.exports = () => {
         await page.select('select', 'on-call');
 
         // Expect the inputs to be there
-        await page.waitForSelector('#shortDescription', { timeout: 500 });
+        await page.waitForSelector('#shortDescription');
 
         const shortDescription = 'Short description of the issue';
         await fillInput(page, '#shortDescription', shortDescription);

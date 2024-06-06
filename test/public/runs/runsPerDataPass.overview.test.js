@@ -26,8 +26,8 @@ const {
     validateTableData,
     expectLink,
     validateDate,
-} = require('../defaults');
-const { waitForDownload } = require('../../utilities/waitForDownload');
+    waitForDownload,
+} = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -120,7 +120,7 @@ module.exports = () => {
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 3 }],
             { runNumber: 105, dataPassIdentifier: { id: 3 }, dplDetectorIdentifier: { dplDetectorId: 1 } },
-            { userIdentifier: { externalUserId: 1 } }, // Create good flag
+            { user: { externalUserId: 1, roles: ['admin'] } }, // Create good flag
         );
 
         await reloadPage(page);
@@ -135,21 +135,22 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
+        await waitForTimeout('table');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await reloadPage(page);
-        const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565294400000');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('1565298000000');
+        await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
+
+        await pressElement(page, '#preferences-raw-timestamps', true);
+        await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
+
         // Go back to normal
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+        await pressElement(page, '#preferences-raw-timestamps', true);
     });
 
     it('can set how many runs are available per page', async () => {
@@ -219,22 +220,11 @@ module.exports = () => {
 
     it('should successfully export runs', async () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
-
-        const downloadPath = path.resolve('./download');
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
-        });
 
         const targetFileName = 'runs.json';
 
         // First export
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await pressElement(page, '#export-runs-trigger');
         await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
@@ -243,9 +233,7 @@ module.exports = () => {
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
-        await page.$eval('#send', (button) => button.click());
-
-        await waitForDownload(session);
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
@@ -279,7 +267,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
-        await pressElement(page, '#detector-filter-dropdown-option-CPV');
+        await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
         await pressElement(page, '#reset-filters');
@@ -292,11 +280,8 @@ module.exports = () => {
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
 
-        await fillInput(page, '#tag-dropdown-search-input', 'FOOD');
-        await pressElement(page, '#tag-dropdown-option-FOOD');
-
-        await fillInput(page, '#tag-dropdown-search-input', 'RUN');
-        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '#tag-dropdown-option-RUN', true);
 
         await expectColumnValues(page, 'runNumber', ['106']);
 

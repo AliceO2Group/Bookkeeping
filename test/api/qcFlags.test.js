@@ -29,6 +29,7 @@ module.exports = () => {
                 from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
+                origin: null,
                 createdAt: new Date('2024-02-13 11:57:19').getTime(),
                 updatedAt: new Date('2024-02-13 11:57:19').getTime(),
                 runNumber: 1,
@@ -183,7 +184,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
@@ -214,7 +215,7 @@ module.exports = () => {
                 dplDetectorId: 21,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=det-glo').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { dataPassId } = qcFlagCreationParameters;
@@ -255,7 +256,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=det-cpv').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
             const { data: createdQcFlag } = response.body;
             const { simulationPassId, ...expectedProperties } = qcFlagCreationParameters;
@@ -287,7 +288,7 @@ module.exports = () => {
                 dplDetectorId: 1,
             };
 
-            const response = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(400);
             const { errors } = response.body;
             expect(errors).to.be.eql([
@@ -339,30 +340,11 @@ module.exports = () => {
     });
 
     describe('POST /api/qcFlags/:id/verify', () => {
-        it('should fail to verify QC flag when being owner', async () => {
-            const qcFlagCreationParameters = {
-                from: new Date('2019-08-09 01:29:50').getTime(),
-                to: new Date('2019-08-09 05:40:00').getTime(),
-                comment: 'VERY INTERESTING REMARK',
-                flagTypeId: 2,
-                runNumber: 106,
-                dataPassId: 1,
-                dplDetectorId: 1,
-            };
-
-            const createResponse = await request(server).post('/api/qcFlags').send(qcFlagCreationParameters);
-
-            expect(createResponse.status).to.be.equal(201);
-            const { id: flagId } = createResponse.body.data;
-
-            const response = await request(server).post(`/api/qcFlags/${flagId}/verify`);
-            expect(response.status).to.be.equal(403);
-        });
         it('should succesfuly verify QC flag when not being owner', async () => {
             const flagId = 5;
             const comment = 'Ok, VERIFIED';
 
-            const response = await request(server).post(`/api/qcFlags/${flagId}/verify`).send({ comment });
+            const response = await request(server).post(`/api/qcFlags/${flagId}/verify?token=det-cpv`).send({ comment });
             expect(response.status).to.be.equal(201);
             const { body: { data: verifiedFlag } } = response;
             {

@@ -18,14 +18,13 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    checkMismatchingUrlParam,
     waitForNavigation,
-    validateElement,
     expectColumnValues,
     setConfirmationDialogToBeDismissed,
     setConfirmationDialogToBeAccepted,
-    unsetConfirmationdialogActions,
-} = require('../defaults');
+    unsetConfirmationDialogActions,
+    expectUrlParams,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -71,7 +70,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-data-pass', dataPassId: '1' })).to.be.eql({});
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
     it('can naviagate to run details page', async () => {
@@ -82,7 +81,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
+        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
     it('should display correct QC flag details', async () => {
@@ -104,7 +103,7 @@ module.exports = () => {
         await expectInnerText(page, '#qc-flag-details-createdAt', 'Created at:\n13/02/2024, 11:57:16');
         await expectInnerText(page, '.panel div', 'Some qc comment 1');
 
-        await validateElement(page, 'button#delete');
+        await page.waitForSelector('button#delete');
     });
 
     it('should successfuly delete QC flag', async () => {
@@ -115,29 +114,29 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await validateElement(page, 'button#delete');
+        await page.waitForSelector('button#delete');
         // Check that deletion is interapted when confirmation dialog is dismissed
         setConfirmationDialogToBeDismissed(page);
         await pressElement(page, 'button#delete');
-        expect(await checkMismatchingUrlParam(page, {
+        expectUrlParams(page, {
             page: 'qc-flag-details-for-data-pass',
             id: '1',
             dataPassId: '1',
             runNumber: '106',
             dplDetectorId: '1',
-        })).to.be.eql({});
+        });
 
         // Delete
         setConfirmationDialogToBeAccepted(page);
         await waitForNavigation(page, () => pressElement(page, 'button#delete'));
-        expect(await checkMismatchingUrlParam(page, {
+        expectUrlParams(page, {
             page: 'qc-flags-for-data-pass',
             dataPassId: '1',
             runNumber: '106',
             dplDetectorId: '1',
-        })).to.be.eql({});
+        });
 
-        unsetConfirmationdialogActions(page);
+        unsetConfirmationDialogActions(page);
     });
 
     it('should successfuly verify flag', async () => {
@@ -148,7 +147,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await validateElement(page, '#delete:not([disabled])');
+        await page.waitForSelector('#delete:not([disabled])');
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
 
         await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
@@ -156,9 +155,9 @@ module.exports = () => {
         await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
 
         await pressElement(page, 'button#verify-qc-flag');
-        await validateElement(page, '#verification-comment');
-        await validateElement(page, '#cancel-verification');
-        await validateElement(page, '#submit');
+        await page.waitForSelector('#verification-comment');
+        await page.waitForSelector('#cancel-verification');
+        await page.waitForSelector('#submit');
 
         await pressElement(page, 'button#cancel-verification');
         await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
@@ -170,12 +169,13 @@ module.exports = () => {
         await pressElement(page, '#verification-comment ~ .CodeMirror');
         const comment = 'Hello, it\'s ok';
         await page.keyboard.type(comment);
-
+        await setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#submit');
+        await unsetConfirmationDialogActions(page);
         await expectColumnValues(page, 'createdBy', ['Anonymous']);
         await expectColumnValues(page, 'comment', [comment]);
 
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
-        await validateElement(page, '#delete:disabled');
+        await page.waitForSelector('#delete:disabled');
     });
 };

@@ -20,9 +20,8 @@ const {
     testTableSortingByColumn,
     pressElement,
     expectColumnValues,
-    validateElement,
     validateTableData,
-} = require('../defaults');
+} = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -135,18 +134,18 @@ module.exports = () => {
     it('should successfuly apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
-        await validateElement(page, '#reset-filters:disabled');
+        await page.waitForSelector('#reset-filters:disabled');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
         await expectColumnValues(page, 'name', ['LHC22a']);
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'name', ['LHC23f', 'LHC22b', 'LHC22a']);
-        await validateElement(page, '#reset-filters:disabled');
+        await page.waitForSelector('#reset-filters:disabled');
     });
 
     it('should successfuly apply lhc period year filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
-        await validateElement(page, '#reset-filters:disabled');
+        await page.waitForSelector('#reset-filters:disabled');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '2022');
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
         await expectColumnValues(page, 'year', ['2022', '2022']);
@@ -155,7 +154,7 @@ module.exports = () => {
     it('should successfuly apply lhc period beam type filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
-        await validateElement(page, '#reset-filters:disabled');
+        await page.waitForSelector('#reset-filters:disabled');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'XeXe');
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
         await expectColumnValues(page, 'beamTypes', ['XeXe']);
