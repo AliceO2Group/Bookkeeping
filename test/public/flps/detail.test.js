@@ -33,14 +33,14 @@ module.exports = () => {
 
     it('flp detail loads correctly', async () => {
         await goToPage(page, 'flp-detail', { queryParameters: { id: 1 } });
+
         await expectInnerText(page, 'h2', 'Flp #FLP-TPC-1');
     });
 
     it('can navigate to the main panel', async () => {
-        await pressElement(page, '#main-tab');
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=1&panel=main`)).to.be.true;
+        await waitForNavigation(page, () => pressElement(page, '#main-tab'));
+
+        expectUrlParams(page, { page: 'flp-detail', id: 1, panel: 'main' });
     });
 
     it('notifies if a specified flp id is invalid', async () => {
@@ -60,21 +60,18 @@ module.exports = () => {
     });
 
     it('allows navigating to an associated run', async () => {
-        const flpRoleId = 1;
         const runNumber = 1;
 
         // Navigate to a flp detail view
-        await goToPage(page, 'flp-detail', { queryParameters: { id: flpRoleId } });
+        await goToPage(page, 'flp-detail', { queryParameters: { id: 1 } });
 
         // We expect the correct associated runs to be shown
-        const runField = await page.waitForSelector('#Flp-run');
-        const runText = await page.evaluate((element) => element.innerText, runField);
-        expect(runText).to.equal(`Run:\n${runNumber}`);
+        await expectInnerText(page, '#Flp-run', `Run:\n${runNumber}`);
 
         // We expect the associated run to be clickable with a valid link
-        await waitForNavigation(page, () => page.waitForSelector('#Flp-run a'));
+        await waitForNavigation(page, () => pressElement(page, '#Flp-run a'));
 
         // We expect the link to navigate to the correct run detail page
-        expectUrlParams({ page: 'run-detail', runNumber: runNumber });
+        expectUrlParams(page, { page: 'run-detail', runNumber: runNumber });
     });
 };

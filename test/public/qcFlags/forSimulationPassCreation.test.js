@@ -75,18 +75,18 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
+    it('can navigate to run details page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3) a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
