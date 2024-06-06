@@ -17,9 +17,11 @@ const {
     defaultAfter,
     pressElement,
     goToPage,
-    checkColumnBalloon, waitForNavigation, expectUrlParams,
+    checkColumnBalloon,
+    waitForNavigation,
+    expectUrlParams,
+    expectInnerText,
 } = require('../defaults.js');
-const { waitForTimeout, expectInnerText } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

@@ -12,8 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, waitForTableLength } = require('../defaults.js');
-const { goToPage, reloadPage, getInnerText, waitForTimeout } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, waitForTableLength, goToPage, reloadPage, getInnerText } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
