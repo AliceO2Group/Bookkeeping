@@ -12,7 +12,14 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, getFirstRow, waitForNetworkIdleAndRedraw, goToPage } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    pressElement,
+    goToPage,
+    waitForNavigation,
+    expectUrlParams,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -20,14 +27,9 @@ const { expect } = chai;
 module.exports = () => {
     let page;
     let browser;
-    let url;
-
-    let table;
-    let firstRowId;
-    let parsedFirstRowId;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
         await resetDatabaseContent();
     });
 
@@ -47,14 +49,7 @@ module.exports = () => {
     });
 
     it('can navigate to a subsystem detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-        parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-
-        // We expect the entry page to have the same id as the id from the subsystem overview
-        await pressElement(page, `#${firstRowId}`);
-        await waitForNetworkIdleAndRedraw(page);
-        const redirectedUrl = await page.url();
-        expect(String(redirectedUrl).startsWith(`${url}/?page=subsystem-detail&id=${parsedFirstRowId}`)).to.be.true;
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr'));
+        expectUrlParams(page, { page: 'subsystem-detail', id: 1 });
     });
 };
