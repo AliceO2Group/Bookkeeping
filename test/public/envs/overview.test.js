@@ -21,9 +21,9 @@ const {
     checkEnvironmentStatusColor,
     validateTableData,
     expectInnerText,
-    waitForTimeout,
     expectUrlParams,
     waitForNavigation,
+    waitForTableLength,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');

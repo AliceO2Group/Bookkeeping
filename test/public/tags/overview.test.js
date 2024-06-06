@@ -12,7 +12,16 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, goToPage, getFirstRow } = require('../defaults.js');
+const {
+    defaultBefore,
+    defaultAfter,
+    pressElement,
+    goToPage,
+    getFirstRow,
+    waitForTableLength,
+    waitForEmptyTable,
+    waitForNavigation,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;

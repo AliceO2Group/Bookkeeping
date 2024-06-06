@@ -21,6 +21,7 @@ const {
     waitForNavigation,
     expectUrlParams,
     expectInnerText,
+    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 

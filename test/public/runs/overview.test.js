@@ -32,7 +32,9 @@ const {
     getInnerText,
     waitForTimeout,
     getPopoverSelector,
-    waitForTableLength, waitForTableTotalRowsCountToEqual,
+    waitForTableLength,
+    waitForTableTotalRowsCountToEqual,
+    waitForEmptyTable,
 } = require('../defaults.js');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');

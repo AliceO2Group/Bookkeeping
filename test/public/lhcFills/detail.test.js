@@ -18,10 +18,10 @@ const {
     pressElement,
     goToPage,
     getPopoverContent,
-    waitForTimeout,
     waitForNavigation,
     getTableDataSlice,
     expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');

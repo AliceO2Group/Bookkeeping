@@ -21,6 +21,7 @@ const {
     pressElement,
     expectColumnValues,
     validateTableData,
+    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
