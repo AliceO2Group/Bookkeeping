@@ -79,7 +79,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(3) a'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
@@ -92,7 +92,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(5) a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 

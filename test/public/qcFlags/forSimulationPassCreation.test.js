@@ -75,7 +75,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
+        await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(3) a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
@@ -86,7 +86,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3) a'));
+        await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(5) a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
