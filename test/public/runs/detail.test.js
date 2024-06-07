@@ -50,7 +50,6 @@ module.exports = () => {
     let url;
 
     let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -282,7 +281,6 @@ module.exports = () => {
         await waitForTableLength(page, 5);
 
         table = await page.$$('tbody tr');
-        firstRowId = await getFirstRow(table, page);
 
         // We expect the entry page to have the same id as the id from the run overview
         await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
