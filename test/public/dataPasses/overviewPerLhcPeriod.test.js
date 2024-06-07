@@ -25,6 +25,7 @@ const {
     getTableDataSlice,
     expectColumnValues,
     expectUrlParams,
+    expectInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -115,26 +116,19 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
-        await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-
-        await page.waitForSelector('#lastRowIndex');
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-
-        await page.waitForSelector('#totalRowsCount');
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many data passes is available per page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.waitForSelector('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        await page.waitForSelector('.dropup button');
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
+        const amountSelectorButton = await page.$('.dropup button');
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector('.dropup');
 
@@ -178,6 +172,7 @@ module.exports = () => {
         // Sort by year in an ascending manner
         const reconstructedEventsCountHeader = await page.$('th#reconstructedEventsCount');
         await reconstructedEventsCountHeader.evaluate((button) => button.click());
+        await expectInnerText(page, '#rowLHC22b_apass2-reconstructedEventsCount', '50,848,604');
 
         // Expect the year to be in order
         const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'reconstructedEventsCount');
@@ -190,7 +185,7 @@ module.exports = () => {
         // Expect a sorting preview to appear when hovering over a column header
         await page.waitForSelector('th#outputSize');
         await page.hover('th#outputSize');
-        await page.waitForSelector('#outputSize-sort-preview');
+
         const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
         expect(Boolean(sortingPreviewIndicator)).to.be.true;
 
@@ -198,6 +193,7 @@ module.exports = () => {
         const outputSizeHeader = await page.$('th#outputSize');
 
         await outputSizeHeader.evaluate((button) => button.click());
+        await expectInnerText(page, '#rowLHC22b_apass2-outputSize-text', '50.72 TB');
 
         // Expect the avgCenterOfMassEnergy to be in order
         const firstOutputSize = await getColumnCellsInnerTexts(page, 'outputSize');

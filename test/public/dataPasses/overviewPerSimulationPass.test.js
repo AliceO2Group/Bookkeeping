@@ -87,11 +87,10 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.waitForSelector('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
+        const amountSelectorButton = await page.waitForSelector('.dropup button');
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector('.dropup');
 

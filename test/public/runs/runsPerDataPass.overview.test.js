@@ -180,7 +180,6 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('notifies if table loading returned an error', async () => {

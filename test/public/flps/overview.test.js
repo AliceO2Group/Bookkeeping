@@ -99,14 +99,9 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'flp-overview');
 
-        await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-
-        await page.waitForSelector('#lastRowIndex');
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-
-        await page.waitForSelector('#totalRowsCount');
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(105);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '10');
+        await expectInnerText(page, '#totalRowsCount', '105');
     });
 
     it('can switch to infinite mode in amountSelector', async () => {
@@ -201,8 +196,6 @@ module.exports = () => {
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
         await page.waitForSelector('#page1', { hidden: true });
-        const pageOneButton = await page.$('#page1');
-        expect(Boolean(pageOneButton)).to.be.false;
     });
 
     it('notifies if table loading returned an error', async () => {

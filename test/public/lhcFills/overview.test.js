@@ -110,14 +110,9 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-fill-overview');
 
-        await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-
-        await page.waitForSelector('#lastRowIndex');
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(6);
-
-        await page.waitForSelector('#totalRowsCount');
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(6);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '6');
+        await expectInnerText(page, '#totalRowsCount', '6');
     });
 
     it('Should have balloon on runs column', async () => {
@@ -137,8 +132,6 @@ module.exports = () => {
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
@@ -156,7 +149,6 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
@@ -178,8 +170,6 @@ module.exports = () => {
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
         await page.waitForSelector('#page1', { hidden: true });
-        const pageOneButton = await page.$('#page1');
-        expect(pageOneButton).to.be.null;
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {

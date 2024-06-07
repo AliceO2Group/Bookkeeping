@@ -90,7 +90,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
@@ -143,16 +143,11 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
-        await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-
-        await page.waitForSelector('#lastRowIndex');
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(8);
-
-        await page.waitForSelector('#totalRowsCount');
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(108);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '8');
+        await expectInnerText(page, '#totalRowsCount', '108');
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -169,7 +164,7 @@ module.exports = () => {
 
     it('can switch to infinite mode in amountSelector', async () => {
         const INFINITE_SCROLL_CHUNK = 19;
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
         await page.waitForSelector('table tbody tr:nth-child(2)');
@@ -199,7 +194,7 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
@@ -224,12 +219,11 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForSelector('input:invalid');
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of runs visible per page manually
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.overviewModel.pagination.itemsPerPage = 1;
@@ -245,12 +239,10 @@ module.exports = () => {
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
         await page.waitForSelector('#page1', { hidden: true });
-        const pageOneButton = await page.$('#page1');
-        expect(Boolean(pageOneButton)).to.be.false;
     });
 
     it('notifies if table loading returned an error', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
@@ -268,7 +260,7 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         await page.waitForSelector('tbody tr');
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
@@ -283,7 +275,7 @@ module.exports = () => {
     });
 
     it('Should have balloon on detector, tags and eor column', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector(runNumberInputSelector);
@@ -306,13 +298,13 @@ module.exports = () => {
     });
 
     it('Should display balloon if the text overflows', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         await checkColumnBalloon(page, 1, 2);
     });
 
     it('should successfully filter on detectors', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
@@ -361,7 +353,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on definition', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
         const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
@@ -438,7 +430,7 @@ module.exports = () => {
     });
 
     it('should update to current date when empty and time is set', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         // Open the filters
         await pressElement(page, '#openFilterToggle');
@@ -465,7 +457,7 @@ module.exports = () => {
     });
 
     it('Validates date will not be set again', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         const dateString = '03-21-2021';
         const validValue = '2021-03-21';
         // Open the filters
@@ -486,7 +478,7 @@ module.exports = () => {
     });
 
     it('The max/min should be the right value when date is set to same day', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         const dateString = '03-02-2021';
         // Open the filters
@@ -518,7 +510,7 @@ module.exports = () => {
     });
 
     it('The max should be the maximum value when having different dates', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         const dateString = '03-20-2021';
         const maxTime = '23:59';
@@ -544,7 +536,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on duration', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#duration-operator');
@@ -597,7 +589,7 @@ module.exports = () => {
     });
 
     it('Should successfully filter runs by their run quality', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runQualityCheckbox';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
         const testFilterSelector = `${filterInputSelectorPrefix}test`;
@@ -644,7 +636,7 @@ module.exports = () => {
     });
 
     it('Should successfully filter runs by their trigger value', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#triggerValueCheckbox';
         const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
         const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
@@ -702,7 +694,7 @@ module.exports = () => {
 
     it('should successfully filter on a list of run numbers and inform the user about it', async () => {
         const inputValue = '101, 102';
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         /**
          * This is the sequence to test filtering the runs on run numbers.
@@ -727,7 +719,7 @@ module.exports = () => {
         expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
 
         // Test if it works in the filter tab.
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         await page.$eval('#openFilterToggle', (element) => element.click());
 
         // Run the same test sequence on the filter tab.
@@ -736,7 +728,7 @@ module.exports = () => {
 
     it('should successfully filter on a single run number and inform the user about it', async () => {
         const inputValue = '10';
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         /**
          * This is the sequence to test filtering the runs on run numbers.
@@ -774,7 +766,7 @@ module.exports = () => {
         expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
 
         // Test if it works in the filter tab.
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         await page.$eval('#openFilterToggle', (element) => element.click());
         await page.waitForSelector('#eorCategories');
 
@@ -783,7 +775,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
         await waitForTableLength(page, 8);
 
@@ -977,7 +969,7 @@ module.exports = () => {
     });
 
     it('should successfully display runs export button', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
         await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
         const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
         expect(runsExportButton).to.be.not.null;
@@ -1018,7 +1010,7 @@ module.exports = () => {
     });
 
     it('should successfully export filtered runs', async () => {
-        await waitForNavigation(page, () => goToPage(page, 'run-overview'));
+        await goToPage(page, 'run-overview');
 
         const targetFileName = 'runs.json';
 

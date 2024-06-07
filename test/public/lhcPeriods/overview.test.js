@@ -22,6 +22,7 @@ const {
     expectColumnValues,
     validateTableData,
     waitForTableLength,
+    expectInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -76,26 +77,19 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-period-overview');
 
-        await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-
-        await page.waitForSelector('#lastRowIndex');
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
-
-        await page.waitForSelector('#totalRowsCount');
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('can set how many lhcPeriods is available per page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await page.waitForSelector('.dropup button');
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.$('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
+        await expectInnerText(page, '.dropup button', 'Rows per page: 11 ');
 
         // Expect the dropdown options to be visible when it is selected
+        const amountSelectorButton = await page.$('.dropup button');
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector('.dropup');
         const amountSelectorDropdown = await page.$('.dropup');

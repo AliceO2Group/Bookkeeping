@@ -21,6 +21,7 @@ const {
     pressElement,
     expectColumnValues,
     validateTableData,
+    expectInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -76,23 +77,20 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        await page.waitForSelector('#firstRowIndex');
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many simulation passes is available per page', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        await page.waitForSelector('.dropup button');
-        const amountSelectorButton = await page.$('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
+        const amountSelectorButton = await page.$('.dropup button');
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector('.dropup');
         const amountSelectorDropdown = await page.$('.dropup');
