@@ -17,7 +17,6 @@ const {
     defaultAfter,
     expectInnerText,
     pressElement,
-    getFirstRow,
     expectUrlParams,
     reloadPage,
     goToPage,
@@ -48,8 +47,6 @@ module.exports = () => {
     let page;
     let browser;
     let url;
-
-    let table;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -279,8 +276,6 @@ module.exports = () => {
 
     it('can navigate to a log detail page', async () => {
         await waitForTableLength(page, 5);
-
-        table = await page.$$('tbody tr');
 
         // We expect the entry page to have the same id as the id from the run overview
         await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));

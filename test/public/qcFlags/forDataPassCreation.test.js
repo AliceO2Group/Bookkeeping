@@ -22,7 +22,6 @@ const {
     getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
-    getPopoverSelector,
     expectUrlParams,
     waitForTableLength,
 } = require('../defaults.js');

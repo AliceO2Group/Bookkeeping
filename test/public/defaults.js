@@ -585,11 +585,30 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
  * @return {Promise<void>} resolve once column values were checked
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    const size = expectedInnerTextValues.length;
+    try {
+        await page.waitForFunction(
+            (columnId, expectedInnerTextValues) => {
+                const cells = document.querySelectorAll(`table tbody .column-${columnId}`);
+                if (cells.length !== expectedInnerTextValues.length) {
+                    return false;
+                }
 
-    await waitForTableToLength(page, size);
+                for (const rowIndex in expectedInnerTextValues) {
+                    if (cells[rowIndex].innerText !== expectedInnerTextValues[rowIndex]) {
+                        return false;
+                    }
+                }
 
-    expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
+                return true;
+            },
+            {},
+            columnId,
+            expectedInnerTextValues,
+        );
+    } catch (_) {
+        // Use expect to have explicit error message
+        expect(getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+    }
 };
 
 /**
@@ -628,7 +647,7 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
-    await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
+    await page.waitForSelector(`th#${columnId}`);
     await page.hover(`th#${columnId}`);
     await page.waitForSelector(`#${columnId}-sort-preview`);
 
