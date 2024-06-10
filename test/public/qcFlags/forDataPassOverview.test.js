@@ -159,7 +159,7 @@ module.exports = () => {
         await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 
-    it('should inform when run quality was changes to bad', async () => {
+    it('should inform when run quality was changed to bad', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 2,
             runNumber: 2,
