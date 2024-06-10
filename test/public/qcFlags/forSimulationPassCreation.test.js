@@ -24,7 +24,6 @@ const {
     expectRowValues,
     getPopoverSelector,
     expectUrlParams,
-    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
