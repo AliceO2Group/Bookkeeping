@@ -21,6 +21,8 @@ const {
     validateTableData,
     fillInput,
     expectUrlParams,
+    getPopoverSelector,
+    getPopoverContent,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -155,5 +157,25 @@ module.exports = () => {
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
+    });
+
+    it('should inform when run quality was changes to bad', async () => {
+        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
+            dataPassId: 2,
+            runNumber: 2,
+            dplDetectorId: 1,
+        } });
+
+        const epectedQcDisabledMessage = 'Quality of the run was changed to bad so it is no more subject for QC';
+
+        await page.waitForSelector('.breadcrumbs *:nth-child(5) h2.danger a');
+        const badRunLinkPopoverSelector = await getPopoverSelector(await page.waitForSelector('.breadcrumbs *:nth-child(5).popover-trigger'));
+        const badRunPopoverContent = await getPopoverContent(await page.waitForSelector(badRunLinkPopoverSelector));
+        expect(badRunPopoverContent).to.be.equal(epectedQcDisabledMessage);
+
+        const addQcFlagPopoverSelector = await getPopoverSelector(await page
+            .waitForSelector('.popover-trigger:has(button.btn.btn-primary[disabled])'));
+        const addQcFlagPopoverContent = await getPopoverContent(await page.waitForSelector(addQcFlagPopoverSelector));
+        expect(addQcFlagPopoverContent).to.be.equal(epectedQcDisabledMessage);
     });
 };
