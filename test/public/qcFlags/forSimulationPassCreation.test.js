@@ -22,7 +22,6 @@ const {
     getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
-    getPopoverSelector,
     expectUrlParams,
     waitForTableLength,
 } = require('../defaults.js');
@@ -49,11 +48,13 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        const response = await goToPage(page, 'qc-flag-creation-for-simulation-pass', {
+            queryParameters: {
+                simulationPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -69,41 +70,47 @@ module.exports = () => {
     });
 
     it('can navigate to runs per simulation pass page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-simulation-pass', {
+            queryParameters: {
+                simulationPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(3) a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
     it('can navigate to run details page from breadcrumbs link', async () => {
-        await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-simulation-pass', {
+            queryParameters: {
+                simulationPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(5) a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
     it('should successfully create run-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-simulation-pass', {
+            queryParameters: {
+                simulationPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await page.waitForSelector('button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
-        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-2');
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
@@ -121,18 +128,20 @@ module.exports = () => {
     });
 
     it('should successfully create time-based QC flag', async () => {
-        await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-simulation-pass', {
+            queryParameters: {
+                simulationPassId: 1,
+                runNumber: 106,
+                dplDetectorId: 1,
+            },
+        });
 
         await page.waitForSelector('button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
-        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option:nth-of-type(2)`, true);
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-11');
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await pressElement(page, '.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', true);
 
@@ -157,19 +166,21 @@ module.exports = () => {
     });
 
     it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
-        await goToPage(page, 'qc-flag-creation-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 105,
-            dplDetectorId: 1,
-        } });
+        await goToPage(page, 'qc-flag-creation-for-simulation-pass', {
+            queryParameters: {
+                simulationPassId: 1,
+                runNumber: 105,
+                dplDetectorId: 1,
+            },
+        });
 
         await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
         await page.waitForSelector('button#submit[disabled]');
-        await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
-        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
-        await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
-        await page.waitForSelector('.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('input[type="time"]', { hidden: true });
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-2');
+        await page.waitForSelector('button#submit[disabled]', { hidden: true });
+        await page.waitForSelector('.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', { hidden: true });
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expectUrlParams(page, {
