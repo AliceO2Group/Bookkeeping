@@ -164,28 +164,4 @@ module.exports = () => {
         const { rows: dataPasses } = await dataPassService.getAll(dto.query);
         expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
     });
-
-    it.skip('should succesfully sort data passes by reconstructedEventsCount', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    reconstructedEventsCount: 'DESC',
-                },
-            },
-        };
-        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-        expect(dataPasses).to.have.ordered.deep.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
-    });
-
-    it.skip('should succesfully sort data passes by outputSize', async () => {
-        const dto = {
-            query: {
-                sort: {
-                    outputSize: 'ASC',
-                },
-            },
-        };
-        const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-        expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass2, LHC22b_apass1]);
-    });
 };

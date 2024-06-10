@@ -236,23 +236,6 @@ module.exports = () => {
                     done();
                 });
         });
-        it.skip('should successfuly sort on outputSize', (done) => {
-            request(server)
-                .get('/api/dataPasses?sort[outputSize]=DESC')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data: dataPasses } = res.body;
-                    expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(3);
-                    expect(dataPasses).to.have.deep.ordered.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
-                    done();
-                });
-        });
         it('should support pagination', (done) => {
             request(server)
                 .get('/api/dataPasses?page[offset]=1&sort[id]=desc')
