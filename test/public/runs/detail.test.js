@@ -450,7 +450,7 @@ module.exports = () => {
     it('should display the LHC fill number when beam is stable', async () => {
         await waitForNavigation(page, () => pressElement(page, '#run-overview'));
         await waitForNavigation(page, () => pressElement(page, '#row108-runNumber-text > div > a'));
-        
+
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 
