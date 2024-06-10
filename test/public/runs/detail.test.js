@@ -430,7 +430,8 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-runNumber-text > div > a'));
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expectUrlParams(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' });
@@ -440,12 +441,16 @@ module.exports = () => {
     });
 
     it('should not display the LHC Data when beam is not stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row107-runNumber-text > div > a'));
+
         await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
 
     it('should display the LHC fill number when beam is stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row108-runNumber-text > div > a'));
+        
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 
