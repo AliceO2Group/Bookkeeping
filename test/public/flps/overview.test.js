@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, waitForTableLength, validateElement } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, waitForTableLength } = require('../defaults.js');
 const { goToPage, reloadPage, getInnerText, waitForTimeout } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -133,7 +133,7 @@ module.exports = () => {
         await expectInnerText(page, `${amountSelectorId} button`, 'Rows per page: Infinite ');
 
         await pressElement(page, `${amountSelectorId} button`);
-        await validateElement(page, `${amountSelectorId} .dropup-menu`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         // Expect the amount of visible flps to reduce when the first option (5) is selected
         await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);

@@ -12,7 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults');
+const { defaultBefore, defaultAfter, goToPage, expectInnerText } = require('../defaults.js');
 const packageJson = require('../../../package.json');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -52,7 +52,7 @@ module.exports = () => {
 
         // For each service, search for an element with that id
         for (const service of services) {
-            const servicePanel = await page.$(`#${service}`);
+            const servicePanel = await page.waitForSelector(`#${service}`);
             expect(servicePanel, `Couldn't find panel for service ${service}`).to.not.be.null;
         }
     });

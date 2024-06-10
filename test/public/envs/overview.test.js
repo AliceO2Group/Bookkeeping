@@ -10,7 +10,6 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
 const chai = require('chai');
 const {
     defaultBefore,
@@ -18,13 +17,15 @@ const {
     pressElement,
     goToPage,
     checkColumnBalloon,
-    checkEnvironmentStatusColor,
     validateElement,
     expectLink,
     validateTableData,
     expectInnerText,
-} = require('../defaults');
-const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
+    waitForTimeout,
+    expectUrlParams,
+    waitForNavigation,
+    getInnerText,
+} = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -99,17 +100,42 @@ module.exports = () => {
         await goToPage(page, 'env-overview');
         await waitForTimeout(100);
 
-        await checkEnvironmentStatusColor(page, 1, 4);
-        await checkEnvironmentStatusColor(page, 2, 4);
-        await checkEnvironmentStatusColor(page, 3, 4);
-        await checkEnvironmentStatusColor(page, 4, 4);
+        /**
+         * Check that a given cell of the given column displays the correct color depending on the status
+         *
+         * @param {number} rowIndex the index of the row to look for status color
+         * @param {number} columnIndex the index of the column to look for status color
+         * @returns {Promise<Chai.Assertion>} void promise
+         */
+        const checkEnvironmentStatusColor = async (rowIndex, columnIndex) => {
+            const cellSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
+            const cell = await page.waitForSelector(cellSelector);
+            const cellContent = await getInnerText(cell);
+
+            switch (cellContent) {
+                case 'RUNNING':
+                    await page.waitForSelector(`${cellSelector}.success`);
+                    break;
+                case 'ERROR':
+                    await page.waitForSelector(`${cellSelector}.danger`);
+                    break;
+                case 'CONFIGURED':
+                    await page.waitForSelector(`${cellSelector}.warning`);
+                    break;
+            }
+        };
+
+        await checkEnvironmentStatusColor(1, 4);
+        await checkEnvironmentStatusColor(2, 4);
+        await checkEnvironmentStatusColor(3, 4);
+        await checkEnvironmentStatusColor(4, 4);
     });
 
     it('can set how many environments are available per page', async () => {
         await waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
@@ -150,10 +176,8 @@ module.exports = () => {
         await waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
-        const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
-        const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+        await page.waitForSelector('#page5');
+        await page.waitForSelector('#page6', { hidden: true });
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
@@ -164,11 +188,8 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'env-overview');
-        await pressElement(page, '#rowTDI59So3d-runs a');
-        await waitForNetworkIdleAndRedraw(page);
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 
     it('should successfully display dropdown links', async () => {
