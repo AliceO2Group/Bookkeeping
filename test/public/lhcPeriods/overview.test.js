@@ -88,15 +88,13 @@ module.exports = () => {
         await expectInnerText(page, '.dropup button', 'Rows per page: 11 ');
 
         // Expect the dropdown options to be visible when it is selected
-        const amountSelectorButton = await page.$('.dropup button');
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup');
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$('.dropup .menu-item');
-        await menuItem.evaluate((button) => button.click());
+        await pressElement(page, '.dropup .menu-item');
         await page.waitForSelector('table tbody tr:nth-child(3)');
 
         const tableRows = await page.$$('table tr');

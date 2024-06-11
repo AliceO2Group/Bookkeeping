@@ -476,8 +476,7 @@ module.exports = () => {
         });
         await waitForTimeout(100);
 
-        const secondPageButton = await page.$('#page2');
-        await secondPageButton.evaluate((button) => button.click());
+        await pressElement(page, '#page2');
         await waitForTimeout(500);
         // Expect the pagination to still be on page two
         let currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);

@@ -90,15 +90,11 @@ module.exports = () => {
         await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
-        const amountSelectorButton = await page.$('.dropup button');
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup');
-        const amountSelectorDropdown = await page.$('.dropup');
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
 
         // Expect the amount of visible simulationPasses to reduce when the first option (5) is selected
-        const menuItem = await page.$('.dropup .menu-item');
-        await menuItem.evaluate((button) => button.click());
+        await pressElement(page, '.dropup .menu-item');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -108,9 +104,7 @@ module.exports = () => {
             element.value = '1111';
             element.dispatchEvent(new Event('input'));
         });
-        await page.waitForSelector('.dropup');
-
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
+        await page.waitForSelector('.dropup input:invalid');
     });
 
     it('can sort by name column in ascending and descending manners', async () => {

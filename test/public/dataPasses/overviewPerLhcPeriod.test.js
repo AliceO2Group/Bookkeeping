@@ -124,13 +124,12 @@ module.exports = () => {
     it('can set how many data passes is available per page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
-        const amountSelectorButton = await page.$('.dropup button');
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup');
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         pressElement(page, '.dropup .menu-item');
@@ -153,8 +152,8 @@ module.exports = () => {
         await page.waitForSelector('#name-sort-preview');
 
         // Sort by name in an ascending manner
-        const nameHeader = await page.$('th#name');
-        await nameHeader.evaluate((button) => button.click());
+        await pressElement(page, 'th#name');
+        await expectInnerText(page, 'table tbody tr:first-child td:first-child', 'LHC22b_apass1');
 
         // Expect the names to be in alphabetical order
         const firstNames = await getColumnCellsInnerTexts(page, 'name');

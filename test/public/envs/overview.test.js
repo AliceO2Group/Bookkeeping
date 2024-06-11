@@ -136,16 +136,12 @@ module.exports = () => {
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
+        await pressElement(page, `${amountSelectorId} button`);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         // Expect the amount of visible environments to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
+        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
-
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(5);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);

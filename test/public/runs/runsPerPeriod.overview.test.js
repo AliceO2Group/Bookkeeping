@@ -156,7 +156,7 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        await waitForNavigation(page, () => reloadPage(page));
+        await reloadPage(page);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
@@ -174,7 +174,7 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        await waitForNavigation(page, () => reloadPage(page));
+        await reloadPage(page);
         await page.waitForSelector('tbody tr');
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);

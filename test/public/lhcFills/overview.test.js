@@ -130,12 +130,11 @@ module.exports = () => {
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
+        await pressElement(page, `${amountSelectorId} button`);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
+        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
 
         const tableRows = await page.$$('table tr');

@@ -148,37 +148,6 @@ module.exports = () => {
         await waitForTableLength(page, 5);
     });
 
-    it.skip('can switch between pages of flps', async () => {
-        // Expect the page selector to be available with two pages
-        const pageSelectorId = '#amountSelector';
-        const pageSelector = await page.$(pageSelectorId);
-        expect(Boolean(pageSelector)).to.be.true;
-        const pageSelectorButtons = await page.$$('#pageSelector .btn-tab');
-        expect(pageSelectorButtons.length).to.equal(5);
-
-        // Expect the table rows to change upon page navigation
-        const oldFirstRowId = await getFirstRow(table, page);
-        const secondPage = await page.$('#page2');
-        await secondPage.evaluate((button) => button.click());
-        table = await page.$$('tr');
-        const newFirstRowId = await getFirstRow(table, page);
-        expect(oldFirstRowId).to.not.equal(newFirstRowId);
-
-        // Expect us to be able to do the same with the page arrows
-        const prevPage = await page.$('#pageMoveLeft');
-        await prevPage.evaluate((button) => button.click());
-        const oldFirstPageButton = await page.$('#page1');
-        const oldFirstPageButtonClass = await page.evaluate((element) => element.className, oldFirstPageButton);
-        expect(oldFirstPageButtonClass).to.include('selected');
-
-        // The same, but for the other (right) arrow
-        const nextPage = await page.$('#pageMoveRight');
-        await nextPage.evaluate((button) => button.click());
-        const newFirstPageButton = await page.$('#page1');
-        const newFirstPageButtonClass = await page.evaluate((element) => element.className, newFirstPageButton);
-        expect(newFirstPageButtonClass).to.not.include('selected');
-    });
-
     it('dynamically switches between visible pages in the page selector', async () => {
         // Override the amount of flps visible per page manually
         await page.evaluate(() => {

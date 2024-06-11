@@ -86,13 +86,12 @@ module.exports = () => {
     it('can set how many data passes is available per page', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
 
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
-        const amountSelectorButton = await page.waitForSelector('.dropup button');
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup');
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -102,8 +101,7 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
 
-        await page.waitForSelector('.dropup');
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
+        await page.waitForSelector('.dropup input:invalid');
     });
 
     it('can sort by name column in ascending and descending manners', async () => {

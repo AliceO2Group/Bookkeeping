@@ -90,7 +90,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'run-overview');
         table = await page.$$('tr');
         firstRowId = await getFirstRow(table, page);
 
@@ -670,24 +669,16 @@ module.exports = () => {
         await page.$eval(offFilterSelector, (element) => element.click());
         await waitForTableLength(page, 9);
 
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(9);
         await checkTableTriggerValue(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTableLength(page, 10);
 
         table = await page.$$('tbody tr');
-        expect(table.length).to.equal(10);
-
-        table = await page.$$('tbody tr');
         await checkTableTriggerValue(table, ['OFF', 'LTU']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTableLength(page, 9);
-
-        table = await page.$$('tbody tr');
-        expect(table.length).to.equal(9);
 
         await checkTableTriggerValue(table, ['OFF']);
     });

@@ -140,6 +140,7 @@ module.exports = () => {
         await reloadPage(page);
         await pressElement(page, '#edit-run');
         await pressElement(page, '#Run-detectors .dropdown-trigger');
+        await page.waitForSelector('.dropdown');
 
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';
@@ -160,6 +161,7 @@ module.exports = () => {
 
         await pressElement(page, '#edit-run');
         await pressElement(page, '#Run-detectors .dropdown-trigger');
+        await page.waitForSelector('.dropdown');
 
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.false;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
@@ -299,6 +301,7 @@ module.exports = () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 105 } });
 
         await pressElement(page, '#edit-run');
+        await page.waitForSelector('#cancel-run');
         expect(await page.$('#runQualitySelect')).to.be.null;
     });
 
@@ -306,6 +309,7 @@ module.exports = () => {
         await reloadPage(page);
 
         await pressElement(page, '#edit-run');
+        await page.waitForSelector('#cancel-run');
         expect(await page.$('#Run-detectors .dropdown-trigger')).to.be.null;
     });
 
