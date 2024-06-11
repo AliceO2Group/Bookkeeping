@@ -178,6 +178,7 @@ module.exports = () => {
         // Remove the first EOR reason
         await page.click('.remove-eor-reason');
         await pressElement(page, '#save-run');
+        await page.waitForSelector('#save-run', { hidden: true });
 
         await page.waitForSelector('#Run-eorReasons .eor-reason');
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
@@ -202,6 +203,7 @@ module.exports = () => {
         // Remove the first EOR reason
         await page.click('.remove-eor-reason');
         await page.click('#cancel-run');
+        await page.waitForSelector('#cancel-run', { hidden: true });
 
         await page.waitForSelector('#Run-eorReasons .eor-reason');
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');

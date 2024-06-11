@@ -21,7 +21,6 @@ const {
     pressElement,
     expectColumnValues,
     validateTableData,
-    waitForTableLength,
     expectInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -98,7 +97,7 @@ module.exports = () => {
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         const menuItem = await page.$('.dropup .menu-item');
         await menuItem.evaluate((button) => button.click());
-        await waitForTableLength(page, 3);
+        await page.waitForSelector('table tbody tr:nth-child(3)');
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(3);
@@ -111,7 +110,6 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForSelector('.dropup input:invalid');
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
