@@ -17,7 +17,6 @@ const {
     pressElement,
     goToPage,
     checkColumnBalloon,
-    validateElement,
     expectLink,
     validateTableData,
     expectInnerText,
@@ -198,7 +197,7 @@ module.exports = () => {
         // Running env
         let envId = 'CmCvjNbg';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
-        let popover = await validateElement(page, `.popover:has(button[id='copy-${envId}'])`);
+        let popover = await page.waitForSelector(`.popover:has(button[id='copy-${envId}'])`);
         await expectLink(popover, 'a:nth-of-type(1)', {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
@@ -212,7 +211,7 @@ module.exports = () => {
         // Not running env
         envId = 'EIDO13i3D';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
-        popover = await validateElement(page, `.popover:has(button[id='copy-${envId}'])`);
+        popover = await page.waitForNavigation(`.popover:has(button[id='copy-${envId}'])`);
         await expectLink(popover, 'a:nth-of-type(1)', {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
