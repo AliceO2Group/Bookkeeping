@@ -21,8 +21,6 @@ const {
     validateTableData,
     fillInput,
     expectUrlParams,
-    getPopoverSelector,
-    getPopoverContent,
 } = require('../defaults.js');
 
 const { expect } = chai;
