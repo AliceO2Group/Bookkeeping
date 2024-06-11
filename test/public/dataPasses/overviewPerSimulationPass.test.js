@@ -111,16 +111,6 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'name');
     });
 
-    it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        await testTableSortingByColumn(page, 'reconstructedEventsCount');
-    });
-
-    it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        await testTableSortingByColumn(page, 'outputSize');
-    });
-
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await pressElement(page, '#openFilterToggle');

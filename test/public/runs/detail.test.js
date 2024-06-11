@@ -17,7 +17,6 @@ const {
     defaultAfter,
     expectInnerText,
     pressElement,
-    getFirstRow,
     expectUrlParams,
     reloadPage,
     goToPage,
@@ -25,6 +24,7 @@ const {
     getPopoverContent,
     waitForNavigation,
     waitForTableLength,
+    getTableContent,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
@@ -46,9 +46,6 @@ module.exports = () => {
     let page;
     let browser;
     let url;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -263,30 +260,37 @@ module.exports = () => {
     });
 
     it('can navigate to the logs panel', async () => {
-        await waitForNavigation(page, () => pressElement(page, '#logs-tab'));
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('runNumber=1');
-        expect(urlParameters).to.contain('panel=logs');
+        await pressElement(page, '#logs-tab');
+        await page.waitForSelector('#logs-tab.active');
+
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'logs' });
+    });
+
+    it('can navigate to a log detail page', async () => {
+        await waitForTableLength(page, 5);
+
+        // We expect the entry page to have the same id as the id from the run overview
+        await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
+
+        expectUrlParams(page, { page: 'log-detail', id: 1 });
+    });
+
+    it('should successfully navigate to the trigger counters panel', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+
+        await pressElement(page, '#trigger-counters-tab');
+        await waitForTableLength(page, 2);
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'trigger-counters' });
+        expect(await getTableContent(page)).to.deep.eql([
+            ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
+            ['SECOND-CLASS-NAME', '2001', '2002', '2003', '2004', '2005', '2006'],
+        ]);
     });
 
     it('should show lhc data in normal mode', async () => {
         const element = await page.$('#lhc-fill-fillNumber>strong');
         const value = await element.evaluate((el) => el.textContent);
         expect(value).to.equal('Fill number:');
-    });
-    it('can navigate to a log detail page', async () => {
-        await waitForTableLength(page, 5);
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
-        // We expect the entry page to have the same id as the id from the run overview
-        await waitForNavigation(page, () => pressElement(page, `#${firstRowId} .btn-redirect`));
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-        expect(urlParameters).to.contain('page=log-detail');
-        expect(urlParameters).to.contain('id=1');
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
@@ -415,7 +419,8 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-runNumber-text > div > a'));
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expectUrlParams(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' });
@@ -425,12 +430,16 @@ module.exports = () => {
     });
 
     it('should not display the LHC Data when beam is not stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row107-runNumber-text > div > a'));
+
         await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
 
     it('should display the LHC fill number when beam is stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row108-runNumber-text > div > a'));
+
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 
