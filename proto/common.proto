@@ -136,3 +136,7 @@ message EorReason {
   string title = 3;
   optional string description = 4;
 }
+
+// Generic empty message when services return no data
+message Empty {
+}
