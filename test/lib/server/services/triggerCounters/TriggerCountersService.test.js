@@ -2,7 +2,6 @@ const { triggerCountersService } = require('../../../../../lib/server/services/t
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
-const { environmentService } = require('../../../../../lib/server/services/environment/EnvironmentService.js');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 
 /**
