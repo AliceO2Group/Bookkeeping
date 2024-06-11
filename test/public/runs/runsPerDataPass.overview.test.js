@@ -129,7 +129,7 @@ module.exports = () => {
             innerText: '100!',
         });
 
-        await qcFlagService.delete(tmpQcFlag.id);
+        await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
