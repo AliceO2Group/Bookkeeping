@@ -165,6 +165,7 @@ module.exports = () => {
         } });
 
         await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
-        await page.waitForSelector('button.btn.btn-primary[disabled]');
+        const title = 'Quality of the run was changed to bad so it is no more subject to QC';
+        await page.waitForSelector(`button.btn.btn-primary[disabled][title="${title}"]`);
     });
 };
