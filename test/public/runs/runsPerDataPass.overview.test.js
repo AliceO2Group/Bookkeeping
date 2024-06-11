@@ -27,6 +27,8 @@ const {
     expectLink,
     validateDate,
     waitForDownload,
+    getPopoverContent,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
@@ -331,5 +333,15 @@ module.exports = () => {
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should display bad runs marked out', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+
+        await page.waitForSelector('tr#row2.danger');
+        await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('tr#row2 .column-CPV .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.$(popoverSelector));
+        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
     });
 };

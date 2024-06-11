@@ -194,4 +194,15 @@ module.exports = () => {
 
         await expectColumnValues(page, 'flagType', ['Unknown Quality']);
     });
+
+    it('should disabled creation form when run quality was changes to bad', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
+            dataPassId: 2,
+            runNumber: 2,
+            dplDetectorId: 1,
+        } });
+
+        await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject to QC');
+        await page.waitForSelector('input', { hidden: true });
+    });
 };
