@@ -202,7 +202,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject for QC');
+        await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject to QC');
         await page.waitForSelector('input', { hidden: true });
     });
 };

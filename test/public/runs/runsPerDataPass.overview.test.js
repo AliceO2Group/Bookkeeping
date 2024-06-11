@@ -342,6 +342,6 @@ module.exports = () => {
         await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('tr#row2 .column-CPV .popover-trigger'));
         const popoverContent = await getPopoverContent(await page.$(popoverSelector));
-        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject for QC');
+        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
     });
 };

@@ -166,7 +166,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        const epectedQcDisabledMessage = 'Quality of the run was changed to bad so it is no more subject for QC';
+        const epectedQcDisabledMessage = 'Quality of the run was changed to bad so it is no more subject to QC';
 
         await page.waitForSelector('.breadcrumbs *:nth-child(5) h2.danger a');
         const badRunLinkPopoverSelector = await getPopoverSelector(await page.waitForSelector('.breadcrumbs *:nth-child(5).popover-trigger'));
