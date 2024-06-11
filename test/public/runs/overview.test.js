@@ -669,6 +669,7 @@ module.exports = () => {
         await page.$eval(offFilterSelector, (element) => element.click());
         await waitForTableLength(page, 9);
 
+        table = await page.$$('tbody tr');
         await checkTableTriggerValue(table, ['OFF']);
 
         await page.$eval(ltuFilterSelector, (element) => element.click());
@@ -680,6 +681,7 @@ module.exports = () => {
         await page.$eval(ltuFilterSelector, (element) => element.click());
         await waitForTableLength(page, 9);
 
+        table = await page.$$('tbody tr');
         await checkTableTriggerValue(table, ['OFF']);
     });
 
