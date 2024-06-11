@@ -14,7 +14,7 @@ message QcFlagCreationResponse {
 }
 
 message DataPassQcFlagCreationRequest {
-  int32 runNumber = 1;
+  uint32 runNumber = 1;
   // usually apassN, cpassN, where N is a natural number
   string passName = 2;
   string detectorName = 3;
@@ -22,7 +22,7 @@ message DataPassQcFlagCreationRequest {
 }
 
 message SimulationPassQcFlagCreationRequest {
-  int32 runNumber = 1;
+  uint32 runNumber = 1;
   // Simulation Pass (production) Tag
   string productionName = 2;
   string detectorName = 3;
@@ -32,9 +32,9 @@ message SimulationPassQcFlagCreationRequest {
 message QcFlag {
   uint32 flagTypeId = 1;
   // Unix timestamp (ms) since which QC flag applies to data taken during given run
-  uint64 from = 2;
+  optional uint64 from = 2;
   // Unix timestamp (ms) until which QC flag applies to data taken during given run
-  uint64 to = 3;
+  optional uint64 to = 3;
   // string indicating why a given flag was given, providing some details about the nature of the problem
   optional string comment = 4;
   // string indicating what produced this flag.

@@ -10,27 +10,28 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
 const chai = require('chai');
 const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    getFirstRow,
     goToPage,
     checkColumnBalloon,
-    checkEnvironmentStatusColor,
-} = require('../defaults');
-const { waitForNetworkIdleAndRedraw, waitForTimeout } = require('../defaults.js');
+    validateTableData,
+    expectInnerText,
+    waitForTimeout,
+    expectUrlParams,
+    waitForNavigation,
+    getInnerText,
+} = require('../defaults.js');
+const dateAndTime = require('date-and-time');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
 module.exports = () => {
     let page;
     let browser;
-
-    let table;
-    let firstRowId;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -39,6 +40,8 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -57,55 +60,36 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
+        await goToPage(page, 'env-overview');
 
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
-            id: (string) => typeof string == 'string',
-            createdAt: (date) => !isNaN(Date.parse(date)),
-            updatedAt: (date) => !isNaN(Date.parse(date)),
-            toredownAt: (date) => !isNaN(Date.parse(date)),
-            status: (date) => !isNaN(Date.parse(date)),
-            statusMessage: (string) => typeof string == 'string',
-            runs: (string) => typeof string == 'string',
+        const { StatusAcronym, STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronym.mjs');
+
+        const statusNames = new Set(Object.keys(StatusAcronym));
+
+        // eslint-disable-next-line require-jsdoc
+        const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
+        const tableDataValidators = {
+            id: (id) => /[A-Za-z0-9]+/.test(id),
+            runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
+            createdAt: checkDate,
+            updatedAt: checkDate,
+            status: (currentStatus) => statusNames.has(currentStatus),
+            historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
         };
-
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
-
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-        const firstRowCells = await page.$$(`#${firstRowId} td`);
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (Object.keys(headerIndices).includes(index)) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
-        }
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'env-overview');
         await waitForTimeout(100);
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(11);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '9');
+        await expectInnerText(page, '#totalRowsCount', '9');
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'env-overview');
-        await waitForTimeout(100);
-
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });
@@ -114,17 +98,42 @@ module.exports = () => {
         await goToPage(page, 'env-overview');
         await waitForTimeout(100);
 
-        await checkEnvironmentStatusColor(page, 1, 4);
-        await checkEnvironmentStatusColor(page, 2, 4);
-        await checkEnvironmentStatusColor(page, 3, 4);
-        await checkEnvironmentStatusColor(page, 4, 4);
+        /**
+         * Check that a given cell of the given column displays the correct color depending on the status
+         *
+         * @param {number} rowIndex the index of the row to look for status color
+         * @param {number} columnIndex the index of the column to look for status color
+         * @returns {Promise<Chai.Assertion>} void promise
+         */
+        const checkEnvironmentStatusColor = async (rowIndex, columnIndex) => {
+            const cellSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
+            const cell = await page.waitForSelector(cellSelector);
+            const cellContent = await getInnerText(cell);
+
+            switch (cellContent) {
+                case 'RUNNING':
+                    await page.waitForSelector(`${cellSelector}.success`);
+                    break;
+                case 'ERROR':
+                    await page.waitForSelector(`${cellSelector}.danger`);
+                    break;
+                case 'CONFIGURED':
+                    await page.waitForSelector(`${cellSelector}.warning`);
+                    break;
+            }
+        };
+
+        await checkEnvironmentStatusColor(1, 4);
+        await checkEnvironmentStatusColor(2, 4);
+        await checkEnvironmentStatusColor(3, 4);
+        await checkEnvironmentStatusColor(4, 4);
     });
 
     it('can set how many environments are available per page', async () => {
         await waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
-        const amountSelectorButton = await page.$(`${amountSelectorId} button`);
+        const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
         await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
@@ -165,10 +174,8 @@ module.exports = () => {
         await waitForTimeout(100);
 
         // Expect the page five button to now be visible, but no more than that
-        const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
-        const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+        await page.waitForSelector('#page5');
+        await page.waitForSelector('#page6', { hidden: true });
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
@@ -179,10 +186,7 @@ module.exports = () => {
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await goToPage(page, 'env-overview');
-        await pressElement(page, '#rowTDI59So3d-runs a');
-        await waitForNetworkIdleAndRedraw(page);
-        const [, parametersExpr] = await page.url().split('?');
-        const urlParameters = parametersExpr.split('&');
-        expect(urlParameters).to.contain('page=run-detail');
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 };

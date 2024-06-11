@@ -20,13 +20,13 @@ const {
     goToPage,
     validateTableData,
     fillInput,
-    validateElement,
-    checkMismatchingUrlParam,
-} = require('../defaults');
+    expectUrlParams,
+} = require('../defaults.js');
 
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
 const { waitForNavigation } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -39,6 +39,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -73,7 +74,7 @@ module.exports = () => {
         } });
 
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
-        expect(await checkMismatchingUrlParam(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' })).to.be.eql({});
+        expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
     it('can naviagate to run details page from breadcrumbs link', async () => {
@@ -84,7 +85,7 @@ module.exports = () => {
         } });
 
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
-        expect(await checkMismatchingUrlParam(page, { page: 'run-detail', runNumber: '106' })).to.be.eql({});
+        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -131,13 +132,13 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
-        await validateElement(page, `${amountSelectorId} .dropup-menu`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
 
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
-        await validateElement(page, amountSelectorId);
+        await page.waitForSelector(amountSelectorId);
     });
 
     it('notifies if table loading returned an error', async () => {

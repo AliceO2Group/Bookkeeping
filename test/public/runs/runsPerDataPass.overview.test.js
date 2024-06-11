@@ -21,13 +21,18 @@ const {
     pressElement,
     goToPage,
     reloadPage,
+    expectColumnValues,
+    fillInput,
     validateTableData,
     expectLink,
     validateDate,
-} = require('../defaults');
-const { waitForDownload } = require('../../utilities/waitForDownload');
+    waitForDownload,
+    getPopoverContent,
+    getPopoverSelector,
+} = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -60,6 +65,7 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -116,7 +122,7 @@ module.exports = () => {
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 3 }],
             { runNumber: 105, dataPassIdentifier: { id: 3 }, dplDetectorIdentifier: { dplDetectorId: 1 } },
-            { userIdentifier: { externalUserId: 1 } }, // Create good flag
+            { user: { externalUserId: 1, roles: ['admin'] } }, // Create good flag
         );
 
         await reloadPage(page);
@@ -125,27 +131,28 @@ module.exports = () => {
             innerText: '100!',
         });
 
-        await qcFlagService.delete(tmpQcFlag.id);
+        await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await reloadPage(page);
-        const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565294400000');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('1565298000000');
+        await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
+
+        await pressElement(page, '#preferences-raw-timestamps', true);
+        await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
+
         // Go back to normal
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+        await pressElement(page, '#preferences-raw-timestamps', true);
     });
 
     it('can set how many runs are available per page', async () => {
@@ -215,22 +222,11 @@ module.exports = () => {
 
     it('should successfully export runs', async () => {
         await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
-
-        const downloadPath = path.resolve('./download');
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
-        });
 
         const targetFileName = 'runs.json';
 
         // First export
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+        await pressElement(page, '#export-runs-trigger');
         await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
@@ -239,9 +235,7 @@ module.exports = () => {
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
         expect(exportButtonText).to.be.eql('Export');
 
-        await page.$eval('#send', (button) => button.click());
-
-        await waitForDownload(session);
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
@@ -256,5 +250,98 @@ module.exports = () => {
             { runNumber: 49, runQuality: 'good' },
         ]);
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    // Filters
+    it('should successfuly apply runNumber filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, '.runNumber-filter input[type=text]', '108,107');
+        await expectColumnValues(page, 'runNumber', ['108', '107']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
+    it('should successfuly apply detectors filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await pressElement(page, '.detectors-filter .dropdown-trigger');
+        await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
+        await expectColumnValues(page, 'runNumber', ['2', '1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply tags filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await pressElement(page, '.tags-filter .dropdown-trigger');
+
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '#tag-dropdown-option-RUN', true);
+
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
+    it('should successfuly apply timeStart filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
+        await expectColumnValues(page, 'runNumber', ['1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply timeEnd filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
+        await expectColumnValues(page, 'runNumber', ['1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply duration filter', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await pressElement(page, '#openFilterToggle');
+
+        await page.select('.runDuration-filter select', '>=');
+
+        /**
+         * Invokation of page.select and fillInput in case of amountFilter results in two concurrent,
+         * async actions whereas a result of only one of them is saved into model.
+         * Therefore additional action is invoked in between
+         */
+        await page.select('.runDuration-filter select', '>=');
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle');
+        await fillInput(page, '.runDuration-filter input[type=number]', '10');
+
+        await expectColumnValues(page, 'runNumber', ['55', '1']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should display bad runs marked out', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+
+        await page.waitForSelector('tr#row2.danger');
+        await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('tr#row2 .column-CPV .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.$(popoverSelector));
+        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
     });
 };

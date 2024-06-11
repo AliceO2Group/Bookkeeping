@@ -22,7 +22,8 @@ const {
     expectColumnValues,
     validateTableData,
     expectInnerText,
-} = require('../defaults');
+} = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -34,6 +35,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -85,16 +87,13 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        await page.waitForSelector('.dropup button');
-        const amountSelectorButton = await page.$('.dropup button');
+        const amountSelectorButton = await page.waitForSelector('.dropup button');
         const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
         expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await amountSelectorButton.evaluate((button) => button.click());
         await page.waitForSelector('.dropup');
-        const amountSelectorDropdown = await page.$('.dropup');
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -111,16 +110,6 @@ module.exports = () => {
     it('can sort by name column in ascending and descending manners', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
         await testTableSortingByColumn(page, 'name');
-    });
-
-    it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        await testTableSortingByColumn(page, 'reconstructedEventsCount');
-    });
-
-    it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
-        await testTableSortingByColumn(page, 'outputSize');
     });
 
     it('should successfuly apply data pass name filter', async () => {

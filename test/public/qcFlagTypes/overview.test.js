@@ -22,11 +22,12 @@ const {
     testTableSortingByColumn,
     validateTableData,
     checkColumnValuesWithRegex,
-} = require('../defaults');
+} = require('../defaults.js');
 
 const { expect } = chai;
 
 const dateAndTime = require('date-and-time');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -34,6 +35,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {

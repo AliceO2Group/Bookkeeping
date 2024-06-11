@@ -23,7 +23,8 @@ const {
     expectInnerText,
     expectInnerTextTo,
     expectColumnValues,
-} = require('../defaults');
+} = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -35,6 +36,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {

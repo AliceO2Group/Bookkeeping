@@ -12,8 +12,9 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, pressElement, goToPage, getFirstRow } = require('../defaults');
+const { defaultBefore, defaultAfter, pressElement, goToPage, getFirstRow } = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -33,7 +34,9 @@ module.exports = () => {
             height: 720,
             deviceScaleFactor: 1,
         });
+        await resetDatabaseContent();
     });
+
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });

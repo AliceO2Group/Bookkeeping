@@ -10,15 +10,15 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
-
 const {
     goToPage,
     defaultBefore,
     defaultAfter,
-    checkMismatchingUrlParam,
-    waitForNetworkIdleAndRedraw,
     reloadPage,
     fillInput,
+    waitForNavigation,
+    pressElement,
+    expectUrlParams,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -51,7 +51,7 @@ module.exports = () => {
     it('Should successfully display the Shift Leader eos report creation page', async () => {
         const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.SL } });
         expect(response.status()).to.equal(200);
-        expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create', shiftType: encodeURIComponent(ShiftTypes.SL) })).to.eql({});
+        expectUrlParams(page, { page: 'eos-report-create', shiftType: encodeURIComponent(ShiftTypes.SL) });
     });
 
     it('Should successfully create a Shift Leader EoS report when submitting the form and redirect to the corresponding log', async () => {
@@ -109,9 +109,9 @@ module.exports = () => {
 
         await page.waitForSelector('#type-specific #magnets-start input:nth-of-type(1)');
         await page.focus('#type-specific #magnets-start input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-start');
-        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
         await page.keyboard.type('dipole-start');
+        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-start');
 
         await page.click('#type-specific #magnets-add');
         await page.click('#type-specific #magnets-add');
@@ -122,21 +122,21 @@ module.exports = () => {
         await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(1)', magnet1Date, ['change']);
         await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(2)', magnet1Time, ['change']);
         await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-1');
-        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-1');
+        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
 
         await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(1)', magnet2Date, ['change']);
         await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(2)', magnet2Time, ['change']);
         await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-2');
-        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
         await page.keyboard.type('dipole-2');
+        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-2');
 
         await page.focus('#type-specific #magnets-end input:nth-of-type(1)');
-        await page.keyboard.type('solenoid-end');
-        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
         await page.keyboard.type('dipole-end');
+        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-end');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
         await page.focus('#from-previous-shifter .CodeMirror textarea');
@@ -150,12 +150,8 @@ module.exports = () => {
         await page.focus('#for-rm-rc .CodeMirror textarea');
         await page.keyboard.type('For RM & RC\nOn multiple lines');
 
-        await page.waitForSelector('#submit');
-        await page.click('#submit');
-
-        await waitForNetworkIdleAndRedraw(page);
-
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '120' })).to.eql({});
+        await waitForNavigation(page, () => pressElement(page, '#submit'));
+        expectUrlParams(page, { page: 'log-detail', id: '120' });
 
         // Fetch log manually, because it's hard to parse codemirror display
         const { text } = await getLog(120);
@@ -173,10 +169,10 @@ module.exports = () => {
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
         expect(text.includes(`## Magnets
-- ${magnetStart} - Solenoid solenoid-start - Dipole dipole-start
-- ${formatShiftDate(magnet2Timestamp, { time: true })} - Solenoid solenoid-2 - Dipole dipole-2
-- ${formatShiftDate(magnet1Timestamp, { time: true })} - Solenoid solenoid-1 - Dipole dipole-1
-- ${magnetEnd} - Solenoid solenoid-end - Dipole dipole-end`)).to.be.true;
+- ${magnetStart} - Dipole dipole-start - Solenoid solenoid-start
+- ${formatShiftDate(magnet2Timestamp, { time: true })} - Dipole dipole-2 - Solenoid solenoid-2
+- ${formatShiftDate(magnet1Timestamp, { time: true })} - Dipole dipole-1 - Solenoid solenoid-1
+- ${magnetEnd} - Dipole dipole-end - Solenoid solenoid-end`)).to.be.true;
         expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
