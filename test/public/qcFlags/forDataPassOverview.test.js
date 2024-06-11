@@ -156,4 +156,16 @@ module.exports = () => {
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
     });
+
+    it('should inform when run quality was changed to bad', async () => {
+        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
+            dataPassId: 2,
+            runNumber: 2,
+            dplDetectorId: 1,
+        } });
+
+        await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
+        const title = 'Quality of the run was changed to bad so it is no more subject to QC';
+        await page.waitForSelector(`button.btn.btn-primary[disabled][title="${title}"]`);
+    });
 };
