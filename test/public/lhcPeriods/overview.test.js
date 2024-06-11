@@ -95,6 +95,7 @@ module.exports = () => {
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         await pressElement(page, '.dropup .menu-item');
+        await page.waitForSelector('table tbody tr.empty-row', { hidden: true });
         await page.waitForSelector('table tbody tr:nth-child(3)');
 
         const tableRows = await page.$$('table tr');
