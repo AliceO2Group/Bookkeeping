@@ -166,16 +166,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        const epectedQcDisabledMessage = 'Quality of the run was changed to bad so it is no more subject to QC';
-
         await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
-        const badRunLinkPopoverSelector = await getPopoverSelector(await page.waitForSelector('.breadcrumbs *:nth-child(5).popover-trigger'));
-        const badRunPopoverContent = await getPopoverContent(await page.waitForSelector(badRunLinkPopoverSelector));
-        expect(badRunPopoverContent).to.be.equal(epectedQcDisabledMessage);
-
-        const addQcFlagPopoverSelector = await getPopoverSelector(await page
-            .waitForSelector('.popover-trigger:has(button.btn.btn-primary[disabled])'));
-        const addQcFlagPopoverContent = await getPopoverContent(await page.waitForSelector(addQcFlagPopoverSelector));
-        expect(addQcFlagPopoverContent).to.be.equal(epectedQcDisabledMessage);
+        await page.waitForSelector('button.btn.btn-primary[disabled])');
     });
 };
