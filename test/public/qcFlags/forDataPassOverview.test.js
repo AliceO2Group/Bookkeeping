@@ -167,6 +167,6 @@ module.exports = () => {
         } });
 
         await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
-        await page.waitForSelector('button.btn.btn-primary[disabled])');
+        await page.waitForSelector('button.btn.btn-primary[disabled]');
     });
 };
