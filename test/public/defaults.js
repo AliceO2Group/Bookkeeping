@@ -405,20 +405,6 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
 };
 
 /**
- * Expect a link to have a given text and href
- * @param {puppeteer.Page|puppeteer.ElementHandle} element Puppeteer element or page object.
- * @param {string} selector css selector.
- * @param {string} [expected.href] expected href of the link
- * @param {string} [expected.innerText] expected inner text of the link
- * @return {Promise<void>} promise
- */
-module.exports.expectLink = async (element, selector, { href, innerText }) => {
-    await element.waitForSelector(selector, { timeout: 200 });
-    const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
-    expect(actualLinkProperties).to.eql({ href, innerText });
-};
-
-/**
  * Expect an element to have a text valid against givne validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
