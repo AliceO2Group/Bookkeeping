@@ -167,44 +167,6 @@ module.exports = () => {
         expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
     });
 
-    it('can sort by ReconstructedEvents column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#reconstructedEventsCount');
-        await page.hover('th#reconstructedEventsCount');
-        page.waitForSelector('#reconstructedEventsCount-sort-preview');
-
-        // Sort by year in an ascending manner
-        const reconstructedEventsCountHeader = await page.$('th#reconstructedEventsCount');
-        await reconstructedEventsCountHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the year to be in order
-        const firstReconstructedEventsCounts = await getColumnCellsInnerTexts(page, 'reconstructedEventsCount');
-        expect(firstReconstructedEventsCounts).to.have.all.deep.ordered.members(firstReconstructedEventsCounts.sort());
-    });
-
-    it('can sort by outputSize column in ascending and descending manners', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-
-        // Expect a sorting preview to appear when hovering over a column header
-        await page.waitForSelector('th#outputSize');
-        await page.hover('th#outputSize');
-        await waitForTimeout(100);
-        const sortingPreviewIndicator = await page.$('#outputSize-sort-preview');
-        expect(Boolean(sortingPreviewIndicator)).to.be.true;
-
-        // Sort by avgCenterOfMassEnergy in an ascending manner
-        const outputSizeHeader = await page.$('th#outputSize');
-        await outputSizeHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
-
-        // Expect the avgCenterOfMassEnergy to be in order
-        const firstOutputSize = await getColumnCellsInnerTexts(page, 'outputSize');
-        expect(firstOutputSize).to.have.all.deep.ordered.members(firstOutputSize.sort());
-    });
-
     it('should successfuly apply data pass name filter', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 

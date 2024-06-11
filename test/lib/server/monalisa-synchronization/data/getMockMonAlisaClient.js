@@ -12,9 +12,10 @@
  */
 
 const { MonAlisaClient } = require('../../../../../lib/server/monalisa-synchronization/MonAlisaClient.js');
+const fs = require('fs');
 
-const mockDataPasses = require('./mockDataPasses.json');
-const mockDescriptionToDataPassDetails = require('./mockDescriptionToDataPassDetails.json');
+const mockDataPasses = String(fs.readFileSync('./test/lib/server/monalisa-synchronization/data/mockDataPasses.txt'));
+const mockDescriptionToDataPassVersionDetails = require('./mockDescriptionToDataPassVersionDetails.json');
 const mockSimulationPasses = require('./mockSimulationPasses.json');
 
 exports.getMockMonAlisaClient = (yearLowerLimit) => {
@@ -26,8 +27,8 @@ exports.getMockMonAlisaClient = (yearLowerLimit) => {
         dataPassDetailsUrl: 'https://some.other.mock.url.com',
         yearLowerLimit,
     });
-    instance._fetchDataPasses = async () => mockDataPasses;
-    instance._fetchDataPassDetails = async (description) => mockDescriptionToDataPassDetails[description];
+    instance._fetchDataPassesVersions = async () => mockDataPasses;
+    instance._fetchDataPassVersionDetails = async (description) => mockDescriptionToDataPassVersionDetails[description];
     instance._fetchSimulationPasses = async () => mockSimulationPasses;
     return instance;
 };
