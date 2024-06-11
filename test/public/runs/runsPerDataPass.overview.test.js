@@ -137,9 +137,13 @@ module.exports = () => {
         await reloadPage(page);
 
         await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
+        await expectInnerText(page, '#firstRowIndex', '1');
+
+        await page.waitForSelector('#lastRowIndex');
+        await expectInnerText(page, '#lastRowIndex', '4');
+
+        await page.waitForSelector('#totalRowsCount');
+        await expectInnerText(page, '#totalRowsCount', '4');
     });
 
     it('successfully switch to raw timestamp display', async () => {
