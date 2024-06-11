@@ -488,7 +488,7 @@ module.exports = () => {
 
         it('should successfuly filter by aliceL3Current', async () => {
             const response =
-                await request(server).get('/api/runs?filter[aliceL3Current][operator]=<&filter[aliceL3Current][limit]=1000');
+                await request(server).get('/api/runs?filter[aliceL3Current][<]=1000');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;

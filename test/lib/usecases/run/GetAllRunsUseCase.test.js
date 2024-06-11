@@ -618,8 +618,7 @@ module.exports = () => {
             query: {
                 filter: {
                     aliceL3Current: {
-                        limit,
-                        operator: '>',
+                        '>': limit,
                     },
                 },
             },
