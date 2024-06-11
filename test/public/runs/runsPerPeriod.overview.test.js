@@ -107,9 +107,11 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        await reloadPage(page);
+
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('successfully switch to raw timestamp display', async () => {
