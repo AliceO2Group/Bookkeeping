@@ -1,3 +1,7 @@
+## [0.91.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.91.0)
+* Changes made to the database
+  * Added data_pass_versions table
+
 ## [0.90.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.90.0)
 * Changes made to the database
   * Added origin column to quality_control_flags table
