@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Disable sorting reconstructedEventsCount and outputSize on DataPasses overview pages
   * Added iconBan to RCT runs overviews in case there is no QC flag assigned to detector and user has no permission to add one
   * Added gRPC interface to create/update trigger counters
+  * Changed display of Bad runs in Runs per data/simulation pass views and disabled QC management for them
 * Notable change for developers:
   * Several improvements has been done on frontend suite:
     * Set default navigation timeout to 5s
@@ -17,8 +18,7 @@ All notable changes to this project will be documented in this file. See [standa
     * Removed function validateElement and replaced its calls by native waitForSelector
   * Refactored ML client to fetch data passes data n CSV format
   * Refactored ML synchronization to work with lastSeen instead of lastRunNumber
-
-
+  * Factorized QC flags breadcrumbs
 
 ## [0.90.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.90.0)
 * Notable changes for users:
