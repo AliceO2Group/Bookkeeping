@@ -487,16 +487,20 @@ module.exports = () => {
         });
 
         it('should successfuly filter by aliceL3Current', async () => {
+            const lowerLimit = -10000000;
+            const upperLimit = 1000;
             const response =
-                await request(server).get('/api/runs?filter[aliceL3Current][<]=1000');
+                await request(server).get(`/api/runs?filter[aliceL3Current][<]=${upperLimit}&filter[aliceL3Current][>]=${lowerLimit}`);
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
 
             expect(runs).to.be.an('array');
             expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(Math.mmin(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
+                .to.be.greaterThan(lowerLimit);
             expect(Math.max(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
-                .to.be.lessThan(1000);
+                .to.be.lessThan(upperLimit);
         });
     });
 
