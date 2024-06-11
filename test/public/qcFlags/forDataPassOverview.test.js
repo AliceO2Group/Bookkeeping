@@ -168,7 +168,7 @@ module.exports = () => {
 
         const epectedQcDisabledMessage = 'Quality of the run was changed to bad so it is no more subject to QC';
 
-        await page.waitForSelector('.breadcrumbs *:nth-child(5) h2.danger a');
+        await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
         const badRunLinkPopoverSelector = await getPopoverSelector(await page.waitForSelector('.breadcrumbs *:nth-child(5).popover-trigger'));
         const badRunPopoverContent = await getPopoverContent(await page.waitForSelector(badRunLinkPopoverSelector));
         expect(badRunPopoverContent).to.be.equal(epectedQcDisabledMessage);
