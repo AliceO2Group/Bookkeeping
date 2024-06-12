@@ -25,6 +25,7 @@ const {
     waitForNavigation,
     waitForTableLength,
     getTableContent,
+    takeScreenshot,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
@@ -101,7 +102,6 @@ module.exports = () => {
     });
 
     it('should display detectors qualities and colors', async () => {
-        await reloadPage(page);
         const detectorBadgeClassesSelector = '#Run-detectors .detector-badge';
         const detectorBadgeClasses = await page.$$eval(detectorBadgeClassesSelector, (badges) => badges.map((badge) => badge.className));
 
@@ -123,7 +123,6 @@ module.exports = () => {
     });
 
     it('should successfully display detectors icons', async () => {
-        await reloadPage(page);
         const svgPaths = await page.$$eval('#Run-detectors .detector-quality-icon svg path', (elements) =>
             elements.map((elem) => elem.getAttribute('d')));
 
@@ -137,7 +136,6 @@ module.exports = () => {
     });
 
     it('successfully update detectors qualities in EDIT mode', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
         await pressElement(page, '#Run-detectors .dropdown-trigger');
         await page.waitForSelector('.dropdown');
@@ -165,25 +163,40 @@ module.exports = () => {
 
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.false;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
+        await pressElement(page, '#save-run');
     });
 
     it('should successfully update end of run reasons', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
 
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'DETECTORS');
 
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
         await page.type('#Run-eorReasons input', 'A new EOR reason');
-        await page.click('#add-eor-reason');
-        // Remove the first EOR reason
-        await page.click('.remove-eor-reason');
-        await pressElement(page, '#save-run');
-        await page.waitForSelector('#save-run', { hidden: true });
+        await pressElement(page, '#add-eor-reason', true);
+        try {
+            await page.waitForFunction(
+                () => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3,
+                { timeout: 5000, polling: 'mutation' },
+            );
+        } catch (e) {
+            await takeScreenshot(page, e);
+        }
 
-        await page.waitForSelector('#Run-eorReasons .eor-reason');
+        // Remove the first EOR reason
+        await pressElement(page, '.remove-eor-reason');
+        await page.waitForFunction(
+            () => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 2,
+            { timeout: 5000, polling: 'mutation' },
+        );
+        await pressElement(page, '#save-run');
+        await page.waitForSelector('#edit-run');
+
+        await waitForTableLength(page, 5);
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
             .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
@@ -193,22 +206,24 @@ module.exports = () => {
     });
 
     it('should successfully revert the update end of run reasons', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
 
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'OTHER');
 
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'Some-other');
         await page.type('#Run-eorReasons input', 'A new new EOR reason');
-        await page.click('#add-eor-reason');
-        // Remove the first EOR reason
-        await page.click('.remove-eor-reason');
-        await page.click('#cancel-run');
-        await page.waitForSelector('#cancel-run', { hidden: true });
+        await pressElement(page, '#add-eor-reason');
 
-        await page.waitForSelector('#Run-eorReasons .eor-reason');
+        // Remove the first EOR reason
+        await pressElement(page, '.remove-eor-reason');
+        await pressElement(page, '#cancel-run');
+        await page.waitForSelector('#save-run', { hidden: true });
+
+        await waitForTableLength(page, 5);
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
             .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
