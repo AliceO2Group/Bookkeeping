@@ -51,7 +51,6 @@ const {
 } = require('../../../../mocks/mock-dcs-eos-report.js');
 const { logService } = require('../../../../../lib/server/services/log/LogService.js');
 const { formatEosReportTitle } = require('../../../../../lib/server/services/eosReport/formatEosReport.js');
-const { getShiftFromTimestamp, SHIFT_DURATION } = require('../../../../../lib/server/services/shift/getShiftFromTimestamp.js');
 
 module.exports = () => {
     it('should successfully create a log containing ECS EoS report', async () => {

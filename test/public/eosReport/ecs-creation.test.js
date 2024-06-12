@@ -33,7 +33,6 @@ const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
-const { SHIFT_DURATION, getShiftFromTimestamp } = require('../../../lib/server/services/shift/getShiftFromTimestamp.js');
 const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
 
 module.exports = () => {
