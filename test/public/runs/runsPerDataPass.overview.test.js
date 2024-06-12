@@ -27,6 +27,8 @@ const {
     expectLink,
     validateDate,
     waitForDownload,
+    getPopoverContent,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
@@ -129,13 +131,13 @@ module.exports = () => {
             innerText: '100!',
         });
 
-        await qcFlagService.delete(tmpQcFlag.id);
+        await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
-        await waitForTimeout('table');
+        await page.waitForSelector('#firstRowIndex');
         expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
         expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
         expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
@@ -331,5 +333,15 @@ module.exports = () => {
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should display bad runs marked out', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+
+        await page.waitForSelector('tr#row2.danger');
+        await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('tr#row2 .column-CPV .popover-trigger'));
+        const popoverContent = await getPopoverContent(await page.$(popoverSelector));
+        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
     });
 };

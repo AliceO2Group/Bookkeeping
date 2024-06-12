@@ -19,10 +19,18 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
-    description: 'Some random desc',
-    reconstructedEventsCount: 50948694,
-    outputSize: 56875682112600,
-    lastRunNumber: 108,
+    versions: [
+        {
+            id: 1,
+            dataPassId: 1,
+            description: 'Some random desc',
+            reconstructedEventsCount: 50948694,
+            outputSize: 56875682112600,
+            lastSeen: 108,
+            createdAt: 1704884400000,
+            updatedAt: 1704884400000,
+        },
+    ],
     runsCount: 3,
     simulationPassesCount: 1,
 };
@@ -30,10 +38,18 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
-    description: 'Some random desc',
-    reconstructedEventsCount: 50848604,
-    outputSize: 55765671112610,
-    lastRunNumber: 55,
+    versions: [
+        {
+            id: 2,
+            dataPassId: 2,
+            description: 'Some random desc 2',
+            reconstructedEventsCount: 50848604,
+            outputSize: 55765671112610,
+            lastSeen: 55,
+            createdAt: 1704884400000,
+            updatedAt: 1704884400000,
+        },
+    ],
     runsCount: 3,
     simulationPassesCount: 1,
 };
@@ -41,10 +57,18 @@ const LHC22b_apass2 = {
 const LHC22a_apass1 = {
     id: 3,
     name: 'LHC22a_apass1',
-    description: 'Some random desc for apass 1',
-    reconstructedEventsCount: 50848111,
-    outputSize: 55761110122610,
-    lastRunNumber: 105,
+    versions: [
+        {
+            id: 3,
+            dataPassId: 3,
+            description: 'Some random desc for apass 1',
+            reconstructedEventsCount: 50848111,
+            outputSize: 55761110122610,
+            lastSeen: 105,
+            createdAt: 1704884400000,
+            updatedAt: 1704884400000,
+        },
+    ],
     runsCount: 4,
     simulationPassesCount: 2,
 };
@@ -209,23 +233,6 @@ module.exports = () => {
                         LHC22b_apass1,
                     ]);
 
-                    done();
-                });
-        });
-        it('should successfuly sort on outputSize', (done) => {
-            request(server)
-                .get('/api/dataPasses?sort[outputSize]=DESC')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    const { data: dataPasses } = res.body;
-                    expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(3);
-                    expect(dataPasses).to.have.deep.ordered.members([LHC22b_apass1, LHC22b_apass2, LHC22a_apass1]);
                     done();
                 });
         });

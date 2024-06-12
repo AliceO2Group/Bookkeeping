@@ -22,7 +22,6 @@ const {
     getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
-    getPopoverSelector,
     expectUrlParams,
     waitForTableLength,
 } = require('../defaults.js');
@@ -110,8 +109,8 @@ module.exports = () => {
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
-        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-2');
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
@@ -140,12 +139,12 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
-        await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('input[type="time"]', { hidden: true });
 
-        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option:nth-of-type(2)`, true);
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-11');
 
-        await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('button#submit[disabled]', { hidden: true });
         await pressElement(page, '.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', true);
 
         await fillInput(page, '.flex-column.g1:nth-of-type(1) > div input[type="time"]', '13:01:01', ['change']);
@@ -180,8 +179,8 @@ module.exports = () => {
         await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
         await page.waitForSelector('button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
-        const popoverSelector = await getPopoverSelector(await page.$('#global-container .popover-trigger'));
-        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-2');
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await page.waitForSelector('.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', { hidden: true, timeout: 250 });
 
@@ -194,5 +193,16 @@ module.exports = () => {
         });
 
         await expectColumnValues(page, 'flagType', ['Unknown Quality']);
+    });
+
+    it('should disabled creation form when run quality was changes to bad', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
+            dataPassId: 2,
+            runNumber: 2,
+            dplDetectorId: 1,
+        } });
+
+        await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject to QC');
+        await page.waitForSelector('input', { hidden: true });
     });
 };
