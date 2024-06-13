@@ -153,6 +153,11 @@ module.exports = () => {
 
         // Sort by name in an ascending manner
         await pressElement(page, 'th#name');
+
+        // Move the mouse to the top left corner of the page to unhover which shows sorting icon
+        await page.mouse.move(0, 0);
+
+        await page.waitForSelector('th#name #name-sort .icon');
         await expectInnerText(page, 'table tbody tr:first-child td:first-child', 'LHC22b_apass1');
 
         // Expect the names to be in alphabetical order
