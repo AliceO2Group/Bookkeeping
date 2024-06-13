@@ -32,8 +32,8 @@ message SimulationPassQcFlagCreationRequest {
 
 message SynchronousQcFlagCreationRequest {
   uint32 runNumber = 1;
-  string detectorName = 3;
-  repeated QcFlag flags = 4;
+  string detectorName = 2;
+  repeated QcFlag flags = 3;
 }
 
 message QcFlag {
