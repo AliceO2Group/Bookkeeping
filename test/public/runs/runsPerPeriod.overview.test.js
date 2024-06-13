@@ -139,11 +139,10 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTableLength(page, 3);
 
-        // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(3);
+        // Expect the amount selector to currently be set to 5 when the first option (5) is selected
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);

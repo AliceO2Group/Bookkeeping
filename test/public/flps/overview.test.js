@@ -176,11 +176,9 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.flps.pagination.itemsPerPage = 200;
         });
-        await page.waitForSelector('.alert-danger');
 
         // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
+        await expectInnerText(page, '.alert-danger', 'Invalid Attribute: "query.page.limit" must be less than or equal to 100');
 
         // Revert changes for next test
         await page.evaluate(() => {
