@@ -22,6 +22,7 @@ const {
     expectColumnValues,
     validateTableData,
     expectInnerText,
+    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -84,7 +85,7 @@ module.exports = () => {
     it('can set how many lhcPeriods is available per page', async () => {
         await goToPage(page, 'lhc-period-overview');
 
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 11 (because of the defined page height)
         await expectInnerText(page, '.dropup button', 'Rows per page: 11 ');
 
         // Expect the dropdown options to be visible when it is selected
@@ -93,13 +94,10 @@ module.exports = () => {
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
+        // Expect the amount selector to currently be set to 5 when the first option (5) is selected
         await pressElement(page, '.dropup .menu-item');
-        await page.waitForSelector('table tbody tr.empty-row', { hidden: true });
-        await page.waitForSelector('table tbody tr:nth-child(3)');
-
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(3);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
