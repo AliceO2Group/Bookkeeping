@@ -26,6 +26,7 @@ const {
     waitForTableLength,
     getTableContent,
     takeScreenshot,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
@@ -138,7 +139,9 @@ module.exports = () => {
     it('successfully update detectors qualities in EDIT mode', async () => {
         await pressElement(page, '#edit-run');
         await pressElement(page, '#Run-detectors .dropdown-trigger');
-        await page.waitForSelector('.dropdown');
+
+        const popoverSelector = await getPopoverSelector(await page.$('#Run-detectors .popover-trigger'));
+        await page.waitForSelector(`${popoverSelector} .dropdown`);
 
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';

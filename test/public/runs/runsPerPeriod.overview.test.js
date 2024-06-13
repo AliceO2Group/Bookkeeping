@@ -178,7 +178,7 @@ module.exports = () => {
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await waitForNavigation(page, () => page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click()));
+        await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
