@@ -469,18 +469,13 @@ module.exports = () => {
                     },
                     {
                         id: 7,
-                        effectivePeriods: [
-                            {
-                                from: new Date('2019-08-09 01:29:50').getTime(),
-                                to: new Date('2019-08-09 03:20:00').getTime(),
-                            },
-                        ],
+                        effectivePeriods: [],
                     },
                     {
                         id: 8,
                         effectivePeriods: [
                             {
-                                from: new Date('2019-08-09 03:20:00').getTime(),
+                                from: new Date('2019-08-09 04:00:00').getTime(),
                                 to: new Date('2019-08-09 05:40:00').getTime(),
                             },
                         ],
