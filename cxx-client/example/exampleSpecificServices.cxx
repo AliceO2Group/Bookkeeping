@@ -59,6 +59,12 @@ int main(int argc, char** argv)
       std::cout << simulationPassQcFlagIds[flagIndex] << ", ";
     }
     std::cout << simulationPassQcFlagIds[simulationPassQcFlagIds.size() - 1] << std::endl;
+
+    // Test trigger counters registration
+    client->triggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 123, 1, 2, 3, 4, 5, 6);
+    std::cout << "Successfully created trigger counters" << std::endl;
+    client->triggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 1234, 10, 20, 30, 40, 50, 60);
+    std::cout << "Successfully updated trigger counters" << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);
