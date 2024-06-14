@@ -346,10 +346,12 @@ module.exports = () => {
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of', true);
         await waitForTableTotalRowsCountToEqual(page, 106);
+        await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on definition', async () => {
-        await goToPage(page, 'run-overview');
+        await waitForTableTotalRowsCountToEqual(page, 108);
+
         const filterInputSelectorPrefix = '#runDefinitionCheckbox';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
         const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
@@ -376,9 +378,6 @@ module.exports = () => {
             expect(definitions.length).to.equal(size);
             expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
         };
-
-        // Open filter toggle
-        await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, physicsFilterSelector, true);
         await checkTableSizeAndDefinition(4, [RunDefinition.Physics]);
