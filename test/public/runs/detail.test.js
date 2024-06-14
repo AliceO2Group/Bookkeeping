@@ -25,7 +25,6 @@ const {
     waitForNavigation,
     waitForTableLength,
     getTableContent,
-    takeScreenshot,
     getPopoverSelector,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
@@ -179,14 +178,11 @@ module.exports = () => {
         await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
         await page.type('#Run-eorReasons input', 'A new EOR reason');
         await pressElement(page, '#add-eor-reason', true);
-        try {
-            await page.waitForFunction(
-                () => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3,
-                { timeout: 5000, polling: 'mutation' },
-            );
-        } catch (e) {
-            await takeScreenshot(page, e);
-        }
+        // Flaky test, these options seem to fix it for now
+        await page.waitForFunction(
+            () => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3,
+            { timeout: 5000, polling: 'mutation' },
+        );
 
         // Remove the first EOR reason
         await pressElement(page, '.remove-eor-reason');
