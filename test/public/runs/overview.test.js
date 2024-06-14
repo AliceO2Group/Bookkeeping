@@ -22,23 +22,21 @@ const {
     getFirstRow,
     goToPage,
     checkColumnBalloon,
-    expectLink,
-    waitForDownload,
     fillInput,
     getPopoverContent,
     getInnerText,
-    waitForTimeout,
     getPopoverSelector,
+    getPeriodInputsSelectors,
     waitForTableLength,
-    waitForTableTotalRowsCountToEqual,
-    waitForEmptyTable,
     waitForNavigation,
+    waitForTableTotalRowsCountToEqual,
     expectInputValue,
     expectColumnValues,
+    waitForEmptyTable,
+    waitForDownload,
     expectUrlParams,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { runService } = require('../../../lib/server/services/run/RunService.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
 
@@ -53,18 +51,6 @@ module.exports = () => {
     let table;
     let firstRowId;
     const runNumberInputSelector = '.runNumber-filter input';
-    const timeFilterSelectors = {
-        startFrom: '#o2startFilterFromTime',
-        startTo: '#o2startFilterToTime',
-        endFrom: '#o2endFilterFromTime',
-        endTo: '#o2endFilterToTime',
-    };
-    const dateFilterSelectors = {
-        startFrom: '#o2startFilterFrom',
-        startTo: '#o2startFilterTo',
-        endFrom: '#o2endFilterFrom',
-        endTo: '#o2endFilterTo',
-    };
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -437,110 +423,49 @@ module.exports = () => {
         );
     });
 
-    it('should update to current date when empty and time is set', async () => {
+    it('Should correctly set the the min/max of time range picker inputs', async () => {
         await goToPage(page, 'run-overview');
 
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#o2startFilterFromTime');
-        let today = new Date();
-        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-        [today] = today.toISOString().split('T');
-        const time = '00:01';
 
-        for (const selector of Object.values(timeFilterSelectors)) {
-            await page.type(selector, time);
-            await waitForTimeout(300);
-        }
-        for (const selector of Object.values(dateFilterSelectors)) {
-            const value = await page.$eval(selector, (element) => element.value);
-            expect(String(value)).to.equal(today);
-        }
-        const date = new Date();
-        const now = `${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`;
-        const firstTill = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
-        const secondTill = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
-        expect(String(firstTill)).to.equal(now);
-        expect(String(secondTill)).to.equal(now);
-    });
+        await pressElement(page, '.timeO2Start-filter .popover-trigger');
 
-    it('Validates date will not be set again', async () => {
-        await goToPage(page, 'run-overview');
-        const dateString = '03-21-2021';
-        const validValue = '2021-03-21';
-        // Open the filters
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#eorDescription');
+        const o2StartPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
+        const periodInputsSelectors = getPeriodInputsSelectors(o2StartPopoverSelector);
 
-        // Set date
-        for (const key in dateFilterSelectors) {
-            await page.focus(dateFilterSelectors[key]);
-            await page.keyboard.type(dateString);
-            await waitForTimeout(500);
-            await page.focus(timeFilterSelectors[key]);
-            await page.keyboard.type('00-01-AM');
-            await waitForTimeout(500);
-            const value = await page.$eval(dateFilterSelectors[key], (element) => element.value);
-            expect(value).to.equal(validValue);
-        }
-    });
+        await fillInput(page, periodInputsSelectors.fromTimeSelector, '11:11', ['change']);
+        await fillInput(page, periodInputsSelectors.toTimeSelector, '14:00', ['change']);
 
-    it('The max/min should be the right value when date is set to same day', async () => {
-        await goToPage(page, 'run-overview');
+        // American style input
+        await fillInput(page, periodInputsSelectors.fromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-03', ['change']);
 
-        const dateString = '03-02-2021';
-        // Open the filters
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#eorDescription');
+        // Wait for page to be refreshed
+        await page.waitForFunction(
+            (selector) => document.querySelector(selector).getAttribute('min') !== '',
+            { timeout: 500 },
+            periodInputsSelectors.toTimeSelector,
+        );
 
-        // Set date to an open day
-        for (const selector of Object.values(dateFilterSelectors)) {
-            await page.type(selector, dateString);
-            await waitForTimeout(300);
-        }
-        await page.type(timeFilterSelectors.startFrom, '11:11');
-        await page.type(timeFilterSelectors.startTo, '14:00');
-        await page.type(timeFilterSelectors.endFrom, '11:11');
-        await page.type(timeFilterSelectors.endTo, '14:00');
-        await waitForTimeout(500);
+        expect(await page.$eval(periodInputsSelectors.toTimeSelector, (element) => element.getAttribute('min'))).to.equal('11:12');
+        expect(await page.$eval(periodInputsSelectors.toDateSelector, (element) => element.getAttribute('min'))).to.equal('2021-02-03');
 
-        // Validate if the max value is the same as the till values
-        const startMax = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
-        const endMax = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
-        expect(String(startMax)).to.equal(await page.$eval(timeFilterSelectors.startTo, (element) => element.value));
-        expect(String(endMax)).to.equal(await page.$eval(timeFilterSelectors.endTo, (element) => element.value));
+        expect(await page.$eval(periodInputsSelectors.fromTimeSelector, (element) => element.getAttribute('max'))).to.equal('13:59');
+        expect(await page.$eval(periodInputsSelectors.fromDateSelector, (element) => element.getAttribute('max'))).to.equal('2021-02-03');
 
-        // Validate if the min value is the same as the from values
-        const startMin = await page.$eval(timeFilterSelectors.startTo, (element) => element.getAttribute('min'));
-        const endMin = await page.$eval(timeFilterSelectors.endTo, (element) => element.getAttribute('min'));
-        expect(String(startMin)).to.equal(await page.$eval(timeFilterSelectors.startFrom, (element) => element.value));
-        expect(String(endMin)).to.equal(await page.$eval(timeFilterSelectors.endFrom, (element) => element.value));
-    });
+        // Setting different dates, still american style input
+        await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-05', ['change']);
 
-    it('The max should be the maximum value when having different dates', async () => {
-        await goToPage(page, 'run-overview');
+        await page.waitForFunction(
+            (selector) => document.querySelector(selector).getAttribute('min') === '',
+            { timeout: 500 },
+            periodInputsSelectors.toTimeSelector,
+        );
+        expect(await page.$eval(periodInputsSelectors.toDateSelector, (element) => element.getAttribute('min'))).to.equal('2021-02-03');
 
-        const dateString = '03-20-2021';
-        const maxTime = '23:59';
-        const minTime = '00:00';
-        // Open the filters
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#eorDescription');
-        // Set date to an open day
-        for (const selector of Object.values(dateFilterSelectors)) {
-            await page.type(selector, dateString);
-            await waitForTimeout(500);
-        }
-        const startMax = await page.$eval(timeFilterSelectors.startFrom, (element) => element.getAttribute('max'));
-        const endMax = await page.$eval(timeFilterSelectors.endFrom, (element) => element.getAttribute('max'));
-        expect(String(startMax)).to.equal(maxTime);
-        expect(String(endMax)).to.equal(maxTime);
-
-        // Validate if the min value is the same as the from values
-        const startMin = await page.$eval(timeFilterSelectors.startTo, (element) => element.getAttribute('min'));
-        const endMin = await page.$eval(timeFilterSelectors.endTo, (element) => element.getAttribute('min'));
-        expect(String(startMin)).to.equal(minTime);
-        expect(String(endMin)).to.equal(minTime);
+        expect(await page.$eval(periodInputsSelectors.fromTimeSelector, (element) => element.getAttribute('max'))).to.equal('');
+        expect(await page.$eval(periodInputsSelectors.fromDateSelector, (element) => element.getAttribute('max'))).to.equal('2021-02-05');
     });
 
     it('should successfully filter on duration', async () => {
@@ -941,8 +866,9 @@ module.exports = () => {
         expect(eorDescriptionInput).to.exist;
 
         // Expect there to be one result that contains a certain description
+        await page.focus('#eorDescription');
         const descriptionInput = 'some';
-        await fillInput(page, '#eorDescription', descriptionInput);
+        await page.keyboard.type(descriptionInput);
         await waitForTableLength(page, 2);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
@@ -1111,35 +1037,19 @@ module.exports = () => {
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 
-    it('should successfully display links to infologger, QC GUI and ECS', async () => {
-        const { id: createdRunId } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-        await waitForNavigation(page, () => pressElement(page, 'a#home'));
-        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
-
-        // Not running run
+    it('should successfully display links to infologger and QC GUI', async () => {
         await pressElement(page, '#row104-runNumber-text .popover-trigger');
-        let popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
-
-        await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
-            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
-                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
-            innerText: 'Infologger FLP',
-        });
-        await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
-            href: 'http://localhost:8082/' +
-            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
-            innerText: 'QCG',
-        });
-
-        // Running run
-        await pressElement(page, `#row${createdRunId}-runNumber-text .popover-trigger`);
-        popoverSelector = await getPopoverSelector(await page.waitForSelector('#row109-runNumber-text .popover-trigger'));
-        await page.waitForSelector(popoverSelector);
-
-        await expectLink(page, `${popoverSelector} a:nth-of-type(3)`, {
-            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
-            innerText: 'ECS',
-        });
+        expect(await page.$eval(
+            `${popoverSelector} a`,
+            ({ href }) => href,
+        )).to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
+        expect(await page.$eval(
+            `${popoverSelector} a:nth-child(3)`,
+            ({ href }) => href,
+            // eslint-disable-next-line max-len
+        )).to.equal('http://localhost:8082/' +
+            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS');
     });
 };

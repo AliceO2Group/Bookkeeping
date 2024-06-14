@@ -818,3 +818,19 @@ module.exports.expectLink = async (element, selector, { href, innerText }) => {
  * @return {boolean} true if format is correct, false otherwise
  */
 module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
+
+/**
+ * Return the selector for all the inputs composing a period inputs
+ *
+ * @param {string} popoverSelector the selector of the period inputs parent
+ * @return {{fromDateSelector: string, fromTimeSelector: string, toDateSelector: string, toTimeSelector: string}} the selectors
+ */
+module.exports.getPeriodInputsSelectors = (popoverSelector) => {
+    const commonInputsAncestor = `${popoverSelector} > div > div > div > div`;
+    return {
+        fromDateSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(1)`,
+        fromTimeSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(2)`,
+        toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
+        toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
+    };
+};
