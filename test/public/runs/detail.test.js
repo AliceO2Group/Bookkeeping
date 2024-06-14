@@ -179,17 +179,11 @@ module.exports = () => {
         await page.type('#Run-eorReasons input', 'A new EOR reason');
         await pressElement(page, '#add-eor-reason', true);
         // Flaky test, these options seem to fix it for now
-        await page.waitForFunction(
-            () => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3,
-            { timeout: 5000, polling: 'mutation' },
-        );
+        await page.waitForFunction(() => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3, { polling: 'mutation' });
 
         // Remove the first EOR reason
         await pressElement(page, '.remove-eor-reason');
-        await page.waitForFunction(
-            () => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 2,
-            { timeout: 5000, polling: 'mutation' },
-        );
+        await page.waitForFunction(() => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 2, { polling: 'mutation' });
         await pressElement(page, '#save-run');
         await page.waitForSelector('#edit-run');
 
