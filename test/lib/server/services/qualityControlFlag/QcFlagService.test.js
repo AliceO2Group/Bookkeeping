@@ -801,6 +801,74 @@ module.exports = () => {
         });
     });
 
+    describe('Creating synchronous Quality Control Flag', () => {
+        it('should succesfuly create quality control flag', async () => {
+            const allOtherQcFlag = await QcFlagRepository.findAll({
+                include: [
+                    { association: 'dataPasses' },
+                    { association: 'simulationPasses' },
+                    { association: 'effectivePeriods' },
+                ] });
+
+            const qcFlag = {
+                from: null,
+                to: null,
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 106,
+                dplDetectorIdentifier: { dplDetectorId: 1 },
+            };
+            const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
+
+            const [{ id, from, to, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+                await qcFlagService.create([qcFlag], scope, relations);
+
+            expect({
+                flagTypeId,
+                runNumber,
+                dplDetectorId,
+                externalUserId,
+                effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
+            }).to.be.eql({
+                flagTypeId: qcFlag.flagTypeId,
+                runNumber: scope.runNumber,
+                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                externalUserId: relations.user.externalUserId,
+                effectivePeriods: [{ from, to }],
+            });
+
+            const allOtherQcFlagAfterCretion = await QcFlagRepository.findAll({
+                where: { id: { [Op.not]: id } },
+                include: [
+                    { association: 'dataPasses' },
+                    { association: 'simulationPasses' },
+                    { association: 'effectivePeriods' },
+                ] });
+
+            /**
+             * Function to extract properties of QC flags to be compared
+             * @param {QcFlag} qcFlag flag
+             * @return {object} flag properties
+             */
+            const extractComparableProperties = (qcFlag) => {
+                const { id, dataPasses, simulationPasses, effectivePeriods } = qcFlag;
+                return {
+                    id,
+                    dataPassIds: dataPasses.map(({ id }) => id).sort(),
+                    simulationPassIds: simulationPasses.map(({ id }) => id).sort(),
+                    effectivePeriods: effectivePeriods
+                        .map(({ id, from, to }) => ({ id, from, to }))
+                        .sort(({ id: idA }, { id: idB }) => idA - idB),
+                };
+            };
+
+            expect(allOtherQcFlag.map(extractComparableProperties)).to
+                .have.all.deep.members(allOtherQcFlagAfterCretion.map(extractComparableProperties));
+        });
+    });
+
     describe('Deleting Quality Control Flag', () => {
         it('should fail to delete QC flag which is verified', async () => {
             const id = 4;
