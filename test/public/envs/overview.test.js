@@ -19,10 +19,10 @@ const {
     checkColumnBalloon,
     validateTableData,
     expectInnerText,
-    waitForTimeout,
     expectUrlParams,
     waitForNavigation,
     getInnerText,
+    waitForTableLength,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -81,7 +81,6 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'env-overview');
-        await waitForTimeout(100);
 
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '9');
@@ -90,13 +89,13 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'env-overview');
+
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });
 
     it('Should have correct status color in the overview page', async () => {
         await goToPage(page, 'env-overview');
-        await waitForTimeout(100);
 
         /**
          * Check that a given cell of the given column displays the correct color depending on the status
@@ -130,27 +129,19 @@ module.exports = () => {
     });
 
     it('can set how many environments are available per page', async () => {
-        await waitForTimeout(300);
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await pressElement(page, `${amountSelectorId} button`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         // Expect the amount of visible environments to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
-        await waitForTimeout(100);
-
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(5);
+        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
+        await waitForTableLength(page, 5);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -159,8 +150,7 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
@@ -171,7 +161,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.envs.overviewModel.pagination.itemsPerPage = 1;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
         await page.waitForSelector('#page5');
@@ -179,9 +169,7 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await waitForTimeout(100);
-        const pageOneButton = await page.$('#page1');
-        expect(Boolean(pageOneButton)).to.be.false;
+        await page.waitForSelector('#page1', { hidden: true });
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {

@@ -21,11 +21,11 @@ const {
     validateTableData,
     fillInput,
     expectUrlParams,
+    waitForNavigation,
 } = require('../defaults.js');
 
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
-const { waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
