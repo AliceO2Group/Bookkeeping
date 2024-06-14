@@ -22,6 +22,7 @@ const {
     testTableSortingByColumn,
     validateTableData,
     checkColumnValuesWithRegex,
+    waitForTableLength,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -71,46 +72,49 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '6');
         await expectInnerText(page, '#totalRowsCount', '6');
     });
 
     it('can sort by name column in ascending manner', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
+        await waitForTableLength(page, 6);
         await testTableSortingByColumn(page, 'name');
     });
 
     it('can sort by method column in ascending manner', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
         await testTableSortingByColumn(page, 'method');
     });
 
     it('can sort by bad column in ascending manner', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
         await testTableSortingByColumn(page, 'bad');
     });
 
     it('should successfuly apply QC flag type names filter', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
+        await waitForTableLength(page, 6);
+
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.name-filter input[type=text]', 'bad');
         await checkColumnValuesWithRegex(page, 'name', '[Bb][Aa][Dd]');
+
+        await pressElement(page, '#reset-filters', true);
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
-        await pressElement(page, '#openFilterToggle');
+        await waitForTableLength(page, 6);
+
         await fillInput(page, '.method-filter input[type=text]', 'bad');
         await checkColumnValuesWithRegex(page, 'method', '[Bb][Aa][Dd]');
+
+        await pressElement(page, '#reset-filters', true);
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
-        await goToPage(page, 'qc-flag-types-overview');
-        await pressElement(page, '#openFilterToggle');
-        await pressElement(page, '.bad-filter input[type=checkbox]');
+        await waitForTableLength(page, 6);
+
+        await pressElement(page, '.bad-filter input[type=checkbox]', true);
         await checkColumnValuesWithRegex(page, 'bad', '^Yes$');
+
+        await pressElement(page, '#reset-filters', true);
     });
 };
