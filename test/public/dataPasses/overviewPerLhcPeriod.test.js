@@ -18,13 +18,14 @@ const {
     goToPage,
     getColumnCellsInnerTexts,
     fillInput,
-    waitForTimeout,
+    waitForTableLength,
     validateTableData,
     waitForNavigation,
     pressElement,
     getTableDataSlice,
     expectColumnValues,
     expectUrlParams,
+    expectInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -114,33 +115,26 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-        await waitForTimeout(100);
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many data passes is available per page', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.waitForSelector('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        await waitForTimeout(300);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
+        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-        await page.waitForSelector('.dropup');
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
 
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         pressElement(page, '.dropup .menu-item');
-        await waitForTimeout(100);
 
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(2);
+        await waitForTableLength(page, 2);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await page.$eval('.dropup input[type=number]', (el) => {
@@ -158,9 +152,13 @@ module.exports = () => {
         await page.waitForSelector('#name-sort-preview');
 
         // Sort by name in an ascending manner
-        const nameHeader = await page.$('th#name');
-        await nameHeader.evaluate((button) => button.click());
-        await waitForTimeout(300);
+        await pressElement(page, 'th#name');
+
+        // Move the mouse to the top left corner of the page to unhover which shows sorting icon
+        await page.mouse.move(0, 0);
+
+        await page.waitForSelector('th#name #name-sort .icon');
+        await expectInnerText(page, 'table tbody tr:first-child td:first-child', 'LHC22b_apass1');
 
         // Expect the names to be in alphabetical order
         const firstNames = await getColumnCellsInnerTexts(page, 'name');

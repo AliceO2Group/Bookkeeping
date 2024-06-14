@@ -18,10 +18,10 @@ const {
     pressElement,
     goToPage,
     getPopoverContent,
-    waitForTimeout,
     waitForNavigation,
     getTableDataSlice,
     expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -113,7 +113,7 @@ module.exports = () => {
 
     it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
         await pressElement(page, '#all-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 5);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -143,7 +143,7 @@ module.exports = () => {
 
         // Test the switch back to physics only
         await pressElement(page, '#physics-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 4);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
