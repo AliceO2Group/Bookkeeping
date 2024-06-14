@@ -302,27 +302,25 @@ module.exports = () => {
     });
 
     it('should successfully filter on detectors', async () => {
-        await goToPage(page, 'run-overview');
-
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('.detectors-filter .dropdown-trigger');
 
-        await page.$eval('.detectors-filter .dropdown-trigger', (element) => element.click());
-        await pressElement(page, '#detector-filter-dropdown-option-ITS');
-        await pressElement(page, '#detector-filter-dropdown-option-FT0');
+        await pressElement(page, '.detectors-filter .dropdown-trigger');
+        await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
+        await pressElement(page, '#detector-filter-dropdown-option-FT0', true);
         await waitForTableLength(page, 4);
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(4);
 
-        await page.$eval('#detector-filter-combination-operator-radio-button-or', (element) => element.click());
+        await pressElement(page, '#detector-filter-combination-operator-radio-button-or', true);
         await waitForTableLength(page, 8);
 
         table = await page.$$('tbody tr');
         expect(table.length).to.equal(8);
 
-        await page.$eval('#detector-filter-combination-operator-radio-button-none', (element) => element.click());
+        await pressElement(page, '#detector-filter-combination-operator-radio-button-none', true);
         await waitForTableLength(page, 2);
 
         table = await page.$$('tbody tr');
@@ -336,17 +334,17 @@ module.exports = () => {
 
         // Open filter toggle
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-FOOD');
-        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '#tag-dropdown-option-RUN', true);
         await waitForTableLength(page, 1);
 
-        await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
+        await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-RUN');
+        await pressElement(page, '#tag-dropdown-option-RUN', true);
         await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
         await waitForTableLength(page, 2);
 
-        await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of');
+        await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of', true);
         await waitForTableTotalRowsCountToEqual(page, 106);
     });
 
@@ -798,9 +796,8 @@ module.exports = () => {
         await waitForTableLength(page, 8);
 
         await pressElement(page, '.runType-filter .dropdown-trigger');
-        await pressElement(page, '#run-types-dropdown-option-2');
-        await page.waitForSelector('#run-types-dropdown-option-14');
-        await pressElement(page, '#run-types-dropdown-option-14');
+        await pressElement(page, '#run-types-dropdown-option-2', true);
+        await pressElement(page, '#run-types-dropdown-option-14', true);
         await waitForTableLength(page, 5);
 
         await pressElement(page, '#reset-filters');

@@ -188,7 +188,7 @@ module.exports = () => {
         await waitForEmptyTable(page);
 
         // Set the filter operation to "OR"
-        await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
+        await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await waitForTableLength(page, 3);
 
         await pressElement(page, '#reset-filters');
