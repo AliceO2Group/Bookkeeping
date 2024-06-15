@@ -130,7 +130,7 @@ module.exports = () => {
         await page.waitForSelector('#reset-filters:disabled');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
         await expectColumnValues(page, 'name', ['LHC22a']);
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'name', ['LHC23f', 'LHC22b', 'LHC22a']);
         await page.waitForSelector('#reset-filters:disabled');
     });
