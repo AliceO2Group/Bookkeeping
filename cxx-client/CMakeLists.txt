@@ -111,7 +111,7 @@ install(FILES
         ${PROTO_OUT_DIR}/flp.pb.h
         ${PROTO_OUT_DIR}/run.pb.h
         ${PROTO_OUT_DIR}/dplProcessExecution.pb.h
-        ${PROTO_OUT_DIR}/qcFlags.pb.h
+        ${PROTO_OUT_DIR}/qcFlag.pb.h
         ${PROTO_OUT_DIR}/triggerCounters.pb.h
         DESTINATION "include"
 )
