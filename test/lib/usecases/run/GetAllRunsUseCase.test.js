@@ -632,4 +632,27 @@ module.exports = () => {
         expect(Math.max(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
             .to.be.lessThan(upperLimit);
     });
+
+    it('should successfuly filter by aliceDipoleCurrent', async () => {
+        const lowerLimit = 20;
+        const upperLimit = 100;
+        const { runs } = await new GetAllRunsUseCase().execute({
+            query: {
+                filter: {
+                    aliceDipoleCurrent: {
+                        '>': lowerLimit,
+                        '<': upperLimit,
+                    },
+                },
+            },
+        });
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.greaterThan(0);
+        expect(Math.min(...runs.map(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+            aliceDipoleCurrent * (1 - 2 * (aliceDipolePolarity === 'NEGATIVE')))))
+            .to.be.greaterThan(lowerLimit);
+        expect(Math.max(...runs.map(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+            aliceDipoleCurrent * (1 - 2 * (aliceDipolePolarity === 'NEGATIVE')))))
+            .to.be.lessThan(upperLimit);
+    });
 };
