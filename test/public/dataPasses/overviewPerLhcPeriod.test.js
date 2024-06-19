@@ -16,7 +16,6 @@ const {
     defaultBefore,
     defaultAfter,
     goToPage,
-    getColumnCellsInnerTexts,
     fillInput,
     waitForTableLength,
     validateTableData,
@@ -26,6 +25,7 @@ const {
     expectColumnValues,
     expectUrlParams,
     expectInnerText,
+    testTableSortingByColumn,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -151,29 +151,16 @@ module.exports = () => {
         await page.hover('th#name');
         await page.waitForSelector('#name-sort-preview');
 
-        // Sort by name in an ascending manner
-        await pressElement(page, 'th#name');
-
-        // Move the mouse to the top left corner of the page to unhover which shows sorting icon
-        await page.mouse.move(0, 0);
-
-        await page.waitForSelector('th#name #name-sort .icon');
-        await expectInnerText(page, 'table tbody tr:first-child td:first-child', 'LHC22b_apass1');
-
-        // Expect the names to be in alphabetical order
-        const firstNames = await getColumnCellsInnerTexts(page, 'name');
-        expect(firstNames).to.have.all.deep.ordered.members(firstNames.sort());
+        await testTableSortingByColumn(page, 'name');
     });
 
     it('should successfuly apply data pass name filter', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
 
         await expectColumnValues(page, 'name', ['LHC22b_apass1']);
 
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
     });
 };

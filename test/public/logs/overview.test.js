@@ -131,7 +131,7 @@ module.exports = () => {
         await pressElement(page, '#reset-filters');
     });
 
-    it('should successfully provide an easy to access button to filter in/out anonymous logs', async () => {
+    it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
         // Close the filter panel
         await pressElement(page, '#openFilterToggle');
         await waitForTableTotalRowsCountToEqual(page, 119);
@@ -170,25 +170,25 @@ module.exports = () => {
     it('can filter by tags', async () => {
         await waitForTableTotalRowsCountToEqual(page, 119);
 
-        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '.tags-filter .dropdown-trigger');
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
-        await pressElement(page, `#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`, true);
         await waitForTableLength(page, 1);
 
         // Deselect the filter and wait for the changes to process
-        await pressElement(page, `#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`, true);
         await waitForTableLength(page, 10);
 
         // Select the first available filter and the second one at once
         const secondCheckboxId = 'tag-dropdown-option-FOOD';
-        await pressElement(page, `#${firstCheckboxId}`);
-        await pressElement(page, `#${secondCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`, true);
+        await pressElement(page, `#${secondCheckboxId}`, true);
         await waitForEmptyTable(page);
 
         // Set the filter operation to "OR"
-        await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
+        await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await waitForTableLength(page, 3);
 
         await pressElement(page, '#reset-filters');
