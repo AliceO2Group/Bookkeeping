@@ -338,7 +338,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
-        await pressElement(`${popoverSelector} .dropdown-option:last-child`); // Select 30003kA/0kA
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
 
         await expectColumnValues(page, 'runNumber', ['54']);
 
