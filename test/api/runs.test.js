@@ -502,6 +502,25 @@ module.exports = () => {
             expect(Math.max(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
                 .to.be.lessThan(upperLimit);
         });
+
+        it('should successfuly filter by aliceDipoleCurrent', async () => {
+            const lowerLimit = -1;
+            const upperLimit = 25;
+            const response =
+                await request(server).get(`/api/runs?filter[aliceDipoleCurrent][<]=${upperLimit}&filter[aliceDipoleCurrent][>]=${lowerLimit}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(Math.min(...runs.map(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+                aliceDipoleCurrent * (1 - 2 * (aliceDipolePolarity === 'NEGATIVE')))))
+                .to.be.greaterThan(lowerLimit);
+            expect(Math.max(...runs.map(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+                aliceDipoleCurrent * (1 - 2 * (aliceDipolePolarity === 'NEGATIVE')))))
+                .to.be.lessThan(upperLimit);
+        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
