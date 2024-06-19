@@ -56,6 +56,91 @@ FROM developmentdependencies as test
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
 
 #
+# ---- Test ----
+FROM developmentdependencies as test_unit
+CMD ["/opt/wait-for-it.sh", "-t", "0", "unit_db:3306", "--", "npm", "run", "test:unit"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_api
+CMD ["/opt/wait-for-it.sh", "-t", "0", "api_db:3306", "--", "npm", "run", "test:api"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_lhc_periods
+CMD ["/opt/wait-for-it.sh", "-t", "0", "lhc_periods_db:3306", "--", "npm", "run", "test:lhcPeriods"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_lhc_fills
+CMD ["/opt/wait-for-it.sh", "-t", "0", "lhc_fills_db:3306", "--", "npm", "run", "test:lhcFills"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_logs
+CMD ["/opt/wait-for-it.sh", "-t", "0", "logs_db:3306", "--", "npm", "run", "test:logs"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_envs
+CMD ["/opt/wait-for-it.sh", "-t", "0", "envs_db:3306", "--", "npm", "run", "test:envs"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_runs
+CMD ["/opt/wait-for-it.sh", "-t", "0", "runs_db:3306", "--", "npm", "run", "test:runs"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_subsystems
+CMD ["/opt/wait-for-it.sh", "-t", "0", "subsystems_db:3306", "--", "npm", "run", "test:subsystems"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_tags
+CMD ["/opt/wait-for-it.sh", "-t", "0", "tags_db:3306", "--", "npm", "run", "test:tags"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_flp
+CMD ["/opt/wait-for-it.sh", "-t", "0", "flp_db:3306", "--", "npm", "run", "test:flp"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_home
+CMD ["/opt/wait-for-it.sh", "-t", "0", "home_db:3306", "--", "npm", "run", "test:home"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_about
+CMD ["/opt/wait-for-it.sh", "-t", "0", "about_db:3306", "--", "npm", "run", "test:about"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_eos_report
+CMD ["/opt/wait-for-it.sh", "-t", "0", "eos_report_db:3306", "--", "npm", "run", "test:eosReport"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_data_passes
+CMD ["/opt/wait-for-it.sh", "-t", "0", "data_passes_db:3306", "--", "npm", "run", "test:dataPasses"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_simulation_passes
+CMD ["/opt/wait-for-it.sh", "-t", "0", "simulation_passes_db:3306", "--", "npm", "run", "test:simulationPasses"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_qc_flagtypes
+CMD ["/opt/wait-for-it.sh", "-t", "0", "qc_flagtypes_db:3306", "--", "npm", "run", "test:qcFlagTypes"]
+
+#
+# ---- Test ----
+FROM developmentdependencies as test_qc_flags
+CMD ["/opt/wait-for-it.sh", "-t", "0", "qc_flags_db:3306", "--", "npm", "run", "test:qcFlags"]
+
+#
 # ---- Coverage ----
 FROM developmentdependencies as coverage
 

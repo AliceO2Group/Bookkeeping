@@ -1,0 +1,720 @@
+version: "3.7"
+
+services:
+  unit_tests:
+    build:
+      target: test_unit
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: unit_db
+    links:
+      - unit_db
+    restart: "no"
+    depends_on:
+      - unit_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  api_tests:
+    build:
+      target: test_api
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: api_db
+    links:
+      - api_db
+    restart: "no"
+    depends_on:
+      - api_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  lhc_periods_tests:
+    build:
+      target: test_lhc_periods
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: lhc_periods_db
+    links:
+      - lhc_periods_db
+    restart: "no"
+    depends_on:
+      - lhc_periods_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  lhc_fills_tests:
+    build:
+      target: test_lhc_fills
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: lhc_fills_db
+    links:
+      - lhc_fills_db
+    restart: "no"
+    depends_on:
+      - lhc_fills_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  logs_tests:
+    build:
+      target: test_logs
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: logs_db
+    links:
+      - logs_db
+    restart: "no"
+    depends_on:
+      - logs_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  envs_tests:
+    build:
+      target: test_envs
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: envs_db
+    links:
+      - envs_db
+    restart: "no"
+    depends_on:
+      - envs_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  runs_tests:
+    build:
+      target: test_runs
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: runs_db
+    links:
+      - runs_db
+    restart: "no"
+    depends_on:
+      - runs_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+
+  subsystems_tests:
+    build:
+      target: test_subsystems
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: subsystems_db
+    links:
+      - subsystems_db
+    restart: "no"
+    depends_on:
+      - subsystems_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  tags_tests:
+    build:
+      target: test_tags
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: tags_db
+    links:
+      - tags_db
+    restart: "no"
+    depends_on:
+      - tags_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+
+  flp_tests:
+    build:
+      target: test_flp
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: flp_db
+    links:
+      - flp_db
+    restart: "no"
+    depends_on:
+      - flp_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  home_tests:
+    build:
+      target: test_home
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: home_db
+    links:
+      - home_db
+    restart: "no"
+    depends_on:
+      - home_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  about_tests:
+    build:
+      target: test_about
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: about_db
+    links:
+      - about_db
+    restart: "no"
+    depends_on:
+      - about_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  eos_report_tests:
+    build:
+      target: test_eos_report
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: eos_report_db
+    links:
+      - eos_report_db
+    restart: "no"
+    depends_on:
+      - eos_report_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  data_passes_tests:
+    build:
+      target: test_data_passes
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: data_passes_db
+    links:
+      - data_passes_db
+    restart: "no"
+    depends_on:
+      - data_passes_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  simulation_passes_tests:
+    build:
+      target: test_simulation_passes
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: simulation_passes_db
+    links:
+      - simulation_passes_db
+    restart: "no"
+    depends_on:
+      - simulation_passes_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+
+  qc_flagtypes_tests:
+    build:
+      target: test_qc_flagtypes
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: qc_flagtypes_db
+    links:
+      - qc_flagtypes_db
+    restart: "no"
+    depends_on:
+      - qc_flagtypes_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  qc_flags_tests:
+    build:
+      target: test_qc_flags
+    environment:
+      NODE_ENV: test
+      DATABASE_LOGGING: "False"
+      JWT_SECRET: BOOKKEEPING-TEST-SUITE
+      PAGE_ITEMS_LIMIT: 100
+      DATABASE_HOST: qc_flags_db
+    links:
+      - qc_flags_db
+    restart: "no"
+    depends_on:
+      - qc_flags_db
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./scripts
+        target: /opt
+
+  unit_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-unit
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"
+
+  api_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-api
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3308:3306"
+
+  lhc_periods_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-lhc-periods
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3309:3306"
+
+  lhc_fills_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-lhc-fills
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3310:3306"
+
+  logs_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-logs
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3311:3306"
+
+  envs_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-envs
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3312:3306"
+
+  runs_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-runs
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3313:3306"
+
+  subsystems_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-subsystems
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3314:3306"
+
+  tags_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-tags
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3315:3306"
+
+  flp_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-flp
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3316:3306"
+
+  home_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-home
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3317:3306"
+
+  about_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-about
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3318:3306"
+
+  eos_report_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-eos-report
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3319:3306"
+
+  data_passes_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-data-passes
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3320:3306"
+
+  simulation_passes_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-simulation-passes
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3321:3306"
+
+  qc_flagtypes_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-qc-flagtypes
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3322:3306"
+
+  qc_flags_db:
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        read_only: false
+        source: database-data-qc-flags
+        target: /var/lib/mysql
+      - type: bind
+        read_only: true
+        source: ./database/configuration
+        target: /etc/mysql/conf.d
+      - type: bind
+        read_only: true
+        source: ./database/populate
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3323:3306"
+volumes:
+  database-data-unit:
+  database-data-api:
+  database-data-lhc-periods:
+  database-data-lhc-fills:
+  database-data-logs:
+  database-data-envs:
+  database-data-runs:
+  database-data-subsystems:
+  database-data-tags:
+  database-data-flp:
+  database-data-home:
+  database-data-about:
+  database-data-eos-report:
+  database-data-data-passes:
+  database-data-simulation-passes:
+  database-data-qc-flagtypes:
+  database-data-qc-flags:
