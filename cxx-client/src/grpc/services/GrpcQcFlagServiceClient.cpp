@@ -15,9 +15,11 @@
 #include "GrpcQcFlagServiceClient.h"
 
 using grpc::ClientContext;
+
 using o2::bookkeeping::DataPassQcFlagCreationRequest;
 using o2::bookkeeping::QcFlagCreationResponse;
 using o2::bookkeeping::SimulationPassQcFlagCreationRequest;
+using o2::bookkeeping::SynchronousQcFlagCreationRequest;
 
 namespace o2::bkp::api::grpc::services
 {
@@ -74,6 +76,32 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSimulationPas
   }
 
   auto status = mStub->CreateForSimulationPass(&context, request, &response);
+  if (!status.ok()) {
+    throw std::runtime_error(status.error_message());
+  }
+
+  auto flagIds = response.flagids();
+  return { flagIds.begin(), flagIds.end() };
+}
+
+std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSynchronous(
+  uint32_t runNumber,
+  const std::string& detectorName,
+  const std::vector<QcFlag>& qcFlags)
+{
+  ClientContext context;
+  SynchronousQcFlagCreationRequest request;
+  QcFlagCreationResponse response;
+
+  request.set_runnumber(runNumber);
+  request.set_detectorname(detectorName);
+
+  for (const auto& qcFlag : qcFlags) {
+    auto grpcQcFlag = request.add_flags();
+    mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
+  }
+
+  auto status = mStub->CreateSynchronous(&context, request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }

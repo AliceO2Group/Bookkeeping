@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.92.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.92.0)
+* Notable changes for users:
+  * Adds 2 decimals display to plots of LHC Fills statistics
+* Notable changes for developers:
+  * Adds new C++ pipe for creating qc flags for detector and pass
+  * Does not crash bookkeeping if kafka fails
+
 ## [0.91.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.91.0)
 * Notable changes for users:
   * Added a new tab in runs details to display trigger counters table
