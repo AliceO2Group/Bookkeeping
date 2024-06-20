@@ -1,0 +1,36 @@
+name: Check for newer dependency that can be used by Docker
+
+on:
+  schedule:
+    - cron: '0 7 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  check-proto-changes:
+    name: Create a PR in WebUI repo with updated proto file
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Copy new proto file(s)
+      run: |
+        git clone https://github.com/AliceO2Group/Control.git aliecs
+        cp aliecs/core/protos/o2control.proto Control/protobuf
+        cp aliecs/common/protos/events.proto Control/protobuf/protos
+        cp aliecs/apricot/protos/apricot.proto Control/protobuf/o2apricot.proto
+        rm -rf aliecs
+    - name: Check if there are any differences and create PR
+      run: |
+        is_different="$(git diff --name-only)"
+        if [ ! -z "$is_different" ]; then
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -B deps/control-protos-changed
+          git add .
+          git commit -m "Update PROTO files from AliECS"
+          git push origin deps/control-protos-changed
+          gh pr create -t "Update PROTO files from AliECS" -b "Update PROTO files from AliECS" -r "graduta" -l "Control"
+        fi
