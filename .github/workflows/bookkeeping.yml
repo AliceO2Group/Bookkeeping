@@ -18,16 +18,24 @@ jobs:
 
       - name: Build and Start Unit Test Database
         run: |
-          docker-compose -f docker-compose.test-parallel.yml up --detach unit_db
+          docker compose \
+          -f docker-compose.test-parallel.yml \
+          up --detach database
       - name: Build Unit Test Container
         run: |
-          docker-compose -f docker-compose.test-parallel.yml build unit_tests
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build unit_tests
       - name: Run Unit Tests
         run: |
-          docker-compose -f docker-compose.test-parallel.yml run --rm unit_tests
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm unit_tests
       - name: Clean Up
         run: |
-          docker-compose -f docker-compose.test-parallel.yml down
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          down
 
   linter:
     runs-on: ubuntu-latest
