@@ -20,7 +20,7 @@ jobs:
         run: |
           docker compose \
           -f docker-compose.test-parallel.yml \
-          up --detach database
+          up --detach unit_db
       - name: Build Unit Test Container
         run: |
           docker-compose \
