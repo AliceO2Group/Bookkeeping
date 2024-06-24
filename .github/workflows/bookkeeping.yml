@@ -7,42 +7,21 @@ on:
       - main
 
 jobs:
-  coverage:
+  test_unit:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
-      - name: Start database
+      - name: Start Unit Test Database and Build Unit Test Container
         run: |
-          docker compose \
-            -f docker-compose.yml \
-            -f docker-compose.coverage.yml \
-            up --detach database
-      - name: Build test suite
+          docker-compose -f docker-compose.test-parallel.yml up --detach unit_db
+      - name: Run Unit Tests
         run: |
-          docker compose \
-            -f docker-compose.yml \
-            -f docker-compose.coverage.yml \
-            build
-      - name: Wait for the database
+          docker-compose -f docker-compose.test-parallel.yml run --rm unit_tests
+      - name: Clean Up
         run: |
-          docker compose \
-            -f docker-compose.yml \
-            -f docker-compose.coverage.yml \
-            run --rm application /opt/wait-for-it.sh -t 0 database:3306
-      - name: Execute test suite
-        run: |
-          docker compose \
-            -f docker-compose.yml \
-            -f docker-compose.test.yml \
-            run application npm run coverage
-      - name: Copy coverage from container
-        run: docker cp $(docker ps -aqlf "name=bookkeeping-application"):/usr/src/app/coverage/coverage-final.json .
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        env:
-            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          docker-compose -f docker-compose.test-parallel.yml down
 
   linter:
     runs-on: ubuntu-latest
