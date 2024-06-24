@@ -217,7 +217,7 @@ module.exports.waitForFirstRowToHaveId = async (page, id) => page.waitForSelecto
  * @return {Promise<*>} resolves once the navigation finished
  */
 const waitForNavigation = (page, navigateFunction) => Promise.all([
-    page.waitForNavigation({ timeout: 1500 }),
+    page.waitForNavigation(),
     navigateFunction(),
 ]);
 
@@ -333,6 +333,27 @@ const getColumnCellsInnerTexts = async (page, key) => page.$$eval(
 );
 
 module.exports.getColumnCellsInnerTexts = getColumnCellsInnerTexts;
+
+/**
+ * Return the content of a table as an array (rows) of array (cells)
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @return {Promise<array<string[]>>} resolves with the table content
+ */
+module.exports.getTableContent = async (page) => {
+    await page.waitForSelector('table');
+    return JSON.parse(await page.evaluate(() => {
+        const rowsContent = [];
+        for (const row of document.querySelectorAll('table tbody tr')) {
+            const cellsContent = [];
+            rowsContent.push(cellsContent);
+            for (const cell of row.querySelectorAll('td')) {
+                cellsContent.push(cell.innerText);
+            }
+        }
+        return JSON.stringify(rowsContent);
+    }));
+};
 
 /**
  * Special method built to gather all currently visible data from given columns into array of objects
@@ -564,11 +585,30 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
  * @return {Promise<void>} resolve once column values were checked
  */
 module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
-    const size = expectedInnerTextValues.length;
+    try {
+        await page.waitForFunction(
+            (columnId, expectedInnerTextValues) => {
+                const cells = document.querySelectorAll(`table tbody .column-${columnId}`);
+                if (cells.length !== expectedInnerTextValues.length) {
+                    return false;
+                }
 
-    await waitForTableToLength(page, size);
+                for (const rowIndex in expectedInnerTextValues) {
+                    if (cells[rowIndex].innerText !== expectedInnerTextValues[rowIndex]) {
+                        return false;
+                    }
+                }
 
-    expect(await this.getColumnCellsInnerTexts(page, columnId)).to.have.all.ordered.members(expectedInnerTextValues);
+                return true;
+            },
+            {},
+            columnId,
+            expectedInnerTextValues,
+        );
+    } catch (_) {
+        // Use expect to have explicit error message
+        expect(getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+    }
 };
 
 /**
@@ -607,7 +647,7 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
  */
 module.exports.testTableSortingByColumn = async (page, columnId) => {
     // Expect a sorting preview to appear when hovering over column header
-    await page.waitForSelector(`th#${columnId}`, { timeout: 250 });
+    await page.waitForSelector(`th#${columnId}`);
     await page.hover(`th#${columnId}`);
     await page.waitForSelector(`#${columnId}-sort-preview`);
 

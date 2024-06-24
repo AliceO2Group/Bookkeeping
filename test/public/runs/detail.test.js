@@ -17,14 +17,15 @@ const {
     defaultAfter,
     expectInnerText,
     pressElement,
-    getFirstRow,
     expectUrlParams,
     reloadPage,
     goToPage,
     fillInput,
     getPopoverContent,
-    waitForTimeout,
     waitForNavigation,
+    waitForTableLength,
+    getTableContent,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
@@ -47,9 +48,6 @@ module.exports = () => {
     let browser;
     let url;
 
-    let table;
-    let firstRowId;
-
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await page.setViewport({
@@ -70,14 +68,12 @@ module.exports = () => {
 
     it('successfully entered EDIT mode of a run', async () => {
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await expectInnerText(page, '#save-run', 'Save');
         await expectInnerText(page, '#cancel-run', 'Revert');
     });
 
     it('successfully exited EDIT mode of a run', async () => {
         await pressElement(page, '#cancel-run');
-        await waitForTimeout(100);
         await expectInnerText(page, '#edit-run', 'Edit Run');
     });
 
@@ -87,7 +83,6 @@ module.exports = () => {
         await pressElement(page, '#tags-selection #tagCheckbox1');
         await pressElement(page, '#save-run');
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await page.waitForSelector('#tags-selection #tagCheckbox1');
         expect(await page.$eval('#tags-selection #tagCheckbox1', (elem) => elem.checked)).to.be.true;
     });
@@ -107,7 +102,6 @@ module.exports = () => {
     });
 
     it('should display detectors qualities and colors', async () => {
-        await reloadPage(page);
         const detectorBadgeClassesSelector = '#Run-detectors .detector-badge';
         const detectorBadgeClasses = await page.$$eval(detectorBadgeClassesSelector, (badges) => badges.map((badge) => badge.className));
 
@@ -129,7 +123,6 @@ module.exports = () => {
     });
 
     it('should successfully display detectors icons', async () => {
-        await reloadPage(page);
         const svgPaths = await page.$$eval('#Run-detectors .detector-quality-icon svg path', (elements) =>
             elements.map((elem) => elem.getAttribute('d')));
 
@@ -143,11 +136,12 @@ module.exports = () => {
     });
 
     it('successfully update detectors qualities in EDIT mode', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await pressElement(page, '#Run-detectors .dropdown-trigger');
-        await waitForTimeout(100);
+
+        const popoverSelector = await getPopoverSelector(await page.$('#Run-detectors .popover-trigger'));
+        await page.waitForSelector(`${popoverSelector} .dropdown`);
+
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.true;
@@ -166,30 +160,36 @@ module.exports = () => {
             element.getAttribute('d'))).to.equal(xIconPath);
 
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await pressElement(page, '#Run-detectors .dropdown-trigger');
-        await waitForTimeout(100);
+        await page.waitForSelector('.dropdown');
+
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.false;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
+        await pressElement(page, '#save-run');
     });
 
     it('should successfully update end of run reasons', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
 
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'DETECTORS');
-        await waitForTimeout(20);
 
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
         await page.type('#Run-eorReasons input', 'A new EOR reason');
-        await page.click('#add-eor-reason');
-        // Remove the first EOR reason
-        await page.click('.remove-eor-reason');
-        await pressElement(page, '#save-run');
+        await pressElement(page, '#add-eor-reason', true);
+        // Flaky test, these options seem to fix it for now
+        await page.waitForFunction(() => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3, { polling: 'mutation' });
 
-        await page.waitForSelector('#Run-eorReasons .eor-reason');
+        // Remove the first EOR reason
+        await pressElement(page, '.remove-eor-reason');
+        await page.waitForFunction(() => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 2, { polling: 'mutation' });
+        await pressElement(page, '#save-run');
+        await page.waitForSelector('#edit-run');
+
+        await waitForTableLength(page, 5);
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
             .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
@@ -199,22 +199,24 @@ module.exports = () => {
     });
 
     it('should successfully revert the update end of run reasons', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
 
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'OTHER');
-        await waitForTimeout(20);
 
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'Some-other');
         await page.type('#Run-eorReasons input', 'A new new EOR reason');
-        await page.click('#add-eor-reason');
-        // Remove the first EOR reason
-        await page.click('.remove-eor-reason');
-        await page.click('#cancel-run');
+        await pressElement(page, '#add-eor-reason');
 
-        await page.waitForSelector('#Run-eorReasons .eor-reason');
+        // Remove the first EOR reason
+        await pressElement(page, '.remove-eor-reason');
+        await pressElement(page, '#cancel-run');
+        await page.waitForSelector('#save-run', { hidden: true });
+
+        await waitForTableLength(page, 5);
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
             .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
@@ -271,37 +273,43 @@ module.exports = () => {
 
     it('can navigate to the logs panel', async () => {
         await pressElement(page, '#logs-tab');
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain('runNumber=1');
-        expect(urlParameters).to.contain('panel=logs');
+        await page.waitForSelector('#logs-tab.active');
+
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'logs' });
     });
+
+    it('can navigate to a log detail page', async () => {
+        await waitForTableLength(page, 5);
+
+        // We expect the entry page to have the same id as the id from the run overview
+        await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
+
+        expectUrlParams(page, { page: 'log-detail', id: 1 });
+    });
+
+    it('should successfully navigate to the trigger counters panel', async () => {
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+
+        await pressElement(page, '#trigger-counters-tab');
+        await waitForTableLength(page, 2);
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'trigger-counters' });
+        expect(await getTableContent(page)).to.deep.eql([
+            ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
+            ['SECOND-CLASS-NAME', '2001', '2002', '2003', '2004', '2005', '2006'],
+        ]);
+    });
+
     it('should show lhc data in normal mode', async () => {
-        await waitForTimeout(100);
         const element = await page.$('#lhc-fill-fillNumber>strong');
         const value = await element.evaluate((el) => el.textContent);
         expect(value).to.equal('Fill number:');
-    });
-    it('can navigate to a log detail page', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
-        // We expect the entry page to have the same id as the id from the run overview
-        await pressElement(page, `#${firstRowId} .btn-redirect`);
-        await waitForTimeout(300);
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-        expect(urlParameters).to.contain('page=log-detail');
-        expect(urlParameters).to.contain('id=1');
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 105 } });
 
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
+        await page.waitForSelector('#cancel-run');
         expect(await page.$('#runQualitySelect')).to.be.null;
     });
 
@@ -309,7 +317,7 @@ module.exports = () => {
         await reloadPage(page);
 
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
+        await page.waitForSelector('#cancel-run');
         expect(await page.$('#Run-detectors .dropdown-trigger')).to.be.null;
     });
 
@@ -342,8 +350,7 @@ module.exports = () => {
         await expectInnerText(page, '.btn-primary.btn-redirect', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await pressElement(page, '.btn-primary.btn-redirect');
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => pressElement(page, '.btn-primary.btn-redirect'));
         expect(page.url()).to.equal(`${url}/?page=run-overview`);
     });
 
@@ -426,7 +433,8 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-runNumber-text > div > a'));
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expectUrlParams(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' });
@@ -436,12 +444,16 @@ module.exports = () => {
     });
 
     it('should not display the LHC Data when beam is not stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row107-runNumber-text > div > a'));
+
         await expectInnerText(page, '#NoLHCDataNotStable', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
 
     it('should display the LHC fill number when beam is stable', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
+        await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row108-runNumber-text > div > a'));
+
         await expectInnerText(page, '#lhc-fill-fillNumber', 'Fill number:\n1');
     });
 
