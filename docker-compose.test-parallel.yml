@@ -25,6 +25,8 @@ services:
 
   api_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_api
     environment:
       NODE_ENV: test
@@ -45,6 +47,8 @@ services:
 
   lhc_periods_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_lhc_periods
     environment:
       NODE_ENV: test
@@ -65,6 +69,8 @@ services:
 
   lhc_fills_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_lhc_fills
     environment:
       NODE_ENV: test
@@ -85,6 +91,8 @@ services:
 
   logs_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_logs
     environment:
       NODE_ENV: test
@@ -105,6 +113,8 @@ services:
 
   envs_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_envs
     environment:
       NODE_ENV: test
@@ -125,6 +135,8 @@ services:
 
   runs_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_runs
     environment:
       NODE_ENV: test
@@ -146,6 +158,8 @@ services:
 
   subsystems_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_subsystems
     environment:
       NODE_ENV: test
@@ -166,6 +180,8 @@ services:
 
   tags_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_tags
     environment:
       NODE_ENV: test
@@ -187,6 +203,8 @@ services:
 
   flp_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_flp
     environment:
       NODE_ENV: test
@@ -207,6 +225,8 @@ services:
 
   home_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_home
     environment:
       NODE_ENV: test
@@ -227,6 +247,8 @@ services:
 
   about_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_about
     environment:
       NODE_ENV: test
@@ -247,6 +269,8 @@ services:
 
   eos_report_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_eos_report
     environment:
       NODE_ENV: test
@@ -267,6 +291,8 @@ services:
 
   data_passes_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_data_passes
     environment:
       NODE_ENV: test
@@ -287,6 +313,8 @@ services:
 
   simulation_passes_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_simulation_passes
     environment:
       NODE_ENV: test
@@ -308,6 +336,8 @@ services:
 
   qc_flagtypes_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_qc_flagtypes
     environment:
       NODE_ENV: test
@@ -328,6 +358,8 @@ services:
 
   qc_flags_tests:
     build:
+      context: .
+      dockerfile: Dockerfile
       target: test_qc_flags
     environment:
       NODE_ENV: test
