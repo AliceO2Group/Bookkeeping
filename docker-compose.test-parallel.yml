@@ -333,7 +333,6 @@ services:
         source: ./scripts
         target: /opt
 
-
   qc_flagtypes_tests:
     build:
       context: .

@@ -347,6 +347,146 @@ jobs:
           -f docker-compose.test-parallel.yml \
           down
 
+  eos_report_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+      - name: Build and Start EOS Report Test Database
+        run: |
+          docker compose \
+          -f docker-compose.test-parallel.yml \
+          up --detach eos_report_db
+      - name: Build EOS Report Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build eos_report_tests
+      - name: Run EOS Report Tests
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm eos_report_tests
+      - name: Clean Up
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          down
+
+  data_passes_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+      - name: Build and Start Data Passes Test Database
+        run: |
+          docker compose \
+          -f docker-compose.test-parallel.yml \
+          up --detach data_passes_db
+      - name: Build Data Passes Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build data_passes_tests
+      - name: Run Data Passes Tests
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm data_passes_tests
+      - name: Clean Up
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          down
+
+  simulation_passes_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+      - name: Build and Start Simulation Passes Test Database
+        run: |
+          docker compose \
+          -f docker-compose.test-parallel.yml \
+          up --detach simulation_passes_db
+      - name: Build Simulation Passes Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build simulation_passes_tests
+      - name: Run Simulation Passes Tests
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm simulation_passes_tests
+      - name: Clean Up
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          down
+
+  qc_flagtypes_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+      - name: Build and Start QC Flagtypes Test Database
+        run: |
+          docker compose \
+          -f docker-compose.test-parallel.yml \
+          up --detach qc_flagtypes_db
+      - name: Build QC Flagtypes Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build qc_flagtypes_tests
+      - name: Run QC Flagtypes Tests
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm qc_flagtypes_tests
+      - name: Clean Up
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          down
+
+  qc_flags_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+      - name: Build and Start QC Flags Test Database
+        run: |
+          docker compose \
+          -f docker-compose.test-parallel.yml \
+          up --detach qc_flags_db
+      - name: Build QC Flags Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build qc_flags_tests
+      - name: Run QC Flags Tests
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm qc_flags_tests
+      - name: Clean Up
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          down
+
   linter:
     runs-on: ubuntu-latest
     timeout-minutes: 5
