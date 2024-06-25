@@ -31,6 +31,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm unit_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=unit_tests"):usr/src/app/coverage/unit ./coverage/unit
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-coverage
+          path: ./coverage/unit
       - name: Clean Up
         run: |
           docker-compose \
@@ -61,6 +69,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm api_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=api_tests"):usr/src/app/coverage/api ./coverage/api
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-test-coverage
+          path: ./coverage/api
       - name: Clean Up
         run: |
           docker-compose \
@@ -89,6 +105,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm lhc_periods_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=lhc_periods_tests"):usr/src/app/coverage/lhcPeriods ./coverage/lhcPeriods
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lhc-periods-coverage
+          path: ./coverage/lhcPeriods
       - name: Clean Up
         run: |
           docker-compose \
@@ -117,6 +141,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm lhc_fills_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=lhc_fills_tests"):usr/src/app/coverage/lhcFills ./coverage/lhcFills
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lhc-fills-coverage
+          path: ./coverage/lhcFills
       - name: Clean Up
         run: |
           docker-compose \
@@ -145,6 +177,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm logs_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=logs_tests"):usr/src/app/coverage/logs ./coverage/logs
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: logs-coverage
+          path: ./coverage/logs
       - name: Clean Up
         run: |
           docker-compose \
@@ -173,6 +213,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm envs_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=envs_tests"):usr/src/app/coverage/envs ./coverage/envs
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: envs-coverage
+          path: ./coverage/envs
       - name: Clean Up
         run: |
           docker-compose \
@@ -201,6 +249,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm runs_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=runs_tests"):usr/src/app/coverage/runs ./coverage/runs
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: runs-coverage
+          path: ./coverage/runs
       - name: Clean Up
         run: |
           docker-compose \
@@ -229,6 +285,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm subsystems_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=subsystems_tests"):usr/src/app/coverage/subsystems ./coverage/subsystems
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: subsystems-coverage
+          path: ./coverage/subsystems
       - name: Clean Up
         run: |
           docker-compose \
@@ -257,6 +321,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm tags_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=tags_tests"):usr/src/app/coverage/tags ./coverage/tags
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: tags-coverage
+          path: ./coverage/tags
       - name: Clean Up
         run: |
           docker-compose \
@@ -285,6 +357,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm flp_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=flp_tests"):usr/src/app/coverage/flp ./coverage/flp
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: flp-coverage
+          path: ./coverage/flp
       - name: Clean Up
         run: |
           docker-compose \
@@ -313,6 +393,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm home_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=home_tests"):usr/src/app/coverage/home ./coverage/home
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: home-coverage
+          path: ./coverage/home
       - name: Clean Up
         run: |
           docker-compose \
@@ -341,6 +429,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm about_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=about_tests"):usr/src/app/coverage/about ./coverage/about
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: about-coverage
+          path: ./coverage/about
       - name: Clean Up
         run: |
           docker-compose \
@@ -369,6 +465,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm eos_report_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=eos_report_tests"):usr/src/app/coverage/eosReport ./coverage/eosReport
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: eos-report-coverage
+          path: ./coverage/eosReport
       - name: Clean Up
         run: |
           docker-compose \
@@ -397,6 +501,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm data_passes_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=data_passes_tests"):usr/src/app/coverage/dataPasses ./coverage/dataPasses
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: data-passes-coverage
+          path: ./coverage/dataPasses
       - name: Clean Up
         run: |
           docker-compose \
@@ -425,6 +537,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm simulation_passes_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=simulation_passes_tests"):usr/src/app/coverage/simulationPasses ./coverage/simulationPasses
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: simulation-passes-coverage
+          path: ./coverage/simulationPasses
       - name: Clean Up
         run: |
           docker-compose \
@@ -453,6 +573,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm qc_flagtypes_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=qc_flagtypes_tests"):usr/src/app/coverage/qcFlagTypes ./coverage/qcFlagTypes
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: qc-flagtypes-coverage
+          path: ./coverage/qcFlagTypes
       - name: Clean Up
         run: |
           docker-compose \
@@ -481,6 +609,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm qc_flags_tests
+      - name: Collect Coverage Data
+        run: |
+          docker cp $(docker ps -aql --filter "ancestor=qc_flags_tests"):usr/src/app/coverage/qcFlags ./coverage/qcFlags
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: qc-flags-coverage
+          path: ./coverage/qcFlags
       - name: Clean Up
         run: |
           docker-compose \
@@ -508,10 +644,26 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Copy coverage from container
-        run: docker cp $(docker ps -aqlf "name=bookkeeping-application"):/usr/src/app/coverage/coverage-final.json .
-      - name: Upload coverage to Codecov
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+      - name: Install nyc
+        run: npm install nyc
+      - name: Download all coverage artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-data
+          path: coverage
+      - name: Merge Coverage Reports
+        run: nyc merge coverage/ coverage.json
+      - name: Create Final Coverage Report
+        run: nyc report --reporter=text-lcov > coverage/lcov.info
+      - name: Upload Final Coverage to Codecov
         uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

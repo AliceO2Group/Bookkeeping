@@ -26,6 +26,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   api_tests:
     build:
@@ -52,6 +56,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   lhc_periods_tests:
     build:
@@ -78,6 +86,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   lhc_fills_tests:
     build:
@@ -104,6 +116,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   logs_tests:
     build:
@@ -130,6 +146,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   envs_tests:
     build:
@@ -156,6 +176,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   runs_tests:
     build:
@@ -182,6 +206,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   subsystems_tests:
     build:
@@ -208,6 +236,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   tags_tests:
     build:
@@ -234,6 +266,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   flp_tests:
     build:
@@ -260,6 +296,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   home_tests:
     build:
@@ -286,6 +326,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   about_tests:
     build:
@@ -312,6 +356,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   eos_report_tests:
     build:
@@ -338,6 +386,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   data_passes_tests:
     build:
@@ -364,6 +416,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   simulation_passes_tests:
     build:
@@ -390,6 +446,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   qc_flagtypes_tests:
     build:
@@ -416,6 +476,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   qc_flags_tests:
     build:
@@ -442,6 +506,10 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
+      - type: volume
+        source: coverage_data
+        target: /usr/src/app/coverage
+        read_only: false
 
   unit_db:
     image: mariadb:10.5.9
@@ -817,3 +885,5 @@ volumes:
   database-data-simulation-passes:
   database-data-qc-flagtypes:
   database-data-qc-flags:
+  coverage_data:
+    name: "coverage_data"
