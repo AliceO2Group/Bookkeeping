@@ -903,4 +903,3 @@ volumes:
   database-data-qc-flagtypes:
   database-data-qc-flags:
   coverage_data:
-    name: "coverage_data"
