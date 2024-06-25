@@ -161,25 +161,18 @@ module.exports = () => {
         });
     });
     describe('GET /api/lhcFills/:fillNumber', () => {
-        it('should return 200 and an array for a normal request', (done) => {
-            request(server)
-                .get('/api/lhcFills/1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 200 and an array for a normal request', async () => {
+            const response = await request(server).get('/api/lhcFills/1');
+            expect(response.status).to.equal(200);
 
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(1647961200000);
-                    expect(data.stableBeamsEnd).to.equal(1647961200000);
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
-                    expect(data.fillNumber).to.equal(1);
-                    done();
-                });
+            const { data } = response.body;
+            expect(data.stableBeamsStart).to.equal(1647961200000);
+            expect(data.stableBeamsEnd).to.equal(1647961200000);
+            expect(data.stableBeamsDuration).to.equal(600);
+            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.fillingSchemeName).to.equal('schemename');
+            expect(data.fillNumber).to.equal(1);
+            expect(data.runs.map(({ lhcPeriod }) => lhcPeriod)).to.eql([undefined, 'LHC22a', 'LHC22b', 'LHC22b', 'LHC22b']);
         });
 
         it('should return 404 when a invalid run number is given', (done) => {
