@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-coverage
-          path: ./database/storage/coverage/unit
+          path: usr/src/app/coverage/unit
       - name: Clean Up
         run: |
           docker-compose \
