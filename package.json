@@ -12,7 +12,7 @@
     "start:prod": "node lib/main.js",
     "test": "mocha --exit --timeout 0",
     "test:unit": "nyc --report-dir=/usr/src/app/coverage/unit mocha --exit --timeout 0 test/scripts/test-unit.js",
-    "test:api": "nyc --report-dir=/usr/src/app/coverage/ api mocha --exit --timeout 0 test/scripts/test-api.js",
+    "test:api": "nyc --report-dir=/usr/src/app/coverage/api mocha --exit --timeout 0 test/scripts/test-api.js",
     "test:lhcPeriods": "nyc --report-dir=/usr/src/app/coverage/lhcPeriods mocha --exit --timeout 0 test/scripts/test-lhcPeriods.js",
     "test:lhcFills": "nyc --report-dir=/usr/src/app/coverage/lhcFills mocha --exit --timeout 0 test/scripts/test-lhcFills.js",
     "test:logs": "nyc --report-dir=/usr/src/app/coverage/logs mocha --exit --timeout 0 test/scripts/test-logs.js",

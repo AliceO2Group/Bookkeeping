@@ -33,7 +33,7 @@ jobs:
           run --rm unit_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=unit_tests"):usr/src/app/coverage/unit ./coverage/unit
+          docker cp unit_tests_container:usr/src/app/coverage/unit ./coverage/unit
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -71,7 +71,7 @@ jobs:
           run --rm api_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=api_tests"):usr/src/app/coverage/api ./coverage/api
+          docker cp api_tests_container:usr/src/app/coverage/api ./coverage/api
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -107,7 +107,7 @@ jobs:
           run --rm lhc_periods_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=lhc_periods_tests"):usr/src/app/coverage/lhcPeriods ./coverage/lhcPeriods
+          docker cp lhc_periods_tests_container:usr/src/app/coverage/lhcPeriods ./coverage/lhcPeriods
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -143,7 +143,7 @@ jobs:
           run --rm lhc_fills_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=lhc_fills_tests"):usr/src/app/coverage/lhcFills ./coverage/lhcFills
+          docker cp lhc_fills_tests_container:usr/src/app/coverage/lhcFills ./coverage/lhcFills
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -179,7 +179,7 @@ jobs:
           run --rm logs_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=logs_tests"):usr/src/app/coverage/logs ./coverage/logs
+          docker cp logs_tests_container:usr/src/app/coverage/logs ./coverage/logs
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -215,7 +215,7 @@ jobs:
           run --rm envs_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=envs_tests"):usr/src/app/coverage/envs ./coverage/envs
+          docker cp envs_tests_container:usr/src/app/coverage/envs ./coverage/envs
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -251,7 +251,7 @@ jobs:
           run --rm runs_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=runs_tests"):usr/src/app/coverage/runs ./coverage/runs
+          docker cp runs_tests_container:usr/src/app/coverage/runs ./coverage/runs
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -287,7 +287,7 @@ jobs:
           run --rm subsystems_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=subsystems_tests"):usr/src/app/coverage/subsystems ./coverage/subsystems
+          docker cp subsystems_tests_container:usr/src/app/coverage/subsystems ./coverage/subsystems
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -323,7 +323,7 @@ jobs:
           run --rm tags_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=tags_tests"):usr/src/app/coverage/tags ./coverage/tags
+          docker cp tags_tests_container:usr/src/app/coverage/tags ./coverage/tags
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -359,7 +359,7 @@ jobs:
           run --rm flp_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=flp_tests"):usr/src/app/coverage/flp ./coverage/flp
+          docker cp flp_tests_container:usr/src/app/coverage/flp ./coverage/flp
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -395,7 +395,7 @@ jobs:
           run --rm home_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=home_tests"):usr/src/app/coverage/home ./coverage/home
+          docker cp home_tests_container:usr/src/app/coverage/home ./coverage/home
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -431,7 +431,7 @@ jobs:
           run --rm about_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=about_tests"):usr/src/app/coverage/about ./coverage/about
+          docker cp about_tests_container:usr/src/app/coverage/about ./coverage/about
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -467,7 +467,7 @@ jobs:
           run --rm eos_report_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=eos_report_tests"):usr/src/app/coverage/eosReport ./coverage/eosReport
+          docker cp eos_report_tests_container:usr/src/app/coverage/eosReport ./coverage/eosReport
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -503,7 +503,7 @@ jobs:
           run --rm data_passes_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=data_passes_tests"):usr/src/app/coverage/dataPasses ./coverage/dataPasses
+          docker cp data_passes_tests_container:usr/src/app/coverage/dataPasses ./coverage/dataPasses
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -539,7 +539,7 @@ jobs:
           run --rm simulation_passes_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=simulation_passes_tests"):usr/src/app/coverage/simulationPasses ./coverage/simulationPasses
+          docker cp simulation_passes_tests_container:usr/src/app/coverage/simulationPasses ./coverage/simulationPasses
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -575,7 +575,7 @@ jobs:
           run --rm qc_flagtypes_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=qc_flagtypes_tests"):usr/src/app/coverage/qcFlagTypes ./coverage/qcFlagTypes
+          docker cp qc_flagtypes_tests_container:usr/src/app/coverage/qcFlagTypes ./coverage/qcFlagTypes
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -611,7 +611,7 @@ jobs:
           run --rm qc_flags_tests
       - name: Collect Coverage Data
         run: |
-          docker cp $(docker ps -aql --filter "ancestor=qc_flags_tests"):usr/src/app/coverage/qcFlags ./coverage/qcFlags
+          docker cp qc_flags_tests_container:usr/src/app/coverage/qcFlags ./coverage/qcFlags
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
