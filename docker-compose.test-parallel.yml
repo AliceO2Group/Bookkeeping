@@ -22,6 +22,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   api_tests:
     build:
@@ -44,6 +48,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   lhc_periods_tests:
     build:
@@ -66,6 +74,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   lhc_fills_tests:
     build:
@@ -88,6 +100,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   logs_tests:
     build:
@@ -110,6 +126,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   envs_tests:
     build:
@@ -132,6 +152,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   runs_tests:
     build:
@@ -154,7 +178,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
-
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   subsystems_tests:
     build:
@@ -177,6 +204,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   tags_tests:
     build:
@@ -199,7 +230,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
-
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   flp_tests:
     build:
@@ -222,6 +256,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   home_tests:
     build:
@@ -244,6 +282,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   about_tests:
     build:
@@ -266,6 +308,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   eos_report_tests:
     build:
@@ -288,6 +334,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   data_passes_tests:
     build:
@@ -310,6 +360,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   simulation_passes_tests:
     build:
@@ -332,6 +386,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   qc_flagtypes_tests:
     build:
@@ -354,6 +412,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   qc_flags_tests:
     build:
@@ -376,6 +438,10 @@ services:
         read_only: true
         source: ./scripts
         target: /opt
+      - type: bind
+        read_only: false
+        source: ./database/storage
+        target: /var/storage
 
   unit_db:
     image: mariadb:10.5.9
