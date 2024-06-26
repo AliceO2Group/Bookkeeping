@@ -71,11 +71,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run api_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: api-test-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -107,11 +108,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run lhc_periods_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: lhc-periods-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -143,11 +145,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run lhc_fills_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: lhc-fills-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -179,11 +182,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run logs_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: logs-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -215,11 +219,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run envs_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: envs-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -251,11 +256,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run runs_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: runs-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -287,11 +293,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run subsystems_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: subsystems-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -323,11 +330,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run tags_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: tags-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -359,11 +367,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run flp_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: flp-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -395,11 +404,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run home_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: home-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -431,11 +441,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run about_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: about-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -467,11 +478,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run eos_report_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: eos-report-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -503,11 +515,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run data_passes_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: data-passes-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -539,11 +552,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run simulation_passes_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: simulation-passes-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -575,11 +589,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run qc_flagtypes_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: qc-flagtypes-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -611,11 +626,12 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run qc_flags_tests
-      - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: qc-flags-coverage
-          path: ${{ github.workspace }}/coverage
+          file: ./coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
           docker compose \
@@ -636,50 +652,3 @@ jobs:
         run: npm ci
       - name: Running linter
         run: npm run lint
-
-#  coverage:
-#    needs: [test_unit, test_api,
-#            lhc_periods_tests,
-#            lhc_fills_tests,
-#            logs_tests, envs_tests,
-#            runs_tests,
-#            subsystems_tests,
-#            tags_tests,
-#            flp_tests,
-#            home_tests,
-#            about_tests,
-#            eos_report_tests,
-#            data_passes_tests,
-#            simulation_passes_tests,
-#            qc_flagtypes_tests,
-#            qc_flags_tests]
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 20
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#      - name: Set up Node.js
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '18.x'
-#      - name: Install nyc
-#        run: npm install -g nyc
-#      - name: Download all coverage artifacts
-#        uses: actions/download-artifact@v3
-#        with:
-#          path: coverage
-#      - name: Consolidate coverage files
-#        run: |
-#          mkdir -p coverage/consolidated
-#          find coverage/ -name '*.json' -exec mv {} coverage/consolidated/ \;
-#      - name: Merge Coverage Reports
-#        run: nyc merge coverage/consolidated/ coverage.json
-#      - name: Create Final Coverage Report
-#        run: nyc report --temp-directory ./coverage/consolidated --report-dir ./coverage --reporter=text-lcov > ./coverage/lcov.info
-#      - name: Upload Final Coverage to Codecov
-#        uses: codecov/codecov-action@v4
-#        with:
-#          file: ./coverage/lcov.info
-#        env:
-#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
