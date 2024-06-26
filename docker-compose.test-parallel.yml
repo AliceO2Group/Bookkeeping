@@ -58,9 +58,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/api
         read_only: false
 
   lhc_periods_tests:
@@ -89,9 +89,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/lhc_periods
         read_only: false
 
   lhc_fills_tests:
@@ -120,9 +120,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/lhc_fills
         read_only: false
 
   logs_tests:
@@ -151,9 +151,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/logs
         read_only: false
 
   envs_tests:
@@ -182,9 +182,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/envs
         read_only: false
 
   runs_tests:
@@ -213,9 +213,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/runs
         read_only: false
 
   subsystems_tests:
@@ -244,9 +244,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/subsystems
         read_only: false
 
   tags_tests:
@@ -275,9 +275,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/tags
         read_only: false
 
   flp_tests:
@@ -306,9 +306,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/flp
         read_only: false
 
   home_tests:
@@ -337,9 +337,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/home
         read_only: false
 
   about_tests:
@@ -368,9 +368,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/about
         read_only: false
 
   eos_report_tests:
@@ -399,9 +399,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/eos_report
         read_only: false
 
   data_passes_tests:
@@ -430,9 +430,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/data_passes
         read_only: false
 
   simulation_passes_tests:
@@ -461,9 +461,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/simulation_passes
         read_only: false
 
   qc_flagtypes_tests:
@@ -492,9 +492,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/qc_flagtypes
         read_only: false
 
   qc_flags_tests:
@@ -523,9 +523,9 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
-        target: /usr/src/app/coverage
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/qc_flags
         read_only: false
 
   unit_db:
@@ -902,4 +902,3 @@ volumes:
   database-data-simulation-passes:
   database-data-qc-flagtypes:
   database-data-qc-flags:
-  coverage_data:

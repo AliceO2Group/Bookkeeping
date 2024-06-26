@@ -52,6 +52,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
 
       - name: Build and Start API Test Database
         run: |
@@ -67,15 +69,12 @@ jobs:
         run: |
           docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm api_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp api_tests_container:usr/src/app/coverage/api ./coverage/api
+          run api_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: api-test-coverage
-          path: ./coverage/api
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
           docker compose \
@@ -89,6 +88,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start LHC Periods Test Database
         run: |
           docker compose \
@@ -96,25 +98,22 @@ jobs:
           up --detach lhc_periods_db
       - name: Build LHC Periods Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build lhc_periods_tests
       - name: Run LHC Periods Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm lhc_periods_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp lhc_periods_tests_container:usr/src/app/coverage/lhcPeriods ./coverage/lhcPeriods
+          run lhc_periods_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: lhc-periods-coverage
-          path: ./coverage/lhcPeriods
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -125,6 +124,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start LHC Fills Test Database
         run: |
           docker compose \
@@ -132,25 +134,22 @@ jobs:
           up --detach lhc_fills_db
       - name: Build LHC Fills Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build lhc_fills_tests
       - name: Run LHC Fills Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm lhc_fills_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp lhc_fills_tests_container:usr/src/app/coverage/lhcFills ./coverage/lhcFills
+          run lhc_fills_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: lhc-fills-coverage
-          path: ./coverage/lhcFills
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -161,6 +160,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
+        uses: docker/setup-buildx-action@v2
       - name: Build and Start Logs Test Database
         run: |
           docker compose \
@@ -168,25 +171,22 @@ jobs:
           up --detach logs_db
       - name: Build Logs Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build logs_tests
       - name: Run Logs Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm logs_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp logs_tests_container:usr/src/app/coverage/logs ./coverage/logs
+          run logs_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: logs-coverage
-          path: ./coverage/logs
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -197,6 +197,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
+        uses: docker/setup-buildx-action@v2
       - name: Build and Start Envs Test Database
         run: |
           docker compose \
@@ -204,25 +208,22 @@ jobs:
           up --detach envs_db
       - name: Build Envs Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build envs_tests
       - name: Run Envs Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm envs_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp envs_tests_container:usr/src/app/coverage/envs ./coverage/envs
+          run envs_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: envs-coverage
-          path: ./coverage/envs
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -233,6 +234,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start Runs Test Database
         run: |
           docker compose \
@@ -240,25 +244,22 @@ jobs:
           up --detach runs_db
       - name: Build Runs Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build runs_tests
       - name: Run Runs Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm runs_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp runs_tests_container:usr/src/app/coverage/runs ./coverage/runs
+          run runs_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: runs-coverage
-          path: ./coverage/runs
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -269,6 +270,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start Subsystems Test Database
         run: |
           docker compose \
@@ -276,25 +280,22 @@ jobs:
           up --detach subsystems_db
       - name: Build Subsystems Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build subsystems_tests
       - name: Run Subsystems Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm subsystems_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp subsystems_tests_container:usr/src/app/coverage/subsystems ./coverage/subsystems
+          run subsystems_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: subsystems-coverage
-          path: ./coverage/subsystems
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -305,6 +306,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start Tags Test Database
         run: |
           docker compose \
@@ -312,25 +316,22 @@ jobs:
           up --detach tags_db
       - name: Build Tags Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build tags_tests
       - name: Run Tags Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm tags_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp tags_tests_container:usr/src/app/coverage/tags ./coverage/tags
+          run tags_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: tags-coverage
-          path: ./coverage/tags
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -341,6 +342,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start FLP Test Database
         run: |
           docker compose \
@@ -348,25 +352,22 @@ jobs:
           up --detach flp_db
       - name: Build FLP Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build flp_tests
       - name: Run FLP Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm flp_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp flp_tests_container:usr/src/app/coverage/flp ./coverage/flp
+          run flp_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: flp-coverage
-          path: ./coverage/flp
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -377,6 +378,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start Home Test Database
         run: |
           docker compose \
@@ -384,25 +388,22 @@ jobs:
           up --detach home_db
       - name: Build Home Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build home_tests
       - name: Run Home Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm home_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp home_tests_container:usr/src/app/coverage/home ./coverage/home
+          run home_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: home-coverage
-          path: ./coverage/home
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -413,6 +414,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start About Test Database
         run: |
           docker compose \
@@ -420,25 +424,22 @@ jobs:
           up --detach about_db
       - name: Build About Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build about_tests
       - name: Run About Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm about_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp about_tests_container:usr/src/app/coverage/about ./coverage/about
+          run about_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: about-coverage
-          path: ./coverage/about
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -449,6 +450,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start EOS Report Test Database
         run: |
           docker compose \
@@ -456,25 +460,22 @@ jobs:
           up --detach eos_report_db
       - name: Build EOS Report Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build eos_report_tests
       - name: Run EOS Report Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm eos_report_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp eos_report_tests_container:usr/src/app/coverage/eosReport ./coverage/eosReport
+          run eos_report_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: eos-report-coverage
-          path: ./coverage/eosReport
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -485,6 +486,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start Data Passes Test Database
         run: |
           docker compose \
@@ -492,25 +496,22 @@ jobs:
           up --detach data_passes_db
       - name: Build Data Passes Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build data_passes_tests
       - name: Run Data Passes Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm data_passes_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp data_passes_tests_container:usr/src/app/coverage/dataPasses ./coverage/dataPasses
+          run data_passes_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: data-passes-coverage
-          path: ./coverage/dataPasses
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -521,6 +522,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start Simulation Passes Test Database
         run: |
           docker compose \
@@ -528,25 +532,22 @@ jobs:
           up --detach simulation_passes_db
       - name: Build Simulation Passes Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build simulation_passes_tests
       - name: Run Simulation Passes Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm simulation_passes_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp simulation_passes_tests_container:usr/src/app/coverage/simulationPasses ./coverage/simulationPasses
+          run simulation_passes_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: simulation-passes-coverage
-          path: ./coverage/simulationPasses
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -557,6 +558,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start QC Flagtypes Test Database
         run: |
           docker compose \
@@ -564,25 +568,22 @@ jobs:
           up --detach qc_flagtypes_db
       - name: Build QC Flagtypes Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build qc_flagtypes_tests
       - name: Run QC Flagtypes Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm qc_flagtypes_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp qc_flagtypes_tests_container:usr/src/app/coverage/qcFlagTypes ./coverage/qcFlagTypes
+          run qc_flagtypes_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: qc-flagtypes-coverage
-          path: ./coverage/qcFlagTypes
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -593,6 +594,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
       - name: Build and Start QC Flags Test Database
         run: |
           docker compose \
@@ -600,25 +604,22 @@ jobs:
           up --detach qc_flags_db
       - name: Build QC Flags Test Container
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build qc_flags_tests
       - name: Run QC Flags Tests
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm qc_flags_tests
-      - name: Collect Coverage Data
-        run: |
-          docker cp qc_flags_tests_container:usr/src/app/coverage/qcFlags ./coverage/qcFlags
+          run qc_flags_tests
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: qc-flags-coverage
-          path: ./coverage/qcFlags
+          path: ${{ github.workspace }}/coverage
       - name: Clean Up
         run: |
-          docker compose\
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
