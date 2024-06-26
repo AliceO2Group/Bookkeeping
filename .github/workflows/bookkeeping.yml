@@ -163,7 +163,6 @@ jobs:
       - name: Create Coverage Directory
         run: mkdir -p ${{ github.workspace }}/coverage
 
-        uses: docker/setup-buildx-action@v2
       - name: Build and Start Logs Test Database
         run: |
           docker compose \
@@ -200,7 +199,6 @@ jobs:
       - name: Create Coverage Directory
         run: mkdir -p ${{ github.workspace }}/coverage
 
-        uses: docker/setup-buildx-action@v2
       - name: Build and Start Envs Test Database
         run: |
           docker compose \
