@@ -20,17 +20,17 @@ jobs:
 
       - name: Build and Start Unit Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach unit_db
       - name: Build Unit Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build unit_tests
       - name: Run Unit Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run unit_tests
       - name: Upload Coverage to Codecov
@@ -41,7 +41,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
