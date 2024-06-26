@@ -668,10 +668,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: coverage
+      - name: Consolidate coverage files
+        run: |
+          mkdir -p coverage/consolidated
+          find coverage/ -name '*.json' -exec mv {} coverage/consolidated/ \;
       - name: Merge Coverage Reports
-        run: nyc merge coverage/ coverage.json
+        run: nyc merge coverage/consolidated/ coverage.json
       - name: Create Final Coverage Report
-        run: nyc report --reporter=text-lcov > coverage/lcov.info
+        run: nyc report --temp-directory ./coverage/consolidated --report-dir ./coverage --reporter=text-lcov > ./coverage/lcov.info
       - name: Upload Final Coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
