@@ -217,7 +217,7 @@ module.exports.waitForFirstRowToHaveId = async (page, id) => page.waitForSelecto
  * @return {Promise<*>} resolves once the navigation finished
  */
 const waitForNavigation = (page, navigateFunction) => Promise.all([
-    page.waitForNavigation({ timeout: 1500 }),
+    page.waitForNavigation(),
     navigateFunction(),
 ]);
 
