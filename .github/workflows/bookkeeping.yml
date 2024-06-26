@@ -31,11 +31,15 @@ jobs:
           docker compose \
           -f docker-compose.test-parallel.yml \
           run --rm unit_tests
+      - name: Copy Coverage Data to Runner
+        run: |
+          mkdir -p ./coverage
+          docker cp unit_tests_container:/usr/src/app/coverage/unit ./coverage
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-coverage
-          path: /usr/src/app/coverage/unit/
+          path: ./coverage
       - name: Clean Up
         run: |
           docker compose \

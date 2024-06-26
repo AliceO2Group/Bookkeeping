@@ -29,7 +29,7 @@ services:
         target: /var/storage
       - type: volume
         source: coverage_data
-        target: /usr/src/app/coverage/unit
+        target: usr/src/app/coverage/unit
         read_only: false
 
   api_tests:
