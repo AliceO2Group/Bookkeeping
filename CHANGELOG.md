@@ -2,11 +2,54 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.89.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
+## [0.92.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.92.0)
+* Notable changes for users:
+  * Adds 2 decimals display to plots of LHC Fills statistics
+* Notable changes for developers:
+  * Adds new C++ pipe for creating qc flags for detector and pass
+  * Does not crash bookkeeping if kafka fails
+
+## [0.91.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.91.0)
+* Notable changes for users:
+  * Added a new tab in runs details to display trigger counters table
+  * Disable sorting reconstructedEventsCount and outputSize on DataPasses overview pages
+  * Added iconBan to RCT runs overviews in case there is no QC flag assigned to detector and user has no permission to add one
+  * Added gRPC interface to create/update trigger counters
+  * Changed display of Bad runs in Runs per data/simulation pass views and disabled QC management for them
+* Notable change for developers:
+  * Several improvements has been done on frontend suite:
+    * Set default navigation timeout to 5s
+    * Set default timeout (except for navigation) to 1.5s
+    * Removed waitForNetworkIdleAndRedraw and improved tests incorrectly waiting for navigation
+    * Replaced checkMismatchingUrlParam by easier to use function expectUrlParams
+    * Removed function validateElement and replaced its calls by native waitForSelector
+  * Refactored ML client to fetch data passes data n CSV format
+  * Refactored ML synchronization to work with lastSeen instead of lastRunNumber
+  * Factorized QC flags breadcrumbs
+
+## [0.90.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.90.0)
+* Notable changes for users:
+  * Ordered magnets input Dipole first then solenoid in RC daily meeting template and SL EoS report
+  * Added inputs for magnets configuration of noon the day before in the RC daily meeting template
+  * Added description tooltip for tags in run details
+  * Normal inputs (runs, fills, tags etc) can now be filled for the RC daily template log
+  * Added requirement for users to have sufficient roles (per detector) in order to manage (create, verify) QC flags
+  * Allow the creator of QC flag to verify it
+  * A tooltip has been added to inform user about the expected unit in run duration filter
+  * Fixed missing current environment state on overview page when error state occurred
+* Notable change for developers:
+  * Frontend tests suites are now independent the one from the others
+  * Dependabot will not create PRs to update eslint to 9.x
+  * Added c++ API for QC flags creation
+  * Fixed randomness of waitForDownload in tests
+  * Updated the cxx API to not mention deleted proto API
+  * Added model and an endpoint to fetch all trigger counters for a given run
+
+## [0.89.2](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.2)
 * Notable changes for users:
   * Fixed the error thrown when updating environment through gRPC API (Fix was not properly done in 0.89.1)
 
-## [0.89.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.0)
+## [0.89.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.89.1)
 * Notable changes for users:
   * Fixed the error thrown when updating environment through gRPC API
 

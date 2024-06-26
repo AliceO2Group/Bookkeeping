@@ -1,0 +1,21 @@
+syntax = 'proto3';
+
+package o2.bookkeeping;
+
+import 'common.proto';
+
+service TriggerCountersService {
+  rpc CreateOrUpdateForRun(TriggerCounterCreateOrUpdateRequest) returns (Empty);
+}
+
+message TriggerCounterCreateOrUpdateRequest {
+  uint32 runNumber = 1;
+  string className = 2;
+  int64 timestamp = 3;
+  uint64 lmb = 4;
+  uint64 lma = 5;
+  uint64 l0b = 6;
+  uint64 l0a = 7;
+  uint64 l1b = 8;
+  uint64 l1a = 9;
+}

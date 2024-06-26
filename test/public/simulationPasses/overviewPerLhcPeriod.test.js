@@ -21,7 +21,8 @@ const {
     pressElement,
     expectColumnValues,
     validateTableData,
-} = require('../defaults');
+    expectInnerText,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -76,31 +77,24 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
-        await page.waitForSelector('#firstRowIndex');
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(2);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(2);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can set how many simulation passes is available per page', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
 
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        await page.waitForSelector('.dropup button');
-        const amountSelectorButton = await page.$('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup');
-        const amountSelectorDropdown = await page.$('.dropup');
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
 
         // Expect the amount of visible simulationPasses to reduce when the first option (5) is selected
-        const menuItem = await page.$('.dropup .menu-item');
-        await menuItem.evaluate((button) => button.click());
+        await pressElement(page, '.dropup .menu-item');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -110,9 +104,7 @@ module.exports = () => {
             element.value = '1111';
             element.dispatchEvent(new Event('input'));
         });
-        await page.waitForSelector('.dropup');
-
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
+        await page.waitForSelector('.dropup input:invalid');
     });
 
     it('can sort by name column in ascending and descending manners', async () => {

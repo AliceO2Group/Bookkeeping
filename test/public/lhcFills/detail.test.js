@@ -17,8 +17,11 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    checkMismatchingUrlParam,
-    getPopoverContent, waitForTimeout, waitForNavigation, getTableDataSlice,
+    getPopoverContent,
+    waitForNavigation,
+    getTableDataSlice,
+    expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -40,8 +43,7 @@ module.exports = () => {
     it('should successfully emphasize the fills that have a stable beams', async () => {
         // Fill #6 has a stable beam
         {
-            const stableBeamBadge = await page.$('#stable-beam-badge');
-            expect(stableBeamBadge).to.be.not.null;
+            const stableBeamBadge = await page.waitForSelector('#stable-beam-badge');
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-primary'))).to.be.true;
             expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM');
         }
@@ -49,8 +51,7 @@ module.exports = () => {
         // Fill #5 has an ongoing stable beam
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 5 } });
         {
-            const stableBeamBadge = await page.$('#stable-beam-badge');
-            expect(stableBeamBadge).to.be.not.null;
+            const stableBeamBadge = await page.waitForSelector('#stable-beam-badge');
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
             expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM - ONGOING');
         }
@@ -58,9 +59,10 @@ module.exports = () => {
 
     it('should successfully display runs statistics', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
-        const statistics = await page.$('#statistics');
-        expect(statistics).to.be.not.null;
+
+        await page.waitForSelector('#statistics');
         const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);
+
         expect(statisticsContent).to.include('Over 2 minutes');
         expect(statisticsContent).to.include('Under 2 minutes');
         expect(statisticsContent).to.include('Per quality');
@@ -111,7 +113,7 @@ module.exports = () => {
 
     it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
         await pressElement(page, '#all-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 5);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -141,7 +143,7 @@ module.exports = () => {
 
         // Test the switch back to physics only
         await pressElement(page, '#physics-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 4);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -172,24 +174,17 @@ module.exports = () => {
     it('should successfully navigate to run detail page', async () => {
         const row = await page.$('#runs tbody tr');
         expect(row).to.be.not.null;
-        const expectedRunNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
+        const runNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
 
-        await row.$eval('td:first-of-type a', (link) => link.click());
-        await page.waitForNetworkIdle();
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
+        await waitForNavigation(page, () => pressElement(page, 'td:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber });
     });
 
     it('should successfully expose a button to create a new log related to the displayed fill', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
-
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', lhcFillNumbers: '6' })).to.eql({});
+        expectUrlParams(page, { page: 'log-create', lhcFillNumbers: '6' });
 
         await page.waitForSelector('input#lhc-fills');
         expect(await page.$eval('input#lhc-fills', (element) => element.value)).to.equal('6');

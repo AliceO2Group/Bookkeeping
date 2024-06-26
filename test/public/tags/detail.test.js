@@ -12,8 +12,7 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage } = require('../defaults');
-const { waitForTimeout } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -45,8 +44,7 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
-        await pressElement(page, `#${firstRowId} .btn-redirect`, true);
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => pressElement(page, `#${firstRowId} .btn-redirect`, true));
 
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');
@@ -83,17 +81,17 @@ module.exports = () => {
         await goToPage(page, 'tag-detail', { queryParameters: { id: 23, panel: 'logs' } });
         await pressElement(page, '#edit-tag');
         await pressElement(page, '#tag-archive-toggle');
-        await pressElement(page, '#confirm-tag-edit');
 
-        await page.waitForNetworkIdle(50);
+        await waitForNavigation(page, () => pressElement(page, '#confirm-tag-edit'));
+        await page.waitForSelector('h2');
         expect(await page.$eval('h2', (title) => title.parentNode.innerText.includes('Archived'))).to.be.true;
 
         // Do the same again to un-archive
         await pressElement(page, '#edit-tag');
         await pressElement(page, '#tag-archive-toggle');
-        await pressElement(page, '#confirm-tag-edit');
 
-        await page.waitForNetworkIdle(50);
+        await waitForNavigation(page, () => pressElement(page, '#confirm-tag-edit'));
+        await page.waitForSelector('h2');
         expect(await page.$eval('h2', (title) => title.parentNode.innerText.includes('Archived'))).to.be.false;
     });
 };

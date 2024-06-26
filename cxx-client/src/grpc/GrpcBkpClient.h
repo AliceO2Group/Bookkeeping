@@ -14,8 +14,6 @@
 
 #include "flp.grpc.pb.h"
 #include "BookkeepingApi/BkpClient.h"
-#include "grpc/services/GrpcFlpServiceClient.h"
-#include "grpc/services/GrpcDplProcessExecutionClient.h"
 
 namespace o2::bkp::api::grpc
 {
@@ -30,9 +28,12 @@ class GrpcBkpClient : public o2::bkp::api::BkpClient
 
   const std::unique_ptr<DplProcessExecutionClient>& dplProcessExecution() const override;
 
+  const std::unique_ptr<QcFlagServiceClient>& qcFlag() const override;
+
  private:
   std::unique_ptr<::o2::bkp::api::FlpServiceClient> mFlpClient;
   std::unique_ptr<::o2::bkp::api::DplProcessExecutionClient> mDplProcessExecutionClient;
+  std::unique_ptr<::o2::bkp::api::QcFlagServiceClient> mQcFlagClient;
 };
 } // namespace o2::bkp::api::grpc
 

@@ -23,10 +23,11 @@ const {
     reloadPage,
     validateTableData,
     validateDate,
-} = require('../defaults');
+    waitForTableLength,
+    waitForNavigation,
+    waitForDownload,
+} = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { waitForTimeout } = require('../defaults.js');
-const { waitForDownload } = require('../../utilities/waitForDownload');
 const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -109,21 +110,21 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await reloadPage(page);
-        const rawTimestampToggleSelector = '#preferences-raw-timestamps';
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('08/08/2019\n20:00:00');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('08/08/2019\n21:00:00');
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(3)').innerText)).to.equal('1565294400000');
-        expect(await page.evaluate(() => document.querySelector('#row56 td:nth-child(4)').innerText)).to.equal('1565298000000');
+        await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
+
+        await pressElement(page, '#preferences-raw-timestamps', true);
+        await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
+        await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
+
         // Go back to normal
-        await page.$eval(rawTimestampToggleSelector, (element) => element.click());
+        await pressElement(page, '#preferences-raw-timestamps', true);
     });
 
     it('can set how many runs are available per page', async () => {
@@ -138,11 +139,10 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTimeout(600);
 
-        // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(3);
+        // Expect the amount selector to currently be set to 5 when the first option (5) is selected
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -151,16 +151,14 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
     });
 
     it('notifies if table loading returned an error', async () => {
         await reloadPage(page);
-        await waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
-        await waitForTimeout(100);
+        await page.waitForSelector('.alert-danger');
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
@@ -171,18 +169,16 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 3);
     });
 
     it('can navigate to a run detail page', async () => {
         await reloadPage(page);
-        await waitForTimeout(100);
         await page.waitForSelector('tbody tr');
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        await waitForTimeout(100);
+        await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -196,19 +192,9 @@ module.exports = () => {
     it('should successfully export all runs per lhc Period', async () => {
         await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
-        const downloadPath = path.resolve('./download');
-
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        });
-
-        // Check accessibility on frontend
-        const session = await page.target().createCDPSession();
-        await session.send('Browser.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: downloadPath,
-            eventsEnabled: true,
         });
 
         const targetFileName = 'runs.json';
@@ -218,10 +204,8 @@ module.exports = () => {
         await page.waitForSelector('select.form-control', { timeout: 200 });
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
-        await Promise.all([
-            waitForDownload(session),
-            pressElement(page, '#send:enabled'),
-        ]);
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
