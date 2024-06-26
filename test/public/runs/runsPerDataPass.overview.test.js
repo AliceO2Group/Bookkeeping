@@ -131,6 +131,7 @@ module.exports = () => {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
             innerText: '100',
         });
+        await page.waitForSelector('tr#row105 .column-CPV a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
     });

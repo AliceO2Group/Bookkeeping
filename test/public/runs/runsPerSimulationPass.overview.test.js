@@ -131,6 +131,8 @@ module.exports = () => {
             innerText: '0',
         });
 
+        await page.waitForSelector('tr#row56 .column-ITS a .icon');
+
         await qcFlagService.delete(tmpQcFlag.id);
     });
 
