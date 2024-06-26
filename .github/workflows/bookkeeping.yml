@@ -30,7 +30,7 @@ jobs:
         run: |
           docker compose \
           -f docker-compose.test-parallel.yml \
-          run --rm unit_tests
+          run unit_tests
       - name: Copy Coverage Data to Runner
         run: |
           mkdir -p ./coverage
