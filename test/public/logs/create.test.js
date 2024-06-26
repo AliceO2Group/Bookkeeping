@@ -621,7 +621,9 @@ ${actions}\
          */
         expect(lastLog.text
             // Sometimes, browser adds \r to the request to comply with text form data encoding
-            .replaceAll('\r', ''))
+            .replaceAll('\r', '')
+            // On call log is created for DCS system right before this test and appear in `Central systems/services`
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', ''))
             .to.equal(`\
 # RC Daily Meeting Minutes
 Date: ${formatFullDate(new Date())}
