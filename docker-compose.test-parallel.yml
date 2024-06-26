@@ -2,10 +2,7 @@ version: "3.7"
 
 services:
   unit_tests:
-    container_name: unit_tests_container
     build:
-      context: .
-      dockerfile: Dockerfile
       target: test_unit
     environment:
       NODE_ENV: test
@@ -33,7 +30,6 @@ services:
         read_only: false
 
   api_tests:
-    container_name: api_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -64,7 +60,6 @@ services:
         read_only: false
 
   lhc_periods_tests:
-    container_name: lhc_periods_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -95,7 +90,6 @@ services:
         read_only: false
 
   lhc_fills_tests:
-    container_name: lhc_fills_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -126,7 +120,6 @@ services:
         read_only: false
 
   logs_tests:
-    container_name: logs_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -157,7 +150,6 @@ services:
         read_only: false
 
   envs_tests:
-    container_name: envs_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -188,7 +180,6 @@ services:
         read_only: false
 
   runs_tests:
-    container_name: runs_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -219,7 +210,6 @@ services:
         read_only: false
 
   subsystems_tests:
-    container_name: subsystems_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -250,7 +240,6 @@ services:
         read_only: false
 
   tags_tests:
-    container_name: tags_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -281,7 +270,6 @@ services:
         read_only: false
 
   flp_tests:
-    container_name: flp_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -312,7 +300,6 @@ services:
         read_only: false
 
   home_tests:
-    container_name: home_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -343,7 +330,6 @@ services:
         read_only: false
 
   about_tests:
-    container_name: about_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -374,7 +360,6 @@ services:
         read_only: false
 
   eos_report_tests:
-    container_name: eos_report_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -405,7 +390,6 @@ services:
         read_only: false
 
   data_passes_tests:
-    container_name: data_passes_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -436,7 +420,6 @@ services:
         read_only: false
 
   simulation_passes_tests:
-    container_name: simulation_passes_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -467,7 +450,6 @@ services:
         read_only: false
 
   qc_flagtypes_tests:
-    container_name: qc_flagtypes_tests_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -498,7 +480,6 @@ services:
         read_only: false
 
   qc_flags_tests:
-    container_name: qc_flags_tests_container
     build:
       context: .
       dockerfile: Dockerfile

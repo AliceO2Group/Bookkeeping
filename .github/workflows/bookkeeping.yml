@@ -663,7 +663,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Install nyc
-        run: npm install nyc
+        run: npm install -g nyc
       - name: Download all coverage artifacts
         uses: actions/download-artifact@v3
         with:
