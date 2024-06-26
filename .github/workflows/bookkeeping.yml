@@ -31,16 +31,14 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm unit_tests
-      - name: List coverage data
+      - name: List Coverage Data
         run: |
-          docker-compose \
-          -f docker-compose.test-parallel.yml \
-          exec unit_tests ls /usr/src/app/coverage/unit
+          ls -la coverage/unit
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-coverage
-          path: /usr/src/app/coverage/unit
+          path: coverage/unit
       - name: Clean Up
         run: |
           docker-compose \
