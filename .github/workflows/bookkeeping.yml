@@ -31,11 +31,16 @@ jobs:
           docker-compose \
           -f docker-compose.test-parallel.yml \
           run --rm unit_tests
+      - name: List coverage data
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          exec unit_tests ls /usr/src/app/coverage/unit
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-coverage
-          path: usr/src/app/coverage/unit
+          path: /usr/src/app/coverage/unit
       - name: Clean Up
         run: |
           docker-compose \
@@ -636,7 +641,21 @@ jobs:
         run: npm run lint
 
   coverage:
-    needs: [test_unit, test_api, lhc_periods_tests, lhc_fills_tests, logs_tests, envs_tests, runs_tests, subsystems_tests, tags_tests, flp_tests, home_tests, about_tests, eos_report_tests, data_passes_tests, simulation_passes_tests, qc_flagtypes_tests, qc_flags_tests]
+    needs: [test_unit, test_api,
+            lhc_periods_tests,
+            lhc_fills_tests,
+            logs_tests, envs_tests,
+            runs_tests,
+            subsystems_tests,
+            tags_tests,
+            flp_tests,
+            home_tests,
+            about_tests,
+            eos_report_tests,
+            data_passes_tests,
+            simulation_passes_tests,
+            qc_flagtypes_tests,
+            qc_flags_tests]
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -652,7 +671,6 @@ jobs:
       - name: Download all coverage artifacts
         uses: actions/download-artifact@v3
         with:
-          name: coverage-data
           path: coverage
       - name: Merge Coverage Reports
         run: nyc merge coverage/ coverage.json
