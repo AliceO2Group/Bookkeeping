@@ -27,8 +27,8 @@ services:
         read_only: false
         source: ./database/storage
         target: /var/storage
-      - type: volume
-        source: coverage_data
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
         target: /usr/src/app/coverage/unit
         read_only: false
 
