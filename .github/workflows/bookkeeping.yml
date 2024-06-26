@@ -23,14 +23,19 @@ jobs:
           up --detach unit_db
       - name: Build Unit Test Container
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build unit_tests
       - name: Run Unit Tests
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel.yml \
           run --rm unit_tests
+      - name: List Coverage Directory
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run --rm unit_tests ls -al /usr/src/app/coverage/unit
       - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -38,7 +43,7 @@ jobs:
           path: /usr/src/app/coverage/unit
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -58,12 +63,12 @@ jobs:
           up --detach api_db
       - name: Build API Test Container
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel.yml \
           build api_tests
       - name: Run API Tests
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel.yml \
           run --rm api_tests
       - name: Collect Coverage Data
@@ -76,7 +81,7 @@ jobs:
           path: ./coverage/api
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -94,12 +99,12 @@ jobs:
           up --detach lhc_periods_db
       - name: Build LHC Periods Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build lhc_periods_tests
       - name: Run LHC Periods Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm lhc_periods_tests
       - name: Collect Coverage Data
@@ -112,7 +117,7 @@ jobs:
           path: ./coverage/lhcPeriods
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -130,12 +135,12 @@ jobs:
           up --detach lhc_fills_db
       - name: Build LHC Fills Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build lhc_fills_tests
       - name: Run LHC Fills Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm lhc_fills_tests
       - name: Collect Coverage Data
@@ -148,7 +153,7 @@ jobs:
           path: ./coverage/lhcFills
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -166,12 +171,12 @@ jobs:
           up --detach logs_db
       - name: Build Logs Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build logs_tests
       - name: Run Logs Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm logs_tests
       - name: Collect Coverage Data
@@ -184,7 +189,7 @@ jobs:
           path: ./coverage/logs
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -202,12 +207,12 @@ jobs:
           up --detach envs_db
       - name: Build Envs Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build envs_tests
       - name: Run Envs Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm envs_tests
       - name: Collect Coverage Data
@@ -220,7 +225,7 @@ jobs:
           path: ./coverage/envs
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -238,12 +243,12 @@ jobs:
           up --detach runs_db
       - name: Build Runs Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build runs_tests
       - name: Run Runs Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm runs_tests
       - name: Collect Coverage Data
@@ -256,7 +261,7 @@ jobs:
           path: ./coverage/runs
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -274,12 +279,12 @@ jobs:
           up --detach subsystems_db
       - name: Build Subsystems Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build subsystems_tests
       - name: Run Subsystems Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm subsystems_tests
       - name: Collect Coverage Data
@@ -292,7 +297,7 @@ jobs:
           path: ./coverage/subsystems
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -310,12 +315,12 @@ jobs:
           up --detach tags_db
       - name: Build Tags Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build tags_tests
       - name: Run Tags Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm tags_tests
       - name: Collect Coverage Data
@@ -328,7 +333,7 @@ jobs:
           path: ./coverage/tags
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -346,12 +351,12 @@ jobs:
           up --detach flp_db
       - name: Build FLP Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build flp_tests
       - name: Run FLP Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm flp_tests
       - name: Collect Coverage Data
@@ -364,7 +369,7 @@ jobs:
           path: ./coverage/flp
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -382,12 +387,12 @@ jobs:
           up --detach home_db
       - name: Build Home Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build home_tests
       - name: Run Home Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm home_tests
       - name: Collect Coverage Data
@@ -400,7 +405,7 @@ jobs:
           path: ./coverage/home
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -418,12 +423,12 @@ jobs:
           up --detach about_db
       - name: Build About Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build about_tests
       - name: Run About Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm about_tests
       - name: Collect Coverage Data
@@ -436,7 +441,7 @@ jobs:
           path: ./coverage/about
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -454,12 +459,12 @@ jobs:
           up --detach eos_report_db
       - name: Build EOS Report Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build eos_report_tests
       - name: Run EOS Report Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm eos_report_tests
       - name: Collect Coverage Data
@@ -472,7 +477,7 @@ jobs:
           path: ./coverage/eosReport
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -490,12 +495,12 @@ jobs:
           up --detach data_passes_db
       - name: Build Data Passes Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build data_passes_tests
       - name: Run Data Passes Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm data_passes_tests
       - name: Collect Coverage Data
@@ -508,7 +513,7 @@ jobs:
           path: ./coverage/dataPasses
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -526,12 +531,12 @@ jobs:
           up --detach simulation_passes_db
       - name: Build Simulation Passes Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build simulation_passes_tests
       - name: Run Simulation Passes Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm simulation_passes_tests
       - name: Collect Coverage Data
@@ -544,7 +549,7 @@ jobs:
           path: ./coverage/simulationPasses
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -562,12 +567,12 @@ jobs:
           up --detach qc_flagtypes_db
       - name: Build QC Flagtypes Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build qc_flagtypes_tests
       - name: Run QC Flagtypes Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm qc_flagtypes_tests
       - name: Collect Coverage Data
@@ -580,7 +585,7 @@ jobs:
           path: ./coverage/qcFlagTypes
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
@@ -598,12 +603,12 @@ jobs:
           up --detach qc_flags_db
       - name: Build QC Flags Test Container
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           build qc_flags_tests
       - name: Run QC Flags Tests
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           run --rm qc_flags_tests
       - name: Collect Coverage Data
@@ -616,7 +621,7 @@ jobs:
           path: ./coverage/qcFlags
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose\
           -f docker-compose.test-parallel.yml \
           down
 
