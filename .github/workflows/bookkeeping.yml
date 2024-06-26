@@ -58,17 +58,17 @@ jobs:
 
       - name: Build and Start API Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach api_db
       - name: Build API Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build api_tests
       - name: Run API Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run api_tests
       - name: Upload Coverage to Codecov
@@ -79,7 +79,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -95,17 +95,17 @@ jobs:
 
       - name: Build and Start LHC Periods Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach lhc_periods_db
       - name: Build LHC Periods Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build lhc_periods_tests
       - name: Run LHC Periods Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run lhc_periods_tests
       - name: Upload Coverage to Codecov
@@ -116,7 +116,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -132,17 +132,17 @@ jobs:
 
       - name: Build and Start LHC Fills Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach lhc_fills_db
       - name: Build LHC Fills Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build lhc_fills_tests
       - name: Run LHC Fills Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run lhc_fills_tests
       - name: Upload Coverage to Codecov
@@ -153,7 +153,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -169,17 +169,17 @@ jobs:
 
       - name: Build and Start Logs Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach logs_db
       - name: Build Logs Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build logs_tests
       - name: Run Logs Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run logs_tests
       - name: Upload Coverage to Codecov
@@ -190,7 +190,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -206,17 +206,17 @@ jobs:
 
       - name: Build and Start Envs Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach envs_db
       - name: Build Envs Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build envs_tests
       - name: Run Envs Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run envs_tests
       - name: Upload Coverage to Codecov
@@ -227,7 +227,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -243,17 +243,17 @@ jobs:
 
       - name: Build and Start Runs Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach runs_db
       - name: Build Runs Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build runs_tests
       - name: Run Runs Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run runs_tests
       - name: Upload Coverage to Codecov
@@ -264,7 +264,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -280,17 +280,17 @@ jobs:
 
       - name: Build and Start Subsystems Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach subsystems_db
       - name: Build Subsystems Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build subsystems_tests
       - name: Run Subsystems Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run subsystems_tests
       - name: Upload Coverage to Codecov
@@ -301,7 +301,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -317,17 +317,17 @@ jobs:
 
       - name: Build and Start Tags Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach tags_db
       - name: Build Tags Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build tags_tests
       - name: Run Tags Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run tags_tests
       - name: Upload Coverage to Codecov
@@ -338,7 +338,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -354,17 +354,17 @@ jobs:
 
       - name: Build and Start FLP Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach flp_db
       - name: Build FLP Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build flp_tests
       - name: Run FLP Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run flp_tests
       - name: Upload Coverage to Codecov
@@ -375,7 +375,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -391,17 +391,17 @@ jobs:
 
       - name: Build and Start Home Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach home_db
       - name: Build Home Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build home_tests
       - name: Run Home Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run home_tests
       - name: Upload Coverage to Codecov
@@ -412,7 +412,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -428,17 +428,17 @@ jobs:
 
       - name: Build and Start About Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach about_db
       - name: Build About Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build about_tests
       - name: Run About Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run about_tests
       - name: Upload Coverage to Codecov
@@ -449,7 +449,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -465,17 +465,17 @@ jobs:
 
       - name: Build and Start EOS Report Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach eos_report_db
       - name: Build EOS Report Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build eos_report_tests
       - name: Run EOS Report Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run eos_report_tests
       - name: Upload Coverage to Codecov
@@ -486,7 +486,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -502,17 +502,17 @@ jobs:
 
       - name: Build and Start Data Passes Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach data_passes_db
       - name: Build Data Passes Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build data_passes_tests
       - name: Run Data Passes Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run data_passes_tests
       - name: Upload Coverage to Codecov
@@ -523,7 +523,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -539,17 +539,17 @@ jobs:
 
       - name: Build and Start Simulation Passes Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach simulation_passes_db
       - name: Build Simulation Passes Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build simulation_passes_tests
       - name: Run Simulation Passes Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run simulation_passes_tests
       - name: Upload Coverage to Codecov
@@ -560,7 +560,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -576,17 +576,17 @@ jobs:
 
       - name: Build and Start QC Flagtypes Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach qc_flagtypes_db
       - name: Build QC Flagtypes Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build qc_flagtypes_tests
       - name: Run QC Flagtypes Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run qc_flagtypes_tests
       - name: Upload Coverage to Codecov
@@ -597,7 +597,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
@@ -613,17 +613,17 @@ jobs:
 
       - name: Build and Start QC Flags Test Database
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           up --detach qc_flags_db
       - name: Build QC Flags Test Container
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           build qc_flags_tests
       - name: Run QC Flags Tests
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           run qc_flags_tests
       - name: Upload Coverage to Codecov
@@ -634,7 +634,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Clean Up
         run: |
-          docker compose \
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
 
