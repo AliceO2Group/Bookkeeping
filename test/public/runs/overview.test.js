@@ -66,8 +66,6 @@ module.exports = () => {
         endTo: '#o2endFilterTo',
     };
 
-    let createdRunId;
-
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
@@ -76,8 +74,6 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
-        const { id } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-        createdRunId = id;
     });
 
     after(async () => {
@@ -1106,6 +1102,7 @@ module.exports = () => {
     });
 
     it('should successfully display links to infologger, QC GUI and ECS', async () => {
+        const { id: createdRunId } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
         await waitForNavigation(page, () => pressElement(page, 'a#home'));
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
 
