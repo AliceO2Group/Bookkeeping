@@ -471,7 +471,6 @@ module.exports = () => {
     });
 
     it('should display links to environment in ECS if run is running', async () => {
-
         // Test for not running run
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
         await waitForNavigation(page, () => pressElement(page, '#row104 a'));

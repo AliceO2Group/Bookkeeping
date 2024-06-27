@@ -68,7 +68,6 @@ module.exports = () => {
 
     let createdRunId;
 
-
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
