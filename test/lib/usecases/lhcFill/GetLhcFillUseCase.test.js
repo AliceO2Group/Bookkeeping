@@ -49,10 +49,11 @@ module.exports = () => {
         expect(result).to.equal(null);
     });
 
-    it('should successfully include all the fill runs and their definition', async () => {
+    it('should successfully include all the fill runs', async () => {
         getLhcFillDto.params.fillNumber = 6;
         const result = await new GetLhcFillUseCase().execute(getLhcFillDto);
         expect(result.runs).to.lengthOf(5);
         expect(result.runs.filter(({ definition }) => definition === RunDefinition.Physics)).to.lengthOf(4);
+        expect(result.runs.map(({ lhcPeriod }) => lhcPeriod?.id ?? null)).to.eql([1, 1, 2, 1, null]);
     });
 };
