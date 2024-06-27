@@ -487,39 +487,28 @@ module.exports = () => {
         });
 
         it('should successfuly filter by aliceL3Current', async () => {
-            const lowerLimit = -1000000000;
-            const upperLimit = 1000;
             const response =
-                await request(server).get(`/api/runs?filter[aliceL3Current][<]=${upperLimit}&filter[aliceL3Current][>]=${lowerLimit}`);
+                await request(server).get('/api/runs?filter[aliceL3Current]=30003');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
 
             expect(runs).to.be.an('array');
             expect(runs).to.have.lengthOf.greaterThan(0);
-            expect(Math.min(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
-                .to.be.greaterThan(lowerLimit);
-            expect(Math.max(...runs.map(({ aliceL3Current, aliceL3Polarity }) => aliceL3Current * (1 - 2 * (aliceL3Polarity === 'NEGATIVE')))))
-                .to.be.lessThan(upperLimit);
+            expect(runs.every(({ aliceL3Current, aliceL3Polarity }) =>
+                Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
         });
 
         it('should successfuly filter by aliceDipoleCurrent', async () => {
-            const lowerLimit = -1;
-            const upperLimit = 25;
-            const response =
-                await request(server).get(`/api/runs?filter[aliceDipoleCurrent][<]=${upperLimit}&filter[aliceDipoleCurrent][>]=${lowerLimit}`);
+            const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
 
             expect(runs).to.be.an('array');
             expect(runs).to.have.lengthOf.greaterThan(0);
-            expect(Math.min(...runs.map(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
-                aliceDipoleCurrent * (1 - 2 * (aliceDipolePolarity === 'NEGATIVE')))))
-                .to.be.greaterThan(lowerLimit);
-            expect(Math.max(...runs.map(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
-                aliceDipoleCurrent * (1 - 2 * (aliceDipolePolarity === 'NEGATIVE')))))
-                .to.be.lessThan(upperLimit);
+            expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+                Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
         });
     });
 
