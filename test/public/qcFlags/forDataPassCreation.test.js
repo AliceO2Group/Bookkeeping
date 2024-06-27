@@ -19,12 +19,11 @@ const {
     pressElement,
     goToPage,
     waitForNavigation,
-    getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
+    expectRowValues,
     expectUrlParams,
-    waitForTableLength,
-} = require('../defaults.js');
+} = require('../defaults');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -122,9 +121,9 @@ module.exports = () => {
             dplDetectorId: '1',
         });
 
-        await waitForTableLength(page, 4);
-        const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        expect(flagTypes[0]).to.be.equal('Unknown Quality');
+        await expectRowValues(page, 1, {
+            flagType: 'Unknown Quality',
+        });
     });
 
     it('should successfully create time-based QC flag', async () => {
@@ -158,13 +157,11 @@ module.exports = () => {
             dplDetectorId: '1',
         });
 
-        await waitForTableLength(page, 5);
-        const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        const fromTimestamps = await getColumnCellsInnerTexts(page, 'from');
-        const toTimestamps = await getColumnCellsInnerTexts(page, 'to');
-        expect(flagTypes[0]).to.be.equal('Limited acceptance');
-        expect(fromTimestamps[0]).to.be.equal('08/08/2019\n13:01:01');
-        expect(toTimestamps[0]).to.be.equal('09/08/2019\n13:50:59');
+        await expectRowValues(page, 1, {
+            flagType: 'Limited acceptance',
+            from: '08/08/2019\n13:01:01',
+            to: '09/08/2019\n13:50:59',
+        });
     });
 
     it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
