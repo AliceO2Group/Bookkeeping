@@ -49,6 +49,7 @@ module.exports = () => {
     let page;
     let browser;
     let url;
+    let createdRunId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -58,7 +59,8 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
-        const { id: createdRunId } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        const { id } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        createdRunId = id;
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);

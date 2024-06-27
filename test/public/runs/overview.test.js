@@ -66,6 +66,8 @@ module.exports = () => {
         endTo: '#o2endFilterTo',
     };
 
+    let createdRunId;
+
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -75,7 +77,8 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
-        await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        const { id } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        createdRunId = id;
     });
 
     after(async () => {
@@ -1104,7 +1107,6 @@ module.exports = () => {
     });
 
     it('should successfully display links to infologger, QC GUI and ECS', async () => {
-        await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
         await waitForNavigation(page, () => pressElement(page, 'a#home'));
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
 
@@ -1124,7 +1126,7 @@ module.exports = () => {
         });
 
         // Running run
-        await pressElement(page, '#row109-runNumber-text .popover-trigger');
+        await pressElement(page, `#row${createdRunId}-runNumber-text .popover-trigger`);
         popoverSelector = await getPopoverSelector(await page.waitForSelector('#row109-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
 
