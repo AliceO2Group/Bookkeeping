@@ -22,6 +22,12 @@ module.exports = () => {
         expect(lhcFill.fillNumber).to.equal(1);
     });
 
+    it('should successfully return an LHC fill for a given fill with related runs', async () => {
+        const lhcFill = await lhcFillService.get(6, { runs: true });
+        expect(lhcFill).to.have.ownProperty('fillNumber');
+        expect(lhcFill.runs.map(({ lhcPeriod }) => lhcPeriod?.id ?? null)).to.eql([1, 1, 2, 1, null]);
+    });
+
     it('should successfully return null when fetching an LHC fill for a non-existing fill number', async () => {
         expect(await lhcFillService.get(9999)).to.equal(null);
     });
