@@ -58,6 +58,7 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
+        const { id: createdRunId } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -468,7 +469,6 @@ module.exports = () => {
     });
 
     it('should display links to environment in ECS if run is running', async () => {
-        const { id: createdRunId } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
 
         // Test for not running run
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
