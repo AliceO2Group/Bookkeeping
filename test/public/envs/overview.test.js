@@ -201,6 +201,6 @@ module.exports = () => {
             innerText: 'Infologger FLP',
         });
 
-        expect(await popover.$('a:nth-of-type(2)')).to.be.null;
+        await page.waitForSelector('a:nth-of-type(2)', { hidden: true });
     });
 };
