@@ -87,32 +87,26 @@ module.exports = () => {
     });
 
     it('should successfully provide a tab to display related logs', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: '8E4aZTjY' } });
+        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'Dxi029djX' } });
 
         await pressElement(page, '#logs-tab');
 
         const tableSelector = '#logs-pane table tbody tr';
         await page.waitForSelector(tableSelector);
 
-        const table = await page.$$(tableSelector);
-        expect(table).to.lengthOf(3);
-
-        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
-        expect(await table[1].evaluate((row) => row.id)).to.equal('row3');
-        expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
+        expectInnerText(page, `${tableSelector} #row119-lhcFills`, '1,4,6');
     });
 
     it('should successfully display FLP nad ECS links', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'CmCvjNbg' } });
         const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
 
         await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
             href:
-                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22Dxi029djX%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'FLP',
         });
         await expectLink(page, `${contatinerSelector} a:nth-of-type(2)`, {
-            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            href: 'http://localhost:8080/?page=environment&id=Dxi029djX',
             innerText: 'ECS',
         });
     });
