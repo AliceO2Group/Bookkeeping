@@ -66,6 +66,7 @@ module.exports = () => {
         endTo: '#o2endFilterTo',
     };
 
+
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
@@ -74,6 +75,7 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
+        await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
     });
 
     after(async () => {
@@ -1103,7 +1105,8 @@ module.exports = () => {
 
     it('should successfully display links to infologger, QC GUI and ECS', async () => {
         await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-        await goToPage(page, 'run-overview');
+        await waitForNavigation(page, () => pressElement(page, 'a#home'));
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
 
         // Not running run
         await pressElement(page, '#row104-runNumber-text .popover-trigger');
