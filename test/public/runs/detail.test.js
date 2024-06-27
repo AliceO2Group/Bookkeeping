@@ -463,6 +463,9 @@ module.exports = () => {
     });
 
     it('should successfully display links to infologger and QCG', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row108 a'));
+
         await page.waitForSelector('.external-links');
         await expectLink(page, '.external-links a', {
             innerText: 'FLP',
