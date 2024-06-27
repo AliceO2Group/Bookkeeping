@@ -24,7 +24,6 @@ const {
     waitForNavigation,
     getInnerText,
     waitForTableLength,
-    getColumnCellsInnerTexts,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -166,12 +165,12 @@ module.exports = () => {
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.envs.overviewModel.pagination.reset();
+            // eslint-disable-next-line no-undef
             model.envs.overviewModel.pagination.notify();
         });
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        // await goToPage(page, 'env-overview');
         await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });

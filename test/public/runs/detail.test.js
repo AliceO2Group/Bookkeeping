@@ -469,7 +469,7 @@ module.exports = () => {
 
     it('should display links to environment in ECS if run is running', async () => {
         const { id: createdRunId } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-    
+
         // Test for not running run
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
         await waitForNavigation(page, () => pressElement(page, '#row104 a'));
@@ -479,7 +479,7 @@ module.exports = () => {
         // Create running run
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
         await waitForNavigation(page, () => pressElement(page, `#row${createdRunId} a`));
-    
+
         await expectUrlParams(page, { page: 'run-detail', runNumber: '1010' });
         await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
         await expectInnerText(page, '#runDurationValue', 'RUNNING');

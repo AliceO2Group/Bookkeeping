@@ -102,7 +102,7 @@ module.exports = () => {
 
     it('should successfully display FLP nad ECS links', async () => {
         await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#rowDxi029djX a'))
+        await waitForNavigation(page, () => pressElement(page, '#rowDxi029djX a'));
         const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
 
         await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
