@@ -24,6 +24,7 @@ const {
     waitForNavigation,
     getInnerText,
     waitForTableLength,
+    getColumnCellsInnerTexts,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -61,8 +62,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'env-overview');
-
         const { StatusAcronym, STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronym.mjs');
 
         const statusNames = new Set(Object.keys(StatusAcronym));
@@ -81,23 +80,17 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'env-overview');
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '9');
         await expectInnerText(page, '#totalRowsCount', '9');
     });
 
     it('Should have balloon on runs column', async () => {
-        await goToPage(page, 'env-overview');
-
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });
 
     it('Should have correct status color in the overview page', async () => {
-        await goToPage(page, 'env-overview');
-
         /**
          * Check that a given cell of the given column displays the correct color depending on the status
          *
@@ -155,8 +148,6 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        await goToPage(page, 'env-overview');
-
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
@@ -171,19 +162,25 @@ module.exports = () => {
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
         await page.waitForSelector('#page1', { hidden: true });
+
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.envs.overviewModel.pagination.reset();
+            model.envs.overviewModel.pagination.notify();
+        });
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        await goToPage(page, 'env-overview');
+        // await goToPage(page, 'env-overview');
         await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 
     it('should successfully display dropdown links', async () => {
-        await goToPage(page, 'env-overview');
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        let envId = 'CmCvjNbg';
 
         // Running env
-        let envId = 'CmCvjNbg';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
         let popover = await page.waitForSelector(`.popover:has(button[id='copy-${envId}'])`);
         await expectLink(popover, 'a:nth-of-type(1)', {
@@ -199,7 +196,7 @@ module.exports = () => {
         // Not running env
         envId = 'EIDO13i3D';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
-        popover = await page.waitForNavigation(`.popover:has(button[id='copy-${envId}'])`);
+        popover = await page.waitForSelector(`.popover:has(button[id='copy-${envId}'])`);
         await expectLink(popover, 'a:nth-of-type(1)', {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
