@@ -77,6 +77,9 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d a'));
+
         await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
@@ -87,17 +90,19 @@ module.exports = () => {
     });
 
     it('should successfully provide a tab to display related logs', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'Dxi029djX' } });
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d a'));
 
-        await pressElement(page, '#logs-tab');
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
+        expectUrlParams(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' });
 
-        const tableSelector = '#logs-pane table tbody tr';
-        await page.waitForSelector(tableSelector);
-
-        expectInnerText(page, `${tableSelector} #row119-lhcFills`, '1,4,6');
+        await page.waitForSelector('input#environments');
+        expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
     });
 
     it('should successfully display FLP nad ECS links', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowDxi029djX a'))
         const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
 
         await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
