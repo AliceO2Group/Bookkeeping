@@ -22,7 +22,7 @@
 namespace o2::bkp::api::grpc::services
 {
 
-class GrpcQcFlagServiceClient: public QcFlagServiceClient
+class GrpcQcFlagServiceClient : public QcFlagServiceClient
 {
  public:
   explicit GrpcQcFlagServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
@@ -30,6 +30,7 @@ class GrpcQcFlagServiceClient: public QcFlagServiceClient
 
   std::vector<int> createForDataPass(uint32_t runNumber, const std::string& passName, const std::string& detectorName, const std::vector<QcFlag>& qcFlags) override;
   std::vector<int> createForSimulationPass(uint32_t runNumber, const std::string& productionName, const std::string& detectorName, const std::vector<QcFlag>& qcFlags) override;
+  std::vector<int> createForSynchronous(uint32_t runNumber, const std::string& detectorName, const std::vector<QcFlag>& qcFlags) override;
 
  private:
   /**
@@ -38,13 +39,11 @@ class GrpcQcFlagServiceClient: public QcFlagServiceClient
    * @param qcFlag the model QC flag
    * @param grpcQcFlag the destination QC flag
    */
-  static void mirrorQcFlagOnGrpcQcFlag(const QcFlag &qcFlag, bookkeeping::QcFlag* grpcQcFlag);
+  static void mirrorQcFlagOnGrpcQcFlag(const QcFlag& qcFlag, bookkeeping::QcFlag* grpcQcFlag);
 
   std::unique_ptr<o2::bookkeeping::QcFlagService::Stub> mStub;
 };
 
 } // namespace o2::bkp::api::grpc::services
-
-
 
 #endif // CXX_CLIENT_BOOKKEEPINGAPI_GRPCQCFLAGSERVICECLIENT_H

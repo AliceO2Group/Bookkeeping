@@ -26,11 +26,12 @@ const {
     validateTableData,
     expectLink,
     validateDate,
+    waitForTableLength,
+    waitForNavigation,
     waitForDownload,
     getPopoverContent,
     getPopoverSelector,
 } = require('../defaults.js');
-const { waitForTimeout } = require('../defaults.js');
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -138,9 +139,13 @@ module.exports = () => {
         await reloadPage(page);
 
         await page.waitForSelector('#firstRowIndex');
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(4);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(4);
+        await expectInnerText(page, '#firstRowIndex', '1');
+
+        await page.waitForSelector('#lastRowIndex');
+        await expectInnerText(page, '#lastRowIndex', '4');
+
+        await page.waitForSelector('#totalRowsCount');
+        await expectInnerText(page, '#totalRowsCount', '4');
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -167,11 +172,10 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-        await waitForTimeout(600);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(4);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await waitForTableLength(page, 4);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -180,16 +184,14 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
     });
 
     it('notifies if table loading returned an error', async () => {
         await reloadPage(page);
-        await waitForTimeout(100);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
-        await waitForTimeout(100);
+        await page.waitForSelector('.alert-danger');
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
@@ -200,18 +202,16 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 4);
     });
 
     it('can navigate to a run detail page', async () => {
         await reloadPage(page);
-        await waitForTimeout(100);
         await page.waitForSelector('tbody tr');
 
         const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
 
-        await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click());
-        await waitForTimeout(100);
+        await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -303,18 +303,16 @@ module.exports = () => {
     });
 
     it('should successfuly apply timeEnd filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
         await expectColumnValues(page, 'runNumber', ['1']);
 
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
     it('should successfuly apply duration filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
@@ -333,6 +331,19 @@ module.exports = () => {
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply alice currents filters', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await pressElement(page, '#openFilterToggle');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
+
+        await expectColumnValues(page, 'runNumber', ['54']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('should display bad runs marked out', async () => {

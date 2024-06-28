@@ -73,11 +73,10 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'log-overview');
-        await page.waitForSelector('#firstRowIndex');
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(10);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(119);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '10');
+        await expectInnerText(page, '#totalRowsCount', '119');
     });
 
     it('Should have balloon on title, tags and runs columns', async () => {
@@ -132,7 +131,7 @@ module.exports = () => {
         await pressElement(page, '#reset-filters');
     });
 
-    it('should successfully provide an easy to access button to filter in/out anonymous logs', async () => {
+    it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
         // Close the filter panel
         await pressElement(page, '#openFilterToggle');
         await waitForTableTotalRowsCountToEqual(page, 119);
@@ -171,25 +170,25 @@ module.exports = () => {
     it('can filter by tags', async () => {
         await waitForTableTotalRowsCountToEqual(page, 119);
 
-        await page.$eval('.tags-filter .dropdown-trigger', (element) => element.click());
+        await pressElement(page, '.tags-filter .dropdown-trigger');
 
         // Select the second available filter and wait for the changes to be processed
         const firstCheckboxId = 'tag-dropdown-option-DPG';
-        await pressElement(page, `#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`, true);
         await waitForTableLength(page, 1);
 
         // Deselect the filter and wait for the changes to process
-        await pressElement(page, `#${firstCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`, true);
         await waitForTableLength(page, 10);
 
         // Select the first available filter and the second one at once
         const secondCheckboxId = 'tag-dropdown-option-FOOD';
-        await pressElement(page, `#${firstCheckboxId}`);
-        await pressElement(page, `#${secondCheckboxId}`);
+        await pressElement(page, `#${firstCheckboxId}`, true);
+        await pressElement(page, `#${secondCheckboxId}`, true);
         await waitForEmptyTable(page);
 
         // Set the filter operation to "OR"
-        await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
+        await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await waitForTableLength(page, 3);
 
         await pressElement(page, '#reset-filters');
@@ -477,8 +476,7 @@ module.exports = () => {
         });
         await waitForTimeout(100);
 
-        const secondPageButton = await page.$('#page2');
-        await secondPageButton.evaluate((button) => button.click());
+        await pressElement(page, '#page2');
         await waitForTimeout(500);
         // Expect the pagination to still be on page two
         let currentPageSelected = await page.evaluate(() => window.model.logs.overviewModel.pagination.currentPage);

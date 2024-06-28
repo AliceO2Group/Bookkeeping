@@ -10,6 +10,7 @@ services:
       NODE_ENV: production
       DATABASE_HOST: database
       DATABASE_LOGGING: "${DATABASE_LOGGING}"
+      NOTIFICATION_BROKER: "${NOTIFICATION_BROKER}"
       JWT_SECRET: "${JWT_SECRET}"
       JWT_EXPIRATION: "${JWT_EXPIRATION}"
       JWT_ISSUER: "${JWT_ISSUER}"
@@ -18,6 +19,10 @@ services:
       OPENID_SECRET: "${OPENID_SECRET}"
       OPENID_REDIRECT: "${OPENID_REDIRECT}"
       OPENID_WELL_KNOWN: "${OPENID_WELL_KNOWN}"
+      ALI_ECS_GUI_URL: "${ALI_ECS_GUI_URL:-http://localhost:8080}"
+      FLP_INFOLOGGER_URL: "${ALI_ECS_GUI_URL:-http://localhost:8081}"
+      QC_GUI_URL: "${ALI_ECS_GUI_URL:-http://localhost:8082}"
+      ALI_FLP_INDEX_URL: "${ALI_ECS_GUI_URL:-http://localhost:80}"
     links:
       - database
     restart: unless-stopped
