@@ -171,13 +171,15 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
+        await goToPage(page, 'env-overview');
         await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 
     it('should successfully display dropdown links', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
         let envId = 'CmCvjNbg';
+
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
 
         // Running env
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
