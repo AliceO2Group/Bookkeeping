@@ -62,7 +62,7 @@ add_library(BookkeepingApi SHARED
         src/BkpClientFactory.cxx
         include/BookkeepingApi/QcFlagServiceClient.h
         include/BookkeepingApi/QcFlag.h
-        src/grpc/services/GrpcQcFlagServiceClient.cpp
+        src/grpc/services/GrpcQcFlagServiceClient.cxx
         src/grpc/services/GrpcQcFlagServiceClient.h
         include/BookkeepingApi/TriggerCountersServiceClient.h
         src/grpc/services/GrpcTriggerCountersServiceClient.h
