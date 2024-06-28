@@ -186,18 +186,4 @@ module.exports = () => {
             model.flps.pagination.itemsPerPage = 10;
         });
     });
-
-    /*
-     * It('can navigate to a flp detail page', async () => {
-     *  table = await page.$$('tr');
-     *  firstRowId = await getFirstRow(table, page);
-     *  const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-     *
-     *  // We expect the entry page to have the same id as the id from the flp overview
-     *  await pressElement(page, `#${firstRowId}`);
-     *  await waitForTimeout(100);
-     *  const redirectedUrl = await page.url();
-     *  expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=${parsedFirstRowId}`)).to.be.true;
-     * });
-     */
 };

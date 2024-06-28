@@ -523,6 +523,20 @@ module.exports.fillInput = async (page, inputSelector, value, events = ['input']
 };
 
 /**
+ * Focus a given selector then type the given value on keyboard
+ *
+ * @param {puppeteer.Page} page the current puppeteer page
+ * @param {string} inputSelector the target input
+ * @param {string} value the value to type
+ * @return {Promise<void>} resolves once typing is done
+ */
+module.exports.focusAndType = async (page, inputSelector, value) => {
+    await page.waitForSelector(inputSelector);
+    await page.focus(inputSelector);
+    await page.keyboard.type(value);
+};
+
+/**
  * Evaluate and return the value content of a given element handler
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} selector the input selector
@@ -779,3 +793,19 @@ module.exports.expectLink = async (element, selector, { href, innerText }) => {
  * @return {boolean} true if format is correct, false otherwise
  */
 module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
+
+/**
+ * Return the selector for all the inputs composing a period inputs
+ *
+ * @param {string} popoverSelector the selector of the period inputs parent
+ * @return {{fromDateSelector: string, fromTimeSelector: string, toDateSelector: string, toTimeSelector: string}} the selectors
+ */
+module.exports.getPeriodInputsSelectors = (popoverSelector) => {
+    const commonInputsAncestor = `${popoverSelector} > div > div > div > div`;
+    return {
+        fromDateSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(1)`,
+        fromTimeSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(2)`,
+        toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
+        toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
+    };
+};
