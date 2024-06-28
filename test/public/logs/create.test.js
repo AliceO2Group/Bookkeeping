@@ -623,28 +623,7 @@ ${actions}\
             // Sometimes, browser adds \r to the request to comply with text form data encoding
             .replaceAll('\r', '')
             // On call log is created for DCS system right before this test and appear in `Central systems/services`
-            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', '')
-
-            /*
-             * Expect 2 fills: 6 and 123123123, fill 6 because 123123123 has been created during previous tests, hence ending fill 6, and
-             * 123123123 is ended because fill 123123 is created a bit later (both in CreateLhcFillUseCase.test.js)
-             */
-            .replace(`
-Fill 6 (Single_12b_8_1024_8_2018)
-* Beam type: null
-* Stable beam start: 1565262000000
-* Stable beam end: 1565305200000
-* Duration: 43200
-* Efficiency: 41.67%
-* Time to first run: 03:00:00 (25.00%)
-
-Fill 123123123 (schemename)
-* Beam type: Pb-Pb
-* Stable beam start: 1647961200000
-* Stable beam end: 1647961200000
-* Duration: 600
-* Efficiency: 0.00%
-* Time to first run: 00:00:00 (0.00%)`, '-'))
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', ''))
             .to.equal(`\
 # RC Daily Meeting Minutes
 Date: ${formatFullDate(new Date())}
