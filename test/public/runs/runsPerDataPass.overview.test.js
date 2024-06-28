@@ -308,7 +308,7 @@ module.exports = () => {
         await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
         await expectColumnValues(page, 'runNumber', ['1']);
 
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
