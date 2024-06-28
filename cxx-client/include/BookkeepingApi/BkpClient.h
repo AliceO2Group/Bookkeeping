@@ -16,6 +16,7 @@
 #include "FlpServiceClient.h"
 #include "DplProcessExecutionClient.h"
 #include "QcFlagServiceClient.h"
+#include "TriggerCountersServiceClient.h"
 
 namespace o2::bkp::api
 {
@@ -33,6 +34,8 @@ class BkpClient
 
   /// Returns the client for QcFlag service
   virtual const std::unique_ptr<QcFlagServiceClient>& qcFlag() const = 0;
+
+  virtual const std::unique_ptr<TriggerCountersServiceClient>& triggerCounters() const = 0;
 };
 } // namespace o2::bkp::api
 
