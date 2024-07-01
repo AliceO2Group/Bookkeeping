@@ -66,7 +66,7 @@ module.exports = () => {
             expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 1 } });
 
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
 
             expect(flagTypes.map((qcFlagType) => {
                 delete qcFlagType.createdAt;
@@ -94,6 +94,21 @@ module.exports = () => {
                     method: 'CertifiedByExpert',
                     bad: false,
                     color: null,
+
+                    archived: false,
+                    archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
+                },
+                {
+                    id: 5,
+                    name: 'Limited Acceptance MC Reproducible',
+                    method: 'LimitedAcceptanceMCReproducible',
+                    bad: true,
+                    color: '#FFFF00',
 
                     archived: false,
                     archivedAt: null,
@@ -240,25 +255,26 @@ module.exports = () => {
             const response = await request(server).get('/api/qcFlagTypes?sort[id]=DESC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
+            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 1 } });
 
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
 
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 3, 2]);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 5, 11, 3, 2]);
         });
 
         it('should successfuly sort QC flag types by name', async () => {
             const response = await request(server).get('/api/qcFlagTypes?sort[name]=DESC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
+            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 1 } });
 
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
 
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Unknown Quality',
+                'Limited Acceptance MC Reproducible',
                 'Limited acceptance',
                 'Certified by Expert',
                 'Bad PID',
@@ -271,7 +287,7 @@ module.exports = () => {
             const response = await request(server).get('/api/qcFlagTypes?sort[method]=ASC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
+            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 1 } });
 
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(6);
@@ -282,6 +298,7 @@ module.exports = () => {
                 'Bad PID',
                 'Certified by Expert',
                 'Limited acceptance',
+                'Limited Acceptance MC Reproducible',
                 'Unknown Quality',
             ]);
         });
@@ -290,12 +307,12 @@ module.exports = () => {
             const response = await request(server).get('/api/qcFlagTypes?page[limit]=2&page[offset]=2&sort[id]=ASC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 3 } });
+            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 3 } });
 
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12]);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([5, 11]);
         });
     });
 
