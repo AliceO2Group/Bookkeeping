@@ -110,7 +110,7 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
             ])),
         };
 
@@ -129,8 +129,9 @@ module.exports = () => {
         await reloadPage(page);
         await expectLink(page, 'tr#row105 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
-            innerText: '100!',
+            innerText: '100',
         });
+        await page.waitForSelector('tr#row105 .column-CPV a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
     });
