@@ -260,7 +260,7 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(7);
 
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 5, 11, 3, 2]);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 5, 3, 2]);
         });
 
         it('should successfuly sort QC flag types by name', async () => {
@@ -290,7 +290,7 @@ module.exports = () => {
             expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 1 } });
 
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
 
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Archived',
@@ -307,7 +307,7 @@ module.exports = () => {
             const response = await request(server).get('/api/qcFlagTypes?page[limit]=2&page[offset]=2&sort[id]=ASC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 3 } });
+            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 4 } });
 
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
