@@ -63,7 +63,7 @@ module.exports = () => {
             const response = await request(server).get('/api/qcFlagTypes');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
+            expect(meta).to.be.eql({ page: { totalCount: 7, pageCount: 1 } });
 
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(6);
