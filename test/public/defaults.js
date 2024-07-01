@@ -607,7 +607,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
         );
     } catch (_) {
         // Use expect to have explicit error message
-        expect(getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+        expect(await getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
     }
 };
 
