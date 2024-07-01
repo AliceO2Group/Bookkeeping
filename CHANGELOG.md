@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.93.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.93.0)
+* Notable changes for users:
+  * Added c++ client to set trigger counters for a run
+  * Improved RC daily template:
+    * Display fills on one line
+    * Display only fills with stable beams
+    * Exclude the EoS report from the logs list in RC daily meeting minutes template
+    * Display only physics runs
+    * Display the runs list as pre-filled editable markdown input
+  * Display run period in LHC fill display page
+  * Disabled QC for runs which are tags as Not for physics and marked such runs in RunPerLhcPeriod view
+  * Fixed bug of popover not being placed in the right position when using browser zoom
+  * Fixed popover not being resized when filtering drop-down options
+  * Fixed popover not being properly resized along cross axis when using browser zoom
+  * Fixed popover not being properly clipped when overflowing along cross axis
+* Notable changes for developers:
+  * Added runs' filtering by aliceL3Current and aliceDipoleCurrent
+  * Removed default URLs from services config
+  * Removed randomness of two QC flags creation tests
+
 ## [0.92.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.92.0)
 * Notable changes for users:
   * Adds 2 decimals display to plots of LHC Fills statistics

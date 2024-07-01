@@ -303,18 +303,16 @@ module.exports = () => {
     });
 
     it('should successfuly apply timeEnd filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
         await expectColumnValues(page, 'runNumber', ['1']);
 
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
     it('should successfuly apply duration filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
@@ -333,6 +331,19 @@ module.exports = () => {
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply alice currents filters', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await pressElement(page, '#openFilterToggle');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
+
+        await expectColumnValues(page, 'runNumber', ['54']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('should display bad runs marked out', async () => {
