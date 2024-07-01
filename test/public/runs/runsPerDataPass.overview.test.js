@@ -74,7 +74,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -89,7 +89,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
         // Expectations of header texts being of a certain datatype
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
@@ -110,7 +109,7 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+(MC\.R)?)/.test(qualityDisplay),
             ])),
         };
 
