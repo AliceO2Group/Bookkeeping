@@ -480,6 +480,14 @@ label {
     vertical-align: top;
 }
 
+.va-t-bottom {
+    vertical-align: text-bottom;
+}
+
+.italic {
+    font-style: italic;
+}
+
 /* Popover system */
 
 .popover {
