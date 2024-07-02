@@ -73,12 +73,12 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '6');
-        await expectInnerText(page, '#totalRowsCount', '6');
+        await expectInnerText(page, '#lastRowIndex', '7');
+        await expectInnerText(page, '#totalRowsCount', '7');
     });
 
     it('can sort by name column in ascending manner', async () => {
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 7);
         await testTableSortingByColumn(page, 'name');
     });
 
@@ -91,7 +91,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply QC flag type names filter', async () => {
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 7);
 
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, '.name-filter input[type=text]', 'bad');
@@ -101,7 +101,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply QC flag type method filter', async () => {
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 7);
 
         await fillInput(page, '.method-filter input[type=text]', 'bad');
         await checkColumnValuesWithRegex(page, 'method', '[Bb][Aa][Dd]');
@@ -110,7 +110,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply QC flag type bad filter', async () => {
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 7);
 
         await pressElement(page, '.bad-filter input[type=checkbox]', true);
         await checkColumnValuesWithRegex(page, 'bad', '^Yes$');
