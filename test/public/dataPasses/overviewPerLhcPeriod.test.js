@@ -58,8 +58,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
-
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
@@ -93,6 +91,9 @@ module.exports = () => {
                 simulationPassesCount: 1,
             },
         ]);
+
+        await page.waitForSelector('row1-name .popover-trigger .icon');
+        await page.waitForSelector('row1-description .popover-trigger .icon');
     });
 
     it('can navigate to runs per data pass page', async () => {
