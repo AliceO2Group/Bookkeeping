@@ -33,7 +33,7 @@ module.exports = () => {
         const expectedDataPassesVersions = mockDataPassesVersions.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
         // Check whether examining data passes with last runs works correctly;
-        let lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
+        let lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndId();
         expect(mockDataPassesVersions.every((dataPass) => monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
 
         // Run Synchronization
@@ -90,7 +90,7 @@ module.exports = () => {
         }
 
         // Check whether examining data passes with last runs works correctly;
-        lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
+        lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndId();
         expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
     });
 
