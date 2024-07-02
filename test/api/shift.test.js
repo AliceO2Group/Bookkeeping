@@ -26,7 +26,7 @@ module.exports = () => {
             // Create some logs for the shift
 
             const logIds = [];
-            const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+            const currentShift = shiftService.getUserPendingShiftOrFail();
             const defaultLogData = {
                 title: 'Title',
                 text: 'Text',
@@ -53,7 +53,7 @@ module.exports = () => {
             // Create some logs for the shift
 
             const logIds = [];
-            const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+            const currentShift = shiftService.getUserPendingShiftOrFail();
             const defaultLogData = {
                 title: 'Title',
                 text: 'Text',
@@ -80,7 +80,7 @@ module.exports = () => {
             // Create some logs for the shift
 
             const logIds = [];
-            const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+            const currentShift = shiftService.getUserPendingShiftOrFail();
             const defaultLogData = {
                 title: 'Title',
                 text: 'Text',
@@ -107,7 +107,7 @@ module.exports = () => {
             // Create some logs for the shift
 
             const logIds = [];
-            const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+            const currentShift = shiftService.getUserPendingShiftOrFail();
             const defaultLogData = {
                 title: 'Title',
                 text: 'Text',
