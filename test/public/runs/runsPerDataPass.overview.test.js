@@ -31,6 +31,7 @@ const {
     getPopoverContent,
     getPopoverSelector,
     getInnerText,
+    expectUrlParams,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -62,10 +63,21 @@ const DETECTORS = [
  * @return {Promise<void>} promise
  */
 const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
-    await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview'));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses-text a`));
-    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns-text a`));
-    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns-text a`));
+    await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`));
+    expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
+
+    console.log(page.url(), await (await page.waitForSelector(`#row${dataPassId}-associatedRuns a`)).evaluate(({ href }) => href), 'TOBEC');
+    try {
+        await page.waitForFunction((dataPassId) => {
+            const link = document.querySelector(`#row${dataPassId}-associatedRuns a`);
+            return /runs-per-data-pass/.test(link.href);
+        }, dataPassId);
+    } catch {
+        console.log(page.url(), await (await page.waitForSelector(`#row${dataPassId}-associatedRuns a`)).evaluate(({ href }) => href), 'TOBEC 2');
+    }
+    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
+    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId });
 };
 
 module.exports = () => {
@@ -128,6 +140,9 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+
         await expectLink(page, 'tr#row106 .column-EMC a', {
             href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=106&dplDetectorId=2&dataPassId=1',
             innerText: 'QC',
@@ -135,7 +150,7 @@ module.exports = () => {
 
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
-            innerText: '0\nMC.R',
+            innerText: '16MC.R',
         });
         await page.waitForSelector('tr#row106 .column-CPV a .icon');
     });
@@ -147,7 +162,7 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
 
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
@@ -173,7 +188,7 @@ module.exports = () => {
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -207,7 +222,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perDataPassOverviewModel.notify();
         });
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
     });
 
     it('can navigate to a run detail page', async () => {
@@ -224,7 +239,7 @@ module.exports = () => {
     });
 
     it('should successfully export runs', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
 
         const targetFileName = 'runs.json';
 
@@ -257,7 +272,7 @@ module.exports = () => {
 
     // Filters
     it('should successfuly apply runNumber filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 1 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
 
         await pressElement(page, '#openFilterToggle');
 
