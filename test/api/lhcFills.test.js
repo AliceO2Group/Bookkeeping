@@ -161,25 +161,18 @@ module.exports = () => {
         });
     });
     describe('GET /api/lhcFills/:fillNumber', () => {
-        it('should return 200 and an array for a normal request', (done) => {
-            request(server)
-                .get('/api/lhcFills/1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 200 and an array for a normal request', async () => {
+            const response = await request(server).get('/api/lhcFills/1');
+            expect(response.status).to.equal(200);
 
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(1647961200000);
-                    expect(data.stableBeamsEnd).to.equal(1647961200000);
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
-                    expect(data.fillNumber).to.equal(1);
-                    done();
-                });
+            const { data } = response.body;
+            expect(data.stableBeamsStart).to.equal(1647961200000);
+            expect(data.stableBeamsEnd).to.equal(1647961200000);
+            expect(data.stableBeamsDuration).to.equal(600);
+            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.fillingSchemeName).to.equal('schemename');
+            expect(data.fillNumber).to.equal(1);
+            expect(data.runs.map(({ lhcPeriod }) => lhcPeriod)).to.eql([undefined, 'LHC22a', 'LHC22b', 'LHC22b', 'LHC22b']);
         });
 
         it('should return 404 when a invalid run number is given', (done) => {
@@ -227,7 +220,7 @@ module.exports = () => {
         it('should successfully return a 200 response containing the fills that are ended in the given period', async () => {
             const firstCreatedAt = new Date('2019-08-09 18:00:00');
             const secondCreatedAt = new Date('2019-08-09 20:00:00');
-            const url = buildUrl('/api/lhcFills/ended-within', {
+            const url = buildUrl('/api/lhcFills/stable-beams-ended-within', {
                 from: firstCreatedAt.getTime(),
                 to: secondCreatedAt.getTime(),
             });
@@ -240,7 +233,7 @@ module.exports = () => {
         it('should successfully return 400 if the given limits are not valid', async () => {
             const createdAt = new Date('2019-08-09 20:00:00').getTime();
 
-            const baseUrl = '/api/lhcFills/ended-within';
+            const baseUrl = '/api/lhcFills/stable-beams-ended-within';
 
             {
                 const response = await request(server).get(baseUrl);

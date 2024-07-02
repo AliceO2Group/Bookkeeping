@@ -607,7 +607,36 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
         );
     } catch (_) {
         // Use expect to have explicit error message
-        expect(getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+        expect(await getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+    }
+};
+
+/**
+ * Method to check cells of a row with given id have expected innerText
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {stirng} rowId row id
+ * @param {Object<string, string>} [expectedInnerTextValues] values expected in the row
+ *
+ * @return {Promise<void>} resolve once row's values were checked
+ */
+module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) => {
+    try {
+        await page.waitForFunction(async (rowId, expectedInnerTextValues) => {
+            for (const columnId in expectedInnerTextValues) {
+                const actualValue = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
+                if (expectedInnerTextValues[columnId] == actualValue) {
+                    return false;
+                }
+            }
+            return true;
+        }, rowId, expectedInnerTextValues);
+    } catch {
+        const rowInnerTexts = {};
+        for (const columnId in expectedInnerTextValues) {
+            rowInnerTexts[columnId] = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
+        }
+        expect(rowInnerTexts).to.eql(expectedInnerTextValues);
     }
 };
 

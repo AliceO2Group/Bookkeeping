@@ -110,7 +110,7 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
             ])),
         };
 
@@ -129,8 +129,9 @@ module.exports = () => {
         await reloadPage(page);
         await expectLink(page, 'tr#row105 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
-            innerText: '100!',
+            innerText: '100',
         });
+        await page.waitForSelector('tr#row105 .column-CPV a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
     });
@@ -303,18 +304,16 @@ module.exports = () => {
     });
 
     it('should successfuly apply timeEnd filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
         await expectColumnValues(page, 'runNumber', ['1']);
 
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
     it('should successfuly apply duration filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
@@ -333,6 +332,19 @@ module.exports = () => {
 
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+    });
+
+    it('should successfuly apply alice currents filters', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await pressElement(page, '#openFilterToggle');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
+
+        await expectColumnValues(page, 'runNumber', ['54']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('should display bad runs marked out', async () => {
