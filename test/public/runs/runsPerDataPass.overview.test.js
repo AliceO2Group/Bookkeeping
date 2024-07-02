@@ -59,23 +59,15 @@ const DETECTORS = [
  * Navigate to Runs per Data Pass page
  *
  * @param {Puppeteer.page} page page
- * @param {{ lhcPeriodId: number, dataPassId: number }} params id of data pass and lhc period to wich the data pass belongs
+ * @param {number} params.lhcPeriodId id of lhc period on LHC Period overview page
+ * @param {number} params.dataPassId id of data pass on Data Passes per LHC Period page
  * @return {Promise<void>} promise
  */
 const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`));
     expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
-
-    console.log(page.url(), await (await page.waitForSelector(`#row${dataPassId}-associatedRuns a`)).evaluate(({ href }) => href), 'TOBEC');
-    try {
-        await page.waitForFunction((dataPassId) => {
-            const link = document.querySelector(`#row${dataPassId}-associatedRuns a`);
-            return /runs-per-data-pass/.test(link.href);
-        }, dataPassId);
-    } catch {
-        console.log(page.url(), await (await page.waitForSelector(`#row${dataPassId}-associatedRuns a`)).evaluate(({ href }) => href), 'TOBEC 2');
-    }
+    await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
     expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId });
 };
