@@ -16,7 +16,8 @@
         "node_modules/",
         "database/data/",
         "lib/public/assets/",
-        "cpp-api-client/"
+        "cpp-api-client/",
+        "tmp/"
     ],
     "rules": {
         "array-bracket-newline": [

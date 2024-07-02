@@ -23,12 +23,14 @@ const {
     fillInput,
     getPopoverContent,
     waitForNavigation,
+    expectLink,
     waitForTableLength,
     getTableContent,
     getPopoverSelector,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { getRun } = require('../../../lib/server/services/run/getRun.js');
+const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -47,6 +49,7 @@ module.exports = () => {
     let page;
     let browser;
     let url;
+    let createdRunId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -56,6 +59,8 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
+        const { id } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        createdRunId = id;
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -458,10 +463,42 @@ module.exports = () => {
     });
 
     it('should successfully display links to infologger and QCG', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row108 a'));
+
         await page.waitForSelector('.external-links');
-        expect(await page.$eval('.external-links a', ({ href }) => href))
-            .to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
-        expect(await page.$eval('.external-links a:nth-of-type(2)', ({ href }) => href))
-            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS');
+        await expectLink(page, '.external-links a', {
+            innerText: 'FLP',
+            href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+        });
+        await expectLink(page, '.external-links a:nth-of-type(2)', {
+            innerText: 'QCG',
+            href: 'http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS',
+        });
+    });
+
+    it('should display links to environment in ECS if run is running', async () => {
+        // Test for not running run
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row104 a'));
+
+        await page.waitForSelector('.external-links a:nth-of-type(3)', { hidden: true, timeout: 250 });
+
+        // Create running run
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, `#row${createdRunId} a`));
+
+        await expectUrlParams(page, { page: 'run-detail', runNumber: '1010' });
+        await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
+        await expectInnerText(page, '#runDurationValue', 'RUNNING');
+
+        await expectLink(page, '.external-links a:nth-of-type(3)', {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
+        await expectLink(page, '#Run-environmentId a', {
+            href: 'http://localhost:4000/?page=env-details&environmentId=CmCvjNbg',
+            innerText: 'CmCvjNbg',
+        });
     });
 };
