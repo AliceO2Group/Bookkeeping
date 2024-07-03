@@ -20,9 +20,9 @@ module.exports = () => {
     const { server } = require('../../lib/application');
 
     describe('GET /api/environments', () => {
-        it('should return 201 if valid data is provided', async () => {
+        it('should return 200 if valid data is provided', async () => {
             const response = await request(server).get('/api/environments');
-            expect(response.status).to.equal(201);
+            expect(response.status).to.equal(200);
             expect(response.body.data).to.be.an('array');
         });
 
@@ -206,7 +206,7 @@ module.exports = () => {
             expect(titleError.detail).to.equal('"body.createdAt" must be a valid date');
         });
 
-        it('should return 400 if id already exists', async () => {
+        it('should return 409 if id already exists', async () => {
             const response = await request(server).post('/api/environments').send({
                 envId: 'Dxi029djX',
             });

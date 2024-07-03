@@ -100,22 +100,6 @@ module.exports = () => {
         expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
     });
 
-    it('should successfully display FLP and ECS links', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#rowDxi029djX a'));
-        const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
-
-        await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
-            href:
-                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22Dxi029djX%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
-            innerText: 'FLP',
-        });
-        await expectLink(page, `${contatinerSelector} a:nth-of-type(2)`, {
-            href: 'http://localhost:8080/?page=environment&id=Dxi029djX',
-            innerText: 'ECS',
-        });
-    });
-
     it('should successfully provide a tab to display environment configuration', async () => {
         await pressElement(page, '#raw-configuration-tab');
 
@@ -134,5 +118,19 @@ module.exports = () => {
             '#raw-configuration-pane',
             'ccdb_enabled="true"\ndcs_enabled="false"',
         );
+    });
+
+    it('should successfully display FLP and ECS links', async () => {
+        const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
+
+        await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
+            href:
+                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22Dxi029djX%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'FLP',
+        });
+        await expectLink(page, `${contatinerSelector} a:nth-of-type(2)`, {
+            href: 'http://localhost:8080/?page=environment&id=Dxi029djX',
+            innerText: 'ECS',
+        });
     });
 };
