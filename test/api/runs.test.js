@@ -485,6 +485,31 @@ module.exports = () => {
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(5);
         });
+
+        it('should successfuly filter by aliceL3Current', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[aliceL3Current]=30003');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ aliceL3Current, aliceL3Polarity }) =>
+                Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
+        });
+
+        it('should successfuly filter by aliceDipoleCurrent', async () => {
+            const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+                Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
+        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
@@ -1243,6 +1268,14 @@ module.exports = () => {
             expect(body.data.lhcPeriod).to.equal('LHC22b');
             expect(body.data.triggerValue).to.equal('LTU');
             expect(body.data.odcTopologyFullName).to.equal('default');
+        });
+    });
+
+    describe('GET /api/runs/aliceMagnetsCurrentLevels', () => {
+        it('should fetch distinct aliceCurrent levels', async () => {
+            const response = await request(server).get('/api/runs/aliceMagnetsCurrentLevels');
+            expect(response.status).to.be.equal(200);
+            expect(response.body.data).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
         });
     });
 };

@@ -611,4 +611,32 @@ module.exports = () => {
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf.above(3);
     });
+
+    it('should successfuly filter by aliceL3Current', async () => {
+        const { runs } = await new GetAllRunsUseCase().execute({
+            query: {
+                filter: {
+                    aliceL3Current: 30003,
+                },
+            },
+        });
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.greaterThan(0);
+        expect(runs.every(({ aliceL3Current, aliceL3Polarity }) =>
+            Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
+    });
+
+    it('should successfuly filter by aliceDipoleCurrent', async () => {
+        const { runs } = await new GetAllRunsUseCase().execute({
+            query: {
+                filter: {
+                    aliceDipoleCurrent: 0,
+                },
+            },
+        });
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.greaterThan(0);
+        expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+            Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
+    });
 };

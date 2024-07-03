@@ -12,7 +12,16 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, expectUrlParams, goToPage, pressElement, waitForNavigation } = require('../defaults.js');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    expectUrlParams,
+    goToPage,
+    pressElement,
+    waitForNavigation,
+    expectLink,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -68,6 +77,9 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d a'));
+
         await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
@@ -78,18 +90,29 @@ module.exports = () => {
     });
 
     it('should successfully provide a tab to display related logs', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: '8E4aZTjY' } });
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d a'));
 
-        await pressElement(page, '#logs-tab');
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
+        expectUrlParams(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' });
 
-        const tableSelector = '#logs-pane table tbody tr';
-        await page.waitForSelector(tableSelector);
+        await page.waitForSelector('input#environments');
+        expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
+    });
 
-        const table = await page.$$(tableSelector);
-        expect(table).to.lengthOf(3);
+    it('should successfully display FLP nad ECS links', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowDxi029djX a'));
+        const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
 
-        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
-        expect(await table[1].evaluate((row) => row.id)).to.equal('row3');
-        expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
+        await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
+            href:
+                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22Dxi029djX%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'FLP',
+        });
+        await expectLink(page, `${contatinerSelector} a:nth-of-type(2)`, {
+            href: 'http://localhost:8080/?page=environment&id=Dxi029djX',
+            innerText: 'ECS',
+        });
     });
 };
