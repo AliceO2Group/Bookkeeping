@@ -68,18 +68,16 @@ module.exports = () => {
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: 'TDI59So3d' } });
-
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expectUrlParams(page, { page: 'log-create', environmentIds: 'TDI59So3d', runNumbers: '103,104,105' });
 
         await page.waitForSelector('input#environments');
         expect(await page.$eval('input#environments', (element) => element.value)).to.equal('TDI59So3d');
+        await waitForNavigation(page, () => pressElement(page, '#env-overview'));
     });
 
     it('should successfully provide a tab to display related logs', async () => {
-        await goToPage(page, 'env-details', { queryParameters: { environmentId: '8E4aZTjY' } });
-
+        await waitForNavigation(page, () => pressElement(page, '#row8E4aZTjY a:first-of-type'));
         await pressElement(page, '#logs-tab');
 
         const tableSelector = '#logs-pane table tbody tr';
@@ -91,5 +89,25 @@ module.exports = () => {
         expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
         expect(await table[1].evaluate((row) => row.id)).to.equal('row3');
         expect(await table[2].evaluate((row) => row.id)).to.equal('row4');
+    });
+
+    it('should successfully provide a tab to display environment configuration', async () => {
+        await pressElement(page, '#raw-configuration-tab');
+
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane',
+            'No raw configuration stored for this environment. It might have been stored in one of the logs',
+        );
+
+        await waitForNavigation(page, () => pressElement(page, '#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowDxi029djX a:first-of-type'));
+        await pressElement(page, '#raw-configuration-tab');
+
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane',
+            'ccdb_enabled="true"\ndcs_enabled="false"',
+        );
     });
 };
