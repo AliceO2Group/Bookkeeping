@@ -108,7 +108,7 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
             ])),
         };
 
@@ -128,8 +128,10 @@ module.exports = () => {
         await reloadPage(page);
         await expectLink(page, 'tr#row56 .column-ITS a', {
             href: 'http://localhost:4000/?page=qc-flags-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
-            innerText: '0!',
+            innerText: '0',
         });
+
+        await page.waitForSelector('tr#row56 .column-ITS a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id);
     });
