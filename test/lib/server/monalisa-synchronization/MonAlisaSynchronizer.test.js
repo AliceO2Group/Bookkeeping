@@ -98,14 +98,14 @@ module.exports = () => {
         lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndId();
         expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
 
-        let productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMl: true } });
+        let productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMonAlisa: true } });
         expect(productionsDeletedFromMl).to.be.lengthOf(3);
 
         const fetchAllMockDataPassesVersions = monAlisaClient._fetchDataPassesVersions;
         monAlisaClient._fetchDataPassesVersions = async () => (await fetchAllMockDataPassesVersions()).split('\n').slice(0, -5).join('\n');
 
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
-        productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMl: true } });
+        productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMonAlisa: true } });
         expect(productionsDeletedFromMl).to.be.lengthOf(7);
     });
 
