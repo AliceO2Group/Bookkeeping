@@ -1,3 +1,7 @@
+## [0.94.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.94.0)
+* Changes made to the database
+  * Added raw_configuration column to environment table
+
 ## [0.91.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.91.0)
 * Changes made to the database
   * Added data_pass_versions table
