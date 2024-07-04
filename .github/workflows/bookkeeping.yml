@@ -39,10 +39,28 @@ jobs:
       - name: Create Coverage Directory
         run: mkdir -p ${{ github.workspace }}/coverage
 
-      - name: Build and Start Test Services
-        run: docker-compose \
+      - name: Set COMPOSE_PROJECT_NAME
+        run: echo "COMPOSE_PROJECT_NAME=${{ matrix.test_type }}_app" >> $GITHUB_ENV
+
+      - name: Build and Start Test Database
+        run: |
+          docker-compose \
           -f docker-compose.test-parallel.yml \
-          up --detach
+          up --detach test_db
+        env:
+          TEST_TYPE: ${{ matrix.test_type }}
+      - name: Build Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          build test_app
+        env:
+          TEST_TYPE: ${{ matrix.test_type }}
+      - name: Run Tests
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel.yml \
+          run test_app
         env:
           TEST_TYPE: ${{ matrix.test_type }}
       - name: Upload Coverage to Codecov
@@ -51,7 +69,26 @@ jobs:
           file: ./coverage/lcov.info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          TEST_TYPE: ${{ matrix.test_type }}
       - name: Clean Up
-        run: docker-compose \
+        run: |
+          docker-compose \
           -f docker-compose.test-parallel.yml \
           down
+        env:
+          TEST_TYPE: ${{ matrix.test_type }}
+
+  linter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+      - name: Installing dependencies
+        run: npm ci
+      - name: Running linter
+        run: npm run lint
