@@ -60,9 +60,10 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "te
 FROM developmentdependencies as test_parallel
 
 ARG TEST_TYPE
+ENV TEST_TYPE=${TEST_TYPE}
 
-# Running tests based on the TEST_TYPE variable
-CMD ["/opt/wait-for-it.sh", "-t", "0", "test_db:3306", "--", "npm", "run", "test:${TEST_TYPE}"]
+CMD /opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:${TEST_TYPE}
+
 
 #
 # ---- Coverage ----

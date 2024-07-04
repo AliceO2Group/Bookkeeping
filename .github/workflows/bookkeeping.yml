@@ -1,3 +1,5 @@
+name: Bookkeeping
+
 on:
   pull_request:
   push:
