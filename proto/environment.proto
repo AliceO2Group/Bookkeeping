@@ -17,6 +17,7 @@ message EnvironmentCreationRequest {
   string id = 1;
   optional string status = 3;
   optional string statusMessage = 4;
+  string rawConfiguration = 5;
 }
 
 message EnvironmentUpdateRequest {
