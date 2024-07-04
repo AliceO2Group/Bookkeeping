@@ -565,7 +565,7 @@ module.exports = () => {
             {
                 from = null;
                 to = null;
-                qcFlag = await qcFlagService.create(
+                [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
@@ -581,7 +581,7 @@ module.exports = () => {
             {
                 from = null;
                 to = new Date('2024-07-01 12:00:00').getTime();
-                qcFlag = await qcFlagService.create(
+                [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
@@ -601,7 +601,7 @@ module.exports = () => {
             {
                 from = new Date('2024-07-01 16:00:00').getTime();
                 to = null;
-                qcFlag = await qcFlagService.create(
+                [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
