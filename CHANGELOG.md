@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.94.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.94.0)
+* Notable changes for users:
+  * Replaced previous display for missing verifications with warning icon displaying information tooltip
+  * Changed display of `Add QC` button in QC summary to take all available space
+  * Added navigation to ECS active environments and for running runs:
+    * from run details page
+    * from run overview page
+    * from environments details page
+    * from environments overview page
+  * Added special display for Limited Acceptance MC Reproducible in QC summary
+  * Changed QC summary colours palette to match bookkeeping standards
+  * Added possibility to save raw configuration when creating an environment
+  * Display a new tab in environments details to show raw configuration
+  * Added ADJUST beam mode option for on-call log template
+  * Format properly fill start and duration in RC daily meeting minutes template
+  * Fixed runs to check display to be in a panel as the other inputs
+  * Marked data passes deleted from ML with green color and icon
+
 ## [0.93.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.93.0)
 * Notable changes for users:
   * Added c++ client to set trigger counters for a run
