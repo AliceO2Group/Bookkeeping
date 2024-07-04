@@ -37,7 +37,7 @@ const qcFlagWithId1 = {
 
     // Associations
     createdById: 1,
-    flagTypeId: 11, // LimitedAcceptance
+    flagTypeId: 5, // LimitedAcceptance MC Reprodubile
     runNumber: 106,
     dplDetectorId: 1, // CPV
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
@@ -49,9 +49,9 @@ const qcFlagWithId1 = {
         externalId: 1,
     },
     flagType: {
-        id: 11,
-        method: 'LimitedAcceptance',
-        name: 'Limited acceptance',
+        id: 5,
+        name: 'Limited Acceptance MC Reproducible',
+        method: 'LimitedAcceptanceMCReproducible',
         bad: true,
         color: '#FFFF00',
         archived: false,
@@ -123,6 +123,7 @@ module.exports = () => {
                 106: {
                     1: {
                         missingVerificationsCount: 3,
+                        mcReproducible: true,
                         badEffectiveRunCoverage: 0.8376,
                     },
                 },
@@ -134,6 +135,7 @@ module.exports = () => {
                 1: {
                     1: {
                         missingVerificationsCount: 0,
+                        mcReproducible: false,
                         badEffectiveRunCoverage: 0.0196,
                     },
                 },
@@ -149,6 +151,7 @@ module.exports = () => {
                 106: {
                     1: {
                         missingVerificationsCount: 1,
+                        mcReproducible: false,
                         badEffectiveRunCoverage: 0.9310,
                     },
                 },
