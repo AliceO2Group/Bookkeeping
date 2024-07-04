@@ -27,7 +27,7 @@ const { runService } = require('../../../../../lib/server/services/run/RunServic
  * @return {Promise<{ from: number, to: number }[]>} effective periods
  */
 const getEffectivePeriodsOfQcFlag = async (flagId) => (await QcFlagEffectivePeriodRepository.findAll({ where: { flagId } }))
-    .map(({ from, to }) => ({ from: from.getTime(), to: to.getTime() }));
+    .map(({ from, to }) => ({ from: from?.getTime() ?? null, to: to?.getTime() ?? null }));
 
 const qcFlagWithId1 = {
     id: 1,
@@ -576,7 +576,7 @@ module.exports = () => {
                 );
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from: null, to: null }]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
             }
             {
                 from = null;
@@ -592,7 +592,7 @@ module.exports = () => {
                 );
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from: null, to }]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from, to }]);
 
                 // Previous: first flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
@@ -612,7 +612,7 @@ module.exports = () => {
                 );
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from: null, to }]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
 
                 // Previous: first flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
@@ -622,7 +622,7 @@ module.exports = () => {
                 // Previous: second flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
                 expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
-                    .have.all.deep.members([{ from: null, to: new Date('2024-07-01 16:00:00').getTime() }]);
+                    .have.all.deep.members([{ from: null, to: new Date('2024-07-01 12:00:00').getTime() }]);
             }
         });
     });
