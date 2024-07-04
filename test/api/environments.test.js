@@ -20,20 +20,10 @@ module.exports = () => {
     const { server } = require('../../lib/application');
 
     describe('GET /api/environments', () => {
-        it('should return 201 if valid data is provided', (done) => {
-            request(server)
-                .get('/api/environments')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.be.an('array');
-
-                    done();
-                });
+        it('should return 200 if valid data is provided', async () => {
+            const response = await request(server).get('/api/environments');
+            expect(response.status).to.equal(200);
+            expect(response.body.data).to.be.an('array');
         });
 
         it('should successfully show all environments without filter', async () => {
@@ -178,117 +168,70 @@ module.exports = () => {
         });
     });
     describe('POST /api/environments', () => {
-        it('should return 201 if valid data is provided', (done) => {
-            request(server)
-                .post('/api/environments')
-                .expect(201)
-                .send({
-                    envId: 'New original env',
-                    status: 'STANDBY',
-                    statusMessage: 'This is going very good',
-                })
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 201 if valid data is provided', async () => {
+            const response = await request(server).post('/api/environments').send({
+                envId: 'New original env',
+                rawConfiguration: 'epn=5\ndcs="enabled"',
+                status: 'STANDBY',
+                statusMessage: 'This is going very good',
+            });
 
-                    const { data } = res.body;
-                    expect(data.id).to.equal('New original env');
-                    expect(data.status).to.equal('STANDBY');
-                    expect(data.statusMessage).to.equal('This is going very good');
-                    done();
-                });
+            expect(response.status).to.equal(201);
+
+            const { data } = response.body;
+            expect(data.id).to.equal('New original env');
+            expect(data.rawConfiguration).to.equal('epn=5\ndcs="enabled"');
+            expect(data.status).to.equal('STANDBY');
+            expect(data.statusMessage).to.equal('This is going very good');
         });
-        it('should return 400 if no id is provided', (done) => {
-            request(server)
-                .post('/api/environments')
-                .expect(400)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/envId');
-                    expect(titleError.detail).to.equal('"body.envId" is required');
+        it('should return 400 if no id is provided', async () => {
+            const response = await request(server).post('/api/environments');
+            expect(response.status).to.equal(400);
 
-                    done();
-                });
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/envId');
+            expect(titleError.detail).to.equal('"body.envId" is required');
         });
-        it('should return 400 if createdAt is no date', (done) => {
-            request(server)
-                .post('/api/environments')
-                .expect(400)
-                .send({
-                    envId: 'Cake environments',
-                    createdAt: 'This is no date',
-                })
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
 
-                    const { errors } = res.body;
-                    const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/createdAt');
-                    expect(titleError.detail).to.equal('"body.createdAt" must be a valid date');
+        it('should return 400 if createdAt is no date', async () => {
+            const response = await request(server).post('/api/environments').send({
+                envId: 'Cake environments',
+                createdAt: 'This is no date',
+            });
+            expect(response.status).to.equal(400);
 
-                    done();
-                });
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/body/createdAt');
+            expect(titleError.detail).to.equal('"body.createdAt" must be a valid date');
         });
-        it('should return 400 if id already exists', (done) => {
-            request(server)
-                .post('/api/environments')
-                .send({
-                    envId: 'Dxi029djX',
-                })
-                .expect(409)
-                .end((err) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
 
-                    done();
-                });
+        it('should return 409 if id already exists', async () => {
+            const response = await request(server).post('/api/environments').send({
+                envId: 'Dxi029djX',
+            });
+
+            expect(response.status).to.equal(409);
         });
     });
     describe('PUT /api/environment/:envId', () => {
-        const toredownDate = new Date().setMilliseconds('0');
-        it('should return 400 if the wrong id is provided', (done) => {
-            request(server)
-                .put('/api/environments/99999')
-                .expect(400)
-                .end((err) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        const teardownDate = new Date().setMilliseconds('0');
 
-                    done();
-                });
+        it('should return 400 if the wrong id is provided', async () => {
+            const response = await request(server).put('/api/environments/99999');
+            expect(response.status).to.equal(400);
         });
-        it('should return 201 if valid data is given', (done) => {
-            request(server)
-                .put('/api/environments/KGIS12DS')
-                .send({
-                    toredownAt: toredownDate,
-                    status: 'DESTROYED',
-                    statusMessage: 'This is a good environment.',
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    expect(res.body.data.status).to.equal('DESTROYED');
-                    expect(res.body.data.toredownAt).to.equal(toredownDate);
-                    expect(res.body.data.statusMessage).to.equal('This is a good environment.');
-                    done();
-                });
+        it('should return 201 if valid data is given', async () => {
+            const response = await request(server).put('/api/environments/KGIS12DS').send({
+                toredownAt: teardownDate,
+                status: 'DESTROYED',
+                statusMessage: 'This is a good environment.',
+            });
+            expect(response.status).to.equal(201);
+
+            expect(response.body.data.status).to.equal('DESTROYED');
+            expect(response.body.data.toredownAt).to.equal(teardownDate);
+            expect(response.body.data.statusMessage).to.equal('This is a good environment.');
         });
     });
 
