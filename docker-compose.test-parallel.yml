@@ -40,16 +40,11 @@ services:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
     restart: unless-stopped
     volumes:
-      - type: volume
-        read_only: false
-        source: database-data
-        target: /var/lib/mysql
+      - database-data:/var/lib/mysql
       - type: bind
-        read_only: true
         source: ./database/configuration
         target: /etc/mysql/conf.d
       - type: bind
-        read_only: true
         source: ./database/populate
         target: /docker-entrypoint-initdb.d
     ports:
