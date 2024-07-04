@@ -14,8 +14,13 @@
 const { expect } = require('chai');
 const { getMockMonAlisaClient } = require('./data/getMockMonAlisaClient.js');
 const { MonAlisaSynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonAlisaSynchronizer.js');
-const { repositories:
-    { DataPassRepository, LhcPeriodRepository, SimulationPassRepository, RunRepository } } = require('../../../../lib/database/index.js');
+const { repositories: {
+    DataPassRepository,
+    LhcPeriodRepository,
+    SimulationPassRepository,
+    RunRepository,
+    DataPassVersionRepository,
+} } = require('../../../../lib/database/index.js');
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
@@ -33,7 +38,7 @@ module.exports = () => {
         const expectedDataPassesVersions = mockDataPassesVersions.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
         // Check whether examining data passes with last runs works correctly;
-        let lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
+        let lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndId();
         expect(mockDataPassesVersions.every((dataPass) => monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
 
         // Run Synchronization
@@ -90,8 +95,18 @@ module.exports = () => {
         }
 
         // Check whether examining data passes with last runs works correctly;
-        lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
+        lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndId();
         expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
+
+        let productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMonAlisa: true } });
+        expect(productionsDeletedFromMl).to.be.lengthOf(3);
+
+        const fetchAllMockDataPassesVersions = monAlisaClient._fetchDataPassesVersions;
+        monAlisaClient._fetchDataPassesVersions = async () => (await fetchAllMockDataPassesVersions()).split('\n').slice(0, -5).join('\n');
+
+        await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
+        productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMonAlisa: true } });
+        expect(productionsDeletedFromMl).to.be.lengthOf(7);
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
