@@ -59,10 +59,16 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "te
 # ---- Test parallel for CI ----
 FROM developmentdependencies as test_parallel
 
+# Set ARG and ENV for TEST_TYPE
 ARG TEST_TYPE
 ENV TEST_TYPE=${TEST_TYPE}
 
-CMD /opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:${TEST_TYPE}
+# Add the entrypoint script
+COPY parallel-test.sh /parallel-test.sh
+RUN chmod +x /parallel-test.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/parallel-test.sh"]
 
 #
 # ---- Coverage ----
