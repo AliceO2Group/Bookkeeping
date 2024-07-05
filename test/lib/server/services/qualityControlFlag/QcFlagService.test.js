@@ -561,6 +561,7 @@ module.exports = () => {
             let to;
             let qcFlag;
             let effectivePeriods;
+            let qcSummary;
             const createdFlagIds = [];
 
             // 1
@@ -579,6 +580,24 @@ module.exports = () => {
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
                 expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
+
+                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
+                expect(qcSummary).to.be.eql({
+                    106: {
+                        1: {
+                            badEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
+                        },
+                    },
+                    [runNumber]: {
+                        [dplDetectorId]: {
+                            badEffectiveRunCoverage: 1,
+                            mcReproducible: true,
+                            missingVerificationsCount: 1,
+                        },
+                    },
+                });
             }
 
             // 2
@@ -601,6 +620,24 @@ module.exports = () => {
                 // Previous: first flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
                 expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from: to, to: null }]);
+
+                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
+                expect(qcSummary).to.be.eql({
+                    106: {
+                        1: {
+                            badEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
+                        },
+                    },
+                    [runNumber]: {
+                        [dplDetectorId]: {
+                            badEffectiveRunCoverage: -1,
+                            mcReproducible: true,
+                            missingVerificationsCount: 2,
+                        },
+                    },
+                });
             }
 
             // 3
