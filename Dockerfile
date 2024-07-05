@@ -63,8 +63,7 @@ FROM developmentdependencies as test_parallel
 ARG TEST_TYPE
 ENV TEST_TYPE=${TEST_TYPE}
 
-# Add the entrypoint script
-COPY parallel-test.sh /parallel-test.sh
+# Make sure script is executable
 RUN chmod +x /parallel-test.sh
 
 # Set the entrypoint

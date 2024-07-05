@@ -8,3 +8,4 @@
 !.sequelizerc
 !.nycrc
 !package*.json
+!parallel-test.sh
