@@ -551,7 +551,7 @@ module.exports = () => {
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             const flagTypeId = 5;
             const runNumber = 654321;
-            const dplDetectorId = 1; // CPV - It's also Id od detector
+            const dplDetectorId = 1; // CPV - It's also Id of detector
             const dataPassId = 1;
             await runService.create({ runNumber });
             const run = await RunRepository.findOne({ where: { runNumber } });
