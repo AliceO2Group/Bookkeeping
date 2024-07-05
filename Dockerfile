@@ -16,6 +16,24 @@ RUN apk add --no-cache \
 # ---- Development Dependencies ----
 FROM base as developmentdependencies
 
+# Copy all files, except those ignored by .dockerignore, to the container
+COPY . .
+
+# Installs modules from package-lock.json, this ensures reproducible build
+RUN npm ci --verbose
+
+#
+# ---- Development ----
+FROM developmentdependencies as development
+
+# Run start script as specified in package.json
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
+
+
+#
+# ---- Test ----
+FROM developmentdependencies as test
+
 # Installs Git and packages required for Puppeteer
 # https://pkgs.alpinelinux.org/packages
 RUN apk add --no-cache \
@@ -29,28 +47,6 @@ RUN apk add --no-cache \
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
-
-# Installs modules from package-lock.json, this ensures reproducible build
-RUN npm --silent ci
-
-# Copy all files, except those ignored by .dockerignore, to the container
-COPY . .
-
-
-#
-# ---- Development ----
-FROM developmentdependencies as development
-
-# Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
-
-
-#
-# ---- Test ----
-FROM developmentdependencies as test
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
