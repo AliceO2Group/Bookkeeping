@@ -24,7 +24,7 @@ jobs:
                     runs,
                     subsystems,
                     tags,
-                    flp,
+                    flps,
                     home,
                     about,
                     eosReport,
