@@ -63,6 +63,8 @@ FROM developmentdependencies as test_parallel
 ARG TEST_TYPE
 ENV TEST_TYPE=${TEST_TYPE}
 
+RUN chmod +x parallel-test.sh
+
 # Set the entrypoint
 ENTRYPOINT ["/parallel-test.sh"]
 
