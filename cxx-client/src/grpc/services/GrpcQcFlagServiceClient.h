@@ -26,6 +26,7 @@ class GrpcQcFlagServiceClient : public QcFlagServiceClient
 {
  public:
   explicit GrpcQcFlagServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  ~GrpcQcFlagServiceClient() override = default;
 
   std::vector<int> createForDataPass(uint32_t runNumber, const std::string& passName, const std::string& detectorName, const std::vector<QcFlag>& qcFlags) override;
   std::vector<int> createForSimulationPass(uint32_t runNumber, const std::string& productionName, const std::string& detectorName, const std::vector<QcFlag>& qcFlags) override;

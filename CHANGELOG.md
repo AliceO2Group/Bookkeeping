@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.94.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.94.0)
+* Notable changes for users:
+  * Replaced previous display for missing verifications with warning icon displaying information tooltip
+  * Changed display of `Add QC` button in QC summary to take all available space
+  * Added navigation to ECS active environments and for running runs:
+    * from run details page
+    * from run overview page
+    * from environments details page
+    * from environments overview page
+  * Added special display for Limited Acceptance MC Reproducible in QC summary
+  * Changed QC summary colours palette to match bookkeeping standards
+  * Added possibility to save raw configuration when creating an environment
+  * Display a new tab in environments details to show raw configuration
+  * Added ADJUST beam mode option for on-call log template
+  * Format properly fill start and duration in RC daily meeting minutes template
+  * Fixed runs to check display to be in a panel as the other inputs
+  * Marked data passes deleted from ML with green color and icon
+
+## [0.93.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.93.0)
+* Notable changes for users:
+  * Added c++ client to set trigger counters for a run
+  * Improved RC daily template:
+    * Display fills on one line
+    * Display only fills with stable beams
+    * Exclude the EoS report from the logs list in RC daily meeting minutes template
+    * Display only physics runs
+    * Display the runs list as pre-filled editable markdown input
+  * Display run period in LHC fill display page
+  * Disabled QC for runs which are tags as Not for physics and marked such runs in RunPerLhcPeriod view
+  * Fixed bug of popover not being placed in the right position when using browser zoom
+  * Fixed popover not being resized when filtering drop-down options
+  * Fixed popover not being properly resized along cross axis when using browser zoom
+  * Fixed popover not being properly clipped when overflowing along cross axis
+* Notable changes for developers:
+  * Added runs' filtering by aliceL3Current and aliceDipoleCurrent
+  * Removed default URLs from services config
+  * Removed randomness of two QC flags creation tests
+
 ## [0.92.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.92.0)
 * Notable changes for users:
   * Adds 2 decimals display to plots of LHC Fills statistics

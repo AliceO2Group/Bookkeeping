@@ -16,5 +16,5 @@ const DetailsPageSuite = require('./detailsPage.test.js');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
-    describe('Details page', DetailsPageSuite);
+    describe('Details Page', DetailsPageSuite);
 };

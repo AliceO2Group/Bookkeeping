@@ -611,4 +611,9 @@ module.exports = () => {
         expect(run.userIdO2Start).to.not.be.null;
         expect(run.userIdO2Stop).to.not.be.null;
     });
+
+    it('should fetch distinct aliceCurrent levels', async () => {
+        const levelsCombinations = await runService.getAllAliceL3AndDipoleLevelsForPhysicsRuns();
+        expect(levelsCombinations).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
+    });
 };
