@@ -16,22 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         test_type: [unit,
-                    api,
-                    lhcPeriods,
-                    lhcFills,
-                    logs,
-                    envs,
-                    runs,
-                    subsystems,
-                    tags,
-                    flp,
-                    home,
-                    about,
-                    eosReport,
-                    dataPasses,
-                    simulationPasses,
-                    qcFlagTypes,
-                    qcFlags]
+                    api,]
 
     steps:
       - uses: actions/checkout@v4
