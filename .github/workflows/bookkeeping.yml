@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  matrix_test:
+  parallel_tests:
     name: ${{ matrix.test_type }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -16,7 +16,22 @@ jobs:
       fail-fast: false
       matrix:
         test_type: [unit,
-                    api,]
+                    api,
+                    lhcPeriods,
+                    lhcFills,
+                    logs,
+                    envs,
+                    runs,
+                    subsystems,
+                    tags,
+                    flp,
+                    home,
+                    about,
+                    eosReport,
+                    dataPasses,
+                    simulationPasses,
+                    qcFlagTypes,
+                    qcFlags]
 
     steps:
       - uses: actions/checkout@v4
