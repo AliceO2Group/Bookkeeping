@@ -554,7 +554,7 @@ module.exports = () => {
             const dplDetectorId = 1; // CPV - It's also Id of detector
             const dataPassId = 1;
             await runService.create({ runNumber });
-            const run = await RunRepository.findOne({ where: { runNumber } });
+            const run = await RunRepository.findOne({ where: { runNumber } }); // Create run without timestamps
             await run.addDataPass(dataPassId);
             await run.addDetector(dplDetectorId);
             let from;
