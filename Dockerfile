@@ -56,6 +56,16 @@ FROM developmentdependencies as test
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
 
 #
+# ---- Test parallel for CI ----
+FROM developmentdependencies as test_parallel
+
+# Set ARG and ENV for TEST_TYPE
+ARG TEST_TYPE
+ENV TEST_TYPE=${TEST_TYPE}
+
+CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset" ]
+
+#
 # ---- Coverage ----
 FROM developmentdependencies as coverage
 
