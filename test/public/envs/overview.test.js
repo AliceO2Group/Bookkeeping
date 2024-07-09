@@ -24,6 +24,7 @@ const {
     waitForNavigation,
     getInnerText,
     waitForTableLength,
+    getPopoverSelector,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -183,8 +184,8 @@ module.exports = () => {
 
         // Running env
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
-        let popover = await page.waitForSelector(`.popover:has(button[id='copy-${envId}'])`);
-        await expectLink(popover, 'a:nth-of-type(1)', {
+        let popover = await getPopoverSelector(`tr[id='row${envId}'] .popover-trigger`);
+        await expectLink(page, `${popover} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });

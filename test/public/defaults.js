@@ -767,7 +767,7 @@ module.exports.unsetConfirmationDialogActions = (page) => {
  * @return {Promise<void>} promise
  */
 module.exports.expectLink = async (element, selector, { href, innerText }) => {
-    await element.waitForSelector(selector, { timeout: 5000 });
+    await element.waitForSelector(selector);
     const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
     expect(actualLinkProperties).to.eql({ href, innerText });
 };
