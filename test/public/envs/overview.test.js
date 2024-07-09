@@ -15,7 +15,6 @@ const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    goToPage,
     checkColumnBalloon,
     expectLink,
     validateTableData,
@@ -24,6 +23,8 @@ const {
     waitForNavigation,
     getInnerText,
     waitForTableLength,
+    getPopoverSelector,
+    goToPage,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -50,10 +51,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'env-overview');
-
-        // We expect the page to return the correct status code, making sure the server is running properly
-        expect(response.status()).to.equal(200);
+        await goToPage(page, 'env-overview');
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
@@ -171,7 +169,7 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        await goToPage(page, 'env-overview');
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
         await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
@@ -182,14 +180,15 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
 
         // Running env
-        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
-        let popover = await page.waitForSelector(`.popover:has(button[id='copy-${envId}'])`);
-        await expectLink(popover, 'a:nth-of-type(1)', {
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
+        let popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
+
+        await expectLink(page, `${popover} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await expectLink(popover, 'a:nth-of-type(2)', {
+        await expectLink(page, `${popover} a:nth-of-type(2)`, {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
         });
@@ -197,12 +196,12 @@ module.exports = () => {
         // Not running env
         envId = 'EIDO13i3D';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
-        popover = await page.waitForSelector(`.popover:has(button[id='copy-${envId}'])`);
-        await expectLink(popover, 'a:nth-of-type(1)', {
+        popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
+        await expectLink(page, `${popover} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await popover.waitForSelector('a:nth-of-type(2)', { hidden: true });
+        await page.waitForSelector(`${popover} a:nth-of-type(2)`, { hidden: true });
     });
 };

@@ -65,7 +65,7 @@ const DETECTORS = [
  */
 const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
     expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
@@ -142,7 +142,7 @@ module.exports = () => {
 
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
-            innerText: '16MC.R',
+            innerText: '67MC.R',
         });
         await page.waitForSelector('tr#row106 .column-CPV a .icon');
     });
