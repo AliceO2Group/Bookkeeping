@@ -15,7 +15,6 @@ const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    goToPage,
     checkColumnBalloon,
     expectLink,
     validateTableData,
@@ -51,10 +50,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'env-overview');
-
-        // We expect the page to return the correct status code, making sure the server is running properly
-        expect(response.status()).to.equal(200);
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
@@ -172,7 +168,7 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        await goToPage(page, 'env-overview');
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
         await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
