@@ -619,6 +619,7 @@ module.exports = () => {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: false,
                             missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
                         },
                     },
                     [runNumber]: {
@@ -626,6 +627,7 @@ module.exports = () => {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: true,
                             missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
                         },
                     },
                 });
@@ -659,11 +661,13 @@ module.exports = () => {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: false,
                             missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
                         },
                     },
                     [runNumber]: {
                         [dplDetectorId]: {
-                            badEffectiveRunCoverage: -1,
+                            badEffectiveRunCoverage: null,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
                             mcReproducible: true,
                             missingVerificationsCount: 2,
                         },
