@@ -65,7 +65,7 @@ const DETECTORS = [
  */
 const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
     expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
