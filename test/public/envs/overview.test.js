@@ -24,6 +24,7 @@ const {
     getInnerText,
     waitForTableLength,
     getPopoverSelector,
+    goToPage,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -50,7 +51,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await goToPage(page, 'env-overview');
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
