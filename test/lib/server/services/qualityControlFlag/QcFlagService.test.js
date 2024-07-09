@@ -124,22 +124,52 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.8376,
+                        badEffectiveRunCoverage: 0.3333,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
         });
 
         it('should succsessfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 2 })).to.be.eql({
+            const dataPassId = 2;
+            const run = await RunRepository.findOne({ where: { runNumber: 1 } });
+            const { timeTrgStart, timeO2Start, timeTrgEnd, timeO2End } = run;
+            const runDuration = (timeTrgEnd ?? timeO2End) - (timeTrgStart ?? timeO2Start);
+
+            const effectivePeriods = await QcFlagEffectivePeriodRepository.findAll({
+                include: [
+                    {
+                        association: 'flag',
+                        where: { runNumber: run.runNumber },
+                        include: [
+                            { association: 'dataPasses', where: { id: dataPassId } },
+                            { association: 'flagType', where: { bad: true } },
+                        ],
+                    },
+                ],
+            });
+            const badCoverage = effectivePeriods
+                .filter(({ flag: { flagType: { bad } } }) => bad)
+                .reduce((coverage, { from, to }) => coverage + (to - from), 0);
+
+            const goodCoverage = effectivePeriods
+                .filter(({ flag: { flagType: { bad } } }) => !bad)
+                .reduce((coverage, { from, to }) => coverage + (to - from), 0);
+
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.0196,
+                        badEffectiveRunCoverage: 0.0769,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
+
+            expect(goodCoverage / runDuration).to.be.equal(0);
+            expect((badCoverage / runDuration).toFixed(4)).to.be.equal('0.0769');
         });
 
         it('should succsessfully get empty QC flag summary for data pass', async () => {
@@ -152,7 +182,8 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.9310,
+                        badEffectiveRunCoverage: 0.7222,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });

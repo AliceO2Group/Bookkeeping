@@ -47,3 +47,8 @@ jobs:
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
             config --quiet
+      - name: Validate docker-compose.test-parallel.yml
+        run: |
+          docker compose \
+            -f docker-compose.test-parallel.yml \
+            config --quiet
