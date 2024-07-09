@@ -182,12 +182,13 @@ module.exports = () => {
         // Running env
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
         let popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
+
         await expectLink(page, `${popover} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await expectLink(page, `${popover}a:nth-of-type(2)`, {
+        await expectLink(page, `${popover} a:nth-of-type(2)`, {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
         });
@@ -201,6 +202,6 @@ module.exports = () => {
             innerText: 'Infologger FLP',
         });
 
-        await popover.waitForSelector('a:nth-of-type(2)', { hidden: true });
+        await page.waitForSelector(`${popover} a:nth-of-type(2)`, { hidden: true });
     });
 };
