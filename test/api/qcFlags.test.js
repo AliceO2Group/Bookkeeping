@@ -77,6 +77,7 @@ module.exports = () => {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -92,6 +93,7 @@ module.exports = () => {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.7222,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
