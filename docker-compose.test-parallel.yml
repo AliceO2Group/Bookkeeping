@@ -15,6 +15,10 @@ services:
       JWT_SECRET: BOOKKEEPING-TEST-SUITE
       PAGE_ITEMS_LIMIT: 100
       DATABASE_HOST: test_db
+      ALI_ECS_GUI_URL: "${ALI_ECS_GUI_URL:-http://localhost:8080}"
+      FLP_INFOLOGGER_URL: "${ALI_ECS_GUI_URL:-http://localhost:8081}"
+      QC_GUI_URL: "${ALI_ECS_GUI_URL:-http://localhost:8082}"
+      ALI_FLP_INDEX_URL: "${ALI_ECS_GUI_URL:-http://localhost:80}"
     links:
       - test_db
     restart: "no"
