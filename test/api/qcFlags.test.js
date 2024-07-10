@@ -373,7 +373,7 @@ module.exports = () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
             const dplDetectorIds = [4, 7];
-            const response = await request(server).post('/api/qcFlags/gaq').send({
+            const response = await request(server).post('/api/qcFlags/gaqDetectors').send({
                 dataPassId,
                 runNumbers,
                 dplDetectorIds,
