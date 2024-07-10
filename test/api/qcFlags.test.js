@@ -368,7 +368,7 @@ module.exports = () => {
         });
     });
 
-    describe('POST /api/qcFlags/gaq', () => {
+    describe('POST /api/qcFlags/gaqDetectors', () => {
         it('should succesfuly set GAQ detectors', async () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
@@ -379,7 +379,7 @@ module.exports = () => {
                 dplDetectorIds,
             });
             expect(response.status).to.be.equal(201);
-            expect(response.bodyu.data).to.have.all.deep.members(runNumbers
+            expect(response.body.data).to.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
         });
     });
