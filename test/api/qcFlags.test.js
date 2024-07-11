@@ -75,7 +75,9 @@ module.exports = () => {
                 106: {
                     1: {
                         missingVerificationsCount: 3,
-                        badEffectiveRunCoverage: 0.8376,
+                        mcReproducible: true,
+                        badEffectiveRunCoverage: 0.3333,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -89,7 +91,9 @@ module.exports = () => {
                 106: {
                     1: {
                         missingVerificationsCount: 1,
-                        badEffectiveRunCoverage: 0.9310,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.7222,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });

@@ -20,7 +20,6 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    reloadPage,
     expectColumnValues,
     fillInput,
     validateTableData,
@@ -31,8 +30,9 @@ const {
     waitForDownload,
     getPopoverContent,
     getPopoverSelector,
+    getInnerText,
+    expectUrlParams,
 } = require('../defaults.js');
-const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -55,6 +55,23 @@ const DETECTORS = [
     'ZDC',
 ];
 
+/**
+ * Navigate to Runs per Data Pass page
+ *
+ * @param {Puppeteer.page} page page
+ * @param {number} params.lhcPeriodId id of lhc period on LHC Period overview page
+ * @param {number} params.dataPassId id of data pass on Data Passes per LHC Period page
+ * @return {Promise<void>} promise
+ */
+const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
+    await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
+    expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
+    await page.waitForSelector('th#description');
+    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
+    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId });
+};
+
 module.exports = () => {
     let page;
     let browser;
@@ -74,7 +91,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        const response = await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
@@ -85,11 +102,11 @@ module.exports = () => {
 
         await page.waitForSelector('h2');
         const viewTitleElements = await Promise.all((await page.$$('h2')).map((element) => element.evaluate(({ innerText }) => innerText)));
-        expect(viewTitleElements).to.have.all.ordered.members(['Physics Runs', 'LHC22a_apass1']);
+        expect(viewTitleElements).to.have.all.ordered.members(['Physics Runs', 'LHC22b_apass1']);
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
         // Expectations of header texts being of a certain datatype
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
@@ -110,46 +127,35 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+(\nMC\.R)?)/.test(qualityDisplay),
             ])),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
-        await expectLink(page, 'tr#row105 .column-CPV a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
+
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+
+        await expectLink(page, 'tr#row106 .column-EMC a', {
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=106&dplDetectorId=2&dataPassId=1',
             innerText: 'QC',
         });
 
-        const [tmpQcFlag] = await qcFlagService.create(
-            [{ flagTypeId: 3 }],
-            { runNumber: 105, dataPassIdentifier: { id: 3 }, dplDetectorIdentifier: { dplDetectorId: 1 } },
-            { user: { externalUserId: 1, roles: ['admin'] } }, // Create good flag
-        );
-
-        await reloadPage(page);
-        await expectLink(page, 'tr#row105 .column-CPV a', {
-            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=105&dplDetectorId=1&dataPassId=3',
-            innerText: '100',
+        await expectLink(page, 'tr#row106 .column-CPV a', {
+            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
+            innerText: '67MC.R',
         });
-        await page.waitForSelector('tr#row105 .column-CPV a .icon');
-
-        await qcFlagService.delete(tmpQcFlag.id); // Remove tmp flag
+        await page.waitForSelector('tr#row106 .column-CPV a .icon');
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await reloadPage(page);
-
-        await page.waitForSelector('#firstRowIndex');
         await expectInnerText(page, '#firstRowIndex', '1');
-
-        await page.waitForSelector('#lastRowIndex');
-        await expectInnerText(page, '#lastRowIndex', '4');
-
-        await page.waitForSelector('#totalRowsCount');
-        await expectInnerText(page, '#totalRowsCount', '4');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('successfully switch to raw timestamp display', async () => {
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
+
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
 
@@ -162,8 +168,6 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await reloadPage(page);
-
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
@@ -186,10 +190,15 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-return-assign, no-undef
+            model.runs.perDataPassOverviewModel.pagination.reset();
+            // eslint-disable-next-line no-return-assign, no-undef
+            model.runs.perDataPassOverviewModel.notify();
+        });
     });
 
     it('notifies if table loading returned an error', async () => {
-        await reloadPage(page);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
@@ -201,16 +210,16 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 10;
+            model.runs.perDataPassOverviewModel.pagination.reset();
+            // eslint-disable-next-line no-undef
+            model.runs.perDataPassOverviewModel.notify();
         });
         await waitForTableLength(page, 4);
     });
 
     it('can navigate to a run detail page', async () => {
-        await reloadPage(page);
         await page.waitForSelector('tbody tr');
-
-        const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
+        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
 
         await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
         const redirectedUrl = await page.url();
@@ -222,7 +231,7 @@ module.exports = () => {
     });
 
     it('should successfully export runs', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
 
         const targetFileName = 'runs.json';
 
@@ -255,7 +264,8 @@ module.exports = () => {
 
     // Filters
     it('should successfuly apply runNumber filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.runNumber-filter input[type=text]', '108,107');
@@ -266,7 +276,8 @@ module.exports = () => {
     });
 
     it('should successfuly apply detectors filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 });
+
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
@@ -278,7 +289,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply tags filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
@@ -293,7 +304,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply timeStart filter', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 });
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
@@ -335,7 +346,7 @@ module.exports = () => {
     });
 
     it('should successfuly apply alice currents filters', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
         await pressElement(page, '#openFilterToggle');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
@@ -348,7 +359,7 @@ module.exports = () => {
     });
 
     it('should display bad runs marked out', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 2 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 });
 
         await page.waitForSelector('tr#row2.danger');
         await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
