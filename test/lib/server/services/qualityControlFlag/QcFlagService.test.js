@@ -149,6 +149,82 @@ module.exports = () => {
         });
     });
 
+    describe('Fetch GAQ flags', () => {
+        const dataPassId = 3;
+        it('should successfuly set GAQ detectors', async () => {
+            const runNumber = 334455;
+            const timeTrgStart = t(`06:00:00');
+            const timeTrgEnd = t(`22:00:00');
+            await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
+            const run = await RunRepository.findOne({ where: { runNumber } });
+            const dplDetectorIds = [1, 2, 3];
+            await run.addDetectors(dplDetectorIds);
+            await qcFlagService.setGaqDetectors({ dataPassId, runNumbers: [runNumber], dplDetectorIds });
+
+            const scope = {
+                runNumber,
+                dataPassIdentifier: { id: dataPassId },
+            };
+            const scopeCPV = { ...scope, dplDetectorIdentifier: { dplDetectorId: 1 } };
+            const scopeEMC = { ...scope, dplDetectorIdentifier: { dplDetectorId: 2 } };
+            const scopeFDD = { ...scope, dplDetectorIdentifier: { dplDetectorId: 3 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const goodFlagTypeId = 3;
+            const badPidlagTypeId = 12;
+            const lmimittedAccMCTypeId = 5;
+
+            /**
+             * Get unix timestamp for given time on 2024-07-10
+             * @param {string} timeString
+             * @return {number} unix timestamp
+             */
+            const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
+
+            const flagsForCPVids = await qcFlagService.create([
+                { from: t('06:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('06:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: lmimittedAccMCTypeId },
+                { from: t('18:00:00'), to: t('22:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeCPV, relations);
+
+            const flagsForEMCids = await qcFlagService.create([
+                { from: t('06:00:00'), to: t('10:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('10:00:00'), to: t('12:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('12:00:00'), to: t('13:00:00'), flagTypeId: lmimittedAccMCTypeId },
+                { from: t('14:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('18:00:00'), to: t('20:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeEMC, relations);
+
+            const flagsForFDDids = await qcFlagService.create([
+                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
+            ], scopeFDD, relations);
+
+            const gaqFlags = await qcFlagService.getGaqQcFlags(dataPassId, runNumber);
+            const data = gaqFlags.map(({
+                from,
+                to,
+                contributingFlags,
+            }) => ({
+                from,
+                to,
+                contributingFlags: contributingFlags
+                    .map(({ from, to, id, flagTypeId, dplDetectorId }) => ({ from, to, id, flagTypeId, dplDetectorId })),
+            }));
+
+            expect(data).to.have.all.deep.members([
+                { from: t('06:00:00'), to: t('10:00:00'), contributingFlags: [] },
+                { from: t('10:00:00'), to: t('12:00:00'), contributingFlags: [] },
+                { from: t('12:00:00'), to: t('13:00:00'), contributingFlags: [] },
+                { from: t('13:00:00'), to: t('14:00:00'), contributingFlags: [] },
+                { from: t('14:00:00'), to: t('16:00:00'), contributingFlags: [] },
+                { from: t('16:00:00'), to: t('18:00:00'), contributingFlags: [/** empty */] },
+                { from: t('18:00:00'), to: t('20:00:00'), contributingFlags: [] },
+                { from: t('20:00:00'), to: t('22:00:00'), contributingFlags: [] },
+            ])
+        });
+    });
+
     describe('Get QC flags summary', () => {
         it('should succsessfully get non-empty QC flag summary for data pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
