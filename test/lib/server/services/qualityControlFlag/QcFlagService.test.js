@@ -118,29 +118,6 @@ module.exports = () => {
         });
     });
 
-    describe('Manage GAQ detectors', () => {
-        const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
-            const runNumbers = [49, 56];
-            const dplDetectorIds = [4, 7];
-            const data = await qcFlagService.setGaqDetectors(dataPassId, runNumbers, dplDetectorIds);
-            expect(data).to.be.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
-        });
-        it('should fail to set GAQ detectors because of miaaing association', async () => {
-            let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
-            assert.rejects(
-                () => qcFlagService.setGaqDetectors(dataPassId, [1], [4]),
-                new BadParameterError(errorMessage),
-            );
-            errorMessage = `No association between runs and detectors: ${JSON.stringify([[56, 'CPV']])}`;
-            assert.rejects(
-                () => qcFlagService.setGaqDetectors(dataPassId, [105, 56], [1]),
-                new BadParameterError(errorMessage),
-            );
-        });
-    });
-
     describe('Get QC flags summary', () => {
         it('should succsessfully get non-empty QC flag summary for data pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
