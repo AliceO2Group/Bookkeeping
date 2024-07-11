@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.95.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.95.0)
+* Notable changes for users:
+  * Fixed incorrect values of run coverage in QC summary
+  * Added handling of QC summary calculation for runs with missing timestamps
+  * Fixed bug with QC flag creation when run's timestamp is missing
+  * In RC daily meeting template, logs, fills and magnets are now fetched between 4PM the day before and 4PM today. The runs stay from noon to noon.
+  * Added API for setting GAQ detectors
+* Notable changes for developers:
+  * Fixed randomly failing tests for Runs Per Data Pass Page
+  * Separated tests environment into individual docker instances to run tests in parallel
+
 ## [0.94.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.94.0)
 * Notable changes for users:
   * Replaced previous display for missing verifications with warning icon displaying information tooltip
