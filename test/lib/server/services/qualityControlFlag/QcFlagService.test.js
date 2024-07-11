@@ -20,6 +20,7 @@ const { ConflictError } = require('../../../../../lib/server/errors/ConflictErro
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
+const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService');
 
 /**
  * Get effective part and periods of Qc flag
@@ -168,8 +169,9 @@ module.exports = () => {
             const dplDetectorIds = [1, 2, 3];
             await run.addDataPass(dataPassId);
             await run.addDetectors(dplDetectorIds);
-            await qcFlagService.setGaqDetectors({ dataPassId, runNumbers: [runNumber], dplDetectorIds });
+            await dataPassService.setGaqDetectors(dataPassId, [runNumber], dplDetectorIds);
 
+            // Creating flags fo CPV, EMC, FDD
             const scope = {
                 runNumber,
                 dataPassIdentifier: { id: dataPassId },
@@ -182,25 +184,25 @@ module.exports = () => {
             const badPidlagTypeId = 12;
             const lmimittedAccMCTypeId = 5;
 
-            const cpvFlagIds = await qcFlagService.create([
+            const cpvFlagIds = (await qcFlagService.create([
                 { from: t('06:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
                 { from: t('06:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
                 { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: lmimittedAccMCTypeId },
                 { from: t('18:00:00'), to: t('22:00:00'), flagTypeId: goodFlagTypeId },
-            ], scopeCPV, relations);
+            ], scopeCPV, relations)).map(({ id }) => id);
 
-            const emcFlagIds = await qcFlagService.create([
+            const emcFlagIds = (await qcFlagService.create([
                 { from: t('06:00:00'), to: t('10:00:00'), flagTypeId: goodFlagTypeId },
                 { from: t('10:00:00'), to: t('12:00:00'), flagTypeId: badPidlagTypeId },
                 { from: t('12:00:00'), to: t('13:00:00'), flagTypeId: lmimittedAccMCTypeId },
                 { from: t('14:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
                 { from: t('18:00:00'), to: t('20:00:00'), flagTypeId: goodFlagTypeId },
-            ], scopeEMC, relations);
+            ], scopeEMC, relations)).map(({ id }) => id);
 
-            const fddFlagIds = await qcFlagService.create([
+            const fddFlagIds = (await qcFlagService.create([
                 { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
                 { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
-            ], scopeFDD, relations);
+            ], scopeFDD, relations)).map(({ id }) => id);
 
             const gaqFlags = await qcFlagService.getGaqQcFlags(dataPassId, runNumber);
             const data = gaqFlags.map(({
@@ -210,17 +212,17 @@ module.exports = () => {
             }) => ({
                 from,
                 to,
-                contributingFlagIds: contributingFlags.map(({ id }) => id),
+                contributingFlagIds: contributingFlags.map(({ id }) => id).sort(),
             }));
 
-            expect(data).to.have.all.deep.members([
-                { from: t('06:00:00'), to: t('10:00:00'), contributingFlagIds: [cpvFlagIds[1], emcFlagIds[0]] },
-                { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [emcFlagIds[1], cpvFlagIds[2], fddFlagIds[1]] },
-                { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1], emcFlagIds[2]] },
-                { from: t('13:00:00'), to: t('14:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1]] },
-                { from: t('14:00:00'), to: t('16:00:00'), contributingFlagIds: [cpvFlagIds[0], emcFlagIds[3], fddFlagIds[0]] },
+            expect(data).to.have.all.deep.ordered.members([
+                { from: t('06:00:00'), to: t('10:00:00'), contributingFlagIds: [cpvFlagIds[1], emcFlagIds[0]].sort() },
+                { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [emcFlagIds[1], cpvFlagIds[2], fddFlagIds[1]].sort() },
+                { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1], emcFlagIds[2]].sort() },
+                { from: t('13:00:00'), to: t('14:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1]].sort() },
+                { from: t('14:00:00'), to: t('16:00:00'), contributingFlagIds: [cpvFlagIds[0], emcFlagIds[3], fddFlagIds[0]].sort() },
                 { from: t('16:00:00'), to: t('18:00:00'), contributingFlagIds: [/** Empty */] },
-                { from: t('18:00:00'), to: t('20:00:00'), contributingFlagIds: [cpvFlagIds[3], emcFlagIds[4]] },
+                { from: t('18:00:00'), to: t('20:00:00'), contributingFlagIds: [cpvFlagIds[3], emcFlagIds[4]].sort() },
                 { from: t('20:00:00'), to: t('22:00:00'), contributingFlagIds: [cpvFlagIds[3]] },
             ]);
         });
