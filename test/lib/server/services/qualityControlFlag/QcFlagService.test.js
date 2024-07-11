@@ -123,27 +123,19 @@ module.exports = () => {
         it('should successfuly set GAQ detectors', async () => {
             const runNumbers = [49, 56];
             const dplDetectorIds = [4, 7];
-            const data = await qcFlagService.setGaqDetectors({ dataPassId, runNumbers, dplDetectorIds });
+            const data = await qcFlagService.setGaqDetectors(dataPassId, runNumbers, dplDetectorIds);
             expect(data).to.be.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
         });
         it('should fail to set GAQ detectors because of miaaing association', async () => {
             let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
             assert.rejects(
-                () => qcFlagService.setGaqDetectors({
-                    dataPassId,
-                    runNumbers: [1],
-                    dplDetectorIds: [4],
-                }),
+                () => qcFlagService.setGaqDetectors(dataPassId, [1], [4]),
                 new BadParameterError(errorMessage),
             );
             errorMessage = `No association between runs and detectors: ${JSON.stringify([[56, 'CPV']])}`;
             assert.rejects(
-                () => qcFlagService.setGaqDetectors({
-                    dataPassId,
-                    runNumbers: [105, 56],
-                    dplDetectorIds: [1],
-                }),
+                () => qcFlagService.setGaqDetectors(dataPassId, [105, 56], [1]),
                 new BadParameterError(errorMessage),
             );
         });
