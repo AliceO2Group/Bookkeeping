@@ -151,7 +151,7 @@ module.exports = () => {
 
     describe('Fetch GAQ flags', () => {
         const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
+        it('should successfuly get GAQ flags', async () => {
             /**
              * Get unix timestamp for given time on 2024-07-10
              * @param {string} timeString time string
