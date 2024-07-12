@@ -19,6 +19,7 @@ const { qcFlagService } = require('../../../../../lib/server/services/qualityCon
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError');
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
+const { runService } = require('../../../../../lib/server/services/run/RunService');
 
 /**
  * Get effective part and periods of Qc flag
@@ -26,7 +27,7 @@ const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
  * @return {Promise<{ from: number, to: number }[]>} effective periods
  */
 const getEffectivePeriodsOfQcFlag = async (flagId) => (await QcFlagEffectivePeriodRepository.findAll({ where: { flagId } }))
-    .map(({ from, to }) => ({ from: from.getTime(), to: to.getTime() }));
+    .map(({ from, to }) => ({ from: from?.getTime() ?? null, to: to?.getTime() ?? null }));
 
 const qcFlagWithId1 = {
     id: 1,
@@ -574,6 +575,168 @@ module.exports = () => {
                     const { id } = olderFlag;
                     expect({ id, effectivePeriods: await getEffectivePeriodsOfQcFlag(id) }).to.be.eql({ id, effectivePeriods: [] });
                 }
+            }
+        });
+
+        it('should handle flag creation for run with missing timestamps', async () => {
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const flagTypeId = 5;
+            const runNumber = 654321;
+            const dplDetectorId = 1; // CPV - It's also Id of detector
+            const dataPassId = 1;
+            await runService.create({ runNumber });
+            const run = await RunRepository.findOne({ where: { runNumber } }); // Create run without timestamps
+            await run.addDataPass(dataPassId);
+            await run.addDetector(dplDetectorId);
+            let from;
+            let to;
+            let qcFlag;
+            let effectivePeriods;
+            let qcSummary;
+            const createdFlagIds = [];
+
+            // 1
+            {
+                from = null;
+                to = null;
+                [qcFlag] = await qcFlagService.create(
+                    [{ flagTypeId, from, to }],
+                    {
+                        runNumber,
+                        dataPassIdentifier: { id: dataPassId },
+                        dplDetectorIdentifier: { dplDetectorId },
+                    },
+                    relations,
+                );
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                createdFlagIds.push(qcFlag.id);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
+
+                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
+                expect(qcSummary).to.be.eql({
+                    106: {
+                        1: {
+                            badEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                    [runNumber]: {
+                        [dplDetectorId]: {
+                            badEffectiveRunCoverage: 1,
+                            mcReproducible: true,
+                            missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                });
+            }
+
+            // 2
+            {
+                from = null;
+                to = new Date('2024-07-01 12:00:00').getTime();
+                [qcFlag] = await qcFlagService.create(
+                    [{ flagTypeId, from, to }],
+                    {
+                        runNumber,
+                        dataPassIdentifier: { id: dataPassId },
+                        dplDetectorIdentifier: { dplDetectorId },
+                    },
+                    relations,
+                );
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                createdFlagIds.push(qcFlag.id);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from, to }]);
+
+                // Previous: first flag
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from: to, to: null }]);
+
+                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
+                expect(qcSummary).to.be.eql({
+                    106: {
+                        1: {
+                            badEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                    [runNumber]: {
+                        [dplDetectorId]: {
+                            badEffectiveRunCoverage: null,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                            mcReproducible: true,
+                            missingVerificationsCount: 2,
+                        },
+                    },
+                });
+            }
+
+            // 3
+            {
+                from = new Date('2024-07-01 16:00:00').getTime();
+                to = null;
+                [qcFlag] = await qcFlagService.create(
+                    [{ flagTypeId, from, to }],
+                    {
+                        runNumber,
+                        dataPassIdentifier: { id: dataPassId },
+                        dplDetectorIdentifier: { dplDetectorId },
+                    },
+                    relations,
+                );
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                createdFlagIds.push(qcFlag.id);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
+
+                // Previous: first flag
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
+                    .have.all.deep.members([{ from: new Date('2024-07-01 12:00:00').getTime(), to: new Date('2024-07-01 16:00:00').getTime() }]);
+
+                // Previous: second flag
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
+                    .have.all.deep.members([{ from: null, to: new Date('2024-07-01 12:00:00').getTime() }]);
+            }
+
+            // 4
+            {
+                from = new Date('2024-07-01 13:00:00').getTime();
+                to = new Date('2024-07-01 15:00:00').getTime();
+                [qcFlag] = await qcFlagService.create(
+                    [{ flagTypeId, from, to }],
+                    {
+                        runNumber,
+                        dataPassIdentifier: { id: dataPassId },
+                        dplDetectorIdentifier: { dplDetectorId },
+                    },
+                    relations,
+                );
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                createdFlagIds.push(qcFlag.id);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
+
+                // Previous: first flag
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
+                    .have.all.deep.members([
+                        { from: new Date('2024-07-01 12:00:00').getTime(), to: new Date('2024-07-01 13:00:00').getTime() },
+                        { from: new Date('2024-07-01 15:00:00').getTime(), to: new Date('2024-07-01 16:00:00').getTime() },
+                    ]);
+
+                // Previous: second flag
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
+                    .have.all.deep.members([{ from: null, to: new Date('2024-07-01 12:00:00').getTime() }]);
+
+                // Previous: third flag
+                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[2]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
+                    .have.all.deep.members([{ from: new Date('2024-07-01 16:00:00').getTime(), to: null }]);
             }
         });
     });
