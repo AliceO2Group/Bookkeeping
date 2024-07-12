@@ -1256,10 +1256,14 @@ module.exports = () => {
                 contributingFlagIds: contributingFlags.map(({ id }) => id).sort(),
             }));
 
+            console.log(cpvFlagIds, 'CPV TOBEC')
+            console.log(emcFlagIds, 'EMC TOBEC')
+            console.log(fddFlagIds, 'FDD TOBEC')
+
             expect(data).to.have.all.deep.ordered.members([
                 { from: t('06:00:00'), to: t('10:00:00'), contributingFlagIds: [cpvFlagIds[1], emcFlagIds[0]] },
-                { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [emcFlagIds[1], cpvFlagIds[2], fddFlagIds[1]] },
-                { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1], emcFlagIds[2]] },
+                { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[1], fddFlagIds[1]] },
+                { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[2], fddFlagIds[1]] },
                 { from: t('13:00:00'), to: t('14:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1]] },
                 { from: t('14:00:00'), to: t('16:00:00'), contributingFlagIds: [cpvFlagIds[0], emcFlagIds[3], fddFlagIds[0]] },
                 { from: t('16:00:00'), to: t('18:00:00'), contributingFlagIds: [/** Empty */] },
