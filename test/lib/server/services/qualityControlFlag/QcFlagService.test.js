@@ -1256,10 +1256,6 @@ module.exports = () => {
                 contributingFlagIds: contributingFlags.map(({ id }) => id).sort(),
             }));
 
-            console.log(cpvFlagIds, 'CPV TOBEC')
-            console.log(emcFlagIds, 'EMC TOBEC')
-            console.log(fddFlagIds, 'FDD TOBEC')
-
             expect(data).to.have.all.deep.ordered.members([
                 { from: t('06:00:00'), to: t('10:00:00'), contributingFlagIds: [cpvFlagIds[1], emcFlagIds[0]] },
                 { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[1], fddFlagIds[1]] },
