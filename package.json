@@ -12,7 +12,7 @@
     "start:prod": "node lib/main.js",
     "test": "mocha --exit --timeout 0",
     "test:subset": "nyc -- mocha --exit --timeout 0 test/scripts/test-${TEST_TYPE}.js && nyc report --report-dir=/usr/src/app/coverage/${TEST_TYPE} --reporter=json",
-    "test:subset-local": "mocha --exit --timeout 0 test/scripts/test-${TEST_TYPE}.js",
+    "test:subset-local": "mocha --exit --timeout 0 test/scripts/test-${TEST_TYPE}.js --reporter json > /var/storage/${TEST_TYPE}.json",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
     "docker-test:parallel": "node test/scripts/parallel-local/main.js",
