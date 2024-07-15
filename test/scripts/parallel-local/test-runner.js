@@ -32,7 +32,7 @@ const processMessage = (message) => {
 process.on('message', processMessage);
 
 /**
- * Orchestrates the execution of a test based on received settings.
+ * Executes a set of tests based on received settings.
  * @param {Object} testConfig - Configuration for the test.
  * @returns {void} Does not return a value.
  */

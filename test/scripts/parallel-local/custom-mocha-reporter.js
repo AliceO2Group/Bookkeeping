@@ -117,9 +117,9 @@ function CustomReporter(runner) {
         if (failsBuffer.length > 0) {
             fs.writeFileSync(`${basePath}/fails.log`, failsBuffer.join('\n'));
         }
-        resultsBuffer.push(`${indent}${runner.stats.passes} Passing`);
-        resultsBuffer.push(`${indent}${runner.stats.failures} Failing`);
-        resultsBuffer.push(`${indent}${runner.stats.pending} Pending`);
+        resultsBuffer.push(`${runner.stats.passes} Passing`);
+        resultsBuffer.push(`${runner.stats.failures} Failing`);
+        resultsBuffer.push(`${runner.stats.pending} Pending`);
         if (resultsBuffer.length > 0) {
             fs.writeFileSync(`${basePath}/results.log`, resultsBuffer.join('\n'));
         }

@@ -137,10 +137,10 @@ const displayResults = () => {
         totalPending += aggregateResults(testSuiteName, 'results.log', 'Pending');
     });
 
-    console.log('Total Passing:', totalPassing);
-    console.log('Total Failing:', totalFailing);
+    console.log('   ', totalPassing, 'Passing');
+    console.log('   ', totalFailing, 'Failing');
     if (totalPending > 0) {
-        console.log('Total Pending:', totalPending);
+        console.log('   ', totalPending, 'Pending');
     }
 
     console.log('\n');
