@@ -1,5 +1,4 @@
 const { exec } = require('child_process');
-const fs = require('fs');
 
 let isFirstTest = true;
 
@@ -67,59 +66,18 @@ function buildDockerCommand(test, projectName) {
  * @param {string} port - The database port.
  * @param {string} projectName - The project name.
  * @param {Function} resolve - The resolve function for the promise.
- * @param {Function} reject - The reject function for the promise.
  * @returns {void} Does not return a value.
  */
-function execCommand(command, test, port, projectName, resolve, reject) {
+function execCommand(command, test, port, projectName, resolve) {
     const env = {
         ...process.env,
         TEST_TYPE: test,
         DB_PORT: port,
     };
-    const jsonOutputPath = `./database/storage/${test}.json`;
 
-    exec(command, { env }, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`stderr: ${stderr}`);
-            reject(new Error(error.message));
-            return;
-        }
-        processTestResult(jsonOutputPath, projectName, resolve, reject);
-    });
-}
-
-/**
- * Processes the test result by reading the output JSON file.
- * @param {string} jsonOutputPath - Path to the test result JSON file.
- * @param {string} projectName - The project name.
- * @param {Function} resolve - The resolve function for the promise.
- * @param {Function} reject - The reject function for the promise.
- * @returns {void} Does not return a value.
- */
-function processTestResult(jsonOutputPath, projectName, resolve, reject) {
-    fs.readFile(jsonOutputPath, 'utf8', (err, data) => {
-        if (err) {
-            console.error(`Error reading JSON output from file: ${err}`);
-            reject(err);
-            return;
-        }
-        process.send({ type: 'result', projectName, data });
-        cleanUp(jsonOutputPath);
+    exec(command, { env }, () => {
         updateFirstTestFlag();
         resolve();
-    });
-}
-
-/**
- * Deletes the JSON output file after processing.
- * @param {string} jsonOutputPath - Path to the file to be deleted.
- * @returns {void} Does not return a value.
- */
-function cleanUp(jsonOutputPath) {
-    fs.unlink(jsonOutputPath, (err) => {
-        if (err) {
-            console.error(`Error deleting JSON output file: ${err}`);
-        }
     });
 }
 

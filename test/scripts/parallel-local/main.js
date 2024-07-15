@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const { fork } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -23,12 +24,12 @@ const tests = [
     'qcFlagTypes',
     'qcFlags',
 ];
-const initialTestAmount = tests.length;
+const initialTests = tests.slice();
 
 const numWorkers = 3;
 const basePort = 3307;
-const results = [];
 const workersCompleted = new Set();
+const workersExited = new Set();
 
 /**
  * Start worker processes to handle tests in parallel.
@@ -55,26 +56,23 @@ const startWorker = () => {
 };
 
 /**
- * Handles messages from worker processes, including handling results and assigning new tests.
- * @param {Object} msg - The message from the worker.
+ * Handles messages from worker processes, including assigning new tests.
+ * @param {string} msg - The message from the worker.
  * @param {ChildProcess} worker - The child process that sent the message.
  * @param {number} port - The port number assigned to the worker.
  * @param {string} projectName - The project name assigned to the worker.
  * @returns {void} Does not return a value.
  */
 const handleWorkerMessage = (msg, worker, port, projectName) => {
-    if (msg.type === 'result') {
-        results.push(msg.data); // Collect results from each worker
-        workersCompleted.add(projectName); // Mark worker as completed for result submission
-        checkAllWorkersCompleted();
-    } else if (msg === 'request_next_test') {
+    if (msg === 'request_next_test') {
         if (tests.length > 0) {
             const test = tests.pop();
-            console.log(`${projectName} starting new suite: ${test} (${initialTestAmount - tests.length}/${initialTestAmount})`);
+            console.log(`${projectName} starting new suite: ${test} (${initialTests.length - tests.length}/${initialTests.length})`);
             worker.send({ test, port, projectName });
         } else {
             console.log(`${projectName} found no more tests...`);
             worker.send('no_more_tests');
+            workersCompleted.add(projectName);
         }
     }
 };
@@ -84,8 +82,8 @@ const handleWorkerMessage = (msg, worker, port, projectName) => {
  * @returns {void} Does not return a value.
  */
 const checkAllWorkersCompleted = () => {
-    if (workersCompleted.size === numWorkers) {
-        displayResults(results); // Process and display results when all workers are done
+    if (workersCompleted.size === numWorkers && workersExited.size === numWorkers) {
+        displayResults(initialTests); // Process and display results when all workers are done
     }
 };
 
@@ -101,7 +99,7 @@ const logWorkerExit = (code, projectName) => {
     } else {
         console.log(`Worker ${projectName} completed successfully`);
     }
-    workersCompleted.add(projectName); // Mark worker as completed for exit
+    workersExited.add(projectName);
     checkAllWorkersCompleted();
 };
 
@@ -115,70 +113,104 @@ const logWorkerExit = (code, projectName) => {
 const assignTestToWorker = (worker, port, projectName) => {
     if (tests.length > 0) {
         const test = tests.pop();
-        console.log(`Starting ${test} tests on port ${port} by ${projectName} (${initialTestAmount - tests.length}/${initialTestAmount})`);
+        console.log(`Starting ${test} tests on port ${port} by ${projectName} (${initialTests.length - tests.length}/${initialTests.length})`);
         worker.send({ test, port, projectName });
     }
 };
 
 /**
- * Displays the test results in a formatted manner.
- * Parses JSON strings, extracts test details, and prints them out with stats summary.
- * @param {Array<string>} resultsArray - An array of strings containing test results with embedded JSON.
- * @returns {void} Does not return a value.
+ * Displays the test results by reading the files in directories named after each test suite.
+ * This function loops through each test directory and reads all files inside, then logs their contents.
+ * @param {Array<string>} testSuites - An array of test suite names.
+ * @returns {void} Does not return a value. Outputs to the console.
  */
-const displayResults = (resultsArray) => {
-    console.log('\nFinal Test Results:');
+const displayResults = (testSuites) => {
+    console.log('\nTest results:');
 
-    let totalSuites = 0;
-    let totalTests = 0;
-    let totalPasses = 0;
-    let totalFailures = 0;
-    let totalPending = 0;
-
-    resultsArray.forEach((resultString) => {
-        // Find the starting index of the JSON object
-        const startIndex = resultString.indexOf('{');
-        if (startIndex === -1) {
-            console.error('No JSON found in result');
-            return;
-        }
-
-        // Extract only the JSON part
-        const jsonString = resultString.substring(startIndex);
+    // Print all tests.log files
+    testSuites.forEach((testSuiteName) => {
+        const testDirectoryPath = `./database/storage/${testSuiteName}`;
 
         try {
-            const result = JSON.parse(jsonString);
+            const files = fs.readdirSync(testDirectoryPath);
 
-            if (result.stats) {
-                console.log(`\nResults from ${result.stats.suites} suite(s):`);
-                console.log(`Tests Run: ${result.stats.tests}`);
-                console.log(`Passes: ${result.stats.passes}`);
-                console.log(`Failures: ${result.stats.failures}`);
-                console.log(`Pending: ${result.stats.pending}`);
-
-                totalSuites += 1;
-                totalTests += result.stats.tests;
-                totalPasses += result.stats.passes;
-                totalFailures += result.stats.failures;
-                totalPending += result.stats.pending;
-
-                result.failures.forEach((fail) => {
-                    console.log(`\nFailed Test: ${fail.fullTitle}`);
-                    console.log(`Error: ${fail.err.message}`);
-                    console.log(`Stack: ${fail.err.stack}`);
-                });
-            }
-        } catch (error) {
-            console.error('Error parsing JSON result:', error);
+            files.forEach((file) => {
+                if (file === 'tests.log') {
+                    const filePath = path.join(testDirectoryPath, file);
+                    const data = fs.readFileSync(filePath, 'utf8');
+                    console.log(data);
+                }
+            });
+        } catch (err) {
+            console.error(`Error reading directory for ${testSuiteName}: ${err}`);
         }
     });
 
-    console.log('\nSummary of all test suites:');
-    console.log(`Total Suites Processed: ${totalSuites}`);
-    console.log(`Total Tests Run: ${totalTests}`);
-    console.log(`Total Passes: ${totalPasses}`);
-    console.log(`Total Failures: ${totalFailures}`);
-    console.log(`Total Pending: ${totalPending}`);
+    console.log('\n');
+
+    let totalPassing = 0;
+    let totalFailing = 0;
+    let totalPending = 0;
+
+    // Loop through all results.log files and add the results
+    testSuites.forEach((testSuiteName) => {
+        const testDirectoryPath = `./database/storage/${testSuiteName}`;
+
+        try {
+            const files = fs.readdirSync(testDirectoryPath);
+
+            files.forEach((file) => {
+                if (file === 'results.log') {
+                    const filePath = path.join(testDirectoryPath, file);
+                    const data = fs.readFileSync(filePath, 'utf8');
+                    const lines = data.split('\n');
+
+                    lines.forEach((line) => {
+                        const trimmedLine = line.trim(); // Trim leading and trailing spaces
+                        if (trimmedLine.includes('Passing')) {
+                            totalPassing += parseInt(trimmedLine.split(' ')[0], 10);
+                        } else if (trimmedLine.includes('Failing')) {
+                            totalFailing += parseInt(trimmedLine.split(' ')[0], 10);
+                        } else if (trimmedLine.includes('Pending')) {
+                            totalPending += parseInt(trimmedLine.split(' ')[0], 10);
+                        }
+                    });
+                }
+            });
+        } catch (err) {
+            console.error(`Error reading directory for ${testSuiteName}: ${err}`);
+        }
+    });
+
+    // Print totals
+    console.log('Total Passing:', totalPassing);
+    console.log('Total Failing:', totalFailing);
+    if (totalPending > 0) {
+        console.log('Total Pending:', totalPending);
+    }
+
+    console.log('\n');
+
+    // Print all fails.log files if not empty
+    testSuites.forEach((testSuiteName) => {
+        const testDirectoryPath = `./database/storage/${testSuiteName}`;
+
+        try {
+            const files = fs.readdirSync(testDirectoryPath);
+
+            files.forEach((file) => {
+                if (file === 'fails.log') {
+                    const filePath = path.join(testDirectoryPath, file);
+                    const data = fs.readFileSync(filePath, 'utf8');
+                    if (data.trim()) { // Check if the file is not empty
+                        console.log(data);
+                    }
+                }
+            });
+        } catch (err) {
+            console.error(`Error reading directory for ${testSuiteName}: ${err}`);
+        }
+    });
 };
 
 startWorker();
