@@ -168,7 +168,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it("Should verify that form autofill the runNumbers and lhcFillNumbers when leaving environmentIds empty.", async () => {
+    it('Should verify that form autofill the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
         await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
