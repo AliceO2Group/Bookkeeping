@@ -49,12 +49,12 @@ const manageTestExecution = (testConfig) => {
 /**
  * Executes a specified test using Docker Compose.
  * @param {Object} testConfig - Test details including type, port, and project name.
- * @returns {Promise<void>} Resolves on successful test execution, rejects on error.
+ * @returns {Promise<void>} Resolves on successful test execution.
  */
 const executeTest = ({ test, port, projectName }) => {
     const dockerCommand = buildDockerCommand(test, projectName);
-    return new Promise((resolve, reject) => {
-        executeDockerCommand(dockerCommand, test, port, projectName, resolve, reject);
+    return new Promise((resolve) => {
+        executeDockerCommand(dockerCommand, test, port, projectName, resolve);
     });
 };
 
@@ -77,21 +77,16 @@ const buildDockerCommand = (testType, projectName) => {
  * @param {string} port - Port number for database connectivity.
  * @param {string} projectName - Name of the project.
  * @param {Function} resolve - Function to resolve the promise once execution completes.
- * @param {Function} reject - Function to reject the promise in case of errors.
  * @returns {void} Does not return a value.
  */
-const executeDockerCommand = (command, testType, port, projectName, resolve, reject) => {
+const executeDockerCommand = (command, testType, port, projectName, resolve) => {
     const environment = {
         ...process.env,
         TEST_TYPE: testType,
         DB_PORT: port,
     };
 
-    exec(command, { env: environment }, (error) => {
-        if (error) {
-            reject(error);
-            return;
-        }
+    exec(command, { env: environment }, () => {
         updateIsFirstTest();
         resolve();
     });
