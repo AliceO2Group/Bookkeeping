@@ -17,9 +17,9 @@ function CustomReporter(runner) {
     const basePath = `/var/storage/${testType}`;
     mkdirp.sync(basePath);
 
-    const testsStream = fs.createWriteStream(`${basePath}/tests.log`, { flags: 'w' });
-    const failsStream = fs.createWriteStream(`${basePath}/fails.log`, { flags: 'w' });
-    const resultsStream = fs.createWriteStream(`${basePath}/results.log`, { flags: 'w' });
+    const testsBuffer = [];
+    const failsBuffer = [];
+    const resultsBuffer = [];
 
     const suiteStack = [];
     const indent = '  ';
@@ -34,7 +34,7 @@ function CustomReporter(runner) {
     runner.on('suite', (suite) => {
         if (suite.title && suite.title !== 'Bookkeeping') {
             suiteStack.push(suite.title);
-            testsStream.write(`${indent.repeat(suiteStack.length)}${suite.title}\n`);
+            testsBuffer.push(`${indent.repeat(suiteStack.length)}${suite.title}`);
         }
     });
 
@@ -57,51 +57,72 @@ function CustomReporter(runner) {
      * @param {Mocha.Test} test - The Mocha test instance that passed.
      */
     runner.on('pass', (test) => {
-        testsStream.write(`${indent.repeat(suiteStack.length + 1)}✔ ${test.title} (${test.duration}ms)\n`);
+        testsBuffer.push(`${indent.repeat(suiteStack.length + 1)}✔ ${test.title} (${test.duration}ms)`);
     });
 
     /**
      * Event handler for 'fail' event, triggered when a test fails.
-     * Logs a failing test message in the tests stream and detailed error information in the fails stream.
+     * Logs a failing test message in the tests buffer and detailed error information in the fails buffer.
      *
      * @param {Mocha.Test} test - The Mocha test instance that failed.
      * @param {Error} err - The error that caused the test to fail.
      */
     runner.on('fail', (test, err) => {
         failCount += 1;
-        testsStream.write(`${indent.repeat(suiteStack.length + 1)}${failCount}) ${test.title}\n`);
+        testsBuffer.push(`${indent.repeat(suiteStack.length + 1)}${failCount}) ${test.title}`);
 
         suiteStack.forEach((title, idx) => {
             // Add the failCount only next to the "Home" line and an extra space to all subsequent lines.
             if (idx === 0) {
                 // "Home" line with failCount prefixed.
-                failsStream.write(`${indent.repeat(idx + 1)}${failCount}) ${title}\n`);
+                failsBuffer.push(`${indent.repeat(idx + 1)}${failCount}) ${title}`);
             } else {
                 // Subsequent lines with one extra space.
-                failsStream.write(`${indent.repeat(idx + 2)} ${title}\n`);
+                failsBuffer.push(`${indent.repeat(idx + 2)} ${title}`);
             }
         });
 
         // Add one additional indent level to all subsequent details.
         const detailIndentDouble = indent.repeat(suiteStack.length + 2);
         const detailIndentSingle = indent.repeat(suiteStack.length);
-        failsStream.write(`${detailIndentDouble} ${test.title}:\n\n`);
-        failsStream.write(`${detailIndentSingle} AssertionError: ${err.message}\n`);
-        failsStream.write(`${detailIndentSingle} + expected - actual\n\n`);
-        failsStream.write(`${detailIndentSingle} -${err.actual}\n`);
-        failsStream.write(`${detailIndentSingle} +${err.expected}\n\n`);
-        failsStream.write(`${detailIndentSingle} at ${err.stack}\n\n`);
+        failsBuffer.push(`${detailIndentDouble} ${test.title}:`);
+        failsBuffer.push(`\n${detailIndentSingle} AssertionError: ${err.message}`);
+        failsBuffer.push(`${detailIndentSingle} + expected - actual`);
+        failsBuffer.push(`\n${detailIndentSingle} -${err.actual}`);
+        failsBuffer.push(`${detailIndentSingle} +${err.expected}`);
+        failsBuffer.push(`\n${detailIndentSingle} at ${err.stack}`);
+
+        // Add a blank line after each failure for better readability
+        failsBuffer.push('\n');
+    });
+
+    /**
+     * Event handler for 'pending' event, triggered when a test is pending.
+     * Logs a pending test message with indentation indicating its level within the suite.
+     *
+     * @param {Mocha.Test} test - The Mocha test instance that is pending.
+     */
+    runner.on('pending', (test) => {
+        testsBuffer.push(`${indent.repeat(suiteStack.length + 1)}- ${test.title}`);
     });
 
     /**
      * Event handler for 'end' event, triggered when all tests have completed.
-     * Logs the final passing and failing counts to the results stream and closes all streams.
+     * Logs the final passing, failing, and pending counts to the results buffer and writes all buffers to their respective files.
      */
     runner.on('end', () => {
-        resultsStream.write(`${indent}${runner.stats.passes} Passing\n${indent}${runner.stats.failures} Failing\n`);
-        testsStream.end();
-        failsStream.end();
-        resultsStream.end();
+        if (testsBuffer.length > 0) {
+            fs.writeFileSync(`${basePath}/tests.log`, testsBuffer.join('\n'));
+        }
+        if (failsBuffer.length > 0) {
+            fs.writeFileSync(`${basePath}/fails.log`, failsBuffer.join('\n'));
+        }
+        resultsBuffer.push(`${indent}${runner.stats.passes} Passing`);
+        resultsBuffer.push(`${indent}${runner.stats.failures} Failing`);
+        resultsBuffer.push(`${indent}${runner.stats.pending} Pending`);
+        if (resultsBuffer.length > 0) {
+            fs.writeFileSync(`${basePath}/results.log`, resultsBuffer.join('\n'));
+        }
     });
 }
 
