@@ -20,6 +20,7 @@ const { ConflictError } = require('../../../../../lib/server/errors/ConflictErro
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
+const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService');
 
 /**
  * Get effective part and periods of Qc flag
@@ -115,37 +116,6 @@ module.exports = () => {
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(2);
             expect(flags[0].qcFlagId).to.equal(6);
-        });
-    });
-
-    describe('Manage GAQ detectors', () => {
-        const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
-            const runNumbers = [49, 56];
-            const dplDetectorIds = [4, 7];
-            const data = await qcFlagService.setGaqDetectors({ dataPassId, runNumbers, dplDetectorIds });
-            expect(data).to.be.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
-        });
-        it('should fail to set GAQ detectors because of miaaing association', async () => {
-            let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
-            assert.rejects(
-                () => qcFlagService.setGaqDetectors({
-                    dataPassId,
-                    runNumbers: [1],
-                    dplDetectorIds: [4],
-                }),
-                new BadParameterError(errorMessage),
-            );
-            errorMessage = `No association between runs and detectors: ${JSON.stringify([[56, 'CPV']])}`;
-            assert.rejects(
-                () => qcFlagService.setGaqDetectors({
-                    dataPassId,
-                    runNumbers: [105, 56],
-                    dplDetectorIds: [1],
-                }),
-                new BadParameterError(errorMessage),
-            );
         });
     });
 
@@ -1216,6 +1186,86 @@ module.exports = () => {
                     comment,
                 });
             }
+        });
+    });
+
+    describe('Fetch GAQ flags', () => {
+        const dataPassId = 3;
+        it('should successfuly get GAQ flags', async () => {
+            /**
+             * Get unix timestamp for given time on 2024-07-10
+             * Used to avoid code below to be padded out
+             *
+             * @param {string} timeString time string in hh:mm:ss format
+             * @return {number} unix timestamp
+             */
+            const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
+
+            const runNumber = 334455;
+            const timeTrgStart = t('06:00:00');
+            const timeTrgEnd = t('22:00:00');
+
+            await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
+            const run = await RunRepository.findOne({ where: { runNumber } });
+            const dplDetectorIds = [1, 2, 3];
+            await run.addDataPass(dataPassId);
+            await run.addDetectors(dplDetectorIds);
+            await dataPassService.setGaqDetectors(dataPassId, [runNumber], dplDetectorIds);
+
+            // Creating flags fo CPV, EMC, FDD
+            const scope = {
+                runNumber,
+                dataPassIdentifier: { id: dataPassId },
+            };
+            const scopeCPV = { ...scope, dplDetectorIdentifier: { dplDetectorId: 1 } };
+            const scopeEMC = { ...scope, dplDetectorIdentifier: { dplDetectorId: 2 } };
+            const scopeFDD = { ...scope, dplDetectorIdentifier: { dplDetectorId: 3 } };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const goodFlagTypeId = 3;
+            const badPidlagTypeId = 12;
+            const lmimittedAccMCTypeId = 5;
+
+            const cpvFlagIds = (await qcFlagService.create([
+                { from: t('06:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('06:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: lmimittedAccMCTypeId },
+                { from: t('18:00:00'), to: t('22:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeCPV, relations)).map(({ id }) => id);
+
+            const emcFlagIds = (await qcFlagService.create([
+                { from: t('06:00:00'), to: t('10:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('10:00:00'), to: t('12:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('12:00:00'), to: t('13:00:00'), flagTypeId: lmimittedAccMCTypeId },
+                { from: t('14:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('18:00:00'), to: t('20:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeEMC, relations)).map(({ id }) => id);
+
+            const fddFlagIds = (await qcFlagService.create([
+                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
+            ], scopeFDD, relations)).map(({ id }) => id);
+
+            const gaqFlags = await qcFlagService.getGaqQcFlags(dataPassId, runNumber);
+            const data = gaqFlags.map(({
+                from,
+                to,
+                contributingFlags,
+            }) => ({
+                from,
+                to,
+                contributingFlagIds: contributingFlags.map(({ id }) => id).sort(),
+            }));
+
+            expect(data).to.have.all.deep.ordered.members([
+                { from: t('06:00:00'), to: t('10:00:00'), contributingFlagIds: [cpvFlagIds[1], emcFlagIds[0]] },
+                { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[1], fddFlagIds[1]] },
+                { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[2], fddFlagIds[1]] },
+                { from: t('13:00:00'), to: t('14:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1]] },
+                { from: t('14:00:00'), to: t('16:00:00'), contributingFlagIds: [cpvFlagIds[0], emcFlagIds[3], fddFlagIds[0]] },
+                { from: t('16:00:00'), to: t('18:00:00'), contributingFlagIds: [/** Empty */] },
+                { from: t('18:00:00'), to: t('20:00:00'), contributingFlagIds: [cpvFlagIds[3], emcFlagIds[4]] },
+                { from: t('20:00:00'), to: t('22:00:00'), contributingFlagIds: [cpvFlagIds[3]] },
+            ]);
         });
     });
 };

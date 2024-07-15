@@ -169,8 +169,8 @@ module.exports = () => {
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview', true));
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a', true));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
     });
 
