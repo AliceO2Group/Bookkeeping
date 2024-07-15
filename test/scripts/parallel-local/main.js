@@ -5,6 +5,7 @@ const fs = require('fs');
 
 dotenv.config();
 
+const startTime = new Date();
 const testSuites = [
     'unit',
     'api',
@@ -37,6 +38,7 @@ const workersExited = new Set();
  */
 const initializeWorkers = () => {
     const workers = [];
+
     for (let i = 0; i < numWorkers; i++) {
         const port = basePort + i;
         const projectName = `worker-${i}`;
@@ -137,7 +139,13 @@ const displayResults = () => {
         totalPending += aggregateResults(testSuiteName, 'results.log', 'Pending');
     });
 
-    console.log('   ', totalPassing, 'Passing');
+    // Calculate elapsed time
+    const endTime = new Date();
+    const elapsed = new Date(endTime - startTime);
+    const minutes = elapsed.getUTCMinutes();
+
+    // Display total passing with elapsed time in minutes and seconds
+    console.log('   ', totalPassing, 'Passing', `(${minutes}m)`);
     console.log('   ', totalFailing, 'Failing');
     if (totalPending > 0) {
         console.log('   ', totalPending, 'Pending');
