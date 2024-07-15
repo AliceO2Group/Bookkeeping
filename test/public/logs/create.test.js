@@ -128,7 +128,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1, 4, 6');
     });
 
-    it('Should verify that form autofills all inputs with provided full parameters.', async () => {
+    it('Should verify that form autofill all inputs with provided full parameters.', async () => {
         await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
@@ -136,7 +136,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should verify that form autofills runNumbers only when leaving other parameters empty.', async () => {
+    it('Should verify that form autofill runNumbers only when leaving other parameters empty.', async () => {
         await goToPage(page, 'log-create&runNumbers=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
@@ -144,7 +144,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it('Should verify that form autofills environmentIds only when leaving other parameters empty.', async () => {
+    it('Should verify that form autofill environmentIds only when leaving other parameters empty.', async () => {
         await goToPage(page, 'log-create&environmentIds=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '');
@@ -152,7 +152,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it('Should verify that form autofills the lhcFillNumbers only when leaving other parameters empty.', async () => {
+    it('Should verify that form autofill the lhcFillNumbers only when leaving other parameters empty.', async () => {
         await goToPage(page, 'log-create&lhcFillNumbers=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '');
@@ -160,7 +160,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should verify that form autofills the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
+    it('Should verify that form autofill the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
         await goToPage(page, 'log-create&runNumbers=1,2,3&environmentIds=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
@@ -168,7 +168,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it('Should verify that form autofills the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
+    it("Should verify that form autofill the runNumbers and lhcFillNumbers when leaving environmentIds empty.", async () => {
         await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
@@ -176,12 +176,32 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should verify that form autofills the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
+    it('Should verify that form autofill the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
         await goToPage(page, 'log-create&environmentIds=1,2,3&lhcFillNumbers=1,2,3');
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+    });
+
+    it('should successfully provide a tag picker with search input', async () => {
+        await goToPage(page, 'log-create');
+
+        await page.locator('.tag-search-input').fill('P');
+
+        (await page.waitForFunction(() => {
+            const options = document.querySelectorAll('.tag-option');
+            if (options.length === 9) {
+                for (const option of options) {
+                    if (!option.innerText.toUpperCase().includes('P')) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        })).dispose();
     });
 
     it('can disable submit with invalid data', async () => {
@@ -211,7 +231,6 @@ module.exports = () => {
         const tags = ['FOOD', 'GLOBAL'];
 
         // Return to the creation page
-        await goToPage(page, 'log-create');
 
         // Select the boxes and send the values of the title and text to it
         await fillInput(page, '#title', title);
