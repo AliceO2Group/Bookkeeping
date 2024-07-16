@@ -29,7 +29,7 @@ const testSuites = [
 ];
 const remainingTests = [...testSuites];
 
-const amountOfWorkers = 2;
+const amountOfWorkers = 3;
 const basePort = 3307;
 const workersCompleted = new Set();
 const workersExited = new Set();
