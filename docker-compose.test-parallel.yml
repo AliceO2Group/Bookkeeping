@@ -56,8 +56,6 @@ services:
         read_only: true
         source: ./database/populate
         target: /docker-entrypoint-initdb.d
-    ports:
-      - "3306:3306"
 
 volumes:
   database-data:
