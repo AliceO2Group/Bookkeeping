@@ -47,4 +47,14 @@ module.exports = () => {
             { id: 21, name: 'GLO' },
         ]);
     });
+
+    it('should get GAQ detectors', async () => {
+        const detectors = await dplDetectorsService.getGaqDetectors(3, 56);
+        expect(detectors).to.be.an('array');
+        expect(detectors).to.be.lengthOf(2);
+        expect(detectors).to.have.all.deep.members([
+            { id: 4, name: 'ITS' },
+            { id: 7, name: 'FT0' },
+        ]);
+    });
 };

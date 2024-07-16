@@ -50,4 +50,20 @@ module.exports = () => {
             ]);
         });
     });
+
+    describe('GET /api/dpl-detectors/gaq', () => {
+        it('should return 200 with the list of GAQ detectors', async () => {
+            const response = await request(server).get('/api/dpl-detectors/gaq?dataPassId=3&runNumber=56');
+
+            console.log(response.body)
+
+            expect(response.status).to.equal(200);
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+            expect(data).to.have.all.deep.members([
+                { id: 4, name: 'ITS' },
+                { id: 7, name: 'FT0' },
+            ]);
+        });
+    });
 };
