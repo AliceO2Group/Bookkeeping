@@ -1081,6 +1081,8 @@ module.exports = () => {
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
+
+            
         });
 
         it('should successfully delete QC flag of simulationPass ', async () => {
