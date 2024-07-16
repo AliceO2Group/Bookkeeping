@@ -1,16 +1,17 @@
 const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { BASE_STORAGE_PATH, NO_MORE_TESTS, REQUEST_NEXT_TEST } = require('./sharedConstants');
 
 let isFirstTest = true;
 
 /**
  * Ensures the directory exists before executing tests.
  * @param {string} testType The type of the test.
- * @returns {void} Does not return a value.
+ * @returns {void}
  */
-const ensureDirectoryExists = (testType) => {
-    const dirPath = path.join('./database/storage', testType);
+const createTestDirectoryIfNotExist = (testType) => {
+    const dirPath = path.join(BASE_STORAGE_PATH, testType);
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
     }
@@ -19,10 +20,10 @@ const ensureDirectoryExists = (testType) => {
 /**
  * Handles incoming messages to determine test execution workflow.
  * @param {string|Object} message - Message received from the main process.
- * @returns {void} Does not return a value.
+ * @returns {void}
  */
 const processMessage = (message) => {
-    if (message === 'no_more_tests') {
+    if (message === NO_MORE_TESTS) {
         process.exit();
     } else {
         manageTestExecution(message);
@@ -33,69 +34,59 @@ process.on('message', processMessage);
 
 /**
  * Executes a set of tests based on received settings.
- * @param {Object} testConfig - Configuration for the test.
- * @returns {void} Does not return a value.
+ * @param {Object} testConfiguration - Configuration for the test.
+ * @returns {void}
  */
-const manageTestExecution = (testConfig) => {
-    ensureDirectoryExists(testConfig.test);
-    executeTest(testConfig)
-        .then(() => process.send('request_next_test'))
+const manageTestExecution = (testConfiguration) => {
+    createTestDirectoryIfNotExist(testConfiguration.test);
+    executeTest(testConfiguration)
+        .then(() => process.send(REQUEST_NEXT_TEST))
         .catch((error) => {
+            // eslint-disable-next-line no-console
             console.error('Test execution error:', error);
-            process.send('request_next_test');
+            process.send(REQUEST_NEXT_TEST);
         });
 };
 
 /**
  * Executes a specified test using Docker Compose.
- * @param {Object} testConfig - Test details including type, port, and project name.
+ * @param {Object} testConfiguration - Test details including type and worker name.
  * @returns {Promise<void>} Resolves on successful test execution.
  */
-const executeTest = ({ test, port, projectName }) => {
-    const dockerCommand = buildDockerCommand(test, projectName);
+const executeTest = ({ test, workerName }) => {
+    const dockerCommand = buildDockerCommand(workerName);
     return new Promise((resolve) => {
-        executeDockerCommand(dockerCommand, test, port, projectName, resolve);
+        executeDockerCommand(dockerCommand, test, workerName, resolve);
     });
 };
 
 /**
  * Constructs the Docker Compose command based on test parameters.
- * @param {string} testType - Type of the test to run.
- * @param {string} projectName - Name of the project under test.
+ * @param {string} workerName - Name of the worker under test.
  * @returns {string} Docker command string.
  */
-const buildDockerCommand = (testType, projectName) => {
+const buildDockerCommand = (workerName) => {
     const buildOption = isFirstTest ? '--build' : '';
     // eslint-disable-next-line max-len
-    return `COMPOSE_PROJECT_NAME=${projectName} docker-compose -f docker-compose.test-parallel-local.yml up ${buildOption} --abort-on-container-exit`;
+    return `COMPOSE_PROJECT_NAME=${workerName} docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml up ${buildOption} --abort-on-container-exit`;
 };
 
 /**
  * Executes the Docker command and manages the process's output and lifecycle.
  * @param {string} command - Docker command to be executed.
  * @param {string} testType - Type of test being executed.
- * @param {string} port - Port number for database connectivity.
- * @param {string} projectName - Name of the project.
+ * @param {string} workerName - Name of the worker.
  * @param {Function} resolve - Function to resolve the promise once execution completes.
- * @returns {void} Does not return a value.
+ * @returns {void}
  */
-const executeDockerCommand = (command, testType, port, projectName, resolve) => {
+const executeDockerCommand = (command, testType, workerName, resolve) => {
     const environment = {
         ...process.env,
         TEST_TYPE: testType,
-        DB_PORT: port,
     };
 
     exec(command, { env: environment }, () => {
-        updateIsFirstTest();
+        isFirstTest = false;
         resolve();
     });
-};
-
-/**
- * Updates the state to reflect that the first test has been executed.
- * @returns {void} Does not return a value.
- */
-const updateIsFirstTest = () => {
-    isFirstTest = false;
 };

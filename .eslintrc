@@ -122,7 +122,7 @@
             "error",
             "starred-block"
         ],
-        "no-console": "warn",
+        "no-console": "error",
         "no-extra-parens": "error",
         "no-implicit-coercion": "error",
         "no-magic-numbers": "off",

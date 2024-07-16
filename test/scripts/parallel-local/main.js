@@ -2,9 +2,11 @@ const dotenv = require('dotenv');
 const { fork } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const { BASE_STORAGE_PATH, REQUEST_NEXT_TEST } = require('./sharedConstants');
 
 dotenv.config();
 
+const fsPromises = fs.promises;
 const startTime = new Date();
 const testSuites = [
     'unit',
@@ -27,27 +29,29 @@ const testSuites = [
 ];
 const remainingTests = [...testSuites];
 
-const numWorkers = 3;
+const amountOfWorkers = 2;
 const basePort = 3307;
 const workersCompleted = new Set();
 const workersExited = new Set();
 
 /**
  * Initializes and starts worker processes to handle tests in parallel.
- * @returns {void} Does not return a value.
+ * @returns {void}
  */
 const initializeWorkers = () => {
+    cleanupTestDirectories(testSuites);
+
     const workers = [];
 
-    for (let i = 0; i < numWorkers; i++) {
+    for (let i = 0; i < amountOfWorkers; i++) {
         const port = basePort + i;
-        const projectName = `worker-${i}`;
-        const worker = fork(path.resolve(__dirname, 'test-runner.js'), [port.toString(), projectName], {
+        const workerName = `worker-${i}`;
+        const worker = fork(path.resolve(__dirname, 'test-runner.js'), [port.toString(), workerName], {
             stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
         });
 
-        setupWorkerListeners(worker, port, projectName);
-        assignTestToWorker(worker, projectName);
+        setupWorkerListeners(worker, port, workerName);
+        assignTestToWorker(worker, workerName);
         workers.push(worker);
     }
 };
@@ -56,62 +60,79 @@ const initializeWorkers = () => {
  * Sets up event listeners for a worker process.
  * @param {ChildProcess} worker - The worker process.
  * @param {number} port - The port number assigned to the worker.
- * @param {string} projectName - The project name assigned to the worker.
- * @returns {void} Does not return a value.
+ * @param {string} workerName - The worker name assigned to the worker.
+ * @returns {void}
  */
-const setupWorkerListeners = (worker, port, projectName) => {
-    worker.stdout.on('data', (data) => console.log(`${projectName}: ${data.toString()}`));
-    worker.stderr.on('data', (data) => console.error(`${projectName} Error: ${data.toString()}`));
+const setupWorkerListeners = (worker, port, workerName) => {
+    // eslint-disable-next-line no-console
+    worker.stdout.on('data', (data) => console.log(`${workerName}: ${data.toString()}`));
+    // eslint-disable-next-line no-console
+    worker.stderr.on('data', (data) => console.error(`${workerName} Error: ${data.toString()}`));
 
-    worker.on('message', (msg) => handleWorkerMessage(msg, worker, projectName));
-    worker.on('exit', (code) => handleWorkerExit(code, projectName));
+    worker.on('message', (msg) => handleWorkerMessage(msg, worker, workerName));
+    worker.on('exit', (code) => handleWorkerExit(code, workerName));
 };
 
 /**
  * Handles messages from worker processes, potentially assigning new tests.
  * @param {string} msg - The message from the worker.
  * @param {ChildProcess} worker - The worker process.
- * @param {string} projectName - The project name.
- * @returns {void} Does not return a value.
+ * @param {string} workerName - The worker name.
+ * @returns {void}
  */
-const handleWorkerMessage = (msg, worker, projectName) => {
-    if (msg === 'request_next_test') {
-        assignTestToWorker(worker, projectName);
+const handleWorkerMessage = (msg, worker, workerName) => {
+    if (msg === REQUEST_NEXT_TEST) {
+        assignTestToWorker(worker, workerName);
     }
 };
 
 /**
  * Assigns a test to a worker and logs the activity.
  * @param {ChildProcess} worker - The worker process.
- * @param {string} projectName - The project name.
- * @returns {void} Does not return a value.
+ * @param {string} workerName - The worker name.
+ * @returns {void}
  */
-const assignTestToWorker = (worker, projectName) => {
+const assignTestToWorker = (worker, workerName) => {
     if (remainingTests.length > 0) {
         const test = remainingTests.pop();
-        console.log(`${projectName} starting new suite: ${test} (${testSuites.length - remainingTests.length}/${testSuites.length})`);
-        worker.send({ test, projectName });
+        // eslint-disable-next-line no-console
+        console.log(`${workerName} starting new suite: ${test} (${testSuites.length - remainingTests.length}/${testSuites.length})`);
+        worker.send({ test, workerName });
     } else {
-        console.log(`${projectName} found no more tests...`);
+        // eslint-disable-next-line no-console
+        console.log(`${workerName} found no more tests...`);
         worker.send('no_more_tests');
-        workersCompleted.add(projectName);
+        workersCompleted.add(workerName);
     }
 };
 
 /**
  * Logs the exit of worker processes and checks for completion.
  * @param {number} code - The exit code of the worker process.
- * @param {string} projectName - The project name.
- * @returns {void} Does not return a value.
+ * @param {string} workerName - The worker name.
+ * @returns {void}
  */
-const handleWorkerExit = (code, projectName) => {
+const handleWorkerExit = (code, workerName) => {
     if (code !== 0) {
-        console.error(`Worker ${projectName} exited with code ${code}`);
+        // eslint-disable-next-line no-console
+        console.error(`Worker ${workerName} exited with code ${code}`);
     } else {
-        console.log(`Worker ${projectName} completed successfully`);
+        // eslint-disable-next-line no-console
+        console.log(`Worker ${workerName} completed successfully`);
     }
-    workersExited.add(projectName);
-    if (workersCompleted.size === numWorkers && workersExited.size === numWorkers) {
+    workersExited.add(workerName);
+    handleAllWorkersExited();
+};
+
+/**
+ * Handles actions to be taken once all workers have exited.
+ * This function checks if all worker processes have exited. If so, it proceeds to display the results
+ * of the testing process. This function shows results only once all workers have stopped running, regardless of
+ * whether they completed all assigned tests in case of a crash.
+ * @returns {void}
+ */
+const handleAllWorkersExited = () => {
+    if (workersExited.size === amountOfWorkers) {
         displayResults();
     }
 };
@@ -120,24 +141,25 @@ const handleWorkerExit = (code, projectName) => {
  * Displays the results of all tests by reading specific log files and aggregating results.
  * It first prints the contents of 'tests.log', calculates totals from 'results.log',
  * and finally reads 'fails.log' for any failures.
- * @returns {void} Does not return a value.
+ * @returns {void}
  */
-const displayResults = () => {
+const displayResults = async () => {
+    // eslint-disable-next-line no-console
     console.log('\nResults:\n');
-    testSuites.forEach((testSuiteName) => {
-        readLogFiles(testSuiteName, 'tests.log');
-    });
+    await readAllLogFiles('tests.log');
+
+    // eslint-disable-next-line no-console
     console.log('\n');
 
     let totalPassing = 0;
     let totalFailing = 0;
     let totalPending = 0;
 
-    testSuites.forEach((testSuiteName) => {
+    for (const testSuiteName of testSuites) {
         totalPassing += aggregateResults(testSuiteName, 'results.log', 'Passing');
         totalFailing += aggregateResults(testSuiteName, 'results.log', 'Failing');
         totalPending += aggregateResults(testSuiteName, 'results.log', 'Pending');
-    });
+    }
 
     // Calculate elapsed time
     const endTime = new Date();
@@ -145,41 +167,59 @@ const displayResults = () => {
     const minutes = elapsed.getUTCMinutes();
 
     // Display total passing with elapsed time in minutes and seconds
+    // eslint-disable-next-line no-console
     console.log('   ', totalPassing, 'Passing', `(${minutes}m)`);
+    // eslint-disable-next-line no-console
     console.log('   ', totalFailing, 'Failing');
     if (totalPending > 0) {
+        // eslint-disable-next-line no-console
         console.log('   ', totalPending, 'Pending');
     }
-
+    // eslint-disable-next-line no-console
     console.log('\n');
 
-    testSuites.forEach((testSuiteName) => {
-        readLogFiles(testSuiteName, 'fails.log');
-    });
-
-    cleanupTestDirectories(testSuites);
+    await readAllLogFiles('fails.log');
 };
 
 /**
- * Reads and logs the contents of a specified log file from the directory of each test suite.
+ * Asynchronously reads and logs the contents of a specified log file from the directory of each test suite.
+ * This function finds the log file in the test suite's directory, reads it if present, and logs the content.
+ * If the file is not found or an error occurs during reading, an error is logged.
+ *
  * @param {string} testSuiteName - The name of the test suite directory.
  * @param {string} logFileName - The name of the log file to read.
- * @returns {void} Does not return a value.
+ * @returns {Promise<void>} A Promise that resolves when the file has been read and logged, or an error has occurred.
  */
-const readLogFiles = (testSuiteName, logFileName) => {
-    const testDirectoryPath = path.join('./database/storage/', testSuiteName);
+const readLogFilesAsync = async (testSuiteName, logFileName) => {
+    const filePath = path.join(BASE_STORAGE_PATH, testSuiteName, logFileName);
     try {
-        const files = fs.readdirSync(testDirectoryPath);
-        files.forEach((file) => {
-            if (file === logFileName) {
-                const filePath = path.join(testDirectoryPath, file);
-                const data = fs.readFileSync(filePath, 'utf8');
-                console.log(data);
-            }
-        });
+        const data = await fsPromises.readFile(filePath, 'utf8');
+        // eslint-disable-next-line no-console
+        console.log(data);
     } catch (err) {
-        console.error(`Error reading directory for ${testSuiteName}: ${err}`);
+        // Don't log error when no directories are found, because directories are managed by the custom mocha reporter.
+        if (!err.message.includes('ENOENT')) {
+            // eslint-disable-next-line no-console
+            console.error(`Error reading log file at ${filePath}: ${err}`);
+        }
     }
+};
+
+/**
+ * Initiates the concurrent reading of a specified log file for all test suites. Uses readLogFilesAsync to perform
+ * concurrent asynchronous read operations on each test suite's specified log file. Uses Promise.all to manage the concurrency,
+ * ensuring all read operations are initiated at the same time and handling their failure.
+ *
+ * @param {string} logFileName - The name of the log file to read for each test suite (e.g., 'tests.log' or 'fails.log').
+ * @returns {Promise<void>} A Promise that resolves when all log files have been read and logged, or rejects if any read operation fails.
+ */
+const readAllLogFiles = async (logFileName) => {
+    const readOperations = testSuites.map((testSuiteName) => readLogFilesAsync(testSuiteName, logFileName));
+    await Promise.all(readOperations)
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error('An error occurred while reading log files:', err);
+        });
 };
 
 /**
@@ -190,7 +230,7 @@ const readLogFiles = (testSuiteName, logFileName) => {
  * @returns {number} The total count of occurrences of the search keyword.
  */
 const aggregateResults = (testSuiteName, logFileName, searchKeyword) => {
-    const testDirectoryPath = path.join('./database/storage/', testSuiteName);
+    const testDirectoryPath = path.join(BASE_STORAGE_PATH, testSuiteName);
     try {
         const files = fs.readdirSync(testDirectoryPath);
         const file = files.find((file) => file === logFileName);
@@ -207,26 +247,31 @@ const aggregateResults = (testSuiteName, logFileName, searchKeyword) => {
                 }, 0);
         }
     } catch (err) {
+        // eslint-disable-next-line no-console
         console.error(`Error reading directory for ${testSuiteName}: ${err}`);
     }
     return 0;
 };
 
 /**
- * Cleans up directories for each test suite after tests have completed.
+ * Cleans up directories for each test suite before tests are run.
  * This function iterates through each test suite and removes its corresponding directory,
- * ensuring the testing environment is clean for subsequent runs.
+ * ensuring the testing environment is clean for the run.
  *
  * @param {Array<string>} testSuites - Array of test suite names whose directories are to be cleaned up.
- * @returns {void} Does not return a value.
+ * @returns {void}
  */
 const cleanupTestDirectories = (testSuites) => {
     testSuites.forEach((testSuiteName) => {
-        const testDirectoryPath = path.join('./database/storage/', testSuiteName);
+        const testDirectoryPath = path.join(BASE_STORAGE_PATH, testSuiteName);
         try {
             fs.rmSync(testDirectoryPath, { recursive: true });
         } catch (err) {
-            console.error(`Error removing directory ${testDirectoryPath}: ${err}`);
+            // Don't log error when no directories are found, because directories are managed by the custom mocha reporter.
+            if (!err.message.includes('ENOENT')) {
+                // eslint-disable-next-line no-console
+                console.error(`Error removing directory ${testDirectoryPath}: ${err}`);
+            }
         }
     });
 };

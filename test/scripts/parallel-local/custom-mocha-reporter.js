@@ -68,13 +68,13 @@ function CustomReporter(runner) {
      * @param {Error} err - The error that caused the test to fail.
      */
     runner.on('fail', (test, err) => {
-        failCount += 1;
+        failCount++;
         testsBuffer.push(`${indent.repeat(suiteStack.length + 1)}${failCount}) ${test.title}`);
 
         suiteStack.forEach((title, idx) => {
-            // Add the failCount only next to the "Home" line and an extra space to all subsequent lines.
+            // Add the failCount only next to the first level line and an extra space to all subsequent lines.
             if (idx === 0) {
-                // "Home" line with failCount prefixed.
+                // First level line with failCount prefixed.
                 failsBuffer.push(`${indent.repeat(idx + 1)}${failCount}) ${title}`);
             } else {
                 // Subsequent lines with one extra space.
