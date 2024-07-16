@@ -55,8 +55,6 @@ module.exports = () => {
         it('should return 200 with the list of GAQ detectors', async () => {
             const response = await request(server).get('/api/dpl-detectors/gaq?dataPassId=3&runNumber=56');
 
-            console.log(response.body)
-
             expect(response.status).to.equal(200);
             const { data } = response.body;
             expect(data).to.be.an('array');
