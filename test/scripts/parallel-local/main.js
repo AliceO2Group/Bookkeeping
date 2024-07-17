@@ -30,7 +30,6 @@ const testSuites = [
 const remainingTests = [...testSuites];
 
 const amountOfWorkers = 3;
-const workersCompleted = new Set();
 const workersExited = new Set();
 
 const imageTag = 'test-parallel-application:latest';
@@ -111,7 +110,6 @@ const assignTestToWorker = (worker, workerName) => {
         // eslint-disable-next-line no-console
         console.log(`${workerName} found no more tests...`);
         worker.send(TestMessages.NO_MORE_TESTS);
-        workersCompleted.add(workerName);
     }
 };
 
