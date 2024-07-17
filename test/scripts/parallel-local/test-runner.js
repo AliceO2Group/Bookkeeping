@@ -1,9 +1,12 @@
 const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { BASE_STORAGE_PATH, NO_MORE_TESTS, REQUEST_NEXT_TEST } = require('./sharedConstants');
 
-let isFirstTest = true;
+const BASE_STORAGE_PATH = process.env.BASE_STORAGE_PATH || './database/storage';
+const TestMessages = {
+    NO_MORE_TESTS: 'no_more_tests',
+    REQUEST_NEXT_TEST: 'request_next_test',
+};
 
 /**
  * Ensures the directory exists before executing tests.
@@ -23,7 +26,7 @@ const createTestDirectoryIfNotExist = (testType) => {
  * @returns {void}
  */
 const processMessage = (message) => {
-    if (message === NO_MORE_TESTS) {
+    if (message === TestMessages.NO_MORE_TESTS) {
         process.exit();
     } else {
         manageTestExecution(message);
@@ -40,11 +43,11 @@ process.on('message', processMessage);
 const manageTestExecution = (testConfiguration) => {
     createTestDirectoryIfNotExist(testConfiguration.test);
     executeTest(testConfiguration)
-        .then(() => process.send(REQUEST_NEXT_TEST))
+        .then(() => process.send(TestMessages.REQUEST_NEXT_TEST))
         .catch((error) => {
             // eslint-disable-next-line no-console
             console.error('Test execution error:', error);
-            process.send(REQUEST_NEXT_TEST);
+            process.send(TestMessages.REQUEST_NEXT_TEST);
         });
 };
 
@@ -65,11 +68,9 @@ const executeTest = ({ test, workerName }) => {
  * @param {string} workerName - Name of the worker under test.
  * @returns {string} Docker command string.
  */
-const buildDockerCommand = (workerName) => {
-    const buildOption = isFirstTest ? '--build' : '';
+const buildDockerCommand = (workerName) =>
     // eslint-disable-next-line max-len
-    return `COMPOSE_PROJECT_NAME=${workerName} docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml up ${buildOption} --abort-on-container-exit`;
-};
+    `COMPOSE_PROJECT_NAME=${workerName} docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml up --abort-on-container-exit`;
 
 /**
  * Executes the Docker command and manages the process's output and lifecycle.
@@ -86,7 +87,11 @@ const executeDockerCommand = (command, testType, workerName, resolve) => {
     };
 
     exec(command, { env: environment }, () => {
-        isFirstTest = false;
         resolve();
     });
+};
+
+module.exports = {
+    BASE_STORAGE_PATH,
+    TestMessages,
 };

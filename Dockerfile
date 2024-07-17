@@ -59,19 +59,11 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "te
 # ---- Test parallel for CI ----
 FROM developmentdependencies as test_parallel_ci
 
-# Set ARG and ENV for TEST_TYPE
-ARG TEST_TYPE
-ENV TEST_TYPE=${TEST_TYPE}
-
 CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset" ]
 
 #
 # ---- Test parallel local ----
 FROM developmentdependencies as test_parallel_local
-
-# Set ARG and ENV for TEST_TYPE
-ARG TEST_TYPE
-ENV TEST_TYPE=${TEST_TYPE}
 
 CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset-local" ]
 

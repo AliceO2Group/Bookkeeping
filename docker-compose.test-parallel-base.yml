@@ -5,8 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        TEST_TYPE: ${TEST_TYPE}
     environment:
       TEST_TYPE: ${TEST_TYPE}
       NODE_ENV: test

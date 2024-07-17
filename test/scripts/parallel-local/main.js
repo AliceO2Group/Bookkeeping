@@ -1,8 +1,8 @@
 const dotenv = require('dotenv');
-const { fork } = require('child_process');
+const { fork, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const { BASE_STORAGE_PATH, REQUEST_NEXT_TEST } = require('./sharedConstants');
+const { BASE_STORAGE_PATH, TestMessages } = require('./test-runner');
 
 dotenv.config();
 
@@ -30,9 +30,20 @@ const testSuites = [
 const remainingTests = [...testSuites];
 
 const amountOfWorkers = 3;
-const basePort = 3307;
 const workersCompleted = new Set();
 const workersExited = new Set();
+
+const imageTag = 'test-parallel-application:latest';
+
+/**
+ * Builds the Docker image used by all the workers.
+ *
+ * @returns {void}
+ */
+const buildDockerImage = () => {
+    const command = 'docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml build';
+    execSync(`${command} && docker tag test-parallel-application ${imageTag}`, { stdio: 'inherit' });
+};
 
 /**
  * Initializes and starts worker processes to handle tests in parallel.
@@ -44,13 +55,12 @@ const initializeWorkers = () => {
     const workers = [];
 
     for (let i = 0; i < amountOfWorkers; i++) {
-        const port = basePort + i;
         const workerName = `worker-${i}`;
-        const worker = fork(path.resolve(__dirname, 'test-runner.js'), [port.toString(), workerName], {
+        const worker = fork(path.resolve(__dirname, 'test-runner.js'), [workerName], {
             stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
         });
 
-        setupWorkerListeners(worker, port, workerName);
+        setupWorkerListeners(worker, workerName);
         assignTestToWorker(worker, workerName);
         workers.push(worker);
     }
@@ -59,11 +69,10 @@ const initializeWorkers = () => {
 /**
  * Sets up event listeners for a worker process.
  * @param {ChildProcess} worker - The worker process.
- * @param {number} port - The port number assigned to the worker.
  * @param {string} workerName - The worker name assigned to the worker.
  * @returns {void}
  */
-const setupWorkerListeners = (worker, port, workerName) => {
+const setupWorkerListeners = (worker, workerName) => {
     // eslint-disable-next-line no-console
     worker.stdout.on('data', (data) => console.log(`${workerName}: ${data.toString()}`));
     // eslint-disable-next-line no-console
@@ -81,7 +90,7 @@ const setupWorkerListeners = (worker, port, workerName) => {
  * @returns {void}
  */
 const handleWorkerMessage = (msg, worker, workerName) => {
-    if (msg === REQUEST_NEXT_TEST) {
+    if (msg === TestMessages.REQUEST_NEXT_TEST) {
         assignTestToWorker(worker, workerName);
     }
 };
@@ -101,7 +110,7 @@ const assignTestToWorker = (worker, workerName) => {
     } else {
         // eslint-disable-next-line no-console
         console.log(`${workerName} found no more tests...`);
-        worker.send('no_more_tests');
+        worker.send(TestMessages.NO_MORE_TESTS);
         workersCompleted.add(workerName);
     }
 };
@@ -190,7 +199,7 @@ const displayResults = async () => {
  * @param {string} logFileName - The name of the log file to read.
  * @returns {Promise<void>} A Promise that resolves when the file has been read and logged, or an error has occurred.
  */
-const readLogFilesAsync = async (testSuiteName, logFileName) => {
+const dumpLogFileContentToConsole = async (testSuiteName, logFileName) => {
     const filePath = path.join(BASE_STORAGE_PATH, testSuiteName, logFileName);
     try {
         const data = await fsPromises.readFile(filePath, 'utf8');
@@ -206,7 +215,7 @@ const readLogFilesAsync = async (testSuiteName, logFileName) => {
 };
 
 /**
- * Initiates the concurrent reading of a specified log file for all test suites. Uses readLogFilesAsync to perform
+ * Initiates the concurrent reading of a specified log file for all test suites. Uses dumpLogFileContentToConsole to perform
  * concurrent asynchronous read operations on each test suite's specified log file. Uses Promise.all to manage the concurrency,
  * ensuring all read operations are initiated at the same time and handling their failure.
  *
@@ -214,7 +223,7 @@ const readLogFilesAsync = async (testSuiteName, logFileName) => {
  * @returns {Promise<void>} A Promise that resolves when all log files have been read and logged, or rejects if any read operation fails.
  */
 const readAllLogFiles = async (logFileName) => {
-    const readOperations = testSuites.map((testSuiteName) => readLogFilesAsync(testSuiteName, logFileName));
+    const readOperations = testSuites.map((testSuiteName) => dumpLogFileContentToConsole(testSuiteName, logFileName));
     await Promise.all(readOperations)
         .catch((err) => {
             // eslint-disable-next-line no-console
@@ -276,4 +285,5 @@ const cleanupTestDirectories = (testSuites) => {
     });
 };
 
+buildDockerImage();
 initializeWorkers();
