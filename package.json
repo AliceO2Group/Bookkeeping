@@ -12,9 +12,10 @@
     "start:prod": "node lib/main.js",
     "test": "mocha --exit --timeout 0",
     "test:subset": "nyc -- mocha --exit --timeout 0 test/scripts/test-${TEST_TYPE}.js && nyc report --report-dir=/usr/src/app/coverage/${TEST_TYPE} --reporter=json",
+    "test:subset-local": "mocha --exit --timeout 0 --reporter test/scripts/parallel-local/custom-mocha-reporter.js test/scripts/test-${TEST_TYPE}.js",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
-    "docker-test:parallel": "docker compose -p test-parallel -f docker-compose.test-parallel.yml up --build",
+    "docker-test:parallel": "node test/scripts/parallel-local/main.js",
     "docker-update": "node scripts/update-dockerfile.js"
   },
   "engines": {
@@ -27,8 +28,10 @@
     "cls-hooked": "4.2.2",
     "d3": "7.8.5",
     "deepmerge": "4.3.0",
+    "dotenv": "16.4.5",
     "joi": "17.13.1",
     "mariadb": "3.0.0",
+    "mkdirp": "3.0.1",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
     "sequelize": "6.37.0",

@@ -46,21 +46,24 @@ jobs:
       - name: Build and Start Test Database
         run: |
           docker-compose \
-          -f docker-compose.test-parallel.yml \
+          -f docker-compose.test-parallel-base.yml \
+          -f docker-compose.test-parallel-ci.yml \
           up --detach test_db
         env:
           TEST_TYPE: ${{ matrix.test_type }}
       - name: Build Test Container
         run: |
           docker-compose \
-          -f docker-compose.test-parallel.yml \
+          -f docker-compose.test-parallel-base.yml \
+          -f docker-compose.test-parallel-ci.yml \
           build test_app
         env:
           TEST_TYPE: ${{ matrix.test_type }}
       - name: Run Tests
         run: |
           docker-compose \
-          -f docker-compose.test-parallel.yml \
+          -f docker-compose.test-parallel-base.yml \
+          -f docker-compose.test-parallel-ci.yml \
           run test_app
         env:
           TEST_TYPE: ${{ matrix.test_type }}
@@ -74,7 +77,8 @@ jobs:
       - name: Clean Up
         run: |
           docker-compose \
-          -f docker-compose.test-parallel.yml \
+          -f docker-compose.test-parallel-base.yml \
+          -f docker-compose.test-parallel-ci.yml \
           down
         env:
           TEST_TYPE: ${{ matrix.test_type }}
