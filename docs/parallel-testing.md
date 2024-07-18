@@ -35,6 +35,14 @@ After configuring everything, simply run:
 ```sh
 npm run docker-test:parallel
 ```
+The amount of workers can also be set using the environment variable WORKERS:
+```sh
+WORKERS=5 npm run docker-test:parallel
+```
+And the path where the result logs are stored can also be set:
+```sh
+STORAGE_PATH='./path/of/choice' npm run docker-test:parallel
+```
 
 ## Docker configuration files
 

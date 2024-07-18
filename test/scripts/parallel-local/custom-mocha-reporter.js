@@ -14,7 +14,7 @@ function CustomReporter(runner) {
     Base.call(this, runner);
 
     const testType = process.env.TEST_TYPE || 'default';
-    const basePath = `/var/storage/${testType}`;
+    const basePath = process.env.STORAGE_PATH ? `${process.env.STORAGE_PATH}/${testType}` : `/var/storage/${testType}`;
     mkdirp.sync(basePath);
 
     const testsBuffer = [];

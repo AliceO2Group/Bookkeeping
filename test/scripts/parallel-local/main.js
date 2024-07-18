@@ -29,7 +29,7 @@ const testSuites = [
 ];
 const remainingTests = [...testSuites];
 
-const amountOfWorkers = 3;
+const amountOfWorkers = parseInt(process.env?.WORKERS, 10) || 3;
 const workersExited = new Set();
 
 const imageTag = 'test-parallel-application:latest';

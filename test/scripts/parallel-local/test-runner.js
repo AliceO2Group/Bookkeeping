@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const BASE_STORAGE_PATH = process.env.BASE_STORAGE_PATH || './database/storage';
+const BASE_STORAGE_PATH = process.env.STORAGE_PATH || './database/storage';
 const MessageKey = Object.freeze({
     NoMoreTests: 'no_more_tests',
     RequestNextTest: 'request_next_test',
