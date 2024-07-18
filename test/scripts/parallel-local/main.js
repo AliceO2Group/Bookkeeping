@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const { fork, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const { BASE_STORAGE_PATH, TestMessages } = require('./test-runner');
+const { BASE_STORAGE_PATH, MessageKey } = require('./test-runner');
 
 dotenv.config();
 
@@ -89,7 +89,7 @@ const setupWorkerListeners = (worker, workerName) => {
  * @returns {void}
  */
 const handleWorkerMessage = (msg, worker, workerName) => {
-    if (msg === TestMessages.REQUEST_NEXT_TEST) {
+    if (msg === MessageKey.RequestNextTest) {
         assignTestToWorker(worker, workerName);
     }
 };
@@ -109,7 +109,7 @@ const assignTestToWorker = (worker, workerName) => {
     } else {
         // eslint-disable-next-line no-console
         console.log(`${workerName} found no more tests...`);
-        worker.send(TestMessages.NO_MORE_TESTS);
+        worker.send(MessageKey.NoMoreTests);
     }
 };
 

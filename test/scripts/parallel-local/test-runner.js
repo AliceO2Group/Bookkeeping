@@ -3,10 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 const BASE_STORAGE_PATH = process.env.BASE_STORAGE_PATH || './database/storage';
-const TestMessages = {
-    NO_MORE_TESTS: 'no_more_tests',
-    REQUEST_NEXT_TEST: 'request_next_test',
-};
+const MessageKey = Object.freeze({
+    NoMoreTests: 'no_more_tests',
+    RequestNextTest: 'request_next_test',
+});
 
 /**
  * Ensures the directory exists before executing tests.
@@ -26,7 +26,7 @@ const createTestDirectoryIfNotExist = (testType) => {
  * @returns {void}
  */
 const processMessage = (message) => {
-    if (message === TestMessages.NO_MORE_TESTS) {
+    if (message === MessageKey.NoMoreTests) {
         process.exit();
     } else {
         manageTestExecution(message);
@@ -43,11 +43,11 @@ process.on('message', processMessage);
 const manageTestExecution = (testConfiguration) => {
     createTestDirectoryIfNotExist(testConfiguration.test);
     executeTest(testConfiguration)
-        .then(() => process.send(TestMessages.REQUEST_NEXT_TEST))
+        .then(() => process.send(MessageKey.RequestNextTest))
         .catch((error) => {
             // eslint-disable-next-line no-console
             console.error('Test execution error:', error);
-            process.send(TestMessages.REQUEST_NEXT_TEST);
+            process.send(MessageKey.RequestNextTest);
         });
 };
 
@@ -69,8 +69,11 @@ const executeTest = ({ test, workerName }) => {
  * @returns {string} Docker command string.
  */
 const buildDockerCommand = (workerName) =>
-    // eslint-disable-next-line max-len
-    `COMPOSE_PROJECT_NAME=${workerName} docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml up --abort-on-container-exit`;
+    `COMPOSE_PROJECT_NAME=${workerName} \
+     docker-compose \
+     -f docker-compose.test-parallel-base.yml \
+     -f docker-compose.test-parallel-local.yml \
+     up --abort-on-container-exit`;
 
 /**
  * Executes the Docker command and manages the process's output and lifecycle.
@@ -93,5 +96,5 @@ const executeDockerCommand = (command, testType, workerName, resolve) => {
 
 module.exports = {
     BASE_STORAGE_PATH,
-    TestMessages,
+    MessageKey,
 };
