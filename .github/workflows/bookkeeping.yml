@@ -22,7 +22,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-
       - name: Build Test Container
-        run: |
+        run: >
           docker-compose \
           -f docker-compose.test-parallel-base.yml \
           -f docker-compose.test-parallel-ci.yml \
