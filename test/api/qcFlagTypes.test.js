@@ -90,8 +90,8 @@ module.exports = () => {
                 },
                 {
                     id: 3,
-                    name: 'Certified by Expert',
-                    method: 'CertifiedByExpert',
+                    name: 'Good',
+                    method: 'Good',
                     bad: false,
                     color: null,
 
@@ -248,7 +248,7 @@ module.exports = () => {
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Certified by Expert', 'Archived']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Good', 'Archived']);
         });
 
         it('should successfuly sort QC flag types by id', async () => {
@@ -276,7 +276,7 @@ module.exports = () => {
                 'Unknown Quality',
                 'Limited Acceptance MC Reproducible',
                 'Limited acceptance',
-                'Certified by Expert',
+                'Good',
                 'Bad PID',
                 'Bad',
                 'Archived',
@@ -296,7 +296,7 @@ module.exports = () => {
                 'Archived',
                 'Bad',
                 'Bad PID',
-                'Certified by Expert',
+                'Good',
                 'Limited acceptance',
                 'Limited Acceptance MC Reproducible',
                 'Unknown Quality',
