@@ -98,10 +98,12 @@ jobs:
           up --detach test_db
       - name: Build Test Container
         run: |
-          docker-compose \
-          -f docker-compose.test-parallel-base.yml \
-          -f docker-compose.test-parallel-ci.yml \
-          build test_app
+          docker buildx build \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --file Dockerfile \
+            --target test_parallel_ci \
+            --tag test_app:latest \
+            --load
       - name: Run Tests
         run: |
           docker-compose \
