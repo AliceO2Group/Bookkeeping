@@ -34,8 +34,13 @@ jobs:
             --cache-from type=local,src=/tmp/.buildx-cache \
             --cache-to type=local,dest=/tmp/.buildx-cache,mode=max \
             --file Dockerfile \
+            --target test_app \
             --tag test_app:latest \
             --load .
+
+      - name: Verify Cache Content
+        run: |
+          ls -alh /tmp/.buildx-cache
 
   parallel_tests:
     name: ${{ matrix.test_type }}
