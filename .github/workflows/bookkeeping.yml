@@ -103,7 +103,7 @@ jobs:
             --file Dockerfile \
             --target test_parallel_ci \
             --tag test_app:latest \
-            --load
+            --load .
       - name: Run Tests
         run: |
           docker-compose \
