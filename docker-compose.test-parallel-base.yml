@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   test_app:
+    image: test-parallel-application:latest
     build:
       context: .
       dockerfile: Dockerfile
