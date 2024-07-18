@@ -10,17 +10,20 @@ jobs:
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.set-cache-key.outputs.cache-key }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Generate cache key
+        id: set-cache-key
+        run: echo "::set-output name=cache-key::${{ runner.os }}-buildx-${{ github.run_id }}-${{ github.run_attempt }}"
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile', '**/docker-compose.*.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          key: ${{ steps.set-cache-key.outputs.cache-key }}
       - name: Build Test Container
         run: |
           docker-compose \
@@ -58,13 +61,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
+      - name: Create Coverage Directory
+        run: mkdir -p ${{ github.workspace }}/coverage
+
+      - name: Set COMPOSE_PROJECT_NAME
+        run: echo "COMPOSE_PROJECT_NAME=${{ matrix.test_type }}_app" >> $GITHUB_ENV
+
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile', '**/docker-compose.*.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          key: ${{ needs.build.outputs.cache-key }}
       - name: Build and Start Test Database
         run: |
           docker-compose \
