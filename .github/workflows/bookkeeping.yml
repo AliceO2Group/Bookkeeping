@@ -15,15 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
+      - name: Set up Docker
         uses: docker/setup-buildx-action@v2
-        with:
-          buildkitd-flags: --debug
-
       - name: Generate cache key
         id: set-cache-key
         run: echo "::set-output name=cache-key::${{ runner.os }}-buildx-${{ github.run_id }}-${{ github.run_attempt }}"
-
       - name: Restore cache
         id: cache
         uses: actions/cache@v2
@@ -32,21 +28,14 @@ jobs:
           key: ${{ steps.set-cache-key.outputs.cache-key }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-
       - name: Build and cache Docker image
         run: |
           docker buildx build \
             --cache-from type=local,src=/tmp/.buildx-cache \
             --cache-to type=local,dest=/tmp/.buildx-cache,mode=max \
-            --file docker-compose.test-parallel-base.yml \
-            --file docker-compose.test-parallel-ci.yml \
-            --target test_app \
+            --file Dockerfile \
             --tag test_app:latest \
-            .
-
-      - name: Verify Cache Content
-        run: |
-          ls -alh /tmp/.buildx-cache
+            --load .
 
   parallel_tests:
     name: ${{ matrix.test_type }}
