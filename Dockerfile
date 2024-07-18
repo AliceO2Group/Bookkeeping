@@ -30,14 +30,11 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
+# Copy all files, except those ignored by .dockerignore, to the container
+COPY . .
 
 # Installs modules from package-lock.json, this ensures reproducible build
 RUN npm --silent ci
-
-# Copy all files, except those ignored by .dockerignore, to the container
-COPY . .
 
 
 #
