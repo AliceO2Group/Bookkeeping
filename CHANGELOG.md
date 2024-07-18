@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.96.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.96.0)
+* Notable changes for users:
+  * Allow filtering tags in log creation and run edition
+  * Fixed bug with QC flag deletion introduced in https://github.com/AliceO2Group/Bookkeeping/pull/1638
+* Notable changes for developers:
+  * Added methods for fetching QC flags in GAQ periods
+  * Added npm command `npm run docker-test:parallel` to run the tests in parallel
+
 ## [0.95.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.95.0)
 * Notable changes for users:
   * Fixed incorrect values of run coverage in QC summary
