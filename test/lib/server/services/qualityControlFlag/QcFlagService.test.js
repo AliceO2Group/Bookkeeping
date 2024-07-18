@@ -1081,6 +1081,75 @@ module.exports = () => {
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
+
+            /**
+             * Get unix timestamp for given time on 2024-07-10
+             * Used to avoid code below to be padded out
+             *
+             * @param {string} timeString time string in hh:mm:ss format
+             * @return {number} unix timestamp
+             */
+            const t = (timeString) => new Date(`2024-07-16 ${timeString}`).getTime();
+
+            const runNumber = 445566;
+            const dataPassId = 3;
+            const timeTrgStart = t('06:00:00');
+            const timeTrgEnd = t('22:00:00');
+
+            await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
+            const run = await RunRepository.findOne({ where: { runNumber } });
+            const dplDetectorId = 1;
+            await run.addDataPass(dataPassId);
+            await run.addDetector(dplDetectorId);
+
+            // Creating flags fo CPV
+            const scope = {
+                runNumber,
+                dataPassIdentifier: { id: dataPassId },
+                dplDetectorIdentifier: { dplDetectorId: 1 },
+            };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const goodFlagTypeId = 3;
+
+            const [{ id: id1 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('08:00:00'), to: t('20:00:00') }], scope, relations);
+            const [{ id: id2 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('10:00:00'), to: t('18:00:00') }], scope, relations);
+            const [{ id: id3 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('12:00:00'), to: t('16:00:00') }], scope, relations);
+            const [{ id: id4 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('13:30:00'), to: t('14:30:00') }], scope, relations);
+            expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
+                { from: t('08:00:00'), to: t('10:00:00') },
+                { from: t('18:00:00'), to: t('20:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([
+                { from: t('10:00:00'), to: t('12:00:00') },
+                { from: t('16:00:00'), to: t('18:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id3)).to.have.all.deep.members([
+                { from: t('12:00:00'), to: t('13:30:00') },
+                { from: t('14:30:00'), to: t('16:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+
+            await qcFlagService.delete(id3);
+            expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
+                { from: t('08:00:00'), to: t('10:00:00') },
+                { from: t('18:00:00'), to: t('20:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([
+                { from: t('10:00:00'), to: t('13:30:00') },
+                { from: t('14:30:00'), to: t('18:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+
+            await qcFlagService.delete(id4);
+            expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
+                { from: t('08:00:00'), to: t('10:00:00') },
+                { from: t('18:00:00'), to: t('20:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([{ from: t('10:00:00'), to: t('18:00:00') }]);
         });
 
         it('should successfully delete QC flag of simulationPass ', async () => {
