@@ -71,6 +71,12 @@ jobs:
           -f docker-compose.test-parallel-base.yml \
           -f docker-compose.test-parallel-ci.yml \
           up --detach test_db
+      - name: Build Test Container
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel-base.yml \
+          -f docker-compose.test-parallel-ci.yml \
+          build test_app
       - name: Run Tests
         run: |
           docker-compose \
