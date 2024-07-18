@@ -14,16 +14,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.docker-layers/
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile', '**/docker-compose.*.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
       - name: Build Test Container
-        run: >
-          docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-ci.yml --cache-from type=local,src=/tmp/.docker-layers/ build test_app
+        run: |
+          docker-compose \
+          -f docker-compose.test-parallel-base.yml \
+          -f docker-compose.test-parallel-ci.yml \
+          build test_app
       - name: Save Docker Image
         run: docker save test-parallel-application:latest > /tmp/test-parallel-application.tar
       - name: Upload Docker Image as Artifact
