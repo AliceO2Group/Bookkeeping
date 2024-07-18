@@ -33,7 +33,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 # Copy all files, except those ignored by .dockerignore, to the container
 COPY . .
 
-# Installs modules from package-lock.json, this ensures reproducible build
+# Installs modules from package-lock.json if there are changes, this ensures reproducible build
 RUN npm --silent ci
 
 
