@@ -56,7 +56,6 @@ module.exports = () => {
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
     describe('DataPasses API', DataPassesSuite);
     describe('SimulationPassesSuite API', SimulationPassesSuite);
-    describe('Detectors API', DetectorsSuite);
     describe('QcFlagTypes API', QcFlagTypesSuite);
     describe('QcFlags API', QcFlagsSuite);
     describe('TriggerCounters API', TriggerCountersSuite);
