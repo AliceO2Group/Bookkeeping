@@ -50,7 +50,7 @@ module.exports = () => {
         const response = await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
@@ -70,7 +70,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
@@ -81,7 +81,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
@@ -92,7 +92,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         // eslint-disable-next-line require-jsdoc
@@ -113,7 +113,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await expectInnerText(page, '#firstRowIndex', '1');
@@ -125,7 +125,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         const amountSelectorId = '#amountSelector';
@@ -145,7 +145,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         // eslint-disable-next-line no-return-assign, no-undef

@@ -51,7 +51,7 @@ module.exports = () => {
             queryParameters: {
                 dataPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -73,7 +73,7 @@ module.exports = () => {
             queryParameters: {
                 dataPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -86,7 +86,7 @@ module.exports = () => {
             queryParameters: {
                 dataPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -99,7 +99,7 @@ module.exports = () => {
             queryParameters: {
                 dataPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -118,7 +118,7 @@ module.exports = () => {
             page: 'qc-flags-for-data-pass',
             dataPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         await expectRowValues(page, 1, {
@@ -131,7 +131,7 @@ module.exports = () => {
             queryParameters: {
                 dataPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -154,7 +154,7 @@ module.exports = () => {
             page: 'qc-flags-for-data-pass',
             dataPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         await expectRowValues(page, 1, {
@@ -169,7 +169,7 @@ module.exports = () => {
             queryParameters: {
                 dataPassId: 3,
                 runNumber: 105,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -186,7 +186,7 @@ module.exports = () => {
             page: 'qc-flags-for-data-pass',
             dataPassId: '3',
             runNumber: '105',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         await expectColumnValues(page, 'flagType', ['Unknown Quality']);
@@ -196,7 +196,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 2,
             runNumber: 2,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject to QC');

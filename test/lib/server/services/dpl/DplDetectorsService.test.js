@@ -13,13 +13,13 @@
 
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent');
-const { dplDetectorsService } = require('../../../../../lib/server/services/dpl/DplDetectorsService');
+const { detectorsService } = require('../../../../../lib/server/services/dpl/DplDetectorsService');
 
 module.exports = () => {
     before(resetDatabaseContent);
 
     it('should get all DPL Detectors', async () => {
-        const detectors = await dplDetectorsService.getAll
+        const detectors = await detectorsService.getAll
         ();
         expect(detectors).to.be.an('array');
         expect(detectors).to.be.lengthOf(21);

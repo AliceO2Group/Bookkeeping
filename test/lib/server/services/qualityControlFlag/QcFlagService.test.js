@@ -40,7 +40,7 @@ const qcFlagWithId1 = {
     createdById: 1,
     flagTypeId: 5, // LimitedAcceptance MC Reprodubile
     runNumber: 106,
-    dplDetectorId: 1, // CPV
+    detectorId: 1, // CPV
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
     updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
@@ -83,7 +83,7 @@ module.exports = () => {
                 const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
                     dataPassId: 1,
                     runNumber: 106,
-                    dplDetectorId: 1,
+                    detectorId: 1,
                 });
                 expect(count).to.be.equal(3);
                 expect(flags).to.be.an('array');
@@ -95,7 +95,7 @@ module.exports = () => {
                 const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
                     dataPassId: [2],
                     runNumber: [1],
-                    dplDetectorId: [1],
+                    detectorId: [1],
                 });
                 expect(count).to.be.equal(1);
                 expect(flags).to.be.an('array');
@@ -109,7 +109,7 @@ module.exports = () => {
             const { rows: flags, count } = await qcFlagService.getAllPerSimulationPassAndRunAndDetector({
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             });
             expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
@@ -207,7 +207,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             // Failing property
@@ -229,7 +229,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+                detectorIdentifier: { detectorId: 1 }, // CPV
             };
 
             // Failing property
@@ -258,7 +258,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -281,7 +281,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -303,7 +303,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 9999 }, // Failing property
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -334,7 +334,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -349,7 +349,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    dplDetectorId,
+                    detectorId,
                     createdBy: { externalId: externalUserId },
                 } = createdQcFlags[qcFlagIndex];
                 const qcFlag = qcFlags[qcFlagIndex];
@@ -360,7 +360,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    dplDetectorId,
+                    detectorId,
                     externalUserId,
                     effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
                 }).to.be.eql({
@@ -369,7 +369,7 @@ module.exports = () => {
                     comment: qcFlag.comment,
                     flagTypeId: qcFlag.flagTypeId,
                     runNumber: scope.runNumber,
-                    dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                    detectorId: scope.detectorIdentifier.detectorId,
                     externalUserId: relations.user.externalUserId,
                     effectivePeriods: [
                         {
@@ -391,7 +391,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber: scope.runNumber,
-                        dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                        detectorId: scope.detectorIdentifier.detectorId,
                         id: { [Op.notIn]: createdQcFlags.map(({ id }) => id) },
                     },
                     include: [
@@ -452,17 +452,17 @@ module.exports = () => {
                 const scope = {
                     runNumber: 106,
                     dataPassIdentifier: { id: 1 },
-                    dplDetectorIdentifier: { dplDetectorId: 1 },
+                    detectorIdentifier: { detectorId: 1 },
                 };
 
                 const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-                const [{ id, runNumber, dplDetectorId }] = await qcFlagService.create([qcFlag], scope, relations);
+                const [{ id, runNumber, detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
-                        dplDetectorId,
+                        detectorId,
                         id: { [Op.not]: id },
                     },
                     include: [
@@ -528,22 +528,22 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId }, createdAt }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+            expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
                 from: startTime,
                 to: endTime,
                 comment: qcFlag.comment,
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
             });
 
@@ -557,7 +557,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
-                        dplDetectorId,
+                        detectorId,
                         createdAt: { [Op.lt]: createdAt },
                     },
                     include: [
@@ -582,12 +582,12 @@ module.exports = () => {
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             const flagTypeId = 5;
             const runNumber = 654321;
-            const dplDetectorId = 1; // CPV - It's also Id of detector
+            const detectorId = 1; // CPV - It's also Id of detector
             const dataPassId = 1;
             await runService.create({ runNumber });
             const run = await RunRepository.findOne({ where: { runNumber } }); // Create run without timestamps
             await run.addDataPass(dataPassId);
-            await run.addDetector(dplDetectorId);
+            await run.addDetector(detectorId);
             let from;
             let to;
             let qcFlag;
@@ -604,7 +604,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -623,7 +623,7 @@ module.exports = () => {
                         },
                     },
                     [runNumber]: {
-                        [dplDetectorId]: {
+                        [detectorId]: {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: true,
                             missingVerificationsCount: 1,
@@ -642,7 +642,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -665,7 +665,7 @@ module.exports = () => {
                         },
                     },
                     [runNumber]: {
-                        [dplDetectorId]: {
+                        [detectorId]: {
                             badEffectiveRunCoverage: null,
                             explicitlyNotBadEffectiveRunCoverage: 0,
                             mcReproducible: true,
@@ -684,7 +684,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -712,7 +712,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -753,7 +753,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 9999999 } };
@@ -774,7 +774,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+                detectorIdentifier: { detectorId: 1 }, // CPV
             };
 
             const relations = { user: { roles: ['det-its'], externalUserId: 1 } };
@@ -802,7 +802,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -825,7 +825,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -847,7 +847,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 9999 }, // Failing property
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -870,11 +870,11 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
@@ -883,7 +883,7 @@ module.exports = () => {
                 comment,
                 flagTypeId,
                 runNumber,
-                dplDetectorId,
+                detectorId,
                 externalUserId,
                 effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
             }).to.be.eql({
@@ -892,7 +892,7 @@ module.exports = () => {
                 comment: qcFlag.comment,
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
                 effectivePeriods: [{ from, to }],
             });
@@ -910,7 +910,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
-                        dplDetectorId,
+                        detectorId,
                         id: { [Op.not]: id },
                     },
                     include: [
@@ -952,23 +952,23 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+            expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
                 from: startTime,
                 to: endTime,
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: qcFlagCreationParameters.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
             });
 
@@ -986,7 +986,7 @@ module.exports = () => {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorId: 1,
+                detectorId: 1,
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 1 } };
@@ -1015,23 +1015,23 @@ module.exports = () => {
 
             const scope = {
                 runNumber: 106,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
                 flagTypeId,
                 runNumber,
-                dplDetectorId,
+                detectorId,
                 externalUserId,
                 effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
             }).to.be.eql({
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
                 effectivePeriods: [{ from, to }],
             });
@@ -1098,15 +1098,15 @@ module.exports = () => {
 
             await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
             const run = await RunRepository.findOne({ where: { runNumber } });
-            const dplDetectorId = 1;
+            const detectorId = 1;
             await run.addDataPass(dataPassId);
-            await run.addDetector(dplDetectorId);
+            await run.addDetector(detectorId);
 
             // Creating flags fo CPV
             const scope = {
                 runNumber,
                 dataPassIdentifier: { id: dataPassId },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             const goodFlagTypeId = 3;
@@ -1156,7 +1156,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 1 } };
@@ -1167,7 +1167,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber: 106,
-                        dplDetectorId: 1,
+                        detectorId: 1,
                         createdAt: { [Op.lt]: createdAt },
                     },
                     include: [
@@ -1196,7 +1196,7 @@ module.exports = () => {
                 const olderFlags = await QcFlagRepository.findAll({
                     where: {
                         runNumber: 106,
-                        dplDetectorId: 1,
+                        detectorId: 1,
                     },
                     include: [
                         { association: 'effectivePeriods' },

@@ -32,7 +32,7 @@ const RunsWithRunId = require('./runs-with-runId.test.js');
 const DataPassesSuite = require('./dataPasses.test.js');
 const SimulationPassesSuite = require('./simulationPasses.test.js');
 const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
-const DplDetectorsSuite = require('./dplDetectors.test.js');
+const DplDetectorsSuite = require('./detectors.test.js');
 const QcFlagsSuite = require('./qcFlags.test.js');
 const TriggerCountersSuite = require('./triggerCounters.test');
 

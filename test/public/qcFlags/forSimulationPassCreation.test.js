@@ -51,7 +51,7 @@ module.exports = () => {
             queryParameters: {
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -73,7 +73,7 @@ module.exports = () => {
             queryParameters: {
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -86,7 +86,7 @@ module.exports = () => {
             queryParameters: {
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -99,7 +99,7 @@ module.exports = () => {
             queryParameters: {
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -118,7 +118,7 @@ module.exports = () => {
             page: 'qc-flags-for-simulation-pass',
             simulationPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         await expectRowValues(page, 1, {
@@ -131,7 +131,7 @@ module.exports = () => {
             queryParameters: {
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -152,7 +152,7 @@ module.exports = () => {
             page: 'qc-flags-for-simulation-pass',
             simulationPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         await expectRowValues(page, 1, {
@@ -167,7 +167,7 @@ module.exports = () => {
             queryParameters: {
                 simulationPassId: 1,
                 runNumber: 105,
-                dplDetectorId: 1,
+                detectorId: 1,
             },
         });
 
@@ -184,7 +184,7 @@ module.exports = () => {
             page: 'qc-flags-for-simulation-pass',
             simulationPassId: '1',
             runNumber: '105',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         await expectColumnValues(page, 'flagType', ['Unknown Quality']);

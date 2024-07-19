@@ -174,10 +174,10 @@ module.exports = () => {
         const dataPassId = 3;
         it('should successfuly set GAQ detectors', async () => {
             const runNumbers = [49, 56];
-            const dplDetectorIds = [4, 7];
-            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, dplDetectorIds);
+            const detectorIds = [4, 7];
+            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds);
             expect(data).to.be.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
+                .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
         it('should fail to set GAQ detectors because of miaaing association', async () => {
             let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
