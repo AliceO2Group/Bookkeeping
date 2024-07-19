@@ -11,7 +11,6 @@ EXPOSE 4000
 RUN apk add --no-cache \
     bash=5.2.15-r5
 
-
 #
 # ---- Development Dependencies ----
 FROM base as developmentdependencies
@@ -36,14 +35,12 @@ COPY . .
 # Installs modules from package-lock.json if there are changes, this ensures reproducible build
 RUN npm --silent ci
 
-
 #
 # ---- Development ----
 FROM developmentdependencies as development
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
-
 
 #
 # ---- Test ----
@@ -71,7 +68,6 @@ FROM developmentdependencies as coverage
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
 
-
 #
 # ---- Production Dependencies ----
 FROM base as productiondependencies
@@ -84,7 +80,6 @@ RUN npm --silent ci --production
 
 # Copy all files, except those ignored by .dockerignore, to the container
 COPY ./lib ./lib
-
 
 #
 # ---- Production ----
