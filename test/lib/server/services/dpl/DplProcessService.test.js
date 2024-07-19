@@ -16,7 +16,7 @@ const { dplProcessService } = require('../../../../../lib/server/services/dpl/Dp
 const assert = require('assert');
 const { expect } = require('chai');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
-const { getDplDetectorOrFail } = require('../../../../../lib/server/services/dpl/getDplDetectorOrFail.js');
+const { getDetectorOrFail } = require('../../../../../lib/server/services/dpl/getDetectorOrFail.js');
 const { getDplProcessOrFail } = require('../../../../../lib/server/services/dpl/getDplProcessOrFail.js');
 const { getDplProcessType } = require('../../../../../lib/server/services/dpl/getDplProcessType.js');
 const { getHostOrFail } = require('../../../../../lib/server/services/host/getHostOrFail.js');
@@ -294,7 +294,7 @@ module.exports = () => {
             );
             expect(processExecution).to.not.be.null;
             expect(processExecution.detectorId).to.equal(22);
-            const { name } = await getDplDetectorOrFail({ detectorId: 22 });
+            const { name } = await getDetectorOrFail({ detectorId: 22 });
             expect(name).to.equal('NON-EXISTING-DETECTOR');
             expect(processExecution.processId).to.equal(1);
             expect(processExecution.hostId).to.equal(1);
