@@ -79,13 +79,13 @@ module.exports = () => {
         );
     });
 
-    it('should throw an error if trying to fetch processes for a DPL detector that does not exist', async () => {
+    it('should throw an error if trying to fetch processes for a detector that does not exist', async () => {
         await assert.rejects(
             () => dplProcessService.getAllExecutedProcessesByRunAndDetector(
                 { runNumber: 106 },
                 { detectorId: 999 },
             ),
-            new NotFoundError('DPL detector with this id (999) could not be found'),
+            new NotFoundError('detector with this id (999) could not be found'),
         );
     });
 
@@ -139,14 +139,14 @@ module.exports = () => {
         );
     });
 
-    it('should throw an error if trying to fetch hosts for a DPL detector that does not exist', async () => {
+    it('should throw an error if trying to fetch hosts for a detector that does not exist', async () => {
         await assert.rejects(
             () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 106 },
                 { detectorId: 999 },
                 { dplProcessId: 1 },
             ),
-            new NotFoundError('DPL detector with this id (999) could not be found'),
+            new NotFoundError('detector with this id (999) could not be found'),
         );
     });
 
@@ -221,7 +221,7 @@ module.exports = () => {
         );
     });
 
-    it('should throw an error if trying to fetch process executions for a DPL detector that does not exist', async () => {
+    it('should throw an error if trying to fetch process executions for a detector that does not exist', async () => {
         await assert.rejects(
             () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
@@ -229,7 +229,7 @@ module.exports = () => {
                 { dplProcessId: 1 },
                 { hostId: 1 },
             ),
-            new NotFoundError('DPL detector with this id (999) could not be found'),
+            new NotFoundError('detector with this id (999) could not be found'),
         );
     });
 
