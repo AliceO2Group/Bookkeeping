@@ -19,9 +19,9 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/dpl-detectors', () => {
+    describe('GET /api/detectors', () => {
         it('should return 200 with the list of detectors', async () => {
-            const response = await request(server).get('/api/dpl-detectors');
+            const response = await request(server).get('/api/detectors');
 
             expect(response.status).to.equal(200);
             expect(response.body).to.be.an('object');
