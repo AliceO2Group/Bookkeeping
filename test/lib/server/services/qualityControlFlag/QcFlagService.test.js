@@ -293,7 +293,7 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create QC flag because there is no association between data pass, run and dpl detector', async () => {
+        it('should fail to create QC flag because there is no association between data pass, run and detector', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -837,7 +837,7 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create QC flag because there is no association between simulation pass, run and dpl detector', async () => {
+        it('should fail to create QC flag because there is no association between simulation pass, run and detector', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
