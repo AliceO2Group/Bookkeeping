@@ -1276,19 +1276,19 @@ module.exports = () => {
 
             await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
             const run = await RunRepository.findOne({ where: { runNumber } });
-            const dplDetectorIds = [1, 2, 3];
+            const detectorIds = [1, 2, 3];
             await run.addDataPass(dataPassId);
-            await run.addDetectors(dplDetectorIds);
-            await dataPassService.setGaqDetectors(dataPassId, [runNumber], dplDetectorIds);
+            await run.addDetectors(detectorIds);
+            await dataPassService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
 
             // Creating flags fo CPV, EMC, FDD
             const scope = {
                 runNumber,
                 dataPassIdentifier: { id: dataPassId },
             };
-            const scopeCPV = { ...scope, dplDetectorIdentifier: { dplDetectorId: 1 } };
-            const scopeEMC = { ...scope, dplDetectorIdentifier: { dplDetectorId: 2 } };
-            const scopeFDD = { ...scope, dplDetectorIdentifier: { dplDetectorId: 3 } };
+            const scopeCPV = { ...scope, detectorIdentifier: { detectorId: 1 } };
+            const scopeEMC = { ...scope, detectorIdentifier: { detectorId: 2 } };
+            const scopeFDD = { ...scope, detectorIdentifier: { detectorId: 3 } };
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             const goodFlagTypeId = 3;
             const badPidlagTypeId = 12;
