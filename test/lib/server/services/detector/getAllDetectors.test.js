@@ -37,8 +37,10 @@ module.exports = () => {
             { id: 17, name: 'ACO' },
             { id: 18, name: 'CTP' },
             { id: 19, name: 'FIT' },
-            { id: 20, name: 'A-NEW-DETECTOR' },
-            { id: 21, name: 'A-NEW-ONE' },
+            { id: 20, name: 'QC-SPECIFIC' },
+            { id: 21, name: 'GLO' },
+            { id: 22, name: 'A-NEW-DETECTOR' },
+            { id: 23, name: 'A-NEW-ONE' },
         ]);
     });
 };
