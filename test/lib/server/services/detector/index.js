@@ -13,7 +13,7 @@
 
 const getdetectorTest = require('./getDetector.test.js');
 const createDetectorTest = require('./createDetector.test.js');
-const getOrCreateAllDetectorsTest = require('./getOrCreateAllDetectors.test.js');
+const getOrCreateAllDetectorsTest = require('./getOrCreateAllPhysicalDetectorsByName.test.js');
 const getAllDetectorsTest = require('./getAllDetectors.test.js');
 const DetectorServiceTest = require('./DetectorService.test');
 
