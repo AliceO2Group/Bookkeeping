@@ -12,17 +12,17 @@
  */
 
 const { expect } = require('chai');
-const { getOrCreateAllDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
+const { getOrCreateAllPhysicalDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllPhysicalDetectorsByName.js');
 
 module.exports = () => {
     it('should successfully retrieve a list of detectors and create the missing ones', async () => {
-        const detectors = await getOrCreateAllDetectorsByName(['CPV', 'A-NEW-ONE']);
+        const detectors = await getOrCreateAllPhysicalDetectorsByName(['CPV', 'A-NEW-ONE']);
         expect(detectors).to.length(2);
         expect(detectors.map(({ name }) => name)).to.eql(['CPV', 'A-NEW-ONE']);
     });
 
     it('should successfully do nothing with an empty list of detectors', async () => {
-        const detectors = await getOrCreateAllDetectorsByName([]);
+        const detectors = await getOrCreateAllPhysicalDetectorsByName([]);
         expect(detectors).to.length(0);
     });
 };

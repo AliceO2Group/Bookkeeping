@@ -29,7 +29,7 @@ const { createEnvironment } = require('../../../lib/server/services/environment/
 const { customizedECSEosReport, emptyECSEosReportRequest } = require('../../mocks/mock-ecs-eos-report.js');
 const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
+const { getOrCreateAllPhysicalDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllPhysicalDetectorsByName.js');
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
@@ -74,7 +74,7 @@ module.exports = () => {
                 const runId = await createRun(
                     run,
                     {
-                        detectors: await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '')
+                        detectors: await getOrCreateAllPhysicalDetectorsByName((run?.concatenatedDetectors ?? '')
                             .split(',')
                             .map((value) => value.trim())),
                     },
