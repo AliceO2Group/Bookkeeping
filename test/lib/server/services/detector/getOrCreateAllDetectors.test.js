@@ -12,7 +12,8 @@
  */
 
 const { expect } = require('chai');
-const { getOrCreateAllPhysicalDetectorsByName } = require('../../../../../lib/server/services/detector/getOrCreateAllPhysicalDetectorsByName.js');
+const { getOrCreateAllPhysicalDetectorsByName }
+    = require('../../../../../lib/server/services/detector/getOrCreateAllPhysicalDetectorsByName.js');
 
 module.exports = () => {
     it('should successfully retrieve a list of detectors and create the missing ones', async () => {
