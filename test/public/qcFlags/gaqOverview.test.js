@@ -115,7 +115,7 @@ module.exports = () => {
         ]);
 
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
-        await waitForNavigation(page, () => pressElement(page, 'row106-EMC a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-EMC a'));
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-3', true);
 
@@ -123,9 +123,9 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
 
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
-        await waitForNavigation(page, () => pressElement(page, 'row106-globalAggregatedQuality a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a'));
 
-        expect(await getTableContent(page)).to.have.all.deepordered.members([
+        expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 'good',
                 '08/08/2019\n13:00:00',
