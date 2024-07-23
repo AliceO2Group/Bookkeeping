@@ -1144,6 +1144,7 @@ module.exports = () => {
                 { from: t('14:30:00'), to: t('18:00:00') },
             ]);
             expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+
             await qcFlagService.delete(id4);
             expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
                 { from: t('08:00:00'), to: t('10:00:00') },
