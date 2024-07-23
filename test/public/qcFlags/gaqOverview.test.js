@@ -113,5 +113,68 @@ module.exports = () => {
                 '',
             ],
         ]);
+
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
+        await waitForNavigation(page, () => pressElement(page, 'row106-EMC a'));
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-3', true);
+
+        await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
+        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
+
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
+        await waitForNavigation(page, () => pressElement(page, 'row106-globalAggregatedQuality a'));
+
+        expect(await getTableContent(page)).to.have.all.deepordered.members([
+            [
+                'good',
+                '08/08/2019\n13:00:00',
+                '08/08/2019\n22:43:20',
+                '',
+                'Good',
+            ],
+            [
+                'MC.R',
+                '08/08/2019\n22:43:20',
+                '09/08/2019\n04:16:40',
+                'Limited Acceptance MC Reproducible',
+                'Good',
+            ],
+            [
+                'good',
+                '09/08/2019\n04:16:40',
+                '09/08/2019\n05:40:00',
+                '',
+                'Good',
+            ],
+            [
+                'bad',
+                '09/08/2019\n05:40:00',
+                '09/08/2019\n07:03:20',
+                'Limited acceptance',
+                'Good',
+            ],
+            [
+                'good',
+                '09/08/2019\n07:03:20',
+                '09/08/2019\n08:26:40',
+                '',
+                'Good',
+            ],
+            [
+                'bad',
+                '09/08/2019\n08:26:40',
+                '09/08/2019\n09:50:00',
+                'Bad',
+                'Good',
+            ],
+            [
+                'good',
+                '09/08/2019\n09:50:00',
+                '09/08/2019\n14:00:00',
+                '',
+                'Good',
+            ],
+        ]);
     });
 };
