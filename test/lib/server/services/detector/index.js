@@ -13,14 +13,14 @@
 
 const getdetectorTest = require('./getDetector.test.js');
 const createDetectorTest = require('./createDetector.test.js');
-const getOrCreateAllDetectorsTest = require('./getOrCreateAllPhysicalDetectorsByName.test.js');
+const getOrCreateAllPhysicalDetectorsTest = require('./getOrCreateAllPhysicalDetectorsByName.test.js');
 const getAllDetectorsTest = require('./getAllDetectors.test.js');
 const DetectorServiceTest = require('./DetectorService.test');
 
 module.exports = () => {
     describe('getDetector', getdetectorTest);
     describe('createDetector', createDetectorTest);
-    describe('getOrCreateAllDetectors', getOrCreateAllDetectorsTest);
+    describe('getOrCreateAllPhysicalDetectors', getOrCreateAllPhysicalDetectorsTest);
     describe('getAllDetectors', getAllDetectorsTest);
     describe('DetectorService', DetectorServiceTest);
 };
