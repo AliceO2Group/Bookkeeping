@@ -1313,7 +1313,7 @@ module.exports = () => {
                 { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
             ], scopeFDD, relations)).map(({ id }) => id);
 
-            const gaqFlags = await qcFlagService.getGaqQcFlags(dataPassId, runNumber);
+            const gaqFlags = await qcFlagService.getGaqFlags(dataPassId, runNumber);
             const data = gaqFlags.map(({
                 from,
                 to,
