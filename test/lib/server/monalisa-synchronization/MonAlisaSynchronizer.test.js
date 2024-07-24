@@ -145,10 +145,10 @@ module.exports = () => {
 
         // All associated with appropriate Data Passes
 
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const helperGetDataPassNamesPerLhcPeriodOfSimulationPass = (name, lhcPeriod) =>
             nameToSimulationPass[name].associations.dataPassesSuffixes.map((suffix) => `${lhcPeriod}_${suffix}`);
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const helperGetDataPassNamesPerSimulationPassName = (name) =>
             nameToSimulationPass[name]?.associations.lhcPeriods
                 .flatMap((lhcPeriod) => helperGetDataPassNamesPerLhcPeriodOfSimulationPass(name, lhcPeriod));

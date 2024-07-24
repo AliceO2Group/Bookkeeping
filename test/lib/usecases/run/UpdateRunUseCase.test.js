@@ -106,7 +106,7 @@ module.exports = () => {
             const changeReason = 'Change reason';
             updateRunDto.body.runQualityChangeReason = changeReason;
 
-            // eslint-disable-next-line require-jsdoc
+            // eslint-disable-next-line jsdoc/require-param
             const expectLastLogToBeForQualityChange = async (previousQuality, newQuality, expectedTags) => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
                 expect(logs).to.have.lengthOf(1);
@@ -229,7 +229,7 @@ module.exports = () => {
 
         it('should successfully update the run detector\'s quality and create a log accordingly', async () => {
             const justification = 'The detector quality change justification';
-            // eslint-disable-next-line require-jsdoc
+            // eslint-disable-next-line jsdoc/require-param
             const expectLastLogToBeForDetectorQualityChange = async (newQuality) => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
                 expect(logs).to.have.lengthOf(1);

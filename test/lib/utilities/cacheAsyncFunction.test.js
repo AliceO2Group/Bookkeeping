@@ -21,7 +21,7 @@ const { cacheAsyncFunction } = require('../../../lib/utilities/cacheAsyncFunctio
 module.exports = () => {
     it('should successfully cache a resolving function', async () => {
         const fake = sinon.fake();
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const functionMock = async (value) => {
             fake(value);
             return value;
@@ -43,7 +43,7 @@ module.exports = () => {
 
     it('should successfully cache a rejecting function', async () => {
         const fake = sinon.fake();
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const rejecting = async (value) => {
             fake();
             throw new Error(value);
@@ -75,7 +75,7 @@ module.exports = () => {
 
     it('should successfully delete function call when cache overflows', async () => {
         const fake = sinon.fake();
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const functionMock = async (value) => {
             fake(value);
             return value;

@@ -160,7 +160,7 @@ module.exports = () => {
     });
 
     it('should successfully display time elapsed between runs', async () => {
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const getRunDuration = async (rowNumber) => page.$eval(
             `#runs tbody tr:nth-of-type(${rowNumber})`,
             (row) => document.querySelector(`#${row.id}-timeSincePreviousRun`).innerText,

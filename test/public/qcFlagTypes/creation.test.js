@@ -58,7 +58,7 @@ module.exports = () => {
         await expectInnerText(
             page,
             '.alert.alert-danger',
-            // eslint-disable-next-line max-len
+            // eslint-disable-next-line @stylistic/js/max-len
             'The request conflicts with existing data: A QC flag type with name Limited acceptance or method LimitedAcceptance already exists',
         );
     });
