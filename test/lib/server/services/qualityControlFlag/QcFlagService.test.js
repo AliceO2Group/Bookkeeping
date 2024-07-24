@@ -1322,7 +1322,7 @@ module.exports = () => {
             }) => ({
                 from,
                 to,
-                contributingFlagIds: contributingFlags.map(({ id }) => id).sort(),
+                contributingFlagIds: contributingFlags.map(({ id }) => id).sort((id1, id2) => id1 - id2),
             }));
 
             expect(data).to.have.all.deep.ordered.members([
