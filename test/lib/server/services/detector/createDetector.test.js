@@ -19,7 +19,8 @@ const { ConflictError } = require('../../../../../lib/server/errors/ConflictErro
 
 module.exports = () => {
     it('should successfully create a detector and return the corresponding ID', async () => {
-        const detectorId = await createDetector({ name: 'A-NEW-DETECTOR' });
+        const { DetectorType } = await import('../../../../../lib/public/domain/enums/DetectorTypes.mjs');
+        const detectorId = await createDetector({ name: 'A-NEW-DETECTOR', type: DetectorType.Physical });
         expect((await getDetector({ detectorId })).name).to.equal('A-NEW-DETECTOR');
     });
 
