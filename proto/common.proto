@@ -119,7 +119,7 @@ message LHCFill {
 
 message User {
   // The unique CERN identifier of this user.
-  int32 externalId = 1;
+  optional int32 externalId = 1;
   // The unique identifier of this entity.
   optional int32 id = 2;
   // Name of the user.
