@@ -20,15 +20,16 @@ module.exports = () => {
     it('should successfully retrieve a list of detectors and create the missing ones', async () => {
         const detectors = await getOrCreateAllPhysicalDetectorsByName(['CPV', 'A-NEW-ONE']);
         expect(detectors).to.length(2);
-        expect(detectors.map(({ name, isPhysical }) => ({ name, isPhysical }))).to.have.all.deep.members([
-            { name: 'CPV', isPhysical: true },
-            { name: 'A-NEW-ONE', isPhysical: true },
+        const { DetectorType } = await import('../../../../../lib/public/domain/enums/DetectorTypes.mjs');
+        expect(detectors.map(({ name, type }) => ({ name, type }))).to.have.all.deep.members([
+            { name: 'CPV', type: DetectorType.Physical },
+            { name: 'A-NEW-ONE', type: DetectorType.Physical },
         ]);
 
         const aNewDetector = detectors.find(({ name }) => name === 'A-NEW-ONE');
-        await DetectorRepository.update(aNewDetector, { isPhysical: false });
-        const [{ name, isPhysical }] = await getOrCreateAllPhysicalDetectorsByName(['A-NEW-ONE']);
-        expect({ name, isPhysical }).to.be.eql({ name: 'A-NEW-ONE', isPhysical: true });
+        await DetectorRepository.update(aNewDetector, { type: DetectorType.Other });
+        const [{ name, type }] = await getOrCreateAllPhysicalDetectorsByName(['A-NEW-ONE']);
+        expect({ name, type }).to.be.eql({ name: 'A-NEW-ONE', type: DetectorType.Physical });
     });
 
     it('should successfully do nothing with an empty list of detectors', async () => {
