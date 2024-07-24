@@ -95,7 +95,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',

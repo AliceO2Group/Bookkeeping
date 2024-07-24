@@ -72,7 +72,7 @@ module.exports = () => {
         };
 
         // Bigint can not be parsed by JSON utils so it can't be easily copied
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const getGRPCBigintMessage = () => ({
             ui: Long.fromString('FEDCBA9876543210', true, 16),
             i: Long.fromString('-76543210FEDCBA98', false, 16),

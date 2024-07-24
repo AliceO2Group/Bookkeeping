@@ -63,7 +63,7 @@ module.exports = () => {
 
         const statusNames = new Set(Object.keys(StatusAcronym));
 
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
             id: (id) => /[A-Za-z0-9]+/.test(id),

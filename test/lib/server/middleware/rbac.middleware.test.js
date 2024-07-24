@@ -29,7 +29,7 @@ const arrayRequest = {
     },
 };
 
-// eslint-disable-next-line require-jsdoc
+// eslint-disable-next-line jsdoc/require-param
 const expectRequestToReturn403 = (request) => {
     const response = {};
     response.status = sinon.fake.returns(response);
