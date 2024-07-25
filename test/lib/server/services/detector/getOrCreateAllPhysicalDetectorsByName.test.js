@@ -15,12 +15,12 @@ const { expect } = require('chai');
 const { getOrCreateAllPhysicalDetectorsByName }
     = require('../../../../../lib/server/services/detector/getOrCreateAllPhysicalDetectorsByName.js');
 const { DetectorRepository } = require('../../../../../lib/database/repositories');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 module.exports = () => {
     it('should successfully retrieve a list of detectors and create the missing ones', async () => {
         const detectors = await getOrCreateAllPhysicalDetectorsByName(['CPV', 'A-NEW-ONE']);
         expect(detectors).to.length(2);
-        const { DetectorType } = await import('../../../../../lib/public/domain/enums/DetectorTypes.mjs');
         expect(detectors.map(({ name, type }) => ({ name, type }))).to.have.all.deep.members([
             { name: 'CPV', type: DetectorType.PHYSICAL },
             { name: 'A-NEW-ONE', type: DetectorType.PHYSICAL },
