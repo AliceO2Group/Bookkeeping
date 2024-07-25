@@ -22,6 +22,8 @@ const {
     expectUrlParams,
     waitForNavigation,
     getTableContent,
+    getPopoverSelector,
+    getPopoverContent,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -176,5 +178,13 @@ module.exports = () => {
                 'Good',
             ],
         ]);
+
+        let popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(1) td .popover-trigger');
+        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('No flag for some detector\nAt least one flag is not verified');
+
+        popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td .popover-trigger');
+        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('At least one flag is not verified');
+
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:neth-of-type() a'));
     });
 };
