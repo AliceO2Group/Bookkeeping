@@ -11,7 +11,6 @@ EXPOSE 4000
 RUN apk add --no-cache \
     bash=5.2.15-r5
 
-
 #
 # ---- Development Dependencies ----
 FROM base as developmentdependencies
@@ -30,15 +29,11 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
-
-# Installs modules from package-lock.json, this ensures reproducible build
-RUN npm --silent ci
-
 # Copy all files, except those ignored by .dockerignore, to the container
 COPY . .
 
+# Installs modules from package-lock.json if there are changes, this ensures reproducible build
+RUN npm --silent ci
 
 #
 # ---- Development ----
@@ -46,7 +41,6 @@ FROM developmentdependencies as development
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
-
 
 #
 # ---- Test ----
@@ -57,13 +51,15 @@ CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "te
 
 #
 # ---- Test parallel for CI ----
-FROM developmentdependencies as test_parallel
-
-# Set ARG and ENV for TEST_TYPE
-ARG TEST_TYPE
-ENV TEST_TYPE=${TEST_TYPE}
+FROM developmentdependencies as test_parallel_ci
 
 CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset" ]
+
+#
+# ---- Test parallel local ----
+FROM developmentdependencies as test_parallel_local
+
+CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset-local" ]
 
 #
 # ---- Coverage ----
@@ -71,7 +67,6 @@ FROM developmentdependencies as coverage
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
-
 
 #
 # ---- Production Dependencies ----
@@ -85,7 +80,6 @@ RUN npm --silent ci --production
 
 # Copy all files, except those ignored by .dockerignore, to the container
 COPY ./lib ./lib
-
 
 #
 # ---- Production ----
