@@ -11,9 +11,9 @@
  *  or submit itself to any jurisdiction.
  */
 
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 const { lhcFillService } = require('../../../../../lib/server/services/lhcFill/LhcFillService.js');
 const { expect } = require('chai');
+const { RunDefinition } = require('../../../../../lib/domain/enums/RunDefinition.js');
 
 module.exports = () => {
     it('should successfully return an LHC fill for a given fill number', async () => {
@@ -35,7 +35,7 @@ module.exports = () => {
     it('should successfully include the related runs and their definition if asked', async () => {
         const lhcFill = await lhcFillService.get(6, { runs: true });
         expect(lhcFill.runs).to.lengthOf(5);
-        expect(lhcFill.runs.filter(({ definition }) => definition === RunDefinition.Physics)).to.lengthOf(4);
+        expect(lhcFill.runs.filter(({ definition }) => definition === RunDefinition.PHYSICS)).to.lengthOf(4);
     });
 
     it('should successfully return the last LHC fill', async () => {
