@@ -216,19 +216,19 @@ module.exports = () => {
             {
                 runNumber: 49,
                 runQuality: RunQualities.GOOD,
-                definition: RunDefinition.Physics,
+                definition: RunDefinition.PHYSICS,
                 lhcPeriod: 'LHC22a',
             },
             {
                 runNumber: 54,
                 runQuality: RunQualities.GOOD,
-                definition: RunDefinition.Physics,
+                definition: RunDefinition.PHYSICS,
                 lhcPeriod: 'LHC22a',
             },
             {
                 runNumber: 56,
                 runQuality: RunQualities.GOOD,
-                definition: RunDefinition.Physics,
+                definition: RunDefinition.PHYSICS,
                 lhcPeriod: 'LHC22a',
             },
         ]);

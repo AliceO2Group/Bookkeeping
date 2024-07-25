@@ -15,7 +15,6 @@ const { expect } = require('chai');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
 const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
 const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
 const assert = require('assert');
@@ -24,6 +23,7 @@ const { SYNTHETIC, CALIBRATION } = require('../../../../mocks/mock-run.js');
 const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 const { RunDetectorQualities } = require('../../../../../lib/domain/enums/RunDetectorQualities.js');
+const { RunDefinition } = require('../../../../../lib/domain/enums/RunDefinition.js');
 
 module.exports = () => {
     const baseRun = {
@@ -80,7 +80,7 @@ module.exports = () => {
             timeTrgStart,
             timeTrgEnd,
         });
-        expect(run.definition).to.equal(RunDefinition.Physics);
+        expect(run.definition).to.equal(RunDefinition.PHYSICS);
     });
 
     it('should throw when trying to change run quality without justification except from specific cases', async () => {
@@ -135,7 +135,7 @@ module.exports = () => {
             { ...CALIBRATION.LASER, runNumber: ++lastRunNumber },
             { runTypeName: CALIBRATION.LASER.runType.name },
         );
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
     });
 
@@ -149,7 +149,7 @@ module.exports = () => {
     it('should successfully allow to update run calibration status', async () => {
         const runNumber = 40;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
         run = await runService.update({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.SUCCESS } });
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
@@ -162,7 +162,7 @@ module.exports = () => {
         const reason = 'Here is the reason of the change';
 
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
         run = await runService.update(
             { runNumber },
@@ -184,7 +184,7 @@ module.exports = () => {
         const reason = 'Here is the reason of the change';
 
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
         run = await runService.update(
             { runNumber },
@@ -257,21 +257,21 @@ module.exports = () => {
     it('should successfully consider current patch to allow/disallow calibration status update', async () => {
         const runNumber = 106;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Commissioning);
+        expect(run.definition).to.equal(RunDefinition.COMMISSIONING);
         expect(run.calibrationStatus).to.be.null;
         // Run was commissioning, set it to calibration and set calibration status at once
         run = await runService.update(
             { runNumber },
-            { runPatch: { definition: RunDefinition.Calibration, calibrationStatus: RunCalibrationStatus.SUCCESS } },
+            { runPatch: { definition: RunDefinition.CALIBRATION, calibrationStatus: RunCalibrationStatus.SUCCESS } },
         );
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
 
         // Try to move the run to commissioning and set its calibration status in the same time
         await assert.rejects(
             () => runService.update(
                 { runNumber },
-                { runPatch: { definition: RunDefinition.Commissioning, calibrationStatus: RunCalibrationStatus.SUCCESS } },
+                { runPatch: { definition: RunDefinition.COMMISSIONING, calibrationStatus: RunCalibrationStatus.SUCCESS } },
             ),
             new BadParameterError('Calibration status is reserved to calibration runs'),
         );
@@ -280,15 +280,15 @@ module.exports = () => {
     it('should successfully set default values for run calibration status when changing calibration run definition', async () => {
         const runNumber = 106;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
-        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Commissioning } });
-        expect(run.definition).to.equal(RunDefinition.Commissioning);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
+        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.COMMISSIONING } });
+        expect(run.definition).to.equal(RunDefinition.COMMISSIONING);
         expect(run.calibrationStatus).to.be.null;
-        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Calibration } });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.CALIBRATION } });
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
         // Put back definition to commissioning
-        await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Commissioning } });
+        await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.COMMISSIONING } });
     });
 
     it('should successfully update run quality without justification in specific use-cases', async () => {

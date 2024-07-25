@@ -15,12 +15,12 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
-const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
+const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -255,7 +255,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.lengthOf(4);
-            expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
+            expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
         it('should succefully filter on data pass id', async () => {
