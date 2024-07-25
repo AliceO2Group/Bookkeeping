@@ -12,28 +12,28 @@
  */
 
 const { expect } = require('chai');
-const { getOrCreateAllPhysicalDetectorsByName }
-    = require('../../../../../lib/server/services/detector/getOrCreateAllPhysicalDetectorsByName.js');
-const { DetectorRepository } = require('../../../../../lib/database/repositories');
+const { getOrCreateAllDataTakingDetectorsByName }
+    = require('../../../../../lib/server/services/detector/getOrCreateAllDataTakingDetectorsByName.js');
+const { DetectorRepository } = require('../../../../../lib/database/repositories/index.js');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 module.exports = () => {
     it('should successfully retrieve a list of detectors and create the missing ones', async () => {
-        const detectors = await getOrCreateAllPhysicalDetectorsByName(['CPV', 'A-NEW-ONE']);
+        const detectors = await getOrCreateAllDataTakingDetectorsByName(['CPV', 'A-NEW-ONE']);
         expect(detectors).to.length(2);
-        const { DetectorType } = await import('../../../../../lib/public/domain/enums/DetectorTypes.mjs');
         expect(detectors.map(({ name, type }) => ({ name, type }))).to.have.all.deep.members([
-            { name: 'CPV', type: DetectorType.Physical },
-            { name: 'A-NEW-ONE', type: DetectorType.Physical },
+            { name: 'CPV', type: DetectorType.PHYSICAL },
+            { name: 'A-NEW-ONE', type: DetectorType.PHYSICAL },
         ]);
 
         const aNewDetector = detectors.find(({ name }) => name === 'A-NEW-ONE');
-        await DetectorRepository.update(aNewDetector, { type: DetectorType.Other });
-        const [{ name, type }] = await getOrCreateAllPhysicalDetectorsByName(['A-NEW-ONE']);
-        expect({ name, type }).to.be.eql({ name: 'A-NEW-ONE', type: DetectorType.Physical });
+        await DetectorRepository.update(aNewDetector, { type: DetectorType.OTHER });
+        const [{ name, type }] = await getOrCreateAllDataTakingDetectorsByName(['A-NEW-ONE']);
+        expect({ name, type }).to.be.eql({ name: 'A-NEW-ONE', type: DetectorType.PHYSICAL });
     });
 
     it('should successfully do nothing with an empty list of detectors', async () => {
-        const detectors = await getOrCreateAllPhysicalDetectorsByName([]);
+        const detectors = await getOrCreateAllDataTakingDetectorsByName([]);
         expect(detectors).to.length(0);
     });
 };
