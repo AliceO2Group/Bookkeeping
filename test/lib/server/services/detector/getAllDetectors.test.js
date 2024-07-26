@@ -124,6 +124,16 @@ module.exports = () => {
                 name: 'GLO',
                 type: DetectorType.QC,
             },
+            {
+                id: 22,
+                name: 'A-NEW-DETECTOR',
+                type: 'PHYSICAL',
+            },
+            {
+                id: 23,
+                name: 'A-NEW-ONE',
+                type: 'PHYSICAL',
+            },
         ]);
     });
 };
