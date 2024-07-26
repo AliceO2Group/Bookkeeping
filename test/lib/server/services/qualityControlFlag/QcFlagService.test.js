@@ -41,7 +41,7 @@ const qcFlagWithId1 = {
     createdById: 1,
     flagTypeId: 5, // LimitedAcceptance MC Reprodubile
     runNumber: 106,
-    detectorId: 1, // CPV
+    dplDetectorId: 1, // CPV
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
     updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
@@ -350,7 +350,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    detectorId,
+                    dplDetectorId: detectorId,
                     createdBy: { externalId: externalUserId },
                 } = createdQcFlags[qcFlagIndex];
                 const qcFlag = qcFlags[qcFlagIndex];
@@ -458,7 +458,7 @@ module.exports = () => {
 
                 const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-                const [{ id, runNumber, detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
+                const [{ id, runNumber, dplDetectorId: detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
@@ -533,8 +533,10 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId }, createdAt }] =
-                await qcFlagService.create([qcFlag], scope, relations);
+            const [
+                { id, from, to, comment, flagTypeId, runNumber,
+                    dplDetectorId: detectorId, createdBy: { externalId: externalUserId }, createdAt },
+            ] = await qcFlagService.create([qcFlag], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
@@ -875,7 +877,7 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
@@ -958,7 +960,7 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
@@ -1020,7 +1022,7 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
