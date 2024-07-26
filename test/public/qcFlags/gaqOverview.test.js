@@ -21,7 +21,7 @@ const {
     validateTableData,
     waitForNavigation,
     getTableContent,
-    getPopoverContent,
+    getPopoverInnerText,
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
 } = require('../defaults.js');
@@ -159,16 +159,16 @@ module.exports = () => {
             ],
         ]);
 
-        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(1) td .popover-trigger')))
+        expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(1) td .popover-trigger')))
             .to.be.equal('No flag for some detectorAt least one flag is not verified');
 
-        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(2) td .popover-trigger')))
+        expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td .popover-trigger')))
             .to.be.equal('At least one flag is not verified');
 
         setConfirmationDialogToBeAccepted(page);
 
         // Verify QC flag of CPV detector
-        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger')))
+        expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger')))
             .to.be.equal('This flag is not verified');
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) a'));
         await pressElement(page, '#verify-qc-flag');
@@ -178,7 +178,7 @@ module.exports = () => {
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger', { hidden: true });
 
         // Verify QC flag of EMC detector
-        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger')))
+        expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger')))
             .to.be.equal('This flag is not verified');
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) a'));
         await pressElement(page, '#verify-qc-flag');
