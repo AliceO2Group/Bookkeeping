@@ -15,6 +15,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { DetectorType } = require('../../lib/domain/enums/DetectorTypes');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -333,8 +334,8 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             expect(data).to.have.all.deep.members([
-                { id: 4, name: 'ITS' },
-                { id: 7, name: 'FT0' },
+                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
+                { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
             ]);
         });
     });
