@@ -18,8 +18,8 @@ module.exports = () => {
     it('should successfully return the full list of detectors sorted alphabetically', async () => {
         const detectors = await detectorService.getAll();
         expect(detectors.map(({ id, name }) => ({ id, name }))).to.deep.eq([
-            { id: 20, name: 'A-NEW-DETECTOR' },
-            { id: 21, name: 'A-NEW-ONE' },
+            { id: 21, name: 'A-NEW-DETECTOR' },
+            { id: 22, name: 'A-NEW-ONE' },
             { id: 17, name: 'ACO' },
             { id: 1, name: 'CPV' },
             { id: 18, name: 'CTP' },
@@ -28,12 +28,14 @@ module.exports = () => {
             { id: 19, name: 'FIT' },
             { id: 7, name: 'FT0' },
             { id: 5, name: 'FV0' },
+            { id: 21, name: 'GLO' },
             { id: 6, name: 'HMP' },
             { id: 4, name: 'ITS' },
             { id: 8, name: 'MCH' },
             { id: 9, name: 'MFT' },
             { id: 10, name: 'MID' },
             { id: 11, name: 'PHS' },
+            { id: 20, name: 'QC-SPECIFIC' },
             { id: 12, name: 'TOF' },
             { id: 13, name: 'TPC' },
             { id: 14, name: 'TRD' },

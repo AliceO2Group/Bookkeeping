@@ -194,7 +194,7 @@ module.exports = () => {
             const { dataPassId, dplDetectorId, ...expectedProperties } = qcFlagCreationParameters;
             {
                 const { from, to, comment, flagTypeId, runNumber, detectorId } = createdQcFlag;
-                expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql({ expectedProperties, detectorId: dplDetectorId });
+                expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql({ ...expectedProperties, detectorId: dplDetectorId });
             }
             {
                 const { from, to, comment, flagTypeId, runNumber, detectorId, dataPasses } = await QcFlagRepository.findOne({
@@ -266,7 +266,7 @@ module.exports = () => {
             const { simulationPassId, dplDetectorId, ...expectedProperties } = qcFlagCreationParameters;
             {
                 const { from, to, comment, flagTypeId, runNumber, detectorId } = createdQcFlag;
-                expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql({ expectedProperties, detectorId: dplDetectorId });
+                expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql({ ...expectedProperties, detectorId: dplDetectorId });
             }
             {
                 const { from, to, comment, flagTypeId, runNumber, detectorId, simulationPasses } = await QcFlagRepository.findOne({
