@@ -203,7 +203,8 @@ module.exports = () => {
                         id: createdQcFlag.id,
                     },
                 });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, detectorId }).to.be.eql(expectedProperties);
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, detectorId }).to
+                    .be.eql({ ...expectedProperties, detectorId: dplDetectorId });
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
         });
@@ -275,7 +276,8 @@ module.exports = () => {
                         id: createdQcFlag.id,
                     },
                 });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, detectorId }).to.be.eql(expectedProperties);
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, detectorId }).to
+                    .be.eql({ ...expectedProperties, detectorId: dplDetectorId });
                 expect(simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
             }
         });
