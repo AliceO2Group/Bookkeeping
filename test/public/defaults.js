@@ -478,7 +478,7 @@ const getPopoverContent = (popoverTrigger) => {
         }
 
         const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
-        return popover.innerHTML;
+        return popover.innerText;
     });
 };
 

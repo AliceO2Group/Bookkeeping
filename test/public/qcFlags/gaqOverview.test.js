@@ -21,8 +21,9 @@ const {
     validateTableData,
     waitForNavigation,
     getTableContent,
-    getPopoverSelector,
     getPopoverContent,
+    setConfirmationDialogToBeAccepted,
+    unsetConfirmationDialogActions,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -158,27 +159,36 @@ module.exports = () => {
             ],
         ]);
 
-        let popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(1) td .popover-trigger');
-        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('No flag for some detector\nAt least one flag is not verified');
-        popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td .popover-trigger');
-        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('At least one flag is not verified');
+        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(1) td .popover-trigger')))
+            .to.be.equal('No flag for some detectorAt least one flag is not verified');
 
-        popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger');
-        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('This flag is not verified');
+        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(2) td .popover-trigger')))
+            .to.be.equal('At least one flag is not verified');
+
+        setConfirmationDialogToBeAccepted(page);
+
+        // Verify QC flag of CPV detector
+        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger')))
+            .to.be.equal('This flag is not verified');
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) a'));
         await pressElement(page, '#verify-qc-flag');
         await pressElement(page, '#submit');
-        await waitForNavigation(() => page.goBack());
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a'));
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger', { hidden: true });
 
-        popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger');
-        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('This flag is not verified');
+        // Verify QC flag of EMC detector
+        expect(await getPopoverContent(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger')))
+            .to.be.equal('This flag is not verified');
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) a'));
         await pressElement(page, '#verify-qc-flag');
         await pressElement(page, '#submit');
-        await waitForNavigation(() => page.goBack());
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a'));
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger', { hidden: true });
 
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(1) .popover-trigger', { hidden: true });
+
+        unsetConfirmationDialogActions(page);
     });
 };
