@@ -28,8 +28,8 @@ const {
     waitForDownload,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
-const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
 
 const { expect } = chai;
 
@@ -216,19 +216,19 @@ module.exports = () => {
             {
                 runNumber: 49,
                 runQuality: RunQualities.GOOD,
-                definition: RunDefinition.Physics,
+                definition: RunDefinition.PHYSICS,
                 lhcPeriod: 'LHC22a',
             },
             {
                 runNumber: 54,
                 runQuality: RunQualities.GOOD,
-                definition: RunDefinition.Physics,
+                definition: RunDefinition.PHYSICS,
                 lhcPeriod: 'LHC22a',
             },
             {
                 runNumber: 56,
                 runQuality: RunQualities.GOOD,
-                definition: RunDefinition.Physics,
+                definition: RunDefinition.PHYSICS,
                 lhcPeriod: 'LHC22a',
             },
         ]);

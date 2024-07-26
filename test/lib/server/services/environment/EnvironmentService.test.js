@@ -82,7 +82,7 @@ module.exports = () => {
     it('should throw when trying to create an environment with an invalid initial state', async () => {
         await assert.rejects(
             () => environmentService.create({ id: 'A-NEW-NEW-ENVIRONMENT' }, { status: 'DO-NOT-EXIST' }),
-            new BadParameterError('"status" must be one of [STANDBY, DEPLOYED, CONFIGURED, RUNNING, ERROR, MIXED, DESTROYED, PENDING]'),
+            new BadParameterError('"status" must be one of [PENDING, STANDBY, DEPLOYED, CONFIGURED, RUNNING, ERROR, MIXED, DESTROYED, DONE]'),
         );
 
         await assert.rejects(

@@ -200,4 +200,10 @@ module.exports = () => {
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
     });
+
+    it('should successfully toggle to stable beam only', async () => {
+        await waitForTableLength(page, 6);
+        await pressElement(page, '.slider.round');
+        await waitForTableLength(page, 5);
+    });
 };
