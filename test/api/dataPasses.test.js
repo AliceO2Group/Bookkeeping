@@ -324,4 +324,18 @@ module.exports = () => {
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
     });
+
+    describe('GET /api/dataPasses/gaqDetectors', () => {
+        it('should return 200 with the list of GAQ detectors', async () => {
+            const response = await request(server).get('/api/dataPasses/gaqDetectors?dataPassId=3&runNumber=56');
+
+            expect(response.status).to.equal(200);
+            const { data } = response.body;
+            expect(data).to.be.an('array');
+            expect(data).to.have.all.deep.members([
+                { id: 4, name: 'ITS' },
+                { id: 7, name: 'FT0' },
+            ]);
+        });
+    });
 };
