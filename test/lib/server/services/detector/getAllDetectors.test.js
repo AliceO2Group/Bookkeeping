@@ -18,7 +18,7 @@ const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.
 module.exports = () => {
     it('should successfully return the full list of detectors', async () => {
         const detectors = await getAllDetectors();
-        expect(detectors.map(({ id, name }) => ({ id, name }))).to.deep.eq([
+        expect(detectors.map(({ id, name, type }) => ({ id, name, type }))).to.deep.eq([
             {
                 id: 1,
                 name: 'CPV',

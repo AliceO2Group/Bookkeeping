@@ -313,15 +313,15 @@ module.exports = () => {
         it('should succesfuly set GAQ detectors', async () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
-            const dplDetectorIds = [4, 7];
+            const detectorIds = [4, 7];
             const response = await request(server).post('/api/dataPasses/gaqDetectors').send({
                 dataPassId,
                 runNumbers,
-                dplDetectorIds,
+                dplDetectorIds: detectorIds,
             });
             expect(response.status).to.be.equal(201);
             expect(response.body.data).to.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
+                .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
     });
 };
