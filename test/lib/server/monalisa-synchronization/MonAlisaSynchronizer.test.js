@@ -23,8 +23,8 @@ const { repositories: {
 } } = require('../../../../lib/database/index.js');
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
-const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { Op } = require('sequelize');
+const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -84,7 +84,7 @@ module.exports = () => {
                     expectedRunNumbers = [
                         ...(await RunRepository.findAll({ where: {
                             runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
-                            definition: RunDefinition.Physics,
+                            definition: RunDefinition.PHYSICS,
                         } })).map(({ runNumber }) => runNumber),
                         ...expectedRunNumbers,
                     ];
@@ -166,7 +166,7 @@ module.exports = () => {
             if (potentiallyInsertedNamesSet.has(name)) {
                 const expectedRunNumbers = (await RunRepository.findAll({ where: {
                     runNumber: { [Op.in]: nameToSimulationPass[name].associations.runNumbers },
-                    definition: RunDefinition.Physics,
+                    definition: RunDefinition.PHYSICS,
                 } })).map(({ runNumber }) => runNumber);
 
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);

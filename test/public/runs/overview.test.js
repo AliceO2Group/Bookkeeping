@@ -37,10 +37,10 @@ const {
     expectColumnValues,
     expectUrlParams,
 } = require('../defaults.js');
-const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { runService } = require('../../../lib/server/services/run/RunService.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
 
 const { expect } = chai;
 
@@ -382,31 +382,31 @@ module.exports = () => {
         };
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(4, [RunDefinition.Physics]);
+        await checkTableSizeAndDefinition(4, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(6, [RunDefinition.Physics, RunDefinition.Synthetic]);
+        await checkTableSizeAndDefinition(6, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(2, [RunDefinition.Synthetic]);
+        await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);
 
         await pressElement(page, cosmicsFilterSelector, true);
-        await checkTableSizeAndDefinition(4, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
+        await checkTableSizeAndDefinition(4, [RunDefinition.SYNTHETIC, RunDefinition.COSMICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(2, [RunDefinition.Cosmics]);
+        await checkTableSizeAndDefinition(2, [RunDefinition.COSMICS]);
 
         await pressElement(page, technicalFilterSelector, true);
-        await checkTableSizeAndDefinition(3, [RunDefinition.Cosmics, RunDefinition.Technical]);
+        await checkTableSizeAndDefinition(3, [RunDefinition.COSMICS, RunDefinition.TECHNICAL]);
 
         await pressElement(page, cosmicsFilterSelector, true);
-        await checkTableSizeAndDefinition(1, [RunDefinition.Technical]);
+        await checkTableSizeAndDefinition(1, [RunDefinition.TECHNICAL]);
 
         await pressElement(page, calibrationFilterSelector, true);
-        await checkTableSizeAndDefinition(2, [RunDefinition.Technical, RunDefinition.Calibration]);
+        await checkTableSizeAndDefinition(2, [RunDefinition.TECHNICAL, RunDefinition.CALIBRATION]);
 
         await pressElement(page, commissioningFilterSelector, true);
-        await checkTableSizeAndDefinition(8, [RunDefinition.Commissioning]);
+        await checkTableSizeAndDefinition(8, [RunDefinition.COMMISSIONING]);
 
         await pressElement(page, commissioningFilterSelector, true);
         await pressElement(page, physicsFilterSelector, true);
@@ -422,7 +422,7 @@ module.exports = () => {
 
         await checkTableSizeAndDefinition(
             10,
-            [RunDefinition.Cosmics, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
+            [RunDefinition.COSMICS, RunDefinition.TECHNICAL, RunDefinition.PHYSICS, RunDefinition.SYNTHETIC, RunDefinition.CALIBRATION],
         );
     });
 
