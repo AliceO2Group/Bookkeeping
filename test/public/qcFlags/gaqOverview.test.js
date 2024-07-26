@@ -19,7 +19,6 @@ const {
     pressElement,
     goToPage,
     validateTableData,
-    expectUrlParams,
     waitForNavigation,
     getTableContent,
     getPopoverSelector,
@@ -29,23 +28,6 @@ const {
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-
-/**
- * Navigate to Runs per Data Pass page
- *
- * @param {Puppeteer.page} page page
- * @param {number} params.lhcPeriodId id of lhc period on LHC Period overview page
- * @param {number} params.dataPassId id of data pass on Data Passes per LHC Period page
- * @return {Promise<void>} promise
- */
-const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
-    await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
-    expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
-    await page.waitForSelector('th#description');
-    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
-    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId });
-};
 
 module.exports = () => {
     let page;
@@ -181,10 +163,25 @@ module.exports = () => {
 
         let popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(1) td .popover-trigger');
         expect(await getPopoverContent(page, popoverSelector)).to.be.equal('No flag for some detector\nAt least one flag is not verified');
-
         popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td .popover-trigger');
         expect(await getPopoverContent(page, popoverSelector)).to.be.equal('At least one flag is not verified');
 
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:neth-of-type() a'));
+        popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger');
+        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('This flag is not verified');
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) a'));
+        await pressElement(page, '#verify-qc-flag');
+        await pressElement(page, '#submit');
+        await waitForNavigation(() => page.goBack());
+        await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger', { hidden: true });
+
+        popoverSelector = await getPopoverSelector(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger');
+        expect(await getPopoverContent(page, popoverSelector)).to.be.equal('This flag is not verified');
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) a'));
+        await pressElement(page, '#verify-qc-flag');
+        await pressElement(page, '#submit');
+        await waitForNavigation(() => page.goBack());
+        await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger', { hidden: true });
+
+        await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(1) .popover-trigger', { hidden: true });
     });
 };
