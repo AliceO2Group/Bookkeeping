@@ -62,7 +62,7 @@ module.exports = () => {
         {
             const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorName: 'CPV' },
+                { detectorName: 'CPV' },
             );
             expect(processes.map(({ id }) => id)).to.eql([1, 3, 2]);
             expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
@@ -111,7 +111,7 @@ module.exports = () => {
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorName: 'CPV' },
+                { detectorName: 'CPV' },
                 { dplProcessId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
@@ -183,7 +183,7 @@ module.exports = () => {
         {
             const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorName: 'CPV' },
+                { detectorName: 'CPV' },
                 { dplProcessId: 1 },
                 { hostId: 1 },
             );
