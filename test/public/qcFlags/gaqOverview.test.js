@@ -48,10 +48,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'gaq-flags', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-        } });
+        const response = await goToPage(page, 'gaq-flags', { queryParameters: { dataPassId: 1, runNumber: 106 } });
 
         expect(response.status()).to.equal(200);
 
