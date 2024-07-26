@@ -17,6 +17,7 @@ const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -197,8 +198,8 @@ module.exports = () => {
             expect(detectors).to.be.an('array');
             expect(detectors).to.be.lengthOf(2);
             expect(detectors).to.have.all.deep.members([
-                { id: 4, name: 'ITS' },
-                { id: 7, name: 'FT0' },
+                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
+                { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
             ]);
         });
     });
