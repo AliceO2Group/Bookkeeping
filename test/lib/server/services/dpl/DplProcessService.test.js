@@ -46,7 +46,7 @@ module.exports = () => {
         {
             const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
             );
             expect(processes.map(({ id }) => id)).to.eql([1, 3, 2]);
             expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
@@ -54,7 +54,7 @@ module.exports = () => {
         {
             const processes = await dplProcessService.getAllExecutedProcessesByRunAndDetector(
                 { runId: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
             );
             expect(processes.map(({ id }) => id)).to.eql([1, 3, 2]);
             expect(processes.every(({ processesExecutions }) => processesExecutions.length === 0)).to.be.true;
@@ -73,7 +73,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllExecutedProcessesByRunAndDetector(
                 { runNumber: 999 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
             ),
             new NotFoundError('Run with this run number (999) could not be found'),
         );
@@ -83,7 +83,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllExecutedProcessesByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorId: 999 },
+                { detectorId: 999 },
             ),
             new NotFoundError('DPL detector with this id (999) could not be found'),
         );
@@ -93,7 +93,7 @@ module.exports = () => {
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
@@ -102,7 +102,7 @@ module.exports = () => {
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runId: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
@@ -120,7 +120,7 @@ module.exports = () => {
         {
             const hosts = await dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessName: 'PROCESS-1', dplProcessTypeId: 1 },
             );
             expect(hosts.map(({ id }) => id)).to.eql([1, 2]);
@@ -132,7 +132,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 999 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
             ),
             new NotFoundError('Run with this run number (999) could not be found'),
@@ -143,7 +143,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorId: 999 },
+                { detectorId: 999 },
                 { dplProcessId: 1 },
             ),
             new NotFoundError('DPL detector with this id (999) could not be found'),
@@ -154,7 +154,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllHostWithExecutedProcessByRunAndDetector(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 999 },
             ),
             new NotFoundError('DPL process with this id (999) could not be found'),
@@ -165,7 +165,7 @@ module.exports = () => {
         {
             const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
                 { hostId: 1 },
             );
@@ -174,7 +174,7 @@ module.exports = () => {
         {
             const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runId: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
                 { hostId: 1 },
             );
@@ -192,7 +192,7 @@ module.exports = () => {
         {
             const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessName: 'PROCESS-1', dplProcessTypeId: 1 },
                 { hostId: 1 },
             );
@@ -201,7 +201,7 @@ module.exports = () => {
         {
             const processesExecutions = await dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
                 { hostname: 'FLP-1' },
             );
@@ -213,7 +213,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 999 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
                 { hostId: 1 },
             ),
@@ -225,7 +225,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorId: 999 },
+                { detectorId: 999 },
                 { dplProcessId: 1 },
                 { hostId: 1 },
             ),
@@ -237,7 +237,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 999 },
                 { hostId: 1 },
             ),
@@ -249,7 +249,7 @@ module.exports = () => {
         await assert.rejects(
             () => dplProcessService.getAllProcessExecutionByRunAndDetectorAndHost(
                 { runNumber: 106 },
-                { dplDetectorId: 1 },
+                { detectorId: 1 },
                 { dplProcessId: 1 },
                 { hostId: 999 },
             ),
@@ -294,7 +294,7 @@ module.exports = () => {
             );
             expect(processExecution).to.not.be.null;
             expect(processExecution.detectorId).to.equal(22);
-            const { name } = await getDplDetectorOrFail({ dplDetectorId: 22 });
+            const { name } = await getDplDetectorOrFail({ detectorId: 22 });
             expect(name).to.equal('NON-EXISTING-DETECTOR');
             expect(processExecution.processId).to.equal(1);
             expect(processExecution.hostId).to.equal(1);
