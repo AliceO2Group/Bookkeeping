@@ -197,13 +197,14 @@ module.exports = () => {
                 expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                const { from, to, comment, flagTypeId, runNumber, detectorId: dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
                     include: [{ association: 'dataPasses' }],
                     where: {
                         id: createdQcFlag.id,
                     },
                 });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to
+                    .be.eql(expectedProperties);
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
         });
@@ -233,17 +234,17 @@ module.exports = () => {
                 });
             }
             {
-                const { comment, flagTypeId, runNumber, dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                const { comment, flagTypeId, runNumber, detectorId, dataPasses } = await QcFlagRepository.findOne({
                     include: [{ association: 'dataPasses' }],
                     where: {
                         id: createdQcFlag.id,
                     },
                 });
-                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                expect({ comment, flagTypeId, runNumber, detectorId }).to.be.eql({
                     comment: qcFlagCreationParameters.comment,
                     flagTypeId: qcFlagCreationParameters.flagTypeId,
                     runNumber: qcFlagCreationParameters.runNumber,
-                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                    detectorId: qcFlagCreationParameters.dplDetectorId,
                 });
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
@@ -269,13 +270,15 @@ module.exports = () => {
                 expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, dplDetectorId, simulationPasses } = await QcFlagRepository.findOne({
-                    include: [{ association: 'simulationPasses' }],
-                    where: {
-                        id: createdQcFlag.id,
-                    },
-                });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                const { from, to, comment, flagTypeId, runNumber, detectorId: dplDetectorId, simulationPasses }
+                    = await QcFlagRepository.findOne({
+                        include: [{ association: 'simulationPasses' }],
+                        where: {
+                            id: createdQcFlag.id,
+                        },
+                    });
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to
+                    .be.eql(expectedProperties);
                 expect(simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
             }
         });

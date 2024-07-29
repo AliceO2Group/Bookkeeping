@@ -17,6 +17,7 @@ const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -174,10 +175,10 @@ module.exports = () => {
         const dataPassId = 3;
         it('should successfuly set GAQ detectors', async () => {
             const runNumbers = [49, 56];
-            const dplDetectorIds = [4, 7];
-            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, dplDetectorIds);
+            const detectorIds = [4, 7];
+            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds);
             expect(data).to.be.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
+                .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
         it('should fail to set GAQ detectors because of miaaing association', async () => {
             let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
@@ -197,8 +198,8 @@ module.exports = () => {
             expect(detectors).to.be.an('array');
             expect(detectors).to.be.lengthOf(2);
             expect(detectors).to.have.all.deep.members([
-                { id: 4, name: 'ITS' },
-                { id: 7, name: 'FT0' },
+                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
+                { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
             ]);
         });
     });
