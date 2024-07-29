@@ -1261,17 +1261,18 @@ module.exports = () => {
         });
     });
 
-    describe('Fetch GAQ flags', () => {
-        const dataPassId = 3;
+    describe('Fetch GAQ', () => {
+        /**
+         * Get unix timestamp for given time on 2024-07-10
+         * Used to avoid code below to be padded out
+         *
+         * @param {string} timeString time string in hh:mm:ss format
+         * @return {number} unix timestamp
+         */
+        const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
+
         it('should successfuly get GAQ flags', async () => {
-            /**
-             * Get unix timestamp for given time on 2024-07-10
-             * Used to avoid code below to be padded out
-             *
-             * @param {string} timeString time string in hh:mm:ss format
-             * @return {number} unix timestamp
-             */
-            const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
+            const dataPassId = 3;
 
             const runNumber = 334455;
             const timeTrgStart = t('06:00:00');
@@ -1339,6 +1340,39 @@ module.exports = () => {
             ]);
             expect(gaqFlags.every(({ contributingFlags }) => contributingFlags
                 .every(({ flagType, createdBy, verifications }) => flagType && createdBy && verifications))).to.be.true;
+        });
+
+        it('should successfuly get GAQ summary', async () => {
+            const dataPassId = 3;
+
+            const runNumber = 334455;
+            const timeTrgStart = t('06:00:00');
+            const timeTrgEnd = t('22:00:00');
+
+            const gaqSubsummaries = [
+                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
+                { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
+                { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: false },
+                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
+                { from: t('14:00:00'), to: t('16:00:00'), bad: false, mcReproducible: false },
+                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
+                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
+            ];
+            const expectedGaqSummary = gaqSubsummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
+                if (bad) {
+                    acc.badEffectiveRunCoverage += to - from;
+                } else {
+                    acc.explicitlyNotBadEffectiveRunCoverage += to - from;
+                }
+                acc.mcReproducible = acc.mcReproducible || mcReproducible;
+                acc.missingVerificationsCount ++;
+                return acc;
+            }, { badEffectiveRunCoverage: 0, explicitlyNotBadEffectiveRunCoverage: 0, missingVerificationsCount: 0 });
+            expectedGaqSummary.badEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
+            expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
+
+            const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
+            expect(runGaqSummary).to.be.eql(expectedGaqSummary);
         });
     });
 };
