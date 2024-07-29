@@ -198,8 +198,8 @@ module.exports = () => {
             expect(detectors).to.be.an('array');
             expect(detectors).to.be.lengthOf(2);
             expect(detectors).to.have.all.deep.members([
-                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
                 { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
+                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
             ]);
         });
     });
