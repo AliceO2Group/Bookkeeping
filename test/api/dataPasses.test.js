@@ -334,8 +334,8 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             expect(data).to.have.all.deep.members([
-                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
                 { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
+                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
             ]);
         });
     });
