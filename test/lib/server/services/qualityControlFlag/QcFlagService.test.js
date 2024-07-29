@@ -1350,27 +1350,27 @@ module.exports = () => {
             const timeTrgEnd = t('22:00:00');
 
             const gaqSubsummaries = [
-                { from: t('06:00:00'), to: t('10:00:00'), numberOfFlags: 2, bad: true, mcReproducible: false },
-                { from: t('10:00:00'), to: t('12:00:00'), numberOfFlags: 3, bad: true, mcReproducible: false },
-                { from: t('12:00:00'), to: t('13:00:00'), numberOfFlags: 3, bad: true, mcReproducible: true },
-                { from: t('13:00:00'), to: t('14:00:00'), numberOfFlags: 2, bad: true, mcReproducible: true },
-                { from: t('14:00:00'), to: t('16:00:00'), numberOfFlags: 3, bad: true, mcReproducible: false },
-                { from: t('18:00:00'), to: t('20:00:00'), numberOfFlags: 2, bad: false, mcReproducible: false },
-                { from: t('20:00:00'), to: t('22:00:00'), numberOfFlags: 1, bad: false, mcReproducible: false },
+                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
+                { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
+                { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
+                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
+                { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
+                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
+                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
             ];
 
-            const expectedGaqSummary = gaqSubsummaries.reduce((acc, { from, to, bad, mcReproducible, numberOfFlags }) => {
+            const expectedGaqSummary = gaqSubsummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
                 if (bad) {
                     acc.badEffectiveRunCoverage += to - from;
                 } else {
                     acc.explicitlyNotBadEffectiveRunCoverage += to - from;
                 }
                 acc.mcReproducible = acc.mcReproducible || mcReproducible;
-                acc.missingVerificationsCount += numberOfFlags;
                 return acc;
-            }, { badEffectiveRunCoverage: 0, explicitlyNotBadEffectiveRunCoverage: 0, missingVerificationsCount: 0 });
+            }, { badEffectiveRunCoverage: 0, explicitlyNotBadEffectiveRunCoverage: 0 });
             expectedGaqSummary.badEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
+            expectedGaqSummary.missingVerificationsCount = 11;
 
             const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
