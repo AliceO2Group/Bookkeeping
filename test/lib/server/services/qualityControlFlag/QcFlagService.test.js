@@ -1336,6 +1336,8 @@ module.exports = () => {
                 { from: t('18:00:00'), to: t('20:00:00'), contributingFlagIds: [cpvFlagIds[3], emcFlagIds[4]] },
                 { from: t('20:00:00'), to: t('22:00:00'), contributingFlagIds: [cpvFlagIds[3]] },
             ]);
+            expect(gaqFlags.every(({ contributingFlags }) => contributingFlags
+                .every(({ flagType, createdBy, verifications }) => flagType && createdBy && verifications))).to.be.true;
         });
     });
 };
