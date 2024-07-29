@@ -1314,8 +1314,8 @@ module.exports = () => {
             ], scopeEMC, relations)).map(({ id }) => id);
 
             const fddFlagIds = (await qcFlagService.create([
-                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
-                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: goodFlagTypeId },
             ], scopeFDD, relations)).map(({ id }) => id);
 
             const gaqFlags = await qcFlagService.getGaqFlags(dataPassId, runNumber);
@@ -1352,12 +1352,19 @@ module.exports = () => {
             const gaqSubsummaries = [
                 { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
                 { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
-                { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: false },
+                { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
                 { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
-                { from: t('14:00:00'), to: t('16:00:00'), bad: false, mcReproducible: false },
+                { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
                 { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
                 { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
             ];
+            // { from: t('06:00:00'), to: t('10:00:00'), quality: [bad, good] },
+            // { from: t('10:00:00'), to: t('12:00:00'), quality: [mc, bad, good] },
+            // { from: t('12:00:00'), to: t('13:00:00'), quality: [mc, mc, good] },
+            // { from: t('13:00:00'), to: t('14:00:00'), quality: [mc, good] },
+            // { from: t('14:00:00'), to: t('16:00:00'), quality: [good, good, bad] },
+            // { from: t('18:00:00'), to: t('20:00:00'), quality: [good, good] },
+            // { from: t('20:00:00'), to: t('22:00:00'), quality: [good] },
             const expectedGaqSummary = gaqSubsummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
                 if (bad) {
                     acc.badEffectiveRunCoverage += to - from;
