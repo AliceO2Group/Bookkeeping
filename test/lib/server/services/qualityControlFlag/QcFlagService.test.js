@@ -1395,12 +1395,7 @@ module.exports = () => {
                 relations,
             );
 
-            scope.runNumber = 49;
-            await qcFlagService.create(
-                [{ from: null, to: null, flagTypeId: badPidlagTypeId }],
-                { ...scope, detectorIdentifier: { detectorId: ft0Id } },
-                relations,
-            );
+            scope.runNumber = 54;
             await qcFlagService.create(
                 [{ from: null, to: null, flagTypeId: badPidlagTypeId }],
                 { ...scope, detectorIdentifier: { detectorId: itsId } },
@@ -1416,8 +1411,8 @@ module.exports = () => {
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
                 },
-                49: {
-                    missingVerificationsCount: 2,
+                54: {
+                    missingVerificationsCount: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     badEffectiveRunCoverage: 1,
                     mcReproducible: false,
