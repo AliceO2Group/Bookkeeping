@@ -117,6 +117,41 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/qcFlags/summary/gaq', () => {
+        it('should succsessfully get non-empty GAQ summary for data pass', async () => {
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const lmimittedAccMCTypeId = 5;
+            const itsId = 4;
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: lmimittedAccMCTypeId }],
+                { runNumber: 54, dataPassIdentifier: { id: 3 }, detectorIdentifier: { detectorId: itsId } },
+                relations,
+            );
+
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                54: {
+                    missingVerificationsCount: 1,
+                    mcReproducible: true,
+                    badEffectiveRunCoverage: 1,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
+                },
+            });
+        });
+
+        it('should return 400 when bad query paramter provided', async () => {
+            {
+                const response = await request(server).get('/api/qcFlags/summary/gaq');
+                expect(response.status).to.be.equal(400);
+                const { errors } = response.body;
+                const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/dataPassId');
+                expect(titleError.detail).to.equal('"query.dataPassId" is required');
+            }
+        });
+    });
+
     describe('GET /api/qcFlags/perDataPass and /api/qcFlags/perSimulationPass', () => {
         it('should successfully fetch QC flags for data pass', async () => {
             const response = await request(server)
