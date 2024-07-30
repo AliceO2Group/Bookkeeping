@@ -1271,6 +1271,11 @@ module.exports = () => {
          */
         const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
 
+        const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+        const goodFlagTypeId = 3;
+        const badPidlagTypeId = 12;
+        const lmimittedAccMCTypeId = 5;
+
         it('should successfuly get GAQ flags', async () => {
             const dataPassId = 3;
 
@@ -1293,10 +1298,6 @@ module.exports = () => {
             const scopeCPV = { ...scope, detectorIdentifier: { detectorId: 1 } };
             const scopeEMC = { ...scope, detectorIdentifier: { detectorId: 2 } };
             const scopeFDD = { ...scope, detectorIdentifier: { detectorId: 3 } };
-            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
-            const goodFlagTypeId = 3;
-            const badPidlagTypeId = 12;
-            const lmimittedAccMCTypeId = 5;
 
             const cpvFlagIds = (await qcFlagService.create([
                 { from: t('06:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
@@ -1374,6 +1375,54 @@ module.exports = () => {
 
             const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
+
+            const scope = {
+                runNumber: 56,
+                dataPassIdentifier: { id: dataPassId },
+            };
+
+            const ft0Id = 7;
+            const itsId = 4;
+
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: ft0Id } },
+                relations,
+            );
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: itsId } },
+                relations,
+            );
+
+            scope.runNumber = 49;
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: badPidlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: ft0Id } },
+                relations,
+            );
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: badPidlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: itsId } },
+                relations,
+            );
+
+            const gaqSummary = await qcFlagService.getGaqSummary(dataPassId);
+            expect(gaqSummary).to.be.eql({
+                [runNumber]: expectedGaqSummary,
+                56: {
+                    missingVerificationsCount: 2,
+                    explicitlyNotBadEffectiveRunCoverage: 1,
+                    badEffectiveRunCoverage: 0,
+                    mcReproducible: false,
+                },
+                49: {
+                    missingVerificationsCount: 2,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
+                    badEffectiveRunCoverage: 1,
+                    mcReproducible: false,
+                },
+            });
         });
     });
 };
