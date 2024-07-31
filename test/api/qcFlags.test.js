@@ -118,12 +118,12 @@ module.exports = () => {
     });
 
     describe('GET /api/qcFlags/summary/gaq', () => {
-        it('should succsessfully get non-empty GAQ summary for data pass', async () => {
+        it('should successfully get non-empty GAQ summary for data pass', async () => {
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
-            const lmimittedAccMCTypeId = 5;
+            const limitedAccMCTypeId = 5;
             const itsId = 4;
             await qcFlagService.create(
-                [{ from: null, to: null, flagTypeId: lmimittedAccMCTypeId }],
+                [{ from: null, to: null, flagTypeId: limitedAccMCTypeId }],
                 { runNumber: 54, dataPassIdentifier: { id: 3 }, detectorIdentifier: { detectorId: itsId } },
                 relations,
             );
@@ -141,7 +141,7 @@ module.exports = () => {
             });
         });
 
-        it('should return 400 when bad query paramter provided', async () => {
+        it('should return 400 when bad query parameter provided', async () => {
             {
                 const response = await request(server).get('/api/qcFlags/summary/gaq');
                 expect(response.status).to.be.equal(400);
