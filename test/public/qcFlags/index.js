@@ -17,6 +17,7 @@ const ForDataPassCreationSuite = require('./forDataPassCreation.test');
 const ForSimulationPassCreationSuite = require('./forSimulationPassCreation.test');
 const DetailsForDataPassPageSuite = require('./detailsForDataPass.test');
 const DetailsForSimulationPassPageSuite = require('./detailsForSimulationPass.test');
+const GaqOverviewPageSuite = require('./gaqOverview.test');
 
 module.exports = () => {
     describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
@@ -25,4 +26,5 @@ module.exports = () => {
     describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
     describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
     describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
+    describe('GAQ overviewe page', GaqOverviewPageSuite);
 };
