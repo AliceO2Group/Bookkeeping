@@ -461,10 +461,10 @@ exports.getPopoverSelector = (popoverTrigger) => {
 };
 
 /**
- * Extract the content of a popover corresponding to a popover trigger
+ * Extract the HTML content of a popover corresponding to a popover trigger
  *
  * @param {object} popoverTrigger the puppeteer element of the popover trigger
- * @return {Promise<string>} the content of the trigger
+ * @return {Promise<string>} the HTML content of the trigger
  */
 const getPopoverContent = (popoverTrigger) => {
     if (popoverTrigger === null) {
@@ -483,6 +483,30 @@ const getPopoverContent = (popoverTrigger) => {
 };
 
 module.exports.getPopoverContent = getPopoverContent;
+
+/**
+ * Extract the inner text of a popover corresponding to a popover trigger
+ *
+ * @param {object} popoverTrigger the puppeteer element of the popover trigger
+ * @return {Promise<string>} the content of the trigger
+ */
+const getPopoverInnerText = (popoverTrigger) => {
+    if (popoverTrigger === null) {
+        return null;
+    }
+
+    return popoverTrigger.evaluate((element) => {
+        const key = element.dataset.popoverKey;
+        if (!key) {
+            return null;
+        }
+
+        const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
+        return popover.innerHTML;
+    });
+};
+
+module.exports.getPopoverInnerText = getPopoverInnerText;
 
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's

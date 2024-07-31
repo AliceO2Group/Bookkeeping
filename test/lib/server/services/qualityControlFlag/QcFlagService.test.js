@@ -57,6 +57,7 @@ const qcFlagWithId1 = {
         bad: true,
         color: '#FFFF00',
         archived: false,
+        mcReproducible: true,
     },
 
     verifications: [],
