@@ -1273,10 +1273,10 @@ module.exports = () => {
 
         const relations = { user: { roles: ['admin'], externalUserId: 456 } };
         const goodFlagTypeId = 3;
-        const badPidlagTypeId = 12;
-        const lmimittedAccMCTypeId = 5;
+        const badPidFlagTypeId = 12;
+        const limitedAccMCTypeId = 5;
 
-        it('should successfuly get GAQ flags', async () => {
+        it('should successfully get GAQ flags', async () => {
             const dataPassId = 3;
 
             const runNumber = 334455;
@@ -1301,21 +1301,21 @@ module.exports = () => {
 
             const cpvFlagIds = (await qcFlagService.create([
                 { from: t('06:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
-                { from: t('06:00:00'), to: t('14:00:00'), flagTypeId: badPidlagTypeId },
-                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: lmimittedAccMCTypeId },
+                { from: t('06:00:00'), to: t('14:00:00'), flagTypeId: badPidFlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: limitedAccMCTypeId },
                 { from: t('18:00:00'), to: t('22:00:00'), flagTypeId: goodFlagTypeId },
             ], scopeCPV, relations)).map(({ id }) => id);
 
             const emcFlagIds = (await qcFlagService.create([
                 { from: t('06:00:00'), to: t('10:00:00'), flagTypeId: goodFlagTypeId },
-                { from: t('10:00:00'), to: t('12:00:00'), flagTypeId: badPidlagTypeId },
-                { from: t('12:00:00'), to: t('13:00:00'), flagTypeId: lmimittedAccMCTypeId },
+                { from: t('10:00:00'), to: t('12:00:00'), flagTypeId: badPidFlagTypeId },
+                { from: t('12:00:00'), to: t('13:00:00'), flagTypeId: limitedAccMCTypeId },
                 { from: t('14:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
                 { from: t('18:00:00'), to: t('20:00:00'), flagTypeId: goodFlagTypeId },
             ], scopeEMC, relations)).map(({ id }) => id);
 
             const fddFlagIds = (await qcFlagService.create([
-                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: badPidlagTypeId },
+                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: badPidFlagTypeId },
                 { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: goodFlagTypeId },
             ], scopeFDD, relations)).map(({ id }) => id);
 
@@ -1343,14 +1343,14 @@ module.exports = () => {
                 .every(({ flagType, createdBy, verifications }) => flagType && createdBy && verifications))).to.be.true;
         });
 
-        it('should successfuly get GAQ summary', async () => {
+        it('should successfully get GAQ summary', async () => {
             const dataPassId = 3;
 
             const runNumber = 334455;
             const timeTrgStart = t('06:00:00');
             const timeTrgEnd = t('22:00:00');
 
-            const gaqSubsummaries = [
+            const gaqSubSummaries = [
                 { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
                 { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
                 { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
@@ -1360,7 +1360,7 @@ module.exports = () => {
                 { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
             ];
 
-            const expectedGaqSummary = gaqSubsummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
+            const expectedGaqSummary = gaqSubSummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
                 if (bad) {
                     acc.badEffectiveRunCoverage += to - from;
                 } else {
@@ -1397,7 +1397,7 @@ module.exports = () => {
 
             scope.runNumber = 54;
             await qcFlagService.create(
-                [{ from: null, to: null, flagTypeId: badPidlagTypeId }],
+                [{ from: null, to: null, flagTypeId: badPidFlagTypeId }],
                 { ...scope, detectorIdentifier: { detectorId: itsId } },
                 relations,
             );
