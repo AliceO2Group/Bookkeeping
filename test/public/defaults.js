@@ -165,7 +165,7 @@ module.exports.waitForTableLength = waitForTableToLength;
  */
 const waitForTableToBeLoaded = async (page) => page.waitForSelector('table tbody tr:not(.loading-row):not(.empty-row)');
 
-module.exports.waitForTableLength = waitForTableToBeLoaded;
+module.exports.waitForTableToBeLoaded = waitForTableToBeLoaded;
 
 /**
  * Wait for the total number of elements to be the expected one
