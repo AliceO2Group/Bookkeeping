@@ -72,6 +72,7 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
+        await page.waitForSelector('tr:nth-of-type(2)');
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 'MC.R',
