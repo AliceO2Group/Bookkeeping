@@ -184,7 +184,7 @@ module.exports = () => {
         expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger')))
             .to.be.equal('This flag is not verified');
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) a', true));
-        await pressElement(page, '#verify-qc-flag', true);
+        await pressElement(page, '#verify-qc-flag');
         await pressElement(page, '#submit', true);
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
