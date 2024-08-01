@@ -97,16 +97,16 @@ module.exports = () => {
             ],
         ]);
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-EMC a'));
-        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-EMC a', true));
+        await pressElement(page, '#flag-type-panel .popover-trigger', true);
         await pressElement(page, '#flag-type-dropdown-option-3', true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
-        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
+        await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a'));
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
 
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
@@ -171,21 +171,21 @@ module.exports = () => {
         // Verify QC flag of CPV detector
         expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger')))
             .to.be.equal('This flag is not verified');
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) a'));
-        await pressElement(page, '#verify-qc-flag');
-        await pressElement(page, '#submit');
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(4) a', true));
+        await pressElement(page, '#verify-qc-flag', true);
+        await pressElement(page, '#submit', true);
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(4) .popover-trigger', { hidden: true });
 
         // Verify QC flag of EMC detector
         expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger')))
             .to.be.equal('This flag is not verified');
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(2) td:nth-of-type(5) a'));
-        await pressElement(page, '#verify-qc-flag');
-        await pressElement(page, '#submit');
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a'));
+        await pressElement(page, '#verify-qc-flag', true);
+        await pressElement(page, '#submit', true);
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(5) .popover-trigger', { hidden: true });
 
         await page.waitForSelector('tbody tr:nth-of-type(2) td:nth-of-type(1) .popover-trigger', { hidden: true });
@@ -194,17 +194,17 @@ module.exports = () => {
     });
 
     it('set GAQ detectors', async () => {
-        await pressElement(page, '#gaq-detectors-selection-trigger');
+        await pressElement(page, '#gaq-detectors-selection-trigger', true);
         await page.waitForSelector('#gaq-detectorsCheckbox2');
         expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox2').checked)).to.be.true; // CPV
         expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox4').checked)).to.be.true; // EMC
 
-        await pressElement(page, '#gaq-detectorsCheckbox9'); // HMP
+        await pressElement(page, '#gaq-detectorsCheckbox9', true); // HMP
         expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox9').checked)).to.be.true;
-        await pressElement(page, '#revert');
+        await pressElement(page, '#revert', true);
         await page.waitForFunction(() => !document.querySelector('#gaq-detectorsCheckbox9').checked);
-        await pressElement(page, '#gaq-detectorsCheckbox9'); // HMP
-        await pressElement(page, '#send');
+        await pressElement(page, '#gaq-detectorsCheckbox9', true); // HMP
+        await pressElement(page, '#send', true);
         await page.waitForSelector('th#HMP-flag');
     });
 };
