@@ -194,13 +194,13 @@ module.exports = () => {
 
     it('set GAQ detectors', async () => {
         await pressElement(page, '#gaq-detectors-selection-trigger');
-        expect(page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox2').checked)).to.be.true; // CPV
-        expect(page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox4').checked)).to.be.true; // EMC
+        expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox2').checked)).to.be.true; // CPV
+        expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox4').checked)).to.be.true; // EMC
 
         await pressElement(page, '#gaq-detectorsCheckbox9'); // HMP
-        expect(page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox9').checked)).to.be.true;
+        expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox9').checked)).to.be.true;
         await pressElement(page, '#revert');
-        expect(page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox9').checked)).to.be.false;
+        expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox9').checked)).to.be.false;
         await pressElement(page, '#gaq-detectorsCheckbox9'); // HMP
         await pressElement(page, '#send');
         await page.waitForSelector('th#HMP-flag');
