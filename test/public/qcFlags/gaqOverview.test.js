@@ -24,6 +24,7 @@ const {
     getPopoverInnerText,
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
+    waitForTableToBeLoaded,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -72,7 +73,7 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
-        await page.waitForSelector('tr:nth-of-type(2)');
+        await waitForTableToBeLoaded(page);
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 'MC.R',
@@ -108,6 +109,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
 
+        await waitForTableToBeLoaded(page);
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 'good',
