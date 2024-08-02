@@ -47,7 +47,7 @@ module.exports = () => {
 
         const dataPassesDB = await DataPassRepository.findAll({ include: [
             { association: 'runs', attributes: ['runNumber'] },
-            { association: 'versions' },
+            { association: 'versions', include: [{ association: 'statusHistory', required: true }] },
         ] });
 
         // Correct amount of data
