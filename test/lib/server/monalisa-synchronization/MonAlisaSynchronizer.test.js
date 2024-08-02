@@ -99,49 +99,79 @@ module.exports = () => {
         lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
         expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
 
-        let productionsDeletedFromMl = await DataPassVersionRepository.findAll({ include: [
+        const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
+            include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
+            order: [['statusHistory', 'createdAt', 'ASC']],
+        })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
+
+        expect(dataPassVersionsDeletedFromML.map(({ description, statusHistory }) => ({
+            description,
+            statusHistory: statusHistory.map(({ status }) => status),
+        }))).to.be.have.all.deep.members([
             {
-                association: 'statusHistory', where: { status: DataPassVersionStatus.DELETED }, required: true,
+                description: 'Some random desc',
+                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED],
             },
-        ] });
-        expect(productionsDeletedFromMl).to.be.lengthOf(3);
-
-        const fetchAllMockDataPassesVersions = monAlisaClient._fetchDataPassesVersions;
-        monAlisaClient._fetchDataPassesVersions = async () => (await fetchAllMockDataPassesVersions()).split('\n').slice(0, -5).join('\n');
-
-        await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
-        productionsDeletedFromMl = await DataPassVersionRepository.findAll({ include: [
             {
-                association: 'statusHistory', where: { status: DataPassVersionStatus.DELETED }, required: true,
+                description: 'Some random desc 2',
+                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED],
             },
-            { association: 'dataPass' },
-        ] });
-        expect(productionsDeletedFromMl).to.be.lengthOf(7);
+            {
+                description: 'Some random desc for apass 1',
+                statusHistory: [
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                ],
+            },
+        ]);
 
-        const dataPassVersionsToBeRestartedPayload = productionsDeletedFromMl.map(({
+        // Restart some data passes
+        let dataPassVersionsToBeRestartedPayload = dataPassVersionsDeletedFromML.map(({
             dataPass: { name },
             description,
             lastSeen,
             outputSize,
             reconstructedEventsCount,
-        }) => `"${name}";"${description}";;;;;;;;;${reconstructedEventsCount};${lastSeen};${outputSize}`)
+        }) => `"${name}";"${description}";;;;;;;;;${reconstructedEventsCount};;;;${lastSeen};;${outputSize}`)
             .join('\n');
+        dataPassVersionsToBeRestartedPayload = `# header\n${dataPassVersionsToBeRestartedPayload}`;
 
-        monAlisaClient._fetchDataPassesVersions = () => dataPassVersionsToBeRestartedPayload;
+        monAlisaClient._fetchDataPassesVersions = async () => dataPassVersionsToBeRestartedPayload;
+        monAlisaClient.yearLowerLimit = 2022;
+        monAlisaClient.ok = true;
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
-        const restartedProductions = await DataPassVersionRepository.findAll({
+        const restartedDataPassVersions = await DataPassVersionRepository.findAll({
             include: 'statusHistory',
-            where: { id: { [Op.in]: productionsDeletedFromMl.map(({ id }) => id) } },
+            where: { id: { [Op.in]: dataPassVersionsDeletedFromML.map(({ id }) => id) } },
             order: [['statusHistory', 'createdAt', 'ASC']],
         });
-        expect(restartedProductions.map(({ description, statusHistory }) => ({
+
+        expect(restartedDataPassVersions.map(({ description, statusHistory }) => ({
             description,
             statusHistory: statusHistory.map(({ status }) => status),
-        }))).to.be.have.all.deep.members(restartedProductions.map(({ description }) => ({
-            description,
-            statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED, DataPassVersionStatus.RUNNING],
-        })));
+        }))).to.be.have.all.deep.members([
+            {
+                description: 'Some random desc',
+                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED, DataPassVersionStatus.RUNNING],
+            },
+            {
+                description: 'Some random desc 2',
+                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED, DataPassVersionStatus.RUNNING],
+            },
+            {
+                description: 'Some random desc for apass 1',
+                statusHistory: [
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                    DataPassVersionStatus.RUNNING,
+                ],
+            },
+        ]);
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
