@@ -18,6 +18,7 @@ const ForDataPassCreationSuite = require('../public/qcFlags/forDataPassCreation.
 const ForSimulationPassCreationSuite = require('../public/qcFlags/forSimulationPassCreation.test');
 const DetailsForDataPassPageSuite = require('../public/qcFlags/detailsForDataPass.test');
 const DetailsForSimulationPassPageSuite = require('../public/qcFlags/detailsForSimulationPass.test');
+const GaqOverviewPageSuite = require('../public/qcFlags/gaqOverview.test');
 
 describe('Bookkeeping', () => {
     before(async () => {
@@ -36,5 +37,6 @@ describe('Bookkeeping', () => {
         describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
         describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
         describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
+        describe('GAQ overview page', GaqOverviewPageSuite);
     });
 });
