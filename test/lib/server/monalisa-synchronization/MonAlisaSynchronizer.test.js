@@ -136,6 +136,8 @@ module.exports = () => {
             order: [['statusHistory', 'createdAt', 'ASC']],
         })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
 
+        const yearOfDataPassesExistingBeforeFirstSynchronization = 2022;
+        const monAlisaClient = getMockMonAlisaClient(yearOfDataPassesExistingBeforeFirstSynchronization);
         // Override mock fetch method
         const dataPassVersionsToBeRestartedContent = dataPassVersionsDeletedFromML.map(({
             dataPass: { name },
@@ -146,9 +148,6 @@ module.exports = () => {
         }) => `"${name}";"${description}";;;;;;;;;${reconstructedEventsCount};;;;${lastSeen};;${outputSize}`)
             .join('\n');
         const dataPassVersionsToBeRestartedPayload = `# header\n${dataPassVersionsToBeRestartedContent}`;
-
-        const yearOfDataPassesExistingBeforeFirstSynchronization = 2022;
-        const monAlisaClient = getMockMonAlisaClient(yearOfDataPassesExistingBeforeFirstSynchronization);
         monAlisaClient._fetchDataPassesVersions = async () => dataPassVersionsToBeRestartedPayload;
         const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
 
