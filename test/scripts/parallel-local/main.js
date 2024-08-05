@@ -11,8 +11,8 @@ const startTime = new Date();
 const testSuites = [
     'unit',
     'api',
-    'lhcPeriods',
-    'lhcFills',
+    'lhc-periods',
+    'lhc-fills',
     'logs',
     'envs',
     'runs',
@@ -20,11 +20,11 @@ const testSuites = [
     'flps',
     'home',
     'about',
-    'eosReport',
-    'dataPasses',
-    'simulationPasses',
-    'qcFlagTypes',
-    'qcFlags',
+    'eos-report',
+    'data-passes',
+    'simulation-passes',
+    'qc-flag-types',
+    'qc-flags',
 ];
 const remainingTests = [...testSuites];
 
