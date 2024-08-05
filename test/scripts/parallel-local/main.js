@@ -11,8 +11,8 @@ const startTime = new Date();
 const testSuites = [
     'unit',
     'api',
-    'lhcPeriods',
-    'lhcFills',
+    'lhc-periods',
+    'lhc-fills',
     'logs',
     'envs',
     'runs',
@@ -20,11 +20,11 @@ const testSuites = [
     'flps',
     'home',
     'about',
-    'eosReport',
-    'dataPasses',
-    'simulationPasses',
-    'qcFlagTypes',
-    'qcFlags',
+    'eos-report',
+    'data-passes',
+    'simulation-passes',
+    'qc-flag-types',
+    'qc-flags',
 ];
 const remainingTests = [...testSuites];
 
@@ -39,7 +39,7 @@ const imageTag = 'test-parallel-application:latest';
  * @returns {void}
  */
 const buildDockerImage = () => {
-    const command = 'docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml build';
+    const command = 'docker compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml build';
     execSync(`${command} && docker tag test-parallel-application ${imageTag}`, { stdio: 'inherit' });
 };
 
