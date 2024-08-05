@@ -62,6 +62,18 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'QC Flag Details');
     });
 
+    it('can navigate to runs per data pass page', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+        await waitForNavigation(page, () => page.goBack());
+    });
+
+    it('can navigate to run details page', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
+        await waitForNavigation(page, () => page.goBack());
+    });
+
     it('should display correct QC flag details', async () => {
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
         await expectInnerText(page, '#qc-flag-details-dataPass', 'Data pass:\nLHC22b_apass1');
@@ -75,18 +87,15 @@ module.exports = () => {
         await expectInnerText(page, '.panel div', 'Some qc comment 1');
 
         await page.waitForSelector('button#delete');
-    });
 
-    it('can navigate to runs per data pass page', async () => {
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
-        await waitForNavigation(page, () => page.goBack());
-    });
+        await waitForNavigation(page, () => pressElement(page, '#row106-ZDC a'));
+        await waitForNavigation(page, () => pressElement(page, '#row7-qcFlagId a'));
+        await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nqc_async/ZDC/AverageClusterSize');
 
-    it('can navigate to run details page', async () => {
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
-        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
-        await waitForNavigation(page, () => page.goBack());
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-CPV a'));
+        await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a'));
     });
 
     it('should successfully delete QC flag', async () => {
