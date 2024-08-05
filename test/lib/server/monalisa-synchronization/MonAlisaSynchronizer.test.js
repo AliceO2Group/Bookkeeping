@@ -151,6 +151,7 @@ module.exports = () => {
         monAlisaClient._fetchDataPassesVersions = async () => dataPassVersionsToBeRestartedPayload;
         const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
 
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Sleep 1s
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
         const restartedDataPassVersions = await DataPassVersionRepository.findAll({
