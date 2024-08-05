@@ -38,9 +38,10 @@ module.exports = () => {
         const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
         const expectedDataPassesVersions = mockDataPassesVersions.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
-        // Check whether examining data passes with last runs works correctly;
-        let lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
-        expect(mockDataPassesVersions.every((dataPass) => monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
+        // Check whether examining data passes with last_seen information works correctly;
+        let lastSeenAndLastStatus = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
+        expect(mockDataPassesVersions.every((dataPass) => monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeenAndLastStatus)))
+            .to.be.true;
 
         // Run Synchronization
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
@@ -50,7 +51,7 @@ module.exports = () => {
             { association: 'versions', include: [{ association: 'statusHistory', required: true }] },
         ] });
 
-        // Correct amount of data
+        // Expect correct amount of data
         expect(dataPassesDB).to.be.an('array');
         expect(dataPassesDB).to.be.lengthOf(8);
 
@@ -95,9 +96,10 @@ module.exports = () => {
             }
         }
 
-        // Check whether examining data passes with last runs works correctly;
-        lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
-        expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
+        // Check whether examining data passes with last_seen information works correctly;
+        lastSeenAndLastStatus = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
+        expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeenAndLastStatus)))
+            .to.be.true;
 
         const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
             include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
@@ -128,6 +130,8 @@ module.exports = () => {
         ]);
 
         // Restart some data passes
+
+        //// Prepare mock fetch method
         let dataPassVersionsToBeRestartedPayload = dataPassVersionsDeletedFromML.map(({
             dataPass: { name },
             description,
