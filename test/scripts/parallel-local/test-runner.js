@@ -70,7 +70,7 @@ const executeTest = ({ test, workerName }) => {
  */
 const buildDockerCommand = (workerName) =>
     `COMPOSE_PROJECT_NAME=${workerName} \
-     docker-compose \
+     docker compose \
      -f docker-compose.test-parallel-base.yml \
      -f docker-compose.test-parallel-local.yml \
      up --abort-on-container-exit`;

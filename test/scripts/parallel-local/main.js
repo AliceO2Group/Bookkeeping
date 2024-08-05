@@ -39,7 +39,7 @@ const imageTag = 'test-parallel-application:latest';
  * @returns {void}
  */
 const buildDockerImage = () => {
-    const command = 'docker-compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml build';
+    const command = 'docker compose -f docker-compose.test-parallel-base.yml -f docker-compose.test-parallel-local.yml build';
     execSync(`${command} && docker tag test-parallel-application ${imageTag}`, { stdio: 'inherit' });
 };
 
