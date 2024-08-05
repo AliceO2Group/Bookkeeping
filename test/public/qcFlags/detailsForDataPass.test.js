@@ -62,36 +62,7 @@ module.exports = () => {
         await expectInnerText(page, 'h2', 'QC Flag Details');
     });
 
-    it('can naviagate to runs per data pass page', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
-    });
-
-    it('can naviagate to run details page', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
-        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
-    });
-
     it('should display correct QC flag details', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
         await expectInnerText(page, '#qc-flag-details-dataPass', 'Data pass:\nLHC22b_apass1');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
@@ -106,16 +77,21 @@ module.exports = () => {
         await page.waitForSelector('button#delete');
     });
 
-    it('should successfuly delete QC flag', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+    it('can navigate to runs per data pass page', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+        await waitForNavigation(page, () => page.goBack());
+    });
 
+    it('can navigate to run details page', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
+        await waitForNavigation(page, () => page.goBack());
+    });
+
+    it('should successfully delete QC flag', async () => {
         await page.waitForSelector('button#delete');
-        // Check that deletion is interapted when confirmation dialog is dismissed
+        // Check that deletion is interrupted when confirmation dialog is dismissed
         setConfirmationDialogToBeDismissed(page);
         await pressElement(page, 'button#delete');
         expectUrlParams(page, {
@@ -139,13 +115,8 @@ module.exports = () => {
         unsetConfirmationDialogActions(page);
     });
 
-    it('should successfuly verify flag', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 2,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+    it('should successfully verify flag', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#row2-qcFlagId a'));
 
         await page.waitForSelector('#delete:not([disabled])');
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
