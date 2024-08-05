@@ -26,5 +26,5 @@ module.exports = () => {
     describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
     describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
     describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
-    describe('GAQ overviewe page', GaqOverviewPageSuite);
+    describe('GAQ overview page', GaqOverviewPageSuite);
 };
