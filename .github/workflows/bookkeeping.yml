@@ -17,8 +17,8 @@ jobs:
       matrix:
         test_type: [unit,
                     api,
-                    lhcPeriods,
-                    lhcFills,
+                    lhc-periods,
+                    lhc-fills,
                     logs,
                     envs,
                     runs,
@@ -26,11 +26,11 @@ jobs:
                     flps,
                     home,
                     about,
-                    eosReport,
-                    dataPasses,
-                    simulationPasses,
-                    qcFlagTypes,
-                    qcFlags]
+                    eos-report,
+                    data-passes,
+                    simulation-passes,
+                    qc-flag-types,
+                    qc-flags]
 
     steps:
       - uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
 
       - name: Build and Start Test Database
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel-base.yml \
           -f docker-compose.test-parallel-ci.yml \
           up --detach test_db
@@ -52,7 +52,7 @@ jobs:
           TEST_TYPE: ${{ matrix.test_type }}
       - name: Build Test Container
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel-base.yml \
           -f docker-compose.test-parallel-ci.yml \
           build test_app
@@ -60,7 +60,7 @@ jobs:
           TEST_TYPE: ${{ matrix.test_type }}
       - name: Run Tests
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel-base.yml \
           -f docker-compose.test-parallel-ci.yml \
           run test_app
@@ -75,7 +75,7 @@ jobs:
           TEST_TYPE: ${{ matrix.test_type }}
       - name: Clean Up
         run: |
-          docker-compose \
+          docker compose \
           -f docker-compose.test-parallel-base.yml \
           -f docker-compose.test-parallel-ci.yml \
           down
