@@ -93,9 +93,9 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#row7-qcFlagId a'));
         await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nqc_async/ZDC/AverageClusterSize');
 
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-CPV a'));
-        await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a'));
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-CPV a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
 
     it('should successfully delete QC flag', async () => {
