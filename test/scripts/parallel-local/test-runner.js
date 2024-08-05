@@ -69,7 +69,7 @@ const executeTest = ({ test, workerName }) => {
  * @returns {string} Docker command string.
  */
 const buildDockerCommand = (workerName) =>
-    `COMPOSE_PROJECT_NAME=${workerName.toLowerCase()} \
+    `COMPOSE_PROJECT_NAME=${workerName} \
      docker compose \
      -f docker-compose.test-parallel-base.yml \
      -f docker-compose.test-parallel-local.yml \
