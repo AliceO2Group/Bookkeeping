@@ -128,11 +128,16 @@ module.exports = () => {
                 ],
             },
         ]);
+    });
 
-        // Restart some data passes
+    it('should successfully restart some data passes', async () => {
+        const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
+            include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
+            order: [['statusHistory', 'createdAt', 'ASC']],
+        })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
 
-        //// Prepare mock fetch method
-        let dataPassVersionsToBeRestartedPayload = dataPassVersionsDeletedFromML.map(({
+        // Override mock fetch method
+        const dataPassVersionsToBeRestartedContent = dataPassVersionsDeletedFromML.map(({
             dataPass: { name },
             description,
             lastSeen,
@@ -140,11 +145,13 @@ module.exports = () => {
             reconstructedEventsCount,
         }) => `"${name}";"${description}";;;;;;;;;${reconstructedEventsCount};;;;${lastSeen};;${outputSize}`)
             .join('\n');
-        dataPassVersionsToBeRestartedPayload = `# header\n${dataPassVersionsToBeRestartedPayload}`;
+        const dataPassVersionsToBeRestartedPayload = `# header\n${dataPassVersionsToBeRestartedContent}`;
 
+        const yearOfDataPassesExistingBeforeFirstSynchronization = 2022;
+        const monAlisaClient = getMockMonAlisaClient(yearOfDataPassesExistingBeforeFirstSynchronization);
         monAlisaClient._fetchDataPassesVersions = async () => dataPassVersionsToBeRestartedPayload;
-        monAlisaClient.yearLowerLimit = 2022;
-        monAlisaClient.ok = true;
+        const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
+
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
         const restartedDataPassVersions = await DataPassVersionRepository.findAll({
