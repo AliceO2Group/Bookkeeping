@@ -207,6 +207,7 @@ module.exports = () => {
         await page.waitForFunction(() => !document.querySelector('#gaq-detectorsCheckbox9').checked);
         await pressElement(page, '#gaq-detectorsCheckbox9', true); // HMP
         await pressElement(page, '#send', true);
+        await page.waitForSelector('#gaq-detector-selection-modal', { hidden: true });
         await page.waitForSelector('th#HMP-flag');
     });
 };
