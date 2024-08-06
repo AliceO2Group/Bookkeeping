@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { DetectorType } = require('../../lib/domain/enums/DetectorTypes');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -315,7 +316,7 @@ module.exports = () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
-            const response = await request(server).post('/api/dataPasses/gaqDetectors').send({
+            const response = await request(server).post(`/api/dataPasses/gaqDetectors?token=${BkpRoles.GAQ}`).send({
                 dataPassId,
                 runNumbers,
                 dplDetectorIds: detectorIds,
