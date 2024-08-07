@@ -76,7 +76,7 @@ module.exports = () => {
                     const { data, meta } = res.body;
                     expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(3);
+                    expect(data).to.be.lengthOf(5);
 
                     done();
                 });
@@ -214,9 +214,9 @@ module.exports = () => {
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses).to.be.lengthOf(5);
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.members([
-                        'LHC22a_apass1',
                         'LHC22a_apass2_skimmed',
                         'LHC22a_skimming',
+                        'LHC22a_apass1',
                         'LHC22b_apass2',
                         'LHC22b_apass1',
                     ]);
@@ -236,9 +236,11 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.have.ordered.deep.members([
-                        LHC22b_apass2,
-                        LHC22b_apass1,
+                    expect(dataPasses.map(({ name }) => name)).to.have.ordered.deep.members([
+                        'LHC22a_skimming',
+                        'LHC22a_apass1',
+                        'LHC22b_apass2',
+                        'LHC22b_apass1',
                     ]);
 
                     done();
