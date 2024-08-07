@@ -74,7 +74,7 @@
     "generated_events": 1234,
     "output_size": 5776057770096,
     "anchor_production": "LHC23f",
-    "anchor_pass": "epass4"
+    "anchor_pass": "apass1"
   },
   "LHC23ac7": {
     "runList": "94, 1, 75, 64, 69, 85, 6, 63",
