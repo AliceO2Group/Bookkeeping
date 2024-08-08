@@ -18,7 +18,6 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
-const { BkpRoles } = require('../../../../../lib/domain/enums/BkpRoles.js');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -177,27 +176,20 @@ module.exports = () => {
         it('should successfuly set GAQ detectors', async () => {
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
-            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds, { user: { roles: [BkpRoles.GAQ] } });
+            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds);
             expect(data).to.be.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
         it('should fail to set GAQ detectors because of miaaing association', async () => {
             let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
             assert.rejects(
-                () => dataPassService.setGaqDetectors(dataPassId, [1], [4], { user: { roles: [BkpRoles.GAQ] } }),
+                () => dataPassService.setGaqDetectors(dataPassId, [1], [4]),
                 new BadParameterError(errorMessage),
             );
             errorMessage = `No association between runs and detectors: ${JSON.stringify([[56, 'CPV']])}`;
             assert.rejects(
                 () => dataPassService.setGaqDetectors(dataPassId, [105, 56], [1]),
                 new BadParameterError(errorMessage),
-            );
-        });
-
-        it('should fail to set GAQ detectors because of insufficient permission', async () => {
-            assert.rejects(
-                () => dataPassService.setGaqDetectors(dataPassId, [1], [4], { user: { roles: [BkpRoles.GUEST] } }),
-                new BadParameterError('You have no permission to manage GAQ detector'),
             );
         });
 

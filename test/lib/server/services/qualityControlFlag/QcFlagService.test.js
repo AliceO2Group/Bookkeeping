@@ -21,7 +21,6 @@ const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService');
-const { BkpRoles } = require('../../../../../lib/domain/enums/BkpRoles');
 
 /**
  * Get effective part and periods of Qc flag
@@ -1289,7 +1288,7 @@ module.exports = () => {
             const detectorIds = [1, 2, 3];
             await run.addDataPass(dataPassId);
             await run.addDetectors(detectorIds);
-            await dataPassService.setGaqDetectors(dataPassId, [runNumber], detectorIds, { user: { roles: [BkpRoles.GAQ] } });
+            await dataPassService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
 
             // Creating flags fo CPV, EMC, FDD
             const scope = {

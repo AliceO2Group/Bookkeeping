@@ -325,6 +325,22 @@ module.exports = () => {
             expect(response.body.data).to.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
+
+        it('should fail to set GAQ detectors because of insufficient permission', async () => {
+            const dataPassId = 3;
+            const runNumbers = [49, 56];
+            const detectorIds = [4, 7];
+            const response = await request(server).post(`/api/dataPasses/gaqDetectors?token=${BkpRoles.GUEST}`).send({
+                dataPassId,
+                runNumbers,
+                dplDetectorIds: detectorIds,
+            });
+            expect(response.status).to.be.equal(403);
+
+            const { errors } = response.body;
+            const titleError = errors.find(({ title }) => title === 'Access Denied');
+            expect(titleError.detail).to.equal('You have no permission to manage GAQ detector');
+        });
     });
 
     describe('GET /api/dataPasses/gaqDetectors', () => {
