@@ -32,6 +32,7 @@ const {
     getPopoverSelector,
     getInnerText,
     expectUrlParams,
+    getPopoverInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -145,6 +146,10 @@ module.exports = () => {
             innerText: '67MC.R',
         });
         await page.waitForSelector('tr#row106 .column-CPV a .icon');
+
+        await expectInnerText(page, '#row106-globalAggregatedQuality', '67MC.R');
+        expect(await getPopoverInnerText(await page.waitForSelector('#row106-globalAggregatedQuality .popover-trigger')))
+            .to.be.equal('Missing 3 verifications');
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
