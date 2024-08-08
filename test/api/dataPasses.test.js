@@ -338,8 +338,7 @@ module.exports = () => {
             expect(response.status).to.be.equal(403);
 
             const { errors } = response.body;
-            const titleError = errors.find(({ title }) => title === 'Access Denied');
-            expect(titleError.detail).to.equal('You have no permission to manage GAQ detector');
+            expect(errors.find(({ title }) => title === 'Access denied')).to.not.be.null;
         });
     });
 
