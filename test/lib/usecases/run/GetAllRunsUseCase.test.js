@@ -60,15 +60,6 @@ module.exports = () => {
             const runNumbers = runs.map(({ runNumber }) => runNumber);
             expect(runNumbers).to.have.all.ordered.members(runNumbers.toSorted());
         }
-
-        {
-            const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumbers: 'DESC' } } });
-
-            expect(runs).to.be.an('array');
-            expect(runs).to.have.length.greaterThan(1);
-            const runNumbers = runs.map(({ runNumber }) => runNumber);
-            expect(runNumbers).to.have.all.ordered.members(runNumbers.toSorted((a, b) => -a + b));
-        }
     });
 
     it('should return an array, only containing runs containing the specified run number', async () => {

@@ -113,21 +113,14 @@ module.exports = () => {
                 });
         });
 
-        it('should support sorting, runNumber ASC', (done) => {
-            request(server)
-                .get('/api/runs?sort[id]=asc')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should support sorting by runNumber', async () => {
+            const response = await request(server).get('/api/runs?sort[runNumber]=DESC');
 
-                    const { data } = res.body;
-                    expect(data[1].id).to.be.above(data[0].id);
-
-                    done();
-                });
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.have.length.greaterThan(2);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members(runNumbers.toSorted((a, b) => -a + b));
         });
 
         it('should successfully filter on calibration', async () => {
