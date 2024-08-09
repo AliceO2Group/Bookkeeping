@@ -63,35 +63,18 @@ module.exports = () => {
     });
 
     it('can navigate to runs per data pass page', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+        await waitForNavigation(page, () => page.goBack());
     });
 
     it('can navigate to run details page', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
+        await waitForNavigation(page, () => page.goBack());
     });
 
     it('should display correct QC flag details', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
         await expectInnerText(page, '#qc-flag-details-dataPass', 'Data pass:\nLHC22b_apass1');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
@@ -104,16 +87,18 @@ module.exports = () => {
         await expectInnerText(page, '.panel div', 'Some qc comment 1');
 
         await page.waitForSelector('button#delete');
+
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-ZDC a'));
+        await waitForNavigation(page, () => pressElement(page, '#row7-qcFlagId a'));
+        await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nqc_async/ZDC/AverageClusterSize');
+
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-CPV a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
 
     it('should successfully delete QC flag', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 1,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
         await page.waitForSelector('button#delete');
         // Check that deletion is interrupted when confirmation dialog is dismissed
         setConfirmationDialogToBeDismissed(page);
@@ -140,12 +125,7 @@ module.exports = () => {
     });
 
     it('should successfully verify flag', async () => {
-        await goToPage(page, 'qc-flag-details-for-data-pass', { queryParameters: {
-            id: 2,
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
+        await waitForNavigation(page, () => pressElement(page, '#row2-qcFlagId a'));
 
         await page.waitForSelector('#delete:not([disabled])');
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');

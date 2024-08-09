@@ -79,6 +79,12 @@ module.exports = () => {
                         badEffectiveRunCoverage: 0.3333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
                 },
             });
         });
