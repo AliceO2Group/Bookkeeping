@@ -66,8 +66,8 @@ module.exports = () => {
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outpuSize) => {
-                const [number, unit] = outpuSize.split(' ');
+            outputSize: (outputSize) => {
+                const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
         };
@@ -109,7 +109,7 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'name');
     });
 
-    it('should successfuly apply data pass name filter', async () => {
+    it('should successfully apply data pass name filter', async () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');

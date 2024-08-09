@@ -66,7 +66,7 @@ module.exports = () => {
         await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
     });
 
-    it('can naviagate to runs per data pass page from breadcrumbs link', async () => {
+    it('can navigate to runs per data pass page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
@@ -77,7 +77,7 @@ module.exports = () => {
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
+    it('can navigate to run details page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,

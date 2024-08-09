@@ -415,10 +415,10 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
 };
 
 /**
- * Expect an element to have a text valid against givne validator
+ * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
- * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, return false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
@@ -431,7 +431,7 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
  * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
- * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, return false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
@@ -613,7 +613,7 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
  * Method to check cells of columns with given id have expected innerText
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {stirng} columnId column id
+ * @param {string} columnId column id
  * @param {string[]} [expectedInnerTextValues] values expected in columns
  *
  * @return {Promise<void>} resolve once column values were checked
@@ -649,7 +649,7 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  * Method to check cells of a row with given id have expected innerText
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {stirng} rowId row id
+ * @param {string} rowId row id
  * @param {Object<string, string>} [expectedInnerTextValues] values expected in the row
  *
  * @return {Promise<void>} resolve once row's values were checked
@@ -685,7 +685,7 @@ module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) =>
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation] if true it's expected not to match given regex
  *
- * @return {Promise<void>} revoled once column values were checked
+ * @return {Promise<void>} resoled once column values were checked
  */
 module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
     const {
@@ -720,7 +720,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     await this.pressElement(page, `th#${columnId}`);
     this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
-    // Sort in DESCSENDING manner
+    // Sort in DESCENDING manner
     await this.pressElement(page, `th#${columnId}`);
     this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 

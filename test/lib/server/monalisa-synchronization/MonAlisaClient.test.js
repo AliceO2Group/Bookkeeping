@@ -64,7 +64,7 @@ module.exports = () => {
         }
     });
 
-    it('Should get simultion passes with respect to given year limit (2022) and in correct format', async () => {
+    it('Should get simulation passes with respect to given year limit (2022) and in correct format', async () => {
         const monAlisaInterface = getMockMonAlisaClient(2022);
         const simulationPasses = await monAlisaInterface.getSimulationPasses();
 

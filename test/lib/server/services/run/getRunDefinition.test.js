@@ -29,7 +29,7 @@ module.exports = () => {
         expect(getRunDefinition(COSMICS.stableBeamOverlapAndNoDetectorAndNoBeam)).to.equal(RunDefinition.COSMICS);
     });
 
-    it('should successfully identify runs as COMMISIONING', () => {
+    it('should successfully identify runs as COMMISSIONING', () => {
         expect(getRunDefinition(COMMISSIONING.standalone)).to.equal(RunDefinition.COMMISSIONING);
         expect(getRunDefinition(COMMISSIONING.noStableBeamOverlap)).to.equal(RunDefinition.COMMISSIONING);
     });

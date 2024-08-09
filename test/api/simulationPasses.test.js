@@ -58,7 +58,7 @@ const LHC23k6a = {
 module.exports = () => {
     before(resetDatabaseContent);
     describe('GET /api/simulationPasses/:id', () => {
-        it('should successfuly get simulation pass by id', (done) => {
+        it('should successfully get simulation pass by id', (done) => {
             request(server)
                 .get('/api/simulationPasses/1')
                 .expect(200)
@@ -100,7 +100,7 @@ module.exports = () => {
     });
 
     describe('GET /api/simulationPasses', () => {
-        it('should successfuly fetch all data', (done) => {
+        it('should successfully fetch all data', (done) => {
             request(server)
                 .get('/api/simulationPasses')
                 .expect(200)
@@ -118,7 +118,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on ids', (done) => {
+        it('should successfully filter on ids', (done) => {
             request(server)
                 .get('/api/simulationPasses?filter[ids][]=1')
                 .expect(200)
@@ -136,7 +136,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on names', (done) => {
+        it('should successfully filter on names', (done) => {
             request(server)
                 .get('/api/simulationPasses?filter[names][]=LHC23k6b')
                 .expect(200)
@@ -153,7 +153,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on ids', (done) => {
+        it('should retrieve no records when filtering on ids', (done) => {
             request(server)
                 .get('/api/simulationPasses?filter[ids][]=9999')
                 .expect(200)
@@ -170,9 +170,9 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on names', (done) => {
+        it('should retrieve no records when filtering on names', (done) => {
             request(server)
-                .get('/api/simulationPasses?filter[names][]=LHC2asdfasdf2b_aasdfpass2asdf')
+                .get('/api/simulationPasses?filter[names][]=LHC2afRandomName')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -186,7 +186,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on ids given as array', (done) => {
+        it('should successfully filter on ids given as array', (done) => {
             request(server)
                 .get('/api/simulationPasses?filter[ids][]=1&filter[ids][]=2')
                 .expect(200)
@@ -202,7 +202,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on lhcPeriodIds', (done) => {
+        it('should successfully filter on lhcPeriodIds', (done) => {
             request(server)
                 .get('/api/simulationPasses?filter[lhcPeriodIds][]=1')
                 .expect(200)
@@ -218,7 +218,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on dataPassIds', (done) => {
+        it('should successfully filter on dataPassIds', (done) => {
             request(server)
                 .get('/api/simulationPasses?filter[dataPassIds][]=1')
                 .expect(200)
@@ -234,7 +234,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on id and name', (done) => {
+        it('should successfully sort on id and name', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[id]=DESC&sort[name]=ASC')
                 .expect(200)
@@ -251,7 +251,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on outputSize', (done) => {
+        it('should successfully sort on outputSize', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[outputSize]=DESC')
                 .expect(200)
@@ -267,7 +267,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on requestedEventsCount', (done) => {
+        it('should successfully sort on requestedEventsCount', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[requestedEventsCount]=DESC')
                 .expect(200)
@@ -283,7 +283,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on generatedEventsCount', (done) => {
+        it('should successfully sort on generatedEventsCount', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[generatedEventsCount]=DESC')
                 .expect(200)
@@ -299,7 +299,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on pwg', (done) => {
+        it('should successfully sort on pwg', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[pwg]=DESC')
                 .expect(200)
@@ -315,7 +315,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on jiraId', (done) => {
+        it('should successfully sort on jiraId', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[jiraId]=DESC')
                 .expect(200)
@@ -348,7 +348,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 400 when bad query paramter provided', (done) => {
+        it('should return 400 when bad query parameter provided', (done) => {
             request(server)
                 .get('/api/simulationPasses?a=1')
                 .expect(400)
