@@ -16,8 +16,6 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
-const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
-const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 const LHC22b_apass1 = {
     id: 1,
