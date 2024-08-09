@@ -121,7 +121,7 @@ module.exports = () => {
     });
 
     describe('Get QC flags summary', () => {
-        it('should succsessfully get non-empty QC flag summary for data pass', async () => {
+        it('should successfully get non-empty QC flag summary for data pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
                 106: {
                     1: {
@@ -129,6 +129,12 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                    },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
                     },
                 },
             });
@@ -505,11 +511,11 @@ module.exports = () => {
                         ],
                     },
                     {
-                        id: 7,
+                        id: 8,
                         effectivePeriods: [],
                     },
                     {
-                        id: 8,
+                        id: 9,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 04:00:00').getTime(),
@@ -625,6 +631,12 @@ module.exports = () => {
                             missingVerificationsCount: 1,
                             explicitlyNotBadEffectiveRunCoverage: 0,
                         },
+                        16: {
+                            badEffectiveRunCoverage: 0,
+                            explicitlyNotBadEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
+                        },
                     },
                     [runNumber]: {
                         [detectorId]: {
@@ -666,6 +678,12 @@ module.exports = () => {
                             mcReproducible: false,
                             missingVerificationsCount: 1,
                             explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                        16: {
+                            badEffectiveRunCoverage: 0,
+                            explicitlyNotBadEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
                         },
                     },
                     [runNumber]: {
