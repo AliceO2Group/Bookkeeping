@@ -28,6 +28,7 @@ const {
     waitForDownload,
     waitForNavigation,
     expectUrlParams,
+    testTableSortingByColumn,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -134,6 +135,10 @@ module.exports = () => {
         await page.waitForSelector('tr#row56 .column-ITS a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id);
+    });
+
+    it('should successfully sort by runNumber in ascending and descending manners', async () => {
+        await testTableSortingByColumn(page, 'runNumber');
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
