@@ -133,7 +133,7 @@ module.exports = () => {
         await pressElement(page, `${amountSelectorId} button`);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
+        // Expect the amount of visible lhcFills to reduce when the first option (5) is selected
         await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
 

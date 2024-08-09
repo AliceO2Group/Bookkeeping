@@ -268,7 +268,7 @@ module.exports = () => {
     });
 
     // Filters
-    it('should successfuly apply runNumber filter', async () => {
+    it('should successfully apply runNumber filter', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
 
         await pressElement(page, '#openFilterToggle');
@@ -280,7 +280,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
-    it('should successfuly apply detectors filter', async () => {
+    it('should successfully apply detectors filter', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 });
 
         await pressElement(page, '#openFilterToggle');
@@ -293,7 +293,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
-    it('should successfuly apply tags filter', async () => {
+    it('should successfully apply tags filter', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
         await pressElement(page, '#openFilterToggle');
 
@@ -308,7 +308,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
-    it('should successfuly apply timeStart filter', async () => {
+    it('should successfully apply timeStart filter', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 });
         await pressElement(page, '#openFilterToggle');
 
@@ -319,7 +319,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
-    it('should successfuly apply timeEnd filter', async () => {
+    it('should successfully apply timeEnd filter', async () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
@@ -329,13 +329,13 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
-    it('should successfuly apply duration filter', async () => {
+    it('should successfully apply duration filter', async () => {
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
 
         /**
-         * Invokation of page.select and fillInput in case of amountFilter results in two concurrent,
+         * Invocation of page.select and fillInput in case of amountFilter results in two concurrent,
          * async actions whereas a result of only one of them is saved into model.
          * Therefore additional action is invoked in between
          */
@@ -350,7 +350,7 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
-    it('should successfuly apply alice currents filters', async () => {
+    it('should successfully apply alice currents filters', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
         await pressElement(page, '#openFilterToggle');
 

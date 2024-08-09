@@ -258,7 +258,7 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
-        it('should succefully filter on data pass id', async () => {
+        it('should successfully filter on data pass id', async () => {
             const response = await request(server).get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3');
             expect(response.status).to.equal(200);
 
@@ -267,7 +267,7 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
-        it('should succefully filter on simulation pass id', async () => {
+        it('should successfully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
 
@@ -486,7 +486,7 @@ module.exports = () => {
             expect(data).to.have.lengthOf(5);
         });
 
-        it('should successfuly filter by aliceL3Current', async () => {
+        it('should successfully filter by aliceL3Current', async () => {
             const response =
                 await request(server).get('/api/runs?filter[aliceL3Current]=30003');
 
@@ -499,7 +499,7 @@ module.exports = () => {
                 Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
         });
 
-        it('should successfuly filter by aliceDipoleCurrent', async () => {
+        it('should successfully filter by aliceDipoleCurrent', async () => {
             const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
 
             expect(response.status).to.equal(200);

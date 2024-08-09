@@ -83,17 +83,17 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('Fetching', () => {
-        it('should succesfully get by id', async () => {
+        it('should successfully get by id', async () => {
             const dataPass = await dataPassService.getByIdentifier({ id: 1 });
             expect(dataPass).to.be.eql(LHC22b_apass1);
         });
 
-        it('should succesfully get by name', async () => {
+        it('should successfully get by name', async () => {
             const dataPass = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
             expect(dataPass).to.be.eql(LHC22a_apass1);
         });
 
-        it('should succesfully get all data', async () => {
+        it('should successfully get all data', async () => {
             const { rows: dataPasses } = await dataPassService.getAll();
             expect(dataPasses).to.be.lengthOf(3);
         });
@@ -105,7 +105,7 @@ module.exports = () => {
             );
         });
 
-        it('should succesfully filter data passes on names', async () => {
+        it('should successfully filter data passes on names', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -118,7 +118,7 @@ module.exports = () => {
             expect(dataPasses[0]).to.be.eql(LHC22b_apass1);
         });
 
-        it('should succesfully filter data passes on ids', async () => {
+        it('should successfully filter data passes on ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -134,7 +134,7 @@ module.exports = () => {
             expect(await dataPassService.getByIdentifier({ id: 99999 })).to.be.null;
         });
 
-        it('should succesfully filter data passes on lhc petriods ids', async () => {
+        it('should successfully filter data passes on lhc periods ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -147,7 +147,7 @@ module.exports = () => {
             expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
         });
 
-        it('should succesfully filter data passes on simulation pass ids', async () => {
+        it('should successfully filter data passes on simulation pass ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -159,7 +159,7 @@ module.exports = () => {
             expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
         });
 
-        it('should succesfully sort data passes by names', async () => {
+        it('should successfully sort data passes by names', async () => {
             const dto = {
                 query: {
                     sort: {
@@ -173,14 +173,14 @@ module.exports = () => {
     });
     describe('Manage GAQ detectors', () => {
         const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
+        it('should successfully set GAQ detectors', async () => {
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
             const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds);
             expect(data).to.be.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
-        it('should fail to set GAQ detectors because of miaaing association', async () => {
+        it('should fail to set GAQ detectors because of missing association', async () => {
             let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
             assert.rejects(
                 () => dataPassService.setGaqDetectors(dataPassId, [1], [4]),
