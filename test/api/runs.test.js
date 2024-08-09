@@ -120,7 +120,7 @@ module.exports = () => {
             const { data: runs } = response.body;
             expect(runs).to.have.length.greaterThan(2);
             const runNumbers = runs.map(({ runNumber }) => runNumber);
-            expect(runNumbers).to.have.all.ordered.members(runNumbers.toSorted((a, b) => -a + b));
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => -a + b));
         });
 
         it('should successfully filter on calibration', async () => {
