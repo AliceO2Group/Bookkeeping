@@ -58,7 +58,7 @@ module.exports = () => {
             expect(runs).to.be.an('array');
             expect(runs).to.have.length.greaterThan(1);
             const runNumbers = runs.map(({ runNumber }) => runNumber);
-            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort());
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => a - b));
         }
     });
 
