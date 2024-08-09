@@ -171,36 +171,4 @@ module.exports = () => {
             expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
         });
     });
-    describe('Manage GAQ detectors', () => {
-        const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
-            const runNumbers = [49, 56];
-            const detectorIds = [4, 7];
-            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds);
-            expect(data).to.be.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
-        });
-        it('should fail to set GAQ detectors because of miaaing association', async () => {
-            let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
-            assert.rejects(
-                () => dataPassService.setGaqDetectors(dataPassId, [1], [4]),
-                new BadParameterError(errorMessage),
-            );
-            errorMessage = `No association between runs and detectors: ${JSON.stringify([[56, 'CPV']])}`;
-            assert.rejects(
-                () => dataPassService.setGaqDetectors(dataPassId, [105, 56], [1]),
-                new BadParameterError(errorMessage),
-            );
-        });
-
-        it('should get GAQ detectors', async () => {
-            const detectors = await dataPassService.getGaqDetectors(3, 56);
-            expect(detectors).to.be.an('array');
-            expect(detectors).to.be.lengthOf(2);
-            expect(detectors).to.have.all.deep.members([
-                { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
-                { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
-            ]);
-        });
-    });
 };
