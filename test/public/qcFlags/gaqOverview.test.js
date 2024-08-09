@@ -201,13 +201,13 @@ module.exports = () => {
         expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox2').checked)).to.be.true; // CPV
         expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox4').checked)).to.be.true; // EMC
 
-        await pressElement(page, '#gaq-detectorsCheckbox9', true); // HMP
+        await pressElement(page, '#gaq-detectorsCheckbox9', true); // MFT
         expect(await page.evaluate(() => document.querySelector('#gaq-detectorsCheckbox9').checked)).to.be.true;
         await pressElement(page, '#revert', true);
         await page.waitForFunction(() => !document.querySelector('#gaq-detectorsCheckbox9').checked);
-        await pressElement(page, '#gaq-detectorsCheckbox9', true); // HMP
+        await pressElement(page, '#gaq-detectorsCheckbox9', true); // MFT
         await pressElement(page, '#send', true);
         await page.waitForSelector('#gaq-detector-selection-modal', { hidden: true });
-        await page.waitForSelector('th#HMP-flag');
+        await page.waitForSelector('th#MFT-flag');
     });
 };
