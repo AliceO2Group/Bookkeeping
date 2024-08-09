@@ -102,7 +102,7 @@ module.exports = () => {
         await page.waitForSelector('button#delete');
         // Check that deletion is interrupted when confirmation dialog is dismissed
         setConfirmationDialogToBeDismissed(page);
-        await pressElement(page, 'button#delete');
+        await pressElement(page, 'button#delete', true);
         expectUrlParams(page, {
             page: 'qc-flag-details-for-data-pass',
             id: '1',
@@ -113,7 +113,7 @@ module.exports = () => {
 
         // Delete
         setConfirmationDialogToBeAccepted(page);
-        await waitForNavigation(page, () => pressElement(page, 'button#delete'));
+        await waitForNavigation(page, () => pressElement(page, 'button#delete', true));
         expectUrlParams(page, {
             page: 'qc-flags-for-data-pass',
             dataPassId: '1',
