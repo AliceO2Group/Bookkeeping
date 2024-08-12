@@ -14,13 +14,13 @@
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
-const { gaqDetectorService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 const { Op } = require('sequelize');
 const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
+const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
