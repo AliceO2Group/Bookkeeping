@@ -77,6 +77,8 @@ module.exports = () => {
 
         await dataPass.addRuns(await RunRepository.findAll({ where: { runNumber: { [Op.in]: runNumbers } } }));
 
+        await gaqDetectorService.setDefaultGaqDetectors(dataPassId, runNumbers);
+
         expect((await gaqDetectorService.getGaqDetectors(dataPassId, 777770)).map(({ name }) => name)).to
             .have.all.members(['TPC', 'ITS', 'FT0']);
         expect((await gaqDetectorService.getGaqDetectors(dataPassId, 777771)).map(({ name }) => name)).to
