@@ -18,6 +18,10 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
 const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
+const { runService } = require('../../../../../lib/server/services/run/RunService.js');
+const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
+const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
+const { Op } = require('sequelize');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -173,14 +177,14 @@ module.exports = () => {
     });
     describe('Manage GAQ detectors', () => {
         const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
+        it('should successfully set GAQ detectors', async () => {
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
             const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, detectorIds);
             expect(data).to.be.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
         });
-        it('should fail to set GAQ detectors because of miaaing association', async () => {
+        it('should fail to set GAQ detectors because of missing association', async () => {
             let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
             assert.rejects(
                 () => dataPassService.setGaqDetectors(dataPassId, [1], [4]),
@@ -201,6 +205,38 @@ module.exports = () => {
                 { id: 7, name: 'FT0', type: DetectorType.PHYSICAL },
                 { id: 4, name: 'ITS', type: DetectorType.PHYSICAL },
             ]);
+        });
+
+        it('should successfully set default GAQ detectors', async () => {
+            /**
+             * Default GAQ detectors for runs with given pdpBeamType
+             *      pp: ['TPC', 'ITS', 'FT0']
+             *      PbPb: ['TPC', 'ITS', 'FT0', 'ZDC']
+             */
+
+            const newRuns = [
+                { runNumber: 777770, pdpBeamType: 'pp', detectors: ['CPV', 'TPC', 'ITS', 'FT0'].join(',') },
+                { runNumber: 777771, pdpBeamType: 'pp', detectors: ['CPV', 'TPC', 'ITS'].join(',') },
+                { runNumber: 888880, pdpBeamType: 'PbPb', detectors: ['CPV', 'TPC', 'ITS', 'FT0', 'ZDC'].join(',') },
+                { runNumber: 888881, pdpBeamType: 'PbPb', detectors: ['CPV', 'TPC', 'ITS', 'FT0'].join(',') },
+            ];
+            for (const runData of newRuns) {
+                await runService.create(runData);
+            }
+            const dataPassId = 3;
+            const dataPass = await DataPassRepository.findOne({ where: { id: dataPassId } });
+            const runNumbers = newRuns.map(({ runNumber }) => runNumber);
+
+            await dataPass.addRuns(await RunRepository.findAll({ where: { runNumber: { [Op.in]: runNumbers } } }));
+
+            expect((await dataPassService.getGaqDetectors(dataPassId, 777770)).map(({ name }) => name)).to
+                .have.all.members(['TPC', 'ITS', 'FT0']);
+            expect((await dataPassService.getGaqDetectors(dataPassId, 777771)).map(({ name }) => name)).to
+                .have.all.members(['TPC', 'ITS']);
+            expect((await dataPassService.getGaqDetectors(dataPassId, 888880)).map(({ name }) => name)).to
+                .have.all.members(['TPC', 'ITS', 'FT0', 'ZDC']);
+            expect((await dataPassService.getGaqDetectors(dataPassId, 888881)).map(({ name }) => name)).to
+                .have.all.members(['TPC', 'ITS', 'FT0']);
         });
     });
 };
