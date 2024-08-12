@@ -16,6 +16,15 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
+<<<<<<< HEAD
+=======
+const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
+const { runService } = require('../../../../../lib/server/services/run/RunService.js');
+const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
+const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
+const { Op } = require('sequelize');
+>>>>>>> xsalonx/gaq/O2B-1336/def-gaq-detector-when-ML-sync
 
 const LHC22b_apass1 = {
     id: 1,
