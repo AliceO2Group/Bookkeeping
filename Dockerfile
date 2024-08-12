@@ -40,14 +40,14 @@ RUN npm --silent ci
 FROM developmentdependencies as development
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "localhost:3306", "--", "npm", "run", "start:dev" ]
 
 #
 # ---- Test ----
 FROM developmentdependencies as test
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "localhost:3306", "--", "npm", "run", "test" ]
 
 #
 # ---- Test parallel for CI ----
@@ -66,7 +66,7 @@ CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset-
 FROM developmentdependencies as coverage
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "localhost:3306", "--", "npm", "run", "coverage" ]
 
 #
 # ---- Production Dependencies ----
@@ -86,4 +86,4 @@ COPY ./lib ./lib
 FROM productiondependencies as production
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "node", "lib/main.js" ]
+CMD [ "/opt/wait-for-it.sh", "-t", "0", "localhost:3306", "--", "node", "lib/main.js" ]
