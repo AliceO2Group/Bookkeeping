@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { DetectorType } = require('../../lib/domain/enums/DetectorTypes');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -301,7 +302,7 @@ module.exports = () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
-            const response = await request(server).post('/api/dataPasses/gaqDetectors').send({
+            const response = await request(server).post(`/api/dataPasses/gaqDetectors?token=${BkpRoles.GAQ}`).send({
                 dataPassId,
                 runNumbers,
                 dplDetectorIds: detectorIds,
@@ -309,6 +310,21 @@ module.exports = () => {
             expect(response.status).to.be.equal(201);
             expect(response.body.data).to.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
+        });
+
+        it('should fail to set GAQ detectors because of insufficient permission', async () => {
+            const dataPassId = 3;
+            const runNumbers = [49, 56];
+            const detectorIds = [4, 7];
+            const response = await request(server).post(`/api/dataPasses/gaqDetectors?token=${BkpRoles.GUEST}`).send({
+                dataPassId,
+                runNumbers,
+                dplDetectorIds: detectorIds,
+            });
+            expect(response.status).to.be.equal(403);
+
+            const { errors } = response.body;
+            expect(errors.find(({ title }) => title === 'Access denied')).to.not.be.null;
         });
     });
 
