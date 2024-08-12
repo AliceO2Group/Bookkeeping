@@ -26,6 +26,7 @@ const {
     waitForTableLength,
     waitForNavigation,
     waitForDownload,
+    testTableSortingByColumn,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -105,6 +106,10 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+    });
+
+    it('should successfully sort by runNumber in ascending and descending manners', async () => {
+        await testTableSortingByColumn(page, 'runNumber');
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
