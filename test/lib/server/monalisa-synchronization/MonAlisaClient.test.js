@@ -47,7 +47,7 @@ module.exports = () => {
         const dataPasses = await monAlisaInterface.getDataPassesVersions();
 
         expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(12);
+        expect(dataPasses).to.be.lengthOf(13);
         for (const dataPass of dataPasses) {
             await dataPassSchema.validateAsync(dataPass);
         }
@@ -58,7 +58,7 @@ module.exports = () => {
         const dataPasses = await monAlisaInterface.getDataPassesVersions();
 
         expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(5);
+        expect(dataPasses).to.be.lengthOf(6);
         for (const dataPass of dataPasses) {
             await dataPassSchema.validateAsync(dataPass);
         }

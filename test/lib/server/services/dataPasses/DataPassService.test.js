@@ -22,6 +22,7 @@ const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    skimmingStage: null,
     versions: [
         {
             id: 1,
@@ -42,6 +43,7 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
+    skimmingStage: null,
     versions: [
         {
             id: 2,
@@ -62,6 +64,7 @@ const LHC22b_apass2 = {
 const LHC22a_apass1 = {
     id: 3,
     name: 'LHC22a_apass1',
+    skimmingStage: null,
     versions: [
         {
             id: 3,
@@ -95,7 +98,7 @@ module.exports = () => {
 
         it('should succesfully get all data', async () => {
             const { rows: dataPasses } = await dataPassService.getAll();
-            expect(dataPasses).to.be.lengthOf(3);
+            expect(dataPasses).to.be.lengthOf(5);
         });
 
         it('should fail when no Data Pass with given id', async () => {
@@ -168,7 +171,8 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have
+                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2_skimmed', 'LHC22a_skimming', 'LHC22b_apass1', 'LHC22b_apass2']);
         });
     });
     describe('Manage GAQ detectors', () => {
