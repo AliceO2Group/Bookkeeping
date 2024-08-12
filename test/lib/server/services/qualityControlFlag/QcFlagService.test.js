@@ -123,11 +123,16 @@ module.exports = () => {
             const runNumber = 56;
             const detectorId = 7;
             {
-                const flags = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
+                const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
+                expect(count).to.be.equal(2);
                 expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
             }
             {
-                const flags = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId }, { limit: 1, offset: 1 });
+                const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector(
+                    { runNumber, detectorId },
+                    { limit: 1, offset: 1 },
+                );
+                expect(count).to.be.equal(2);
                 expect(flags).to.be.lengthOf(1);
                 const [flag] = flags;
                 expect(flag.id).to.be.equal(100);
@@ -528,11 +533,11 @@ module.exports = () => {
                         ],
                     },
                     {
-                        id: 8,
+                        id: createdQcFlags[0].id,
                         effectivePeriods: [],
                     },
                     {
-                        id: 9,
+                        id: createdQcFlags[1].id,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 04:00:00').getTime(),
