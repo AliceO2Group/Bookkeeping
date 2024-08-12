@@ -16,10 +16,12 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { DetectorType } = require('../../lib/domain/enums/DetectorTypes');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles');
 
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    skimmingStage: null,
     versions: [
         {
             id: 1,
@@ -40,6 +42,7 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
+    skimmingStage: null,
     versions: [
         {
             id: 2,
@@ -57,26 +60,6 @@ const LHC22b_apass2 = {
     simulationPassesCount: 1,
 };
 
-const LHC22a_apass1 = {
-    id: 3,
-    name: 'LHC22a_apass1',
-    versions: [
-        {
-            id: 3,
-            dataPassId: 3,
-            description: 'Some random desc for apass 1',
-            reconstructedEventsCount: 50848111,
-            outputSize: 55761110122610,
-            lastSeen: 105,
-            deletedFromMonAlisa: false,
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 4,
-    simulationPassesCount: 2,
-};
-
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -92,9 +75,9 @@ module.exports = () => {
                     }
 
                     const { data, meta } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(3);
+                    expect(data).to.be.lengthOf(5);
 
                     done();
                 });
@@ -230,11 +213,13 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(3);
-                    expect(dataPasses).to.have.ordered.deep.members([
-                        LHC22a_apass1,
-                        LHC22b_apass2,
-                        LHC22b_apass1,
+                    expect(dataPasses).to.be.lengthOf(5);
+                    expect(dataPasses.map(({ name }) => name)).to.have.ordered.members([
+                        'LHC22a_apass2_skimmed',
+                        'LHC22a_skimming',
+                        'LHC22a_apass1',
+                        'LHC22b_apass2',
+                        'LHC22b_apass1',
                     ]);
 
                     done();
@@ -252,9 +237,11 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.have.ordered.deep.members([
-                        LHC22b_apass2,
-                        LHC22b_apass1,
+                    expect(dataPasses.map(({ name }) => name)).to.have.ordered.deep.members([
+                        'LHC22a_skimming',
+                        'LHC22a_apass1',
+                        'LHC22b_apass2',
+                        'LHC22b_apass1',
                     ]);
 
                     done();
@@ -315,7 +302,7 @@ module.exports = () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
-            const response = await request(server).post('/api/dataPasses/gaqDetectors').send({
+            const response = await request(server).post(`/api/dataPasses/gaqDetectors?token=${BkpRoles.GAQ}`).send({
                 dataPassId,
                 runNumbers,
                 dplDetectorIds: detectorIds,
@@ -323,6 +310,21 @@ module.exports = () => {
             expect(response.status).to.be.equal(201);
             expect(response.body.data).to.have.all.deep.members(runNumbers
                 .flatMap((runNumber) => detectorIds.map((detectorId) => ({ dataPassId, runNumber, detectorId }))));
+        });
+
+        it('should fail to set GAQ detectors because of insufficient permission', async () => {
+            const dataPassId = 3;
+            const runNumbers = [49, 56];
+            const detectorIds = [4, 7];
+            const response = await request(server).post(`/api/dataPasses/gaqDetectors?token=${BkpRoles.GUEST}`).send({
+                dataPassId,
+                runNumbers,
+                dplDetectorIds: detectorIds,
+            });
+            expect(response.status).to.be.equal(403);
+
+            const { errors } = response.body;
+            expect(errors.find(({ title }) => title === 'Access denied')).to.not.be.null;
         });
     });
 

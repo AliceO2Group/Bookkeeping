@@ -26,6 +26,7 @@ const { resetDatabaseContent } = require('../../../utilities/resetDatabaseConten
 const { Op } = require('sequelize');
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
 const { DataPassVersionStatus } = require('../../../../lib/domain/enums/DataPassVersionStatus.js');
+const { SkimmingStage } = require('../../../../lib/domain/enums/SkimmingStage.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -53,7 +54,7 @@ module.exports = () => {
 
         // Expect correct amount of data
         expect(dataPassesDB).to.be.an('array');
-        expect(dataPassesDB).to.be.lengthOf(8);
+        expect(dataPassesDB).to.be.lengthOf(11);
 
         // All expected data passes names present
         const expectedNames = expectedDataPassesVersions.map(({ name }) => name);
@@ -68,6 +69,7 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
 
         // Properties of data passes are the same
+
         expect(dataPassesDB.map((dataPass) => {
             const { name, versions: [{ outputSize, description, reconstructedEventsCount, lastSeen }] } = dataPass;
             return { name, outputSize, description, reconstructedEventsCount, lastSeen };
@@ -95,6 +97,14 @@ module.exports = () => {
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
         }
+
+        // Check skimming
+        const lhc23fDataPass = await DataPassRepository.findAll({ where: { lhcPeriodId: 3, skimmingStage: { [Op.not]: null } } });
+        expect(lhc23fDataPass.map(({ name, skimmingStage }) => ({ name, skimmingStage }))).to.have.all.deep.members([
+            { name: 'LHC23f_skimming', skimmingStage: SkimmingStage.SKIMMING },
+            { name: 'LHC23f_apass3_skimmed', skimmingStage: SkimmingStage.SKIMMED },
+            { name: 'LHC23f_apass4_skimmed', skimmingStage: SkimmingStage.POST_SKIMMED },
+        ]);
 
         // Check whether examining data passes with last_seen information works correctly;
         lastSeenAndLastStatus = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();

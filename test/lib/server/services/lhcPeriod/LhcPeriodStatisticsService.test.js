@@ -31,7 +31,7 @@ const lhcPeriod_LHC22a = {
         56.1,
     ],
     runsCount: 3,
-    dataPassesCount: 1,
+    dataPassesCount: 3,
     simulationPassesCount: 2,
 };
 

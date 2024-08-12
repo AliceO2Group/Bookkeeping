@@ -67,7 +67,7 @@ module.exports = () => {
     });
 
     describe('GET /api/qcFlags/summary', () => {
-        it('should succsessfully get non-empty QC flag summary for data pass', async () => {
+        it('should successfully get non-empty QC flag summary for data pass', async () => {
             const response = await request(server).get('/api/qcFlags/summary?dataPassId=1');
             expect(response.status).to.be.equal(200);
             const { body: { data } } = response;
@@ -78,6 +78,12 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                    },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
                     },
                 },
             });
