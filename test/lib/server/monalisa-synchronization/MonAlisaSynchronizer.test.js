@@ -58,7 +58,7 @@ module.exports = () => {
         const expectedNames = expectedDataPassesVersions.map(({ name }) => name);
         expect(dataPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
-        // All associated with appripriate LHC Periods
+        // All associated with appropriate LHC Periods
         const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll({
             raw: true,
             attributes: ['id', 'name'],
