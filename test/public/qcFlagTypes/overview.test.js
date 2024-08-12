@@ -90,7 +90,7 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'bad');
     });
 
-    it('should successfuly apply QC flag type names filter', async () => {
+    it('should successfully apply QC flag type names filter', async () => {
         await waitForTableLength(page, 7);
 
         await pressElement(page, '#openFilterToggle');
@@ -100,7 +100,7 @@ module.exports = () => {
         await pressElement(page, '#reset-filters', true);
     });
 
-    it('should successfuly apply QC flag type method filter', async () => {
+    it('should successfully apply QC flag type method filter', async () => {
         await waitForTableLength(page, 7);
 
         await fillInput(page, '.method-filter input[type=text]', 'bad');
@@ -109,7 +109,7 @@ module.exports = () => {
         await pressElement(page, '#reset-filters', true);
     });
 
-    it('should successfuly apply QC flag type bad filter', async () => {
+    it('should successfully apply QC flag type bad filter', async () => {
         await waitForTableLength(page, 7);
 
         await pressElement(page, '.bad-filter input[type=checkbox]', true);

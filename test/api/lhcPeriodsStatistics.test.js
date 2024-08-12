@@ -30,7 +30,7 @@ const lhcPeriod_LHC22a = {
         56.1,
     ],
     runsCount: 3,
-    dataPassesCount: 1,
+    dataPassesCount: 3,
     simulationPassesCount: 2,
 };
 
@@ -68,7 +68,7 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/lhcPeriodsStatistics', () => {
-        it('should successfuly fetch all data', (done) => {
+        it('should successfully fetch all data', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics')
                 .expect(200)
@@ -86,7 +86,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on ids', (done) => {
+        it('should successfully filter on ids', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[ids][]=1')
                 .expect(200)
@@ -105,7 +105,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on names', (done) => {
+        it('should successfully filter on names', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[names][]=LHC22b')
                 .expect(200)
@@ -123,7 +123,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on ids', (done) => {
+        it('should retrieve no records when filtering on ids', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[ids][]=9999')
                 .expect(200)
@@ -140,7 +140,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on names', (done) => {
+        it('should retrieve no records when filtering on names', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[names][]=LHC29xyz')
                 .expect(200)
@@ -156,7 +156,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on ids given as array', (done) => {
+        it('should successfully filter on ids given as array', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[ids][]=1&filter[ids][]=2')
                 .expect(200)
@@ -172,7 +172,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on years', (done) => {
+        it('should successfully filter on years', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[years][]=2023')
                 .expect(200)
@@ -189,7 +189,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on beamTypes', (done) => {
+        it('should successfully filter on beamTypes', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?filter[beamTypes][]=XeXe')
                 .expect(200)
@@ -206,7 +206,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on id and name', (done) => {
+        it('should successfully sort on id and name', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[id]=DESC&sort[name]=ASC')
                 .expect(200)
@@ -228,7 +228,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on year', (done) => {
+        it('should successfully sort on year', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[year]=DESC')
                 .expect(200)
@@ -247,7 +247,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on beamTypes', (done) => {
+        it('should successfully sort on beamTypes', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics?sort[beamTypes]=DESC')
                 .expect(200)
@@ -335,7 +335,7 @@ module.exports = () => {
     });
 
     describe('GET /api/lhcPeriodsStatistics/:lhcPeriodId', () => {
-        it('should successfuly fetch period with given id 1', (done) => {
+        it('should successfully fetch period with given id 1', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics/1')
                 .expect(200)
@@ -351,7 +351,7 @@ module.exports = () => {
                 });
         });
 
-        it('should successfuly fetch period with given id 2', (done) => {
+        it('should successfully fetch period with given id 2', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics/2')
                 .expect(200)
