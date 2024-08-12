@@ -685,7 +685,7 @@ module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) =>
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation] if true it's expected not to match given regex
  *
- * @return {Promise<void>} resoled once column values were checked
+ * @return {Promise<void>} resolved once column values were checked
  */
 module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
     const {
