@@ -118,6 +118,23 @@ module.exports = () => {
             expect(flags).to.be.lengthOf(2);
             expect(flags[0].qcFlagId).to.equal(6);
         });
+
+        it('should successfully fetch all synchronous flags for run and detector', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            {
+                const flags = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
+                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+            }
+            {
+                const flags = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId }, { limit: 1, offset: 1 });
+                expect(flags).to.be.lengthOf(1);
+                const [flag] = flags;
+                expect(flag.id).to.be.equal(100);
+
+                expect(flag.verifications[0].comment).to.be.equal('good');
+            }
+        });
     });
 
     describe('Get QC flags summary', () => {
