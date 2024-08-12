@@ -217,6 +217,35 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/qcFlags/synchronous', () => {
+        it('should successfully fetch synchronous flags', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            const response = await request(server).get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}`);
+            expect(response.status).to.be.equal(200);
+            const { data: flags, meta } = response.body;
+            expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+            expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+        });
+
+        it('should successfully fetch synchronous flags', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&page[limit]=1&page[offset]=1`);
+
+                expect(response.status).to.be.equal(200);
+                const { data: flags, meta } = response.body;
+                expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 2 } });
+                expect(flags).to.be.lengthOf(1);
+                const [flag] = flags;
+                expect(flag.id).to.be.equal(100);
+                expect(flag.verifications[0].comment).to.be.equal('good');
+            }
+        });
+    });
+
     describe('POST /api/qcFlags', () => {
         it('should successfuly create QC flag instance for data pass', async () => {
             const qcFlagCreationParameters = {
