@@ -64,7 +64,7 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/dataPasses', () => {
-        it('should successfuly fetch all data', (done) => {
+        it('should successfully fetch all data', (done) => {
             request(server)
                 .get('/api/dataPasses')
                 .expect(200)
@@ -82,7 +82,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on ids', (done) => {
+        it('should successfully filter on ids', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[ids][]=1')
                 .expect(200)
@@ -101,7 +101,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on names', (done) => {
+        it('should successfully filter on names', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[names][]=LHC22b_apass2')
                 .expect(200)
@@ -119,7 +119,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on ids', (done) => {
+        it('should retrieve no records when filtering on ids', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[ids][]=9999')
                 .expect(200)
@@ -136,7 +136,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on names', (done) => {
+        it('should retrieve no records when filtering on names', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[names][]=LHC22b_aasdfpass2asdf')
                 .expect(200)
@@ -152,7 +152,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on ids given as array', (done) => {
+        it('should successfully filter on ids given as array', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[ids][]=1&filter[ids][]=2')
                 .expect(200)
@@ -168,7 +168,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on lhcPeriodIds', (done) => {
+        it('should successfully filter on lhcPeriodIds', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[lhcPeriodIds][]=2')
                 .expect(200)
@@ -185,7 +185,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on simulationPassIds', (done) => {
+        it('should successfully filter on simulationPassIds', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[simulationPassIds][]=1')
                 .expect(200)
@@ -201,7 +201,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on id and name', (done) => {
+        it('should successfully sort on id and name', (done) => {
             request(server)
                 .get('/api/dataPasses?sort[id]=DESC&sort[name]=ASC')
                 .expect(200)
@@ -247,7 +247,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 400 when bad query paramter provided', (done) => {
+        it('should return 400 when bad query parameter provided', (done) => {
             request(server)
                 .get('/api/dataPasses?a=1')
                 .expect(400)
@@ -298,7 +298,7 @@ module.exports = () => {
     });
 
     describe('POST /api/dataPasses/gaqDetectors', () => {
-        it('should succesfuly set GAQ detectors', async () => {
+        it('should successfully set GAQ detectors', async () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];

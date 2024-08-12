@@ -351,7 +351,7 @@ module.exports = () => {
         expect(runs[0].runNumber).to.equal(1);
     });
 
-    it('should successfuly filter on "updatedAt"', async () => {
+    it('should successfully filter on "updatedAt"', async () => {
         {
             getAllRunsDto.query = {
                 filter: {
@@ -631,7 +631,7 @@ module.exports = () => {
         expect(runs).to.have.lengthOf.above(3);
     });
 
-    it('should successfuly filter by aliceL3Current', async () => {
+    it('should successfully filter by aliceL3Current', async () => {
         const { runs } = await new GetAllRunsUseCase().execute({
             query: {
                 filter: {
@@ -645,7 +645,7 @@ module.exports = () => {
             Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
     });
 
-    it('should successfuly filter by aliceDipoleCurrent', async () => {
+    it('should successfully filter by aliceDipoleCurrent', async () => {
         const { runs } = await new GetAllRunsUseCase().execute({
             query: {
                 filter: {
