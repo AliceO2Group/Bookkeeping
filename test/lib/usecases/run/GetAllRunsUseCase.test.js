@@ -51,6 +51,25 @@ module.exports = () => {
         expect(runs[1].runNumber).to.equal(17);
     });
 
+    it('should return runs sorted by runNumber', async () => {
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'ASC' } } });
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.length.greaterThan(1);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => a - b));
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'DESC' } } });
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.length.greaterThan(1);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => b - a));
+        }
+    });
+
     it('should return an array, only containing runs containing the specified run number', async () => {
         getAllRunsDto.query = { filter: { runNumbers: '5' } };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
@@ -332,7 +351,7 @@ module.exports = () => {
         expect(runs[0].runNumber).to.equal(1);
     });
 
-    it('should successfuly filter on "updatedAt"', async () => {
+    it('should successfully filter on "updatedAt"', async () => {
         {
             getAllRunsDto.query = {
                 filter: {
@@ -612,7 +631,7 @@ module.exports = () => {
         expect(runs).to.have.lengthOf.above(3);
     });
 
-    it('should successfuly filter by aliceL3Current', async () => {
+    it('should successfully filter by aliceL3Current', async () => {
         const { runs } = await new GetAllRunsUseCase().execute({
             query: {
                 filter: {
@@ -626,7 +645,7 @@ module.exports = () => {
             Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
     });
 
-    it('should successfuly filter by aliceDipoleCurrent', async () => {
+    it('should successfully filter by aliceDipoleCurrent', async () => {
         const { runs } = await new GetAllRunsUseCase().execute({
             query: {
                 filter: {
