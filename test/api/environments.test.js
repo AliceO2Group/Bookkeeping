@@ -215,8 +215,6 @@ module.exports = () => {
         });
     });
     describe('PUT /api/environment/:envId', () => {
-        const teardownDate = new Date().setMilliseconds('0');
-
         it('should return 400 if the wrong id is provided', async () => {
             const response = await request(server).put('/api/environments/99999');
             expect(response.status).to.equal(400);
