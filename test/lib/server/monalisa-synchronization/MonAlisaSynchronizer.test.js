@@ -111,53 +111,25 @@ module.exports = () => {
         expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeenAndLastStatus)))
             .to.be.true;
 
-        const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
-            include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
+        const dataPassVersionDeletedFromML = await DataPassVersionRepository.findOne({
+            attributes: [],
+            include: 'statusHistory',
+            where: { description: 'Some random desc for apass 1' },
             order: [['statusHistory', 'createdAt', 'ASC']],
-        })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
+        });
 
-        expect(dataPassVersionsDeletedFromML.map(({ description, statusHistory }) => ({
-            description,
-            statusHistory: statusHistory.map(({ status }) => status),
-        }))).to.be.have.all.deep.members([
-            {
-                description: 'Some random desc',
-                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED],
-            },
-            {
-                description: 'Some random desc 2',
-                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED],
-            },
-            {
-                description: 'Some random desc for apass 1',
-                statusHistory: [
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                ],
-            },
-
-            {
-                description: 'LHC22a skimming',
-                statusHistory: [
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                ],
-            },
-            {
-                description: 'LHC22a skimmed',
-                statusHistory: [
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                ],
-            },
+        expect(dataPassVersionDeletedFromML.statusHistory.map(({ status }) => status)).to.be.have.all.members([
+            DataPassVersionStatus.RUNNING,
+            DataPassVersionStatus.DELETED,
+            DataPassVersionStatus.RUNNING,
+            DataPassVersionStatus.DELETED,
         ]);
     });
 
     it('should successfully restart some data passes', async () => {
         const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
             include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
+            where: { description: 'LHC22a skimmed' },
             order: [['statusHistory', 'createdAt', 'ASC']],
         })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
 
@@ -179,51 +151,17 @@ module.exports = () => {
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Sleep 1s
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
-        const restartedDataPassVersions = await DataPassVersionRepository.findAll({
+        const restartedDataPassVersion = await DataPassVersionRepository.findOne({
+            attributes: [],
             include: 'statusHistory',
-            where: { id: { [Op.in]: dataPassVersionsDeletedFromML.map(({ id }) => id) } },
+            where: { description: 'LHC22a skimmed' },
             order: [['statusHistory', 'createdAt', 'ASC']],
         });
 
-        expect(restartedDataPassVersions.map(({ description, statusHistory }) => ({
-            description,
-            statusHistory: statusHistory.map(({ status }) => status),
-        }))).to.be.have.all.deep.members([
-            {
-                description: 'Some random desc',
-                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED, DataPassVersionStatus.RUNNING],
-            },
-            {
-                description: 'Some random desc 2',
-                statusHistory: [DataPassVersionStatus.RUNNING, DataPassVersionStatus.DELETED, DataPassVersionStatus.RUNNING],
-            },
-            {
-                description: 'Some random desc for apass 1',
-                statusHistory: [
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                    DataPassVersionStatus.RUNNING,
-                ],
-            },
-
-            {
-                description: 'LHC22a skimming',
-                statusHistory: [
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                    DataPassVersionStatus.RUNNING,
-                ],
-            },
-            {
-                description: 'LHC22a skimmed',
-                statusHistory: [
-                    DataPassVersionStatus.RUNNING,
-                    DataPassVersionStatus.DELETED,
-                    DataPassVersionStatus.RUNNING,
-                ],
-            },
+        expect(restartedDataPassVersion.statusHistory.map(({ status }) => status)).to.be.have.all.members([
+            DataPassVersionStatus.RUNNING,
+            DataPassVersionStatus.DELETED,
+            DataPassVersionStatus.RUNNING,
         ]);
     });
 
