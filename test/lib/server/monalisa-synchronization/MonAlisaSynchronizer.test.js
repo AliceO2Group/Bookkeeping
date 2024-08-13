@@ -25,7 +25,7 @@ const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLh
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 const { Op } = require('sequelize');
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
-const { dataPassService } = require('../../../../lib/server/services/dataPasses/DataPassService.js');
+const { dataPassService, DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } = require('../../../../lib/server/services/dataPasses/DataPassService.js');
 const { SkimmingStage } = require('../../../../lib/domain/enums/SkimmingStage.js');
 
 const YEAR_LOWER_LIMIT = 2023;
@@ -98,14 +98,13 @@ module.exports = () => {
         }
 
         // Default GAQ detectors should be set (PbPb runs)
-        const dataPassWithNewRuns = await DataPassRepository.findOne({ where: { name: 'LHC23f_epass4' } });
-        const defaultPbPbRunGaqDetectorsNames = ['TPC', 'ITS', 'FT0', 'ZDC'];
+        const dataPassWithNewRuns = await DataPassRepository.findOne({ where: { name: 'LHC23f_skimming' } });
         const runNumbersWithDefaultGaqDetectors = [54, 56];
         for (const runNumber of runNumbersWithDefaultGaqDetectors) {
             const [runDetectors] = await RunRepository.findAll({
                 subQuery: false,
                 where: { runNumber },
-                include: [{ association: 'detectors', where: { name: { [Op.in]: defaultPbPbRunGaqDetectorsNames } } }],
+                include: [{ association: 'detectors', where: { name: { [Op.in]: DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } } }],
             });
             expect((await dataPassService.getGaqDetectors(dataPassWithNewRuns.id, runNumber)).map(({ name }) => name))
                 .to.have.all.members(runDetectors.detectors.map(({ name }) => name));
