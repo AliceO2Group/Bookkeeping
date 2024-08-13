@@ -137,6 +137,21 @@ module.exports = () => {
                     DataPassVersionStatus.DELETED,
                 ],
             },
+
+            {
+                description: 'LHC22a skimming',
+                statusHistory: [
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                ],
+            },
+            {
+                description: 'LHC22a skimmed',
+                statusHistory: [
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                ],
+            },
         ]);
     });
 
@@ -187,6 +202,23 @@ module.exports = () => {
                 statusHistory: [
                     DataPassVersionStatus.RUNNING,
                     DataPassVersionStatus.DELETED,
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                    DataPassVersionStatus.RUNNING,
+                ],
+            },
+
+            {
+                description: 'LHC22a skimming',
+                statusHistory: [
+                    DataPassVersionStatus.RUNNING,
+                    DataPassVersionStatus.DELETED,
+                    DataPassVersionStatus.RUNNING,
+                ],
+            },
+            {
+                description: 'LHC22a skimmed',
+                statusHistory: [
                     DataPassVersionStatus.RUNNING,
                     DataPassVersionStatus.DELETED,
                     DataPassVersionStatus.RUNNING,
