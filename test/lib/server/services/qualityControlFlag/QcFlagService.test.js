@@ -223,6 +223,28 @@ module.exports = () => {
         it('should successfully get empty QC flag summary for simulation pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
         });
+
+        it('should successfully get QC summary of synchronous QC flags for one LHC Period', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
+                56: {
+                    // FT0
+                    7: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.17,
+                        explicitlyNotBadEffectiveRunCoverage: 0.83,
+                    },
+
+                    // ITS
+                    4: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                    },
+                },
+            });
+        });
     });
 
     describe('Creating Quality Control Flag for data pass', () => {
