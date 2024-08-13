@@ -66,8 +66,8 @@ module.exports = () => {
             jiraId: (jiraId) => /[A-Z]+[A-Z0-9]+-\d+/.test(jiraId),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
             generatedEventsCount: (generatedEventsCount) => !isNaN(generatedEventsCount.replace(/,/g, '')),
-            outputSize: (outpuSize) => {
-                const [number, unit] = outpuSize.split(' ');
+            outputSize: (outputSize) => {
+                const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
         };
@@ -127,7 +127,7 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'outputSize');
     });
 
-    it('should successfuly apply simulation passes name filter', async () => {
+    it('should successfully apply simulation passes name filter', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
         await pressElement(page, '#openFilterToggle');
 
