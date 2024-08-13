@@ -228,7 +228,7 @@ module.exports = () => {
             expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
         });
 
-        it('should successfully fetch synchronous flags', async () => {
+        it('should successfully fetch synchronous flags with pagination', async () => {
             const runNumber = 56;
             const detectorId = 7;
             {
