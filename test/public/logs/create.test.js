@@ -687,6 +687,7 @@ ${access}
 * LHC_IF: 
 
 ## Detectors
+* EMC: 
 * FIT: 
 * ITS: 
 * MFT: 
