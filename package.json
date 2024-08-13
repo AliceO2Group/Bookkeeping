@@ -71,6 +71,7 @@
     "mariadb",
     "multer",
     "node-fetch",
+    "protobufjs",
     "sequelize",
     "umzug"
   ]
