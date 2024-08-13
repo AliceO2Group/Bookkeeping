@@ -21,6 +21,7 @@ const { BkpRoles } = require('../../lib/domain/enums/BkpRoles');
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    skimmingStage: null,
     versions: [
         {
             id: 1,
@@ -41,6 +42,7 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
+    skimmingStage: null,
     versions: [
         {
             id: 2,
@@ -58,31 +60,11 @@ const LHC22b_apass2 = {
     simulationPassesCount: 1,
 };
 
-const LHC22a_apass1 = {
-    id: 3,
-    name: 'LHC22a_apass1',
-    versions: [
-        {
-            id: 3,
-            dataPassId: 3,
-            description: 'Some random desc for apass 1',
-            reconstructedEventsCount: 50848111,
-            outputSize: 55761110122610,
-            lastSeen: 105,
-            deletedFromMonAlisa: false,
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 4,
-    simulationPassesCount: 2,
-};
-
 module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/dataPasses', () => {
-        it('should successfuly fetch all data', (done) => {
+        it('should successfully fetch all data', (done) => {
             request(server)
                 .get('/api/dataPasses')
                 .expect(200)
@@ -93,14 +75,14 @@ module.exports = () => {
                     }
 
                     const { data, meta } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(3);
+                    expect(data).to.be.lengthOf(5);
 
                     done();
                 });
         });
-        it('should successfuly filter on ids', (done) => {
+        it('should successfully filter on ids', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[ids][]=1')
                 .expect(200)
@@ -119,7 +101,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly filter on names', (done) => {
+        it('should successfully filter on names', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[names][]=LHC22b_apass2')
                 .expect(200)
@@ -137,7 +119,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on ids', (done) => {
+        it('should retrieve no records when filtering on ids', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[ids][]=9999')
                 .expect(200)
@@ -154,7 +136,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should retrive no records when filtering on names', (done) => {
+        it('should retrieve no records when filtering on names', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[names][]=LHC22b_aasdfpass2asdf')
                 .expect(200)
@@ -170,7 +152,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on ids given as array', (done) => {
+        it('should successfully filter on ids given as array', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[ids][]=1&filter[ids][]=2')
                 .expect(200)
@@ -186,7 +168,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on lhcPeriodIds', (done) => {
+        it('should successfully filter on lhcPeriodIds', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[lhcPeriodIds][]=2')
                 .expect(200)
@@ -203,7 +185,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should succefully filter on simulationPassIds', (done) => {
+        it('should successfully filter on simulationPassIds', (done) => {
             request(server)
                 .get('/api/dataPasses?filter[simulationPassIds][]=1')
                 .expect(200)
@@ -219,7 +201,7 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfuly sort on id and name', (done) => {
+        it('should successfully sort on id and name', (done) => {
             request(server)
                 .get('/api/dataPasses?sort[id]=DESC&sort[name]=ASC')
                 .expect(200)
@@ -231,11 +213,13 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(3);
-                    expect(dataPasses).to.have.ordered.deep.members([
-                        LHC22a_apass1,
-                        LHC22b_apass2,
-                        LHC22b_apass1,
+                    expect(dataPasses).to.be.lengthOf(5);
+                    expect(dataPasses.map(({ name }) => name)).to.have.ordered.members([
+                        'LHC22a_apass2_skimmed',
+                        'LHC22a_skimming',
+                        'LHC22a_apass1',
+                        'LHC22b_apass2',
+                        'LHC22b_apass1',
                     ]);
 
                     done();
@@ -253,15 +237,17 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.have.ordered.deep.members([
-                        LHC22b_apass2,
-                        LHC22b_apass1,
+                    expect(dataPasses.map(({ name }) => name)).to.have.ordered.deep.members([
+                        'LHC22a_skimming',
+                        'LHC22a_apass1',
+                        'LHC22b_apass2',
+                        'LHC22b_apass1',
                     ]);
 
                     done();
                 });
         });
-        it('should return 400 when bad query paramter provided', (done) => {
+        it('should return 400 when bad query parameter provided', (done) => {
             request(server)
                 .get('/api/dataPasses?a=1')
                 .expect(400)
@@ -312,7 +298,7 @@ module.exports = () => {
     });
 
     describe('POST /api/dataPasses/gaqDetectors', () => {
-        it('should succesfuly set GAQ detectors', async () => {
+        it('should successfully set GAQ detectors', async () => {
             const dataPassId = 3;
             const runNumbers = [49, 56];
             const detectorIds = [4, 7];
