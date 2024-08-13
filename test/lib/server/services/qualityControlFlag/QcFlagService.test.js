@@ -231,8 +231,8 @@ module.exports = () => {
                     7: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.17,
-                        explicitlyNotBadEffectiveRunCoverage: 0.83,
+                        badEffectiveRunCoverage: 0.1667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
                     },
 
                     // ITS
