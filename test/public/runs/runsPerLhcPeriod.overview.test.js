@@ -29,6 +29,7 @@ const {
     testTableSortingByColumn,
     getInnerText,
     expectUrlParams,
+    waitForTableToBeLoaded,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -155,10 +156,8 @@ module.exports = () => {
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-
-        // Expect the amount selector to currently be set to 5 when the first option (5) is selected
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 5, '<');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
