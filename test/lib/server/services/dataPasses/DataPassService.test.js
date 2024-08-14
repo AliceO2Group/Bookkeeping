@@ -20,6 +20,7 @@ const { dataPassService } = require('../../../../../lib/server/services/dataPass
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    skimmingStage: null,
     versions: [
         {
             id: 1,
@@ -40,6 +41,7 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
+    skimmingStage: null,
     versions: [
         {
             id: 2,
@@ -60,6 +62,7 @@ const LHC22b_apass2 = {
 const LHC22a_apass1 = {
     id: 3,
     name: 'LHC22a_apass1',
+    skimmingStage: null,
     versions: [
         {
             id: 3,
@@ -81,19 +84,19 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('Fetching', () => {
-        it('should succesfully get by id', async () => {
+        it('should successfully get by id', async () => {
             const dataPass = await dataPassService.getByIdentifier({ id: 1 });
             expect(dataPass).to.be.eql(LHC22b_apass1);
         });
 
-        it('should succesfully get by name', async () => {
+        it('should successfully get by name', async () => {
             const dataPass = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
             expect(dataPass).to.be.eql(LHC22a_apass1);
         });
 
-        it('should succesfully get all data', async () => {
+        it('should successfully get all data', async () => {
             const { rows: dataPasses } = await dataPassService.getAll();
-            expect(dataPasses).to.be.lengthOf(3);
+            expect(dataPasses).to.be.lengthOf(5);
         });
 
         it('should fail when no Data Pass with given id', async () => {
@@ -103,7 +106,7 @@ module.exports = () => {
             );
         });
 
-        it('should succesfully filter data passes on names', async () => {
+        it('should successfully filter data passes on names', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -116,7 +119,7 @@ module.exports = () => {
             expect(dataPasses[0]).to.be.eql(LHC22b_apass1);
         });
 
-        it('should succesfully filter data passes on ids', async () => {
+        it('should successfully filter data passes on ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -132,7 +135,7 @@ module.exports = () => {
             expect(await dataPassService.getByIdentifier({ id: 99999 })).to.be.null;
         });
 
-        it('should succesfully filter data passes on lhc petriods ids', async () => {
+        it('should successfully filter data passes on lhc periods ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -145,7 +148,7 @@ module.exports = () => {
             expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
         });
 
-        it('should succesfully filter data passes on simulation pass ids', async () => {
+        it('should successfully filter data passes on simulation pass ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -157,7 +160,7 @@ module.exports = () => {
             expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
         });
 
-        it('should succesfully sort data passes by names', async () => {
+        it('should successfully sort data passes by names', async () => {
             const dto = {
                 query: {
                     sort: {
@@ -166,7 +169,8 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have
+                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2_skimmed', 'LHC22a_skimming', 'LHC22b_apass1', 'LHC22b_apass2']);
         });
     });
 };
