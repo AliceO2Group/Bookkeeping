@@ -20,7 +20,6 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    reloadPage,
     validateTableData,
     validateDate,
     waitForTableLength,
@@ -29,7 +28,7 @@ const {
     testTableSortingByColumn,
     getInnerText,
     expectUrlParams,
-    waitForTableToBeLoaded,
+    fillInput,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -151,8 +150,7 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
@@ -160,17 +158,12 @@ module.exports = () => {
         await waitForTableLength(page, 5, '<');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
-        const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
-        await customPerPageInput.evaluate((input) => input.focus());
-        await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
-            el.value = '1111';
-            el.dispatchEvent(new Event('input'));
-        });
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '');
     });
 
     it('notifies if table loading returned an error', async () => {
-        await reloadPage(page);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
