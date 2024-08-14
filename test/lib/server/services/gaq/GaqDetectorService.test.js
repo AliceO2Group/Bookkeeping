@@ -20,7 +20,11 @@ const { Op } = require('sequelize');
 const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
-const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService.js');
+const {
+    gaqDetectorService,
+    DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS,
+    DEFAULT_GAQ_DETECTORS_FOR_PROTON_PROTON_RUNS,
+} = require('../../../../../lib/server/services/gaq/GaqDetectorsService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -56,17 +60,11 @@ module.exports = () => {
     });
 
     it('should successfully set default GAQ detectors', async () => {
-        /**
-         * Default GAQ detectors for runs with given pdpBeamType
-         *      pp: ['TPC', 'ITS', 'FT0']
-         *      PbPb: ['TPC', 'ITS', 'FT0', 'ZDC']
-         */
-
         const newRuns = [
-            { runNumber: 777770, pdpBeamType: 'pp', detectors: ['CPV', 'TPC', 'ITS', 'FT0'].join(',') },
-            { runNumber: 777771, pdpBeamType: 'pp', detectors: ['CPV', 'TPC', 'ITS'].join(',') },
-            { runNumber: 888880, pdpBeamType: 'PbPb', detectors: ['CPV', 'TPC', 'ITS', 'FT0', 'ZDC'].join(',') },
-            { runNumber: 888881, pdpBeamType: 'PbPb', detectors: ['CPV', 'TPC', 'ITS', 'FT0'].join(',') },
+            { runNumber: 777770, pdpBeamType: 'pp', detectors: ['CPV', ...DEFAULT_GAQ_DETECTORS_FOR_PROTON_PROTON_RUNS].join(',') },
+            { runNumber: 777771, pdpBeamType: 'pp', detectors: ['CPV', ...DEFAULT_GAQ_DETECTORS_FOR_PROTON_PROTON_RUNS.slice(1)].join(',') },
+            { runNumber: 888880, pdpBeamType: 'PbPb', detectors: ['CPV', ...DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS].join(',') },
+            { runNumber: 888881, pdpBeamType: 'PbPb', detectors: ['CPV', ...DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS.slice(1)].join(',') },
         ];
         for (const runData of newRuns) {
             await runService.create(runData);
@@ -77,15 +75,15 @@ module.exports = () => {
 
         await dataPass.addRuns(await RunRepository.findAll({ where: { runNumber: { [Op.in]: runNumbers } } }));
 
-        await gaqDetectorService.setDefaultGaqDetectors(dataPassId, runNumbers);
+        await gaqDetectorService.useDefaultGaqDetectors(dataPassId, runNumbers);
 
         expect((await gaqDetectorService.getGaqDetectors(dataPassId, 777770)).map(({ name }) => name)).to
-            .have.all.members(['TPC', 'ITS', 'FT0']);
+            .have.all.members(DEFAULT_GAQ_DETECTORS_FOR_PROTON_PROTON_RUNS);
         expect((await gaqDetectorService.getGaqDetectors(dataPassId, 777771)).map(({ name }) => name)).to
-            .have.all.members(['TPC', 'ITS']);
+            .have.all.members(DEFAULT_GAQ_DETECTORS_FOR_PROTON_PROTON_RUNS.slice(1));
         expect((await gaqDetectorService.getGaqDetectors(dataPassId, 888880)).map(({ name }) => name)).to
-            .have.all.members(['TPC', 'ITS', 'FT0', 'ZDC']);
+            .have.all.members(DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS);
         expect((await gaqDetectorService.getGaqDetectors(dataPassId, 888881)).map(({ name }) => name)).to
-            .have.all.members(['TPC', 'ITS', 'FT0']);
+            .have.all.members(DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS.slice(1));
     });
 };
