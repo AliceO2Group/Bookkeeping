@@ -189,7 +189,7 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        const expectedRunNumber = await getInnerText(page, 'tbody tr:first-of-type a');
+        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
     });
