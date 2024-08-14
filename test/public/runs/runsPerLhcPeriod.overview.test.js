@@ -27,6 +27,8 @@ const {
     waitForNavigation,
     waitForDownload,
     testTableSortingByColumn,
+    getInnerText,
+    expectUrlParams,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -73,18 +75,13 @@ module.exports = () => {
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
-        // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
 
-        // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
-
-        // Expectations of header texts being of a certain datatype
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
@@ -102,10 +99,28 @@ module.exports = () => {
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+        };
+
+        // By default current tab is 'detectorsQualities'
+        const tableDataValidatorsWithDetectorQualities = {
+            ...tableDataValidators,
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
-        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
+
+        await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
+
+        const tableDataValidatorsWithQualityFromSynchronousFlags = {
+            ...tableDataValidators,
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [
+                detectorName,
+                (notBadDataFraction) => !notBadDataFraction || !isNaN(Number(notBadDataFraction)),
+            ])),
+        };
+
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
+        await expectInnerText(page, '#row56-FT0', '83');
     });
 
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
@@ -113,8 +128,6 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await reloadPage(page);
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '3');
         await expectInnerText(page, '#totalRowsCount', '3');
@@ -133,8 +146,6 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await reloadPage(page);
-
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
@@ -178,24 +189,15 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
-        await reloadPage(page);
-        await page.waitForSelector('tbody tr');
-
-        const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
-
-        await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
-        const redirectedUrl = await page.url();
-
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
+        const expectedRunNumber = await getInnerText(page, 'tbody tr:first-of-type a');
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
-        await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
+        await waitForNavigation(page, () => page.goBack());
 
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
