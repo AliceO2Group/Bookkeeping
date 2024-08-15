@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.97.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.97.0)
+* Notable changes for users:
+  * Updates some of the headers from the FLP Statistics table from run-details page
+  * Improved the way numbers are displayed in the FLP Statistics table from run-details page
+  * Improved labels for some of the run-details page and their value to improve readability of the numbers
+  * Adjusted run's detectors creation to work only with physical detectors
+  * (Unused) Subsystems have been removed
+  * Several improvements to environments:
+    * Add PENDING, MIXED, DONE possible status for environments
+    * Handle unknown environment status
+    * Make environment timestamps store milliseconds to properly handle history state ordering
+  * Min/max length of text inputs is now displayed and invalid values are correctly outlined
+  * Toggle button on lhc overview page to show either all lhc fills or only ones with stable beam
+  * GAQ:
+    * Added GAQ flags overview for data passes
+    * Added GAQ summary to Runs Per Data Pass view
+    * Added form for choosing GAQ detectors
+  * Fixed QC flag origin display on details page
+  * Added property skimmingStage to data pass entity
+  * Added logic to ML synchronizer to recognize skimming stage of given data pass if it applies
+  * Implemented sorting of runs by runNumber
+  * Infologger links from run overview includes environment id
+  * RC daily template:
+    * Updated p2info to P2INFO tag in rc daily template
+    * Sort runs to be checked in ascending order in RC daily template
+    * Added EMC to list of detectors in RC daily template
+  * Consume ECS kafka messages to get runs and environment information
+* Notable changes for developers:
+  * Subsequent test runs don't run npm ci unless there are changes to package-lock.json
+  * Fixed usage of transaction in run creation
+  * No coverage output in console of test runs, less cluttered
+  * Uniformized enums: all are frozen objects in dedicated files, named in PascalCase with properties in CAPITAL_SNAKE_CASE
+  * Use new logging interface from WebUI
+  * Refactored DplDetector service to work upon Detectors
+  * Added mcReproducible property to QcFlagType adapter
+  * Change order of foreign key constraints creation for run_detectors table
+  * GAQ:
+    * Added endpoint for fetching GAQ detectors
+    * Added missing associations to GAQ flags
+    * Added alphabetical sorting to GAQ detectors fetching method
+    * Fixed migration file adding default GAQ detectors
+    * Fixed GAQ overview tests
+    * Added API for fetching GAQ summary
+    * Added 'gaq' role to (dev) UserRoleSelectionModel
+    * Restricted setting GAQ detectors to 'gaq' role
+    * Extracted GAQ detectors related logic to separate service and controller
+  * Replaces docker-compose command by docker compose
+  * Updates files name as per docker requirements: https://docs.docker.com/compose/project-name/#set-a-project-name
+  * default value for tokens is set to expire after 7d (7 days). This will not impact prod deployments as value is configured on deployment
+  * Changed valid data pass name regex to include skimming productions
+  * Added logging of QC flag deletion
+  * Added Anonymous to users seeder and QC flag with origin to QC flags seeder
+  * Added column skimming_stage to data_passes
+  * Fixed several typos in the project
+  * Removed Dpl detectors provider
+  * Fixed async run-detectors active columns factory utilisation
+  * Removed toredown_at information from environment
+  * Enviroment raw configuration is handled as JSON
+
 ## [0.96.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.96.0)
 * Notable changes for users:
   * Allow filtering tags in log creation and run edition
