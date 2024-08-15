@@ -25,8 +25,8 @@ const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLh
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 const { Op } = require('sequelize');
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
-const { dataPassService, DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } = require('../../../../lib/server/services/dataPasses/DataPassService.js');
 const { SkimmingStage } = require('../../../../lib/domain/enums/SkimmingStage.js');
+const { gaqDetectorService, DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } = require('../../../../lib/server/services/gaq/GaqDetectorsService.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -106,7 +106,7 @@ module.exports = () => {
                 where: { runNumber },
                 include: [{ association: 'detectors', where: { name: { [Op.in]: DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } } }],
             });
-            expect((await dataPassService.getGaqDetectors(dataPassWithNewRuns.id, runNumber)).map(({ name }) => name))
+            expect((await gaqDetectorService.getGaqDetectors(dataPassWithNewRuns.id, runNumber)).map(({ name }) => name))
                 .to.have.all.members(runDetectors.detectors.map(({ name }) => name));
         }
 
