@@ -115,8 +115,23 @@ module.exports = () => {
 
         await expectInnerText(
             page,
-            '#raw-configuration-pane',
-            'ccdb_enabled="true"\ndcs_enabled="false"',
+            '#raw-configuration-pane table #rowccdb_enabled-key-text',
+            'ccdb_enabled',
+        );
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane table #rowccdb_enabled-value-text',
+            'true',
+        );
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane table #rowdcs_enabled-key-text',
+            'dcs_enabled',
+        );
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane table #rowdcs_enabled-value-text',
+            'false',
         );
     });
 

@@ -1,0 +1,146 @@
+/*
+ * === This file is part of ALICE O² ===
+ *
+ * Copyright 2024 CERN and copyright holders of ALICE O².
+ * Author: Teo Mrnjavac <teo.mrnjavac@cern.ch>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In applying this license CERN does not waive the privileges and
+ * immunities granted to it by virtue of its status as an
+ * Intergovernmental Organization or submit itself to any jurisdiction.
+ */
+
+syntax = "proto3";
+
+package events;
+option java_package = "ch.cern.alice.o2.control.events";
+option go_package = "github.com/AliceO2Group/Control/common/protos;pb";
+
+import public "protos/common.proto";
+
+//////////////// Common event messages ///////////////
+
+enum OpStatus {
+  NULL = 0;
+  STARTED = 1;
+  ONGOING = 2;
+  DONE_OK = 3;
+  DONE_ERROR = 4;
+  DONE_TIMEOUT = 5;
+}
+
+message Ev_MetaEvent_MesosHeartbeat {
+}
+
+message Ev_MetaEvent_CoreStart {
+  string frameworkId = 1;
+}
+
+message Ev_MetaEvent_FrameworkEvent {
+  string frameworkId = 1;
+  string message = 2;
+}
+
+message Ev_EnvironmentEvent {
+  string environmentId = 1;
+  string state = 2;
+  uint32 runNumber = 3; // only when the environment is in the running state
+  string error = 4;
+  string message = 5;   // any additional message concerning the current state or transition
+  string transition = 6;
+  string transitionStep = 7;
+  OpStatus transitionStatus = 8;
+  map<string, string> vars = 9; // consolidated environment variables at the root role of the environment
+  common.User lastRequestUser = 10;
+}
+
+message Traits {
+  string trigger = 1;
+  string await = 2;
+  string timeout = 3;
+  bool critical = 4;
+}
+
+message Ev_TaskEvent {
+  string name = 1;         // task name, based on the name of the task class
+  string taskid = 2;       // task id, unique
+  string state = 3;        // state machine state for this task
+  string status = 4;       // active/inactive etc.
+  string hostname = 5;
+  string className = 6;    // name of the task class from which this task was spawned
+  Traits traits = 7;
+  string environmentId = 8;
+  string path = 9;         // path to the parent taskRole of this task within the environment
+}
+
+message Ev_CallEvent {
+  string func = 1;         // name of the function being called, within the workflow template context
+  OpStatus callStatus = 2; // progress or success/failure state of the call
+  string return = 3;       // return value of the function
+  Traits traits = 4;
+  string output = 5;       // any additional output of the function
+  string error = 6;        // error value, if returned
+  string environmentId = 7;
+  string path = 8;         // path to the parent callRole of this call within the environment
+}
+
+message Ev_RoleEvent {
+  string name = 1;         // role name
+  string status = 2;       // active/inactive etc., derived from the state of child tasks, calls or other roles
+  string state = 3;        // state machine state for this role
+  string rolePath = 4;     // path to this role within the environment
+  string environmentId = 5;
+}
+
+message Ev_IntegratedServiceEvent {
+  string name = 1;                    // name of the context, usually the path of the callRole that calls a given integrated service function e.g. readout-dataflow.dd-scheduler.terminate
+  string error = 2;                   // error message, if any
+  string operationName = 3;           // name of the operation, usually the name of the integrated service function being called e.g. ddsched.PartitionTerminate()"
+  OpStatus operationStatus = 4;       // progress or success/failure state of the operation
+  string operationStep = 5;           // if the operation has substeps, this is the name of the current substep, like an API call or polling phase
+  OpStatus operationStepStatus = 6;   // progress or success/failure state of the current substep
+  string environmentId = 7;
+  string payload = 8;                 // any additional payload, depending on the integrated service; there is no schema, it can even be the raw return structure of a remote API call
+}
+
+message Ev_RunEvent {
+  string environmentId = 1;
+  uint32 runNumber = 2;
+  string state = 3;
+  string error = 4;
+  string transition = 5;
+  OpStatus transitionStatus = 6;
+  map<string, string> vars = 7;
+  common.User lastRequestUser = 8;
+}
+
+message Event {
+  int64 timestamp = 1;
+  reserved 2 to 10;
+  reserved 17 to 100;
+
+  oneof Payload {
+    Ev_EnvironmentEvent environmentEvent                 = 11;
+    Ev_TaskEvent taskEvent                               = 12;
+    Ev_RoleEvent roleEvent                               = 13;
+    Ev_CallEvent callEvent                               = 14;
+    Ev_IntegratedServiceEvent integratedServiceEvent     = 15;
+    Ev_RunEvent runEvent                                 = 16;
+
+    Ev_MetaEvent_FrameworkEvent frameworkEvent           = 101;
+    Ev_MetaEvent_MesosHeartbeat mesosHeartbeatEvent      = 102;
+    Ev_MetaEvent_CoreStart coreStartEvent                = 103;
+  }
+}

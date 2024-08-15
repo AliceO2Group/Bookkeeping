@@ -13,7 +13,7 @@ RUN apk add --no-cache \
 
 #
 # ---- Development Dependencies ----
-FROM base as developmentdependencies
+FROM base AS developmentdependencies
 
 # Installs Git and packages required for Puppeteer
 # https://pkgs.alpinelinux.org/packages
@@ -37,40 +37,40 @@ RUN npm --silent ci
 
 #
 # ---- Development ----
-FROM developmentdependencies as development
+FROM developmentdependencies AS development
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
 
 #
 # ---- Test ----
-FROM developmentdependencies as test
+FROM developmentdependencies AS test
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
 
 #
 # ---- Test parallel for CI ----
-FROM developmentdependencies as test_parallel_ci
+FROM developmentdependencies AS test_parallel_ci
 
 CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset" ]
 
 #
 # ---- Test parallel local ----
-FROM developmentdependencies as test_parallel_local
+FROM developmentdependencies AS test_parallel_local
 
 CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset-local" ]
 
 #
 # ---- Coverage ----
-FROM developmentdependencies as coverage
+FROM developmentdependencies AS coverage
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
 
 #
 # ---- Production Dependencies ----
-FROM base as productiondependencies
+FROM base AS productiondependencies
 
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
@@ -83,7 +83,7 @@ COPY ./lib ./lib
 
 #
 # ---- Production ----
-FROM productiondependencies as production
+FROM productiondependencies AS production
 
 # Run start script as specified in package.json
 CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "node", "lib/main.js" ]

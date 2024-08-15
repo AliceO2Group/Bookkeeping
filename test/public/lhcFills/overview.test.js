@@ -68,8 +68,6 @@ module.exports = () => {
             // Seems to not exist anymore
             updatedAt: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
-            toredownAt: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
             status: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
             statusMessage: (string) => typeof string == 'string',
