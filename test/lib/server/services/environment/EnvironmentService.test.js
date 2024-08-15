@@ -26,11 +26,13 @@ module.exports = () => {
     const environmentId = 'A-NEW-ENVIRONMENT';
 
     it('should successfully return an environment extracted by its id with the related runs and history items', async () => {
+        const expectedRawConfiguration = JSON.stringify({ ccdb_enabled: true, dcs_enabled: false });
+
         {
             const environment = await environmentService.get('Dxi029djX');
             expect(environment).to.have.ownProperty('id');
             expect(environment.id).to.equal('Dxi029djX');
-            expect(environment.rawConfiguration).to.equal('ccdb_enabled="true"\ndcs_enabled="false"');
+            expect(environment.rawConfiguration).to.equal(expectedRawConfiguration);
             expect(environment.historyItems).to.lengthOf(1);
             expect(environment.historyItems[0].id).to.equal(19);
         }
@@ -39,7 +41,7 @@ module.exports = () => {
             const environment = await environmentService.getOrFail('Dxi029djX');
             expect(environment).to.have.ownProperty('id');
             expect(environment.id).to.equal('Dxi029djX');
-            expect(environment.rawConfiguration).to.equal('ccdb_enabled="true"\ndcs_enabled="false"');
+            expect(environment.rawConfiguration).to.equal(expectedRawConfiguration);
             expect(environment.historyItems).to.lengthOf(1);
             expect(environment.historyItems[0].id).to.equal(19);
         }
