@@ -28,7 +28,6 @@ module.exports = () => {
                 envId: 'EIDO13i3D',
             },
             body: {
-                toredownAt: new Date(),
                 status: 'DESTROYED',
                 statusMessage: 'Completely new message',
             },

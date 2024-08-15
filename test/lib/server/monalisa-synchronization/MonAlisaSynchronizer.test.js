@@ -25,6 +25,8 @@ const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLh
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 const { Op } = require('sequelize');
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
+const { SkimmingStage } = require('../../../../lib/domain/enums/SkimmingStage.js');
+const { gaqDetectorService, DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } = require('../../../../lib/server/services/gaq/GaqDetectorsService.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -46,18 +48,18 @@ module.exports = () => {
 
         const dataPassesDB = await DataPassRepository.findAll({ include: [
             { association: 'runs', attributes: ['runNumber'] },
-            { association: 'versions' }, // TODO
+            { association: 'versions' },
         ] });
 
         // Correct amount of data
         expect(dataPassesDB).to.be.an('array');
-        expect(dataPassesDB).to.be.lengthOf(8);
+        expect(dataPassesDB).to.be.lengthOf(11);
 
         // All expected data passes names present
         const expectedNames = expectedDataPassesVersions.map(({ name }) => name);
         expect(dataPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
-        // All associated with appripriate LHC Periods
+        // All associated with appropriate LHC Periods
         const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll({
             raw: true,
             attributes: ['id', 'name'],
@@ -66,6 +68,7 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
 
         // Properties of data passes are the same
+
         expect(dataPassesDB.map((dataPass) => {
             const { name, versions: [{ outputSize, description, reconstructedEventsCount, lastSeen }] } = dataPass;
             return { name, outputSize, description, reconstructedEventsCount, lastSeen };
@@ -94,6 +97,27 @@ module.exports = () => {
             }
         }
 
+        // Default GAQ detectors should be set (PbPb runs)
+        const dataPassWithNewRuns = await DataPassRepository.findOne({ where: { name: 'LHC23f_skimming' } });
+        const runNumbersWithDefaultGaqDetectors = [54, 56];
+        for (const runNumber of runNumbersWithDefaultGaqDetectors) {
+            const [runDetectors] = await RunRepository.findAll({
+                subQuery: false,
+                where: { runNumber },
+                include: [{ association: 'detectors', where: { name: { [Op.in]: DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } } }],
+            });
+            expect((await gaqDetectorService.getGaqDetectors(dataPassWithNewRuns.id, runNumber)).map(({ name }) => name))
+                .to.have.all.members(runDetectors.detectors.map(({ name }) => name));
+        }
+
+        // Check skimming
+        const lhc23fDataPass = await DataPassRepository.findAll({ where: { lhcPeriodId: 3, skimmingStage: { [Op.not]: null } } });
+        expect(lhc23fDataPass.map(({ name, skimmingStage }) => ({ name, skimmingStage }))).to.have.all.deep.members([
+            { name: 'LHC23f_skimming', skimmingStage: SkimmingStage.SKIMMING },
+            { name: 'LHC23f_apass3_skimmed', skimmingStage: SkimmingStage.SKIMMED },
+            { name: 'LHC23f_apass4_skimmed', skimmingStage: SkimmingStage.POST_SKIMMED },
+        ]);
+
         // Check whether examining data passes with last runs works correctly;
         lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndId();
         expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
@@ -106,7 +130,7 @@ module.exports = () => {
 
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
         productionsDeletedFromMl = await DataPassVersionRepository.findAll({ where: { deletedFromMonAlisa: true } });
-        expect(productionsDeletedFromMl).to.be.lengthOf(7);
+        expect(productionsDeletedFromMl).to.be.lengthOf(5);
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {

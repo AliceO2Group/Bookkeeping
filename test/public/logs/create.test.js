@@ -687,6 +687,7 @@ ${access}
 * LHC_IF: 
 
 ## Detectors
+* EMC: 
 * FIT: 
 * ITS: 
 * MFT: 
@@ -707,6 +708,6 @@ ${aob}\
 `);
         const tags = lastLog.tags.map(({ text }) => text);
         expect(tags).to.lengthOf(2);
-        expect(tags).to.have.members(['p2info', 'RC']);
+        expect(tags).to.have.members(['P2INFO', 'RC']);
     });
 };

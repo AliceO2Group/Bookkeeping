@@ -63,7 +63,7 @@ module.exports = () => {
         );
     });
 
-    it('should succesfully create QC Flag Type', async () => {
+    it('should successfully create QC Flag Type', async () => {
         await goToPage(page, 'qc-flag-type-creation');
         await page.waitForSelector('button#submit[disabled]');
 

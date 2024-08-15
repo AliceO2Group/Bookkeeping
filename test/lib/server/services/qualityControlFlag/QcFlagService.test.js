@@ -20,7 +20,7 @@ const { ConflictError } = require('../../../../../lib/server/errors/ConflictErro
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
-const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService');
+const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
 
 /**
  * Get effective part and periods of Qc flag
@@ -39,7 +39,7 @@ const qcFlagWithId1 = {
 
     // Associations
     createdById: 1,
-    flagTypeId: 5, // LimitedAcceptance MC Reprodubile
+    flagTypeId: 5, // LimitedAcceptance MC Reproducible
     runNumber: 106,
     dplDetectorId: 1, // CPV
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
@@ -140,7 +140,7 @@ module.exports = () => {
             });
         });
 
-        it('should succsessfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
+        it('should successfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
             const dataPassId = 2;
             const run = await RunRepository.findOne({ where: { runNumber: 1 } });
             const { timeTrgStart, timeO2Start, timeTrgEnd, timeO2End } = run;
@@ -181,11 +181,11 @@ module.exports = () => {
             expect((badCoverage / runDuration).toFixed(4)).to.be.equal('0.0769');
         });
 
-        it('should succsessfully get empty QC flag summary for data pass', async () => {
+        it('should successfully get empty QC flag summary for data pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
         });
 
-        it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
+        it('should successfully get non-empty QC flag summary for simulation pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
                 106: {
                     1: {
@@ -198,7 +198,7 @@ module.exports = () => {
             });
         });
 
-        it('should succsessfully get empty QC flag summary for simulation pass', async () => {
+        it('should successfully get empty QC flag summary for simulation pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
         });
     });
@@ -527,7 +527,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfuly create quality control flag without timestamps', async () => {
+        it('should successfully create quality control flag without timestamps', async () => {
             const qcFlag = {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
@@ -881,7 +881,7 @@ module.exports = () => {
             );
         });
 
-        it('should succesfuly create quality control flag with externalUserId', async () => {
+        it('should successfully create quality control flag with externalUserId', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -965,7 +965,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfuly create quality control flag without timstamps', async () => {
+        it('should successfully create quality control flag without timestamps', async () => {
             const qcFlagCreationParameters = {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
@@ -1021,7 +1021,7 @@ module.exports = () => {
     });
 
     describe('Creating synchronous Quality Control Flag', () => {
-        it('should succesfuly create quality control flag', async () => {
+        it('should successfully create quality control flag', async () => {
             const allOtherQcFlag = await QcFlagRepository.findAll({
                 include: [
                     { association: 'dataPasses' },
@@ -1058,7 +1058,7 @@ module.exports = () => {
                 effectivePeriods: [{ from, to }],
             });
 
-            const allOtherQcFlagAfterCretion = await QcFlagRepository.findAll({
+            const allOtherQcFlagAfterCreation = await QcFlagRepository.findAll({
                 where: { id: { [Op.not]: id } },
                 include: [
                     { association: 'dataPasses' },
@@ -1084,7 +1084,7 @@ module.exports = () => {
             };
 
             expect(allOtherQcFlag.map(extractComparableProperties)).to
-                .have.all.deep.members(allOtherQcFlagAfterCretion.map(extractComparableProperties));
+                .have.all.deep.members(allOtherQcFlagAfterCreation.map(extractComparableProperties));
         });
     });
 
@@ -1241,7 +1241,7 @@ module.exports = () => {
     });
 
     describe('Verifying Quality Control Flag', () => {
-        it('should succesfuly verify QC flag when not being owner', async () => {
+        it('should successfully verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
                 comment: 'Some Comment',
@@ -1306,7 +1306,7 @@ module.exports = () => {
             const detectorIds = [1, 2, 3];
             await run.addDataPass(dataPassId);
             await run.addDetectors(detectorIds);
-            await dataPassService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
+            await gaqDetectorService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
 
             // Creating flags fo CPV, EMC, FDD
             const scope = {

@@ -47,7 +47,7 @@ module.exports = () => {
         const dataPasses = await monAlisaInterface.getDataPassesVersions();
 
         expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(12);
+        expect(dataPasses).to.be.lengthOf(13);
         for (const dataPass of dataPasses) {
             await dataPassSchema.validateAsync(dataPass);
         }
@@ -58,13 +58,13 @@ module.exports = () => {
         const dataPasses = await monAlisaInterface.getDataPassesVersions();
 
         expect(dataPasses).to.be.an('array');
-        expect(dataPasses).to.be.lengthOf(5);
+        expect(dataPasses).to.be.lengthOf(6);
         for (const dataPass of dataPasses) {
             await dataPassSchema.validateAsync(dataPass);
         }
     });
 
-    it('Should get simultion passes with respect to given year limit (2022) and in correct format', async () => {
+    it('Should get simulation passes with respect to given year limit (2022) and in correct format', async () => {
         const monAlisaInterface = getMockMonAlisaClient(2022);
         const simulationPasses = await monAlisaInterface.getSimulationPasses();
 
