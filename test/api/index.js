@@ -34,6 +34,7 @@ const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
 const DplDetectorsSuite = require('./dplDetectors.test.js');
 const QcFlagsSuite = require('./qcFlags.test.js');
 const TriggerCountersSuite = require('./triggerCounters.test');
+const GaqDetectorsSuite = require('./gaqDetectors.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -43,6 +44,7 @@ module.exports = () => {
     describe('Environments API', EnvironmentsSuite);
     describe('EOS report API', EosReportSuite);
     describe('FLP API', FlpSuite);
+    describe('GaqDetectors API', GaqDetectorsSuite);
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
     describe('Runs API', RunsSuite);
