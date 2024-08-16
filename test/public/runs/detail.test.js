@@ -300,7 +300,7 @@ module.exports = () => {
         expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'trigger-counters' });
         expect(await getTableContent(page)).to.deep.eql([
             ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
-            ['SECOND-CLASS-NAME', '2001', '2002', '2003', '2004', '2005', '2006'],
+            ['SECOND-CLASS-NAME', '2,001', '2,002', '2,003', '2,004', '2,005', '2,006'],
         ]);
     });
 
