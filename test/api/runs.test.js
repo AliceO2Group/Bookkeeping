@@ -355,6 +355,17 @@ module.exports = () => {
             expect(data).to.have.lengthOf(10);
         });
 
+        it('should successfully filter on muInelasticInteractionRate', async () => {
+            const response = await request(server).get('/api/runs?filter[muInelasticInteractionRate][>=]=0.05');
+
+            expect(response.status).to.equal(200);
+
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([49]);
+        });
+
         it('should successfully filter on inelasticInteractionRateAvg', async () => {
             const response = await request(server).get('/api/runs?filter[inelasticInteractionRateAvg][>=]=500000');
 
