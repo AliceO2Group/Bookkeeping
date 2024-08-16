@@ -659,33 +659,20 @@ module.exports = () => {
             Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
     });
 
-    it('should successfully filter on muInelasticInteractionRate', async () => {
-        const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { muInelasticInteractionRate: { '>=': 0.05 } } } });
-        expect(runs).to.be.an('array');
-        expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([49]);
-    });
+    const inelasticInteractionRateFilteringTestsParameters = {
+        muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
+        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+        inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
+        inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
+        inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
+    };
 
-    it('should successfully filter on inelasticInteractionRateAvg', async () => {
-        const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { inelasticInteractionRateAvg: { '>=': 500000 } } } });
-        expect(runs).to.be.an('array');
-        expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([2, 49]);
-    });
-
-    it('should successfully filter on inelasticInteractionRateAtStart', async () => {
-        const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { inelasticInteractionRateAtStart: { '<=': 10000 } } } });
-        expect(runs).to.be.an('array');
-        expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([54]);
-    });
-
-    it('should successfully filter on inelasticInteractionRateAtMid', async () => {
-        const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { inelasticInteractionRateAtMid: { '<': 30000 } } } });
-        expect(runs).to.be.an('array');
-        expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([54]);
-    });
-
-    it('should successfully filter on inelasticInteractionRateAtEnd', async () => {
-        const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { inelasticInteractionRateAtEnd: { '=': 50000 } } } });
-        expect(runs).to.be.an('array');
-        expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([56]);
-    });
+    for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
+        const { operator, value, expectedRuns } = testParameters;
+        it(`should successfully filter by ${property}`, async () => {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { [property]: { [operator]: value } } } });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
+        });
+    }
 };
