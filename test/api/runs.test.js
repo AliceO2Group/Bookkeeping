@@ -355,6 +355,50 @@ module.exports = () => {
             expect(data).to.have.lengthOf(10);
         });
 
+        it('should successfully filter on inelasticInteractionRateAvg', async () => {
+            const response = await request(server).get('/api/runs?filter[inelasticInteractionRateAvg][>=]=500000');
+
+            expect(response.status).to.equal(200);
+
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([2, 49]);
+        });
+
+        it('should successfully filter on inelasticInteractionRateAtStart', async () => {
+            const response = await request(server).get('/api/runs?filter[inelasticInteractionRateAtStart][<=]=10000');
+
+            expect(response.status).to.equal(200);
+
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([54]);
+        });
+
+        it('should successfully filter on inelasticInteractionRateAtMid', async () => {
+            const response = await request(server).get('/api/runs?filter[inelasticInteractionRateAtMid][<]=30000');
+
+            expect(response.status).to.equal(200);
+
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([54]);
+        });
+
+        it('should successfully filter on inelasticInteractionRateAtEnd', async () => {
+            const response = await request(server).get('/api/runs?filter[inelasticInteractionRateAtEnd][=]=50000');
+
+            expect(response.status).to.equal(200);
+
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([56]);
+        });
+
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =
