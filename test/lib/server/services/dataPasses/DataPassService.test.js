@@ -71,7 +71,7 @@ const LHC22a_apass1 = {
             reconstructedEventsCount: 50848111,
             outputSize: 55761110122610,
             lastSeen: 105,
-            deletedFromMonAlisa: false,
+            deletedFromMonAlisa: true,
             createdAt: 1704884400000,
             updatedAt: 1704884400000,
         },
