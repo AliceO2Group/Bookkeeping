@@ -128,13 +128,11 @@ module.exports = () => {
         const dataPassVersionDeletedFromML = await DataPassVersionRepository.findOne({
             attributes: [],
             include: 'statusHistory',
-            where: { description: 'Some random desc for apass 1' },
+            where: { description: 'LHC22a skimmed' },
             order: [['statusHistory', 'createdAt', 'ASC']],
         });
 
         expect(dataPassVersionDeletedFromML.statusHistory.map(({ status }) => status)).to.be.have.all.members([
-            DataPassVersionStatus.RUNNING,
-            DataPassVersionStatus.DELETED,
             DataPassVersionStatus.RUNNING,
             DataPassVersionStatus.DELETED,
         ]);
