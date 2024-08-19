@@ -89,6 +89,28 @@ module.exports = () => {
             });
         });
 
+        it('should successfully get non-empty QC flag summary with MC.Reproducible interpreted as not-bad for data pass', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?dataPassId=1&mcReproducibleAsNotBad=true');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 3,
+                        mcReproducible: true,
+                        badEffectiveRunCoverage: 0.1111,
+                        explicitlyNotBadEffectiveRunCoverage: 0.2222,
+                    },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
+            });
+        });
+
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
             const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1');
             expect(response.status).to.be.equal(200);
