@@ -29,7 +29,6 @@ const {
     getPopoverSelector,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
-const { getRun } = require('../../../lib/server/services/run/getRun.js');
 const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -424,7 +423,7 @@ module.exports = () => {
     it('should allow to update calibration status on calibration runs', async () => {
         const runNumber = 40;
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: runNumber } });
-        await expectInnerText(page, '#Run-calibrationStatus', RunCalibrationStatus.NO_STATUS);
+        await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.NO_STATUS}`);
         await pressElement(page, '#edit-run');
         await page.waitForSelector('#Run-calibrationStatus select');
         await page.select('#Run-calibrationStatus select', RunCalibrationStatus.SUCCESS);
@@ -432,7 +431,7 @@ module.exports = () => {
 
         // Wait for page to be reloaded
         await page.waitForSelector('#edit-run');
-        await expectInnerText(page, '#Run-calibrationStatus', RunCalibrationStatus.SUCCESS);
+        await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.SUCCESS}`);
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
