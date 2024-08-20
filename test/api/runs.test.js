@@ -355,6 +355,28 @@ module.exports = () => {
             expect(data).to.have.lengthOf(10);
         });
 
+        const inelasticInteractionRateFilteringTestsParameters = {
+            muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
+            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+            inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
+            inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
+            inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
+        };
+
+        for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
+            const { operator, value, expectedRuns } = testParameters;
+            it(`should successfully filter by ${property}`, async () => {
+                const response = await request(server).get(`/api/runs?filter[${property}][${operator}]=${value}`);
+
+                expect(response.status).to.equal(200);
+
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
+            });
+        }
+
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =

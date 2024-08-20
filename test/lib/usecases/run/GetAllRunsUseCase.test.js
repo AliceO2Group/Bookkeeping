@@ -658,4 +658,21 @@ module.exports = () => {
         expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
             Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
     });
+
+    const inelasticInteractionRateFilteringTestsParameters = {
+        muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
+        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+        inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
+        inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
+        inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
+    };
+
+    for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
+        const { operator, value, expectedRuns } = testParameters;
+        it(`should successfully filter by ${property}`, async () => {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { [property]: { [operator]: value } } } });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
+        });
+    }
 };
