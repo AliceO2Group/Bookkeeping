@@ -118,6 +118,28 @@ module.exports = () => {
             expect(flags).to.be.lengthOf(2);
             expect(flags[0].qcFlagId).to.equal(6);
         });
+
+        it('should successfully fetch all synchronous flags for run and detector', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            {
+                const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
+                expect(count).to.be.equal(2);
+                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+            }
+            {
+                const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector(
+                    { runNumber, detectorId },
+                    { limit: 1, offset: 1 },
+                );
+                expect(count).to.be.equal(2);
+                expect(flags).to.be.lengthOf(1);
+                const [flag] = flags;
+                expect(flag.id).to.be.equal(100);
+
+                expect(flag.verifications[0].comment).to.be.equal('good');
+            }
+        });
     });
 
     describe('Get QC flags summary', () => {
@@ -530,11 +552,11 @@ module.exports = () => {
                         ],
                     },
                     {
-                        id: 8,
+                        id: createdQcFlags[0].id,
                         effectivePeriods: [],
                     },
                     {
-                        id: 9,
+                        id: createdQcFlags[1].id,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 04:00:00').getTime(),
