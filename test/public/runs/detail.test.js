@@ -348,7 +348,7 @@ module.exports = () => {
 
     it('notifies if a specified run number is invalid', async () => {
         // Navigate to a run detail view with a run number that cannot exist
-        await goToRunDetails(page, 'abc');
+        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 'abc' } });
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runNumber" must be a number');
