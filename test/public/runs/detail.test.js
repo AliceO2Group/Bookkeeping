@@ -423,9 +423,8 @@ module.exports = () => {
 
     it('should allow to update calibration status on calibration runs', async () => {
         const runNumber = 40;
-        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
-
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: runNumber } });
+        await expectInnerText(page, '#Run-calibrationStatus', RunCalibrationStatus.NO_STATUS);
         await pressElement(page, '#edit-run');
         await page.waitForSelector('#Run-calibrationStatus select');
         await page.select('#Run-calibrationStatus select', RunCalibrationStatus.SUCCESS);
@@ -433,8 +432,7 @@ module.exports = () => {
 
         // Wait for page to be reloaded
         await page.waitForSelector('#edit-run');
-
-        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+        await expectInnerText(page, '#Run-calibrationStatus', RunCalibrationStatus.SUCCESS);
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
