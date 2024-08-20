@@ -136,14 +136,15 @@ module.exports = () => {
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
-                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId]');
+                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId, lhcPeriodId]');
             }
             {
                 const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1&dataPassId=1');
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
-                expect(titleError.detail).to.equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId]');
+                expect(titleError.detail).to
+                    .equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId, lhcPeriodId]');
             }
         });
     });
