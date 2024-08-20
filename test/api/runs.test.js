@@ -377,6 +377,29 @@ module.exports = () => {
             });
         }
 
+        it('should successfully filter by GAQ', async () => {
+            const dataPassId = 1;
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            }
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +
+                    '&filter[gaq][notBadFraction][<]=0.8&filter[gaq][mcReproducibleAsNotBad]=true');
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs).to.have.lengthOf(0);
+            }
+        });
+
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =

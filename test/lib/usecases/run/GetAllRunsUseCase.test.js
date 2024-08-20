@@ -684,7 +684,6 @@ module.exports = () => {
                 gaq: { notBadFraction: { '<': 0.8 } },
             } } });
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf.greaterThan(1);
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
         }
         {
@@ -692,7 +691,7 @@ module.exports = () => {
                 dataPassIds,
                 gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
             } } });
-            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs).to.have.lengthOf(0);
         }
     });
 };
