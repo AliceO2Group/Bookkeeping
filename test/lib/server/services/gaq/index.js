@@ -11,9 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-// Default configuration
-const brokers = process.env?.NOTIFICATION_BROKER ? [process.env.NOTIFICATION_BROKER] : null;
+const GaqDetectorServiceSuite = require('./GaqDetectorService.test.js');
 
-module.exports = {
-    brokers,
+module.exports = () => {
+    describe('GaqDetectorService', GaqDetectorServiceSuite);
 };

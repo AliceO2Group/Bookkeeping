@@ -20,7 +20,7 @@ const { ConflictError } = require('../../../../../lib/server/errors/ConflictErro
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
-const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService');
+const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
 
 /**
  * Get effective part and periods of Qc flag
@@ -1328,7 +1328,7 @@ module.exports = () => {
             const detectorIds = [1, 2, 3];
             await run.addDataPass(dataPassId);
             await run.addDetectors(detectorIds);
-            await dataPassService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
+            await gaqDetectorService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
 
             // Creating flags fo CPV, EMC, FDD
             const scope = {

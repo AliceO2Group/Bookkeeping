@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.96.0",
+  "version": "0.97.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -30,10 +30,12 @@
     "deepmerge": "4.3.0",
     "dotenv": "16.4.5",
     "joi": "17.13.1",
+    "kafkajs": "2.2.0",
     "mariadb": "3.0.0",
     "mkdirp": "3.0.1",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
+    "protobufjs": "7.3.2",
     "sequelize": "6.37.0",
     "umzug": "3.8.0"
   },
@@ -45,7 +47,7 @@
   "devDependencies": {
     "@types/d3": "7.4.0",
     "chai": "4.5.0",
-    "date-and-time": "3.4.0",
+    "date-and-time": "3.5.0",
     "eslint": "8.57.0",
     "js-yaml": "4.1.0",
     "mocha": "10.7.0",
@@ -65,9 +67,11 @@
     "d3",
     "deepmerge",
     "joi",
+    "kafkajs",
     "mariadb",
     "multer",
     "node-fetch",
+    "protobufjs",
     "sequelize",
     "umzug"
   ]
