@@ -44,6 +44,19 @@ const banIconPath =
     + ' 4.188c-.353-.492-.563-1.095-.563-1.75 0-1.663 1.337-3 3-3zm2.438 1.25c.353.492.563 1.095.563 1.75 0 1.663-1.337 3-3 3-.655'
     + ' 0-1.258-.209-1.75-.563l4.188-4.188z';
 
+/**
+ * Navigate to the details page of a given run
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {number} runNumber the run number for which details should be displayed
+ * @return {Promise<void>} resolves once the page is displayed
+ */
+const goToRunDetails = async (page, runNumber) => {
+    await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+    await fillInput(page, '#runNumber', `${runNumber},${runNumber}`);
+    return waitForNavigation(page, () => pressElement(page, `#row${runNumber}-runNumber-text a`));
+};
+
 module.exports = () => {
     let page;
     let browser;
@@ -230,7 +243,7 @@ module.exports = () => {
     });
 
     it('should successfully update inelasticInteractionRate values of PbPb run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
+        await goToRunDetails(page, 54);
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100.1);
         await fillInput(page, '#Run-inelasticInteractionRateAtStart input', 101.1);
@@ -248,7 +261,7 @@ module.exports = () => {
     });
 
     it('should successfully update inelasticInteractionRateAvg of pp run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 49 } });
+        await goToRunDetails(page, 49);
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100000);
 
@@ -261,7 +274,7 @@ module.exports = () => {
     });
 
     it('should show lhc data in edit mode', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+        await goToRunDetails(page, 1);
         await pressElement(page, '#edit-run');
         await expectInnerText(page, '#lhc-fill-fillNumber>strong', 'Fill number:');
     });
@@ -292,7 +305,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the trigger counters panel', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+        await goToRunDetails(page, 1);
 
         await pressElement(page, '#trigger-counters-tab');
         await waitForTableLength(page, 2);
@@ -310,7 +323,7 @@ module.exports = () => {
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 105 } });
+        await goToRunDetails(page, 105);
 
         await pressElement(page, '#edit-run');
         await page.waitForSelector('#cancel-run');
@@ -326,7 +339,7 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
+        await goToRunDetails(page, 108);
 
         await waitForNavigation(page, () => pressElement(page, '#lhc-fill-fillNumber a'));
 
@@ -335,7 +348,7 @@ module.exports = () => {
 
     it('notifies if a specified run number is invalid', async () => {
         // Navigate to a run detail view with a run number that cannot exist
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 'abc' } });
+        await goToRunDetails(page, 'abc');
 
         // We expect there to be an error message
         await expectInnerText(page, '.alert', 'Invalid Attribute: "params.runNumber" must be a number');
@@ -359,52 +372,52 @@ module.exports = () => {
     });
 
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await goToRunDetails(page, 106);
         const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display duration without warning popover when run has trigger OFF', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
+        await goToRunDetails(page, 107);
         const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 105 } });
+        await goToRunDetails(page, 105);
         const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
     });
 
     it('should successfully display popover warning when run is missing trigger start', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 104 } });
+        await goToRunDetails(page, 104);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
     });
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 103 } });
+        await goToRunDetails(page, 103);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 102 } });
+        await goToRunDetails(page, 102);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 
     it('should display OFF in the nEPNs field when EPNs is null', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 3 } });
+        await goToRunDetails(page, 3);
         await page.waitForSelector('#Run-nEpns');
         await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\nOFF');
     });
 
     it('should not display OFF in the nEPNs field when EPNs is not null', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await goToRunDetails(page, 106);
         await page.waitForSelector('#Run-nEpns');
         await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\n12');
     });
@@ -415,7 +428,7 @@ module.exports = () => {
     });
 
     it('should display calibration status on calibration runs', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 40 } });
+        await goToRunDetails(page, 40);
         await page.waitForSelector('#Run-calibrationStatus');
         await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.NO_STATUS}`);
     });
