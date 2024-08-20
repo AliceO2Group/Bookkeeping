@@ -676,7 +676,7 @@ module.exports = () => {
         });
     }
 
-    it('should successfully filter by GAQ', async () => {
+    it('should successfully filter by GAQ notBadFraction', async () => {
         const dataPassIds = [1];
         {
             const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {

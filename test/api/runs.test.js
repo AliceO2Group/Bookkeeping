@@ -377,7 +377,7 @@ module.exports = () => {
             });
         }
 
-        it('should successfully filter by GAQ', async () => {
+        it('should successfully filter by GAQ notBadFraction', async () => {
             const dataPassId = 1;
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
