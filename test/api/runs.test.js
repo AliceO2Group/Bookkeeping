@@ -113,21 +113,14 @@ module.exports = () => {
                 });
         });
 
-        it('should support sorting, runNumber ASC', (done) => {
-            request(server)
-                .get('/api/runs?sort[id]=asc')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should support sorting by runNumber', async () => {
+            const response = await request(server).get('/api/runs?sort[runNumber]=DESC');
 
-                    const { data } = res.body;
-                    expect(data[1].id).to.be.above(data[0].id);
-
-                    done();
-                });
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.have.length.greaterThan(2);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => -a + b));
         });
 
         it('should successfully filter on calibration', async () => {
@@ -258,7 +251,7 @@ module.exports = () => {
             expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
-        it('should succefully filter on data pass id', async () => {
+        it('should successfully filter on data pass id', async () => {
             const response = await request(server).get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3');
             expect(response.status).to.equal(200);
 
@@ -267,7 +260,7 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
-        it('should succefully filter on simulation pass id', async () => {
+        it('should successfully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
 
@@ -361,6 +354,28 @@ module.exports = () => {
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(10);
         });
+
+        const inelasticInteractionRateFilteringTestsParameters = {
+            muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
+            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+            inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
+            inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
+            inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
+        };
+
+        for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
+            const { operator, value, expectedRuns } = testParameters;
+            it(`should successfully filter by ${property}`, async () => {
+                const response = await request(server).get(`/api/runs?filter[${property}][${operator}]=${value}`);
+
+                expect(response.status).to.equal(200);
+
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
+            });
+        }
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
@@ -486,7 +501,7 @@ module.exports = () => {
             expect(data).to.have.lengthOf(5);
         });
 
-        it('should successfuly filter by aliceL3Current', async () => {
+        it('should successfully filter by aliceL3Current', async () => {
             const response =
                 await request(server).get('/api/runs?filter[aliceL3Current]=30003');
 
@@ -499,7 +514,7 @@ module.exports = () => {
                 Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
         });
 
-        it('should successfuly filter by aliceDipoleCurrent', async () => {
+        it('should successfully filter by aliceDipoleCurrent', async () => {
             const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
 
             expect(response.status).to.equal(200);

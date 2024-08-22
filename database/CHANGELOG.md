@@ -1,3 +1,13 @@
+## [0.98.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.98.0)
+* Changes made to the database
+  * Removed data_pass_versions column 'deleted_from_monalisa' and added data_pass_version_status_history table
+
+## [0.97.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.97.0)
+* Changes made to the database
+  * Added column type (ENUM) to detectors table
+  * Removed dpl_detectors table
+  * Removed toredown_at column from environments table
+
 ## [0.94.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.94.0)
 * Changes made to the database
   * Added raw_configuration column to environment table

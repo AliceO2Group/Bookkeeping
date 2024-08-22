@@ -68,8 +68,6 @@ module.exports = () => {
             // Seems to not exist anymore
             updatedAt: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
-            toredownAt: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
             status: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
             statusMessage: (string) => typeof string == 'string',
@@ -133,7 +131,7 @@ module.exports = () => {
         await pressElement(page, `${amountSelectorId} button`);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
+        // Expect the amount of visible lhcFills to reduce when the first option (5) is selected
         await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
 

@@ -1112,7 +1112,8 @@ module.exports = () => {
         await page.waitForSelector(popoverSelector);
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
-            href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
+                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
         await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {

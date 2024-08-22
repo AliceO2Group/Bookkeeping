@@ -20,7 +20,7 @@ const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/
 module.exports = () => {
     before(resetDatabaseContent);
     describe('GET /api/qcFlags/:id', () => {
-        it('should successfuly fetch one QC flag', async () => {
+        it('should successfully fetch one QC flag', async () => {
             const response = await request(server).get('/api/qcFlags/4');
             expect(response.status).to.be.equal(200);
             const { data: qcFlag } = response.body;
@@ -89,7 +89,7 @@ module.exports = () => {
             });
         });
 
-        it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
+        it('should successfully get non-empty QC flag summary for simulation pass', async () => {
             const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1');
             expect(response.status).to.be.equal(200);
             const { body: { data } } = response;
@@ -105,7 +105,7 @@ module.exports = () => {
             });
         });
 
-        it('should return 400 when bad query paramter provided', async () => {
+        it('should return 400 when bad query parameter provided', async () => {
             {
                 const response = await request(server).get('/api/qcFlags/summary');
                 expect(response.status).to.be.equal(400);
@@ -148,13 +148,11 @@ module.exports = () => {
         });
 
         it('should return 400 when bad query parameter provided', async () => {
-            {
-                const response = await request(server).get('/api/qcFlags/summary/gaq');
-                expect(response.status).to.be.equal(400);
-                const { errors } = response.body;
-                const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/dataPassId');
-                expect(titleError.detail).to.equal('"query.dataPassId" is required');
-            }
+            const response = await request(server).get('/api/qcFlags/summary/gaq');
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/dataPassId');
+            expect(titleError.detail).to.equal('"query.dataPassId" is required');
         });
     });
 
@@ -189,7 +187,7 @@ module.exports = () => {
             expect(qcFlags).to.be.an('array');
             expect(qcFlags.map(({ qcFlagId }) => qcFlagId)).to.have.ordered.deep.members([2, 1]);
         });
-        it('should return 400 when bad query paramter provided', async () => {
+        it('should return 400 when bad query parameter provided', async () => {
             {
                 const response = await request(server).get('/api/qcFlags/perDataPass?a=1');
                 expect(response.status).to.be.equal(400);
@@ -217,8 +215,37 @@ module.exports = () => {
         });
     });
 
+    describe('GET /api/qcFlags/synchronous', () => {
+        it('should successfully fetch synchronous flags', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            const response = await request(server).get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}`);
+            expect(response.status).to.be.equal(200);
+            const { data: flags, meta } = response.body;
+            expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+            expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+        });
+
+        it('should successfully fetch synchronous flags with pagination', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&page[limit]=1&page[offset]=1`);
+
+                expect(response.status).to.be.equal(200);
+                const { data: flags, meta } = response.body;
+                expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 2 } });
+                expect(flags).to.be.lengthOf(1);
+                const [flag] = flags;
+                expect(flag.id).to.be.equal(100);
+                expect(flag.verifications[0].comment).to.be.equal('good');
+            }
+        });
+    });
+
     describe('POST /api/qcFlags', () => {
-        it('should successfuly create QC flag instance for data pass', async () => {
+        it('should successfully create QC flag instance for data pass', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -250,7 +277,7 @@ module.exports = () => {
             }
         });
 
-        it('should successfuly create QC flag instance for data pass with GLO detector', async () => {
+        it('should successfully create QC flag instance for data pass with GLO detector', async () => {
             const qcFlagCreationParameters = {
                 from: null,
                 to: null,
@@ -291,7 +318,7 @@ module.exports = () => {
             }
         });
 
-        it('should successfuly create QC flag instance for simulation pass', async () => {
+        it('should successfully create QC flag instance for simulation pass', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -324,7 +351,7 @@ module.exports = () => {
             }
         });
 
-        it('should fail to create QC flag instance when dataPass and simualtion are both specified', async () => {
+        it('should fail to create QC flag instance when dataPass and simulation are both specified', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -378,7 +405,7 @@ module.exports = () => {
                 },
             ]);
         });
-        it('should succesfuly delete QC flag as admin', async () => {
+        it('should successfully delete QC flag as admin', async () => {
             const id = 2;
             const response = await request(server).delete(`/api/qcFlags/${id}?token=admin`);
 
@@ -388,7 +415,7 @@ module.exports = () => {
     });
 
     describe('POST /api/qcFlags/:id/verify', () => {
-        it('should succesfuly verify QC flag when not being owner', async () => {
+        it('should successfully verify QC flag when not being owner', async () => {
             const flagId = 5;
             const comment = 'Ok, VERIFIED';
 
