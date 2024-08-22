@@ -64,6 +64,7 @@ module.exports = () => {
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
+            statusHistory: (statusHistory) => /R(\n-\n[RD])*/.test(statusHistory),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
             outputSize: (outputSize) => {
