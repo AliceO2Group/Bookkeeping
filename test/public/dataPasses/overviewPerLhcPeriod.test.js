@@ -80,12 +80,12 @@ module.exports = () => {
             simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
         }))).to.have.all.deep.members([
             {
-                name: 'deleted\nLHC22b_apass2',
+                name: 'LHC22b_apass2',
                 runsCount: 3,
                 simulationPassesCount: 1,
             },
             {
-                name: 'LHC22b_apass1',
+                name: 'deleted\nLHC22b_apass1',
                 runsCount: 3,
                 simulationPassesCount: 1,
             },
@@ -161,6 +161,6 @@ module.exports = () => {
         await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'deleted\nLHC22b_apass1']);
     });
 };

@@ -114,6 +114,6 @@ module.exports = () => {
         await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'deleted\nLHC22b_apass1']);
     });
 };
