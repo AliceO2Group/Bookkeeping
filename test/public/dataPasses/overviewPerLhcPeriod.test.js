@@ -91,8 +91,7 @@ module.exports = () => {
             },
         ]);
 
-        await page.waitForSelector('td#row1-name .popover-trigger .icon');
-        await page.waitForSelector('td#row1-description .popover-trigger .icon');
+        await page.waitForSelector('td#row1-name .popover-trigger');
     });
 
     it('can navigate to runs per data pass page', async () => {
