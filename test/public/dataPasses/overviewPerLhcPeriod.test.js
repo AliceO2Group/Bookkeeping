@@ -31,8 +31,6 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 
 const { expect } = chai;
 
-const periodNameRegex = /LHC\d\d[a-zA-Z]+/;
-
 module.exports = () => {
     let page;
     let browser;
@@ -60,7 +58,7 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => periodNameRegex.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_[a-z]pass\d/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
