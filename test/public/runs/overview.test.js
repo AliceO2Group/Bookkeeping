@@ -382,7 +382,7 @@ module.exports = () => {
         };
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(4, [RunDefinition.PHYSICS]);
+        await checkTableSizeAndDefinition(8, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
         await checkTableSizeAndDefinition(6, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
