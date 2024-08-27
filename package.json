@@ -35,7 +35,7 @@
     "mkdirp": "3.0.1",
     "multer": "1.4.5-lts.1",
     "node-fetch": "3.3.1",
-    "protobufjs": "7.3.2",
+    "protobufjs": "7.4.0",
     "sequelize": "6.37.0",
     "umzug": "3.8.0"
   },
