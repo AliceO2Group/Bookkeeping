@@ -42,7 +42,7 @@ module.exports = () => {
         expect(fill1.timeLossAtEnd).to.equal(0);
         expect(fill1.efficiencyLossAtEnd).to.equal(0);
         expect(fill1.meanRunDuration).to.equal(0);
-        expect(fill1.totalCtfFileSize).to.equal(214920239535280);
+        expect(fill1.totalCtfFileSize).to.equal(644760718605840);
         expect(fill1.totalTfFileSize).to.equal(0);
     });
 

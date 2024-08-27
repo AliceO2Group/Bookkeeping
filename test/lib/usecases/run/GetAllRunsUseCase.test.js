@@ -174,7 +174,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on run definition', async () => {
-        const PHYSICS_COUNT = 4;
+        const PHYSICS_COUNT = 10;
         const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
@@ -597,7 +597,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(44);
+        expect(runs).to.have.lengthOf(43);
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
@@ -661,7 +661,7 @@ module.exports = () => {
 
     const inelasticInteractionRateFilteringTestsParameters = {
         muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
-        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [106, 49, 2] },
         inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
         inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
         inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
