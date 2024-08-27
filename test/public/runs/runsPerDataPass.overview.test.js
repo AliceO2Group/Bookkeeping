@@ -273,7 +273,7 @@ module.exports = () => {
 
         expect(runs).to.be.lengthOf(4);
         expect(runs).to.have.deep.all.members([
-            { runNumber: 105, runQuality: 'test' },
+            { runNumber: 105, runQuality: 'good' },
             { runNumber: 56, runQuality: 'good' },
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },

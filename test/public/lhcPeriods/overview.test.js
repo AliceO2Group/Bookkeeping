@@ -148,8 +148,8 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'XeXe');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
-        await expectColumnValues(page, 'beamTypes', ['XeXe']);
+        await expectColumnValues(page, 'beamTypes', ['PbPb']);
     });
 };

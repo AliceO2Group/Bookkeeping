@@ -97,7 +97,6 @@ module.exports = () => {
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
-            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
@@ -115,9 +114,10 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
+
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '3');
-        await expectInnerText(page, '#totalRowsCount', '3');
+        await expectInnerText(page, '#lastRowIndex', '4');
+        await expectInnerText(page, '#totalRowsCount', '4');
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -147,7 +147,7 @@ module.exports = () => {
 
         // Expect the amount selector to currently be set to 5 when the first option (5) is selected
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -174,7 +174,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
     });
 
     it('can navigate to a run detail page', async () => {
@@ -218,6 +218,12 @@ module.exports = () => {
         const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
         expect(runs).to.have.all.deep.members([
+            {
+                runNumber: 105,
+                lhcPeriod: 'LHC22a',
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.PHYSICS,
+            },
             {
                 runNumber: 49,
                 runQuality: RunQualities.GOOD,
