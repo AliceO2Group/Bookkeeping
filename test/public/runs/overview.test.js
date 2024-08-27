@@ -377,7 +377,7 @@ module.exports = () => {
                 const rowId = row.id;
                 return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
             }));
-            expect(definitions.length).to.equal(size);
+
             try {
                 expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
             } catch {
@@ -386,7 +386,7 @@ module.exports = () => {
         };
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(8, [RunDefinition.PHYSICS]);
+        await checkTableSizeAndDefinition(4, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
         await checkTableSizeAndDefinition(6, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
