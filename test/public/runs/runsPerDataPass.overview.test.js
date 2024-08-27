@@ -67,11 +67,12 @@ const DETECTORS = [
  */
 const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
+    const pdpBeamType = await getInnerText(await page.waitForSelector(`#row${lhcPeriodId}-beamTypes`));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
     expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
-    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId });
+    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId, pdpBeamType });
 };
 
 module.exports = () => {
@@ -108,9 +109,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
-        // Expectations of header texts being of a certain datatype
-        const tableDataValidators = {
+        const commonColumnsValidators = {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
 
@@ -121,21 +120,31 @@ module.exports = () => {
 
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
-
-            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
                 (qualityDisplay) => !qualityDisplay || /(QC)|(\d+(\nMC\.R)?)/.test(qualityDisplay),
             ])),
         };
 
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 });
+        // Expectations of header texts being of a certain datatype
+        let tableDataValidators = {
+            ...commonColumnsValidators,
+            inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+        };
+
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+        // Expectations of header texts being of a certain datatype
+        tableDataValidators = {
+            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+            inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+        };
+        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
         await expectLink(page, 'tr#row106 .column-EMC a', {
             href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=106&dplDetectorId=2&dataPassId=1',
@@ -369,7 +378,6 @@ module.exports = () => {
     });
 
     const inelasticInteractionRateFilteringTestsParameters = {
-        muInelasticInteractionRate: { operator: 'ge', value: 0.003, expectedRuns: ['56', '49'] },
         inelasticInteractionRateAvg: { operator: 'le', value: 50000, expectedRuns: ['56', '54'] },
         inelasticInteractionRateAtStart: { operator: 'gt', value: 20000, expectedRuns: ['56'] },
         inelasticInteractionRateAtMid: { operator: 'lt', value: 30000, expectedRuns: ['54'] },
@@ -390,6 +398,19 @@ module.exports = () => {
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
     }
+
+    it('should successfully apply muInelasticInteractionRate filters', async () => {
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+        await pressElement(page, '#openFilterToggle');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.muInelasticInteractionRate-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} #muInelasticInteractionRate-dropdown-option-ge`, true);
+        await fillInput(page, '#muInelasticInteractionRate-value-input', 0.03);
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
 
     it('should display bad runs marked out', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 });
