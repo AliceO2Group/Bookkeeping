@@ -378,7 +378,11 @@ module.exports = () => {
                 return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
             }));
             expect(definitions.length).to.equal(size);
-            expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
+            try {
+                expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
+            } catch {
+                throw new Error(`Expect all run definitions ${definitions} to be one of ${authorizedRunDefinition}`);
+            }
         };
 
         await pressElement(page, physicsFilterSelector, true);

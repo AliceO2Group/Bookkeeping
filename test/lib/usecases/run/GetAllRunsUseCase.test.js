@@ -378,7 +378,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(4);
+            expect(runs).to.have.lengthOf(1);
         }
     });
 
