@@ -114,7 +114,6 @@ module.exports = () => {
     it('Should display the correct items counter at the bottom of the page', async () => {
         await reloadPage(page);
 
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '4');
         await expectInnerText(page, '#totalRowsCount', '4');
