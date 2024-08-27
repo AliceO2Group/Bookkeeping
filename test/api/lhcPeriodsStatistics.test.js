@@ -24,7 +24,7 @@ const lhcPeriod_LHC22a = {
         name: 'LHC22a',
 
     },
-    beamTypes: ['PbPb', 'pp'],
+    beamTypes: ['PbPb'],
     distinctEnergies: [
         23.21,
         56.1,
@@ -42,7 +42,7 @@ const lhcPeriod_LHC22b = {
         name: 'LHC22b',
 
     },
-    beamTypes: ['XeXe'],
+    beamTypes: ['pp'],
     distinctEnergies: [55.2],
     runsCount: 1,
     dataPassesCount: 2,
