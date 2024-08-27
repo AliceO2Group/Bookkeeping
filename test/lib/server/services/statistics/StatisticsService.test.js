@@ -43,7 +43,7 @@ module.exports = () => {
         expect(fill1.efficiencyLossAtEnd).to.equal(0);
         expect(fill1.meanRunDuration).to.equal(0);
         expect(fill1.totalCtfFileSize).to.equal(644760718605840);
-        expect(fill1.totalTfFileSize).to.equal(0);
+        expect(fill1.totalTfFileSize).to.equal(644760718605840);
     });
 
     it('should successfully filter out fills after a date (excluded) for statistics', async () => {

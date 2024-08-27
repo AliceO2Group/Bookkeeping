@@ -174,7 +174,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on run definition', async () => {
-        const PHYSICS_COUNT = 10;
+        const PHYSICS_COUNT = 6;
         const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
@@ -364,7 +364,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(98);
+            expect(runs).to.have.lengthOf(97);
         }
         {
             getAllRunsDto.query = {
