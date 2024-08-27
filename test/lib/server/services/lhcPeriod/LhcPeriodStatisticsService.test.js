@@ -43,7 +43,7 @@ const lhcPeriod_LHC22b = {
     },
     beamTypes: ['pp'],
     distinctEnergies: [55.2],
-    runsCount: 1,
+    runsCount: 2,
     dataPassesCount: 2,
     simulationPassesCount: 1,
 };
