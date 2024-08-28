@@ -27,8 +27,6 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 
 const { expect } = chai;
 
-const periodNameRegex = /LHC\d\d[a-zA-Z]+/;
-
 module.exports = () => {
     let page;
     let browser;
@@ -60,7 +58,7 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => periodNameRegex.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_[a-z]pass\d/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
@@ -113,9 +111,9 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
-        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'deleted\nLHC22b_apass1']);
     });
 };
