@@ -215,22 +215,18 @@ module.exports = () => {
         });
     });
     describe('PUT /api/environment/:envId', () => {
-        const teardownDate = new Date().setMilliseconds('0');
-
         it('should return 400 if the wrong id is provided', async () => {
             const response = await request(server).put('/api/environments/99999');
             expect(response.status).to.equal(400);
         });
         it('should return 201 if valid data is given', async () => {
             const response = await request(server).put('/api/environments/KGIS12DS').send({
-                toredownAt: teardownDate,
                 status: 'DONE',
                 statusMessage: 'This is a good environment.',
             });
             expect(response.status).to.equal(201);
 
             expect(response.body.data.status).to.equal('DONE');
-            expect(response.body.data.toredownAt).to.equal(teardownDate);
             expect(response.body.data.statusMessage).to.equal('This is a good environment.');
         });
     });
