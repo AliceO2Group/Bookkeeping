@@ -46,8 +46,7 @@ ${formattedTypeSpecific}
 ## Shift to shift transfer of information
 
 ### From previous shifter
-Info from
-previous shifter
+-
 
 ### For next shifter
 Info for
