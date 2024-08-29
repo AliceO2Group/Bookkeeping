@@ -145,17 +145,22 @@ module.exports.waitForTimeout = waitForTimeout;
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
- * @param {string} [operator = '==='] comparison operator
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
-const waitForTableLength = async (page, expectedSize, operator = '===') => {
-    await page.waitForFunction(
-        `document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length ${operator} ${expectedSize}`,
-        {},
-    );
+const waitForTableToLength = async (page, expectedSize) => {
+    try {
+        await page.waitForFunction(
+            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+            {},
+            expectedSize,
+        );
+    } catch {
+        const actualSize = (await page.$$('tbody tr')).length;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}`);
+    }
 };
 
-module.exports.waitForTableLength = waitForTableLength;
+module.exports.waitForTableLength = waitForTableToLength;
 
 /**
  * Waits for table to be loaded
