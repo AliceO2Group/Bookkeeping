@@ -180,17 +180,9 @@ module.exports = () => {
         await waitForTableLength(page, 3);
     });
 
-    it('can navigate to a run detail page', async () => {
-        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
-        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
-    });
-
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
-        await waitForNavigation(page, () => page.goBack());
-
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
@@ -233,5 +225,11 @@ module.exports = () => {
         ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('can navigate to a run detail page', async () => {
+        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
     });
 };
