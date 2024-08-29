@@ -174,17 +174,21 @@ module.exports = () => {
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 10);
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perSimulationPassOverviewModel.pagination.reset();
+            // eslint-disable-next-line no-undef
+            model.runs.perSimulationPassOverviewModel.pagination.notify();
+        });
     });
 
     it('can navigate to a run detail page', async () => {
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 56 });
+        await waitForNavigation(page, () => page.goBack());
     });
 
     it('should successfully export runs', async () => {
-        await waitForNavigation(page, () => page.goBack());
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
         const targetFileName = 'runs.json';
