@@ -29,6 +29,7 @@ const {
     waitForNavigation,
     expectUrlParams,
     testTableSortingByColumn,
+    waitForTableLength,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -180,6 +181,7 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             model.runs.perSimulationPassOverviewModel.pagination.notify();
         });
+        await waitForTableLength(page, 3);
     });
 
     it('can navigate to a run detail page', async () => {
