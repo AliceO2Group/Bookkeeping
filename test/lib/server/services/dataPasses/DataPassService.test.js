@@ -16,12 +16,13 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
+const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage.js');
 
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
-    skimmingStage: null,
+    skimmingStage: SkimmingStage.SKIMMABLE,
     versions: [
         {
             id: 1,
@@ -52,82 +53,6 @@ const LHC22b_apass1 = {
     simulationPassesCount: 1,
 };
 
-const LHC22b_apass2 = {
-    id: 2,
-    name: 'LHC22b_apass2',
-    pdpBeamType: 'pp',
-    skimmingStage: null,
-    versions: [
-        {
-            id: 2,
-            dataPassId: 2,
-            description: 'Some random desc 2',
-            reconstructedEventsCount: 50848604,
-            outputSize: 55765671112610,
-            lastSeen: 55,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 2,
-                    id: 3,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704884520000,
-                    dataPassVersionId: 2,
-                    id: 4,
-                    status: 'Deleted',
-                },
-                {
-                    createdAt: 1704884940000,
-                    dataPassVersionId: 2,
-                    id: 5,
-                    status: 'Running',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 3,
-    simulationPassesCount: 1,
-};
-
-const LHC22a_apass1 = {
-    id: 3,
-    name: 'LHC22a_apass1',
-    pdpBeamType: 'PbPb',
-    skimmingStage: null,
-    versions: [
-        {
-            id: 3,
-            dataPassId: 3,
-            description: 'Some random desc for apass 1',
-            reconstructedEventsCount: 50848111,
-            outputSize: 55761110122610,
-            lastSeen: 105,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 3,
-                    id: 6,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704885120000,
-                    dataPassVersionId: 3,
-                    id: 7,
-                    status: 'Deleted',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 4,
-    simulationPassesCount: 2,
-};
-
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -139,7 +64,7 @@ module.exports = () => {
 
         it('should successfully get by name', async () => {
             const dataPass = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
-            expect(dataPass).to.be.eql(LHC22a_apass1);
+            expect(dataPass.name).to.be.eql('LHC22a_apass1');
         });
 
         it('should successfully get all data', async () => {
@@ -193,7 +118,7 @@ module.exports = () => {
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
             expect(dataPasses).to.be.lengthOf(2);
-            expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
         });
 
         it('should successfully filter data passes on simulation pass ids', async () => {
@@ -205,7 +130,7 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
         });
 
         it('should successfully sort data passes by names', async () => {

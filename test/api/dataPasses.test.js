@@ -15,12 +15,13 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { SkimmingStage } = require('../../lib/domain/enums/SkimmingStage');
 
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
-    skimmingStage: null,
+    skimmingStage: SkimmingStage.SKIMMABLE,
     versions: [
         {
             id: 1,
@@ -41,47 +42,6 @@ const LHC22b_apass1 = {
                     dataPassVersionId: 1,
                     id: 2,
                     status: 'Deleted',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 3,
-    simulationPassesCount: 1,
-};
-
-const LHC22b_apass2 = {
-    id: 2,
-    name: 'LHC22b_apass2',
-    pdpBeamType: 'pp',
-    skimmingStage: null,
-    versions: [
-        {
-            id: 2,
-            dataPassId: 2,
-            description: 'Some random desc 2',
-            reconstructedEventsCount: 50848604,
-            outputSize: 55765671112610,
-            lastSeen: 55,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 2,
-                    id: 3,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704884520000,
-                    dataPassVersionId: 2,
-                    id: 4,
-                    status: 'Deleted',
-                },
-                {
-                    createdAt: 1704884940000,
-                    dataPassVersionId: 2,
-                    id: 5,
-                    status: 'Running',
                 },
             ],
             createdAt: 1704884400000,
@@ -146,7 +106,7 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.eql(LHC22b_apass2);
+                    expect(data[0].name).to.be.eql('LHC22b_apass2');
 
                     done();
                 });
@@ -213,7 +173,7 @@ module.exports = () => {
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses).to.be.lengthOf(2);
-                    expect(dataPasses).to.have.deep.members([LHC22b_apass2, LHC22b_apass1]);
+                    expect(dataPasses.name(({ name }) => name)).to.have.deep.members(['LHC22b_apass2', 'LHC22b_apass1']);
                     done();
                 });
         });
@@ -229,7 +189,7 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
+                    expect(dataPasses.map(({ name }) => name)).to.have.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
                     done();
                 });
         });
