@@ -20,13 +20,15 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    reloadPage,
     validateTableData,
     validateDate,
     waitForTableLength,
     waitForNavigation,
     waitForDownload,
     testTableSortingByColumn,
+    getInnerText,
+    expectUrlParams,
+    fillInput,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -73,18 +75,13 @@ module.exports = () => {
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
 
-        // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
 
-        // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
-
-        // Expectations of header texts being of a certain datatype
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
@@ -101,10 +98,28 @@ module.exports = () => {
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+        };
+
+        // By default current tab is 'detectorsQualities'
+        const tableDataValidatorsWithDetectorQualities = {
+            ...tableDataValidators,
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
-        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
+
+        await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
+
+        const tableDataValidatorsWithQualityFromSynchronousFlags = {
+            ...tableDataValidators,
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [
+                detectorName,
+                (notBadDataFraction) => !notBadDataFraction || !isNaN(Number(notBadDataFraction)),
+            ])),
+        };
+
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
+        await expectInnerText(page, '#row56-FT0', '83');
     });
 
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
@@ -112,8 +127,6 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await reloadPage(page);
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '4');
         await expectInnerText(page, '#totalRowsCount', '4');
@@ -132,34 +145,24 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await reloadPage(page);
-
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
-
-        // Expect the amount selector to currently be set to 5 when the first option (5) is selected
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
         await waitForTableLength(page, 4);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
-        const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
-        await customPerPageInput.evaluate((input) => input.focus());
-        await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
-            el.value = '1111';
-            el.dispatchEvent(new Event('input'));
-        });
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '');
     });
 
     it('notifies if table loading returned an error', async () => {
-        await reloadPage(page);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
@@ -176,26 +179,9 @@ module.exports = () => {
         await waitForTableLength(page, 4);
     });
 
-    it('can navigate to a run detail page', async () => {
-        await reloadPage(page);
-        await page.waitForSelector('tbody tr');
-
-        const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
-
-        await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
-        const redirectedUrl = await page.url();
-
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
-    });
-
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
-        await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
-
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
@@ -244,5 +230,11 @@ module.exports = () => {
         ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('can navigate to a run detail page', async () => {
+        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
     });
 };
