@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.98.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.98.0)
+* Notable changes for users:
+  * Fixed unnecessary splitting of GAQ periods
+  * Format properly FLP statistics
+* Notable changes for developers:
+  * Fixed calculation of timestamps which define gaq_effective_periods, so only flags of detectors which are defined in global_aggregated_quality_detectors are taken into account for the calculation
+  * Added filtering by INEL and mu values to runs API
+  * Added API for fetching synchronous QC flags
+
 ## [0.97.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.97.0)
 * Notable changes for users:
   * Updates some of the headers from the FLP Statistics table from run-details page

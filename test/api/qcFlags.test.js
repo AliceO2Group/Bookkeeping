@@ -127,20 +127,46 @@ module.exports = () => {
             });
         });
 
+        it('should successfully get non-empty QC summary of synchronous flags for given LHC period', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?lhcPeriodId=1');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                56: {
+                    // FT0
+                    7: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.1667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                    },
+
+                    // ITS
+                    4: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                    },
+                },
+            });
+        });
+
         it('should return 400 when bad query parameter provided', async () => {
             {
                 const response = await request(server).get('/api/qcFlags/summary');
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
-                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId]');
+                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId, lhcPeriodId]');
             }
             {
                 const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1&dataPassId=1');
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
-                expect(titleError.detail).to.equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId]');
+                expect(titleError.detail).to
+                    .equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId, lhcPeriodId]');
             }
         });
     });

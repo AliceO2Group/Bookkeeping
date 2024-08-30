@@ -14,7 +14,7 @@
 const application = require('../../lib/application');
 const OverviewSuite = require('../public/runs/overview.test');
 const DetailSuite = require('../public/runs/detail.test');
-const RunsPerPeriodOverviewSuite = require('../public/runs/runsPerPeriod.overview.test');
+const RunsPerPeriodOverviewSuite = require('../public/runs/runsPerLhcPeriod.overview.test');
 const RunsPerDataPassOverviewPage = require('../public/runs/runsPerDataPass.overview.test');
 const RunsPerSimulationPassOverviewPage = require('../public/runs/runsPerSimulationPass.overview.test');
 
