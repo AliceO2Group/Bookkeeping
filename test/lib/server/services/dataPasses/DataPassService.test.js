@@ -218,4 +218,11 @@ module.exports = () => {
                 .ordered.members(['LHC22a_apass1', 'LHC22a_apass2_skimmed', 'LHC22a_skimming', 'LHC22b_apass1', 'LHC22b_apass2']);
         });
     });
+
+    describe('Skimming', () => {
+        it('should successfully mark data pass as skimmable', async () => {
+            const dataPass = await dataPassService.getByIdentifier({ id: 1 });
+            expect(dataPass).to.be.eql(LHC22b_apass1);
+        });
+    });
 };
