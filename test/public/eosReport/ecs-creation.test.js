@@ -17,10 +17,10 @@ const {
     defaultAfter,
     reloadPage,
     fillInput,
-    expectInnerText,
     waitForNavigation,
     pressElement,
     expectUrlParams,
+    expectInnerText,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -125,9 +125,7 @@ module.exports = () => {
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
-        expectInnerText(page, '#from-previous-shifter .CodeMirror textarea', info);
-        await page.focus('#from-previous-shifter .CodeMirror textarea');
-        await page.keyboard.type('Old information: ');
+        await expectInnerText(page, '#from-previous-shifter .CodeMirror .CodeMirror-line', info);
 
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
@@ -156,7 +154,7 @@ module.exports = () => {
           on run`)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
-        expect(text.includes(`### From previous shifter\nOld information: ${info}`)).to.be.true;
+        expect(text.includes(`### From previous shifter\n${info}`)).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
     });
