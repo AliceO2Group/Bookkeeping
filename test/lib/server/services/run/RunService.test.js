@@ -257,7 +257,7 @@ module.exports = () => {
     it('should successfully consider current patch to allow/disallow calibration status update', async () => {
         const runNumber = 106;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.COMMISSIONING);
+        expect(run.definition).to.equal(RunDefinition.PHYSICS);
         expect(run.calibrationStatus).to.be.null;
         // Run was commissioning, set it to calibration and set calibration status at once
         run = await runService.update(

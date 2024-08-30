@@ -91,7 +91,7 @@ module.exports = () => {
             const run = await new GetRunUseCase().execute(getRunDto);
             expect(run).to.be.an('object');
             expect(run.id).to.equal(105);
-            expect(run.runQuality).to.equal(RunQualities.TEST);
+            expect(run.runQuality).to.equal(RunQualities.GOOD);
 
             updateRunDto.params.runNumber = 105;
             updateRunDto.body.runQuality = RunQualities.BAD;
