@@ -74,6 +74,8 @@ module.exports = () => {
         await page.focus('#type-specific .CodeMirror textarea');
         await page.keyboard.type('An alert\nAnd another');
 
+        await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
+
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
         await page.keyboard.type('For next shifter\nOn multiple lines');
