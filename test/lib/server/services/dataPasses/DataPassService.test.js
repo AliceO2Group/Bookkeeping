@@ -20,6 +20,7 @@ const { dataPassService } = require('../../../../../lib/server/services/dataPass
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    pdpBeamType: 'pp',
     skimmingStage: null,
     versions: [
         {
@@ -54,6 +55,7 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
+    pdpBeamType: 'pp',
     skimmingStage: null,
     versions: [
         {
@@ -94,6 +96,7 @@ const LHC22b_apass2 = {
 const LHC22a_apass1 = {
     id: 3,
     name: 'LHC22a_apass1',
+    pdpBeamType: 'PbPb',
     skimmingStage: null,
     versions: [
         {

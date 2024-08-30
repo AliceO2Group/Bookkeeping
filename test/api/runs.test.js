@@ -247,7 +247,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data).to.lengthOf(4);
+            expect(data).to.lengthOf(10);
             expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
@@ -357,7 +357,7 @@ module.exports = () => {
 
         const inelasticInteractionRateFilteringTestsParameters = {
             muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
-            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [106, 49, 2] },
             inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
             inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
             inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
@@ -395,7 +395,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(44);
+            expect(data.length).to.equal(43);
         });
 
         it('should filter run on their trigger value', async () => {
