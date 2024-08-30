@@ -83,8 +83,13 @@ module.exports = () => {
             simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
         }))).to.have.all.deep.members([
             {
-                name: 'LHC22b_apass2',
+                name: 'LHC22b_skimming',
                 runsCount: 3,
+                simulationPassesCount: 0,
+            },
+            {
+                name: 'LHC22b_apass2_skimmed',
+                runsCount: 4,
                 simulationPassesCount: 1,
             },
             {
