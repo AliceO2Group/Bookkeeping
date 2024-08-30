@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { SkimmingStage } = require('../../lib/domain/enums/SkimmingStage');
+const { DataPassRepository, RunRepository, DataPassVersionRepository } = require('../../lib/database/repositories');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -286,6 +287,27 @@ module.exports = () => {
                     expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
                     done();
                 });
+        });
+    });
+
+    describe('PATCH /api/dataPasses/skimming', () => {
+        it('should successfully mark data pass as skimmable', async () => {
+            let newDataPass = await DataPassRepository.insert({ name: 'LHC22b_apass2', lhcPeriodId: 2 });
+            const run = await RunRepository.findOne({ where: { runNumber: 106 } });
+            await newDataPass.addRun(run);
+            await DataPassVersionRepository.insert({ dataPassId: newDataPass.id, description: 'desc for LHC22b apass2' });
+
+            let previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            const response = await request(server).patch(`/api/dataPasses/skimming?dataPassId=${newDataPass.id}`);
+            expect(response.status).to.be.equal(200);
+
+            previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(null);
+
+            newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
+            expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
         });
     });
 };
