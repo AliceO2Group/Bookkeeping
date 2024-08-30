@@ -155,8 +155,8 @@ const waitForTableToLength = async (page, expectedSize) => {
             expectedSize,
         );
     } catch {
-        const currentTableLength = (await page.$$('tbody tr')).length;
-        throw new Error(`Current table length is ${currentTableLength}, but expected one is ${expectedSize}`);
+        const actualSize = (await page.$$('tbody tr')).length;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}`);
     }
 };
 
