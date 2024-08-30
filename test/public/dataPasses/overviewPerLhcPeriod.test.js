@@ -66,6 +66,9 @@ module.exports = () => {
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
             outputSize: (outputSize) => {
+                if (outputSize === '-') {
+                    return true;
+                }
                 const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
@@ -161,6 +164,6 @@ module.exports = () => {
         await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_apass2_skimmed']);
+        await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1']);
     });
 };
