@@ -95,7 +95,7 @@ module.exports = () => {
         });
         it('should successfully filter on names', (done) => {
             request(server)
-                .get('/api/dataPasses?filter[names][]=LHC22b_apass2')
+                .get('/api/dataPasses?filter[names][]=LHC22b_apass2_skimmed')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -106,7 +106,7 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0].name).to.be.eql('LHC22b_apass2');
+                    expect(data[0].name).to.be.eql('LHC22b_apass2_skimmed');
 
                     done();
                 });
@@ -172,8 +172,8 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(2);
-                    expect(dataPasses.name(({ name }) => name)).to.have.deep.members(['LHC22b_apass2', 'LHC22b_apass1']);
+                    expect(dataPasses).to.be.lengthOf(3);
+                    expect(dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming', 'LHC22b_apass2_skimmed']);
                     done();
                 });
         });
@@ -189,7 +189,7 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses.map(({ name }) => name)).to.have.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2']);
+                    expect(dataPasses.map(({ name }) => name)).to.have.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2_skimmed']);
                     done();
                 });
         });
@@ -207,10 +207,10 @@ module.exports = () => {
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses).to.be.lengthOf(5);
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.members([
-                        'LHC22a_apass2_skimmed',
-                        'LHC22a_skimming',
+                        'LHC22b_apass2_skimmed',
+                        'LHC22a_apass2',
                         'LHC22a_apass1',
-                        'LHC22b_apass2',
+                        'LHC22b_skimming',
                         'LHC22b_apass1',
                     ]);
 
@@ -230,9 +230,9 @@ module.exports = () => {
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.deep.members([
-                        'LHC22a_skimming',
+                        'LHC22a_apass2',
                         'LHC22a_apass1',
-                        'LHC22b_apass2',
+                        'LHC22b_skimming',
                         'LHC22b_apass1',
                     ]);
 
