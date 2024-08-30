@@ -29,6 +29,7 @@ const {
     waitForNavigation,
     expectUrlParams,
     testTableSortingByColumn,
+    waitForTableLength,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -88,8 +89,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
@@ -102,7 +101,6 @@ module.exports = () => {
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
-            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
@@ -142,16 +140,12 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '3');
         await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
 
@@ -161,8 +155,6 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
@@ -177,26 +169,28 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perSimulationPassOverviewModel.pagination.reset();
+            // eslint-disable-next-line no-undef
+            model.runs.perSimulationPassOverviewModel.pagination.notify();
+        });
+        await waitForTableLength(page, 3);
     });
 
     it('can navigate to a run detail page', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 56 });
+        await waitForNavigation(page, () => page.goBack());
     });
 
     it('should successfully export runs', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
         const targetFileName = 'runs.json';
