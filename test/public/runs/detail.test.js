@@ -261,7 +261,7 @@ module.exports = () => {
     });
 
     it('should successfully update inelasticInteractionRateAvg of pp run', async () => {
-        await goToRunDetails(page, 49);
+        await goToRunDetails(page, 55);
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100000);
 
@@ -483,7 +483,7 @@ module.exports = () => {
         });
         await expectLink(page, '.external-links a:nth-of-type(2)', {
             innerText: 'QCG',
-            href: 'http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS',
+            href: 'http://localhost:8082/?page=layoutShow&runNumber=108&definition=PHYSICS&pdpBeamType=pp&runType=PHYSICS',
         });
     });
 
