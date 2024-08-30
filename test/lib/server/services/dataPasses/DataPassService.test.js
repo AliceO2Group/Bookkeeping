@@ -17,6 +17,8 @@ const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage.js');
+const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
+const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -148,9 +150,36 @@ module.exports = () => {
     });
 
     describe('Skimming', () => {
+        it('should throw when calling for data pass of PbPb runs', async () => {
+            await assert.rejects(
+                () => dataPassService.setAsSkimmable({ name: 'LHC22a_apass1' }),
+                new NotFoundError('Cannot mark LHC22a_apass1 as skimmable.' +
+                    ' Only production for PROTON_PROTON runs can be marked as skimmable'),
+            );
+        });
+
+        it('should throw when calling for data pass with invalid name', async () => {
+            await assert.rejects(
+                () => dataPassService.setAsSkimmable({ name: 'LHC22b_skimmed' }),
+                new NotFoundError('Cannot mark LHC22b_skimmed as skimmable.' +
+                    ' Only  `apass` can be marked as skimmable'),
+            );
+        });
+
         it('should successfully mark data pass as skimmable', async () => {
-            const dataPass = await dataPassService.getByIdentifier({ id: 1 });
-            expect(dataPass).to.be.eql(LHC22b_apass1);
+            let newDataPass = await DataPassRepository.insert({ name: 'LHC22b_apass2' });
+            const run = await RunRepository.findOne({ where: { runNumber: 106 } });
+            await newDataPass.addRun(run);
+
+            let previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            await dataPassService.setAsSkimmable({ name: 'LHC22b_apass2' });
+            previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(null);
+
+            newDataPass = await DataPassRepository.insert({ name: 'LHC22b_apass2' });
+            expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
         });
     });
 };
