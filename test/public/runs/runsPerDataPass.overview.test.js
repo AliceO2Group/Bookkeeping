@@ -162,6 +162,21 @@ module.exports = () => {
             .to.be.equal('Missing 3 verifications');
     });
 
+    it('should switch mcReproducibleAsNotBad', async () => {
+        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
+        await page.waitForFunction(() => document.querySelector('tr#row106 .column-CPV a') !== 'QC');
+        await expectLink(page, 'tr#row106 .column-CPV a', {
+            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
+            innerText: '89',
+        });
+        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
+        await page.waitForFunction(() => document.querySelector('tr#row106 .column-CPV a') !== 'QC');
+        await expectLink(page, 'tr#row106 .column-CPV a', {
+            href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
+            innerText: '67MC.R',
+        });
+    });
+
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
         await testTableSortingByColumn(page, 'runNumber');
     });
