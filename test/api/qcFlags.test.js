@@ -105,20 +105,46 @@ module.exports = () => {
             });
         });
 
+        it('should successfully get non-empty QC summary of synchronous flags for given LHC period', async () => {
+            const response = await request(server).get('/api/qcFlags/summary?lhcPeriodId=1');
+            expect(response.status).to.be.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.be.eql({
+                56: {
+                    // FT0
+                    7: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.1667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                    },
+
+                    // ITS
+                    4: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                    },
+                },
+            });
+        });
+
         it('should return 400 when bad query parameter provided', async () => {
             {
                 const response = await request(server).get('/api/qcFlags/summary');
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
-                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId]');
+                expect(titleError.detail).to.equal('"query" must contain at least one of [dataPassId, simulationPassId, lhcPeriodId]');
             }
             {
                 const response = await request(server).get('/api/qcFlags/summary?simulationPassId=1&dataPassId=1');
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query');
-                expect(titleError.detail).to.equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId]');
+                expect(titleError.detail).to
+                    .equal('"query" contains a conflict between exclusive peers [dataPassId, simulationPassId, lhcPeriodId]');
             }
         });
     });
@@ -211,6 +237,35 @@ module.exports = () => {
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
                 expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
+            }
+        });
+    });
+
+    describe('GET /api/qcFlags/synchronous', () => {
+        it('should successfully fetch synchronous flags', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            const response = await request(server).get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}`);
+            expect(response.status).to.be.equal(200);
+            const { data: flags, meta } = response.body;
+            expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
+            expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+        });
+
+        it('should successfully fetch synchronous flags with pagination', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&page[limit]=1&page[offset]=1`);
+
+                expect(response.status).to.be.equal(200);
+                const { data: flags, meta } = response.body;
+                expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 2 } });
+                expect(flags).to.be.lengthOf(1);
+                const [flag] = flags;
+                expect(flag.id).to.be.equal(100);
+                expect(flag.verifications[0].comment).to.be.equal('good');
             }
         });
     });
