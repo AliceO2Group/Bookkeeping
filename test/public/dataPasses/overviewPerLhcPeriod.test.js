@@ -58,7 +58,7 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_[a-z]pass\d/.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_([a-z]pass\d|skimming)/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
@@ -109,7 +109,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
         expectUrlParams(page, {
             page: 'anchored-simulation-passes-overview',
-            dataPassId: '2',
+            dataPassId: '5',
         });
     });
 
@@ -117,8 +117,8 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '2');
-        await expectInnerText(page, '#totalRowsCount', '2');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('can set how many data passes is available per page', async () => {
@@ -134,7 +134,7 @@ module.exports = () => {
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         pressElement(page, '.dropup .menu-item');
 
-        await waitForTableLength(page, 2);
+        await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await page.$eval('.dropup input[type=number]', (el) => {
@@ -161,6 +161,6 @@ module.exports = () => {
         await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'deleted\nLHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_apass2_skimmed']);
     });
 };
