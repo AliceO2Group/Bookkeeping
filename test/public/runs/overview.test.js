@@ -377,15 +377,28 @@ module.exports = () => {
                 const rowId = row.id;
                 return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
             }));
-            expect(definitions.length).to.equal(size);
-            expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
+
+            try {
+                expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
+            } catch {
+                const runNumbers = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
+                    const rowId = row.id;
+                    return document.querySelector(`#${rowId}-runNumber-text`).innerText;
+                }));
+                throw new Error(`Expect all run definitions ${definitions} to be one of ${authorizedRunDefinition}, for runs (${runNumbers})`);
+            }
         };
 
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.overviewModel.pagination.itemsPerPage = 20;
+        });
+
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(4, [RunDefinition.PHYSICS]);
+        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(6, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
+        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
         await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);
@@ -406,7 +419,7 @@ module.exports = () => {
         await checkTableSizeAndDefinition(2, [RunDefinition.TECHNICAL, RunDefinition.CALIBRATION]);
 
         await pressElement(page, commissioningFilterSelector, true);
-        await checkTableSizeAndDefinition(8, [RunDefinition.COMMISSIONING]);
+        await checkTableSizeAndDefinition(20, [RunDefinition.COMMISSIONING]);
 
         await pressElement(page, commissioningFilterSelector, true);
         await pressElement(page, physicsFilterSelector, true);
@@ -418,10 +431,8 @@ module.exports = () => {
             model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
 
-        await waitForTableLength(page, 10);
-
         await checkTableSizeAndDefinition(
-            10,
+            16,
             [RunDefinition.COSMICS, RunDefinition.TECHNICAL, RunDefinition.PHYSICS, RunDefinition.SYNTHETIC, RunDefinition.CALIBRATION],
         );
     });

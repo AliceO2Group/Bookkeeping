@@ -148,11 +148,16 @@ module.exports.waitForTimeout = waitForTimeout;
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
 const waitForTableToLength = async (page, expectedSize) => {
-    await page.waitForFunction(
-        (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-        {},
-        expectedSize,
-    );
+    try {
+        await page.waitForFunction(
+            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+            {},
+            expectedSize,
+        );
+    } catch {
+        const actualSize = (await page.$$('tbody tr')).length;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}`);
+    }
 };
 
 module.exports.waitForTableLength = waitForTableToLength;
