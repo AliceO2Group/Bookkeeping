@@ -17,6 +17,7 @@ const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { SkimmingStage } = require('../../lib/domain/enums/SkimmingStage');
 const { DataPassRepository, RunRepository, DataPassVersionRepository } = require('../../lib/database/repositories');
+const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -308,6 +309,39 @@ module.exports = () => {
 
             newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
             expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+        });
+    });
+
+    describe('GET /api/dataPasses/skimming/runs', async () => {
+        it('should successfully fetch runs list with ready_for_skimming information', async () => {
+            const response = await request(server).get('/api/dataPasses/skimming?dataPassId=1');
+            expect(response.status).to.be.equal(200);
+            const { data } = response.body;
+            expect(data).to.have.all.deep.members([
+                { runNumber: 106, readyForSkimming: true },
+                { runNumber: 107, readyForSkimming: false },
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
+    });
+
+    describe('PUT /api/dataPasses/skimming/runs', async () => {
+        it('should successfully update runs with ready_for_skimming information', async () => {
+            const newData = [
+                { runNumber: 106, readyForSkimming: false },
+                { runNumber: 107, readyForSkimming: true },
+            ];
+
+            const skimmableRuns = await request(server).put('/api/dataPasses/skimming?dataPassId=1').send({ data: newData });
+            expect(skimmableRuns).to.have.all.deep.members([
+                ...newData,
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+
+            expect(await dataPassService.getSkimmableRuns({ id: 1 })).to.have.all.deep.members([
+                ...newData,
+                { runNumber: 108, readyForSkimming: false },
+            ]);
         });
     });
 };
