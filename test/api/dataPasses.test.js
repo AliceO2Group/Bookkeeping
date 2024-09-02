@@ -334,10 +334,7 @@ module.exports = () => {
 
             const response = await request(server).put('/api/dataPasses/skimming/runs?dataPassId=1').send({ data: newData });
             const { data } = response.body;
-            expect(data).to.have.all.deep.members([
-                ...newData,
-                { runNumber: 108, readyForSkimming: false },
-            ]);
+            expect(data).to.have.all.deep.members(newData);
 
             expect(await dataPassService.getSkimmableRuns({ id: 1 })).to.have.all.deep.members([
                 ...newData,
