@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const SynchronousOverviewSuite = require('./synchronousOverview.test');
 const ForDataPassOverviewSuite = require('./forDataPassOverview.test');
 const ForSimulationPassOverviewSuite = require('./forSimulationPassOverview.test');
 const ForDataPassCreationSuite = require('./forDataPassCreation.test');
@@ -20,6 +21,7 @@ const DetailsForSimulationPassPageSuite = require('./detailsForSimulationPass.te
 const GaqOverviewPageSuite = require('./gaqOverview.test');
 
 module.exports = () => {
+    describe('Synchronous Overview Page', SynchronousOverviewSuite);
     describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
     describe('For Simulation Pass Overview Page', ForSimulationPassOverviewSuite);
     describe('For Data Pass Creation Page', ForDataPassCreationSuite);

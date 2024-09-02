@@ -675,4 +675,23 @@ module.exports = () => {
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
         });
     }
+
+    it('should successfully filter by GAQ notBadFraction', async () => {
+        const dataPassIds = [1];
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
+                dataPassIds,
+                gaq: { notBadFraction: { '<': 0.8 } },
+            } } });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
+                dataPassIds,
+                gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
+            } } });
+            expect(runs).to.have.lengthOf(0);
+        }
+    });
 };
