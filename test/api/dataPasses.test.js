@@ -316,9 +316,7 @@ module.exports = () => {
         it('should successfully fetch runs list with ready_for_skimming information', async () => {
             await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
             const response = await request(server).get('/api/dataPasses/skimming/runs?dataPassId=1');
-            // expect(response.status).to.be.equal(200);
             const { data } = response.body;
-            console.log(response.body, 'TOBEC body');
             expect(data).to.have.all.deep.members([
                 { runNumber: 106, readyForSkimming: true },
                 { runNumber: 107, readyForSkimming: false },
@@ -334,8 +332,7 @@ module.exports = () => {
                 { runNumber: 107, readyForSkimming: true },
             ];
 
-            const response = await request(server).put('/api/dataPasses/skimming?dataPassId=1').send({ data: newData });
-            // expect(response.status).to.be.equal(200);
+            const response = await request(server).put('/api/dataPasses/skimming/runs?dataPassId=1').send({ data: newData });
             const { data } = response.body;
             expect(data).to.have.all.deep.members([
                 ...newData,
