@@ -153,7 +153,7 @@ module.exports = () => {
     describe('Skimming', () => {
         it('should throw when calling for data pass of PbPb runs', async () => {
             await assert.rejects(
-                () => dataPassService.setAsSkimmable({ name: 'LHC22a_apass1' }),
+                () => dataPassService.markAsSkimmable({ name: 'LHC22a_apass1' }),
                 new NotFoundError('Cannot mark LHC22a_apass1 as skimmable.' +
                     ' Only production for PROTON_PROTON runs can be marked as skimmable'),
             );
@@ -161,7 +161,7 @@ module.exports = () => {
 
         it('should throw when calling for data pass with invalid name', async () => {
             await assert.rejects(
-                () => dataPassService.setAsSkimmable({ name: 'LHC22b_skimming' }),
+                () => dataPassService.markAsSkimmable({ name: 'LHC22b_skimming' }),
                 new NotFoundError('Cannot mark LHC22b_skimming as skimmable.' +
                     ' Only `apass` can be marked as skimmable'),
             );
@@ -176,7 +176,7 @@ module.exports = () => {
             let previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
             expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
 
-            await dataPassService.setAsSkimmable({ name: 'LHC22b_apass2' });
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass2' });
             previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
             expect(previousSkimmable.skimmingStage).to.be.equal(null);
 
