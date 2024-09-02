@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { lhcFill: { UpdateLhcFillUseCase }, lhcFill } = require('../../../../lib/usecases/index.js');
+const { lhcFill: { UpdateLhcFillUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { UpdateLhcFillDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { getLhcFill } = require('../../../../lib/server/services/lhcFill/getLhcFill.js');
