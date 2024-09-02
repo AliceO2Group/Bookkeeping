@@ -327,7 +327,8 @@ module.exports = () => {
 
     it ('should throw an error if no previous EoS report is found for autofilling', async () => {
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS);
-        expect(response.infoFromPreviousShifter.errorMessage).to.equal('No SLIMOS EoS reports found from the previous shift');
+        const { infoFromPreviousShifter } = response;
+        expect(infoFromPreviousShifter.errorMessage).to.equal('No SLIMOS EoS reports found from the previous shift');
     });
 
     it ('should throw an error if the previous EoS report has no information transfer field', async () => {
@@ -341,7 +342,8 @@ module.exports = () => {
             text: 'Missing information',
         });
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.DCS);
-        expect(response.infoFromPreviousShifter.errorMessage)
+        const { infoFromPreviousShifter } = response;
+        expect(infoFromPreviousShifter.errorMessage)
             .to.equal('EoS report from the previous shift is missing the information transfer field');
     });
 
@@ -357,7 +359,8 @@ module.exports = () => {
         await eosReportService.createLogEntry(ShiftTypes.SLIMOS, request, { userId: 1 });
 
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS);
-        expect(response.infoFromPreviousShifter.errorMessage).to.equal('Previous EoS report contains no information for next shifter');
+        const { infoFromPreviousShifter } = response;
+        expect(infoFromPreviousShifter.errorMessage).to.equal('Previous EoS report contains no information for next shifter');
     });
 
     it ('should throw an error if multiple previous EoS reports are found for autofilling', async () => {
@@ -376,7 +379,8 @@ module.exports = () => {
         await eosReportService.createLogEntry(ShiftTypes.SLIMOS, request2, { userId: 1 });
 
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.SLIMOS);
-        expect(response.infoFromPreviousShifter.errorMessage).to.equal('Multiple SLIMOS EoS reports found from the previous shift');
+        const { infoFromPreviousShifter } = response;
+        expect(infoFromPreviousShifter.errorMessage).to.equal('Multiple SLIMOS EoS reports found from the previous shift');
     });
 
     it ('should autofill new EoS reports with information from the previous shifter', async () => {
@@ -393,6 +397,7 @@ module.exports = () => {
         await eosReportService.createLogEntry(ShiftTypes.ECS, request, { userId: 1 });
 
         const response = await shiftService.getShiftData({ userId: 1 }, ShiftTypes.ECS);
-        expect(response.infoFromPreviousShifter.value).to.equal(info);
+        const { infoFromPreviousShifter } = response;
+        expect(infoFromPreviousShifter.value).to.equal(info);
     });
 };
