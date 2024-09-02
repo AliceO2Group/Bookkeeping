@@ -11,12 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
-const { lhcFill: { UpdateLhcFillUseCase } } = require('../../../../lib/usecases/index.js');
+const { lhcFill: { UpdateLhcFillUseCase }, lhcFill } = require('../../../../lib/usecases/index.js');
 const { dtos: { UpdateLhcFillDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 const { getLhcFill } = require('../../../../lib/server/services/lhcFill/getLhcFill.js');
 const { getRun } = require('../../../../lib/server/services/run/getRun.js');
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
+const { lhcFillService } = require('../../../../lib/server/services/lhcFill/LhcFillService.js');
 
 const { expect } = chai;
 
@@ -47,12 +48,31 @@ module.exports = () => {
     });
 
     it('Should be able to update the LHC fill with correct values', async () => {
-        const { result } = await new UpdateLhcFillUseCase().execute(updateLhcFillDto);
-        expect(result.stableBeamsStart).to.equal(new Date('2022-03-21 13:00:00 utc').getTime());
-        expect(result.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-        expect(result.stableBeamsDuration).to.equal(600);
-        expect(result.beamType).to.equal('Pb-Pb');
-        expect(result.fillingSchemeName).to.equal('schemename');
+        {
+            const { result } = await new UpdateLhcFillUseCase().execute(updateLhcFillDto);
+            expect(result.stableBeamsStart).to.equal(new Date('2022-03-21 13:00:00 utc').getTime());
+            expect(result.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(result.stableBeamsDuration).to.equal(600);
+            expect(result.beamType).to.equal('Pb-Pb');
+            expect(result.fillingSchemeName).to.equal('schemename');
+        }
+        {
+            const existingFill = await lhcFillService.get(1);
+            const collidingBunchesCount = 12345;
+            const deliveredLuminosity = 12.53;
+
+            expect(existingFill.collidingBunchesCount).to.be.null;
+            expect(existingFill.deliveredLuminosity).to.be.null;
+
+            updateLhcFillDto.body = {
+                collidingBunchesCount,
+                deliveredLuminosity,
+            };
+
+            const { result } = await new UpdateLhcFillUseCase().execute(updateLhcFillDto);
+            expect(result.collidingBunchesCount).to.equal(collidingBunchesCount);
+            expect(result.deliveredLuminosity).to.equal(deliveredLuminosity);
+        }
     });
 
     it('Should give an error when the id of the LHC fill can not be found', async () => {
