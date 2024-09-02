@@ -247,7 +247,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data).to.lengthOf(4);
+            expect(data).to.lengthOf(10);
             expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
@@ -357,7 +357,7 @@ module.exports = () => {
 
         const inelasticInteractionRateFilteringTestsParameters = {
             muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
-            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [106, 49, 2] },
             inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
             inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
             inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
@@ -377,6 +377,29 @@ module.exports = () => {
             });
         }
 
+        it('should successfully filter by GAQ notBadFraction', async () => {
+            const dataPassId = 1;
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            }
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +
+                    '&filter[gaq][notBadFraction][<]=0.8&filter[gaq][mcReproducibleAsNotBad]=true');
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs).to.have.lengthOf(0);
+            }
+        });
+
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =
@@ -395,7 +418,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(44);
+            expect(data.length).to.equal(43);
         });
 
         it('should filter run on their trigger value', async () => {

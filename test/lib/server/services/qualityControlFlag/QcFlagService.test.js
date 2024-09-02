@@ -162,6 +162,25 @@ module.exports = () => {
             });
         });
 
+        it('should successfully get non-empty QC flag summary with MC.Reproducible interpreted as not-bad for data pass', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 3,
+                        mcReproducible: true,
+                        badEffectiveRunCoverage: 0.1111,
+                        explicitlyNotBadEffectiveRunCoverage: 0.2222,
+                    },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
+            });
+        });
+
         it('should successfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
             const dataPassId = 2;
             const run = await RunRepository.findOne({ where: { runNumber: 1 } });
@@ -222,6 +241,28 @@ module.exports = () => {
 
         it('should successfully get empty QC flag summary for simulation pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
+        });
+
+        it('should successfully get QC summary of synchronous QC flags for one LHC Period', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
+                56: {
+                    // FT0
+                    7: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.1667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                    },
+
+                    // ITS
+                    4: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                    },
+                },
+            });
         });
     });
 

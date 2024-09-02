@@ -174,7 +174,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on run definition', async () => {
-        const PHYSICS_COUNT = 4;
+        const PHYSICS_COUNT = 6;
         const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
@@ -364,7 +364,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(98);
+            expect(runs).to.have.lengthOf(97);
         }
         {
             getAllRunsDto.query = {
@@ -378,7 +378,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(4);
+            expect(runs).to.have.lengthOf(1);
         }
     });
 
@@ -597,7 +597,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(44);
+        expect(runs).to.have.lengthOf(43);
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
@@ -661,7 +661,7 @@ module.exports = () => {
 
     const inelasticInteractionRateFilteringTestsParameters = {
         muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
-        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [2, 49] },
+        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [106, 49, 2] },
         inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
         inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
         inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
@@ -675,4 +675,23 @@ module.exports = () => {
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
         });
     }
+
+    it('should successfully filter by GAQ notBadFraction', async () => {
+        const dataPassIds = [1];
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
+                dataPassIds,
+                gaq: { notBadFraction: { '<': 0.8 } },
+            } } });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
+                dataPassIds,
+                gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
+            } } });
+            expect(runs).to.have.lengthOf(0);
+        }
+    });
 };

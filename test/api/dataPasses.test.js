@@ -19,6 +19,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    pdpBeamType: 'pp',
     skimmingStage: null,
     versions: [
         {
@@ -28,7 +29,20 @@ const LHC22b_apass1 = {
             reconstructedEventsCount: 50948694,
             outputSize: 56875682112600,
             lastSeen: 108,
-            deletedFromMonAlisa: true,
+            statusHistory: [
+                {
+                    createdAt: 1704884400000,
+                    dataPassVersionId: 1,
+                    id: 1,
+                    status: 'Running',
+                },
+                {
+                    createdAt: 1704885060000,
+                    dataPassVersionId: 1,
+                    id: 2,
+                    status: 'Deleted',
+                },
+            ],
             createdAt: 1704884400000,
             updatedAt: 1704884400000,
         },
@@ -40,6 +54,7 @@ const LHC22b_apass1 = {
 const LHC22b_apass2 = {
     id: 2,
     name: 'LHC22b_apass2',
+    pdpBeamType: 'pp',
     skimmingStage: null,
     versions: [
         {
@@ -49,7 +64,26 @@ const LHC22b_apass2 = {
             reconstructedEventsCount: 50848604,
             outputSize: 55765671112610,
             lastSeen: 55,
-            deletedFromMonAlisa: false,
+            statusHistory: [
+                {
+                    createdAt: 1704884400000,
+                    dataPassVersionId: 2,
+                    id: 3,
+                    status: 'Running',
+                },
+                {
+                    createdAt: 1704884520000,
+                    dataPassVersionId: 2,
+                    id: 4,
+                    status: 'Deleted',
+                },
+                {
+                    createdAt: 1704884940000,
+                    dataPassVersionId: 2,
+                    id: 5,
+                    status: 'Running',
+                },
+            ],
             createdAt: 1704884400000,
             updatedAt: 1704884400000,
         },

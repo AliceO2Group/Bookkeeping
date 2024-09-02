@@ -117,12 +117,12 @@ module.exports = () => {
             {
                 id: 20,
                 name: 'QC-SPECIFIC',
-                type: DetectorType.QC,
+                type: DetectorType.QC_ONLY,
             },
             {
                 id: 21,
                 name: 'GLO',
-                type: DetectorType.QC,
+                type: DetectorType.QC_ONLY,
             },
             {
                 id: 22,

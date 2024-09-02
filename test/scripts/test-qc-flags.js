@@ -12,6 +12,7 @@
  */
 
 const application = require('../../lib/application');
+const SynchronousOverviewSuite = require('../public/qcFlags/synchronousOverview.test');
 const ForDataPassOverviewSuite = require('../public/qcFlags/forDataPassOverview.test');
 const ForSimulationPassOverviewSuite = require('../public/qcFlags/forSimulationPassOverview.test');
 const ForDataPassCreationSuite = require('../public/qcFlags/forDataPassCreation.test');
@@ -31,6 +32,7 @@ describe('Bookkeeping', () => {
     });
 
     describe('QcFlags', () => {
+        describe('Synchronous Overview Page', SynchronousOverviewSuite);
         describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
         describe('For Simulation Pass Overview Page', ForSimulationPassOverviewSuite);
         describe('For Data Pass Creation Page', ForDataPassCreationSuite);
