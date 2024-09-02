@@ -81,7 +81,7 @@ module.exports = () => {
     });
 
     it('can navigate to run details page from breadcrumbs link', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
-        expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
+        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: '56' });
     });
 };
