@@ -23,7 +23,18 @@ Use the npm script (the `docker compose` command must be available to npm)
 npm run docker-run
 ```
 
-You will then see in these tabs the server's log
+The docker stack will start to run in the background. If you want to see the logs run, from the directory where docker
+has been started:
+
+```sh
+docker compose logs -f
+```
+
+And finally, if you want to stop the docker stack simply run, from the directory where docker has been started:
+
+```sh
+docker compose stop
+```
 
 ### Run seeders
 
