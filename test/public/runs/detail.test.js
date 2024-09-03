@@ -191,7 +191,7 @@ module.exports = () => {
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'DETECTORS');
 
-        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2) option:nth-of-type(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
         await page.type('#Run-eorReasons input', 'A new EOR reason');
         await pressElement(page, '#add-eor-reason', true);
@@ -204,7 +204,6 @@ module.exports = () => {
         await pressElement(page, '#save-run');
         await page.waitForSelector('#edit-run');
 
-        await waitForTableLength(page, 5);
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
 
         expect(eorReasons).to.lengthOf(2);
@@ -231,7 +230,6 @@ module.exports = () => {
         await pressElement(page, '#cancel-run');
         await page.waitForSelector('#save-run', { hidden: true });
 
-        await waitForTableLength(page, 5);
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
 
         expect(eorReasons).to.lengthOf(2);
@@ -296,7 +294,8 @@ module.exports = () => {
     });
 
     it('can navigate to a log detail page', async () => {
-        await waitForTableLength(page, 5);
+        // Lengh of 6 because of the test to change EoR reason which creates a log
+        await waitForTableLength(page, 6);
 
         // We expect the entry page to have the same id as the id from the run overview
         await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
