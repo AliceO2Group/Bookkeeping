@@ -191,7 +191,7 @@ module.exports = () => {
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'DETECTORS');
 
-        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2) option:nth-of-type(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
         await page.type('#Run-eorReasons input', 'A new EOR reason');
         await pressElement(page, '#add-eor-reason', true);
