@@ -941,9 +941,8 @@ module.exports = () => {
         expect(eorDescriptionInput).to.exist;
 
         // Expect there to be one result that contains a certain description
-        await page.focus('#eorDescription');
         const descriptionInput = 'some';
-        await page.keyboard.type(descriptionInput);
+        await fillInput(page, '#eorDescription', descriptionInput);
         await waitForTableLength(page, 2);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
