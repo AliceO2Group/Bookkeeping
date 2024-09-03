@@ -1,3 +1,7 @@
+## [0.99.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.0)
+* Changes made to the database
+    * Added columns colliding_bunches_count and delivered_lumi columns to lhc_fills
+
 ## [0.98.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.98.0)
 * Changes made to the database
   * Removed data_pass_versions column 'deleted_from_monalisa' and added data_pass_version_status_history table

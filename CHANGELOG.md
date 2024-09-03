@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.99.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.0)
+* Notable changes for users:
+  * Format properly FLP statistics
+  * Removed colour of deleted productions.
+  * Added status history columns to overview of data passes
+  * Removed GLO column from runs views
+  * The info from previous shifter field in eos report creation is now readonly
+  * Added runs filtering by INEL and mu values
+  * Added switch for changing Interpretation of MC.Reproducible flag type between bad and not-bad what affects QC summary display
+  * Added display of synchronous QC flags
+  * Added page with overview of synchronous QC flags
+  * Per fill delivered lumi and colliding bunches can be defined
+  * Fixed formatting of TF/CTF file size/count in run details
+  * Extract user that start/stop runs from kafka message
+  * FLP hosts list is now properly extracted when consuming ECS new run message
+  * Create a log entry when DETECTOR is chosen as EoR reason
+* Notable changes for developers:
+  * Added filtering by INEL and mu values to runs API
+  * Added API for fetching synchronous QC flags
+  * Added API for fetching QC summary of synchronous QC flags
+  * Fixed randomness of one of GAQ overview tests
+  * Removed notion of Dpl detectors from QcFlag creation and setting GAQ detectors
+  * Added filtering by GAQ not bad data fraction to runs API
+
 ## [0.98.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.98.0)
 * Notable changes for users:
   * Fixed unnecessary splitting of GAQ periods
