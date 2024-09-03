@@ -183,5 +183,30 @@ module.exports = () => {
             newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
             expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
         });
+
+        it('should successfully fetch runs list with ready_for_skimming information', async () => {
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
+            const data = await dataPassService.getSkimmableRuns({ id: 1 });
+            expect(data).to.have.all.deep.members([
+                { runNumber: 106, readyForSkimming: true },
+                { runNumber: 107, readyForSkimming: false },
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
+
+        it('should successfully update runs with ready_for_skimming information', async () => {
+            const newData = [
+                { runNumber: 106, readyForSkimming: false },
+                { runNumber: 107, readyForSkimming: true },
+            ];
+
+            const skimmableRuns = await dataPassService.updateReadyForSkimmingRuns({ id: 1 }, newData);
+            expect(skimmableRuns).to.have.all.deep.members(newData);
+
+            expect(await dataPassService.getSkimmableRuns({ id: 1 })).to.have.all.deep.members([
+                ...newData,
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
     });
 };
