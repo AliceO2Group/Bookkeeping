@@ -301,7 +301,7 @@ module.exports = () => {
             expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
 
             const response = await request(server).patch(`/api/dataPasses/skimming/markSkimmable?dataPassId=${newDataPass.id}`);
-            expect(response.status).to.be.equal(200);
+            expect(response.status).to.be.equal(204);
 
             previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
             expect(previousSkimmable.skimmingStage).to.be.equal(null);
