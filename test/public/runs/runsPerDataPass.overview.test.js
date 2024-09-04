@@ -450,4 +450,13 @@ module.exports = () => {
         const popoverContent = await getPopoverContent(await page.$(popoverSelector));
         expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
     });
+
+    it('should successfully change ready_for_skimming status', async () => {
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+        await expectColumnValues(page, ['not ready', 'not ready', 'ready']);
+        await pressElement(page, 'row108-readyForSkimming button', true);
+        await expectInnerText(page, 'row108-readyForSkimming', 'ready');
+        await pressElement(page, 'row108-readyForSkimming button', true);
+        await expectInnerText(page, 'row108-readyForSkimming', 'not ready');
+    });
 };
