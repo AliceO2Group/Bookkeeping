@@ -62,11 +62,13 @@ module.exports = () => {
     it('should successfully create a new environment with an initial state', async () => {
         const status = 'STANDBY';
         const statusMessage = 'Environment has been created';
+        const timestamp = new Date('2024-09-06 10:30').getTime();
+        const timestampNano = 654321;
         const rawConfiguration = 'Raw configuration';
 
         const environment = await environmentService.create(
             { id: environmentId, rawConfiguration },
-            { status, statusMessage },
+            { status, statusMessage, timestamp, timestampNano },
         );
 
         const { rawConfiguration: actualRawConfiguration, historyItems } = environment;
@@ -79,16 +81,24 @@ module.exports = () => {
 
         expect(firstHistoryItem.status).to.equal(status);
         expect(firstHistoryItem.statusMessage).to.equal(statusMessage);
+        expect(firstHistoryItem.timestamp.getTime()).to.equal(timestamp);
+        expect(firstHistoryItem.timestampNano).to.equal(timestampNano);
     });
 
     it('should throw when trying to create an environment with an invalid initial state', async () => {
         await assert.rejects(
-            () => environmentService.create({ id: 'A-NEW-NEW-ENVIRONMENT' }, { status: 'DO-NOT-EXIST' }),
+            () => environmentService.create(
+                { id: 'A-NEW-NEW-ENVIRONMENT' },
+                { status: 'DO-NOT-EXIST', timestamp: new Date(), timestampNano: 0 },
+            ),
             new BadParameterError('"status" must be one of [PENDING, STANDBY, DEPLOYED, CONFIGURED, RUNNING, ERROR, MIXED, DESTROYED, DONE]'),
         );
 
         await assert.rejects(
-            () => environmentService.create({ id: 'A-NEW-NEW-ENVIRONMENT' }, { statusMessage: 'I forgot the actual status' }),
+            () => environmentService.create(
+                { id: 'A-NEW-NEW-ENVIRONMENT' },
+                { statusMessage: 'I forgot the actual status', timestamp: new Date(), timestampNano: 0 },
+            ),
             new BadParameterError('"status" is required'),
         );
     });
@@ -96,8 +106,14 @@ module.exports = () => {
     it('should successfully update the environment\'s history when updating the environment\'s state', async () => {
         const status = 'CONFIGURED';
         const statusMessage = 'The environment has been successfully configured';
+        const timestamp = new Date('2024-09-06 10:40').getTime();
+        const timestampNano = 123456;
 
-        const environment = await environmentService.update(environmentId, {}, { status, statusMessage });
+        const environment = await environmentService.update(
+            environmentId,
+            {},
+            { status, statusMessage, timestamp, timestampNano },
+        );
 
         const { historyItems } = environment;
 
@@ -108,5 +124,7 @@ module.exports = () => {
 
         expect(lastHistoryItem.status).to.equal(status);
         expect(lastHistoryItem.statusMessage).to.equal(statusMessage);
+        expect(lastHistoryItem.timestamp.getTime()).to.equal(timestamp);
+        expect(lastHistoryItem.timestampNano).to.equal(timestampNano);
     });
 };

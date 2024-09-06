@@ -41,8 +41,7 @@ module.exports = () => {
     });
 
     it('Should be able to update the environment with correct values', async () => {
-        const { result } = await new UpdateEnvironmentUseCase()
-            .execute(updateEnvironmentDto);
+        const { result } = await new UpdateEnvironmentUseCase().execute(updateEnvironmentDto);
         expect(result.status).to.equal('DESTROYED');
     });
 
