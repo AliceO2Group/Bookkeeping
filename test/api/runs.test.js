@@ -1182,10 +1182,10 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 200 in all other cases', (done) => {
+        it('should return 200 in all other cases', async () => {
             const TIMESTAMP = 1664271988000;
             const BIG_INT_NUMBER = '99999999999999999';
-            request(server)
+            const response = await request(server)
                 .patch('/api/runs?runNumber=1')
                 .send({
                     lhcBeamEnergy: 232.156,
@@ -1203,32 +1203,36 @@ module.exports = () => {
                     tfFileSize: BIG_INT_NUMBER,
                     otherFileCount: 123156132,
                     otherFileSize: BIG_INT_NUMBER,
-                })
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    const { data } = res.body;
-                    expect(data.runNumber).to.equal(1);
-                    expect(data.lhcBeamEnergy).to.equal(232.156);
-                    expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
-                    expect(data.lhcBetaStar).to.equal(123e-5);
-                    expect(data.aliceL3Current).to.equal(561.2);
-                    expect(data.aliceL3Polarity).to.equal('POSITIVE');
-                    expect(data.aliceDipoleCurrent).to.equal(45654.1);
-                    expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
-                    expect(data.startOfDataTransfer).to.equal(TIMESTAMP);
-                    expect(data.endOfDataTransfer).to.equal(TIMESTAMP);
-                    expect(data.ctfFileCount).to.equal(30);
-                    expect(data.ctfFileSize).to.equal(BIG_INT_NUMBER);
-                    expect(data.tfFileCount).to.equal(1234);
-                    expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
-                    expect(data.otherFileCount).to.equal(123156132);
-                    expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
-                    done();
+                    crossSection: 0.1,
+                    triggerEfficiency: 0.2,
+                    triggerAcceptance: 0.3,
+                    phaseShiftAtStart: 0.4,
+                    phaseShiftAtEnd: 0.5,
                 });
+
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            expect(data.runNumber).to.equal(1);
+            expect(data.lhcBeamEnergy).to.equal(232.156);
+            expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
+            expect(data.lhcBetaStar).to.equal(123e-5);
+            expect(data.aliceL3Current).to.equal(561.2);
+            expect(data.aliceL3Polarity).to.equal('POSITIVE');
+            expect(data.aliceDipoleCurrent).to.equal(45654.1);
+            expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
+            expect(data.startOfDataTransfer).to.equal(TIMESTAMP);
+            expect(data.endOfDataTransfer).to.equal(TIMESTAMP);
+            expect(data.ctfFileCount).to.equal(30);
+            expect(data.ctfFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.tfFileCount).to.equal(1234);
+            expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.otherFileCount).to.equal(123156132);
+            expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.triggerEfficiency).to.equal(0.2);
+            expect(data.triggerAcceptance).to.equal(0.3);
+            expect(data.phaseShiftAtStart).to.equal(0.4);
+            expect(data.phaseShiftAtEnd).to.equal(0.5);
         });
     });
 
