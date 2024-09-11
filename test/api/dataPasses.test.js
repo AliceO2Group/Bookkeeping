@@ -15,12 +15,14 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
+const { SkimmingStage } = require('../../lib/domain/enums/SkimmingStage');
+const { DataPassRepository, RunRepository, DataPassVersionRepository } = require('../../lib/database/repositories');
 
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
-    skimmingStage: null,
+    skimmingStage: SkimmingStage.SKIMMABLE,
     versions: [
         {
             id: 1,
@@ -41,47 +43,6 @@ const LHC22b_apass1 = {
                     dataPassVersionId: 1,
                     id: 2,
                     status: 'Deleted',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 3,
-    simulationPassesCount: 1,
-};
-
-const LHC22b_apass2 = {
-    id: 2,
-    name: 'LHC22b_apass2',
-    pdpBeamType: 'pp',
-    skimmingStage: null,
-    versions: [
-        {
-            id: 2,
-            dataPassId: 2,
-            description: 'Some random desc 2',
-            reconstructedEventsCount: 50848604,
-            outputSize: 55765671112610,
-            lastSeen: 55,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 2,
-                    id: 3,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704884520000,
-                    dataPassVersionId: 2,
-                    id: 4,
-                    status: 'Deleted',
-                },
-                {
-                    createdAt: 1704884940000,
-                    dataPassVersionId: 2,
-                    id: 5,
-                    status: 'Running',
                 },
             ],
             createdAt: 1704884400000,
@@ -135,7 +96,7 @@ module.exports = () => {
         });
         it('should successfully filter on names', (done) => {
             request(server)
-                .get('/api/dataPasses?filter[names][]=LHC22b_apass2')
+                .get('/api/dataPasses?filter[names][]=LHC22b_apass2_skimmed')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -146,7 +107,7 @@ module.exports = () => {
                     const { data } = res.body;
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.eql(LHC22b_apass2);
+                    expect(data[0].name).to.be.eql('LHC22b_apass2_skimmed');
 
                     done();
                 });
@@ -212,8 +173,8 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(2);
-                    expect(dataPasses).to.have.deep.members([LHC22b_apass2, LHC22b_apass1]);
+                    expect(dataPasses).to.be.lengthOf(3);
+                    expect(dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming', 'LHC22b_apass2_skimmed']);
                     done();
                 });
         });
@@ -229,7 +190,7 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
+                    expect(dataPasses.map(({ name }) => name)).to.have.all.deep.members(['LHC22b_apass1', 'LHC22b_apass2_skimmed']);
                     done();
                 });
         });
@@ -247,10 +208,10 @@ module.exports = () => {
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses).to.be.lengthOf(5);
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.members([
-                        'LHC22a_apass2_skimmed',
-                        'LHC22a_skimming',
+                        'LHC22b_apass2_skimmed',
+                        'LHC22a_apass2',
                         'LHC22a_apass1',
-                        'LHC22b_apass2',
+                        'LHC22b_skimming',
                         'LHC22b_apass1',
                     ]);
 
@@ -270,9 +231,9 @@ module.exports = () => {
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.deep.members([
-                        'LHC22a_skimming',
+                        'LHC22a_apass2',
                         'LHC22a_apass1',
-                        'LHC22b_apass2',
+                        'LHC22b_skimming',
                         'LHC22b_apass1',
                     ]);
 
@@ -326,6 +287,27 @@ module.exports = () => {
                     expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
                     done();
                 });
+        });
+    });
+
+    describe('PATCH /api/dataPasses/skimming/markSkimmable', () => {
+        it('should successfully mark data pass as skimmable', async () => {
+            let newDataPass = await DataPassRepository.insert({ name: 'LHC22b_apass2', lhcPeriodId: 2 });
+            const run = await RunRepository.findOne({ where: { runNumber: 106 } });
+            await newDataPass.addRun(run);
+            await DataPassVersionRepository.insert({ dataPassId: newDataPass.id, description: 'desc for LHC22b apass2' });
+
+            let previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            const response = await request(server).patch(`/api/dataPasses/skimming/markSkimmable?dataPassId=${newDataPass.id}`);
+            expect(response.status).to.be.equal(204);
+
+            previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(null);
+
+            newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
+            expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
         });
     });
 };
