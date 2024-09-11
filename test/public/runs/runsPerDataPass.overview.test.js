@@ -34,8 +34,11 @@ const {
     expectUrlParams,
     getPopoverInnerText,
     testTableSortingByColumn,
+    setConfirmationDialogToBeAccepted,
+    unsetConfirmationDialogActions,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
 
 const { expect } = chai;
 
@@ -443,6 +446,17 @@ module.exports = () => {
 
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
+    it('should successfully mark as skimmable', async () => {
+        await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
+        await DataPassRepository.updateAll({ skimmingStage: null }, { where: { id: 1 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+        await expectInnerText(page, '#skimmableControl button', 'Mark as skimmable');
+        await setConfirmationDialogToBeAccepted(page);
+        await pressElement(page, '#skimmableControl button', true);
+        await unsetConfirmationDialogActions(page);
+        await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
     });
 
     it('should display bad runs marked out', async () => {
