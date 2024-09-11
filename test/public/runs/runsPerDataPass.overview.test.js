@@ -167,13 +167,13 @@ module.exports = () => {
 
     it('should switch mcReproducibleAsNotBad', async () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await page.waitForFunction(() => document.querySelector('tr#row106 .column-CPV a').innerText !== 'QC');
+        await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
             innerText: '89',
         });
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await page.waitForFunction(() => document.querySelector('tr#row106 .column-CPV a').innerText !== 'QC');
+        await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
             innerText: '67MC.R',
@@ -416,6 +416,24 @@ module.exports = () => {
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
     }
+
+    it('should successfully apply gaqNotBadFraction filters', async () => {
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
+
+        await pressElement(page, '#openFilterToggle');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.globalAggregatedQuality-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} #gaqNotBadFraction-dropdown-option-le`, true);
+        await fillInput(page, '#gaqNotBadFraction-value-input', '80');
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
+        await expectColumnValues(page, 'runNumber', []);
+
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
 
     it('should successfully apply muInelasticInteractionRate filters', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
