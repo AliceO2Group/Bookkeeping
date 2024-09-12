@@ -36,7 +36,6 @@ const {
     testTableSortingByColumn,
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
-    getColumnCellsInnerTexts,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
