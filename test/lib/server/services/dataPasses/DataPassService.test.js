@@ -20,6 +20,8 @@ const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage
 const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
 const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
 const DataPassVersionRepository = require('../../../../../lib/database/repositories/DataPassVersionRepository.js');
+const DataPassRunRepository = require('../../../../../lib/database/repositories/DataPassRunRepository.js');
+const { Op } = require('sequelize');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -182,10 +184,20 @@ module.exports = () => {
 
             newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
             expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            // Restore skimmable runs flags after changing skimmable data pass
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: true },
+                { where: { dataPassId: previousSkimmable.id, runNumber: 106 } },
+            );
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: false },
+                { where: { dataPassId: previousSkimmable.id, runNumber: { [Op.in]: [107, 108] } } },
+            );
         });
 
         it('should successfully fetch runs list with ready_for_skimming information', async () => {
-            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
             const data = await dataPassService.getSkimmableRuns({ id: 1 });
             expect(data).to.have.all.deep.members([
                 { runNumber: 106, readyForSkimming: true },
