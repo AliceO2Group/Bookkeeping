@@ -20,6 +20,8 @@ const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage
 const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
 const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
 const DataPassVersionRepository = require('../../../../../lib/database/repositories/DataPassVersionRepository.js');
+const DataPassRunRepository = require('../../../../../lib/database/repositories/DataPassRunRepository.js');
+const { Op } = require('sequelize');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -182,6 +184,41 @@ module.exports = () => {
 
             newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
             expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            // Restore skimmable runs flags after changing skimmable data pass
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: true },
+                { where: { dataPassId: previousSkimmable.id, runNumber: 106 } },
+            );
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: false },
+                { where: { dataPassId: previousSkimmable.id, runNumber: { [Op.in]: [107, 108] } } },
+            );
+        });
+
+        it('should successfully fetch runs list with ready_for_skimming information', async () => {
+            const data = await dataPassService.getSkimmableRuns({ id: 1 });
+            expect(data).to.have.all.deep.members([
+                { runNumber: 106, readyForSkimming: true },
+                { runNumber: 107, readyForSkimming: false },
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
+
+        it('should successfully update runs with ready_for_skimming information', async () => {
+            const newData = [
+                { runNumber: 106, readyForSkimming: false },
+                { runNumber: 107, readyForSkimming: true },
+            ];
+
+            const skimmableRuns = await dataPassService.updateReadyForSkimmingRuns({ id: 1 }, newData);
+            expect(skimmableRuns).to.have.all.deep.members(newData);
+
+            expect(await dataPassService.getSkimmableRuns({ id: 1 })).to.have.all.deep.members([
+                ...newData,
+                { runNumber: 108, readyForSkimming: false },
+            ]);
         });
     });
 };
