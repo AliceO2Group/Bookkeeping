@@ -424,7 +424,7 @@ module.exports = () => {
     it('should successfully apply gaqNotBadFraction filters', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1, rowsCount: 3 });
 
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.globalAggregatedQuality-filter .popover-trigger'));
         await pressElement(page, `${popoverSelector} #gaqNotBadFraction-dropdown-option-le`, true);
@@ -434,7 +434,7 @@ module.exports = () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);
 
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -476,9 +476,9 @@ module.exports = () => {
     it('should successfully change ready_for_skimming status', async () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1, rowsCount: 3 });
         await expectColumnValues(page, 'readyForSkimming', ['not ready', 'not ready', 'ready']);
-        await pressElement(page, 'row108-readyForSkimming button', true);
-        await expectInnerText(page, 'row108-readyForSkimming', 'ready');
-        await pressElement(page, 'row108-readyForSkimming button', true);
-        await expectInnerText(page, 'row108-readyForSkimming', 'not ready');
+        await pressElement(page, '#row108-readyForSkimming input', true);
+        await expectInnerText(page, '#row108-readyForSkimming', 'ready');
+        await pressElement(page, '#row108-readyForSkimming input', true);
+        await expectInnerText(page, '#row108-readyForSkimming', 'not ready');
     });
 };
