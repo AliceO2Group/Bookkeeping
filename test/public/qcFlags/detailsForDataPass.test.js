@@ -65,7 +65,7 @@ module.exports = () => {
 
     it('can navigate to runs per data pass page', async () => {
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
-        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1', pdpBeamType: 'pp' });
         await waitForNavigation(page, () => page.goBack());
     });
 
@@ -100,7 +100,7 @@ module.exports = () => {
         await waitForTableLength(page, 3);
         await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
-return;
+
     it('should successfully delete QC flag', async () => {
         await page.waitForSelector('button#delete');
         // Check that deletion is interrupted when confirmation dialog is dismissed
@@ -152,9 +152,9 @@ return;
         await pressElement(page, '#verification-comment ~ .CodeMirror');
         const comment = 'Hello, it\'s ok';
         await page.keyboard.type(comment);
-        await setConfirmationDialogToBeAccepted(page);
+        setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#submit');
-        await unsetConfirmationDialogActions(page);
+        unsetConfirmationDialogActions(page);
         await expectColumnValues(page, 'createdBy', ['Anonymous']);
         await expectColumnValues(page, 'comment', [comment]);
 
