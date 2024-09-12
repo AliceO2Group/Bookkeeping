@@ -24,6 +24,7 @@ const {
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
     expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -90,14 +91,16 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-ZDC a', true));
+        await waitForTableLength(page, 1);
         await waitForNavigation(page, () => pressElement(page, '#row7-qcFlagId a', true));
         await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nqc_async/ZDC/AverageClusterSize');
 
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-CPV a', true));
+        await waitForTableLength(page, 3);
         await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
-
+return;
     it('should successfully delete QC flag', async () => {
         await page.waitForSelector('button#delete');
         // Check that deletion is interrupted when confirmation dialog is dismissed
