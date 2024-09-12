@@ -453,9 +453,9 @@ module.exports = () => {
         await DataPassRepository.updateAll({ skimmingStage: null }, { where: { id: 1 } });
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 });
         await expectInnerText(page, '#skimmableControl button', 'Mark as skimmable');
-        await setConfirmationDialogToBeAccepted(page);
+        setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#skimmableControl button', true);
-        await unsetConfirmationDialogActions(page);
+        unsetConfirmationDialogActions(page);
         await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
     });
 
