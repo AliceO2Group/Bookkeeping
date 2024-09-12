@@ -128,7 +128,7 @@ module.exports = () => {
         const dataPassVersionDeletedFromML = await DataPassVersionRepository.findOne({
             attributes: [],
             include: 'statusHistory',
-            where: { description: 'LHC22a skimmed' },
+            where: { description: 'LHC22b skimmed' },
             order: [['statusHistory', 'createdAt', 'ASC']],
         });
 
@@ -141,7 +141,7 @@ module.exports = () => {
     it('should successfully restart some data passes', async () => {
         const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
             include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
-            where: { description: 'LHC22a skimmed' },
+            where: { description: 'LHC22b skimmed' },
             order: [['statusHistory', 'createdAt', 'ASC']],
         })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
 
@@ -166,7 +166,7 @@ module.exports = () => {
         const restartedDataPassVersion = await DataPassVersionRepository.findOne({
             attributes: [],
             include: 'statusHistory',
-            where: { description: 'LHC22a skimmed' },
+            where: { description: 'LHC22b skimmed' },
             order: [['statusHistory', 'createdAt', 'ASC']],
         });
 

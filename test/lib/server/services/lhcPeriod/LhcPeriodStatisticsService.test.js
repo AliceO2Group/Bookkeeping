@@ -30,7 +30,7 @@ const lhcPeriod_LHC22a = {
         56.1,
     ],
     runsCount: 4,
-    dataPassesCount: 3,
+    dataPassesCount: 2,
     simulationPassesCount: 2,
 };
 
@@ -44,7 +44,7 @@ const lhcPeriod_LHC22b = {
     beamTypes: ['pp'],
     distinctEnergies: [55.2],
     runsCount: 4,
-    dataPassesCount: 2,
+    dataPassesCount: 3,
     simulationPassesCount: 1,
 };
 
