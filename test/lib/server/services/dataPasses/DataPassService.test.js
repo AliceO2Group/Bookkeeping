@@ -16,12 +16,18 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
+const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage.js');
+const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
+const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
+const DataPassVersionRepository = require('../../../../../lib/database/repositories/DataPassVersionRepository.js');
+const DataPassRunRepository = require('../../../../../lib/database/repositories/DataPassRunRepository.js');
+const { Op } = require('sequelize');
 
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
-    skimmingStage: null,
+    skimmingStage: SkimmingStage.SKIMMABLE,
     versions: [
         {
             id: 1,
@@ -52,82 +58,6 @@ const LHC22b_apass1 = {
     simulationPassesCount: 1,
 };
 
-const LHC22b_apass2 = {
-    id: 2,
-    name: 'LHC22b_apass2',
-    pdpBeamType: 'pp',
-    skimmingStage: null,
-    versions: [
-        {
-            id: 2,
-            dataPassId: 2,
-            description: 'Some random desc 2',
-            reconstructedEventsCount: 50848604,
-            outputSize: 55765671112610,
-            lastSeen: 55,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 2,
-                    id: 3,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704884520000,
-                    dataPassVersionId: 2,
-                    id: 4,
-                    status: 'Deleted',
-                },
-                {
-                    createdAt: 1704884940000,
-                    dataPassVersionId: 2,
-                    id: 5,
-                    status: 'Running',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 3,
-    simulationPassesCount: 1,
-};
-
-const LHC22a_apass1 = {
-    id: 3,
-    name: 'LHC22a_apass1',
-    pdpBeamType: 'PbPb',
-    skimmingStage: null,
-    versions: [
-        {
-            id: 3,
-            dataPassId: 3,
-            description: 'Some random desc for apass 1',
-            reconstructedEventsCount: 50848111,
-            outputSize: 55761110122610,
-            lastSeen: 105,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 3,
-                    id: 6,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704885120000,
-                    dataPassVersionId: 3,
-                    id: 7,
-                    status: 'Deleted',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 4,
-    simulationPassesCount: 2,
-};
-
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -139,7 +69,7 @@ module.exports = () => {
 
         it('should successfully get by name', async () => {
             const dataPass = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
-            expect(dataPass).to.be.eql(LHC22a_apass1);
+            expect(dataPass.name).to.be.eql('LHC22a_apass1');
         });
 
         it('should successfully get all data', async () => {
@@ -192,8 +122,8 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.be.lengthOf(2);
-            expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses).to.be.lengthOf(3);
+            expect(dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming', 'LHC22b_apass2_skimmed']);
         });
 
         it('should successfully filter data passes on simulation pass ids', async () => {
@@ -205,7 +135,7 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_apass2_skimmed']);
         });
 
         it('should successfully sort data passes by names', async () => {
@@ -218,7 +148,77 @@ module.exports = () => {
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
             expect(dataPasses.map(({ name }) => name)).to.have
-                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2_skimmed', 'LHC22a_skimming', 'LHC22b_apass1', 'LHC22b_apass2']);
+                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2', 'LHC22b_apass1', 'LHC22b_apass2_skimmed', 'LHC22b_skimming']);
+        });
+    });
+
+    describe('Skimming', () => {
+        it('should throw when calling for data pass of PbPb runs', async () => {
+            await assert.rejects(
+                () => dataPassService.markAsSkimmable({ name: 'LHC22a_apass1' }),
+                new NotFoundError('Cannot mark LHC22a_apass1 as skimmable.' +
+                    ' Only production for PROTON_PROTON runs can be marked as skimmable'),
+            );
+        });
+
+        it('should throw when calling for data pass with invalid name', async () => {
+            await assert.rejects(
+                () => dataPassService.markAsSkimmable({ name: 'LHC22b_skimming' }),
+                new NotFoundError('Cannot mark LHC22b_skimming as skimmable.' +
+                    ' Only `apass` can be marked as skimmable'),
+            );
+        });
+
+        it('should successfully mark data pass as skimmable', async () => {
+            let newDataPass = await DataPassRepository.insert({ name: 'LHC22b_apass2', lhcPeriodId: 2 });
+            const run = await RunRepository.findOne({ where: { runNumber: 106 } });
+            await newDataPass.addRun(run);
+            await DataPassVersionRepository.insert({ dataPassId: newDataPass.id, description: 'desc for LHC22b apass2' });
+
+            let previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass2' });
+            previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(null);
+
+            newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
+            expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            // Restore skimmable runs flags after changing skimmable data pass
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: true },
+                { where: { dataPassId: previousSkimmable.id, runNumber: 106 } },
+            );
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: false },
+                { where: { dataPassId: previousSkimmable.id, runNumber: { [Op.in]: [107, 108] } } },
+            );
+        });
+
+        it('should successfully fetch runs list with ready_for_skimming information', async () => {
+            const data = await dataPassService.getSkimmableRuns({ id: 1 });
+            expect(data).to.have.all.deep.members([
+                { runNumber: 106, readyForSkimming: true },
+                { runNumber: 107, readyForSkimming: false },
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
+
+        it('should successfully update runs with ready_for_skimming information', async () => {
+            const newData = [
+                { runNumber: 106, readyForSkimming: false },
+                { runNumber: 107, readyForSkimming: true },
+            ];
+
+            const skimmableRuns = await dataPassService.updateReadyForSkimmingRuns({ id: 1 }, newData);
+            expect(skimmableRuns).to.have.all.deep.members(newData);
+
+            expect(await dataPassService.getSkimmableRuns({ id: 1 })).to.have.all.deep.members([
+                ...newData,
+                { runNumber: 108, readyForSkimming: false },
+            ]);
         });
     });
 };

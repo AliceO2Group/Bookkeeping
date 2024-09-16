@@ -58,13 +58,16 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_[a-z]pass\d/.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_([a-z]pass\d|skimming)/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
             outputSize: (outputSize) => {
+                if (outputSize === '-') {
+                    return true;
+                }
                 const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
@@ -111,9 +114,9 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
-        await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1\nSkimmable']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'deleted\nLHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
     });
 };
