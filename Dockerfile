@@ -25,6 +25,7 @@ RUN apk add --no-cache \
     harfbuzz=7.3.0-r0 \
     ca-certificates=20240226-r0
 
+
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
