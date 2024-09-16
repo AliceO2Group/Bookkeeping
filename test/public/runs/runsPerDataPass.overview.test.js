@@ -66,10 +66,10 @@ const DETECTORS = [
  * @param {Puppeteer.page} page page
  * @param {number} params.lhcPeriodId id of lhc period on LHC Period overview page
  * @param {number} params.dataPassId id of data pass on Data Passes per LHC Period page
- * @param {number} [options.rowsCount] expected number of rows on runs per data pass page
+ * @param {number} [options.epectedRowsCount] expected number of rows on runs per data pass page
  * @return {Promise<void>} promise
  */
-const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }, { rowsCount } = {}) => {
+const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }, { epectedRowsCount } = {}) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
     const pdpBeamType = await getInnerText(await page.waitForSelector(`#row${lhcPeriodId}-beamTypes`));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
@@ -77,8 +77,8 @@ const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }, { ro
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
     expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId, pdpBeamType });
-    if (rowsCount) {
-        await waitForTableLength(page, rowsCount);
+    if (epectedRowsCount) {
+        await waitForTableLength(page, epectedRowsCount);
     }
 };
 
@@ -133,7 +133,7 @@ module.exports = () => {
             ])),
         };
 
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { rowsCount: 4 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
         // Expectations of header texts being of a certain datatype
         let tableDataValidators = {
             ...commonColumnsValidators,
@@ -145,7 +145,7 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
         // Expectations of header texts being of a certain datatype
         tableDataValidators = {
             muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
@@ -200,7 +200,7 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { rowsCount: 4 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
 
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
@@ -277,7 +277,7 @@ module.exports = () => {
     });
 
     it('should successfully export runs', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { rowsCount: 4 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
 
         const targetFileName = 'runs.json';
 
@@ -310,7 +310,7 @@ module.exports = () => {
 
     // Filters
     it('should successfully apply runNumber filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
 
         await pressElement(page, '#openFilterToggle');
 
@@ -322,7 +322,7 @@ module.exports = () => {
     });
 
     it('should successfully apply detectors filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
 
         await pressElement(page, '#openFilterToggle');
 
@@ -335,7 +335,7 @@ module.exports = () => {
     });
 
     it('should successfully apply tags filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
@@ -350,7 +350,7 @@ module.exports = () => {
     });
 
     it('should successfully apply timeStart filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
@@ -392,7 +392,7 @@ module.exports = () => {
     });
 
     it('should successfully apply alice currents filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { rowsCount: 4 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
         await pressElement(page, '#openFilterToggle');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
@@ -427,7 +427,7 @@ module.exports = () => {
     }
 
     it('should successfully apply gaqNotBadFraction filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
 
         await pressElement(page, '#openFilterToggle', true);
 
@@ -445,7 +445,7 @@ module.exports = () => {
     });
 
     it('should successfully apply muInelasticInteractionRate filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
         await pressElement(page, '#openFilterToggle');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.muInelasticInteractionRate-filter .popover-trigger'));
@@ -460,7 +460,7 @@ module.exports = () => {
     it('should successfully mark as skimmable', async () => {
         await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
         await DataPassRepository.updateAll({ skimmingStage: null }, { where: { id: 1 } });
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
         await expectInnerText(page, '#skimmableControl button', 'Mark as skimmable');
         setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#skimmableControl button', true);
@@ -469,7 +469,7 @@ module.exports = () => {
     });
 
     it('should display bad runs marked out', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
 
         await page.waitForSelector('tr#row2.danger');
         await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
@@ -479,7 +479,7 @@ module.exports = () => {
     });
 
     it('should successfully change ready_for_skimming status', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { rowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
         await expectColumnValues(page, 'readyForSkimming', ['not ready', 'not ready', 'ready']);
         await pressElement(page, '#row108-readyForSkimming input', true);
         await expectInnerText(page, '#row108-readyForSkimming', 'ready');
