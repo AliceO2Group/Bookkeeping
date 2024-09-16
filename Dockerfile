@@ -21,7 +21,7 @@ RUN apk add --no-cache \
     chromium=119.0.6045.159-r0 \
     freetype=2.13.0-r5 \
     freetype-dev=2.13.0-r5 \
-    git=2.40.1-r0 \
+    git=2.46.1-r0 \
     harfbuzz=7.3.0-r0 \
     ca-certificates=20240226-r0
 
