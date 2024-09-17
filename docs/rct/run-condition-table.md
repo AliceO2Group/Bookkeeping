@@ -29,7 +29,7 @@ verified. Simulated data reconstruction is performed using the same software as 
 acquired from detectors and the same data processing procedures are applied. In conclusion,
 two separate types of productions can be distinguished: real data productions (`data passes`) and Monte Carlo productions (`simulations passes`).
 Majority of data passes being handled in RCT have names, which follow pattern `<LHC_PERIOD>_(c|a)pass*` e.g. LHC23zzk_apass3, LHC23zzg_cpass0, LHC23zzg_apass2_upc.
-Those which containes phrase `cpass` refere to calibrations metioned earlier, whereas actual reconstruction takes place during `apass-es`. Some of them with additional suffix, e.g. `_upc`, `_res`, `_test` and `_debug` serve as auxiliary data analyzies.
+Those which containes phrase `cpass` refere to calibrations mentioned earlier, whereas actual reconstruction takes place during `apass-es`. Some of them with additional suffix, e.g. `_upc`, `_res`, `_test` and `_debug` are auxiliary data analyzies.
 Other data passes (handled in RCT) follow pattern `<PERIOD_NAME>_skimming` (see section 3);
 
 2. QC flags
