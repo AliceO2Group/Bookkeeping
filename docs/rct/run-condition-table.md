@@ -45,10 +45,10 @@ example: <br>
 `-` - indicates that a flag is not nullfied <br>
 `x` - indicates that a flag is nullified <br>
 
-F4:          |----------------------|                                       <br>
-F3:                                           |---|                         <br>
-F2:             |xxxxxxxxxxxxxxxxxxxx---------xxxxx-----|                   <br>
-F1: |--------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx---------------|   <br>
+F4:          |///////////////////////|                                      <br>
+F3:                                          |/////|                        <br>
+F2:             |\\\\\\\\\\\\\\\\\\\\/////////\\\\\///////////|              <br>
+F1:|/////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////|   <br>
 
 3. Skimming
 Skimming is procedure of data compression of proton-proton runs' data only.
