@@ -36,7 +36,7 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array');
         lhcFills.forEach((lhcFill) => {
-            // Every lhcFill should have stableBeamsStart
+            // Every lhcFill should have stableBeamStart
             expect(lhcFill.stableBeamsStart).to.not.be.null;
         });
     });
