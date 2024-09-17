@@ -5,8 +5,8 @@ basic terms:
 - simulation pass - reconstruction of data of batch of runs using Monte Carlo method
     - reconsturction - translation of raw data into high-level data (particle trajectory, particle identity)
     - Monte Carlo methods - broad class of computational algorithms that rely on repeated sampling to obtain numerical results
-- anchored pass - simulation pass linked to given data pass
-- anchorage - data pass which given simulation pass is linked to
+- anchored pass - simulation pass which is linked to a data pass
+- anchorage - data pass which a simulation pass is linked to
 - QC flag - quality control information assigned to one segment of data collected by a detector during a run
 - MonALISA (abbr. ML) - system of detectors' data processing on Grid
 
