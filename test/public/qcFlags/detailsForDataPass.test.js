@@ -24,6 +24,7 @@ const {
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
     expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -63,13 +64,13 @@ module.exports = () => {
     });
 
     it('can navigate to runs per data pass page', async () => {
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1', pdpBeamType: 'pp' });
         await waitForNavigation(page, () => page.goBack());
     });
 
     it('can navigate to run details page', async () => {
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a', true));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
         await waitForNavigation(page, () => page.goBack());
     });
@@ -88,13 +89,16 @@ module.exports = () => {
 
         await page.waitForSelector('button#delete');
 
-        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-ZDC a'));
-        await waitForNavigation(page, () => pressElement(page, '#row7-qcFlagId a'));
+        await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
+        await waitForNavigation(page, () => pressElement(page, '#row106-ZDC a', true));
+        await waitForTableLength(page, 1);
+        await waitForNavigation(page, () => pressElement(page, '#row7-qcFlagId a', true));
         await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nqc_async/ZDC/AverageClusterSize');
 
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-CPV a', true));
+        expectUrlParams(page, { page: 'qc-flags-for-data-pass', dataPassId: '1', runNumber: 106, dplDetectorId: 1 });
+        await waitForTableLength(page, 3);
         await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
 
@@ -110,6 +114,7 @@ module.exports = () => {
             runNumber: '106',
             dplDetectorId: '1',
         });
+        await page.waitForSelector('button#delete');
 
         // Delete
         setConfirmationDialogToBeAccepted(page);
@@ -149,9 +154,9 @@ module.exports = () => {
         await pressElement(page, '#verification-comment ~ .CodeMirror');
         const comment = 'Hello, it\'s ok';
         await page.keyboard.type(comment);
-        await setConfirmationDialogToBeAccepted(page);
+        setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#submit');
-        await unsetConfirmationDialogActions(page);
+        unsetConfirmationDialogActions(page);
         await expectColumnValues(page, 'createdBy', ['Anonymous']);
         await expectColumnValues(page, 'comment', [comment]);
 
