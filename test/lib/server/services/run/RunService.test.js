@@ -647,4 +647,38 @@ module.exports = () => {
         const levelsCombinations = await runService.getAllAliceL3AndDipoleLevelsForPhysicsRuns();
         expect(levelsCombinations).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
     });
+
+    it('should successfully extract informations from environment configuration when creating a run', async () => {
+        const timeO2Start = new Date('2019-08-09 20:01:00');
+        const timeTrgStart = new Date('2019-08-09 20:02:00');
+        const timeTrgEnd = new Date('2019-08-09 20:03:00');
+        const timeO2End = new Date('2019-08-09 20:04:00');
+        const run = await runService.createOrUpdate(
+            1234,
+            'CmCvjNbg',
+            { timeO2Start, timeTrgStart, timeTrgEnd, timeO2End },
+            { externalUserId: 1 },
+        );
+
+        expect(run.triggerValue).to.equal('CTP');
+        expect(run.detectors).to.equal('FT0,ITS');
+        expect(run.detectorsQualities.map(({ name }) => name)).to.eql(['FT0', 'ITS']);
+        expect(run.nDetectors).to.equal(2);
+        expect(run.runType.name).to.equal('PHYSICS');
+        expect(run.dd_flp).to.equal(true);
+        expect(run.dcs).to.equal(true);
+        expect(run.epn).to.equal(true);
+        expect(run.pdpConfigOption).to.equal('Repository hash');
+        expect(run.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
+        expect(run.pdpWorkflowParameters).to.equal('QC,GPU,CALIB,EVENT_DISPLAY');
+        expect(run.tfbDdMode).to.equal('physics');
+        expect(run.lhcPeriod.name).to.equal('new');
+        expect(run.odcTopologyFullName).to.equal('(hash, default, production/production.desc, synchronous-workflow-calib)');
+        expect(run.pdpBeamType).to.equal('pp');
+        expect(run.epnTopology).to.equal('topology');
+        expect(run.odcTopologyFullName).to.equal('(hash, default, production/production.desc, synchronous-workflow-calib)');
+        expect(run.nFlps).to.equal(3);
+        expect(run.nEpns).to.equal(2);
+        expect(run.readoutCfgUri).to.equal('file:///local/replay/2024-04-17-pp-650khz-synt-4tf/readout-replay-24g-dd40.cfg');
+    });
 };
