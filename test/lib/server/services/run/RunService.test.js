@@ -643,6 +643,38 @@ module.exports = () => {
         expect(run.userIdO2Stop).to.not.be.null;
     });
 
+    it('should successfully update run phase shift at start and end', async () => {
+        const runNumber = 1;
+        const run = await runService.update(
+            { runNumber },
+            {
+                runPatch: {
+                    phaseShiftAtStart: 0.0004,
+                    phaseShiftAtEnd: 0.0005,
+                },
+            },
+        );
+        expect(run.phaseShiftAtStart).to.equal(0.0004);
+        expect(run.phaseShiftAtEnd).to.equal(0.0005);
+    });
+
+    it('should successfully update run cross section and trigger acceptance', async () => {
+        const runNumber = 1;
+        const run = await runService.update(
+            { runNumber },
+            {
+                runPatch: {
+                    crossSection: 0.0001,
+                    triggerEfficiency: 0.0002,
+                    triggerAcceptance: 0.0003,
+                },
+            },
+        );
+        expect(run.crossSection).to.equal(0.0001);
+        expect(run.triggerEfficiency).to.equal(0.0002);
+        expect(run.triggerAcceptance).to.equal(0.0003);
+    });
+
     it('should fetch distinct aliceCurrent levels', async () => {
         const levelsCombinations = await runService.getAllAliceL3AndDipoleLevelsForPhysicsRuns();
         expect(levelsCombinations).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
