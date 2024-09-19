@@ -598,7 +598,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.65.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.65.0)
 
 * Notable changes for users:
-  * LHC fill details statistics rely on stableBeamEnd as end of run, not stableBeamStart + duration
+  * LHC fill details statistics rely on stableBeamsEnd as end of run, not stableBeamsStart + duration
   * A button to create a log is now available in LHC fill details page
   * Run edition justification inputs are now visually similar to other inputs
   * Fixed bug for filtering tags using "or"
