@@ -61,10 +61,14 @@ module.exports = () => {
                 crossSection: 0.1,
                 triggerEfficiency: 0.2,
                 triggerAcceptance: 0.3,
-                phaseShiftAtStartBeam1: 0.4,
-                phaseShiftAtStartBeam2: -0.1,
-                phaseShiftAtEndBeam1: 0.5,
-                phaseShiftAtEndBeam2: -0.2,
+                phaseShiftAtStart: {
+                    beam1: 0.4,
+                    beam2: -0.1,
+                },
+                phaseShiftAtEnd: {
+                    beam1: 0.5,
+                    beam2: -0.2,
+                },
             },
         });
     });
