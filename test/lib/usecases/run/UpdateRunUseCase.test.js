@@ -61,8 +61,14 @@ module.exports = () => {
                 crossSection: 0.1,
                 triggerEfficiency: 0.2,
                 triggerAcceptance: 0.3,
-                phaseShiftAtStart: 0.4,
-                phaseShiftAtEnd: 0.5,
+                phaseShiftAtStart: {
+                    beam1: 0.4,
+                    beam2: -0.1,
+                },
+                phaseShiftAtEnd: {
+                    beam1: 0.5,
+                    beam2: -0.2,
+                },
             },
         });
     });
@@ -321,8 +327,10 @@ module.exports = () => {
             expect(result.crossSection).to.equal(0.1);
             expect(result.triggerEfficiency).to.equal(0.2);
             expect(result.triggerAcceptance).to.equal(0.3);
-            expect(result.phaseShiftAtStart).to.equal(0.4);
-            expect(result.phaseShiftAtEnd).to.equal(0.5);
+            expect(result.phaseShiftAtStartBeam1).to.equal(0.4);
+            expect(result.phaseShiftAtStartBeam2).to.equal(-0.1);
+            expect(result.phaseShiftAtEndBeam1).to.equal(0.5);
+            expect(result.phaseShiftAtEndBeam2).to.equal(-0.2);
         });
 
         it('Should give an error when the id of the run can not be found', async () => {
