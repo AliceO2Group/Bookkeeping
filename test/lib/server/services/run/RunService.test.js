@@ -649,13 +649,17 @@ module.exports = () => {
             { runNumber },
             {
                 runPatch: {
-                    phaseShiftAtStart: 0.0004,
-                    phaseShiftAtEnd: 0.0005,
+                    phaseShiftAtStartBeam1: 0.0004,
+                    phaseShiftAtStartBeam2: -0.0001,
+                    phaseShiftAtEndBeam1: 0.0005,
+                    phaseShiftAtEndBeam2: -0.0002,
                 },
             },
         );
-        expect(run.phaseShiftAtStart).to.equal(0.0004);
-        expect(run.phaseShiftAtEnd).to.equal(0.0005);
+        expect(run.phaseShiftAtStartBeam1).to.equal(0.0004);
+        expect(run.phaseShiftAtStartBeam2).to.equal(-0.0001);
+        expect(run.phaseShiftAtEndBeam1).to.equal(0.0005);
+        expect(run.phaseShiftAtEndBeam2).to.equal(-0.0002);
     });
 
     it('should successfully update run cross section and trigger acceptance', async () => {
