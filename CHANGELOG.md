@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.0.1)
+* Notable changes for users:
+  * Fixed gRPC API not updating run LHC period
+
+## [1.0.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.0.0)
+* Notable changes for users:
+  * Added filtering by not-bad percentage of data according to GAQ
+  * Added button for setting skimmable production
+  * Added column to Runs Per (skimmable) Data Pass page with toggle elements for marking runs as ready/not ready for skimming
+  * Environments with status "DONE" are now considered to be ended
+  * Extract missing data from environment configuration:
+    * nEpns
+    * LHC period
+    * run type
+* Notable changes for developers:
+  * Added API for setting skimmable data pass
+  * Added API for fetching and setting ready_for_skimming flag for runs
+  * Removed failing alpine package from Dockerfile
+  * Fixed gRPC API for service LhcFill.getLast
+  * Store XSection, trigger efficiency & acceptance, phase shift at start and end
+
 ## [0.99.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.1)
 * Notable changes for users:
   * Fixed log creation for detector EoR reason
