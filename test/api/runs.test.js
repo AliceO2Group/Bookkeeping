@@ -1206,8 +1206,14 @@ module.exports = () => {
                     crossSection: 0.1,
                     triggerEfficiency: 0.2,
                     triggerAcceptance: 0.3,
-                    phaseShiftAtStart: 0.4,
-                    phaseShiftAtEnd: 0.5,
+                    phaseShiftAtStart: {
+                        beam1: 0.4,
+                        beam2: -0.2,
+                    },
+                    phaseShiftAtEnd: {
+                        beam1: 0.5,
+                        beam2: -0.25,
+                    },
                 });
 
             expect(response.status).to.equal(200);
@@ -1231,8 +1237,10 @@ module.exports = () => {
             expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
             expect(data.triggerEfficiency).to.equal(0.2);
             expect(data.triggerAcceptance).to.equal(0.3);
-            expect(data.phaseShiftAtStart).to.equal(0.4);
-            expect(data.phaseShiftAtEnd).to.equal(0.5);
+            expect(data.phaseShiftAtStartBeam1).to.equal(0.4);
+            expect(data.phaseShiftAtStartBeam2).to.equal(-0.2);
+            expect(data.phaseShiftAtEndBeam1).to.equal(0.5);
+            expect(data.phaseShiftAtEndBeam2).to.equal(-0.25);
         });
     });
 
