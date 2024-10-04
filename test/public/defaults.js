@@ -701,7 +701,7 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
         // Browser context, be careful when modifying
         const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
         return names.length
-               && names[valuesCheckingMode]((name) =>
+            && names[valuesCheckingMode]((name) =>
                 negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
     }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
 };
