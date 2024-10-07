@@ -651,19 +651,29 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  */
 module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) => {
     try {
-        await page.waitForFunction(async (rowId, expectedInnerTextValues) => {
+        await page.waitForFunction((rowId, expectedInnerTextValues) => {
             for (const columnId in expectedInnerTextValues) {
-                const actualValue = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
-                if (expectedInnerTextValues[columnId] == actualValue) {
+                const actualValue = document.querySelector(`table tbody tr:nth-of-type(${rowId}) .column-${columnId}`).innerText;
+                if (expectedInnerTextValues[columnId] !== actualValue) {
                     return false;
                 }
             }
             return true;
-        }, rowId, expectedInnerTextValues);
+        }, {}, rowId, expectedInnerTextValues);
     } catch {
         const rowInnerTexts = {};
         for (const columnId in expectedInnerTextValues) {
-            rowInnerTexts[columnId] = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
+            rowInnerTexts[columnId] = await page.evaluate(
+                (rowId, columnId) => {
+                    const column = document.querySelector(`table tbody tr:nth-of-type(${rowId}) .column-${columnId}`);
+                    if (!column) {
+                        throw new Error(`No element found for row ${rowId} and column ${columnId}`);
+                    }
+                    return column.innerText;
+                },
+                rowId,
+                columnId,
+            );
         }
         expect(rowInnerTexts).to.eql(expectedInnerTextValues);
     }
