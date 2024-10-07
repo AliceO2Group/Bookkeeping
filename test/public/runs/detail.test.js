@@ -27,6 +27,7 @@ const {
     waitForTableLength,
     getTableContent,
     getPopoverSelector,
+    expectRowValues,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService');
@@ -284,6 +285,22 @@ module.exports = () => {
             runNumber: 1,
             panel: 'flps',
         });
+
+        await waitForTableLength(page, 2);
+        await expectRowValues(
+            page,
+            1,
+            {
+                name: 'FLP-TPC-1',
+                hostname: 'someserver.cern.ch',
+                nTimeframes: '18364758544493064720',
+                bytesEquipmentReadOut: '16311.18 PB',
+                meanSTFSize: '1 B',
+                dataRate: '178.45 TB/s',
+                bytesRecordingReadOut: '16311.18 PB',
+                bytesFairMQReadOut: '16311.18 PB',
+            },
+        );
     });
 
     it('can navigate to the logs panel', async () => {

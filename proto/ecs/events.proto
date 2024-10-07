@@ -64,6 +64,7 @@ message Ev_EnvironmentEvent {
   OpStatus transitionStatus = 8;
   map<string, string> vars = 9; // consolidated environment variables at the root role of the environment
   common.User lastRequestUser = 10;
+  common.WorkflowTemplateInfo workflowTemplateInfo = 11;
 }
 
 message Traits {
@@ -128,7 +129,8 @@ message Ev_RunEvent {
 
 message Event {
   int64 timestamp = 1;
-  reserved 2 to 10;
+  int64 timestampNano = 2;
+  reserved 3 to 10;
   reserved 17 to 100;
 
   oneof Payload {
