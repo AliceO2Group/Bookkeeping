@@ -81,7 +81,7 @@ module.exports = () => {
 
         expect(firstHistoryItem.status).to.equal(status);
         expect(firstHistoryItem.statusMessage).to.equal(statusMessage);
-        expect(firstHistoryItem.timestamp.getTime()).to.equal(timestamp);
+        expect(firstHistoryItem.timestamp).to.equal(timestamp);
         expect(firstHistoryItem.timestampNano).to.equal(timestampNano);
     });
 
@@ -124,7 +124,7 @@ module.exports = () => {
 
         expect(lastHistoryItem.status).to.equal(status);
         expect(lastHistoryItem.statusMessage).to.equal(statusMessage);
-        expect(lastHistoryItem.timestamp.getTime()).to.equal(timestamp);
+        expect(lastHistoryItem.timestamp).to.equal(timestamp);
         expect(lastHistoryItem.timestampNano).to.equal(timestampNano);
     });
 };
