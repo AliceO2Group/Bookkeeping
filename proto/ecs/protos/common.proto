@@ -39,3 +39,10 @@ message User {
   // Name of the user.
   string name = 3;
 }
+
+message WorkflowTemplateInfo {
+  string name = 1;
+  string description = 2;
+  string path = 3;
+  bool public = 4; // whether the environment is public or not
+}
