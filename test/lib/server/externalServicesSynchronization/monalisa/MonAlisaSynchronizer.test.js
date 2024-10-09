@@ -13,21 +13,26 @@
 
 const { expect } = require('chai');
 const { getMockMonAlisaClient } = require('./data/getMockMonAlisaClient.js');
-const { MonAlisaSynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonAlisaSynchronizer.js');
-const { repositories: {
-    DataPassRepository,
-    LhcPeriodRepository,
-    SimulationPassRepository,
-    RunRepository,
-    DataPassVersionRepository,
-} } = require('../../../../lib/database/index.js');
-const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod.js');
-const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
+const { MonAlisaSynchronizer } = require('../../../../../lib/server/externalServicesSynchronization/monalisa/MonAlisaSynchronizer.js');
+const {
+    repositories: {
+        DataPassRepository,
+        LhcPeriodRepository,
+        SimulationPassRepository,
+        RunRepository,
+        DataPassVersionRepository,
+    },
+} = require('../../../../../lib/database/index.js');
+const { extractLhcPeriod } = require('../../../../../lib/server/utilities/extractLhcPeriod.js');
+const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { Op } = require('sequelize');
-const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
-const { DataPassVersionStatus } = require('../../../../lib/domain/enums/DataPassVersionStatus.js');
-const { SkimmingStage } = require('../../../../lib/domain/enums/SkimmingStage.js');
-const { gaqDetectorService, DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } = require('../../../../lib/server/services/gaq/GaqDetectorsService.js');
+const { RunDefinition } = require('../../../../../lib/domain/enums/RunDefinition.js');
+const { DataPassVersionStatus } = require('../../../../../lib/domain/enums/DataPassVersionStatus.js');
+const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage.js');
+const {
+    gaqDetectorService,
+    DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS,
+} = require('../../../../../lib/server/services/gaq/GaqDetectorsService.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -48,10 +53,12 @@ module.exports = () => {
         // Run Synchronization
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
-        const dataPassesDB = await DataPassRepository.findAll({ include: [
-            { association: 'runs', attributes: ['runNumber'] },
-            { association: 'versions', include: [{ association: 'statusHistory', required: true }] },
-        ] });
+        const dataPassesDB = await DataPassRepository.findAll({
+            include: [
+                { association: 'runs', attributes: ['runNumber'] },
+                { association: 'versions', include: [{ association: 'statusHistory', required: true }] },
+            ],
+        });
 
         // Expect correct amount of data
         expect(dataPassesDB).to.be.an('array');
@@ -87,10 +94,12 @@ module.exports = () => {
                     const { runNumbers: potentiallyExpectedRunNumbers } = await monAlisaClient.getDataPassVersionDetails(description);
 
                     expectedRunNumbers = [
-                        ...(await RunRepository.findAll({ where: {
-                            runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
-                            definition: RunDefinition.PHYSICS,
-                        } })).map(({ runNumber }) => runNumber),
+                        ...(await RunRepository.findAll({
+                            where: {
+                                runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
+                                definition: RunDefinition.PHYSICS,
+                            },
+                        })).map(({ runNumber }) => runNumber),
                         ...expectedRunNumbers,
                     ];
                 }
@@ -232,10 +241,12 @@ module.exports = () => {
         for (const simulationPassDB of simulationPassesDB) {
             const { name, runs } = simulationPassDB;
             if (potentiallyInsertedNamesSet.has(name)) {
-                const expectedRunNumbers = (await RunRepository.findAll({ where: {
-                    runNumber: { [Op.in]: nameToSimulationPass[name].associations.runNumbers },
-                    definition: RunDefinition.PHYSICS,
-                } })).map(({ runNumber }) => runNumber);
+                const expectedRunNumbers = (await RunRepository.findAll({
+                    where: {
+                        runNumber: { [Op.in]: nameToSimulationPass[name].associations.runNumbers },
+                        definition: RunDefinition.PHYSICS,
+                    },
+                })).map(({ runNumber }) => runNumber);
 
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);
             }
