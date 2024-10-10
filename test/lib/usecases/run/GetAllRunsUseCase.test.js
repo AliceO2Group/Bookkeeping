@@ -14,9 +14,9 @@
 const { run: { GetAllRunsUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetAllRunsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
-const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
+const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
 
 const { expect } = chai;
 
@@ -49,6 +49,25 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(2);
         expect(runs[0].runNumber).to.equal(18); // Default sorting order is dsc
         expect(runs[1].runNumber).to.equal(17);
+    });
+
+    it('should return runs sorted by runNumber', async () => {
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'ASC' } } });
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.length.greaterThan(1);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => a - b));
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'DESC' } } });
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.length.greaterThan(1);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => b - a));
+        }
     });
 
     it('should return an array, only containing runs containing the specified run number', async () => {
@@ -111,7 +130,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfully return an array only containing runs found with tags', async () => {
+    it('should successfully filter on tags', async () => {
         {
             getAllRunsDto.query = {
                 filter: {
@@ -133,75 +152,90 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.lengthOf(2);
             for (const run of runs) {
-                const tagTexts = run.tags.map(({ text }) => text);
-                expect(tagTexts.includes('FOOD') || tagTexts.includes('TEST-TAG-41')).to.be.true;
+                expect(run.tags.some(({ text }) => text.includes('FOOD') || text.includes('TEST-TAG-41'))).to.be.true;
+            }
+
+            {
+                getAllRunsDto.query = {
+                    filter: {
+                        tags: { operation: 'none-of', values: ['FOOD', 'TEST-TAG-41'] },
+                    },
+                    page: {
+                        limit: 200,
+                    },
+                };
+                const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+                expect(runs).to.lengthOf(106);
+                for (const run of runs) {
+                    expect(run.tags.every(({ text }) => text !== 'FOOD' && text !== 'TEST-TAG-41')).to.be.true;
+                }
             }
         }
     });
 
     it('should successfully filter on run definition', async () => {
-        const PHYSICS_COUNT = 4;
+        const PHYSICS_COUNT = 6;
         const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
         const CALIBRATION_COUNT = 1;
 
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.PHYSICS] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Cosmics] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.COSMICS] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(COSMICS_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Cosmics)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.COSMICS)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Synthetic] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.SYNTHETIC] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(SYNTHETIC_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Synthetic)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.SYNTHETIC)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.TECHNICAL] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Technical)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.TECHNICAL)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Calibration] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.CALIBRATION] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(CALIBRATION_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Calibration)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.CALIBRATION)).to.be.true;
         }
 
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Physics, RunDefinition.Cosmics] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.PHYSICS, RunDefinition.COSMICS] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMICS_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Physics || definition === RunDefinition.Cosmics)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.PHYSICS || definition === RunDefinition.COSMICS)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Technical, RunDefinition.Synthetic] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.TECHNICAL, RunDefinition.SYNTHETIC] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(TECHNICAL_COUNT + SYNTHETIC_COUNT);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Technical || definition === RunDefinition.Synthetic)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.TECHNICAL || definition === RunDefinition.SYNTHETIC)).to.be.true;
         }
-        getAllRunsDto.query = { filter: { definitions: [RunDefinition.Commissioning] } };
+        getAllRunsDto.query = { filter: { definitions: [RunDefinition.COMMISSIONING] } };
         {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-            expect(runs.every(({ definition }) => definition === RunDefinition.Commissioning)).to.be.true;
+            expect(runs.every(({ definition }) => definition === RunDefinition.COMMISSIONING)).to.be.true;
         }
         getAllRunsDto.query = {
             filter: {
                 definitions: [
-                    RunDefinition.Physics,
-                    RunDefinition.Synthetic,
-                    RunDefinition.Cosmics,
-                    RunDefinition.Technical,
-                    RunDefinition.Calibration,
+                    RunDefinition.PHYSICS,
+                    RunDefinition.SYNTHETIC,
+                    RunDefinition.COSMICS,
+                    RunDefinition.TECHNICAL,
+                    RunDefinition.CALIBRATION,
                 ],
             },
         };
@@ -209,11 +243,11 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf(PHYSICS_COUNT + COSMICS_COUNT + SYNTHETIC_COUNT + TECHNICAL_COUNT + CALIBRATION_COUNT);
             const any = [
-                RunDefinition.Physics,
-                RunDefinition.Cosmics,
-                RunDefinition.Synthetic,
-                RunDefinition.Technical,
-                RunDefinition.Calibration,
+                RunDefinition.PHYSICS,
+                RunDefinition.COSMICS,
+                RunDefinition.SYNTHETIC,
+                RunDefinition.TECHNICAL,
+                RunDefinition.CALIBRATION,
             ];
             expect(runs.every(({ definition }) => any.includes(definition))).to.be.true;
         }
@@ -317,7 +351,7 @@ module.exports = () => {
         expect(runs[0].runNumber).to.equal(1);
     });
 
-    it('should successfuly filter on "updatedAt"', async () => {
+    it('should successfully filter on "updatedAt"', async () => {
         {
             getAllRunsDto.query = {
                 filter: {
@@ -330,7 +364,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(98);
+            expect(runs).to.have.lengthOf(97);
         }
         {
             getAllRunsDto.query = {
@@ -344,7 +378,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(4);
+            expect(runs).to.have.lengthOf(1);
         }
     });
 
@@ -563,7 +597,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(44);
+        expect(runs).to.have.lengthOf(43);
         expect(runs.every((run) => requiredQualities.includes(run.runQuality))).to.be.true;
     });
 
@@ -574,7 +608,7 @@ module.exports = () => {
             .execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(20);
+        expect(runs).to.have.lengthOf(21);
     });
     it('should successfully return an array, only containing runs found with lhc periods filter', async () => {
         getAllRunsDto.query = {
@@ -595,5 +629,69 @@ module.exports = () => {
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf.above(3);
+    });
+
+    it('should successfully filter by aliceL3Current', async () => {
+        const { runs } = await new GetAllRunsUseCase().execute({
+            query: {
+                filter: {
+                    aliceL3Current: 30003,
+                },
+            },
+        });
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.greaterThan(0);
+        expect(runs.every(({ aliceL3Current, aliceL3Polarity }) =>
+            Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
+    });
+
+    it('should successfully filter by aliceDipoleCurrent', async () => {
+        const { runs } = await new GetAllRunsUseCase().execute({
+            query: {
+                filter: {
+                    aliceDipoleCurrent: 0,
+                },
+            },
+        });
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf.greaterThan(0);
+        expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+            Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
+    });
+
+    const inelasticInteractionRateFilteringTestsParameters = {
+        muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
+        inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [106, 49, 2] },
+        inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
+        inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
+        inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
+    };
+
+    for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
+        const { operator, value, expectedRuns } = testParameters;
+        it(`should successfully filter by ${property}`, async () => {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { [property]: { [operator]: value } } } });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
+        });
+    }
+
+    it('should successfully filter by GAQ notBadFraction', async () => {
+        const dataPassIds = [1];
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
+                dataPassIds,
+                gaq: { notBadFraction: { '<': 0.8 } },
+            } } });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
+                dataPassIds,
+                gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
+            } } });
+            expect(runs).to.have.lengthOf(0);
+        }
     });
 };

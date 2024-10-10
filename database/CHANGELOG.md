@@ -1,3 +1,43 @@
+## [0.99.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.0)
+* Changes made to the database
+    * Added columns colliding_bunches_count and delivered_lumi columns to lhc_fills
+
+## [0.98.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.98.0)
+* Changes made to the database
+  * Removed data_pass_versions column 'deleted_from_monalisa' and added data_pass_version_status_history table
+
+## [0.97.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.97.0)
+* Changes made to the database
+  * Added column type (ENUM) to detectors table
+  * Removed dpl_detectors table
+  * Removed toredown_at column from environments table
+
+## [0.94.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.94.0)
+* Changes made to the database
+  * Added raw_configuration column to environment table
+
+## [0.91.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.91.0)
+* Changes made to the database
+  * Added data_pass_versions table
+
+## [0.90.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.90.0)
+* Changes made to the database
+  * Added origin column to quality_control_flags table
+  * Added table to store trigger counters
+
+## [0.88.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.88.0)
+* Changes made to the database
+  * Adds new table for QC flag effective period
+  * Adds new table for QC flag verification
+
+## [0.85.0]
+* Changes made to the database
+  * Added four columns to run table storing information about inelastic interaction rate
+
+## [0.83.0]
+* Changes made to the database
+  * Added sequelize migration file for QC Flag tables creation
+
 ## [0.80.0]
 * Changes made to the database
   * Refactor Data Passes fetching from MonALISA test - use Joi

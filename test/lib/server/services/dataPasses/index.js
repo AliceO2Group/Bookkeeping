@@ -11,8 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const DataPassesService = require('./DataPassesService.test.js');
+const DataPassService = require('./DataPassService.test.js');
 
 module.exports = () => {
-    describe('DataPassesService', DataPassesService);
+    describe('DataPassService', DataPassService);
 };

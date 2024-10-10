@@ -25,6 +25,8 @@ add_library(BookkeepingProtos OBJECT
         ${PROTO_DIR}/flp.proto
         ${PROTO_DIR}/run.proto
         ${PROTO_DIR}/dplProcessExecution.proto
+        ${PROTO_DIR}/qcFlag.proto
+        ${PROTO_DIR}/triggerCounters.proto
 )
 
 target_link_libraries(BookkeepingProtos
@@ -56,7 +58,15 @@ protobuf_generate(
 add_library(BookkeepingApi SHARED
         src/grpc/GrpcBkpClient.cxx
         src/grpc/services/GrpcFlpServiceClient.cxx
+        src/grpc/services/GrpcDplProcessExecutionClient.cxx
         src/BkpClientFactory.cxx
+        include/BookkeepingApi/QcFlagServiceClient.h
+        include/BookkeepingApi/QcFlag.h
+        src/grpc/services/GrpcQcFlagServiceClient.cxx
+        src/grpc/services/GrpcQcFlagServiceClient.h
+        include/BookkeepingApi/TriggerCountersServiceClient.h
+        src/grpc/services/GrpcTriggerCountersServiceClient.h
+        src/grpc/services/GrpcTriggerCountersServiceClient.cxx
 )
 
 target_include_directories(BookkeepingApi
@@ -74,28 +84,6 @@ target_link_libraries(BookkeepingApi
 
 target_compile_features(BookkeepingApi PUBLIC cxx_std_17)
 
-add_library(BookkeepingProtoApi SHARED
-        src/BkpProtoClientFactory.cxx
-        src/grpc/GrpcBkpProtoClient.cxx
-        src/grpc/services/GrpcRunProtoClient.cxx
-        src/grpc/services/GrpcDplProcessExecutionProtoClient.cxx
-)
-
-target_include_directories(BookkeepingProtoApi
-        PUBLIC $<INSTALL_INTERFACE:include>    # public header once installed
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> # to build it
-        PRIVATE $<BUILD_INTERFACE:${PROTO_OUT_DIR}> # because of the proto generated files
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # private headers
-)
-
-target_link_libraries(BookkeepingProtoApi
-        PUBLIC BookkeepingProtos
-        PUBLIC protobuf::libprotobuf
-        PRIVATE gRPC::grpc++
-)
-
-target_compile_features(BookkeepingProtoApi PUBLIC cxx_std_17)
-
 ### EXAMPLES
 
 add_executable(exampleSpecificService example/exampleSpecificServices.cxx)
@@ -103,14 +91,6 @@ add_executable(exampleSpecificService example/exampleSpecificServices.cxx)
 target_link_libraries(exampleSpecificService
         PUBLIC BookkeepingApi
 )
-
-add_executable(exampleProtoService example/exampleProtoServices.cxx)
-
-target_link_libraries(exampleProtoService
-        PUBLIC BookkeepingProtoApi
-)
-
-target_include_directories(exampleProtoService PRIVATE $<BUILD_INTERFACE:${PROTO_OUT_DIR}>)
 
 # PACKAGE INFO
 
@@ -131,10 +111,12 @@ install(FILES
         ${PROTO_OUT_DIR}/flp.pb.h
         ${PROTO_OUT_DIR}/run.pb.h
         ${PROTO_OUT_DIR}/dplProcessExecution.pb.h
+        ${PROTO_OUT_DIR}/qcFlag.pb.h
+        ${PROTO_OUT_DIR}/triggerCounters.pb.h
         DESTINATION "include"
 )
 
-install(TARGETS BookkeepingProtos BookkeepingApi BookkeepingProtoApi
+install(TARGETS BookkeepingProtos BookkeepingApi
         EXPORT BookkeepingApiTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

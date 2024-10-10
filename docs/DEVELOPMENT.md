@@ -13,8 +13,6 @@ OPENID_REDIRECT=
 JWT_SECRET=
 
 ATTACHMENT_PATH=/var/storage
-
-NOTIFICATION_BROKER=
 ```
 
 On mac, the file database/configuration/my.cnf must be modified to set this variable to 1 : 

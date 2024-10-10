@@ -1,0 +1,49 @@
+/*
+ * === This file is part of ALICE O² ===
+ *
+ * Copyright 2024 CERN and copyright holders of ALICE O².
+ * Author: Teo Mrnjavac <teo.mrnjavac@cern.ch>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In applying this license CERN does not waive the privileges and
+ * immunities granted to it by virtue of its status as an
+ * Intergovernmental Organization or submit itself to any jurisdiction.
+ */
+
+
+syntax = "proto3";
+
+package common;
+option java_package = "ch.cern.alice.o2.control.common";
+option go_package = "github.com/AliceO2Group/Control/common/protos;pb";
+
+//////////////// Common types ///////////////
+
+message User {
+  // The unique CERN identifier of this user.
+  int32 externalId = 1;
+  // The unique identifier of this entity.
+  optional int32 id = 2;
+  // Name of the user.
+  string name = 3;
+}
+
+message WorkflowTemplateInfo {
+  string name = 1;
+  string description = 2;
+  string path = 3;
+  bool public = 4; // whether the environment is public or not
+  bool bookkept = 5; // whether the runs should be logged in bookkeeping
+}

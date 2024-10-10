@@ -29,7 +29,9 @@ const LhcPeriodSuite = require('./lhcPeriod');
 const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
 const SimulationPassesSuite = require('./simulationPasses/index.js');
-const QcFlags = require('./qualityControlFlag/index.js');
+const QcFlagsSuite = require('./qualityControlFlag/index.js');
+const TriggerCountersSuite = require('./triggerCounters/index.js');
+const GaqDetectorSuite = require('./gaq');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -42,6 +44,7 @@ module.exports = () => {
     describe('Environment history item', EnvironmentHistoryItemSuite);
     describe('EOS report', EosReportSuite);
     describe('Flp role', FlpRoleSuite);
+    describe('GaqDetector', GaqDetectorSuite);
     describe('LHC fill suite', LhcFillSuite);
     describe('Logs', LogSuite);
     describe('RunType', RunTypeSuite);
@@ -52,5 +55,6 @@ module.exports = () => {
     describe('User', UserSuite);
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);
-    describe('QC Flags', QcFlags);
+    describe('QC Flags', QcFlagsSuite);
+    describe('Trigger counters', TriggerCountersSuite);
 };

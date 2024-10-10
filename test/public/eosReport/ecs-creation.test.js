@@ -15,9 +15,12 @@ const {
     goToPage,
     defaultBefore,
     defaultAfter,
-    checkMismatchingUrlParam,
-    waitForNetworkIdleAndRedraw,
-    reloadPage, fillInput, expectInnerText,
+    reloadPage,
+    fillInput,
+    waitForNavigation,
+    pressElement,
+    expectUrlParams,
+    expectInnerText,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -26,7 +29,7 @@ const { createEnvironment } = require('../../../lib/server/services/environment/
 const { customizedECSEosReport, emptyECSEosReportRequest } = require('../../mocks/mock-ecs-eos-report.js');
 const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
+const { getOrCreateAllDataTakingDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDataTakingDetectorsByName.js');
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
@@ -53,7 +56,7 @@ module.exports = () => {
     it('Should successfully display the ECS eos report creation page', async () => {
         const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.ECS } });
         expect(response.status()).to.equal(200);
-        expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create', shiftType: ShiftTypes.ECS })).to.eql({});
+        expectUrlParams(page, { page: 'eos-report-create', shiftType: ShiftTypes.ECS });
     });
 
     it('Should successfully create an ECS EoS report when submitting the form and redirect to the corresponding log', async () => {
@@ -63,15 +66,15 @@ module.exports = () => {
             });
             await createEnvironmentHistoryItem({
                 status: 'DESTROYED',
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                timestamp: new Date(),
+                timestampNano: 0,
                 environmentId: environment.id,
             });
             for (const run of environment.runs) {
                 const runId = await createRun(
                     run,
                     {
-                        detectors: await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '')
+                        detectors: await getOrCreateAllDataTakingDetectorsByName((run?.concatenatedDetectors ?? '')
                             .split(',')
                             .map((value) => value.trim())),
                     },
@@ -122,9 +125,7 @@ module.exports = () => {
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
-        expectInnerText(page, '#from-previous-shifter .CodeMirror textarea', info);
-        await page.focus('#from-previous-shifter .CodeMirror textarea');
-        await page.keyboard.type('Old information: ');
+        await expectInnerText(page, '#from-previous-shifter .CodeMirror .CodeMirror-line', info);
 
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
@@ -134,11 +135,8 @@ module.exports = () => {
         await page.focus('#for-rm-rc .CodeMirror textarea');
         await page.keyboard.type('For RM & RC\nOn multiple lines');
 
-        await page.waitForSelector('#submit');
-        await page.click('#submit');
-
-        await waitForNetworkIdleAndRedraw(page);
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '121' })).to.eql({});
+        await waitForNavigation(page, () => pressElement(page, '#submit'));
+        expectUrlParams(page, { page: 'log-detail', id: '121' });
 
         // Fetch log manually, because it's hard to parse codemirror display
         const { text } = await getLog(121);
@@ -156,7 +154,7 @@ module.exports = () => {
           on run`)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
-        expect(text.includes(`### From previous shifter\nOld information: ${info}`)).to.be.true;
+        expect(text.includes(`### From previous shifter\n${info}`)).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
     });

@@ -12,8 +12,17 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
-const { waitForTimeout, waitForNavigation } = require('../defaults.js');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    goToPage,
+    expectUrlParams,
+    waitForTimeout,
+    waitForNavigation,
+} = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -24,6 +33,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -33,15 +43,15 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 5 } });
 
         // We expect to be the only log on page and opened
-        const postExists = await page.$('#log-5');
+        await page.waitForSelector('#log-5');
         const openedLogs = await page.evaluate(() => window.model.logs.treeViewModel.detailedPostsIds);
         expect(openedLogs).to.have.lengthOf(1);
         expect(openedLogs[0]).to.equal(5);
-        expect(Boolean(postExists)).to.be.true;
     });
 
     it('should successfully expand the log specified in the URL and leave other ones closed', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
+        await page.waitForSelector('#log-117 .log-details-collapsed > *');
 
         // Expect other logs to be closed
         const closedLog1 = await page.$$('#log-117 .log-details-collapsed > *');
@@ -57,10 +67,10 @@ module.exports = () => {
     it('should display the log title on the log card if it is the same title as the parent log', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
+        await page.waitForSelector('#log-119 #log-119-title');
+
         const log117Title = await page.$('#log-117 #log-117-title');
-        const log119Title = await page.$('#log-119 #log-119-title');
         expect(log117Title).to.not.exist;
-        expect(log119Title).to.exist;
     });
 
     it('should display a button on each log for copying the url of the log', async () => {
@@ -71,8 +81,7 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect the button to be there. Log 117 should be a parent to 119.
-        const log117CopyBtn = await page.$('#copy-117');
-        expect(log117CopyBtn).to.exist;
+        const log117CopyBtn = await page.waitForSelector('#copy-117');
 
         await log117CopyBtn.click();
 
@@ -86,22 +95,19 @@ module.exports = () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
 
         // Expect the button to be there. Log 117 should be a parent to 119.
-        const log117CopyBtn = await page.$('#copy-117');
-        expect(log117CopyBtn).to.exist;
+        const log117CopyBtn = await page.waitForSelector('#copy-117');
 
         // Expect the text before the click to be different after
         await expectInnerText(page, '#copy-117', 'Copy Link');
         await log117CopyBtn.click();
-        await waitForTimeout(100);
         await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
-    it('should successfuly expand opened log when displaying a log tree', async () => {
+    it('should successfully expand opened log when displaying a log tree', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one log in this log entry
-        const postExists = await page.$('#log-1');
-        expect(Boolean(postExists)).to.be.true;
+        page.waitForSelector('#log-1');
     });
 
     it('notifies if a specified log id is invalid', async () => {
@@ -124,11 +130,8 @@ module.exports = () => {
         await expectInnerText(page, `#log-${logId}-runs`, `Runs:\n${runNumber}`);
 
         // We expect the associated runs to be clickable with a valid link
-        await pressElement(page, `#log-${logId}-runs a`);
-
-        // We expect the link to navigate to the correct run detail page
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=run-detail&runNumber=${runNumber}`);
+        await waitForNavigation(page, () => pressElement(page, `#log-${logId}-runs a`));
+        expectUrlParams(page, { page: 'run-detail', runNumber });
     });
 
     it('allows navigating to an associated environment', async () => {
@@ -137,15 +140,12 @@ module.exports = () => {
 
         await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
 
-        // We expect the correct associated enironments to be shown
+        // We expect the correct associated environments to be shown
         await expectInnerText(page, `#log-${logId}-environments`, 'Environments:\n8E4aZTjY,\neZF99lH6');
 
         // We expect the associated environments to be clickable with a valid link
-        await pressElement(page, `#log-${logId}-environments a`);
-
-        // We expect the link to navigate to the correct environments detail page
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=env-details&environmentId=${environmentId}`);
+        await waitForNavigation(page, () => pressElement(page, `#log-${logId}-environments a`));
+        expectUrlParams(page, { page: 'env-details', environmentId });
     });
 
     it('allows navigating to an associated LHC fill', async () => {
@@ -158,11 +158,8 @@ module.exports = () => {
         await expectInnerText(page, `#log-${logId}-lhcFills`, `LHC Fills:\n${fillNumbers.join(',\n')}`);
 
         // We expect the associated lhcFills to be clickable with a valid link
-        await pressElement(page, `#log-${logId}-lhcFills a`);
-
-        // We expect the link to navigate to the correct lhcFills detail page
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=lhc-fill-details&fillNumber=${fillNumbers[0]}`);
+        await waitForNavigation(page, () => pressElement(page, `#log-${logId}-lhcFills a`));
+        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: fillNumbers[0] });
     });
 
     it('should have a button to reply on a entry', async () => {
@@ -172,8 +169,7 @@ module.exports = () => {
         // We expect there to be at least one log in this log entry
         await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
 
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
+        expectUrlParams(page, { page: 'log-reply', parentLogId });
 
         const text = 'Test the reply button';
 
@@ -183,13 +179,8 @@ module.exports = () => {
         await waitForTimeout(250);
 
         // Create the new log
-        const button = await page.$('button#send');
-        await button.evaluate((button) => button.click());
-        await waitForTimeout(1000);
-
-        // Expect to be redirected to the new log
-        const postSendUrl = await page.url();
-        expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
+        await waitForNavigation(page, () => pressElement(page, 'button#send'));
+        expectUrlParams(page, { page: 'log-detail', id: 120 });
     });
 
     it('should successfully inherit parent log title', async () => {
@@ -198,9 +189,7 @@ module.exports = () => {
 
         // We expect there to be at least one post in this log entry
         await waitForNavigation(page, () => pressElement(page, `#reply-to-${parentLogId}`));
-
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-reply&parentLogId=${parentLogId}`);
+        expectUrlParams(page, { page: 'log-reply', parentLogId });
 
         const text = 'Test the reply log creation with no title';
 
@@ -212,12 +201,8 @@ module.exports = () => {
         const isDisabled = await page.$eval('button#send', (button) => button.disabled);
         expect(isDisabled).to.equal(false);
 
-        const button = await page.$('button#send');
-        await waitForNavigation(page, () => button.evaluate((button) => button.click()));
-
-        // Expect to be redirected to the new log
-        const postSendUrl = await page.url();
-        expect(postSendUrl.startsWith(`${url}/?page=log-detail`)).to.be.true;
+        await waitForNavigation(page, () => pressElement(page, 'button#send'));
+        expectUrlParams(page, { page: 'log-detail', id: 121 });
 
         // Expect new log to inherit title of the parent
         const newLogId = await page.evaluate(() => window.model.router.params.id);

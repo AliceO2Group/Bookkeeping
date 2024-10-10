@@ -15,9 +15,11 @@ const {
     goToPage,
     defaultBefore,
     defaultAfter,
-    checkMismatchingUrlParam,
-    waitForNetworkIdleAndRedraw,
-    reloadPage, fillInput,
+    reloadPage,
+    fillInput,
+    waitForNavigation,
+    pressElement,
+    expectUrlParams,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -49,7 +51,7 @@ module.exports = () => {
     it('Should successfully display the QC/PDP eos report creation page', async () => {
         const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.QC_PDP } });
         expect(response.status()).to.equal(200);
-        expect(await checkMismatchingUrlParam(page, { page: 'eos-report-create', shiftType: encodeURIComponent(ShiftTypes.QC_PDP) })).to.eql({});
+        expectUrlParams(page, { page: 'eos-report-create', shiftType: encodeURIComponent(ShiftTypes.QC_PDP) });
     });
 
     it('Should successfully create a QC/PDP EoS report when submitting the form and redirect to the corresponding log', async () => {
@@ -106,8 +108,6 @@ module.exports = () => {
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
-        await page.focus('#from-previous-shifter .CodeMirror textarea');
-        await page.keyboard.type('From previous shifter\nOn multiple lines');
 
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
@@ -117,11 +117,8 @@ module.exports = () => {
         await page.focus('#for-rm-rc .CodeMirror textarea');
         await page.keyboard.type('For RM & RC\nOn multiple lines');
 
-        await page.waitForSelector('#submit');
-        await page.click('#submit');
-
-        await waitForNetworkIdleAndRedraw(page);
-        expect(await checkMismatchingUrlParam(page, { page: 'log-detail', id: '120' })).to.eql({});
+        await waitForNavigation(page, () => pressElement(page, '#submit'));
+        expectUrlParams(page, { page: 'log-detail', id: '120' });
 
         // Fetch log manually, because it's hard to parse codemirror display
         const { text } = await getLog(120);
@@ -150,7 +147,7 @@ module.exports = () => {
     * Detectors QC bad: \`FT0\`, \`TST\``)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
-        expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
+        expect(text.includes('### From previous shifter\n-')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
     });

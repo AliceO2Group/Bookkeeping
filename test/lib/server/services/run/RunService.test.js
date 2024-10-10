@@ -15,7 +15,6 @@ const { expect } = require('chai');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 const { getDetectorsByNames } = require('../../../../../lib/server/services/detector/getDetectorsByNames.js');
 const { RunQualities } = require('../../../../../lib/domain/enums/RunQualities.js');
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
 const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
 const { RunCalibrationStatus, DEFAULT_RUN_CALIBRATION_STATUS } = require('../../../../../lib/domain/enums/RunCalibrationStatus.js');
 const assert = require('assert');
@@ -24,6 +23,7 @@ const { SYNTHETIC, CALIBRATION } = require('../../../../mocks/mock-run.js');
 const { getLog } = require('../../../../../lib/server/services/log/getLog.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 const { RunDetectorQualities } = require('../../../../../lib/domain/enums/RunDetectorQualities.js');
+const { RunDefinition } = require('../../../../../lib/domain/enums/RunDefinition.js');
 
 module.exports = () => {
     const baseRun = {
@@ -80,7 +80,7 @@ module.exports = () => {
             timeTrgStart,
             timeTrgEnd,
         });
-        expect(run.definition).to.equal(RunDefinition.Physics);
+        expect(run.definition).to.equal(RunDefinition.PHYSICS);
     });
 
     it('should throw when trying to change run quality without justification except from specific cases', async () => {
@@ -135,7 +135,7 @@ module.exports = () => {
             { ...CALIBRATION.LASER, runNumber: ++lastRunNumber },
             { runTypeName: CALIBRATION.LASER.runType.name },
         );
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
     });
 
@@ -149,7 +149,7 @@ module.exports = () => {
     it('should successfully allow to update run calibration status', async () => {
         const runNumber = 40;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
         run = await runService.update({ runNumber }, { runPatch: { calibrationStatus: RunCalibrationStatus.SUCCESS } });
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
@@ -162,7 +162,7 @@ module.exports = () => {
         const reason = 'Here is the reason of the change';
 
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
         run = await runService.update(
             { runNumber },
@@ -184,7 +184,7 @@ module.exports = () => {
         const reason = 'Here is the reason of the change';
 
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
         run = await runService.update(
             { runNumber },
@@ -245,6 +245,9 @@ module.exports = () => {
             { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
         );
 
+        // A new log has been created
+        lastLogId++;
+
         const run = await getRun({ runNumber });
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.FAILED);
 
@@ -254,24 +257,52 @@ module.exports = () => {
         );
     });
 
+    it('should successfully create a log when updating EoR reason to DETECTOR', async () => {
+        const runNumber = 1;
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: [{ reasonTypeId: 2, description: 'A description' }] } },
+        );
+
+        const lastLog = await getLog(++lastLogId, (qb) => {
+            qb.include('tags');
+        });
+        expect(lastLog.title).to.equal('EoR reason has changed for run 1');
+        expect(lastLog.text).to.equal('End of run reason for the run 1 has been changed.\nThe new EoR reasons are:' +
+            '\n- DETECTORS - TPC - A description');
+        expect(lastLog.tags).to.lengthOf(0);
+    });
+
+    it('should successfully NOT create a log when updating EoR reason for something else than DETECTOR', async () => {
+        const runNumber = 1;
+
+        await runService.update(
+            { runNumber },
+            { relations: { eorReasons: [{ reasonTypeId: 3, description: 'A description' }] } },
+        );
+
+        expect(await getLog(lastLogId + 1, (qb) => qb.include('tags'))).to.be.null;
+    });
+
     it('should successfully consider current patch to allow/disallow calibration status update', async () => {
         const runNumber = 106;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Commissioning);
+        expect(run.definition).to.equal(RunDefinition.PHYSICS);
         expect(run.calibrationStatus).to.be.null;
         // Run was commissioning, set it to calibration and set calibration status at once
         run = await runService.update(
             { runNumber },
-            { runPatch: { definition: RunDefinition.Calibration, calibrationStatus: RunCalibrationStatus.SUCCESS } },
+            { runPatch: { definition: RunDefinition.CALIBRATION, calibrationStatus: RunCalibrationStatus.SUCCESS } },
         );
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
 
         // Try to move the run to commissioning and set its calibration status in the same time
         await assert.rejects(
             () => runService.update(
                 { runNumber },
-                { runPatch: { definition: RunDefinition.Commissioning, calibrationStatus: RunCalibrationStatus.SUCCESS } },
+                { runPatch: { definition: RunDefinition.COMMISSIONING, calibrationStatus: RunCalibrationStatus.SUCCESS } },
             ),
             new BadParameterError('Calibration status is reserved to calibration runs'),
         );
@@ -280,15 +311,15 @@ module.exports = () => {
     it('should successfully set default values for run calibration status when changing calibration run definition', async () => {
         const runNumber = 106;
         let run = await getRun({ runNumber });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
-        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Commissioning } });
-        expect(run.definition).to.equal(RunDefinition.Commissioning);
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
+        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.COMMISSIONING } });
+        expect(run.definition).to.equal(RunDefinition.COMMISSIONING);
         expect(run.calibrationStatus).to.be.null;
-        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Calibration } });
-        expect(run.definition).to.equal(RunDefinition.Calibration);
+        run = await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.CALIBRATION } });
+        expect(run.definition).to.equal(RunDefinition.CALIBRATION);
         expect(run.calibrationStatus).to.equal(DEFAULT_RUN_CALIBRATION_STATUS);
         // Put back definition to commissioning
-        await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.Commissioning } });
+        await runService.update({ runNumber }, { runPatch: { definition: RunDefinition.COMMISSIONING } });
     });
 
     it('should successfully update run quality without justification in specific use-cases', async () => {
@@ -610,5 +641,80 @@ module.exports = () => {
         expect(run).to.not.be.null;
         expect(run.userIdO2Start).to.not.be.null;
         expect(run.userIdO2Stop).to.not.be.null;
+    });
+
+    it('should successfully update run phase shift at start and end', async () => {
+        const runNumber = 1;
+        const run = await runService.update(
+            { runNumber },
+            {
+                runPatch: {
+                    phaseShiftAtStartBeam1: 0.0004,
+                    phaseShiftAtStartBeam2: -0.0001,
+                    phaseShiftAtEndBeam1: 0.0005,
+                    phaseShiftAtEndBeam2: -0.0002,
+                },
+            },
+        );
+        expect(run.phaseShiftAtStartBeam1).to.equal(0.0004);
+        expect(run.phaseShiftAtStartBeam2).to.equal(-0.0001);
+        expect(run.phaseShiftAtEndBeam1).to.equal(0.0005);
+        expect(run.phaseShiftAtEndBeam2).to.equal(-0.0002);
+    });
+
+    it('should successfully update run cross section and trigger acceptance', async () => {
+        const runNumber = 1;
+        const run = await runService.update(
+            { runNumber },
+            {
+                runPatch: {
+                    crossSection: 0.0001,
+                    triggerEfficiency: 0.0002,
+                    triggerAcceptance: 0.0003,
+                },
+            },
+        );
+        expect(run.crossSection).to.equal(0.0001);
+        expect(run.triggerEfficiency).to.equal(0.0002);
+        expect(run.triggerAcceptance).to.equal(0.0003);
+    });
+
+    it('should fetch distinct aliceCurrent levels', async () => {
+        const levelsCombinations = await runService.getAllAliceL3AndDipoleLevelsForPhysicsRuns();
+        expect(levelsCombinations).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
+    });
+
+    it('should successfully extract informations from environment configuration when creating a run', async () => {
+        const timeO2Start = new Date('2019-08-09 20:01:00');
+        const timeTrgStart = new Date('2019-08-09 20:02:00');
+        const timeTrgEnd = new Date('2019-08-09 20:03:00');
+        const timeO2End = new Date('2019-08-09 20:04:00');
+        const run = await runService.createOrUpdate(
+            1234,
+            'CmCvjNbg',
+            { timeO2Start, timeTrgStart, timeTrgEnd, timeO2End },
+            { externalUserId: 1 },
+        );
+
+        expect(run.triggerValue).to.equal('CTP');
+        expect(run.detectors).to.equal('FT0,ITS');
+        expect(run.detectorsQualities.map(({ name }) => name)).to.eql(['FT0', 'ITS']);
+        expect(run.nDetectors).to.equal(2);
+        expect(run.runType.name).to.equal('PHYSICS');
+        expect(run.dd_flp).to.equal(true);
+        expect(run.dcs).to.equal(true);
+        expect(run.epn).to.equal(true);
+        expect(run.pdpConfigOption).to.equal('Repository hash');
+        expect(run.pdpTopologyDescriptionLibraryFile).to.equal('production/production.desc');
+        expect(run.pdpWorkflowParameters).to.equal('QC,GPU,CALIB,EVENT_DISPLAY');
+        expect(run.tfbDdMode).to.equal('physics');
+        expect(run.lhcPeriod.name).to.equal('new');
+        expect(run.odcTopologyFullName).to.equal('(hash, default, production/production.desc, synchronous-workflow-calib)');
+        expect(run.pdpBeamType).to.equal('pp');
+        expect(run.epnTopology).to.equal('topology');
+        expect(run.odcTopologyFullName).to.equal('(hash, default, production/production.desc, synchronous-workflow-calib)');
+        expect(run.nFlps).to.equal(3);
+        expect(run.nEpns).to.equal(2);
+        expect(run.readoutCfgUri).to.equal('file:///local/replay/2024-04-17-pp-650khz-synt-4tf/readout-replay-24g-dd40.cfg');
     });
 };

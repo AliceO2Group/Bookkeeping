@@ -9,12 +9,11 @@
 //  granted to it by virtue of its status as an Intergovernmental Organization
 //  or submit itself to any jurisdiction.
 
-#ifndef CXX_CLIENT_GRPC_GRPCBKPCLIENT_H_
-#define CXX_CLIENT_GRPC_GRPCBKPCLIENT_H_
+#ifndef CXX_CLIENT_GRPC_GRPCBKPCLIENT_H
+#define CXX_CLIENT_GRPC_GRPCBKPCLIENT_H
 
 #include "flp.grpc.pb.h"
 #include "BookkeepingApi/BkpClient.h"
-#include "grpc/services/GrpcFlpServiceClient.h"
 
 namespace o2::bkp::api::grpc
 {
@@ -27,9 +26,18 @@ class GrpcBkpClient : public o2::bkp::api::BkpClient
 
   const std::unique_ptr<FlpServiceClient>& flp() const override;
 
+  const std::unique_ptr<DplProcessExecutionClient>& dplProcessExecution() const override;
+
+  const std::unique_ptr<QcFlagServiceClient>& qcFlag() const override;
+
+  const std::unique_ptr<TriggerCountersServiceClient>& triggerCounters() const override;
+
  private:
   std::unique_ptr<::o2::bkp::api::FlpServiceClient> mFlpClient;
+  std::unique_ptr<::o2::bkp::api::DplProcessExecutionClient> mDplProcessExecutionClient;
+  std::unique_ptr<::o2::bkp::api::QcFlagServiceClient> mQcFlagClient;
+  std::unique_ptr<::o2::bkp::api::TriggerCountersServiceClient> mTriggerCountersClient;
 };
 } // namespace o2::bkp::api::grpc
 
-#endif // CXX_CLIENT_GRPC_GRPCBKPCLIENT_H_
+#endif // CXX_CLIENT_GRPC_GRPCBKPCLIENT_H

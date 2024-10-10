@@ -17,10 +17,14 @@ const {
     expectInnerText,
     pressElement,
     goToPage,
-    checkMismatchingUrlParam,
-    getPopoverContent, waitForTimeout,
+    getPopoverContent,
+    waitForNavigation,
+    getTableDataSlice,
+    expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { expect } = require('chai');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
     let page;
@@ -28,6 +32,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore();
+        await resetDatabaseContent();
     });
 
     it('should successfully display lhc fills details page', async () => {
@@ -38,8 +43,7 @@ module.exports = () => {
     it('should successfully emphasize the fills that have a stable beams', async () => {
         // Fill #6 has a stable beam
         {
-            const stableBeamBadge = await page.$('#stable-beam-badge');
-            expect(stableBeamBadge).to.be.not.null;
+            const stableBeamBadge = await page.waitForSelector('#stable-beam-badge');
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-primary'))).to.be.true;
             expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM');
         }
@@ -47,8 +51,7 @@ module.exports = () => {
         // Fill #5 has an ongoing stable beam
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 5 } });
         {
-            const stableBeamBadge = await page.$('#stable-beam-badge');
-            expect(stableBeamBadge).to.be.not.null;
+            const stableBeamBadge = await page.waitForSelector('#stable-beam-badge');
             expect(await stableBeamBadge.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
             expect(await stableBeamBadge.evaluate((element) => element.innerText)).to.equal('STABLE BEAM - ONGOING');
         }
@@ -56,9 +59,10 @@ module.exports = () => {
 
     it('should successfully display runs statistics', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
-        const statistics = await page.$('#statistics');
-        expect(statistics).to.be.not.null;
+
+        await page.waitForSelector('#statistics');
         const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);
+
         expect(statisticsContent).to.include('Over 2 minutes');
         expect(statisticsContent).to.include('Under 2 minutes');
         expect(statisticsContent).to.include('Per quality');
@@ -109,7 +113,7 @@ module.exports = () => {
 
     it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
         await pressElement(page, '#all-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 5);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -139,7 +143,7 @@ module.exports = () => {
 
         // Test the switch back to physics only
         await pressElement(page, '#physics-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 4);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -170,24 +174,17 @@ module.exports = () => {
     it('should successfully navigate to run detail page', async () => {
         const row = await page.$('#runs tbody tr');
         expect(row).to.be.not.null;
-        const expectedRunNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
+        const runNumber = await page.evaluate(() => document.querySelector('td:first-of-type a').innerText);
 
-        await row.$eval('td:first-of-type a', (link) => link.click());
-        await page.waitForNetworkIdle();
-        await waitForTimeout(100);
-        const redirectedUrl = await page.url();
-        const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
-
-        expect(urlParameters).to.contain('page=run-detail');
-        expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
+        await waitForNavigation(page, () => pressElement(page, 'td:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber });
     });
 
     it('should successfully expose a button to create a new log related to the displayed fill', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
 
-        await pressElement(page, '#create-log');
-
-        expect(await checkMismatchingUrlParam(page, { page: 'log-create', lhcFillNumbers: '6' })).to.eql({});
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
+        expectUrlParams(page, { page: 'log-create', lhcFillNumbers: '6' });
 
         await page.waitForSelector('input#lhc-fills');
         expect(await page.$eval('input#lhc-fills', (element) => element.value)).to.equal('6');
@@ -201,11 +198,26 @@ module.exports = () => {
         const tableSelector = '#logs-pane table tbody tr';
         await page.waitForSelector(tableSelector);
 
-        const table = await page.$$(tableSelector);
-        expect(table).to.lengthOf(2);
-
-        expect(await table[0].evaluate((row) => row.id)).to.equal('row1');
-        expect(await table[1].evaluate((row) => row.id)).to.equal('row119');
+        const tableDataSlice = await getTableDataSlice(page, ['title', 'author', 'tags', 'runs', 'environments', 'lhcFills']);
+        expect(tableDataSlice).to.lengthOf(2);
+        expect(tableDataSlice).to.deep.eql([
+            {
+                title: 'First entry',
+                author: 'John Doe',
+                tags: 'MAINTENANCE',
+                runs: '1',
+                environments: '8E4aZTjY,eZF99lH6',
+                lhcFills: '5,6',
+            },
+            {
+                title: 'Another entry, with a title so long that it will probably be displayed with a balloon on it!',
+                author: 'John Doe',
+                tags: 'TEST-TAG-36\nTEST-TAG-37\nTEST-TAG-38\nTEST-TAG-39\nTEST-TAG-40\nTEST-TAG-41',
+                runs: '2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22',
+                environments: 'Dxi029djX,eZF99lH6',
+                lhcFills: '1,4,6',
+            },
+        ]);
     });
 
     after(async () => {

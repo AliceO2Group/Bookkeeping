@@ -14,6 +14,9 @@
 
 #include <memory>
 #include "FlpServiceClient.h"
+#include "DplProcessExecutionClient.h"
+#include "QcFlagServiceClient.h"
+#include "TriggerCountersServiceClient.h"
 
 namespace o2::bkp::api
 {
@@ -25,6 +28,14 @@ class BkpClient
 
   /// Return the client for FLP service
   virtual const std::unique_ptr<FlpServiceClient>& flp() const = 0;
+
+  /// Returns the implementation of the DPL process execution service defined in dpl-process-execution.proto
+  virtual const std::unique_ptr<DplProcessExecutionClient>& dplProcessExecution() const = 0;
+
+  /// Returns the client for QcFlag service
+  virtual const std::unique_ptr<QcFlagServiceClient>& qcFlag() const = 0;
+
+  virtual const std::unique_ptr<TriggerCountersServiceClient>& triggerCounters() const = 0;
 };
 } // namespace o2::bkp::api
 

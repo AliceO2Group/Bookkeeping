@@ -12,7 +12,8 @@
  */
 const chai = require('chai');
 
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage } = require('../defaults');
+const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getPopoverSelector } = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -22,7 +23,9 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
+
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
@@ -65,8 +68,10 @@ module.exports = () => {
     it('Should show no fields when having no admin roles', async () => {
         await goToPage(page, 'tag-create');
         await pressElement(page, 'div[title="User Actions"]');
-        await pressElement(page, 'span.slider.round');
-        await page.waitForSelector('#mattermost', { hidden: true });
+        const popoverSelector = await getPopoverSelector(await page.$('.dropdown-menu .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option`, true);
+
+        await page.waitForSelector('#mattermost', { hidden: true, timeout: 250 });
         expect(await page.$('#mattermost')).to.equal(null);
         expect(await page.$('#email')).to.equal(null);
     });

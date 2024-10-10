@@ -20,9 +20,9 @@ const {
     pressElement,
     expectInnerText,
     waitForNavigation,
-    validateElement,
-    checkMismatchingUrlParam,
-} = require('../defaults');
+    expectUrlParams,
+} = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -32,6 +32,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -49,21 +50,22 @@ module.exports = () => {
 
     it('should fail if attempt to create QC Flag Type with already existing name', async () => {
         await goToPage(page, 'qc-flag-type-creation');
-        await validateElement(page, 'button#submit[disabled]');
+        await page.waitForSelector('button#submit[disabled]');
 
-        await fillInput(page, 'input#name', 'LimitedAcceptance');
-        await fillInput(page, 'input#method', 'Limited acceptance');
+        await fillInput(page, 'input#name', 'Limited acceptance');
+        await fillInput(page, 'input#method', 'LimitedAcceptance');
         await pressElement(page, 'button#submit');
         await expectInnerText(
             page,
             '.alert.alert-danger',
-            'The request conflicts with existing data: A QC flag with name LimitedAcceptance or Limited acceptance already exists',
+            // eslint-disable-next-line max-len
+            'The request conflicts with existing data: A QC flag type with name Limited acceptance or method LimitedAcceptance already exists',
         );
     });
 
-    it('should succesfully create QC Flag Type', async () => {
+    it('should successfully create QC Flag Type', async () => {
         await goToPage(page, 'qc-flag-type-creation');
-        await validateElement(page, 'button#submit[disabled]');
+        await page.waitForSelector('button#submit[disabled]');
 
         await fillInput(page, 'input#name', 'AAA+');
         await fillInput(page, 'input#method', 'A+A+A');
@@ -71,8 +73,8 @@ module.exports = () => {
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
-        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
-        expect(await checkMismatchingUrlParam(page, { page: 'qc-flag-types-overview' })).to.be.eql({});
+        await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
+        expectUrlParams(page, { page: 'qc-flag-types-overview' });
 
         // Expect newly created flag to appear and have correct color
         await expectInnerText(page, '[style*="rgb(240, 0, 240)"]', 'AAA+');
