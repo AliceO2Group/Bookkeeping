@@ -148,11 +148,16 @@ module.exports.waitForTimeout = waitForTimeout;
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
 const waitForTableToLength = async (page, expectedSize) => {
-    await page.waitForFunction(
-        (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-        {},
-        expectedSize,
-    );
+    try {
+        await page.waitForFunction(
+            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+            {},
+            expectedSize,
+        );
+    } catch {
+        const actualSize = (await page.$$('tbody tr')).length;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}`);
+    }
 };
 
 module.exports.waitForTableLength = waitForTableToLength;
@@ -217,7 +222,7 @@ module.exports.waitForFirstRowToHaveId = async (page, id) => page.waitForSelecto
  * @return {Promise<*>} resolves once the navigation finished
  */
 const waitForNavigation = (page, navigateFunction) => Promise.all([
-    page.waitForNavigation({ timeout: 1500 }),
+    page.waitForNavigation(),
     navigateFunction(),
 ]);
 
@@ -405,10 +410,10 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
 };
 
 /**
- * Expect an element to have a text valid against givne validator
+ * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
- * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, return false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
@@ -421,7 +426,7 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
  * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
- * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, return false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
@@ -461,10 +466,10 @@ exports.getPopoverSelector = (popoverTrigger) => {
 };
 
 /**
- * Extract the content of a popover corresponding to a popover trigger
+ * Extract the HTML content of a popover corresponding to a popover trigger
  *
  * @param {object} popoverTrigger the puppeteer element of the popover trigger
- * @return {Promise<string>} the content of the trigger
+ * @return {Promise<string>} the HTML content of the trigger
  */
 const getPopoverContent = (popoverTrigger) => {
     if (popoverTrigger === null) {
@@ -483,6 +488,30 @@ const getPopoverContent = (popoverTrigger) => {
 };
 
 module.exports.getPopoverContent = getPopoverContent;
+
+/**
+ * Extract the inner text of a popover corresponding to a popover trigger
+ *
+ * @param {object} popoverTrigger the puppeteer element of the popover trigger
+ * @return {Promise<string>} the content of the trigger
+ */
+const getPopoverInnerText = (popoverTrigger) => {
+    if (popoverTrigger === null) {
+        return null;
+    }
+
+    return popoverTrigger.evaluate((element) => {
+        const key = element.dataset.popoverKey;
+        if (!key) {
+            return null;
+        }
+
+        const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
+        return popover.innerText;
+    });
+};
+
+module.exports.getPopoverInnerText = getPopoverInnerText;
 
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
@@ -579,7 +608,7 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
  * Method to check cells of columns with given id have expected innerText
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {stirng} columnId column id
+ * @param {string} columnId column id
  * @param {string[]} [expectedInnerTextValues] values expected in columns
  *
  * @return {Promise<void>} resolve once column values were checked
@@ -607,7 +636,46 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
         );
     } catch (_) {
         // Use expect to have explicit error message
-        expect(getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+        expect(await getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+    }
+};
+
+/**
+ * Method to check cells of a row with given id have expected innerText
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} rowId row id
+ * @param {Object<string, string>} [expectedInnerTextValues] values expected in the row
+ *
+ * @return {Promise<void>} resolve once row's values were checked
+ */
+module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) => {
+    try {
+        await page.waitForFunction((rowId, expectedInnerTextValues) => {
+            for (const columnId in expectedInnerTextValues) {
+                const actualValue = document.querySelector(`table tbody tr:nth-of-type(${rowId}) .column-${columnId}`).innerText;
+                if (expectedInnerTextValues[columnId] !== actualValue) {
+                    return false;
+                }
+            }
+            return true;
+        }, {}, rowId, expectedInnerTextValues);
+    } catch {
+        const rowInnerTexts = {};
+        for (const columnId in expectedInnerTextValues) {
+            rowInnerTexts[columnId] = await page.evaluate(
+                (rowId, columnId) => {
+                    const column = document.querySelector(`table tbody tr:nth-of-type(${rowId}) .column-${columnId}`);
+                    if (!column) {
+                        throw new Error(`No element found for row ${rowId} and column ${columnId}`);
+                    }
+                    return column.innerText;
+                },
+                rowId,
+                columnId,
+            );
+        }
+        expect(rowInnerTexts).to.eql(expectedInnerTextValues);
     }
 };
 
@@ -651,7 +719,7 @@ module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) =>
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation = false] if true it's expected not to match given regex
  *
- * @return {Promise<void>} revoled once column values were checked
+ * @return {Promise<void>} resolved once column values were checked
  */
 module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
     const {
@@ -689,7 +757,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     await this.pressElement(page, `th#${columnId}`);
     this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
-    // Sort in DESCSENDING manner
+    // Sort in DESCENDING manner
     await this.pressElement(page, `th#${columnId}`);
     this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
@@ -770,7 +838,7 @@ module.exports.unsetConfirmationDialogActions = (page) => {
  * @return {Promise<void>} promise
  */
 module.exports.expectLink = async (element, selector, { href, innerText }) => {
-    await element.waitForSelector(selector, { timeout: 200 });
+    await element.waitForSelector(selector);
     const actualLinkProperties = await (await element.$(selector)).evaluate(({ innerText, href }) => ({ href, innerText }));
     expect(actualLinkProperties).to.eql({ href, innerText });
 };

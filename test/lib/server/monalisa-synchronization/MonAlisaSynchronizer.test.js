@@ -14,12 +14,20 @@
 const { expect } = require('chai');
 const { getMockMonAlisaClient } = require('./data/getMockMonAlisaClient.js');
 const { MonAlisaSynchronizer } = require('../../../../lib/server/monalisa-synchronization/MonAlisaSynchronizer.js');
-const { repositories:
-    { DataPassRepository, LhcPeriodRepository, SimulationPassRepository, RunRepository } } = require('../../../../lib/database/index.js');
+const { repositories: {
+    DataPassRepository,
+    LhcPeriodRepository,
+    SimulationPassRepository,
+    RunRepository,
+    DataPassVersionRepository,
+} } = require('../../../../lib/database/index.js');
 const { extractLhcPeriod } = require('../../../../lib/server/utilities/extractLhcPeriod.js');
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
-const { RunDefinition } = require('../../../../lib/server/services/run/getRunDefinition.js');
 const { Op } = require('sequelize');
+const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
+const { DataPassVersionStatus } = require('../../../../lib/domain/enums/DataPassVersionStatus.js');
+const { SkimmingStage } = require('../../../../lib/domain/enums/SkimmingStage.js');
+const { gaqDetectorService, DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } = require('../../../../lib/server/services/gaq/GaqDetectorsService.js');
 
 const YEAR_LOWER_LIMIT = 2023;
 
@@ -32,27 +40,28 @@ module.exports = () => {
         const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
         const expectedDataPassesVersions = mockDataPassesVersions.filter(({ name }) => extractLhcPeriod(name).year >= YEAR_LOWER_LIMIT);
 
-        // Check whether examining data passes with last runs works correctly;
-        let lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
-        expect(mockDataPassesVersions.every((dataPass) => monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
+        // Check whether examining data passes with last_seen information works correctly;
+        let lastSeenAndLastStatus = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
+        expect(mockDataPassesVersions.every((dataPass) => monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeenAndLastStatus)))
+            .to.be.true;
 
         // Run Synchronization
         await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
 
         const dataPassesDB = await DataPassRepository.findAll({ include: [
             { association: 'runs', attributes: ['runNumber'] },
-            { association: 'versions' }, // TODO
+            { association: 'versions', include: [{ association: 'statusHistory', required: true }] },
         ] });
 
-        // Correct amount of data
+        // Expect correct amount of data
         expect(dataPassesDB).to.be.an('array');
-        expect(dataPassesDB).to.be.lengthOf(8);
+        expect(dataPassesDB).to.be.lengthOf(11);
 
         // All expected data passes names present
         const expectedNames = expectedDataPassesVersions.map(({ name }) => name);
         expect(dataPassesDB.map(({ name }) => name)).to.include.all.members(expectedNames);
 
-        // All associated with appripriate LHC Periods
+        // All associated with appropriate LHC Periods
         const lhcPeriodNameToId = Object.fromEntries((await LhcPeriodRepository.findAll({
             raw: true,
             attributes: ['id', 'name'],
@@ -61,6 +70,7 @@ module.exports = () => {
         expect(dataPassesDB.map(({ name, lhcPeriodId }) => lhcPeriodNameToId[name.split('_')[0]] === lhcPeriodId).every((I) => I)).to.be.true;
 
         // Properties of data passes are the same
+
         expect(dataPassesDB.map((dataPass) => {
             const { name, versions: [{ outputSize, description, reconstructedEventsCount, lastSeen }] } = dataPass;
             return { name, outputSize, description, reconstructedEventsCount, lastSeen };
@@ -79,7 +89,7 @@ module.exports = () => {
                     expectedRunNumbers = [
                         ...(await RunRepository.findAll({ where: {
                             runNumber: { [Op.in]: potentiallyExpectedRunNumbers },
-                            definition: RunDefinition.Physics,
+                            definition: RunDefinition.PHYSICS,
                         } })).map(({ runNumber }) => runNumber),
                         ...expectedRunNumbers,
                     ];
@@ -89,9 +99,82 @@ module.exports = () => {
             }
         }
 
-        // Check whether examining data passes with last runs works correctly;
-        lastSeens = await monAlisaSynchronizer._getAllDataPassVersionsLastSeen();
-        expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeens))).to.be.true;
+        // Default GAQ detectors should be set (PbPb runs)
+        const dataPassWithNewRuns = await DataPassRepository.findOne({ where: { name: 'LHC23f_skimming' } });
+        const runNumbersWithDefaultGaqDetectors = [54, 56];
+        for (const runNumber of runNumbersWithDefaultGaqDetectors) {
+            const [runDetectors] = await RunRepository.findAll({
+                subQuery: false,
+                where: { runNumber },
+                include: [{ association: 'detectors', where: { name: { [Op.in]: DEFAULT_GAQ_DETECTORS_FOR_LEAD_LEAD_RUNS } } }],
+            });
+            expect((await gaqDetectorService.getGaqDetectors(dataPassWithNewRuns.id, runNumber)).map(({ name }) => name))
+                .to.have.all.members(runDetectors.detectors.map(({ name }) => name));
+        }
+
+        // Check skimming
+        const lhc23fDataPass = await DataPassRepository.findAll({ where: { lhcPeriodId: 3, skimmingStage: { [Op.not]: null } } });
+        expect(lhc23fDataPass.map(({ name, skimmingStage }) => ({ name, skimmingStage }))).to.have.all.deep.members([
+            { name: 'LHC23f_skimming', skimmingStage: SkimmingStage.SKIMMING },
+            { name: 'LHC23f_apass3_skimmed', skimmingStage: SkimmingStage.SKIMMED },
+            { name: 'LHC23f_apass4_skimmed', skimmingStage: SkimmingStage.POST_SKIMMED },
+        ]);
+
+        // Check whether examining data passes with last_seen information works correctly;
+        lastSeenAndLastStatus = await monAlisaSynchronizer._getAllDataPassVersionsLastSeenAndIdAndLastStatus();
+        expect(mockDataPassesVersions.some((dataPass) => !monAlisaSynchronizer._doesDataPassVersionNeedUpdate(dataPass, lastSeenAndLastStatus)))
+            .to.be.true;
+
+        const dataPassVersionDeletedFromML = await DataPassVersionRepository.findOne({
+            attributes: [],
+            include: 'statusHistory',
+            where: { description: 'LHC22b skimmed' },
+            order: [['statusHistory', 'createdAt', 'ASC']],
+        });
+
+        expect(dataPassVersionDeletedFromML.statusHistory.map(({ status }) => status)).to.be.have.all.members([
+            DataPassVersionStatus.RUNNING,
+            DataPassVersionStatus.DELETED,
+        ]);
+    });
+
+    it('should successfully restart some data passes', async () => {
+        const dataPassVersionsDeletedFromML = (await DataPassVersionRepository.findAll({
+            include: [{ association: 'statusHistory' }, { association: 'dataPass' }],
+            where: { description: 'LHC22b skimmed' },
+            order: [['statusHistory', 'createdAt', 'ASC']],
+        })).filter(({ statusHistory }) => statusHistory.slice(-1)[0].status === DataPassVersionStatus.DELETED);
+
+        const yearOfDataPassesExistingBeforeFirstSynchronization = 2022;
+        const monAlisaClient = getMockMonAlisaClient(yearOfDataPassesExistingBeforeFirstSynchronization);
+        // Override mock fetch method
+        const dataPassVersionsToBeRestartedContent = dataPassVersionsDeletedFromML.map(({
+            dataPass: { name },
+            description,
+            lastSeen,
+            outputSize,
+            reconstructedEventsCount,
+        }) => `"${name}";"${description}";;;;;;;;;${reconstructedEventsCount};;;;${lastSeen};;${outputSize}`)
+            .join('\n');
+        const dataPassVersionsToBeRestartedPayload = `# header\n${dataPassVersionsToBeRestartedContent}`;
+        monAlisaClient._fetchDataPassesVersions = async () => dataPassVersionsToBeRestartedPayload;
+        const monAlisaSynchronizer = new MonAlisaSynchronizer(monAlisaClient);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Sleep 1s
+        await monAlisaSynchronizer._synchronizeDataPassesFromMonAlisa();
+
+        const restartedDataPassVersion = await DataPassVersionRepository.findOne({
+            attributes: [],
+            include: 'statusHistory',
+            where: { description: 'LHC22b skimmed' },
+            order: [['statusHistory', 'createdAt', 'ASC']],
+        });
+
+        expect(restartedDataPassVersion.statusHistory.map(({ status }) => status)).to.be.have.all.members([
+            DataPassVersionStatus.RUNNING,
+            DataPassVersionStatus.DELETED,
+            DataPassVersionStatus.RUNNING,
+        ]);
     });
 
     it('Should synchronize Simulation Passes with respect to given year limit and in correct format', async () => {
@@ -151,7 +234,7 @@ module.exports = () => {
             if (potentiallyInsertedNamesSet.has(name)) {
                 const expectedRunNumbers = (await RunRepository.findAll({ where: {
                     runNumber: { [Op.in]: nameToSimulationPass[name].associations.runNumbers },
-                    definition: RunDefinition.Physics,
+                    definition: RunDefinition.PHYSICS,
                 } })).map(({ runNumber }) => runNumber);
 
                 expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRunNumbers);

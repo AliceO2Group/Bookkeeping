@@ -27,8 +27,6 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 
 const { expect } = chai;
 
-const periodNameRegex = /LHC\d\d[a-zA-Z]+/;
-
 module.exports = () => {
     let page;
     let browser;
@@ -60,14 +58,17 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => periodNameRegex.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_([a-z]pass\d|skimming)/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outpuSize) => {
-                const [number, unit] = outpuSize.split(' ');
+            outputSize: (outputSize) => {
+                if (outputSize === '-') {
+                    return true;
+                }
+                const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
         };
@@ -86,14 +87,12 @@ module.exports = () => {
     it('can set how many data passes is available per page', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
 
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.waitForSelector('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
+        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await page.waitForSelector('.dropup');
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -103,8 +102,7 @@ module.exports = () => {
             el.dispatchEvent(new Event('input'));
         });
 
-        await page.waitForSelector('.dropup');
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
+        await page.waitForSelector('.dropup input:invalid');
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
@@ -112,14 +110,13 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'name');
     });
 
-    it('should successfuly apply data pass name filter', async () => {
-        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 } });
+    it('should successfully apply data pass name filter', async () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
-        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1\nSkimmable']);
 
-        await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'name', ['LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
     });
 };

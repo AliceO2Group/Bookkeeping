@@ -19,7 +19,6 @@ const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
 const FlpSuite = require('./flp/index.js');
 const ServerSuite = require('./server/index.js');
-const SubsystemSuite = require('./subsystem/index.js');
 const TagSuite = require('./tag/index.js');
 
 module.exports = () => {
@@ -30,7 +29,6 @@ module.exports = () => {
     describe('RunType use-case', RunTypeSuite);
     describe('Flp use-case', FlpSuite);
     describe('Server use-case', ServerSuite);
-    describe('Subsystem use-case', SubsystemSuite);
     describe('Tag use-case', TagSuite);
     describe('Environment use-case', EnvironmentSuite);
 };

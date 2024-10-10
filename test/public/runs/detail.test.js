@@ -22,13 +22,15 @@ const {
     goToPage,
     fillInput,
     getPopoverContent,
-    waitForTimeout,
     waitForNavigation,
+    expectLink,
     waitForTableLength,
     getTableContent,
+    getPopoverSelector,
+    expectRowValues,
 } = require('../defaults.js');
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
-const { getRun } = require('../../../lib/server/services/run/getRun.js');
+const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -43,10 +45,24 @@ const banIconPath =
     + ' 4.188c-.353-.492-.563-1.095-.563-1.75 0-1.663 1.337-3 3-3zm2.438 1.25c.353.492.563 1.095.563 1.75 0 1.663-1.337 3-3 3-.655'
     + ' 0-1.258-.209-1.75-.563l4.188-4.188z';
 
+/**
+ * Navigate to the details page of a given run
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {number} runNumber the run number for which details should be displayed
+ * @return {Promise<void>} resolves once the page is displayed
+ */
+const goToRunDetails = async (page, runNumber) => {
+    await waitForNavigation(page, () => pressElement(page, '#run-overview'));
+    await fillInput(page, '#runNumber', `${runNumber},${runNumber}`);
+    return waitForNavigation(page, () => pressElement(page, `#row${runNumber}-runNumber-text a`));
+};
+
 module.exports = () => {
     let page;
     let browser;
     let url;
+    let createdRunId;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -56,6 +72,8 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
+        const { id } = await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+        createdRunId = id;
     });
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
@@ -68,14 +86,12 @@ module.exports = () => {
 
     it('successfully entered EDIT mode of a run', async () => {
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await expectInnerText(page, '#save-run', 'Save');
         await expectInnerText(page, '#cancel-run', 'Revert');
     });
 
     it('successfully exited EDIT mode of a run', async () => {
         await pressElement(page, '#cancel-run');
-        await waitForTimeout(100);
         await expectInnerText(page, '#edit-run', 'Edit Run');
     });
 
@@ -85,7 +101,6 @@ module.exports = () => {
         await pressElement(page, '#tags-selection #tagCheckbox1');
         await pressElement(page, '#save-run');
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await page.waitForSelector('#tags-selection #tagCheckbox1');
         expect(await page.$eval('#tags-selection #tagCheckbox1', (elem) => elem.checked)).to.be.true;
     });
@@ -105,7 +120,6 @@ module.exports = () => {
     });
 
     it('should display detectors qualities and colors', async () => {
-        await reloadPage(page);
         const detectorBadgeClassesSelector = '#Run-detectors .detector-badge';
         const detectorBadgeClasses = await page.$$eval(detectorBadgeClassesSelector, (badges) => badges.map((badge) => badge.className));
 
@@ -127,7 +141,6 @@ module.exports = () => {
     });
 
     it('should successfully display detectors icons', async () => {
-        await reloadPage(page);
         const svgPaths = await page.$$eval('#Run-detectors .detector-quality-icon svg path', (elements) =>
             elements.map((elem) => elem.getAttribute('d')));
 
@@ -141,11 +154,12 @@ module.exports = () => {
     });
 
     it('successfully update detectors qualities in EDIT mode', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await pressElement(page, '#Run-detectors .dropdown-trigger');
-        await waitForTimeout(100);
+
+        const popoverSelector = await getPopoverSelector(await page.$('#Run-detectors .popover-trigger'));
+        await page.waitForSelector(`${popoverSelector} .dropdown`);
+
         const goodQualityRadioSelector = '#detector-quality-1-good';
         const badQualityRadioSelector = '#detector-quality-1-bad';
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.true;
@@ -164,30 +178,35 @@ module.exports = () => {
             element.getAttribute('d'))).to.equal(xIconPath);
 
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
         await pressElement(page, '#Run-detectors .dropdown-trigger');
-        await waitForTimeout(100);
+        await page.waitForSelector('.dropdown');
+
         expect(await page.$eval(goodQualityRadioSelector, (element) => element.checked)).to.be.false;
         expect(await page.$eval(badQualityRadioSelector, (element) => element.checked)).to.be.true;
+        await pressElement(page, '#save-run');
     });
 
     it('should successfully update end of run reasons', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
 
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'DETECTORS');
-        await waitForTimeout(20);
 
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2) option:nth-of-type(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'CPV');
         await page.type('#Run-eorReasons input', 'A new EOR reason');
-        await page.click('#add-eor-reason');
-        // Remove the first EOR reason
-        await page.click('.remove-eor-reason');
-        await pressElement(page, '#save-run');
+        await pressElement(page, '#add-eor-reason', true);
+        // Flaky test, these options seem to fix it for now
+        await page.waitForFunction(() => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 3, { polling: 'mutation' });
 
-        await page.waitForSelector('#Run-eorReasons .eor-reason');
+        // Remove the first EOR reason
+        await pressElement(page, '.remove-eor-reason');
+        await page.waitForFunction(() => document.querySelectorAll('#Run-eorReasons .remove-eor-reason').length === 2, { polling: 'mutation' });
+        await pressElement(page, '#save-run');
+        await page.waitForSelector('#edit-run');
+
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
             .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
@@ -197,22 +216,23 @@ module.exports = () => {
     });
 
     it('should successfully revert the update end of run reasons', async () => {
-        await reloadPage(page);
         await pressElement(page, '#edit-run');
 
         await page.waitForSelector('#Run-eorReasons select');
         await page.select('#Run-eorReasons select', 'OTHER');
-        await waitForTimeout(20);
 
+        await page.waitForSelector('#Run-eorReasons select:nth-child(2)');
         await page.select('#Run-eorReasons select:nth-child(2)', 'Some-other');
         await page.type('#Run-eorReasons input', 'A new new EOR reason');
-        await page.click('#add-eor-reason');
-        // Remove the first EOR reason
-        await page.click('.remove-eor-reason');
-        await page.click('#cancel-run');
+        await pressElement(page, '#add-eor-reason');
 
-        await page.waitForSelector('#Run-eorReasons .eor-reason');
+        // Remove the first EOR reason
+        await pressElement(page, '.remove-eor-reason');
+        await pressElement(page, '#cancel-run');
+        await page.waitForSelector('#save-run', { hidden: true });
+
         const eorReasons = await page.$$('#Run-eorReasons .eor-reason');
+
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
             .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
@@ -222,7 +242,7 @@ module.exports = () => {
     });
 
     it('should successfully update inelasticInteractionRate values of PbPb run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 54 } });
+        await goToRunDetails(page, 54);
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100.1);
         await fillInput(page, '#Run-inelasticInteractionRateAtStart input', 101.1);
@@ -240,7 +260,7 @@ module.exports = () => {
     });
 
     it('should successfully update inelasticInteractionRateAvg of pp run', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 49 } });
+        await goToRunDetails(page, 55);
         await pressElement(page, '#edit-run');
         await fillInput(page, '#Run-inelasticInteractionRateAvg input', 100000);
 
@@ -253,7 +273,7 @@ module.exports = () => {
     });
 
     it('should show lhc data in edit mode', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+        await goToRunDetails(page, 1);
         await pressElement(page, '#edit-run');
         await expectInnerText(page, '#lhc-fill-fillNumber>strong', 'Fill number:');
     });
@@ -265,6 +285,22 @@ module.exports = () => {
             runNumber: 1,
             panel: 'flps',
         });
+
+        await waitForTableLength(page, 2);
+        await expectRowValues(
+            page,
+            1,
+            {
+                name: 'FLP-TPC-1',
+                hostname: 'someserver.cern.ch',
+                nTimeframes: '18364758544493064720',
+                bytesEquipmentReadOut: '16311.18 PB',
+                meanSTFSize: '1 B',
+                dataRate: '178.45 TB/s',
+                bytesRecordingReadOut: '16311.18 PB',
+                bytesFairMQReadOut: '16311.18 PB',
+            },
+        );
     });
 
     it('can navigate to the logs panel', async () => {
@@ -275,7 +311,8 @@ module.exports = () => {
     });
 
     it('can navigate to a log detail page', async () => {
-        await waitForTableLength(page, 5);
+        // Lengh of 6 because of the test to change EoR reason which creates a log
+        await waitForTableLength(page, 6);
 
         // We expect the entry page to have the same id as the id from the run overview
         await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
@@ -284,14 +321,14 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the trigger counters panel', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });
+        await goToRunDetails(page, 1);
 
         await pressElement(page, '#trigger-counters-tab');
         await waitForTableLength(page, 2);
         expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'trigger-counters' });
         expect(await getTableContent(page)).to.deep.eql([
             ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
-            ['SECOND-CLASS-NAME', '2001', '2002', '2003', '2004', '2005', '2006'],
+            ['SECOND-CLASS-NAME', '2,001', '2,002', '2,003', '2,004', '2,005', '2,006'],
         ]);
     });
 
@@ -302,10 +339,10 @@ module.exports = () => {
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 105 } });
+        await goToRunDetails(page, 105);
 
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
+        await page.waitForSelector('#cancel-run');
         expect(await page.$('#runQualitySelect')).to.be.null;
     });
 
@@ -313,12 +350,12 @@ module.exports = () => {
         await reloadPage(page);
 
         await pressElement(page, '#edit-run');
-        await waitForTimeout(100);
+        await page.waitForSelector('#cancel-run');
         expect(await page.$('#Run-detectors .dropdown-trigger')).to.be.null;
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 108 } });
+        await goToRunDetails(page, 108);
 
         await waitForNavigation(page, () => pressElement(page, '#lhc-fill-fillNumber a'));
 
@@ -346,58 +383,57 @@ module.exports = () => {
         await expectInnerText(page, '.btn-primary.btn-redirect', 'Return to Overview');
 
         // We expect the button to return the user to the overview page when pressed
-        await pressElement(page, '.btn-primary.btn-redirect');
-        await waitForTimeout(100);
+        await waitForNavigation(page, () => pressElement(page, '.btn-primary.btn-redirect'));
         expect(page.url()).to.equal(`${url}/?page=run-overview`);
     });
 
     it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await goToRunDetails(page, 106);
         const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display duration without warning popover when run has trigger OFF', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 107 } });
+        await goToRunDetails(page, 107);
         const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
     });
 
     it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 105 } });
+        await goToRunDetails(page, 105);
         const runDurationCell = await page.waitForSelector('#runDurationValue');
         expect(await runDurationCell.$('.popover-trigger')).to.be.null;
         expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
     });
 
     it('should successfully display popover warning when run is missing trigger start', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 104 } });
+        await goToRunDetails(page, 104);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
     });
 
     it('should successfully display popover warning when run is missing trigger stop', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 103 } });
+        await goToRunDetails(page, 103);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
     });
 
     it('should successfully display popover warning when run is missing trigger start and stop', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 102 } });
+        await goToRunDetails(page, 102);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#runDurationValue .popover-trigger'));
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 
     it('should display OFF in the nEPNs field when EPNs is null', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 3 } });
+        await goToRunDetails(page, 3);
         await page.waitForSelector('#Run-nEpns');
         await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\nOFF');
     });
 
     it('should not display OFF in the nEPNs field when EPNs is not null', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 106 } });
+        await goToRunDetails(page, 106);
         await page.waitForSelector('#Run-nEpns');
         await expectInnerText(page, '#Run-nEpns', 'Number of EPNs:\n12');
     });
@@ -408,16 +444,15 @@ module.exports = () => {
     });
 
     it('should display calibration status on calibration runs', async () => {
-        await goToPage(page, 'run-detail', { queryParameters: { runNumber: 40 } });
+        await goToRunDetails(page, 40);
         await page.waitForSelector('#Run-calibrationStatus');
         await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.NO_STATUS}`);
     });
 
     it('should allow to update calibration status on calibration runs', async () => {
         const runNumber = 40;
-        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.NO_STATUS);
-
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: runNumber } });
+        await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.NO_STATUS}`);
         await pressElement(page, '#edit-run');
         await page.waitForSelector('#Run-calibrationStatus select');
         await page.select('#Run-calibrationStatus select', RunCalibrationStatus.SUCCESS);
@@ -425,8 +460,7 @@ module.exports = () => {
 
         // Wait for page to be reloaded
         await page.waitForSelector('#edit-run');
-
-        expect((await getRun({ runNumber })).calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
+        await expectInnerText(page, '#Run-calibrationStatus', `Calibration status:\n${RunCalibrationStatus.SUCCESS}`);
     });
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
@@ -455,10 +489,42 @@ module.exports = () => {
     });
 
     it('should successfully display links to infologger and QCG', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row108 a'));
+
         await page.waitForSelector('.external-links');
-        expect(await page.$eval('.external-links a', ({ href }) => href))
-            .to.equal('http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}');
-        expect(await page.$eval('.external-links a:nth-of-type(2)', ({ href }) => href))
-            .to.equal('http://localhost:8082/?page=layoutShow&runNumber=108&definition=COMMISSIONING&pdpBeamType=cosmic&runType=PHYSICS');
+        await expectLink(page, '.external-links a', {
+            innerText: 'FLP',
+            href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+        });
+        await expectLink(page, '.external-links a:nth-of-type(2)', {
+            innerText: 'QCG',
+            href: 'http://localhost:8082/?page=layoutShow&runNumber=108&definition=PHYSICS&pdpBeamType=pp&runType=PHYSICS',
+        });
+    });
+
+    it('should display links to environment in ECS if run is running', async () => {
+        // Test for not running run
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#row104 a'));
+
+        await page.waitForSelector('.external-links a:nth-of-type(3)', { hidden: true, timeout: 250 });
+
+        // Create running run
+        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await waitForNavigation(page, () => pressElement(page, `#row${createdRunId} a`));
+
+        await expectUrlParams(page, { page: 'run-detail', runNumber: '1010' });
+        await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
+        await expectInnerText(page, '#runDurationValue', 'RUNNING');
+
+        await expectLink(page, '.external-links a:nth-of-type(3)', {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
+        await expectLink(page, '#Run-environmentId a', {
+            href: 'http://localhost:4000/?page=env-details&environmentId=CmCvjNbg',
+            innerText: 'CmCvjNbg',
+        });
     });
 };

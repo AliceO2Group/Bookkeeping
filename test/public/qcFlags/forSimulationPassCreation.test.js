@@ -19,11 +19,10 @@ const {
     pressElement,
     goToPage,
     waitForNavigation,
-    getColumnCellsInnerTexts,
     fillInput,
     expectColumnValues,
+    expectRowValues,
     expectUrlParams,
-    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -110,7 +109,7 @@ module.exports = () => {
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-2');
+        await pressElement(page, '#flag-type-dropdown-option-2', true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
@@ -122,9 +121,9 @@ module.exports = () => {
             dplDetectorId: '1',
         });
 
-        await waitForTableLength(page, 3);
-        const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        expect(flagTypes[0]).to.be.equal('Unknown Quality');
+        await expectRowValues(page, 1, {
+            flagType: 'Unknown Quality',
+        });
     });
 
     it('should successfully create time-based QC flag', async () => {
@@ -141,7 +140,7 @@ module.exports = () => {
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-11');
+        await pressElement(page, '#flag-type-dropdown-option-11', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await pressElement(page, '.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', true);
 
@@ -156,13 +155,11 @@ module.exports = () => {
             dplDetectorId: '1',
         });
 
-        await waitForTableLength(page, 4);
-        const flagTypes = await getColumnCellsInnerTexts(page, 'flagType');
-        const fromTimestamps = await getColumnCellsInnerTexts(page, 'from');
-        const toTimestamps = await getColumnCellsInnerTexts(page, 'to');
-        expect(flagTypes[0]).to.be.equal('Limited acceptance');
-        expect(fromTimestamps[0]).to.be.equal('08/08/2019\n13:01:01');
-        expect(toTimestamps[0]).to.be.equal('09/08/2019\n13:50:59');
+        await expectRowValues(page, 1, {
+            flagType: 'Limited acceptance',
+            from: '08/08/2019\n13:01:01',
+            to: '09/08/2019\n13:50:59',
+        });
     });
 
     it('should successfully create run-based QC flag in case of missing run start/stop', async () => {
@@ -178,7 +175,7 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true });
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-2');
+        await pressElement(page, '#flag-type-dropdown-option-2', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
         await page.waitForSelector('.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', { hidden: true });
 

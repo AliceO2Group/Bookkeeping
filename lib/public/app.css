@@ -480,6 +480,10 @@ label {
     vertical-align: top;
 }
 
+.va-t-bottom {
+    vertical-align: text-bottom;
+}
+
 /* Popover system */
 
 .popover {

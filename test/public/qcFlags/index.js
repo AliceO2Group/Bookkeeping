@@ -11,18 +11,22 @@
  * or submit itself to any jurisdiction.
  */
 
+const SynchronousOverviewSuite = require('./synchronousOverview.test');
 const ForDataPassOverviewSuite = require('./forDataPassOverview.test');
 const ForSimulationPassOverviewSuite = require('./forSimulationPassOverview.test');
 const ForDataPassCreationSuite = require('./forDataPassCreation.test');
 const ForSimulationPassCreationSuite = require('./forSimulationPassCreation.test');
 const DetailsForDataPassPageSuite = require('./detailsForDataPass.test');
 const DetailsForSimulationPassPageSuite = require('./detailsForSimulationPass.test');
+const GaqOverviewPageSuite = require('./gaqOverview.test');
 
 module.exports = () => {
+    describe('Synchronous Overview Page', SynchronousOverviewSuite);
     describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
     describe('For Simulation Pass Overview Page', ForSimulationPassOverviewSuite);
     describe('For Data Pass Creation Page', ForDataPassCreationSuite);
     describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
     describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
     describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
+    describe('GAQ Overview page', GaqOverviewPageSuite);
 };

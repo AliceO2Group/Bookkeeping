@@ -21,8 +21,9 @@ const {
     pressElement,
     expectColumnValues,
     validateTableData,
+    expectInnerText,
+    waitForTableLength,
 } = require('../defaults.js');
-const { waitForTimeout } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -54,7 +55,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        const allowedBeamTypesDisplayes = new Set(['-', 'XeXe', 'PbPb', 'pp']);
+        const allowedBeamTypesDisplays = new Set(['-', 'XeXe', 'PbPb', 'pp']);
 
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
@@ -62,7 +63,7 @@ module.exports = () => {
             associatedDataPasses: (display) => /(No data passes)|(\d+)/.test(display),
             associatedSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             year: (year) => !isNaN(year),
-            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
+            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplays.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => avgCenterOfMassEnergy === '-' || !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
                 || distinctEnergies
@@ -75,35 +76,28 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(100);
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(3);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(3);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('can set how many lhcPeriods is available per page', async () => {
         await goToPage(page, 'lhc-period-overview');
-        await waitForTimeout(500);
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
-        const amountSelectorButton = await page.$('.dropup button');
-        const amountSelectorButtonText = await amountSelectorButton.evaluate((element) => element.innerText);
-        await waitForTimeout(300);
-        expect(amountSelectorButtonText.trim().endsWith('11')).to.be.true;
+
+        // Expect the amount selector to currently be set to 11 (because of the defined page height)
+        await expectInnerText(page, '.dropup button', 'Rows per page: 11 ');
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
+        await pressElement(page, '.dropup button');
+        await page.waitForSelector('.dropup-menu');
         const amountSelectorDropdown = await page.$('.dropup');
         expect(Boolean(amountSelectorDropdown)).to.be.true;
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$('.dropup .menu-item');
-        await menuItem.evaluate((button) => button.click());
-        await waitForTimeout(100);
-
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(3);
+        // Expect the amount selector to currently be set to 5 when the first option (5) is selected
+        await pressElement(page, '.dropup .menu-item');
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$('.dropup input[type=number]');
@@ -112,8 +106,7 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
-        expect(Boolean(await page.$('.dropup input:invalid'))).to.be.true;
+        await page.waitForSelector('.dropup input:invalid');
     });
 
     it('can sort by name column in ascending and descending manners', async () => {
@@ -131,18 +124,18 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'avgCenterOfMassEnergy');
     });
 
-    it('should successfuly apply lhc period name filter', async () => {
+    it('should successfully apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
         await expectColumnValues(page, 'name', ['LHC22a']);
-        await pressElement(page, '#reset-filters');
+        await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'name', ['LHC23f', 'LHC22b', 'LHC22a']);
         await page.waitForSelector('#reset-filters:disabled');
     });
 
-    it('should successfuly apply lhc period year filter', async () => {
+    it('should successfully apply lhc period year filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
@@ -151,12 +144,12 @@ module.exports = () => {
         await expectColumnValues(page, 'year', ['2022', '2022']);
     });
 
-    it('should successfuly apply lhc period beam type filter', async () => {
+    it('should successfully apply lhc period beam type filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'XeXe');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
-        await expectColumnValues(page, 'beamTypes', ['XeXe']);
+        await expectColumnValues(page, 'beamTypes', ['PbPb']);
     });
 };

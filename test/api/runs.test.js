@@ -15,12 +15,12 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { repositories: { RunRepository } } = require('../../lib/database');
 const { server } = require('../../lib/application');
-const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { RunQualities } = require('../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQualities.js');
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
+const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -113,21 +113,14 @@ module.exports = () => {
                 });
         });
 
-        it('should support sorting, runNumber ASC', (done) => {
-            request(server)
-                .get('/api/runs?sort[id]=asc')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should support sorting by runNumber', async () => {
+            const response = await request(server).get('/api/runs?sort[runNumber]=DESC');
 
-                    const { data } = res.body;
-                    expect(data[1].id).to.be.above(data[0].id);
-
-                    done();
-                });
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.have.length.greaterThan(2);
+            const runNumbers = runs.map(({ runNumber }) => runNumber);
+            expect(runNumbers).to.have.all.ordered.members([...runNumbers].sort((a, b) => -a + b));
         });
 
         it('should successfully filter on calibration', async () => {
@@ -254,11 +247,11 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data).to.lengthOf(4);
-            expect(data.every(({ definition }) => definition === RunDefinition.Physics)).to.be.true;
+            expect(data).to.lengthOf(10);
+            expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
-        it('should succefully filter on data pass id', async () => {
+        it('should successfully filter on data pass id', async () => {
             const response = await request(server).get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3');
             expect(response.status).to.equal(200);
 
@@ -267,7 +260,7 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
-        it('should succefully filter on simulation pass id', async () => {
+        it('should successfully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
 
@@ -362,6 +355,51 @@ module.exports = () => {
             expect(data).to.have.lengthOf(10);
         });
 
+        const inelasticInteractionRateFilteringTestsParameters = {
+            muInelasticInteractionRate: { operator: '>=', value: 0.05, expectedRuns: [49] },
+            inelasticInteractionRateAvg: { operator: '>=', value: 500000, expectedRuns: [106, 49, 2] },
+            inelasticInteractionRateAtStart: { operator: '<=', value: 10000, expectedRuns: [54] },
+            inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: [54] },
+            inelasticInteractionRateAtEnd: { operator: '=', value: 50000, expectedRuns: [56] },
+        };
+
+        for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
+            const { operator, value, expectedRuns } = testParameters;
+            it(`should successfully filter by ${property}`, async () => {
+                const response = await request(server).get(`/api/runs?filter[${property}][${operator}]=${value}`);
+
+                expect(response.status).to.equal(200);
+
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
+            });
+        }
+
+        it('should successfully filter by GAQ notBadFraction', async () => {
+            const dataPassId = 1;
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            }
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +
+                    '&filter[gaq][notBadFraction][<]=0.8&filter[gaq][mcReproducibleAsNotBad]=true');
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs).to.have.lengthOf(0);
+            }
+        });
+
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =
@@ -380,7 +418,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(44);
+            expect(data.length).to.equal(43);
         });
 
         it('should filter run on their trigger value', async () => {
@@ -484,6 +522,31 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
             expect(data).to.have.lengthOf(5);
+        });
+
+        it('should successfully filter by aliceL3Current', async () => {
+            const response =
+                await request(server).get('/api/runs?filter[aliceL3Current]=30003');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ aliceL3Current, aliceL3Polarity }) =>
+                Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
+        });
+
+        it('should successfully filter by aliceDipoleCurrent', async () => {
+            const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
+                Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
         });
     });
 
@@ -1119,10 +1182,10 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 200 in all other cases', (done) => {
+        it('should return 200 in all other cases', async () => {
             const TIMESTAMP = 1664271988000;
             const BIG_INT_NUMBER = '99999999999999999';
-            request(server)
+            const response = await request(server)
                 .patch('/api/runs?runNumber=1')
                 .send({
                     lhcBeamEnergy: 232.156,
@@ -1140,32 +1203,44 @@ module.exports = () => {
                     tfFileSize: BIG_INT_NUMBER,
                     otherFileCount: 123156132,
                     otherFileSize: BIG_INT_NUMBER,
-                })
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    const { data } = res.body;
-                    expect(data.runNumber).to.equal(1);
-                    expect(data.lhcBeamEnergy).to.equal(232.156);
-                    expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
-                    expect(data.lhcBetaStar).to.equal(123e-5);
-                    expect(data.aliceL3Current).to.equal(561.2);
-                    expect(data.aliceL3Polarity).to.equal('POSITIVE');
-                    expect(data.aliceDipoleCurrent).to.equal(45654.1);
-                    expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
-                    expect(data.startOfDataTransfer).to.equal(TIMESTAMP);
-                    expect(data.endOfDataTransfer).to.equal(TIMESTAMP);
-                    expect(data.ctfFileCount).to.equal(30);
-                    expect(data.ctfFileSize).to.equal(BIG_INT_NUMBER);
-                    expect(data.tfFileCount).to.equal(1234);
-                    expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
-                    expect(data.otherFileCount).to.equal(123156132);
-                    expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
-                    done();
+                    crossSection: 0.1,
+                    triggerEfficiency: 0.2,
+                    triggerAcceptance: 0.3,
+                    phaseShiftAtStart: {
+                        beam1: 0.4,
+                        beam2: -0.2,
+                    },
+                    phaseShiftAtEnd: {
+                        beam1: 0.5,
+                        beam2: -0.25,
+                    },
                 });
+
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            expect(data.runNumber).to.equal(1);
+            expect(data.lhcBeamEnergy).to.equal(232.156);
+            expect(data.lhcBeamMode).to.equal('STABLE BEAMS');
+            expect(data.lhcBetaStar).to.equal(123e-5);
+            expect(data.aliceL3Current).to.equal(561.2);
+            expect(data.aliceL3Polarity).to.equal('POSITIVE');
+            expect(data.aliceDipoleCurrent).to.equal(45654.1);
+            expect(data.aliceDipolePolarity).to.equal('NEGATIVE');
+            expect(data.startOfDataTransfer).to.equal(TIMESTAMP);
+            expect(data.endOfDataTransfer).to.equal(TIMESTAMP);
+            expect(data.ctfFileCount).to.equal(30);
+            expect(data.ctfFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.tfFileCount).to.equal(1234);
+            expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.otherFileCount).to.equal(123156132);
+            expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.triggerEfficiency).to.equal(0.2);
+            expect(data.triggerAcceptance).to.equal(0.3);
+            expect(data.phaseShiftAtStartBeam1).to.equal(0.4);
+            expect(data.phaseShiftAtStartBeam2).to.equal(-0.2);
+            expect(data.phaseShiftAtEndBeam1).to.equal(0.5);
+            expect(data.phaseShiftAtEndBeam2).to.equal(-0.25);
         });
     });
 
@@ -1243,6 +1318,14 @@ module.exports = () => {
             expect(body.data.lhcPeriod).to.equal('LHC22b');
             expect(body.data.triggerValue).to.equal('LTU');
             expect(body.data.odcTopologyFullName).to.equal('default');
+        });
+    });
+
+    describe('GET /api/runs/aliceMagnetsCurrentLevels', () => {
+        it('should fetch distinct aliceCurrent levels', async () => {
+            const response = await request(server).get('/api/runs/aliceMagnetsCurrentLevels');
+            expect(response.status).to.be.equal(200);
+            expect(response.body.data).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
         });
     });
 };

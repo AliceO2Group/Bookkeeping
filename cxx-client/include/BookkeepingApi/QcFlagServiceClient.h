@@ -40,6 +40,12 @@ class QcFlagServiceClient
     const std::string& productionName,
     const std::string& detectorName,
     const std::vector<QcFlag>& qcFlags) = 0;
+
+  /// Create a list of new QC flag for a given run and detector
+  virtual std::vector<int> createForSynchronous(
+    uint32_t runNumber,
+    const std::string& detectorName,
+    const std::vector<QcFlag>& qcFlags) = 0;
 };
 } // namespace o2::bkp::api
 

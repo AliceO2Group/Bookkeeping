@@ -21,11 +21,11 @@ const {
     validateTableData,
     fillInput,
     expectUrlParams,
+    waitForNavigation,
 } = require('../defaults.js');
 
 const { expect } = chai;
 const dateAndTime = require('date-and-time');
-const { waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
@@ -66,7 +66,7 @@ module.exports = () => {
         await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
     });
 
-    it('can naviagate to runs per data pass page from breadcrumbs link', async () => {
+    it('can navigate to runs per data pass page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
@@ -77,7 +77,7 @@ module.exports = () => {
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
+    it('can navigate to run details page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
@@ -155,5 +155,17 @@ module.exports = () => {
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
+    });
+
+    it('should inform when run quality was changed to bad', async () => {
+        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
+            dataPassId: 2,
+            runNumber: 2,
+            dplDetectorId: 1,
+        } });
+
+        await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
+        const title = 'Quality of the run was changed to bad so it is no more subject to QC';
+        await page.waitForSelector(`button.btn.btn-primary[disabled][title="${title}"]`);
     });
 };

@@ -20,7 +20,7 @@ const { qcFlagTypeService } = require('../../../../../lib/server/services/qualit
 
 module.exports = () => {
     describe('Fetching QC flags types by id', () => {
-        it ('should successfuly fetch QC Flag Type by id', async () => {
+        it ('should successfully fetch QC Flag Type by id', async () => {
             const qcFlagType = await qcFlagTypeService.getById(2);
             delete qcFlagType.createdAt;
             delete qcFlagType.updatedAt;
@@ -30,6 +30,7 @@ module.exports = () => {
                 method: 'UnknownQuality',
                 bad: true,
                 color: null,
+                mcReproducible: false,
 
                 archived: false,
                 archivedAt: null,
@@ -55,11 +56,11 @@ module.exports = () => {
     });
 
     describe('fetching QC flag types', () => {
-        it('should successfuly fetch quality control flags types', async () => {
+        it('should successfully fetch quality control flags types', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll();
-            expect(count).to.be.equal(6);
+            expect(count).to.be.equal(7);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
             expect(flagTypes.map((qcFlagType) => {
                 delete qcFlagType.createdAt;
                 delete qcFlagType.updatedAt;
@@ -71,6 +72,7 @@ module.exports = () => {
                     method: 'UnknownQuality',
                     bad: true,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -82,10 +84,27 @@ module.exports = () => {
                 },
                 {
                     id: 3,
-                    name: 'Certified by Expert',
-                    method: 'CertifiedByExpert',
+                    name: 'Good',
+                    method: 'Good',
                     bad: false,
                     color: null,
+                    mcReproducible: false,
+
+                    archived: false,
+                    archivedAt: null,
+
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    lastUpdatedById: null,
+                    lastUpdatedBy: null,
+                },
+                {
+                    id: 5,
+                    name: 'Limited Acceptance MC Reproducible',
+                    method: 'LimitedAcceptanceMCReproducible',
+                    bad: true,
+                    color: '#FFFF00',
+                    mcReproducible: true,
 
                     archived: false,
                     archivedAt: null,
@@ -101,6 +120,7 @@ module.exports = () => {
                     method: 'LimitedAcceptance',
                     bad: true,
                     color: '#FFFF00',
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -116,6 +136,7 @@ module.exports = () => {
                     method: 'BadPID',
                     bad: true,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -131,6 +152,7 @@ module.exports = () => {
                     method: 'Bad',
                     bad: true,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -146,6 +168,7 @@ module.exports = () => {
                     method: 'Archived',
                     bad: false,
                     color: null,
+                    mcReproducible: false,
 
                     createdById: 1,
                     createdBy: { id: 1, externalId: 1, name: 'John Doe' },
@@ -159,7 +182,7 @@ module.exports = () => {
             ]);
         });
 
-        it('should successfuly filter QC flags types by id', async () => {
+        it('should successfully filter QC flags types by id', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { ids: [3, 11] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
@@ -167,7 +190,7 @@ module.exports = () => {
             expect(flagTypes.map(({ id }) => id)).to.have.all.members([3, 11]);
         });
 
-        it('should successfuly filter QC flags types by name pattern', async () => {
+        it('should successfully filter QC flags types by name pattern', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality'] } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
@@ -175,7 +198,7 @@ module.exports = () => {
             expect(flagTypes[0].name).to.be.equal('Unknown Quality');
         });
 
-        it('should successfuly filter QC flags types by name', async () => {
+        it('should successfully filter QC flags types by name', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality', 'Limited acceptance'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
@@ -183,7 +206,7 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Unknown Quality', 'Limited acceptance']);
         });
 
-        it('should successfuly filter QC flags types by names pattern', async () => {
+        it('should successfully filter QC flags types by names pattern', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Bad'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
@@ -191,15 +214,15 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Bad', 'Bad PID']);
         });
 
-        it('should successfuly filter QC flags types by method pattern', async () => {
+        it('should successfully filter QC flags types by method pattern', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { methods: ['LimitedAcceptance'] } });
-            expect(count).to.be.equal(1);
+            expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(1);
-            expect(flagTypes[0].method).to.be.equal('LimitedAcceptance');
+            expect(flagTypes).to.be.lengthOf(2);
+            expect(flagTypes.map(({ method }) => method)).to.be.has.all.members(['LimitedAcceptance', 'LimitedAcceptanceMCReproducible']);
         });
 
-        it('should successfuly filter QC flags types by method pattern', async () => {
+        it('should successfully filter QC flags types by method pattern', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { methods: ['Bad'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
@@ -207,15 +230,15 @@ module.exports = () => {
             expect(flagTypes.map(({ method }) => method)).to.have.all.members(['Bad', 'BadPID']);
         });
 
-        it('should successfuly filter QC flags types by whether the flag is `bad`', async () => {
+        it('should successfully filter QC flags types by whether the flag is `bad`', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { bad: false } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Certified by Expert', 'Archived']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Good', 'Archived']);
         });
 
-        it('should successfuly filter QC flags types by archived', async () => {
+        it('should successfully filter QC flags types by archived', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { archived: true } });
             expect(count).to.be.equal(1);
             expect(flagTypes).to.be.an('array');
@@ -223,63 +246,65 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Archived']);
         });
 
-        it('should successfuly filter QC flags types by archived - 2', async () => {
+        it('should successfully filter QC flags types by archived - 2', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { archived: false } });
-            expect(count).to.be.equal(5);
+            expect(count).to.be.equal(6);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(5);
+            expect(flagTypes).to.be.lengthOf(6);
             expect(flagTypes.filter(({ name }) => name === 'Archived')).to.be.lengthOf(0);
         });
 
-        it('should successfuly sort by id', async () => {
+        it('should successfully sort by id', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ sort: { id: 'DESC' } });
-            expect(count).to.be.equal(6);
+            expect(count).to.be.equal(7);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 3, 2]);
+            expect(flagTypes).to.be.lengthOf(7);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 5, 3, 2]);
         });
 
-        it('should successfuly sort by name', async () => {
+        it('should successfully sort by name', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ sort: { name: 'DESC' } });
-            expect(count).to.be.equal(6);
+            expect(count).to.be.equal(7);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Unknown Quality',
+                'Limited Acceptance MC Reproducible',
                 'Limited acceptance',
-                'Certified by Expert',
+                'Good',
                 'Bad PID',
                 'Bad',
                 'Archived',
             ]);
         });
 
-        it('should successfuly sort by method', async () => {
+        it('should successfully sort by method', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ sort: { method: 'ASC' } });
-            expect(count).to.be.equal(6);
+            expect(count).to.be.equal(7);
             expect(flagTypes).to.be.an('array');
-            expect(flagTypes).to.be.lengthOf(6);
+            expect(flagTypes).to.be.lengthOf(7);
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Archived',
                 'Bad',
                 'Bad PID',
-                'Certified by Expert',
+                'Good',
                 'Limited acceptance',
+                'Limited Acceptance MC Reproducible',
                 'Unknown Quality',
             ]);
         });
 
-        it('should successfuly apply pagination', async () => {
+        it('should successfully apply pagination', async () => {
             const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ offset: 2, limit: 3, sort: { id: 'ASC' } });
-            expect(count).to.be.equal(6);
+            expect(count).to.be.equal(7);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(3);
-            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([11, 12, 13]);
+            expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([5, 11, 12]);
         });
     });
 
     describe('Creating QC Flag Type', () => {
-        it('should successfuly create QC Flag Type', async () => {
+        it('should successfully create QC Flag Type', async () => {
             const parameters = {
                 name: 'A',
                 method: 'AA+',
@@ -355,7 +380,7 @@ module.exports = () => {
             );
         });
 
-        it('should successfuly update one QC Flag Type', async () => {
+        it('should successfully update one QC Flag Type', async () => {
             const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
             const userId = 1;
 
@@ -366,7 +391,7 @@ module.exports = () => {
             expect(updatedFlagType).to.be.eql(fetchedFlagType);
         });
 
-        it('should successfuly archive QC Flag Type', async () => {
+        it('should successfully archive QC Flag Type', async () => {
             const patch = { archived: true };
             const userId = 1;
 
