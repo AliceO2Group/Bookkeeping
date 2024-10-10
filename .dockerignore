@@ -8,3 +8,4 @@
 !.sequelizerc
 !.nycrc
 !package*.json
+!node_modules

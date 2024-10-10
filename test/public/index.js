@@ -14,7 +14,6 @@
 const LhcFillsSuite = require('./lhcFills');
 const LogsSuite = require('./logs');
 const RunsSuite = require('./runs');
-const SubsystemsSuite = require('./subsystems');
 const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
@@ -33,7 +32,6 @@ module.exports = () => {
     describe('Logs', LogsSuite);
     describe('Envs', EnvsSuite);
     describe('Runs', RunsSuite);
-    describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);
     describe('Flps', FlpsSuite);
     describe('Home', HomeSuite);

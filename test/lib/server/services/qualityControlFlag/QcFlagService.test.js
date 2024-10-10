@@ -20,6 +20,7 @@ const { ConflictError } = require('../../../../../lib/server/errors/ConflictErro
 const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
+const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
 
 /**
  * Get effective part and periods of Qc flag
@@ -38,7 +39,7 @@ const qcFlagWithId1 = {
 
     // Associations
     createdById: 1,
-    flagTypeId: 5, // LimitedAcceptance MC Reprodubile
+    flagTypeId: 5, // LimitedAcceptance MC Reproducible
     runNumber: 106,
     dplDetectorId: 1, // CPV
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
@@ -56,6 +57,7 @@ const qcFlagWithId1 = {
         bad: true,
         color: '#FFFF00',
         archived: false,
+        mcReproducible: true,
     },
 
     verifications: [],
@@ -83,7 +85,7 @@ module.exports = () => {
                 const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
                     dataPassId: 1,
                     runNumber: 106,
-                    dplDetectorId: 1,
+                    detectorId: 1,
                 });
                 expect(count).to.be.equal(3);
                 expect(flags).to.be.an('array');
@@ -95,7 +97,7 @@ module.exports = () => {
                 const { rows: flags, count } = await qcFlagService.getAllPerDataPassAndRunAndDetector({
                     dataPassId: [2],
                     runNumber: [1],
-                    dplDetectorId: [1],
+                    detectorId: [1],
                 });
                 expect(count).to.be.equal(1);
                 expect(flags).to.be.an('array');
@@ -109,58 +111,158 @@ module.exports = () => {
             const { rows: flags, count } = await qcFlagService.getAllPerSimulationPassAndRunAndDetector({
                 simulationPassId: 1,
                 runNumber: 106,
-                dplDetectorId: 1,
+                detectorId: 1,
             });
             expect(count).to.be.equal(2);
             expect(flags).to.be.an('array');
             expect(flags).to.be.lengthOf(2);
             expect(flags[0].qcFlagId).to.equal(6);
         });
+
+        it('should successfully fetch all synchronous flags for run and detector', async () => {
+            const runNumber = 56;
+            const detectorId = 7;
+            {
+                const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
+                expect(count).to.be.equal(2);
+                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+            }
+            {
+                const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector(
+                    { runNumber, detectorId },
+                    { limit: 1, offset: 1 },
+                );
+                expect(count).to.be.equal(2);
+                expect(flags).to.be.lengthOf(1);
+                const [flag] = flags;
+                expect(flag.id).to.be.equal(100);
+
+                expect(flag.verifications[0].comment).to.be.equal('good');
+            }
+        });
     });
 
     describe('Get QC flags summary', () => {
-        it('should succsessfully get non-empty QC flag summary for data pass', async () => {
+        it('should successfully get non-empty QC flag summary for data pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.8376,
+                        badEffectiveRunCoverage: 0.3333,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
+                    },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
                     },
                 },
             });
         });
 
-        it('should succsessfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 2 })).to.be.eql({
+        it('should successfully get non-empty QC flag summary with MC.Reproducible interpreted as not-bad for data pass', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
+                106: {
+                    1: {
+                        missingVerificationsCount: 3,
+                        mcReproducible: true,
+                        badEffectiveRunCoverage: 0.1111,
+                        explicitlyNotBadEffectiveRunCoverage: 0.2222,
+                    },
+                    16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
+            });
+        });
+
+        it('should successfully get non-empty QC flag summary for data pass when all flags are verified', async () => {
+            const dataPassId = 2;
+            const run = await RunRepository.findOne({ where: { runNumber: 1 } });
+            const { timeTrgStart, timeO2Start, timeTrgEnd, timeO2End } = run;
+            const runDuration = (timeTrgEnd ?? timeO2End) - (timeTrgStart ?? timeO2Start);
+
+            const effectivePeriods = await QcFlagEffectivePeriodRepository.findAll({
+                include: [
+                    {
+                        association: 'flag',
+                        where: { runNumber: run.runNumber },
+                        include: [
+                            { association: 'dataPasses', where: { id: dataPassId } },
+                            { association: 'flagType', where: { bad: true } },
+                        ],
+                    },
+                ],
+            });
+            const badCoverage = effectivePeriods
+                .filter(({ flag: { flagType: { bad } } }) => bad)
+                .reduce((coverage, { from, to }) => coverage + (to - from), 0);
+
+            const goodCoverage = effectivePeriods
+                .filter(({ flag: { flagType: { bad } } }) => !bad)
+                .reduce((coverage, { from, to }) => coverage + (to - from), 0);
+
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.0196,
+                        badEffectiveRunCoverage: 0.0769,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
+
+            expect(goodCoverage / runDuration).to.be.equal(0);
+            expect((badCoverage / runDuration).toFixed(4)).to.be.equal('0.0769');
         });
 
-        it('should succsessfully get empty QC flag summary for data pass', async () => {
+        it('should successfully get empty QC flag summary for data pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
         });
 
-        it('should succsessfully get non-empty QC flag summary for simulation pass', async () => {
+        it('should successfully get non-empty QC flag summary for simulation pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.9310,
+                        badEffectiveRunCoverage: 0.7222,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
             });
         });
 
-        it('should succsessfully get empty QC flag summary for simulation pass', async () => {
+        it('should successfully get empty QC flag summary for simulation pass', async () => {
             expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
+        });
+
+        it('should successfully get QC summary of synchronous QC flags for one LHC Period', async () => {
+            expect(await qcFlagService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
+                56: {
+                    // FT0
+                    7: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.1667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                    },
+
+                    // ITS
+                    4: {
+                        missingVerificationsCount: 1,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                    },
+                },
+            });
         });
     });
 
@@ -176,7 +278,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             // Failing property
@@ -198,7 +300,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+                detectorIdentifier: { detectorId: 1 }, // CPV
             };
 
             // Failing property
@@ -227,7 +329,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -250,7 +352,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -272,7 +374,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 9999 }, // Failing property
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -303,7 +405,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -318,7 +420,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    dplDetectorId,
+                    dplDetectorId: detectorId,
                     createdBy: { externalId: externalUserId },
                 } = createdQcFlags[qcFlagIndex];
                 const qcFlag = qcFlags[qcFlagIndex];
@@ -329,7 +431,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    dplDetectorId,
+                    detectorId,
                     externalUserId,
                     effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
                 }).to.be.eql({
@@ -338,7 +440,7 @@ module.exports = () => {
                     comment: qcFlag.comment,
                     flagTypeId: qcFlag.flagTypeId,
                     runNumber: scope.runNumber,
-                    dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                    detectorId: scope.detectorIdentifier.detectorId,
                     externalUserId: relations.user.externalUserId,
                     effectivePeriods: [
                         {
@@ -360,7 +462,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber: scope.runNumber,
-                        dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                        detectorId: scope.detectorIdentifier.detectorId,
                         id: { [Op.notIn]: createdQcFlags.map(({ id }) => id) },
                     },
                     include: [
@@ -421,17 +523,17 @@ module.exports = () => {
                 const scope = {
                     runNumber: 106,
                     dataPassIdentifier: { id: 1 },
-                    dplDetectorIdentifier: { dplDetectorId: 1 },
+                    detectorIdentifier: { detectorId: 1 },
                 };
 
                 const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-                const [{ id, runNumber, dplDetectorId }] = await qcFlagService.create([qcFlag], scope, relations);
+                const [{ id, runNumber, dplDetectorId: detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
-                        dplDetectorId,
+                        detectorId,
                         id: { [Op.not]: id },
                     },
                     include: [
@@ -472,11 +574,11 @@ module.exports = () => {
                         ],
                     },
                     {
-                        id: 7,
+                        id: createdQcFlags[0].id,
                         effectivePeriods: [],
                     },
                     {
-                        id: 8,
+                        id: createdQcFlags[1].id,
                         effectivePeriods: [
                             {
                                 from: new Date('2019-08-09 04:00:00').getTime(),
@@ -488,7 +590,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfuly create quality control flag without timestamps', async () => {
+        it('should successfully create quality control flag without timestamps', async () => {
             const qcFlag = {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
@@ -497,22 +599,24 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId }, createdAt }] =
-                await qcFlagService.create([qcFlag], scope, relations);
+            const [
+                { id, from, to, comment, flagTypeId, runNumber,
+                    dplDetectorId: detectorId, createdBy: { externalId: externalUserId }, createdAt },
+            ] = await qcFlagService.create([qcFlag], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+            expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
                 from: startTime,
                 to: endTime,
                 comment: qcFlag.comment,
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
             });
 
@@ -526,7 +630,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
-                        dplDetectorId,
+                        detectorId,
                         createdAt: { [Op.lt]: createdAt },
                     },
                     include: [
@@ -551,12 +655,12 @@ module.exports = () => {
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             const flagTypeId = 5;
             const runNumber = 654321;
-            const dplDetectorId = 1; // CPV - It's also Id of detector
+            const detectorId = 1; // CPV - It's also Id of detector
             const dataPassId = 1;
             await runService.create({ runNumber });
             const run = await RunRepository.findOne({ where: { runNumber } }); // Create run without timestamps
             await run.addDataPass(dataPassId);
-            await run.addDetector(dplDetectorId);
+            await run.addDetector(detectorId);
             let from;
             let to;
             let qcFlag;
@@ -573,7 +677,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -588,13 +692,21 @@ module.exports = () => {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: false,
                             missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                        16: {
+                            badEffectiveRunCoverage: 0,
+                            explicitlyNotBadEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
                         },
                     },
                     [runNumber]: {
-                        [dplDetectorId]: {
+                        [detectorId]: {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: true,
                             missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
                         },
                     },
                 });
@@ -609,7 +721,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -628,11 +740,19 @@ module.exports = () => {
                             badEffectiveRunCoverage: 1,
                             mcReproducible: false,
                             missingVerificationsCount: 1,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                        16: {
+                            badEffectiveRunCoverage: 0,
+                            explicitlyNotBadEffectiveRunCoverage: 1,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1,
                         },
                     },
                     [runNumber]: {
-                        [dplDetectorId]: {
-                            badEffectiveRunCoverage: -1,
+                        [detectorId]: {
+                            badEffectiveRunCoverage: null,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
                             mcReproducible: true,
                             missingVerificationsCount: 2,
                         },
@@ -649,7 +769,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -677,7 +797,7 @@ module.exports = () => {
                     {
                         runNumber,
                         dataPassIdentifier: { id: dataPassId },
-                        dplDetectorIdentifier: { dplDetectorId },
+                        detectorIdentifier: { detectorId },
                     },
                     relations,
                 );
@@ -718,7 +838,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 9999999 } };
@@ -739,7 +859,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 }, // CPV
+                detectorIdentifier: { detectorId: 1 }, // CPV
             };
 
             const relations = { user: { roles: ['det-its'], externalUserId: 1 } };
@@ -767,7 +887,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -790,7 +910,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -812,7 +932,7 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 9999 }, // Failing property
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
@@ -824,7 +944,7 @@ module.exports = () => {
             );
         });
 
-        it('should succesfuly create quality control flag with externalUserId', async () => {
+        it('should successfully create quality control flag with externalUserId', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -835,11 +955,11 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
@@ -848,7 +968,7 @@ module.exports = () => {
                 comment,
                 flagTypeId,
                 runNumber,
-                dplDetectorId,
+                detectorId,
                 externalUserId,
                 effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
             }).to.be.eql({
@@ -857,7 +977,7 @@ module.exports = () => {
                 comment: qcFlag.comment,
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
                 effectivePeriods: [{ from, to }],
             });
@@ -875,7 +995,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber,
-                        dplDetectorId,
+                        detectorId,
                         id: { [Op.not]: id },
                     },
                     include: [
@@ -908,7 +1028,7 @@ module.exports = () => {
             }
         });
 
-        it('should succesfuly create quality control flag without timstamps', async () => {
+        it('should successfully create quality control flag without timestamps', async () => {
             const qcFlagCreationParameters = {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
@@ -917,23 +1037,23 @@ module.exports = () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
 
-            expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId, externalUserId }).to.be.eql({
+            expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
                 from: startTime,
                 to: endTime,
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: qcFlagCreationParameters.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
             });
 
@@ -951,7 +1071,7 @@ module.exports = () => {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorId: 1,
+                detectorId: 1,
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 1 } };
@@ -964,7 +1084,7 @@ module.exports = () => {
     });
 
     describe('Creating synchronous Quality Control Flag', () => {
-        it('should succesfuly create quality control flag', async () => {
+        it('should successfully create quality control flag', async () => {
             const allOtherQcFlag = await QcFlagRepository.findAll({
                 include: [
                     { association: 'dataPasses' },
@@ -980,28 +1100,28 @@ module.exports = () => {
 
             const scope = {
                 runNumber: 106,
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, flagTypeId, runNumber, dplDetectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
                 flagTypeId,
                 runNumber,
-                dplDetectorId,
+                detectorId,
                 externalUserId,
                 effectivePeriods: await getEffectivePeriodsOfQcFlag(id),
             }).to.be.eql({
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
-                dplDetectorId: scope.dplDetectorIdentifier.dplDetectorId,
+                detectorId: scope.detectorIdentifier.detectorId,
                 externalUserId: relations.user.externalUserId,
                 effectivePeriods: [{ from, to }],
             });
 
-            const allOtherQcFlagAfterCretion = await QcFlagRepository.findAll({
+            const allOtherQcFlagAfterCreation = await QcFlagRepository.findAll({
                 where: { id: { [Op.not]: id } },
                 include: [
                     { association: 'dataPasses' },
@@ -1027,7 +1147,7 @@ module.exports = () => {
             };
 
             expect(allOtherQcFlag.map(extractComparableProperties)).to
-                .have.all.deep.members(allOtherQcFlagAfterCretion.map(extractComparableProperties));
+                .have.all.deep.members(allOtherQcFlagAfterCreation.map(extractComparableProperties));
         });
     });
 
@@ -1046,13 +1166,82 @@ module.exports = () => {
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
             expect(fetchedQcFlag).to.be.equal(null);
+
+            /**
+             * Get unix timestamp for given time on 2024-07-10
+             * Used to avoid code below to be padded out
+             *
+             * @param {string} timeString time string in hh:mm:ss format
+             * @return {number} unix timestamp
+             */
+            const t = (timeString) => new Date(`2024-07-16 ${timeString}`).getTime();
+
+            const runNumber = 445566;
+            const dataPassId = 3;
+            const timeTrgStart = t('06:00:00');
+            const timeTrgEnd = t('22:00:00');
+
+            await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
+            const run = await RunRepository.findOne({ where: { runNumber } });
+            const detectorId = 1;
+            await run.addDataPass(dataPassId);
+            await run.addDetector(detectorId);
+
+            // Creating flags fo CPV
+            const scope = {
+                runNumber,
+                dataPassIdentifier: { id: dataPassId },
+                detectorIdentifier: { detectorId: 1 },
+            };
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const goodFlagTypeId = 3;
+
+            const [{ id: id1 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('08:00:00'), to: t('20:00:00') }], scope, relations);
+            const [{ id: id2 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('10:00:00'), to: t('18:00:00') }], scope, relations);
+            const [{ id: id3 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('12:00:00'), to: t('16:00:00') }], scope, relations);
+            const [{ id: id4 }] = await qcFlagService
+                .create([{ flagTypeId: goodFlagTypeId, from: t('13:30:00'), to: t('14:30:00') }], scope, relations);
+            expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
+                { from: t('08:00:00'), to: t('10:00:00') },
+                { from: t('18:00:00'), to: t('20:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([
+                { from: t('10:00:00'), to: t('12:00:00') },
+                { from: t('16:00:00'), to: t('18:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id3)).to.have.all.deep.members([
+                { from: t('12:00:00'), to: t('13:30:00') },
+                { from: t('14:30:00'), to: t('16:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+
+            await qcFlagService.delete(id3);
+            expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
+                { from: t('08:00:00'), to: t('10:00:00') },
+                { from: t('18:00:00'), to: t('20:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([
+                { from: t('10:00:00'), to: t('13:30:00') },
+                { from: t('14:30:00'), to: t('18:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+
+            await qcFlagService.delete(id4);
+            expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
+                { from: t('08:00:00'), to: t('10:00:00') },
+                { from: t('18:00:00'), to: t('20:00:00') },
+            ]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([{ from: t('10:00:00'), to: t('18:00:00') }]);
         });
 
         it('should successfully delete QC flag of simulationPass ', async () => {
             const scope = {
                 runNumber: 106,
                 simulationPassIdentifier: { id: 1 },
-                dplDetectorIdentifier: { dplDetectorId: 1 },
+                detectorIdentifier: { detectorId: 1 },
             };
 
             const relations = { user: { roles: ['admin'], externalUserId: 1 } };
@@ -1063,7 +1252,7 @@ module.exports = () => {
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
                         runNumber: 106,
-                        dplDetectorId: 1,
+                        detectorId: 1,
                         createdAt: { [Op.lt]: createdAt },
                     },
                     include: [
@@ -1092,7 +1281,7 @@ module.exports = () => {
                 const olderFlags = await QcFlagRepository.findAll({
                     where: {
                         runNumber: 106,
-                        dplDetectorId: 1,
+                        detectorId: 1,
                     },
                     include: [
                         { association: 'effectivePeriods' },
@@ -1115,7 +1304,7 @@ module.exports = () => {
     });
 
     describe('Verifying Quality Control Flag', () => {
-        it('should succesfuly verify QC flag when not being owner', async () => {
+        it('should successfully verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
                 comment: 'Some Comment',
@@ -1150,6 +1339,166 @@ module.exports = () => {
                     comment,
                 });
             }
+        });
+    });
+
+    describe('Fetch GAQ', () => {
+        /**
+         * Get unix timestamp for given time on 2024-07-10
+         * Used to avoid code below to be padded out
+         *
+         * @param {string} timeString time string in hh:mm:ss format
+         * @return {number} unix timestamp
+         */
+        const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
+
+        const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+        const goodFlagTypeId = 3;
+        const badPidFlagTypeId = 12;
+        const limitedAccMCTypeId = 5;
+
+        it('should successfully get GAQ flags', async () => {
+            const dataPassId = 3;
+
+            const runNumber = 334455;
+            const timeTrgStart = t('06:00:00');
+            const timeTrgEnd = t('22:00:00');
+
+            await runService.create({ runNumber, timeTrgStart, timeTrgEnd });
+            const run = await RunRepository.findOne({ where: { runNumber } });
+            const detectorIds = [1, 2, 3];
+            await run.addDataPass(dataPassId);
+            await run.addDetectors(detectorIds);
+            await gaqDetectorService.setGaqDetectors(dataPassId, [runNumber], detectorIds);
+
+            // Creating flags fo CPV, EMC, FDD
+            const scope = {
+                runNumber,
+                dataPassIdentifier: { id: dataPassId },
+            };
+            const scopeCPV = { ...scope, detectorIdentifier: { detectorId: 1 } };
+            const scopeEMC = { ...scope, detectorIdentifier: { detectorId: 2 } };
+            const scopeFDD = { ...scope, detectorIdentifier: { detectorId: 3 } };
+
+            const cpvFlagIds = (await qcFlagService.create([
+                { from: t('06:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('06:00:00'), to: t('14:00:00'), flagTypeId: badPidFlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: limitedAccMCTypeId },
+                { from: t('18:00:00'), to: t('22:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeCPV, relations)).map(({ id }) => id);
+
+            const emcFlagIds = (await qcFlagService.create([
+                { from: t('06:00:00'), to: t('10:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('10:00:00'), to: t('12:00:00'), flagTypeId: badPidFlagTypeId },
+                { from: t('12:00:00'), to: t('13:00:00'), flagTypeId: limitedAccMCTypeId },
+                { from: t('14:00:00'), to: t('16:00:00'), flagTypeId: goodFlagTypeId },
+                { from: t('18:00:00'), to: t('20:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeEMC, relations)).map(({ id }) => id);
+
+            const fddFlagIds = (await qcFlagService.create([
+                { from: t('10:00:00'), to: t('16:00:00'), flagTypeId: badPidFlagTypeId },
+                { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: goodFlagTypeId },
+            ], scopeFDD, relations)).map(({ id }) => id);
+
+            const gaqFlags = await qcFlagService.getGaqFlags(dataPassId, runNumber);
+            const data = gaqFlags.map(({
+                from,
+                to,
+                contributingFlags,
+            }) => ({
+                from,
+                to,
+                contributingFlagIds: contributingFlags.map(({ id }) => id).sort((id1, id2) => id1 - id2),
+            }));
+
+            expect(data).to.have.all.deep.ordered.members([
+                { from: t('06:00:00'), to: t('10:00:00'), contributingFlagIds: [cpvFlagIds[1], emcFlagIds[0]] },
+                { from: t('10:00:00'), to: t('12:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[1], fddFlagIds[1]] },
+                { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[2], fddFlagIds[1]] },
+                { from: t('13:00:00'), to: t('14:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1]] },
+                { from: t('14:00:00'), to: t('16:00:00'), contributingFlagIds: [cpvFlagIds[0], emcFlagIds[3], fddFlagIds[0]] },
+                { from: t('18:00:00'), to: t('20:00:00'), contributingFlagIds: [cpvFlagIds[3], emcFlagIds[4]] },
+                { from: t('20:00:00'), to: t('22:00:00'), contributingFlagIds: [cpvFlagIds[3]] },
+            ]);
+            expect(gaqFlags.every(({ contributingFlags }) => contributingFlags
+                .every(({ flagType, createdBy, verifications }) => flagType && createdBy && verifications))).to.be.true;
+        });
+
+        it('should successfully get GAQ summary', async () => {
+            const dataPassId = 3;
+
+            const runNumber = 334455;
+            const timeTrgStart = t('06:00:00');
+            const timeTrgEnd = t('22:00:00');
+
+            const gaqSubSummaries = [
+                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
+                { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
+                { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
+                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
+                { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
+                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
+                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
+            ];
+
+            const expectedGaqSummary = gaqSubSummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
+                if (bad) {
+                    acc.badEffectiveRunCoverage += to - from;
+                } else {
+                    acc.explicitlyNotBadEffectiveRunCoverage += to - from;
+                }
+                acc.mcReproducible = acc.mcReproducible || mcReproducible;
+                return acc;
+            }, { badEffectiveRunCoverage: 0, explicitlyNotBadEffectiveRunCoverage: 0 });
+            expectedGaqSummary.badEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
+            expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
+            expectedGaqSummary.missingVerificationsCount = 11;
+
+            const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
+            expect(runGaqSummary).to.be.eql(expectedGaqSummary);
+
+            const scope = {
+                runNumber: 56,
+                dataPassIdentifier: { id: dataPassId },
+            };
+
+            const ft0Id = 7;
+            const itsId = 4;
+
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: ft0Id } },
+                relations,
+            );
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: itsId } },
+                relations,
+            );
+
+            scope.runNumber = 54;
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: badPidFlagTypeId }],
+                { ...scope, detectorIdentifier: { detectorId: itsId } },
+                relations,
+            );
+
+            const gaqSummary = await qcFlagService.getGaqSummary(dataPassId);
+            expect(gaqSummary).to.be.eql({
+                [runNumber]: expectedGaqSummary,
+                56: {
+                    missingVerificationsCount: 2,
+                    explicitlyNotBadEffectiveRunCoverage: 1,
+                    badEffectiveRunCoverage: 0,
+                    mcReproducible: false,
+                },
+                54: {
+                    missingVerificationsCount: 1,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
+                    badEffectiveRunCoverage: 1,
+                    mcReproducible: false,
+                },
+            });
         });
     });
 };

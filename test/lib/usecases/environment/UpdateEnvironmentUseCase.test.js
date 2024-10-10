@@ -28,7 +28,6 @@ module.exports = () => {
                 envId: 'EIDO13i3D',
             },
             body: {
-                toredownAt: new Date(),
                 status: 'DESTROYED',
                 statusMessage: 'Completely new message',
             },
@@ -42,8 +41,7 @@ module.exports = () => {
     });
 
     it('Should be able to update the environment with correct values', async () => {
-        const { result } = await new UpdateEnvironmentUseCase()
-            .execute(updateEnvironmentDto);
+        const { result } = await new UpdateEnvironmentUseCase().execute(updateEnvironmentDto);
         expect(result.status).to.equal('DESTROYED');
     });
 

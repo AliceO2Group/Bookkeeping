@@ -17,10 +17,10 @@ const {
     defaultAfter,
     reloadPage,
     fillInput,
-    expectInnerText,
     waitForNavigation,
     pressElement,
     expectUrlParams,
+    expectInnerText,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -29,7 +29,7 @@ const { createEnvironment } = require('../../../lib/server/services/environment/
 const { customizedECSEosReport, emptyECSEosReportRequest } = require('../../mocks/mock-ecs-eos-report.js');
 const { createEnvironmentHistoryItem } = require('../../../lib/server/services/environmentHistoryItem/createEnvironmentHistoryItem.js');
 const { createRun } = require('../../../lib/server/services/run/createRun.js');
-const { getOrCreateAllDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDetectorsByName.js');
+const { getOrCreateAllDataTakingDetectorsByName } = require('../../../lib/server/services/detector/getOrCreateAllDataTakingDetectorsByName.js');
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
@@ -66,15 +66,15 @@ module.exports = () => {
             });
             await createEnvironmentHistoryItem({
                 status: 'DESTROYED',
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                timestamp: new Date(),
+                timestampNano: 0,
                 environmentId: environment.id,
             });
             for (const run of environment.runs) {
                 const runId = await createRun(
                     run,
                     {
-                        detectors: await getOrCreateAllDetectorsByName((run?.concatenatedDetectors ?? '')
+                        detectors: await getOrCreateAllDataTakingDetectorsByName((run?.concatenatedDetectors ?? '')
                             .split(',')
                             .map((value) => value.trim())),
                     },
@@ -125,9 +125,7 @@ module.exports = () => {
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
-        expectInnerText(page, '#from-previous-shifter .CodeMirror textarea', info);
-        await page.focus('#from-previous-shifter .CodeMirror textarea');
-        await page.keyboard.type('Old information: ');
+        await expectInnerText(page, '#from-previous-shifter .CodeMirror .CodeMirror-line', info);
 
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
@@ -156,7 +154,7 @@ module.exports = () => {
           on run`)).to.be.true;
         expect(text.includes('## Shift flow\nShift flow\nOn multiple lines')).to.be.true;
         expect(text.includes('## LHC\nLHC machines\ntransitions')).to.be.true;
-        expect(text.includes(`### From previous shifter\nOld information: ${info}`)).to.be.true;
+        expect(text.includes(`### From previous shifter\n${info}`)).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
     });

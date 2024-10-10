@@ -63,7 +63,7 @@ module.exports = () => {
         );
     });
 
-    it('should succesfully create QC Flag Type', async () => {
+    it('should successfully create QC Flag Type', async () => {
         await goToPage(page, 'qc-flag-type-creation');
         await page.waitForSelector('button#submit[disabled]');
 
@@ -73,7 +73,7 @@ module.exports = () => {
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
-        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
+        await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
         expectUrlParams(page, { page: 'qc-flag-types-overview' });
 
         // Expect newly created flag to appear and have correct color

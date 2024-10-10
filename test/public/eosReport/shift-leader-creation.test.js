@@ -139,8 +139,6 @@ module.exports = () => {
         await page.keyboard.type('solenoid-end');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');
-        await page.focus('#from-previous-shifter .CodeMirror textarea');
-        await page.keyboard.type('From previous shifter\nOn multiple lines');
 
         await page.waitForSelector('#for-next-shifter .CodeMirror textarea');
         await page.focus('#for-next-shifter .CodeMirror textarea');
@@ -173,7 +171,7 @@ module.exports = () => {
 - ${formatShiftDate(magnet2Timestamp, { time: true })} - Dipole dipole-2 - Solenoid solenoid-2
 - ${formatShiftDate(magnet1Timestamp, { time: true })} - Dipole dipole-1 - Solenoid solenoid-1
 - ${magnetEnd} - Dipole dipole-end - Solenoid solenoid-end`)).to.be.true;
-        expect(text.includes('### From previous shifter\nFrom previous shifter\nOn multiple lines')).to.be.true;
+        expect(text.includes('### From previous shifter\n-')).to.be.true;
         expect(text.includes('### For next shifter\nFor next shifter\nOn multiple lines')).to.be.true;
         expect(text.includes('### For RM/RC\nFor RM & RC\nOn multiple lines')).to.be.true;
     });

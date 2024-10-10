@@ -115,20 +115,35 @@ module.exports = () => {
 
         await expectInnerText(
             page,
-            '#raw-configuration-pane',
-            'ccdb_enabled="true"\ndcs_enabled="false"',
+            '#raw-configuration-pane table #rowccdb_enabled-key-text',
+            'ccdb_enabled',
+        );
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane table #rowccdb_enabled-value-text',
+            'true',
+        );
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane table #rowdcs_enabled-key-text',
+            'dcs_enabled',
+        );
+        await expectInnerText(
+            page,
+            '#raw-configuration-pane table #rowdcs_enabled-value-text',
+            'false',
         );
     });
 
     it('should successfully display FLP and ECS links', async () => {
-        const contatinerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
+        const containerSelector = '.flex-row.w-100.g2.items-baseline.mb3';
 
-        await expectLink(page, `${contatinerSelector} a:nth-of-type(1)`, {
+        await expectLink(page, `${containerSelector} a:nth-of-type(1)`, {
             href:
                 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22Dxi029djX%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'FLP',
         });
-        await expectLink(page, `${contatinerSelector} a:nth-of-type(2)`, {
+        await expectLink(page, `${containerSelector} a:nth-of-type(2)`, {
             href: 'http://localhost:8080/?page=environment&id=Dxi029djX',
             innerText: 'ECS',
         });

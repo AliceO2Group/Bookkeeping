@@ -14,7 +14,7 @@
 const { getRun } = require('../../../../../lib/server/services/run/getRun.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 const { expect } = require('chai');
-const { RunDefinition } = require('../../../../../lib/server/services/run/getRunDefinition.js');
+const { RunDefinition } = require('../../../../../lib/domain/enums/RunDefinition.js');
 
 module.exports = () => {
     it('should successfully update the run definition when updating run', async () => {
@@ -31,10 +31,10 @@ module.exports = () => {
 
         let updatedRun = await getRun({ runNumber });
 
-        expect(updatedRun.definition).to.equal(RunDefinition.Commissioning);
+        expect(updatedRun.definition).to.equal(RunDefinition.COMMISSIONING);
 
         updatedRun = await updateRun({ runNumber }, { runPatch: { timeTrgStart, timeTrgEnd } });
 
-        expect(updatedRun.definition).to.equal(RunDefinition.Physics);
+        expect(updatedRun.definition).to.equal(RunDefinition.PHYSICS);
     });
 };

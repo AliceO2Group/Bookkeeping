@@ -37,10 +37,10 @@ const {
     expectColumnValues,
     expectUrlParams,
 } = require('../defaults.js');
-const { RunDefinition } = require('../../../lib/server/services/run/getRunDefinition.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { runService } = require('../../../lib/server/services/run/RunService.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
 
 const { expect } = chai;
 
@@ -377,36 +377,49 @@ module.exports = () => {
                 const rowId = row.id;
                 return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
             }));
-            expect(definitions.length).to.equal(size);
-            expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
+
+            try {
+                expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
+            } catch {
+                const runNumbers = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
+                    const rowId = row.id;
+                    return document.querySelector(`#${rowId}-runNumber-text`).innerText;
+                }));
+                throw new Error(`Expect all run definitions ${definitions} to be one of ${authorizedRunDefinition}, for runs (${runNumbers})`);
+            }
         };
 
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.overviewModel.pagination.itemsPerPage = 20;
+        });
+
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(4, [RunDefinition.Physics]);
+        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(6, [RunDefinition.Physics, RunDefinition.Synthetic]);
+        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(2, [RunDefinition.Synthetic]);
+        await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);
 
         await pressElement(page, cosmicsFilterSelector, true);
-        await checkTableSizeAndDefinition(4, [RunDefinition.Synthetic, RunDefinition.Cosmics]);
+        await checkTableSizeAndDefinition(4, [RunDefinition.SYNTHETIC, RunDefinition.COSMICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(2, [RunDefinition.Cosmics]);
+        await checkTableSizeAndDefinition(2, [RunDefinition.COSMICS]);
 
         await pressElement(page, technicalFilterSelector, true);
-        await checkTableSizeAndDefinition(3, [RunDefinition.Cosmics, RunDefinition.Technical]);
+        await checkTableSizeAndDefinition(3, [RunDefinition.COSMICS, RunDefinition.TECHNICAL]);
 
         await pressElement(page, cosmicsFilterSelector, true);
-        await checkTableSizeAndDefinition(1, [RunDefinition.Technical]);
+        await checkTableSizeAndDefinition(1, [RunDefinition.TECHNICAL]);
 
         await pressElement(page, calibrationFilterSelector, true);
-        await checkTableSizeAndDefinition(2, [RunDefinition.Technical, RunDefinition.Calibration]);
+        await checkTableSizeAndDefinition(2, [RunDefinition.TECHNICAL, RunDefinition.CALIBRATION]);
 
         await pressElement(page, commissioningFilterSelector, true);
-        await checkTableSizeAndDefinition(8, [RunDefinition.Commissioning]);
+        await checkTableSizeAndDefinition(20, [RunDefinition.COMMISSIONING]);
 
         await pressElement(page, commissioningFilterSelector, true);
         await pressElement(page, physicsFilterSelector, true);
@@ -418,11 +431,9 @@ module.exports = () => {
             model.runs.overviewModel.pagination.itemsPerPage = 20;
         });
 
-        await waitForTableLength(page, 10);
-
         await checkTableSizeAndDefinition(
-            10,
-            [RunDefinition.Cosmics, RunDefinition.Technical, RunDefinition.Physics, RunDefinition.Synthetic, RunDefinition.Calibration],
+            16,
+            [RunDefinition.COSMICS, RunDefinition.TECHNICAL, RunDefinition.PHYSICS, RunDefinition.SYNTHETIC, RunDefinition.CALIBRATION],
         );
     });
 
@@ -930,9 +941,8 @@ module.exports = () => {
         expect(eorDescriptionInput).to.exist;
 
         // Expect there to be one result that contains a certain description
-        await page.focus('#eorDescription');
         const descriptionInput = 'some';
-        await page.keyboard.type(descriptionInput);
+        await fillInput(page, '#eorDescription', descriptionInput);
         await waitForTableLength(page, 2);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
@@ -1112,7 +1122,8 @@ module.exports = () => {
         await page.waitForSelector(popoverSelector);
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
-            href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
+                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
         await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {

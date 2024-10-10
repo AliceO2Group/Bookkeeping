@@ -59,7 +59,7 @@ module.exports = () => {
                 ],
                 text: 'Detected particle ABC123',
                 origin: 'process',
-                subtype: 'subsystem',
+                subtype: 'comment',
                 rootLogId: 1,
                 parentLogId: 1,
             },
@@ -160,7 +160,7 @@ module.exports = () => {
                     ],
                     text: 'Detected particle ABC123',
                     origin: 'process',
-                    subtype: 'subsystem',
+                    subtype: 'comment',
                     rootLogId: 1,
                     parentLogId: 1,
                     children: [

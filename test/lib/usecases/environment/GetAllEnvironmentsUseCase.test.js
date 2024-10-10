@@ -65,7 +65,7 @@ module.exports = () => {
         expect(environments.map(({ id }) => id)).to.have.members(['CmCvjNbg', 'Dxi029djX']);
     });
 
-    it('should successfully filter environments on multiple current statusses', async () => {
+    it('should successfully filter environments on multiple current statuses', async () => {
         getAllEnvsDto.query = { filter: { currentStatus: 'RUNNING, ERROR' } };
         const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
 

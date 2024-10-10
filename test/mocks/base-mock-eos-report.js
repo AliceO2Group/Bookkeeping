@@ -20,7 +20,7 @@ const genericCustomizedEosReport = {
     shiftStart: MORNING_SHIFT_START,
     shiftFlow: 'The\nshift flow',
     lhcTransitions: 'The\nLHC machine transitions',
-    infoFromPreviousShifter: 'Info from\nprevious shifter',
+    infoFromPreviousShifter: '-',
     infoForNextShifter: 'Info for\nnext shifter',
     infoForRmRc: 'Info for\nRM and RC',
 };
@@ -46,8 +46,7 @@ ${formattedTypeSpecific}
 ## Shift to shift transfer of information
 
 ### From previous shifter
-Info from
-previous shifter
+-
 
 ### For next shifter
 Info for

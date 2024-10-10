@@ -103,7 +103,7 @@ module.exports = () => {
         await expectInnerText(page, '#copy-117', 'Copied!');
     });
 
-    it('should successfuly expand opened log when displaying a log tree', async () => {
+    it('should successfully expand opened log when displaying a log tree', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one log in this log entry

@@ -68,8 +68,6 @@ module.exports = () => {
             // Seems to not exist anymore
             updatedAt: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
-            toredownAt: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
             status: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
             statusMessage: (string) => typeof string == 'string',
@@ -133,7 +131,7 @@ module.exports = () => {
         await pressElement(page, `${amountSelectorId} button`);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
+        // Expect the amount of visible lhcFills to reduce when the first option (5) is selected
         await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
 
@@ -199,5 +197,11 @@ module.exports = () => {
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
+    });
+
+    it('should successfully toggle to stable beam only', async () => {
+        await waitForTableLength(page, 6);
+        await pressElement(page, '.slider.round');
+        await waitForTableLength(page, 5);
     });
 };

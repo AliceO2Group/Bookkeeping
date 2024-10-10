@@ -13,32 +13,127 @@
 
 const { expect } = require('chai');
 const { getAllDetectors } = require('../../../../../lib/server/services/detector/getAllDetectors.js');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 module.exports = () => {
     it('should successfully return the full list of detectors', async () => {
         const detectors = await getAllDetectors();
-        expect(detectors.map(({ id, name }) => ({ id, name }))).to.deep.eq([
-            { id: 1, name: 'CPV' },
-            { id: 2, name: 'EMC' },
-            { id: 3, name: 'FDD' },
-            { id: 4, name: 'ITS' },
-            { id: 5, name: 'FV0' },
-            { id: 6, name: 'HMP' },
-            { id: 7, name: 'FT0' },
-            { id: 8, name: 'MCH' },
-            { id: 9, name: 'MFT' },
-            { id: 10, name: 'MID' },
-            { id: 11, name: 'PHS' },
-            { id: 12, name: 'TOF' },
-            { id: 13, name: 'TPC' },
-            { id: 14, name: 'TRD' },
-            { id: 15, name: 'TST' },
-            { id: 16, name: 'ZDC' },
-            { id: 17, name: 'ACO' },
-            { id: 18, name: 'CTP' },
-            { id: 19, name: 'FIT' },
-            { id: 20, name: 'A-NEW-DETECTOR' },
-            { id: 21, name: 'A-NEW-ONE' },
+        expect(detectors.map(({ id, name, type }) => ({ id, name, type }))).to.deep.eq([
+            {
+                id: 1,
+                name: 'CPV',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 2,
+                name: 'EMC',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 3,
+                name: 'FDD',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 4,
+                name: 'ITS',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 5,
+                name: 'FV0',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 6,
+                name: 'HMP',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 7,
+                name: 'FT0',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 8,
+                name: 'MCH',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 9,
+                name: 'MFT',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 10,
+                name: 'MID',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 11,
+                name: 'PHS',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 12,
+                name: 'TOF',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 13,
+                name: 'TPC',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 14,
+                name: 'TRD',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 15,
+                name: 'TST',
+                type: DetectorType.VIRTUAL,
+            },
+            {
+                id: 16,
+                name: 'ZDC',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 17,
+                name: 'ACO',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 18,
+                name: 'CTP',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 19,
+                name: 'FIT',
+                type: DetectorType.PHYSICAL,
+            },
+            {
+                id: 20,
+                name: 'QC-SPECIFIC',
+                type: DetectorType.QC_ONLY,
+            },
+            {
+                id: 21,
+                name: 'GLO',
+                type: DetectorType.QC_ONLY,
+            },
+            {
+                id: 22,
+                name: 'A-NEW-DETECTOR',
+                type: 'PHYSICAL',
+            },
+            {
+                id: 23,
+                name: 'A-NEW-ONE',
+                type: 'PHYSICAL',
+            },
         ]);
     });
 };
