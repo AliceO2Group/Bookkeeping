@@ -1,3 +1,7 @@
+## [1.1.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.1.0)
+* Changes made to the database
+  * Added columns first_tf_timestamp and last_tf_timestamp to runs table
+
 ## [0.99.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.0)
 * Changes made to the database
     * Added columns colliding_bunches_count and delivered_lumi columns to lhc_fills
