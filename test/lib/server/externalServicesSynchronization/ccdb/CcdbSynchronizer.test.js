@@ -3,30 +3,48 @@ const { expect } = require('chai');
 const { CcdbSynchronizer } = require('../../../../../lib/server/externalServicesSynchronization/ccdb/CcdbSynchronizer.js');
 const { runService } = require('../../../../../lib/server/services/run/RunService.js');
 
-const dummyCcdbRunInfo = `Listing content of RCT/Info/RunInformation
-
-ID: dummy-id
-Path: RCT/Info/RunInformation
-Validity: 108 - 108 (Thu Jan 01 01:09:17 CET 1970 - Thu Jan 01 01:09:17 CET 1970)
-Initial validity limit: 108 (Thu Jan 01 01:09:17 CET 1970)
-Created: 1565262000000 (Tue Sep 17 13:31:31 CEST 2024)
-Last modified: 1726573167825 (Tue Sep 17 13:39:27 CEST 2024)
-Original file: tmp.dat, size: 1, md5: fake-md5, content type: application/x-ns-proxy-autoconfig
-Uploaded from: 10.161.69.39
-Metadata:
-  ObjectType = char
-  STF = 1565262000000
-  ETF = 1565265600000
-  SOR = 1565262000000
-  UpdatedFrom = 10.161.69.39
-  EOR = 1565265600000
-  SOX = 1565262000000
-  partName = send
-  EOX = 1565265600000
-
-
-
-Subfolders:`;
+const dummyCcdbRunInfo = JSON.parse(`{
+  "path": "RCT/Info/RunInformation",
+  "latest": false,
+  "patternMatching": false,
+  "validAt": 108,
+  "objects": [
+    {
+      "path": "RCT/Info/RunInformation",
+      "createTime": 1565262000000,
+      "lastModified": 1565262000000,
+      "Created": 1565262000000,
+      "Last-Modified": 1565262000000,
+      "id": "dummy-id",
+      "validFrom": 108,
+      "validUntil": 109,
+      "initialValidity": 109,
+      "MD5": "dummy-md5",
+      "fileName": "tmp.dat",
+      "contentType": "application/octet-stream",
+      "size": 1,
+      "ETag": "\\"dummy-etag\\"",
+      "Valid-From": 108,
+      "Valid-Until": 109,
+      "InitialValidityLimit": 109,
+      "Content-MD5": "dummy-content-md5",
+      "Content-Disposition": "inline;filename=\\"tmp.dat\\"",
+      "Content-Type": "application/octet-stream",
+      "Content-Length": 1,
+      "UploadedFrom": "1.2.3.4",
+      "ObjectType": "char",
+      "STF": "156526200000",
+      "ETF": "1565265600000",
+      "SOR": "156526200000",
+      "EOR": "1565265600000",
+      "partName": "send",
+      "replicas": [
+        "http://dummy-recplica"
+      ]
+    }
+  ],
+  "subfolders": []
+}`);
 
 module.exports = () => {
     it('Should successfully update good physics runs first and last TF timestamps', async () => {

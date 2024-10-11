@@ -9,7 +9,7 @@ services:
       DATABASE_LOGGING: "False"
       JWT_SECRET: BOOKKEEPING-TEST-SUITE
       PAGE_ITEMS_LIMIT: 100
-      CCDB_SYNCHRONIZATION_PERIOD: 3153600000000
+      CCDB_SYNCHRONIZATION_PERIOD: 3153600000000 # 100y in milliseconds, to be sure all the runs are included when testing sync
     restart: "no"
 
   database:
