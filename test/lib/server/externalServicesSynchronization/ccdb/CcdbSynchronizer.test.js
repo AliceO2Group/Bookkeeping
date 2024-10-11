@@ -33,9 +33,9 @@ const dummyCcdbRunInfo = JSON.parse(`{
       "Content-Length": 1,
       "UploadedFrom": "1.2.3.4",
       "ObjectType": "char",
-      "STF": "156526200000",
+      "STF": "1565262000000",
       "ETF": "1565265600000",
-      "SOR": "156526200000",
+      "SOR": "1565262000000",
       "EOR": "1565265600000",
       "partName": "send",
       "replicas": [
