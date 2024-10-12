@@ -106,6 +106,9 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+
+        const rects = await page.$$('svg rect');
+        expect(rects).to.be.lengthOf(3);
     });
 
     it('should inform when run quality was changed to bad', async () => {
