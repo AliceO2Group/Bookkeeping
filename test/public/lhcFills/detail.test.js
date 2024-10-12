@@ -38,6 +38,15 @@ module.exports = () => {
     it('should successfully display lhc fills details page', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
         await expectInnerText(page, 'h2', 'Fill No. 6');
+
+        await expectInnerText(page, '#lhc-fill-stableBeamsStart', 'Stable beams start:\n08/08/2019, 11:00:00');
+        await expectInnerText(page, '#lhc-fill-stableBeamsEnd', 'Stable beams end:\n08/08/2019, 23:00:00');
+        await expectInnerText(page, '#lhc-fill-stableBeamsDuration', 'Beams duration:\n12:00:00');
+
+        await expectInnerText(page, '#lhc-fill-beamType', 'Beam type:\nPROTON-PROTON');
+        await expectInnerText(page, '#lhc-fill-fillingSchemeName', 'Scheme name:\nSingle_12b_8_1024_8_2018');
+        await expectInnerText(page, '#lhc-fill-collidingBunchesCount', 'Colliding bunches:\n123,456,789');
+        await expectInnerText(page, '#lhc-fill-deliveredLuminosity', 'Delivered lumi:\n420 nb-1');
     });
 
     it('should successfully emphasize the fills that have a stable beams', async () => {

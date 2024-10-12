@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.1.0)
+* Notable changes for users:
+  * Store phase shift for runs at start and stop for both beams 1 and 2
+  * Display mean STF size and data rate per FLP
+  * Store nanoseconds of environments transitions
+  * Environments with bookkept: false in configuration are not stored
+  * Users can only press "copy to..." button when the clipboard is available. Otherwise, they will see a message explaining the reason.
+  * Store timestamps of first and last TF per runs in bookkeeping
+  * Display colliding bunches and luminosity on fills details page
+* Notable changes for developers:
+  * First and Last TF timestamps are regularly fetched and sync from CCDB
+
 ## [1.0.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.0.1)
 * Notable changes for users:
   * Fixed gRPC API not updating run LHC period
