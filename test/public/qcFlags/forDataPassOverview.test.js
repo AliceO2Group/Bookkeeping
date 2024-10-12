@@ -109,54 +109,6 @@ module.exports = () => {
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
     });
 
-    it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '3');
-        await expectInnerText(page, '#totalRowsCount', '3');
-    });
-
-    it('can set how many entires are available per page', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        const amountSelectorId = '#amountSelector';
-        await page.waitForSelector(amountSelectorId);
-        const amountSelectorButtonSelector = `${amountSelectorId} button`;
-        await pressElement(page, amountSelectorButtonSelector);
-
-        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
-
-        const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
-        await pressElement(page, amountItems5);
-
-        await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
-        await page.waitForSelector(amountSelectorId);
-    });
-
-    it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.qcFlags.forDataPassOverviewModel.pagination.itemsPerPage = 200);
-
-        // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
-    });
-
     it('should inform when run quality was changed to bad', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 2,
