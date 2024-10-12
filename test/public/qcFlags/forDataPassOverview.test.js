@@ -19,7 +19,6 @@ const {
     pressElement,
     goToPage,
     validateTableData,
-    fillInput,
     expectUrlParams,
     waitForNavigation,
 } = require('../defaults.js');
