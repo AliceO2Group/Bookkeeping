@@ -49,6 +49,7 @@ module.exports = () => {
                 createdBy: { id: 2, externalId: 456, name: 'Jan Jansen' },
                 flagTypeId: 13,
                 flagType: { id: 13, name: 'Bad', method: 'Bad', mcReproducible: false, bad: true, archived: false, color: null },
+                effectivePeriods: [],
             });
         });
 

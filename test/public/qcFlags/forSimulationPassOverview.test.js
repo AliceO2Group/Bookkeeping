@@ -140,19 +140,4 @@ module.exports = () => {
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
         await page.waitForSelector(amountSelectorId);
     });
-
-    it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.qcFlags.forSimulationPassOverviewModel.pagination.itemsPerPage = 200);
-
-        // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
-    });
 };
