@@ -220,6 +220,20 @@ module.exports = () => {
 
             expect(goodCoverage / runDuration).to.be.equal(0);
             expect((badCoverage / runDuration).toFixed(4)).to.be.equal('0.0769');
+
+            // Verify flag and fetch summary one more time
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            await qcFlagService.verifyFlag({ flagId: 4 }, relations);
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+                1: {
+                    1: {
+                        missingVerificationsCount: 0,
+                        mcReproducible: false,
+                        badEffectiveRunCoverage: 0.0769,
+                        explicitlyNotBadEffectiveRunCoverage: 0,
+                    },
+                },
+            });
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
