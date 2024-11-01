@@ -81,6 +81,30 @@ module.exports = () => {
         expect(lastLog.tags[0].text).to.equal('Not for physics');
     });
 
+    it(
+        'should successfully NOT create a log when adding a tag that do NOT need logging to a run that already have tags that needs logging',
+        async () => {
+            await updateRun({ runNumber: 2 }, {
+                relations: { tags: [{ id: 19, text: 'Not for physics' }, { id: 1, text: 'FOOD' }] },
+            });
+
+            const lastLog = await getLog(lastLogId + 1);
+            expect(lastLog).to.be.null;
+        },
+    );
+
+    it(
+        'should successfully NOT create a log when removing a tag that do NOT need logging to a run that already have tags that needs logging',
+        async () => {
+            await updateRun({ runNumber: 2 }, {
+                relations: { tags: [{ id: 19, text: 'Not for physics' }] },
+            });
+
+            const lastLog = await getLog(lastLogId + 1);
+            expect(lastLog).to.be.null;
+        },
+    );
+
     it('should successfully create a log when replacing a tag that needs logging', async () => {
         await updateRun({ runNumber: 2 }, {
             relations: { tags: [{ id: 1, text: 'Food' }] },
