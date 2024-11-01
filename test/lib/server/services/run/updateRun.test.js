@@ -75,7 +75,6 @@ module.exports = () => {
             qb.include('tags');
         });
 
-        console.log(lastLog.text);
         expect(lastLog.title).to.equal('Run 2 tags has changed');
         expect(lastLog.text.startsWith('Run 2 tags has been changed from `FOOD` to `Not for physics`')).to.be.true;
         expect(lastLog.tags).to.lengthOf(1);

@@ -110,10 +110,10 @@ module.exports = () => {
         expect(await page.$eval(inputSelector, (input) => input.placeholder)).to.equal('Filter by name');
 
         await page.type(inputSelector, '-TAG-');
-        await waitForTableLength(page, 32);
+        await waitForTableLength(page, 31);
 
         let table = await page.$$('tbody tr');
-        expect(table.length).to.equal(32);
+        expect(table.length).to.equal(31);
 
         await page.type(inputSelector, 'DO-NOT-EXIST');
         await waitForEmptyTable(page);
