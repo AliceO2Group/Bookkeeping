@@ -191,7 +191,7 @@ module.exports = () => {
 
         (await page.waitForFunction(() => {
             const options = document.querySelectorAll('.tag-option');
-            if (options.length === 9) {
+            if (options.length === 10) {
                 for (const option of options) {
                     if (!option.innerText.toUpperCase().includes('P')) {
                         return false;
