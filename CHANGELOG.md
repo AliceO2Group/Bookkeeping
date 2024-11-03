@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.2.0)
+* Notable changes for users:
+  * Prevented the QC summary color from changing to gray after more than one verification
+  * Create a log when tag "Not for physics" is added/removed to a run
+* Notable changes for developers:
+  * Added separate request to fetch non-verified flags when calculating QC summary
+  * BKP process do not crash anymore when database crash
+
 ## [1.1.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.1.0)
 * Notable changes for users:
   * Store phase shift for runs at start and stop for both beams 1 and 2
