@@ -185,13 +185,13 @@ module.exports = () => {
     });
 
     it('should successfully provide a tag picker with search input', async () => {
-        await goToPage(page, 'log-create');
+        await waitForNavigation(page, () => pressElement(page, '#create-log-button'));
 
         await page.locator('.tag-search-input').fill('P');
 
         (await page.waitForFunction(() => {
             const options = document.querySelectorAll('.tag-option');
-            if (options.length === 9) {
+            if (options.length === 10) {
                 for (const option of options) {
                     if (!option.innerText.toUpperCase().includes('P')) {
                         return false;
