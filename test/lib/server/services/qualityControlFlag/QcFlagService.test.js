@@ -914,6 +914,36 @@ module.exports = () => {
             );
         });
 
+        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.firstTfTimestamp', async () => {
+            const period = {
+                from: new Date('2019-08-08 11:36:40').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+            };
+
+            const runFirstTfTimestamp = new Date('2019-08-08 12:59:00').getTime();
+            const runLastTfTimestamp = new Date('2019-08-09 14:01:00').getTime();
+
+            const qcFlag = {
+                ...period,
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 107,
+                simulationPassIdentifier: { id: 1 },
+                detectorIdentifier: { detectorId: 1 },
+            };
+
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runFirstTfTimestamp}, ${runLastTfTimestamp}) period`),
+            );
+        });
+
         it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
