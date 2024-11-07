@@ -20,7 +20,6 @@ const {
     getFirstRow,
     waitForTableLength,
     goToPage,
-    reloadPage,
     getInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
