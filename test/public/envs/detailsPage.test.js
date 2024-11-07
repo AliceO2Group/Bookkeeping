@@ -21,6 +21,7 @@ const {
     pressElement,
     waitForNavigation,
     expectLink,
+    waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -33,7 +34,7 @@ module.exports = () => {
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
         await page.setViewport({
-            width: 1920,
+            width: 800,
             height: 1080,
             deviceScaleFactor: 1,
         });
@@ -133,6 +134,16 @@ module.exports = () => {
             '#raw-configuration-pane table #rowdcs_enabled-value-text',
             'false',
         );
+
+        await waitForNavigation(page, () => pressElement(page, '#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, '#rowCmCvjNbg a:first-of-type'));
+        await pressElement(page, '#raw-configuration-tab');
+
+        await waitForTableLength(page, 18);
+        expect(await page.evaluate(() => {
+            const cellContents = Array.from(document.querySelectorAll('table tbody tr td:first-child')).map((element) => element.innerText);
+            return cellContents.every((v, i) => !i || v.localeCompare(cellContents[i - 1]) >= 0);
+        })).to.be.true;
     });
 
     it('should successfully display FLP and ECS links', async () => {
@@ -140,11 +151,11 @@ module.exports = () => {
 
         await expectLink(page, `${containerSelector} a:nth-of-type(1)`, {
             href:
-                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22Dxi029djX%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'FLP',
         });
         await expectLink(page, `${containerSelector} a:nth-of-type(2)`, {
-            href: 'http://localhost:8080/?page=environment&id=Dxi029djX',
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
         });
     });
