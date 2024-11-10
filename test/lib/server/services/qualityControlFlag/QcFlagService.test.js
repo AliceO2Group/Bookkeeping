@@ -61,6 +61,7 @@ const qcFlagWithId1 = {
     },
 
     verifications: [],
+    effectivePeriods: [],
 };
 
 module.exports = () => {
