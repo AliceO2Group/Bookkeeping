@@ -1,3 +1,7 @@
+## [1.3.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.3.0)
+* Changes made to the database
+  * Fixed physical constants values in database
+
 ## [1.1.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.1.0)
 * Changes made to the database
   * Added columns first_tf_timestamp and last_tf_timestamp to runs table

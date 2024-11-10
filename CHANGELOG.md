@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.3.0)
+* Notable changes for users:
+  * Fixed physical constants values which resulted in wrong AVG center of mass energy
+  * Minor improvements to environments configuration display
+    * Table is now sorted alphabetically
+    * Table columns are not truncated anymore
+  * Use proper configuration for CCDB synchronization period and not monalisa one
+  * Added visualization of QC flags for data pass
+* Notable changes for developers:
+  * Extended chart renderers:
+    * both x and y can be configured as index axis
+    * each bar in bar chart can have specific visual properties: color, stroke, pattern
+
 ## [1.2.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.2.0)
 * Notable changes for users:
   * Prevented the QC summary color from changing to gray after more than one verification
