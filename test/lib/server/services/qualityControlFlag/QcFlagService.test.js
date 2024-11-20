@@ -249,7 +249,7 @@ module.exports = () => {
                     4: {
                         badEffectiveRunCoverage: 0.5,
                         explicitlyNotBadEffectiveRunCoverage: 0.5,
-                        mcReproducible: false,
+                        mcReproducible: true,
                         missingVerificationsCount: 2,
                         qualityNotDefinedEffectiveRunCoverage: 0,
                     },
