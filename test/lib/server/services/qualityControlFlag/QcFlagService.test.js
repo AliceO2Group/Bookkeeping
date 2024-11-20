@@ -55,7 +55,7 @@ const qcFlagWithId1 = {
         name: 'Limited Acceptance MC Reproducible',
         method: 'LimitedAcceptanceMCReproducible',
         bad: true,
-        color: '#FFFF00',
+        color: '#bb9d30',
         archived: false,
         mcReproducible: true,
     },
@@ -248,10 +248,10 @@ module.exports = () => {
                 56: {
                     4: {
                         badEffectiveRunCoverage: 0.5,
-                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        explicitlyNotBadEffectiveRunCoverage: 0.5,
                         mcReproducible: false,
                         missingVerificationsCount: 2,
-                        qualityNotDefinedEffectiveRunCoverage: -0.5,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                     7: {
                         badEffectiveRunCoverage: 0,

@@ -199,11 +199,12 @@ module.exports = () => {
         });
 
         it('should successfully filter QC flags types by name', async () => {
-            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({ filter: { names: ['Unknown Quality', 'Limited acceptance'] } });
+            const { count, rows: flagTypes } = await qcFlagTypeService.getAll({
+                filter: { names: ['Unknown Quality', 'Limited Acceptance MC Not Reproducible'] } });
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Unknown Quality', 'Limited acceptance']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.members(['Unknown Quality', 'Limited Acceptance MC Not Reproducible']);
         });
 
         it('should successfully filter QC flags types by names pattern', async () => {
@@ -219,7 +220,8 @@ module.exports = () => {
             expect(count).to.be.equal(2);
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
-            expect(flagTypes.map(({ method }) => method)).to.be.has.all.members(['LimitedAcceptance', 'LimitedAcceptanceMCReproducible']);
+            expect(flagTypes.map(({ method }) => method)).to.be.has
+                .all.members(['LimitedAcceptanceMCNotReproducible', 'LimitedAcceptanceMCReproducible']);
         });
 
         it('should successfully filter QC flags types by method pattern', async () => {
@@ -270,7 +272,7 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Unknown Quality',
                 'Limited Acceptance MC Reproducible',
-                'Limited acceptance',
+                'Limited Acceptance MC Not Reproducible',
                 'Good',
                 'Bad PID',
                 'Bad',
@@ -288,7 +290,7 @@ module.exports = () => {
                 'Bad',
                 'Bad PID',
                 'Good',
-                'Limited acceptance',
+                'Limited Acceptance MC Not Reproducible',
                 'Limited Acceptance MC Reproducible',
                 'Unknown Quality',
             ]);

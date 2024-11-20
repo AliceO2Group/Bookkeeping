@@ -425,21 +425,21 @@ module.exports = () => {
     }
 
     it('should successfully apply gaqNotBadFraction filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
 
         await pressElement(page, '#openFilterToggle', true);
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.globalAggregatedQuality-filter .popover-trigger'));
         await pressElement(page, `${popoverSelector} #gaqNotBadFraction-dropdown-option-le`, true);
         await fillInput(page, '#gaqNotBadFraction-value-input', '80');
-        await expectColumnValues(page, 'runNumber', ['106']);
+        await expectColumnValues(page, 'runNumber', ['56']);
 
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);
 
         await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('should successfully apply muInelasticInteractionRate filters', async () => {
