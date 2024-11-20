@@ -52,8 +52,8 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-type-creation');
         await page.waitForSelector('button#submit[disabled]');
 
-        await fillInput(page, 'input#name', 'Limited acceptance');
-        await fillInput(page, 'input#method', 'LimitedAcceptance');
+        await fillInput(page, 'input#name', 'LimitedAcceptanceMCNotReproducible');
+        await fillInput(page, 'input#method', 'Limited Acceptance MC Not Reproducible');
         await pressElement(page, 'button#submit');
         await expectInnerText(
             page,
