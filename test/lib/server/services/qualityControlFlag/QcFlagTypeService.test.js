@@ -29,7 +29,7 @@ module.exports = () => {
                 name: 'Unknown Quality',
                 method: 'UnknownQuality',
                 bad: true,
-                color: null,
+                color: '#d62631',
                 mcReproducible: false,
 
                 archived: false,
@@ -71,7 +71,7 @@ module.exports = () => {
                     name: 'Unknown Quality',
                     method: 'UnknownQuality',
                     bad: true,
-                    color: null,
+                    color: '#d62631',
                     mcReproducible: false,
 
                     archived: false,
@@ -87,7 +87,7 @@ module.exports = () => {
                     name: 'Good',
                     method: 'Good',
                     bad: false,
-                    color: null,
+                    color: '#4caf50',
                     mcReproducible: false,
 
                     archived: false,
@@ -103,7 +103,7 @@ module.exports = () => {
                     name: 'Limited Acceptance MC Reproducible',
                     method: 'LimitedAcceptanceMCReproducible',
                     bad: true,
-                    color: '#FFFF00',
+                    color: '#bb9d30',
                     mcReproducible: true,
 
                     archived: false,
@@ -116,10 +116,10 @@ module.exports = () => {
                 },
                 {
                     id: 11,
-                    name: 'Limited acceptance',
-                    method: 'LimitedAcceptance',
+                    name: 'Limited Acceptance MC Not Reproducible',
+                    method: 'LimitedAcceptanceMCNotReproducible',
                     bad: true,
-                    color: '#FFFF00',
+                    color: '#72512c',
                     mcReproducible: false,
 
                     archived: false,
@@ -135,7 +135,7 @@ module.exports = () => {
                     name: 'Bad PID',
                     method: 'BadPID',
                     bad: true,
-                    color: null,
+                    color: '#d62631',
                     mcReproducible: false,
 
                     archived: false,
@@ -151,7 +151,7 @@ module.exports = () => {
                     name: 'Bad',
                     method: 'Bad',
                     bad: true,
-                    color: null,
+                    color: '#d62631',
                     mcReproducible: false,
 
                     archived: false,

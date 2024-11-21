@@ -79,7 +79,7 @@ module.exports = () => {
                     name: 'Unknown Quality',
                     method: 'UnknownQuality',
                     bad: true,
-                    color: null,
+                    color: '#d62631',
                     mcReproducible: false,
 
                     archived: false,
@@ -95,7 +95,7 @@ module.exports = () => {
                     name: 'Good',
                     method: 'Good',
                     bad: false,
-                    color: null,
+                    color: '#4caf50',
                     mcReproducible: false,
 
                     archived: false,
@@ -111,7 +111,7 @@ module.exports = () => {
                     name: 'Limited Acceptance MC Reproducible',
                     method: 'LimitedAcceptanceMCReproducible',
                     bad: true,
-                    color: '#FFFF00',
+                    color: '#bb9d30',
                     mcReproducible: true,
 
                     archived: false,
@@ -124,10 +124,10 @@ module.exports = () => {
                 },
                 {
                     id: 11,
-                    name: 'Limited acceptance',
-                    method: 'LimitedAcceptance',
+                    name: 'Limited Acceptance MC Not Reproducible',
+                    method: 'LimitedAcceptanceMCNotReproducible',
                     bad: true,
-                    color: '#FFFF00',
+                    color: '#72512c',
                     mcReproducible: false,
 
                     archived: false,
@@ -143,7 +143,7 @@ module.exports = () => {
                     name: 'Bad PID',
                     method: 'BadPID',
                     bad: true,
-                    color: null,
+                    color: '#d62631',
                     mcReproducible: false,
 
                     archived: false,
@@ -159,7 +159,7 @@ module.exports = () => {
                     name: 'Bad',
                     method: 'Bad',
                     bad: true,
-                    color: null,
+                    color: '#d62631',
                     mcReproducible: false,
 
                     archived: false,
@@ -213,14 +213,15 @@ module.exports = () => {
         });
 
         it('should successfully filter QC flag types by names', async () => {
-            const response = await request(server).get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=Limited%20acceptance');
+            const response = await request(server)
+                .get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=Limited%20Acceptance%20MC%20Not%20Reproducible');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
             expect(flagTypes).to.be.an('array');
             expect(flagTypes).to.be.lengthOf(2);
 
-            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'Limited acceptance']);
+            expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'Limited Acceptance MC Not Reproducible']);
         });
 
         it('should successfully filter QC flag types by methods', async () => {
@@ -283,7 +284,7 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.ordered.members([
                 'Unknown Quality',
                 'Limited Acceptance MC Reproducible',
-                'Limited acceptance',
+                'Limited Acceptance MC Not Reproducible',
                 'Good',
                 'Bad PID',
                 'Bad',
@@ -305,7 +306,7 @@ module.exports = () => {
                 'Bad',
                 'Bad PID',
                 'Good',
-                'Limited acceptance',
+                'Limited Acceptance MC Not Reproducible',
                 'Limited Acceptance MC Reproducible',
                 'Unknown Quality',
             ]);
