@@ -59,7 +59,7 @@ module.exports = () => {
             page,
             '.alert.alert-danger',
             // eslint-disable-next-line max-len
-            'The request conflicts with existing data: A QC flag type with name Limited acceptance or method LimitedAcceptance already exists',
+            'The request conflicts with existing data: A QC flag type with name Limited Acceptance MC Not Reproducible or method LimitedAcceptanceMCNotReproducible already exists',
         );
     });
 

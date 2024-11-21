@@ -202,10 +202,10 @@ module.exports = () => {
                     qualityNotDefinedEffectiveRunCoverage: 0,
                 },
                 56: {
-                    badEffectiveRunCoverage: 0.5,
-                    explicitlyNotBadEffectiveRunCoverage: 0.5,
+                    badEffectiveRunCoverage: 1,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
                     mcReproducible: true,
-                    missingVerificationsCount: 3,
+                    missingVerificationsCount: 4,
                     qualityNotDefinedEffectiveRunCoverage: 0,
                 },
             });
