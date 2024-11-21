@@ -32,7 +32,7 @@ module.exports = () => {
                 name: 'Bad',
                 method: 'Bad',
                 bad: true,
-                color: null,
+                color: '#d62631',
                 mcReproducible: false,
 
                 archived: false,
