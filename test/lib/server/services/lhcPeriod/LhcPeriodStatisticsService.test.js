@@ -19,7 +19,7 @@ const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundErro
 
 const lhcPeriod_LHC22a = {
     id: 1,
-    avgCenterOfMassEnergy: 108.64388160203008,
+    avgCenterOfMassEnergy: 27.04839037960254,
     lhcPeriod: {
         id: 1,
         name: 'LHC22a',
