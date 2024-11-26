@@ -335,8 +335,12 @@ module.exports = () => {
         expect(lastLog.attachments[0].originalName).to.equal(file1);
         expect(lastLog.attachments[1].originalName).to.equal(file2);
 
-        fs.unlinkSync(path.resolve(...downloadDir, file1));
-        fs.unlinkSync(path.resolve(...downloadDir, file2));
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, file1));
+            fs.unlinkSync(path.resolve(...downloadDir, file2));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -366,7 +370,11 @@ module.exports = () => {
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
 
-        fs.unlinkSync(path.resolve(...downloadDir, fileName));
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, fileName));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     });
 
     it('can create a log with a run number', async () => {
