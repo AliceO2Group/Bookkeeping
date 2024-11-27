@@ -150,7 +150,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.3333,
+                        badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                         qualityNotDefinedEffectiveRunCoverage: 0.6667000000000001,
                     },
@@ -171,9 +171,9 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.1111,
-                        explicitlyNotBadEffectiveRunCoverage: 0.2222,
-                        qualityNotDefinedEffectiveRunCoverage: 0.6667,
+                        badEffectiveRunCoverage: 0.1111111,
+                        explicitlyNotBadEffectiveRunCoverage: 0.2222222,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
@@ -217,7 +217,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 0,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.0769,
+                        badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                         qualityNotDefinedEffectiveRunCoverage: 0.9231,
                     },
@@ -235,7 +235,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 0,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.0769,
+                        badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                         qualityNotDefinedEffectiveRunCoverage: 0.9231,
                     },
@@ -270,7 +270,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.7222,
+                        badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                         qualityNotDefinedEffectiveRunCoverage: 0.27780000000000005,
                     },
@@ -289,8 +289,8 @@ module.exports = () => {
                     7: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.1667,
-                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                        badEffectiveRunCoverage: 0.1666667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333333,
                         qualityNotDefinedEffectiveRunCoverage: 0,
                     },
 
