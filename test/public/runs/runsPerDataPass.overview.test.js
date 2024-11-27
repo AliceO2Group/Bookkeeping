@@ -167,14 +167,15 @@ module.exports = () => {
 
         await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
 
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 3 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
         await expectInnerText(page, '#row56-globalAggregatedQuality', '0MC.R');
         expect(await getPopoverInnerText(await page.waitForSelector('#row56-globalAggregatedQuality .popover-trigger')))
             .to.be.equal('Missing 4 verifications');
     });
 
     it('should switch mcReproducibleAsNotBad', async () => {
-        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await waitForTableLength(page, 3);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
