@@ -79,7 +79,7 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        qualityNotDefinedEffectiveRunCoverage: 0.6667000000000001,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
@@ -128,7 +128,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        qualityNotDefinedEffectiveRunCoverage: 0.27780000000000005,
+                        qualityNotDefinedEffectiveRunCoverage: 0.27777779999999996,
                     },
                 },
             });
