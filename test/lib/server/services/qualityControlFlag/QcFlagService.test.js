@@ -1540,10 +1540,10 @@ module.exports = () => {
                 [runNumber]: expectedGaqSummary,
                 56: {
                     missingVerificationsCount: 2,
-                    explicitlyNotBadEffectiveRunCoverage: 0,
+                    explicitlyNotBadEffectiveRunCoverage: 1,
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
-                    qualityNotDefinedEffectiveRunCoverage: 1,
+                    qualityNotDefinedEffectiveRunCoverage: 0,
                 },
                 54: {
                     missingVerificationsCount: 1,
