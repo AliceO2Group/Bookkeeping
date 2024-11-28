@@ -152,7 +152,7 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        qualityNotDefinedEffectiveRunCoverage: 0.6667000000000001,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
@@ -219,7 +219,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        qualityNotDefinedEffectiveRunCoverage: 0.9231,
+                        qualityNotDefinedEffectiveRunCoverage: 0.9230769,
                     },
                 },
             });
@@ -237,7 +237,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        qualityNotDefinedEffectiveRunCoverage: 0.9231,
+                        qualityNotDefinedEffectiveRunCoverage: 0.9230769,
                     },
                 },
             });
@@ -272,7 +272,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        qualityNotDefinedEffectiveRunCoverage: 0.27780000000000005,
+                        qualityNotDefinedEffectiveRunCoverage: 0.27777779999999996,
                     },
                 },
             });
@@ -1540,10 +1540,10 @@ module.exports = () => {
                 [runNumber]: expectedGaqSummary,
                 56: {
                     missingVerificationsCount: 2,
-                    explicitlyNotBadEffectiveRunCoverage: 1,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
-                    qualityNotDefinedEffectiveRunCoverage: 0,
+                    qualityNotDefinedEffectiveRunCoverage: 1,
                 },
                 54: {
                     missingVerificationsCount: 1,
