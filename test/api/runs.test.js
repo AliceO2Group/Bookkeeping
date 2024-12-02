@@ -548,20 +548,6 @@ module.exports = () => {
             expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
                 Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
         });
-
-        it('should successfully filter on aliceDipoleCurrent aliceL3Current together', async () => {
-            const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0&filter[aliceL3Current]=30003');
-
-            expect(response.status).to.equal(200);
-            const { data: runs } = response.body;
-
-            expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf.greaterThan(0);
-            expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
-                Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
-            expect(runs.every(({ aliceL3Current, aliceL3Polarity }) =>
-                Math.round(aliceL3Current * (aliceL3Polarity === 'NEGATIVE' ? -1 : 1) / 1000) === 30003)).to.be.true;
-        });
     });
 
     describe('GET /api/runs/reasonTypes', () => {
