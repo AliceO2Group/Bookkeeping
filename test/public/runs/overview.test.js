@@ -596,6 +596,21 @@ module.exports = () => {
         expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
     });
 
+    it('should successfully apply alice currents filters', async () => {
+        await goToPage(page, 'run-overview');
+
+        await pressElement(page, '#openFilterToggle');
+        await page.waitForSelector('.aliceL3AndDipoleCurrent-filter');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
+
+        await expectColumnValues(page, 'runNumber', ['54']);
+
+        await pressElement(page, '#reset-filters');
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
+    });
+
     it('Should successfully filter runs by their run quality', async () => {
         await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runQualityCheckbox';
