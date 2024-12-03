@@ -77,7 +77,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.3333,
+                        badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                     16: {
@@ -99,8 +99,8 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.1111,
-                        explicitlyNotBadEffectiveRunCoverage: 0.2222,
+                        badEffectiveRunCoverage: 0.1111111,
+                        explicitlyNotBadEffectiveRunCoverage: 0.2222222,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
@@ -121,7 +121,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.7222,
+                        badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
@@ -138,8 +138,8 @@ module.exports = () => {
                     7: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.1667,
-                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                        badEffectiveRunCoverage: 0.1666667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333333,
                     },
 
                     // ITS
