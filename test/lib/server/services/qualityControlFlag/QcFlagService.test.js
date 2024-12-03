@@ -238,7 +238,7 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 4 })).to.be.eql({});
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
