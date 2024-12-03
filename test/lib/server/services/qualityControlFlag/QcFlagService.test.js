@@ -55,7 +55,7 @@ const qcFlagWithId1 = {
         name: 'Limited Acceptance MC Reproducible',
         method: 'LimitedAcceptanceMCReproducible',
         bad: true,
-        color: '#FFFF00',
+        color: '#bb9d30',
         archived: false,
         mcReproducible: true,
     },
@@ -152,12 +152,14 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -171,12 +173,14 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.1111111,
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -215,6 +219,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        qualityNotDefinedEffectiveRunCoverage: 0.9230769,
                     },
                 },
             });
@@ -232,13 +237,31 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        qualityNotDefinedEffectiveRunCoverage: 0.9230769,
                     },
                 },
             });
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({
+                56: {
+                    4: {
+                        badEffectiveRunCoverage: 0.5,
+                        explicitlyNotBadEffectiveRunCoverage: 0.5,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
+                    },
+                    7: {
+                        badEffectiveRunCoverage: 0.5,
+                        explicitlyNotBadEffectiveRunCoverage: 0.5,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
+                    },
+                },
+            });
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
@@ -249,6 +272,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        qualityNotDefinedEffectiveRunCoverage: 0.27777779999999996,
                     },
                 },
             });
@@ -267,6 +291,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.1666667,
                         explicitlyNotBadEffectiveRunCoverage: 0.8333333,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
 
                     // ITS
@@ -275,6 +300,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -708,12 +734,14 @@ module.exports = () => {
                             mcReproducible: false,
                             missingVerificationsCount: 1,
                             explicitlyNotBadEffectiveRunCoverage: 0,
+                            qualityNotDefinedEffectiveRunCoverage: 0,
                         },
                         16: {
                             badEffectiveRunCoverage: 0,
                             explicitlyNotBadEffectiveRunCoverage: 1,
                             mcReproducible: false,
                             missingVerificationsCount: 1,
+                            qualityNotDefinedEffectiveRunCoverage: 0,
                         },
                     },
                     [runNumber]: {
@@ -722,6 +750,7 @@ module.exports = () => {
                             mcReproducible: true,
                             missingVerificationsCount: 1,
                             explicitlyNotBadEffectiveRunCoverage: 0,
+                            qualityNotDefinedEffectiveRunCoverage: 0,
                         },
                     },
                 });
@@ -756,12 +785,14 @@ module.exports = () => {
                             mcReproducible: false,
                             missingVerificationsCount: 1,
                             explicitlyNotBadEffectiveRunCoverage: 0,
+                            qualityNotDefinedEffectiveRunCoverage: 0,
                         },
                         16: {
                             badEffectiveRunCoverage: 0,
                             explicitlyNotBadEffectiveRunCoverage: 1,
                             mcReproducible: false,
                             missingVerificationsCount: 1,
+                            qualityNotDefinedEffectiveRunCoverage: 0,
                         },
                     },
                     [runNumber]: {
@@ -770,6 +801,7 @@ module.exports = () => {
                             explicitlyNotBadEffectiveRunCoverage: 0,
                             mcReproducible: true,
                             missingVerificationsCount: 2,
+                            qualityNotDefinedEffectiveRunCoverage: null,
                         },
                     },
                 });
@@ -1492,6 +1524,7 @@ module.exports = () => {
                 { from: t('12:00:00'), to: t('13:00:00'), contributingFlagIds: [cpvFlagIds[2], emcFlagIds[2], fddFlagIds[1]] },
                 { from: t('13:00:00'), to: t('14:00:00'), contributingFlagIds: [cpvFlagIds[2], fddFlagIds[1]] },
                 { from: t('14:00:00'), to: t('16:00:00'), contributingFlagIds: [cpvFlagIds[0], emcFlagIds[3], fddFlagIds[0]] },
+                { from: t('16:00:00'), to: t('18:00:00'), contributingFlagIds: [] },
                 { from: t('18:00:00'), to: t('20:00:00'), contributingFlagIds: [cpvFlagIds[3], emcFlagIds[4]] },
                 { from: t('20:00:00'), to: t('22:00:00'), contributingFlagIds: [cpvFlagIds[3]] },
             ]);
@@ -1507,26 +1540,30 @@ module.exports = () => {
             const timeTrgEnd = t('22:00:00');
 
             const gaqSubSummaries = [
-                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
+                { from: t('06:00:00'), to: t('10:00:00'), bad: null, mcReproducible: false },
                 { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
                 { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
-                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
+                { from: t('13:00:00'), to: t('14:00:00'), bad: null, mcReproducible: true },
                 { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
-                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
-                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
+                { from: t('16:00:00'), to: t('18:00:00'), bad: null, mcReproducible: false },
+                { from: t('18:00:00'), to: t('20:00:00'), bad: null, mcReproducible: false },
+                { from: t('20:00:00'), to: t('22:00:00'), bad: null, mcReproducible: false },
             ];
 
             const expectedGaqSummary = gaqSubSummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
-                if (bad) {
+                if (bad === null) {
+                    acc.qualityNotDefinedEffectiveRunCoverage += to - from;
+                } else if (bad) {
                     acc.badEffectiveRunCoverage += to - from;
                 } else {
                     acc.explicitlyNotBadEffectiveRunCoverage += to - from;
                 }
                 acc.mcReproducible = acc.mcReproducible || mcReproducible;
                 return acc;
-            }, { badEffectiveRunCoverage: 0, explicitlyNotBadEffectiveRunCoverage: 0 });
+            }, { badEffectiveRunCoverage: 0, explicitlyNotBadEffectiveRunCoverage: 0, qualityNotDefinedEffectiveRunCoverage: 0 });
             expectedGaqSummary.badEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
+            expectedGaqSummary.qualityNotDefinedEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.missingVerificationsCount = 11;
 
             const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
@@ -1566,12 +1603,14 @@ module.exports = () => {
                     explicitlyNotBadEffectiveRunCoverage: 1,
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
+                    qualityNotDefinedEffectiveRunCoverage: 0,
                 },
                 54: {
                     missingVerificationsCount: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     badEffectiveRunCoverage: 1,
                     mcReproducible: false,
+                    qualityNotDefinedEffectiveRunCoverage: 0,
                 },
             });
         });
