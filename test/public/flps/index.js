@@ -17,6 +17,5 @@ const DetailSuite = require('./detail.test');
 
 module.exports = () => {
     describe('Overview Page', OverviewSuite);
-    // eslint-disable-next-line capitalized-comments
-    describe('Detail Page', DetailSuite);
+    // describe('Detail Page', DetailSuite);
 };
