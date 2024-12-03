@@ -502,7 +502,7 @@ module.exports = () => {
     it('should successfully create run with only userO2Start', async () => {
         const runNumber = ++lastRunNumber;
         const userO2Start = {
-            externalId: 1000,
+            userIdentifier: { externalUserId: 1000 },
             name: 'test',
         };
 
@@ -525,7 +525,7 @@ module.exports = () => {
     it('should successfully create run with only userO2Stop', async () => {
         const runNumber = ++lastRunNumber;
         const userO2Stop = {
-            externalId: 1001,
+            userIdentifier: { externalUserId: 1001 },
             name: 'test',
         };
 
@@ -548,11 +548,11 @@ module.exports = () => {
     it('should successfully create run with userO2Start and userO2Stop', async () => {
         const runNumber = ++lastRunNumber;
         const userO2Start = {
-            externalId: 1002,
+            userIdentifier: { externalUserId: 1002 },
             name: 'test',
         };
         const userO2Stop = {
-            externalId: 1003,
+            userIdentifier: { externalUserId: 1003 },
             name: 'test',
         };
 
@@ -577,7 +577,7 @@ module.exports = () => {
     it('should successfully update run with only userO2Start', async () => {
         const runNumber = 1;
         const userO2Start = {
-            externalId: 1000,
+            userIdentifier: { externalUserId: 1000 },
             name: 'test',
         };
 
@@ -598,7 +598,7 @@ module.exports = () => {
     it('should successfully update run with only userO2Stop', async () => {
         const runNumber = 1;
         const userO2Stop = {
-            externalId: 1000,
+            userIdentifier: { externalUserId: 1000 },
             name: 'test',
         };
 
@@ -619,11 +619,11 @@ module.exports = () => {
     it('should successfully update run with userO2Start and userO2Stop', async () => {
         const runNumber = 1;
         const userO2Start = {
-            externalId: 1002,
+            userIdentifier: { externalUserId: 1002 },
             name: 'test',
         };
         const userO2Stop = {
-            externalId: 1003,
+            userIdentifier: { externalUserId: 1003 },
             name: 'test',
         };
 
@@ -684,7 +684,7 @@ module.exports = () => {
         expect(levelsCombinations).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
     });
 
-    it('should successfully extract informations from environment configuration when creating a run', async () => {
+    it('should successfully extract information from environment configuration when creating a run', async () => {
         const timeO2Start = new Date('2019-08-09 20:01:00');
         const timeTrgStart = new Date('2019-08-09 20:02:00');
         const timeTrgEnd = new Date('2019-08-09 20:03:00');
@@ -693,7 +693,7 @@ module.exports = () => {
             1234,
             'CmCvjNbg',
             { timeO2Start, timeTrgStart, timeTrgEnd, timeO2End },
-            { externalUserId: 1 },
+            { userO2Start: { userIdentifier: { externalUserId: 1 } }, userO2Stop: { userIdentifier: { externalUserId: 456 } } },
         );
 
         expect(run.triggerValue).to.equal('CTP');
@@ -716,5 +716,7 @@ module.exports = () => {
         expect(run.nFlps).to.equal(3);
         expect(run.nEpns).to.equal(2);
         expect(run.readoutCfgUri).to.equal('file:///local/replay/2024-04-17-pp-650khz-synt-4tf/readout-replay-24g-dd40.cfg');
+        expect(run.userIdO2Start).to.equal(1);
+        expect(run.userIdO2Stop).to.equal(2);
     });
 };
