@@ -32,6 +32,8 @@ const {
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const request = require('supertest');
+const { server } = require('../../../lib/application');
 
 const { expect } = chai;
 
@@ -63,6 +65,30 @@ module.exports = () => {
     let browser;
     let url;
     let createdRunId;
+
+    /**
+     *  Retrieve the badge classes and styles
+     *
+     *  @return {Promise<void>} A promise that resolves when the badge classes and styles are retrieved
+     */
+    const getBadges = async () => {
+    // Check if the tag is updated
+        const tagsBadgeClassesSelector = '#Run-tags .badge';
+        // Wait for badge elements to appear
+        await page.waitForSelector(tagsBadgeClassesSelector);
+
+        // Evaluate and check for inline background color
+        const badgesWithStyles = await page.$$eval(
+            tagsBadgeClassesSelector,
+            (badges) => badges.map((badge) => ({
+                index: badges.indexOf(badge),
+                className: badge.className,
+                backgroundColor: badge.style.backgroundColor,
+            })),
+        );
+
+        return badgesWithStyles;
+    };
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -526,5 +552,30 @@ module.exports = () => {
             href: 'http://localhost:4000/?page=env-details&environmentId=CmCvjNbg',
             innerText: 'CmCvjNbg',
         });
+    });
+
+    it('should display correct tag styling after updating in tag overview', async () => {
+        let badges;
+        // Fetch the run data before update of tag
+        await goToRunDetails(page, 106);
+
+        badges = await getBadges();
+
+        expect(badges[0].backgroundColor === 'rgb(255, 0, 0)').to.be.false;
+
+        const updatedTag = {
+            color: '#ff0000', // Red color
+        };
+
+        // Update the tag via API request
+        await request(server)
+            .put('/api/tags/1?token=admin')
+            .send(updatedTag)
+            .expect(201);
+
+        await goToRunDetails(page, 106);
+        badges = await getBadges();
+
+        expect(badges[0].backgroundColor == 'rgb(255, 0, 0)').to.be.true;
     });
 };
