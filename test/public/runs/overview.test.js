@@ -793,6 +793,7 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
         await waitForTableLength(page, 8);
+
         await pressElement(page, '#openFilterToggle');
 
         const filterInputSelector = '#fillNumbers';
