@@ -1014,7 +1014,7 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
 
         await pressElement(page, '#openFilterToggle');
-        
+
         // Type a fake run number to have no runs
         await fillInput(page, runNumberInputSelector, '99999999999');
         await pressElement(page, '#openFilterToggle');
