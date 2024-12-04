@@ -190,7 +190,7 @@ module.exports = () => {
 
         await page.waitForSelector('select');
         const selectedOption = await page.evaluate(() => document.querySelector('select').value);
-        expect(selectedOption).to.equal('On-call');
+        expect(selectedOption).to.equal('on-call');
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
@@ -210,7 +210,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '');
-        await expectInputValue(page, 'select#detectorOrSubsystem', detectorOrSubsystem);
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('ALL');
         await expectInputValue(page, 'textarea#issue-description', issueDescription);
     });
 
@@ -222,7 +222,7 @@ module.exports = () => {
         await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
         ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
 
-        await expectInputValue(page, 'select#detectorOrSubsystem', '');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('- None -');
         await expectInputValue(page, 'textarea#issue-description', '');
     });
 
@@ -233,7 +233,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
-        await expectInputValue(page, 'select#detectorOrSubsystem', 'ALL');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('ALL');
         await expectInputValue(page, 'textarea#issue-description', 'This is a sample issue description');
     });
 
