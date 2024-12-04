@@ -10,7 +10,7 @@
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
-    "test": "mocha --exit --timeout 0",
+    "test": "mocha --globals describe,it --exit --timeout 0",
     "test:subset": "nyc -- mocha --exit --timeout 0 test/scripts/test-${TEST_TYPE}.js && nyc report --report-dir=/usr/src/app/coverage/${TEST_TYPE} --reporter=json",
     "test:subset-local": "mocha --exit --timeout 0 --reporter test/scripts/parallel-local/custom-mocha-reporter.js test/scripts/test-${TEST_TYPE}.js",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",

@@ -184,6 +184,40 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
+    it('Should not autofill detectorOrSubsystem and issueDescription if templateKey is not "on-call".', async () => {
+        const templateKey = 'rc-daily-meeting'; 
+        const detectorOrSubsystem = 'ALL';
+        const issueDescription = 'This is a sample issue description';
+        
+        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+        
+        await expectInputValue(page, 'input#detectorOrSubsystem', ''); 
+        await expectInputValue(page, 'input#issue-description', '');  
+    });
+    
+    it('Should autofill detectorOrSubsystem and issueDescription if templateKey is "on-call".', async () => {
+        const templateKey = 'on-call';
+        const detectorOrSubsystem = 'ALL';
+        const issueDescription = 'This is a sample issue description';
+        
+        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+        
+        await expectInputValue(page, 'input#detectorOrSubsystem', detectorOrSubsystem);
+        await expectInputValue(page, 'input#issue-description', issueDescription);
+    });
+    
+    it('Should not autofill detectorOrSubsystem and issueDescription if templateKey is missing or empty.', async () => {
+        const detectorOrSubsystem = 'ALL';
+        const issueDescription = 'This is a sample issue description';
+        
+        // No templateKey provided
+        await goToPage(page, `log-create&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+        
+        // Assert that the fields are not autofilled
+        await expectInputValue(page, 'input#detectorOrSubsystem', '');
+        await expectInputValue(page, 'input#issue-description', '');  
+    });
+
     it('should successfully provide a tag picker with search input', async () => {
         await waitForNavigation(page, () => pressElement(page, '#create-log-button'));
 
