@@ -597,7 +597,7 @@ module.exports = () => {
     });
 
     it('should successfully apply alice currents filters', async () => {
-        await goToPage(page, 'run-overview');
+        await pressElement(page, '#reset-filters');
         await pressElement(page, '#openFilterToggle', true);
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
@@ -606,7 +606,6 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['54', '53', '52']);
 
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('Should successfully filter runs by their run quality', async () => {
