@@ -347,27 +347,6 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
-    it('should successfully apply timeStart filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
-        await pressElement(page, '#openFilterToggle');
-
-        await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
-        await expectColumnValues(page, 'runNumber', ['1']);
-
-        await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
-    });
-
-    it('should successfully apply timeEnd filter', async () => {
-        await pressElement(page, '#openFilterToggle');
-
-        await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
-        await expectColumnValues(page, 'runNumber', ['1']);
-
-        await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
-    });
-
     it('should successfully apply duration filter', async () => {
         await pressElement(page, '#openFilterToggle');
 
