@@ -20,7 +20,6 @@ const {
     getFirstRow,
     waitForTableLength,
     goToPage,
-    reloadPage,
     getInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -97,8 +96,6 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'flp-overview');
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '10');
         await expectInnerText(page, '#totalRowsCount', '105');
@@ -106,7 +103,6 @@ module.exports = () => {
 
     it('can switch to infinite mode in amountSelector', async () => {
         const INFINITE_SCROLL_CHUNK = 19;
-        await reloadPage(page);
 
         // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
         await page.waitForSelector('table tbody tr:nth-child(2)');

@@ -150,7 +150,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.3333,
+                        badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                     16: {
@@ -169,8 +169,8 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 3,
                         mcReproducible: true,
-                        badEffectiveRunCoverage: 0.1111,
-                        explicitlyNotBadEffectiveRunCoverage: 0.2222,
+                        badEffectiveRunCoverage: 0.1111111,
+                        explicitlyNotBadEffectiveRunCoverage: 0.2222222,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
@@ -213,7 +213,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 0,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.0769,
+                        badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
@@ -230,7 +230,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 0,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.0769,
+                        badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
@@ -247,7 +247,7 @@ module.exports = () => {
                     1: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.7222,
+                        badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
@@ -265,8 +265,8 @@ module.exports = () => {
                     7: {
                         missingVerificationsCount: 1,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.1667,
-                        explicitlyNotBadEffectiveRunCoverage: 0.8333,
+                        badEffectiveRunCoverage: 0.1666667,
+                        explicitlyNotBadEffectiveRunCoverage: 0.8333333,
                     },
 
                     // ITS
@@ -911,6 +911,66 @@ module.exports = () => {
                 () => qcFlagService.create([qcFlag], scope, relations),
                 // eslint-disable-next-line max-len
                 new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
+            );
+        });
+
+        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.firstTfTimestamp', async () => {
+            const period = {
+                from: new Date('2019-08-08 11:36:40').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+            };
+
+            const runFirstTfTimestamp = new Date('2019-08-08 12:59:00').getTime();
+            const runLastTfTimestamp = new Date('2019-08-09 14:01:00').getTime();
+
+            const qcFlag = {
+                ...period,
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 107,
+                simulationPassIdentifier: { id: 1 },
+                detectorIdentifier: { detectorId: 1 },
+            };
+
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runFirstTfTimestamp}, ${runLastTfTimestamp}) period`),
+            );
+        });
+
+        it('should fail to create quality control flag because qc flag `to` timestamp is greater than run.lastTfTimestamp', async () => {
+            const period = {
+                from: new Date('2019-08-08 13:17:19').getTime(),
+                to: new Date('2019-08-09 15:49:01').getTime(),
+            };
+
+            const runFirstTfTimestamp = new Date('2019-08-08 12:59:00').getTime();
+            const runLastTfTimestamp = new Date('2019-08-09 14:01:00').getTime();
+
+            const qcFlag = {
+                ...period,
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+            };
+
+            const scope = {
+                runNumber: 107,
+                simulationPassIdentifier: { id: 1 },
+                detectorIdentifier: { detectorId: 1 },
+            };
+
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+
+            await assert.rejects(
+                () => qcFlagService.create([qcFlag], scope, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runFirstTfTimestamp}, ${runLastTfTimestamp}) period`),
             );
         });
 
