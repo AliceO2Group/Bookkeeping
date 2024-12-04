@@ -598,7 +598,6 @@ module.exports = () => {
 
     it('should successfully apply alice currents filters', async () => {
         await pressElement(page, '#openFilterToggle', true);
-        
         await page.waitForSelector('.aliceL3AndDipoleCurrent-filter');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
@@ -794,7 +793,6 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
         await waitForTableLength(page, 8);
-        
         await pressElement(page, '#openFilterToggle');
 
         const filterInputSelector = '#fillNumbers';
