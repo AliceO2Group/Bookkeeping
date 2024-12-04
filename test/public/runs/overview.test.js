@@ -598,7 +598,7 @@ module.exports = () => {
 
     it('should successfully apply alice currents filters', async () => {
         await goToPage(page, 'run-overview');
-        await page.waitForSelector('.aliceL3AndDipoleCurrent-filter');
+        await pressElement(page, '#openFilterToggle', true);
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
         await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
