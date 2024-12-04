@@ -598,7 +598,6 @@ module.exports = () => {
 
     it('should successfully apply alice currents filters', async () => {
         await goToPage(page, 'run-overview');
-        await pressElement(page, '#run-overview');
         await page.waitForSelector('.aliceL3AndDipoleCurrent-filter');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
