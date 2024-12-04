@@ -597,6 +597,7 @@ module.exports = () => {
     });
 
     it('should successfully apply alice currents filters', async () => {
+        await page.waitForSelector('#run-overview');
         await pressElement(page, '#run-overview');
         await page.waitForSelector('.aliceL3AndDipoleCurrent-filter');
 
