@@ -184,14 +184,17 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should not autofill detectorOrSubsystem and issueDescription if templateKey is not "on-call".', async () => {
-        const templateKey = 'rc-daily-meeting';
-        const detectorOrSubsystem = 'ALL';
-        const issueDescription = 'This is a sample issue description';
+    it('Should set the correct template when templateKey is specified without setting other values.', async () => {
+        const templateKey = 'on-call';
+        await goToPage(page, `log-create&templateKey=${templateKey}`);
 
-        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
-        ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+        await page.waitForSelector('select');
+        const selectedOption = await page.evaluate(() => document.querySelector('select').value);
+        expect(selectedOption).to.equal('On-call');
 
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '');
         await expectInputValue(page, 'select#detectorOrSubsystem', '');
         await expectInputValue(page, 'textarea#issue-description', '');
     });
@@ -204,20 +207,34 @@ module.exports = () => {
         await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
         ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
 
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '');
         await expectInputValue(page, 'select#detectorOrSubsystem', detectorOrSubsystem);
         await expectInputValue(page, 'textarea#issue-description', issueDescription);
     });
 
-    it('Should not autofill detectorOrSubsystem and issueDescription if templateKey is missing or empty.', async () => {
+    it('Should not fill the detectorOrSubsystem and issueDescription if templateKey is not "on-call".', async () => {
+        const templateKey = 'rc-daily-meeting';
         const detectorOrSubsystem = 'ALL';
         const issueDescription = 'This is a sample issue description';
 
-        // No templateKey provided
-        await goToPage(page, `log-create&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
+        ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
 
-        // Assert that the fields are not autofilled
         await expectInputValue(page, 'select#detectorOrSubsystem', '');
         await expectInputValue(page, 'textarea#issue-description', '');
+    });
+
+    it('Should autofill all inputs with provided full parameters.', async () => {
+        await goToPage(page, `log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&
+        templateKey=on-call&detectorOrSubsystem=ALL&issueDescription=This is a sample issue description`);
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+        await expectInputValue(page, 'select#detectorOrSubsystem', 'ALL');
+        await expectInputValue(page, 'textarea#issue-description', 'This is a sample issue description');
     });
 
     it('should successfully provide a tag picker with search input', async () => {
