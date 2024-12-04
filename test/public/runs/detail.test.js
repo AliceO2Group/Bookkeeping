@@ -60,36 +60,35 @@ const goToRunDetails = async (page, runNumber) => {
     return waitForNavigation(page, () => pressElement(page, `#row${runNumber}-runNumber-text a`));
 };
 
-/**
- *  Retrieve the badge classes and styles\
- *
- *  @param {puppeteer.Page} page the puppeteer page
- *  @returns {Promise<void>} A promise that resolves when the badge classes and styles are retrieved
- */
-const getBadges = async (page) => {
-    // Check if the tag is updated
-    const tagsBadgeClassesSelector = '#Run-tags .badge';
-    // Wait for badge elements to appear
-    await page.waitForSelector(tagsBadgeClassesSelector);
-
-    // Evaluate and check for inline background color
-    const badgesWithStyles = await page.$$eval(
-        tagsBadgeClassesSelector,
-        (badges) => badges.map((badge) => ({
-            index: badges.indexOf(badge),
-            className: badge.className,
-            backgroundColor: badge.style.backgroundColor,
-        })),
-    );
-
-    return badgesWithStyles;
-};
-
 module.exports = () => {
     let page;
     let browser;
     let url;
     let createdRunId;
+
+    /**
+     *  Retrieve the badge classes and styles
+     *
+     *  @return {Promise<void>} A promise that resolves when the badge classes and styles are retrieved
+     */
+    const getBadges = async () => {
+    // Check if the tag is updated
+        const tagsBadgeClassesSelector = '#Run-tags .badge';
+        // Wait for badge elements to appear
+        await page.waitForSelector(tagsBadgeClassesSelector);
+
+        // Evaluate and check for inline background color
+        const badgesWithStyles = await page.$$eval(
+            tagsBadgeClassesSelector,
+            (badges) => badges.map((badge) => ({
+                index: badges.indexOf(badge),
+                className: badge.className,
+                backgroundColor: badge.style.backgroundColor,
+            })),
+        );
+
+        return badgesWithStyles;
+    };
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
