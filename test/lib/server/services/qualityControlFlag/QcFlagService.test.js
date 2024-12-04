@@ -238,7 +238,7 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 4 })).to.be.eql({});
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
@@ -1507,19 +1507,20 @@ module.exports = () => {
             const timeTrgEnd = t('22:00:00');
 
             const gaqSubSummaries = [
-                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
+                { from: t('06:00:00'), to: t('10:00:00'), bad: null, mcReproducible: false },
                 { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
                 { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
-                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
+                { from: t('13:00:00'), to: t('14:00:00'), bad: null, mcReproducible: true },
                 { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
-                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
-                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
+                { from: t('16:00:00'), to: t('18:00:00'), bad: null, mcReproducible: false },
+                { from: t('18:00:00'), to: t('20:00:00'), bad: null, mcReproducible: false },
+                { from: t('20:00:00'), to: t('22:00:00'), bad: null, mcReproducible: false },
             ];
 
             const expectedGaqSummary = gaqSubSummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
                 if (bad) {
                     acc.badEffectiveRunCoverage += to - from;
-                } else {
+                } else if (bad !== null) {
                     acc.explicitlyNotBadEffectiveRunCoverage += to - from;
                 }
                 acc.mcReproducible = acc.mcReproducible || mcReproducible;
