@@ -185,37 +185,39 @@ module.exports = () => {
     });
 
     it('Should not autofill detectorOrSubsystem and issueDescription if templateKey is not "on-call".', async () => {
-        const templateKey = 'rc-daily-meeting'; 
+        const templateKey = 'rc-daily-meeting';
         const detectorOrSubsystem = 'ALL';
         const issueDescription = 'This is a sample issue description';
-        
-        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
-        
-        await expectInputValue(page, 'select#detectorOrSubsystem', ''); 
-        await expectInputValue(page, 'textarea#issue-description', '');  
+
+        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
+        ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+
+        await expectInputValue(page, 'select#detectorOrSubsystem', '');
+        await expectInputValue(page, 'textarea#issue-description', '');
     });
-    
+
     it('Should autofill detectorOrSubsystem and issueDescription if templateKey is "on-call".', async () => {
         const templateKey = 'on-call';
         const detectorOrSubsystem = 'ALL';
         const issueDescription = 'This is a sample issue description';
-        
-        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
-        
+
+        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
+        ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
+
         await expectInputValue(page, 'select#detectorOrSubsystem', detectorOrSubsystem);
         await expectInputValue(page, 'textarea#issue-description', issueDescription);
     });
-    
+
     it('Should not autofill detectorOrSubsystem and issueDescription if templateKey is missing or empty.', async () => {
         const detectorOrSubsystem = 'ALL';
         const issueDescription = 'This is a sample issue description';
-        
+
         // No templateKey provided
         await goToPage(page, `log-create&detectorOrSubsystem=${detectorOrSubsystem}&issueDescription=${issueDescription}`);
-        
+
         // Assert that the fields are not autofilled
         await expectInputValue(page, 'select#detectorOrSubsystem', '');
-        await expectInputValue(page, 'textarea#issue-description', '');  
+        await expectInputValue(page, 'textarea#issue-description', '');
     });
 
     it('should successfully provide a tag picker with search input', async () => {
