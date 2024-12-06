@@ -195,7 +195,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '');
-        await expectInputValue(page, 'select#detectorOrSubsystem', '');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('- None -');
         await expectInputValue(page, 'textarea#issue-description', '');
     });
 
@@ -203,10 +203,10 @@ module.exports = () => {
         const templateKey = 'on-call';
         const detectorOrSubsystem = 'ALL';
         const issueDescription = 'This is a sample issue description';
-
-        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
-        ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
-
+        await goToPage(page, 
+            `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&` + 
+            `issueDescription=${issueDescription}`);
+          
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '');
@@ -214,21 +214,10 @@ module.exports = () => {
         await expectInputValue(page, 'textarea#issue-description', issueDescription);
     });
 
-    it('Should not fill the detectorOrSubsystem and issueDescription if templateKey is not "on-call".', async () => {
-        const templateKey = 'rc-daily-meeting';
-        const detectorOrSubsystem = 'ALL';
-        const issueDescription = 'This is a sample issue description';
-
-        await goToPage(page, `log-create&templateKey=${templateKey}&detectorOrSubsystem=
-        ${detectorOrSubsystem}&issueDescription=${issueDescription}`);
-
-        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('- None -');
-        await expectInputValue(page, 'textarea#issue-description', '');
-    });
-
     it('Should autofill all inputs with provided full parameters.', async () => {
-        await goToPage(page, `log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&
-        templateKey=on-call&detectorOrSubsystem=ALL&issueDescription=This is a sample issue description`);
+        await goToPage(page, 
+            `log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&templateKey=on-call&detectorOrSubsystem=ALL&` + 
+            `issueDescription=This is a sample issue description`);          
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
