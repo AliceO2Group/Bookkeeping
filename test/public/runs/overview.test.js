@@ -277,7 +277,7 @@ module.exports = () => {
     it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
 
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await page.waitForSelector(runNumberInputSelector);
 
         // Run 106 has detectors and tags that overflow
@@ -287,7 +287,7 @@ module.exports = () => {
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
 
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await page.waitForSelector(runNumberInputSelector);
 
         // Run 1 has eor reasons that overflow
@@ -306,7 +306,7 @@ module.exports = () => {
     it('should successfully filter on detectors', async () => {
         // Open filter toggle
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('.detectors-filter .dropdown-trigger');
+        await page.waitForSelector('.detectors-filter .dropdown-trigger', { visible: true });
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
         await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
@@ -334,7 +334,7 @@ module.exports = () => {
     it('should successfully filter on tags', async () => {
         await waitForTableLength(page, 8);
 
-        // Open filter toggle
+        // Open filter toggle and wait for the dropdown to be visible
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '#tag-dropdown-option-RUN', true);
@@ -441,7 +441,7 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
 
         // Open the filters
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await page.waitForSelector('#o2startFilterFromTime');
         let today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -470,7 +470,7 @@ module.exports = () => {
         const validValue = '2021-03-21';
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#eorDescription');
+        await page.waitForSelector('#eorDescription', { visible: true });
 
         // Set date
         for (const key in dateFilterSelectors) {
@@ -491,7 +491,7 @@ module.exports = () => {
         const dateString = '03-02-2021';
         // Open the filters
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#eorDescription');
+        await page.waitForSelector('#eorDescription', { visible: true });
 
         // Set date to an open day
         for (const selector of Object.values(dateFilterSelectors)) {
@@ -524,8 +524,8 @@ module.exports = () => {
         const maxTime = '23:59';
         const minTime = '00:00';
         // Open the filters
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#eorDescription');
+        await pressElement(page, '#openFilterToggle', true);
+        await page.waitForSelector('#eorDescription', { visible: true });
         // Set date to an open day
         for (const selector of Object.values(dateFilterSelectors)) {
             await page.type(selector, dateString);
@@ -546,7 +546,7 @@ module.exports = () => {
     it('should successfully filter on duration', async () => {
         await goToPage(page, 'run-overview');
 
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await page.waitForSelector('#duration-operator');
 
         const runDurationOperatorSelector = '#duration-operator';
@@ -596,6 +596,17 @@ module.exports = () => {
         expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
     });
 
+    it('should successfully apply alice currents filters', async () => {
+        await pressElement(page, '#reset-filters');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
+
+        await expectColumnValues(page, 'runNumber', ['54', '53', '52']);
+
+        await pressElement(page, '#reset-filters');
+    });
+
     it('Should successfully filter runs by their run quality', async () => {
         await goToPage(page, 'run-overview');
         const filterInputSelectorPrefix = '#runQualityCheckbox';
@@ -619,7 +630,7 @@ module.exports = () => {
         };
 
         // Open filter toggle
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await page.waitForSelector(badFilterSelector);
 
         await page.$eval(badFilterSelector, (element) => element.click());
@@ -672,7 +683,7 @@ module.exports = () => {
         };
 
         // Open filter toggle
-        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#openFilterToggle', true);
         await page.waitForSelector(offFilterSelector);
 
         await page.$eval(offFilterSelector, (element) => element.click());
@@ -971,7 +982,7 @@ module.exports = () => {
     it('should successfully display runs export button', async () => {
         await goToPage(page, 'run-overview');
         await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-        const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
+        const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR, { visible: true });
         expect(runsExportButton).to.be.not.null;
     });
 
@@ -1116,7 +1127,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'a#home'));
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
 
-        // Not running run
+        // Not running run, wait for popover to be visible
         await pressElement(page, '#row104-runNumber-text .popover-trigger');
         let popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
