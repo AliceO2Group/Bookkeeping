@@ -203,10 +203,12 @@ module.exports = () => {
         const templateKey = 'on-call';
         const detectorOrSubsystem = 'ALL';
         const issueDescription = 'This is a sample issue description';
-        await goToPage(page, 
-            `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&` + 
-            `issueDescription=${issueDescription}`);
-          
+        await goToPage(
+            page,
+            `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&` +
+            `issueDescription=${issueDescription}`,
+        );
+
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '');
@@ -215,9 +217,11 @@ module.exports = () => {
     });
 
     it('Should autofill all inputs with provided full parameters.', async () => {
-        await goToPage(page, 
-            `log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&templateKey=on-call&detectorOrSubsystem=ALL&` + 
-            `issueDescription=This is a sample issue description`);          
+        await goToPage(
+            page,
+            'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&templateKey=on-call&detectorOrSubsystem=ALL&' +
+            'issueDescription=This is a sample issue description',
+        );
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
