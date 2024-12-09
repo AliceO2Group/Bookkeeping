@@ -35,10 +35,12 @@ const {
     waitForEmptyTable,
     waitForDownload,
     expectUrlParams,
+    expectAttributeValue,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { runService } = require('../../../lib/server/services/run/RunService.js');
 
 const { expect } = chai;
 
@@ -268,6 +270,7 @@ module.exports = () => {
 
         // Run 106 has detectors and tags that overflow
         await page.type(runNumberInputSelector, '106');
+        await fillInput(page, runNumberInputSelector, '106');
         await waitForTableLength(page, 1);
 
         await checkColumnBalloon(page, 1, 2);
@@ -442,30 +445,20 @@ module.exports = () => {
         await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-03', ['change']);
 
         // Wait for page to be refreshed
-        await page.waitForFunction(
-            (selector) => document.querySelector(selector).getAttribute('min') !== '',
-            { timeout: 500 },
-            periodInputsSelectors.toTimeSelector,
-        );
+        await expectAttributeValue(page, periodInputsSelectors.toTimeSelector, 'min', '11:12');
+        await expectAttributeValue(page, periodInputsSelectors.toDateSelector, 'min', '2021-02-03');
 
-        expect(await page.$eval(periodInputsSelectors.toTimeSelector, (element) => element.getAttribute('min'))).to.equal('11:12');
-        expect(await page.$eval(periodInputsSelectors.toDateSelector, (element) => element.getAttribute('min'))).to.equal('2021-02-03');
-
-        expect(await page.$eval(periodInputsSelectors.fromTimeSelector, (element) => element.getAttribute('max'))).to.equal('13:59');
-        expect(await page.$eval(periodInputsSelectors.fromDateSelector, (element) => element.getAttribute('max'))).to.equal('2021-02-03');
+        await expectAttributeValue(page, periodInputsSelectors.fromTimeSelector, 'max', '13:59');
+        await expectAttributeValue(page, periodInputsSelectors.fromDateSelector, 'max', '2021-02-03');
 
         // Setting different dates, still american style input
         await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-05', ['change']);
 
-        await page.waitForFunction(
-            (selector) => document.querySelector(selector).getAttribute('min') === '',
-            { timeout: 500 },
-            periodInputsSelectors.toTimeSelector,
-        );
-        expect(await page.$eval(periodInputsSelectors.toDateSelector, (element) => element.getAttribute('min'))).to.equal('2021-02-03');
+        await expectAttributeValue(page, periodInputsSelectors.toTimeSelector, 'min', '');
+        await expectAttributeValue(page, periodInputsSelectors.toDateSelector, 'min', '2021-02-03');
 
-        expect(await page.$eval(periodInputsSelectors.fromTimeSelector, (element) => element.getAttribute('max'))).to.equal('');
-        expect(await page.$eval(periodInputsSelectors.fromDateSelector, (element) => element.getAttribute('max'))).to.equal('2021-02-05');
+        await expectAttributeValue(page, periodInputsSelectors.fromTimeSelector, 'max', '');
+        await expectAttributeValue(page, periodInputsSelectors.fromDateSelector, 'max', '2021-02-05');
     });
 
     it('should successfully filter on duration', async () => {
@@ -1048,12 +1041,12 @@ module.exports = () => {
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
-                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
         await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
             href: 'http://localhost:8082/' +
-            '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
+                '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
             innerText: 'QCG',
         });
 

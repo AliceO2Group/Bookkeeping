@@ -348,6 +348,7 @@ module.exports = () => {
     });
 
     it('should successfully apply duration filter', async () => {
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
