@@ -576,15 +576,6 @@ module.exports = () => {
                 name: 'John Doe',
             },
         };
-
-        /*
-         * UpdateTagDto.session = {
-         *     personid: 1,
-         *     id: 1,
-         *     name: 'John Doe',
-         * };
-         */
-
         await new UpdateTagUseCase()
             .execute(updateTagDto);
 
