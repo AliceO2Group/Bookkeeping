@@ -32,8 +32,8 @@ const {
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const request = require('supertest');
-const { server } = require('../../../lib/application');
+const { tag: { UpdateTagUseCase } } = require('../../../lib/usecases/index.js');
+const { dtos: { UpdateTagDto } } = require('../../../lib/domain/index.js');
 
 const { expect } = chai;
 
@@ -65,30 +65,6 @@ module.exports = () => {
     let browser;
     let url;
     let createdRunId;
-
-    /**
-     *  Retrieve the badge classes and styles
-     *
-     *  @return {Promise<void>} A promise that resolves when the badge classes and styles are retrieved
-     */
-    const getBadges = async () => {
-    // Check if the tag is updated
-        const tagsBadgeClassesSelector = '#Run-tags .badge';
-        // Wait for badge elements to appear
-        await page.waitForSelector(tagsBadgeClassesSelector);
-
-        // Evaluate and check for inline background color
-        const badgesWithStyles = await page.$$eval(
-            tagsBadgeClassesSelector,
-            (badges) => badges.map((badge) => ({
-                index: badges.indexOf(badge),
-                className: badge.className,
-                backgroundColor: badge.style.backgroundColor,
-            })),
-        );
-
-        return badgesWithStyles;
-    };
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
@@ -555,27 +531,61 @@ module.exports = () => {
     });
 
     it('should display correct tag styling after updating in tag overview', async () => {
+        /**
+         *  Retrieve the badge classes and styles
+         *
+         *  @return {Promise<Array>} resolves with the badge classes and styles
+         */
+        const getRunTagsBadges = async () => {
+            // Check if the tag is updated
+            const tagsBadgeClassesSelector = '#Run-tags .badge';
+            // Wait for badge elements to appear
+            await page.waitForSelector(tagsBadgeClassesSelector);
+
+            // Evaluate and check for inline background color
+            const badgesWithStyles = await page.$$eval(
+                tagsBadgeClassesSelector,
+                (badges) => badges.map((badge) => ({
+                    className: badge.className,
+                    backgroundColor: badge.style.backgroundColor,
+                })),
+            );
+
+            return badgesWithStyles;
+        };
+
         let badges;
+        let updateTagDto = {};
+        const expectedBgColorBefore = ['bg-gray-light', 'b-gray-light'];
+        const expectedBgColorAfter = 'rgb(255, 0, 0)'; //Red
+
         // Fetch the run data before update of tag
         await goToRunDetails(page, 106);
 
-        badges = await getBadges();
+        badges = await getRunTagsBadges();
 
-        expect(badges[0].backgroundColor === 'rgb(255, 0, 0)').to.be.false;
+        expect(badges[0].className).to.contain.oneOf(expectedBgColorBefore);
 
-        const updatedTag = {
-            color: '#ff0000', // Red color
+        updateTagDto = await UpdateTagDto.validateAsync({
+            body: {
+                color: '#FF0000', //Red
+            },
+            params: {
+                tagId: 1,
+            },
+        });
+        updateTagDto.session = {
+            personid: 1,
+            id: 1,
+            name: 'John Doe',
         };
 
-        // Update the tag via API request
-        await request(server)
-            .put('/api/tags/1?token=admin')
-            .send(updatedTag)
-            .expect(201);
+        await new UpdateTagUseCase()
+            .execute(updateTagDto);
 
         await goToRunDetails(page, 106);
-        badges = await getBadges();
+        badges = await getRunTagsBadges();
 
-        expect(badges[0].backgroundColor == 'rgb(255, 0, 0)').to.be.true;
+        expect(badges[0].backgroundColor == expectedBgColorAfter).to.be.true;
     });
 };
