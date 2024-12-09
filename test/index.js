@@ -35,13 +35,13 @@ describe('Bookkeeping', () => {
     });
 
     describe('Unit Suite', () => {
-        // describe('Database', DatabaseSuite);
-        // describe('Presentation', PresentationSuite);
+        describe('Database', DatabaseSuite);
+        describe('Presentation', PresentationSuite);
         describe('Public', PublicSuite);
-        // describe('Server', ServerSuite);
-        // describe('Use Cases', UseCasesSuite);
-        // describe('Utilities', UtilitiesSuite);
-        // describe('gRPC suite', GrpcSuite);
+        describe('Server', ServerSuite);
+        describe('Use Cases', UseCasesSuite);
+        describe('Utilities', UtilitiesSuite);
+        describe('gRPC suite', GrpcSuite);
     });
 
     describe('Integration Suite', () => {
