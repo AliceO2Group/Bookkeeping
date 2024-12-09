@@ -541,22 +541,19 @@ module.exports = () => {
             const tagsBadgeClassesSelector = '#Run-tags .badge';
             // Wait for badge elements to appear
             await page.waitForSelector(tagsBadgeClassesSelector);
-
             // Evaluate and check for inline background color
-            const badgesWithStyles = await page.$$eval(
+            return await page.$$eval(
                 tagsBadgeClassesSelector,
                 (badges) => badges.map((badge) => ({
                     className: badge.className,
                     backgroundColor: badge.style.backgroundColor,
                 })),
             );
-
-            return badgesWithStyles;
         };
 
         let badges;
         let updateTagDto = {};
-        const expectedBgColorBefore = ['bg-gray-light', 'b-gray-light'];
+        const expectedBgColorBefore = 'badge b1 b-gray-light bg-gray-light';
         const expectedBgColorAfter = 'rgb(255, 0, 0)'; //Red
 
         // Fetch the run data before update of tag
@@ -564,21 +561,29 @@ module.exports = () => {
 
         badges = await getRunTagsBadges();
 
-        expect(badges[0].className).to.contain.oneOf(expectedBgColorBefore);
+        expect(badges[0].className).to.eql(expectedBgColorBefore);
 
-        updateTagDto = await UpdateTagDto.validateAsync({
+        updateTagDto = {
             body: {
                 color: '#FF0000', //Red
             },
             params: {
                 tagId: 1,
             },
-        });
-        updateTagDto.session = {
-            personid: 1,
-            id: 1,
-            name: 'John Doe',
+            session: {
+                personid: 1,
+                id: 1,
+                name: 'John Doe',
+            },
         };
+
+        /*
+         * UpdateTagDto.session = {
+         *     personid: 1,
+         *     id: 1,
+         *     name: 'John Doe',
+         * };
+         */
 
         await new UpdateTagUseCase()
             .execute(updateTagDto);
