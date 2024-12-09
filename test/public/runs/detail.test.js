@@ -478,12 +478,11 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
         await waitForNavigation(page, () => pressElement(page, '#row108 a'));
 
-        await page.waitForSelector('.external-links');
-        await expectLink(page, '.external-links a', {
+        await expectLink(page, 'a.external-link', {
             innerText: 'FLP',
             href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
         });
-        await expectLink(page, '.external-links:nth-of-type(3) a', {
+        await expectLink(page, 'a.external-link:nth-of-type(2)', {
             innerText: 'QCG',
             href: 'http://localhost:8082/?page=layoutShow&runNumber=108&definition=PHYSICS&pdpBeamType=pp&runType=PHYSICS',
         });
@@ -492,7 +491,7 @@ module.exports = () => {
     it('should display links to environment in ECS if run is running', async () => {
         await goToRunDetails(page, 104);
 
-        await page.waitForSelector('.external-links:nth-of-type(3) a', { hidden: true, timeout: 250 });
+        await page.waitForSelector('a.external-link:nth-of-type(3)', { hidden: true, timeout: 250 });
 
         // Create running run
         await goToRunDetails(page, '1010');
@@ -501,7 +500,7 @@ module.exports = () => {
         await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
         await expectInnerText(page, '#runDurationValue', 'RUNNING');
 
-        await expectLink(page, '.external-links:nth-of-type(5) a', {
+        await expectLink(page, 'a.external-link:nth-of-type(4)', {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
         });
