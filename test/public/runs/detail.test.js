@@ -552,7 +552,6 @@ module.exports = () => {
         };
 
         let badges;
-        let updateTagDto = {};
         const expectedBgColorBefore = 'badge b1 b-gray-light bg-gray-light';
         const expectedBgColorAfter = 'rgb(255, 0, 0)'; //Red
 
@@ -563,7 +562,7 @@ module.exports = () => {
 
         expect(badges[0].className).to.eql(expectedBgColorBefore);
 
-        updateTagDto = {
+        const updateTagDto = {
             body: {
                 color: '#FF0000', //Red
             },
