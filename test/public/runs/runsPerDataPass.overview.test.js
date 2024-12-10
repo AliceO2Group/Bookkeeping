@@ -165,12 +165,17 @@ module.exports = () => {
         });
         await page.waitForSelector('tr#row106 .column-CPV a .icon');
 
-        await expectInnerText(page, '#row106-globalAggregatedQuality', '67MC.R');
-        expect(await getPopoverInnerText(await page.waitForSelector('#row106-globalAggregatedQuality .popover-trigger')))
-            .to.be.equal('Missing 3 verifications');
+        await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
+
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
+        await expectInnerText(page, '#row56-globalAggregatedQuality', '0MC.R');
+        expect(await getPopoverInnerText(await page.waitForSelector('#row56-globalAggregatedQuality .popover-trigger')))
+            .to.be.equal('Missing 4 verifications');
     });
 
     it('should switch mcReproducibleAsNotBad', async () => {
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await waitForTableLength(page, 3);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
@@ -425,21 +430,21 @@ module.exports = () => {
     }
 
     it('should successfully apply gaqNotBadFraction filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
 
         await pressElement(page, '#openFilterToggle', true);
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.globalAggregatedQuality-filter .popover-trigger'));
         await pressElement(page, `${popoverSelector} #gaqNotBadFraction-dropdown-option-le`, true);
         await fillInput(page, '#gaqNotBadFraction-value-input', '80');
-        await expectColumnValues(page, 'runNumber', ['106']);
+        await expectColumnValues(page, 'runNumber', ['56']);
 
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);
 
         await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('should successfully apply muInelasticInteractionRate filters', async () => {
