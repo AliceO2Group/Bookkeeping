@@ -34,6 +34,7 @@ const {
     expectColumnValues,
     waitForEmptyTable,
     waitForDownload,
+    expectLink,
     expectUrlParams,
     expectAttributeValue,
 } = require('../defaults.js');
