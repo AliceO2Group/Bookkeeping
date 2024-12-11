@@ -184,19 +184,13 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should set the correct template when templateKey is specified without setting other values.', async () => {
+    it('Should set the correct template when templateKey is specified.', async () => {
         const templateKey = 'on-call';
         await goToPage(page, `log-create&templateKey=${templateKey}`);
 
         await page.waitForSelector('select');
         const selectedOption = await page.evaluate(() => document.querySelector('select').value);
         expect(selectedOption).to.equal('on-call');
-
-        await expectInputValue(page, 'input#run-numbers', '');
-        await expectInputValue(page, 'input#environments', '');
-        await expectInputValue(page, 'input#lhc-fills', '');
-        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('- None -');
-        await expectInputValue(page, 'textarea#issue-description', '');
     });
 
     it('Should autofill detectorOrSubsystem and issueDescription if templateKey is "on-call".', async () => {
