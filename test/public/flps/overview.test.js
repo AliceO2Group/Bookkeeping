@@ -164,13 +164,11 @@ module.exports = () => {
     it('notifies if table loading returned an error', async () => {
         await pressElement(page, amountSelectorButtonSelector);
         await fillInput(page, `${amountSelectorSelector} input`, '200', ['input', 'change']);
-        await page.keyboard.press('Enter');
 
         // We expect there to be a fitting error message
         await expectInnerText(page, '.alert-danger', 'Invalid Attribute: "query.page.limit" must be less than or equal to 100');
 
         await pressElement(page, amountSelectorButtonSelector);
-        await fillInput(page, `${amountSelectorSelector} input`, '10');
-        await page.keyboard.press('Enter');
+        await fillInput(page, `${amountSelectorSelector} input`, '10', ['input', 'change']);
     });
 };
