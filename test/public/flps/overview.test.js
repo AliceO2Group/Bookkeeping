@@ -20,7 +20,8 @@ const {
     getFirstRow,
     waitForTableLength,
     goToPage,
-    getInnerText, fillInput, takeScreenshot,
+    getInnerText,
+    fillInput,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
