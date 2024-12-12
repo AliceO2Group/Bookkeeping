@@ -324,7 +324,7 @@ module.exports = () => {
     it('should successfully filter on tags', async () => {
         await waitForTableLength(page, 8);
 
-        // Open filter toggle
+        // Open filter toggle and wait for the dropdown to be visible
         await pressElement(page, '.tags-filter .dropdown-trigger');
         await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '#tag-dropdown-option-RUN', true);
@@ -513,6 +513,17 @@ module.exports = () => {
         }));
 
         expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
+    });
+
+    it('should successfully apply alice currents filters', async () => {
+        await pressElement(page, '#reset-filters');
+
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
+
+        await expectColumnValues(page, 'runNumber', ['54', '53', '52']);
+
+        await pressElement(page, '#reset-filters');
     });
 
     it('Should successfully filter runs by their run quality', async () => {
@@ -1035,7 +1046,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'a#home'));
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
 
-        // Not running run
+        // Not running run, wait for popover to be visible
         await pressElement(page, '#row104-runNumber-text .popover-trigger');
         let popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
