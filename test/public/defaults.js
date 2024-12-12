@@ -680,15 +680,44 @@ module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) =>
 };
 
 /**
+ * Method to check cells of a row with given id have expected innerText
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {stirng} rowId row id
+ * @param {Object<string, string>} [expectedInnerTextValues] values expected in the row
+ *
+ * @return {Promise<void>} resolve once row's values were checked
+ */
+module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) => {
+    try {
+        await page.waitForFunction(async (rowId, expectedInnerTextValues) => {
+            for (const columnId in expectedInnerTextValues) {
+                const actualValue = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
+                if (expectedInnerTextValues[columnId] == actualValue) {
+                    return false;
+                }
+            }
+            return true;
+        }, rowId, expectedInnerTextValues);
+    } catch {
+        const rowInnerTexts = {};
+        for (const columnId in expectedInnerTextValues) {
+            rowInnerTexts[columnId] = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
+        }
+        expect(rowInnerTexts).to.eql(expectedInnerTextValues);
+    }
+};
+
+/**
  * Generic method to validate inner text of cells belonging column with given id.
  * It checks exact match with given values
  *
  * @param {puppeteer.Page} page the puppeteer page
  * @param {string} columnId column id
- * @param {string} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
+ * @param {string|RegExp} expectedValuesRegex string that regex constructor `RegExp(expectedValuesRegex)` returns desired regular expression
  * @param {object} options options
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
- * @param {boolean} [options.negation] if true it's expected not to match given regex
+ * @param {boolean} [options.negation = false] if true it's expected not to match given regex
  *
  * @return {Promise<void>} resolved once column values were checked
  */
@@ -697,13 +726,16 @@ module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValue
         valuesCheckingMode = 'every',
         negation = false,
     } = options;
+
+    const adjustedRegExp = new RegExp(expectedValuesRegex).toString().slice(1, -1);
+
     await page.waitForFunction((columnId, regexString, valuesCheckingMode, negation) => {
         // Browser context, be careful when modifying
-        const names = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
-        return names.length
-            && names[valuesCheckingMode]((name) =>
+        const innerTexts = [...document.querySelectorAll(`table tbody .column-${columnId}`)].map(({ innerText }) => innerText);
+        return innerTexts.length
+            && innerTexts[valuesCheckingMode]((name) =>
                 negation ? !RegExp(regexString).test(name) : RegExp(regexString).test(name));
-    }, { timeout: 1500 }, columnId, expectedValuesRegex, valuesCheckingMode, negation);
+    }, { timeout: 1500 }, columnId, adjustedRegExp, valuesCheckingMode, negation);
 };
 
 /**

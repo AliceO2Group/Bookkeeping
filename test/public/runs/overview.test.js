@@ -36,6 +36,7 @@ const {
     expectInputValue,
     expectColumnValues,
     expectUrlParams,
+    checkColumnValuesWithRegex,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { runService } = require('../../../lib/server/services/run/RunService.js');
@@ -545,55 +546,32 @@ module.exports = () => {
 
     it('should successfully filter on duration', async () => {
         await goToPage(page, 'run-overview');
-
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#duration-operator');
 
-        const runDurationOperatorSelector = '#duration-operator';
-        const runDurationOperator = await page.$(runDurationOperatorSelector) || null;
-        expect(runDurationOperator).to.not.be.null;
-        expect(await runDurationOperator.evaluate((element) => element.value)).to.equal('=');
+        const runDurationFilterDivSelector = '.runDuration-filter';
+        const operatorSelector = `${runDurationFilterDivSelector} select`;
+        const hoursSelector = `${runDurationFilterDivSelector} input:nth-of-type(1)`;
+        const minutesSelector = `${runDurationFilterDivSelector} input:nth-of-type(2)`;
+        await expectInputValue(page, operatorSelector, '=');
 
-        const runDurationLimitSelector = '#duration-limit';
-        const runDurationLimit = await page.$(runDurationLimitSelector) || null;
+        // Case 1
+        await fillInput(page, hoursSelector, 26);
+        await checkColumnValuesWithRegex(page, 'runDuration', '26:00:00');
 
-        await page.waitForSelector(runDurationLimitSelector);
-        expect(runDurationLimit).to.not.be.null;
+        // Case 2
+        await fillInput(page, hoursSelector, 1);
+        await fillInput(page, minutesSelector, 0);
+        await checkColumnValuesWithRegex(page, 'runDuration', '01:00:00');
 
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('1500');
-        await waitForTableLength(page, 3);
+        // Case 3
+        await page.select(operatorSelector, '>=');
+        await checkColumnValuesWithRegex(page, 'runDuration', /(UNKNOWN)|(([1-9][0-9])|(0[1-9]):[0-5][0-9]:[0-5][0-9])/);
 
-        await page.select(runDurationOperatorSelector, '=');
-        await waitForTableLength(page, 3);
-
-        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
-        }));
-
-        expect(runDurationList.every((runDuration) => {
-            const time = runDuration.replace('*', '');
-            return time === '25:00:00';
-        })).to.be.true;
-
-        await page.$eval(runDurationLimitSelector, (input) => {
-            input.value = '';
-        });
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('3000');
-        await waitForTableLength(page, 0);
-
-        await page.select(runDurationOperatorSelector, '>=');
-        await waitForTableLength(page, 3);
-
-        // Expect only unknown
-        runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
-        }));
-
-        expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
+        // Case 4
+        await page.select(operatorSelector, '<=');
+        await fillInput(page, hoursSelector, 10);
+        await fillInput(page, minutesSelector, 0);
+        await checkColumnValuesWithRegex(page, 'runDuration', /(10:00:00)|(0[1-9]:[0-5][0-9]:[0-5][0-9])/);
     });
 
     it('should successfully apply alice currents filters', async () => {
