@@ -545,7 +545,7 @@ module.exports = () => {
 
         it('should successfully filter by aliceL3Current', async () => {
             const response =
-                await request(server).get('/api/runs?filter[aliceL3Current]=30003');
+                await request(server).get('/api/runs?filter[magnets][l3]=30003');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -557,7 +557,7 @@ module.exports = () => {
         });
 
         it('should successfully filter by aliceDipoleCurrent', async () => {
-            const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
+            const response = await request(server).get('/api/runs?filter[magnets][dipole]=0');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
