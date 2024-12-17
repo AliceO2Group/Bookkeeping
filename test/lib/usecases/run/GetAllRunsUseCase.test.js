@@ -59,14 +59,6 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(18);
     });
 
-    it('should limit range to 100 if range exceeds the maximum', async () => {
-        getAllRunsDto.query = { filter: { runNumbers: '1-108' } };
-        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(100);
-    });
-
     it('should return runs sorted by runNumber', async () => {
         {
             const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'ASC' } } });
