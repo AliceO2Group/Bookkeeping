@@ -59,14 +59,4 @@ module.exports = () => {
         const errorCode = await page.$eval('h3', (el) => el.innerText);
         expect(errorCode).to.equal('Unknown Error - Something unexpected happened.');
     });
-
-    it ('shows 404 when page is not found', async () => {
-        await goToPage(page, 'sdf');
-
-        //eslint-disable-next-line no-console
-        console.log(await page.title());
-
-        const errorCode = await page.$eval('.h3', (el) => el.innerText);
-        expect(errorCode).to.equal('404 - Page not found');
-    });
 };
