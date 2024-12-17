@@ -552,7 +552,7 @@ module.exports = () => {
         };
 
         let badges;
-        const expectedBgColorBefore = 'badge b1 b-gray-light bg-gray-light';
+        const expectedBgColorBefore = 'rgb(238, 238, 238)'; //Gray
         const expectedBgColorAfter = 'rgb(255, 0, 0)'; //Red
 
         // Fetch the run data before update of tag
@@ -560,7 +560,7 @@ module.exports = () => {
 
         badges = await getRunTagsBadges();
 
-        expect(badges[0].className).to.eql(expectedBgColorBefore);
+        expect(badges[0].backgroundColor == expectedBgColorBefore).to.be.true;
 
         const updateTagDto = {
             body: {
