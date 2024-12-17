@@ -545,7 +545,6 @@ module.exports = () => {
             return await page.$$eval(
                 tagsBadgeClassesSelector,
                 (badges) => badges.map((badge) => ({
-                    className: badge.className,
                     backgroundColor: badge.style.backgroundColor,
                 })),
             );
