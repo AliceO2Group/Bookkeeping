@@ -58,6 +58,7 @@ module.exports = () => {
                 tfFileSize: BIG_INT_NUMBER,
                 otherFileCount: 123156132,
                 otherFileSize: BIG_INT_NUMBER,
+                nTfOrbits: BIG_INT_NUMBER,
                 crossSection: 0.1,
                 triggerEfficiency: 0.2,
                 triggerAcceptance: 0.3,
@@ -324,6 +325,7 @@ module.exports = () => {
             expect(result.tfFileSize).to.equal(BIG_INT_NUMBER);
             expect(result.otherFileCount).to.equal(123156132);
             expect(result.otherFileSize).to.equal(BIG_INT_NUMBER);
+            expect(result.nTfOrbits).to.equal(BIG_INT_NUMBER);
             expect(result.crossSection).to.equal(0.1);
             expect(result.triggerEfficiency).to.equal(0.2);
             expect(result.triggerAcceptance).to.equal(0.3);
