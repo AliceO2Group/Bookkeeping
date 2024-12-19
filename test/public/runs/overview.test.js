@@ -36,7 +36,8 @@ const {
     waitForDownload,
     expectLink,
     expectUrlParams,
-    expectAttributeValue, getColumnCellsInnerTexts,
+    expectAttributeValue,
+    getColumnCellsInnerTexts,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
