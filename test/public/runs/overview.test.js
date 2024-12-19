@@ -474,22 +474,13 @@ module.exports = () => {
         expect(await runDurationOperator.evaluate((element) => element.value)).to.equal('=');
 
         const runDurationLimitSelector = '#duration-limit';
-        const runDurationLimit = await page.$(runDurationLimitSelector) || null;
-
-        await page.waitForSelector(runDurationLimitSelector);
-        expect(runDurationLimit).to.not.be.null;
-
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('1500');
+        await fillInput(page, runDurationLimitSelector, '1500');
         await waitForTableLength(page, 3);
 
         await page.select(runDurationOperatorSelector, '=');
         await waitForTableLength(page, 3);
 
-        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
-        }));
+        let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
 
         expect(runDurationList.every((runDuration) => {
             const time = runDuration.replace('*', '');
