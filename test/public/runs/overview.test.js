@@ -36,7 +36,7 @@ const {
     waitForDownload,
     expectLink,
     expectUrlParams,
-    expectAttributeValue,
+    expectAttributeValue, getColumnCellsInnerTexts,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -1044,12 +1044,12 @@ module.exports = () => {
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
-                + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
         await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
             href: 'http://localhost:8082/' +
-                '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
+                  '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
             innerText: 'QCG',
         });
 
