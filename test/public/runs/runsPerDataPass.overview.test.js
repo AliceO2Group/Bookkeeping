@@ -312,10 +312,12 @@ module.exports = () => {
 
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, '.runNumber-filter input[type=text]', '108,107');
+        await fillInput(page, '.runNumber-filter input[type=text]', '108,107', ['change']);
+        await waitForTableLength(page, 2);
         await expectColumnValues(page, 'runNumber', ['108', '107']);
 
         await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
