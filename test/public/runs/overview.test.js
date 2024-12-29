@@ -340,7 +340,7 @@ module.exports = () => {
     it('should successfully filter on definition', async () => {
         await waitForTableTotalRowsCountToEqual(page, 108);
 
-        const filterInputSelectorPrefix = '#runDefinitionCheckbox';
+        const filterInputSelectorPrefix = '#run-definition-checkbox-';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
         const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
         const technicalFilterSelector = `${filterInputSelectorPrefix}TECHNICAL`;
@@ -359,10 +359,10 @@ module.exports = () => {
             // Wait for the table to have the proper size
             await waitForTableLength(page, size);
 
-            const definitions = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
-                const rowId = row.id;
-                return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
-            }));
+            const definitions = await page.$$eval(
+                '.column-definition div div div:first-child',
+                (rows) => rows.map((row) => row.innerText),
+            );
 
             try {
                 expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
@@ -384,7 +384,7 @@ module.exports = () => {
         await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
+        await checkTableSizeAndDefinition(12, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
         await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);
@@ -1023,12 +1023,12 @@ module.exports = () => {
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
-                + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
         await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
             href: 'http://localhost:8082/' +
-                '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
+                  '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
             innerText: 'QCG',
         });
 
