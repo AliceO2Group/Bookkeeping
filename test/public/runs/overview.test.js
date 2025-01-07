@@ -469,8 +469,8 @@ module.exports = () => {
         expect(runDurationOperator).to.not.be.null;
         expect(await runDurationOperator.evaluate((element) => element.value)).to.equal('=');
 
-        const runDurationLimitSelector = '#duration-limit';
-        await fillInput(page, runDurationLimitSelector, '1500');
+        const runDurationLimitSelector = '#duration-operand';
+        await fillInput(page, runDurationLimitSelector, '1500', ['change']);
         await waitForTableLength(page, 3);
 
         await page.select(runDurationOperatorSelector, '=');
@@ -483,11 +483,7 @@ module.exports = () => {
             return time === '25:00:00';
         })).to.be.true;
 
-        await page.$eval(runDurationLimitSelector, (input) => {
-            input.value = '';
-        });
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('3000');
+        await fillInput(page, runDurationLimitSelector, '3000', ['change']);
         await waitForTableLength(page, 0);
 
         await page.select(runDurationOperatorSelector, '>=');
