@@ -33,7 +33,6 @@ const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrati
 const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { tag: { UpdateTagUseCase } } = require('../../../lib/usecases/index.js');
-const { dtos: { UpdateTagDto } } = require('../../../lib/domain/index.js');
 
 const { expect } = chai;
 
