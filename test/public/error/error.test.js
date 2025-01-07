@@ -23,11 +23,6 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
-        await page.setViewport({
-            width: 700,
-            height: 720,
-            deviceScaleFactor: 1,
-        });
         await resetDatabaseContent();
     });
 
@@ -47,15 +42,11 @@ module.exports = () => {
     });
 
     it('shows the error message', async () => {
-        await goToPage(page, 'error');
-
         const errorTitle = await page.$eval('h2', (el) => el.innerText);
         expect(errorTitle).to.equal('Oops! Something went wrong.');
     });
 
     it ('shows the default text', async () => {
-        await goToPage(page, 'error');
-
         const errorCode = await page.$eval('h3', (el) => el.innerText);
         expect(errorCode).to.equal('Unknown Error - Something unexpected happened.');
     });
