@@ -24,7 +24,8 @@ services:
       FLP_INFOLOGGER_URL: "${ALI_ECS_GUI_URL:-http://localhost:8081}"
       QC_GUI_URL: "${ALI_ECS_GUI_URL:-http://localhost:8082}"
       ALI_FLP_INDEX_URL: "${ALI_ECS_GUI_URL:-http://localhost:80}"
-      CCDB_ENABLE_SYNCHRONIZATION: false
+      CCDB_ENABLE_SYNCHRONIZATION: "${CCDB_ENABLE_SYNCHRONIZATION:-false}"
+      CCDB_RUN_INFO_URL: "${CCDB_RUN_INFO_URL:-}"
     links:
       - database
     restart: unless-stopped
