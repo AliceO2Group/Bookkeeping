@@ -46,6 +46,7 @@ module.exports = () => {
     let browser;
     let url;
     const assetsDir = [__dirname, '../..', 'assets'];
+    const downloadDir = [__dirname, '../../../..', 'database/storage'];
 
     before(async () => {
         [page, browser, url] = await defaultBefore();
@@ -373,6 +374,13 @@ module.exports = () => {
         expect(lastLog.attachments).to.lengthOf(2);
         expect(lastLog.attachments[0].originalName).to.equal(file1);
         expect(lastLog.attachments[1].originalName).to.equal(file2);
+
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, file1));
+            fs.unlinkSync(path.resolve(...downloadDir, file2));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -385,7 +393,8 @@ module.exports = () => {
 
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
-        attachmentsInput.uploadFile(path.resolve(...assetsDir, '1200px-CERN_logo.png'));
+        const fileName = '1200px-CERN_logo.png';
+        attachmentsInput.uploadFile(path.resolve(...assetsDir, fileName));
         await waitForTimeout(500);
 
         // We expect the clear button to appear
@@ -400,6 +409,12 @@ module.exports = () => {
         await waitForTimeout(100);
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
+
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, fileName));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     });
 
     it('can create a log with a run number', async () => {

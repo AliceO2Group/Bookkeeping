@@ -1,3 +1,24 @@
+## [1.4.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.0)
+* Changes made to the database
+  * Following columns in runs table has been changed to Datetime(3):
+    * time_o2_start
+    * time_trg_start
+    * first_tf_timestamp
+    * last_tf_timestamp
+    * time_trg_end
+    * time_o2_end
+  * Following columns in quality_control_flags table has been changed to Datetime(3):
+    * from
+    * to
+    * created_at
+    * updated_at
+  * Following columns in quality_control_flag_effective_periods table has been changed to Datetime(3):
+    * from
+    * to
+    * created_at
+    * updated_at
+  * Added two more virtual columns to runs, rct_time_start and rct_time_end that coalesce first/last TF timestamps with run start/stop
+
 ## [1.3.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.3.0)
 * Changes made to the database
   * Fixed physical constants values in database
