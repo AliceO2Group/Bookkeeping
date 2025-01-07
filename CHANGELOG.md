@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.1)
+* Notable changes for developers:
+  * Fixed the runs start/stop extraction from AliECS kafka messages
+  * Added more logs to external service synchronization (CCDB, MonALISA)
+
 ## [1.4.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.0)
 * Notable changes for users:
   * Fixed tag color not being updated when switching to run details after updating a tag
