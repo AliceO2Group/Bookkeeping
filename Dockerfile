@@ -22,7 +22,7 @@ RUN apk add --no-cache \
     freetype=2.13.0-r5 \
     freetype-dev=2.13.0-r5 \
     harfbuzz=7.3.0-r0 \
-    ca-certificates=20241121-r0
+    ca-certificates=20241121-r1
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
