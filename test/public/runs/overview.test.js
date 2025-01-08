@@ -511,7 +511,7 @@ module.exports = () => {
 
     it('Should successfully filter runs by their run quality', async () => {
         await goToPage(page, 'run-overview');
-        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
         const testFilterSelector = `${filterInputSelectorPrefix}test`;
 
@@ -937,7 +937,7 @@ module.exports = () => {
         // Second export
 
         // Apply filtering
-        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
 
         await pressElement(page, '#openFilterToggle');
