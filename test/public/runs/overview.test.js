@@ -698,10 +698,10 @@ module.exports = () => {
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
         await waitForTableLength(page, 8);
 
-        const filterInputSelector = '#environmentIds';
+        const filterInputSelector = '.environment-ids-filter';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
-        await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d');
+        await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d', ['change']);
         await waitForTableLength(page, 6);
 
         await pressElement(page, '#reset-filters');
