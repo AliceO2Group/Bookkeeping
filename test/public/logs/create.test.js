@@ -187,7 +187,7 @@ module.exports = () => {
 
     it('Should set the correct template when templateKey is specified.', async () => {
         const templateKey = 'on-call';
-        await goToPage(page, `log-create&templateKey=${templateKey}`);
+        await goToPage(page, 'log-create', { queryParameters: { templateKey } });
 
         await page.waitForSelector('select');
         const selectedOption = await page.evaluate(() => document.querySelector('select').value);
@@ -200,8 +200,8 @@ module.exports = () => {
         const issueDescription = 'This is a sample issue description';
         await goToPage(
             page,
-            `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&` +
-            `issueDescription=${issueDescription}`,
+            'log-create',
+            { queryParameters: { templateKey, detectorOrSubsystem, issueDescription } },
         );
 
         await expectInputValue(page, 'input#run-numbers', '');
@@ -214,8 +214,17 @@ module.exports = () => {
     it('Should autofill all inputs with provided full parameters.', async () => {
         await goToPage(
             page,
-            'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&templateKey=on-call&detectorOrSubsystem=ALL&' +
-            'issueDescription=This is a sample issue description',
+            'log-create',
+            {
+                queryParameters: {
+                    runNumbers: '1,2,3',
+                    lhcFillNumbers: '1,2,3',
+                    environmentIds: '1,2,3',
+                    templateKey: 'on-call',
+                    detectorOrSubsystem: 'ALL',
+                    issueDescription: 'This is a sample issue description',
+                },
+            },
         );
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
