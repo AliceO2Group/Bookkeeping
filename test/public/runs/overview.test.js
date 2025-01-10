@@ -723,7 +723,7 @@ module.exports = () => {
         await expectInputValue(page, '#nDetectors-operator', '=');
 
         await page.select('#nDetectors-operator', '<=');
-        await fillInput(page, '#nDetectors-limit', '1');
+        await fillInput(page, '#nDetectors-operand', '1', ['change']);
         await waitForTableLength(page, 6);
 
         const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
@@ -743,7 +743,7 @@ module.exports = () => {
         await expectInputValue(page, '#nFlps-operator', '=');
 
         await page.select('#nFlps-operator', '<=');
-        await fillInput(page, '#nFlps-limit', '10');
+        await fillInput(page, '#nFlps-operand', '10', ['change']);
         await waitForTableLength(page, 5);
 
         const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
@@ -761,7 +761,7 @@ module.exports = () => {
         await expectInputValue(page, '#nEpns-operator', '=');
 
         await page.select('#nEpns-operator', '<=');
-        await fillInput(page, '#nEpns-limit', '10');
+        await fillInput(page, '#nEpns-operand', '10', ['change']);
         await waitForTableLength(page, 5);
 
         await expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
