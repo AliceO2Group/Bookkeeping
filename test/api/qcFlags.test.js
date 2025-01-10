@@ -326,6 +326,58 @@ module.exports = () => {
             }
         });
 
+        it('should successfully create multiple QC flag instances for data pass', async () => {
+            const qcFlagCreationParameters = [
+                {
+                    from: new Date('2019-08-09 01:29:50').getTime(),
+                    to: new Date('2019-08-09 05:40:00').getTime(),
+                    comment: 'VERY INTERESTING REMARK',
+                    flagTypeId: 2,
+                    runNumber: 49,
+                    dataPassId: 1,
+                    dplDetectorId: 4,
+                },
+                {
+                    from: new Date('2019-08-09 01:29:50').getTime(),
+                    to: new Date('2019-08-09 05:40:00').getTime(),
+                    comment: 'VERY INTERESTING REMARK',
+                    flagTypeId: 2,
+                    runNumber: 49,
+                    dataPassId: 1,
+                    dplDetectorId: 7,
+                },
+                {
+                    from: new Date('2019-08-09 01:29:50').getTime(),
+                    to: new Date('2019-08-09 05:40:00').getTime(),
+                    comment: 'VERY INTERESTING REMARK',
+                    flagTypeId: 2,
+                    runNumber: 54,
+                    dataPassId: 1,
+                    dplDetectorId: 4,
+                },
+            ];
+
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlag } = response.body;
+            const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
+            {
+                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
+                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+            }
+            {
+                const { from, to, comment, flagTypeId, runNumber, detectorId: dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                    include: [{ association: 'dataPasses' }],
+                    where: {
+                        id: createdQcFlag.id,
+                    },
+                });
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to
+                    .be.eql(expectedProperties);
+                expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
+            }
+        });
+
         it('should successfully create QC flag instance for data pass with GLO detector', async () => {
             const qcFlagCreationParameters = {
                 from: null,
