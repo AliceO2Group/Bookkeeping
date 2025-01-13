@@ -515,28 +515,29 @@ module.exports = () => {
          */
         const getRunTagsBadges = async () => {
             // Check if the tag is updated
-            const tagsBadgeClassesSelector = '#Run-tags .badge';
+            const tagsBadgeClassesSelector = '#tags .badge';
             // Wait for badge elements to appear
             await page.waitForSelector(tagsBadgeClassesSelector);
             // Evaluate and check for inline background color
             return await page.$$eval(
                 tagsBadgeClassesSelector,
-                (badges) => badges.map((badge) => ({
-                    backgroundColor: badge.style.backgroundColor,
-                })),
+                (badges) => badges.map((badge) => badge.style.backgroundColor),
             );
         };
 
         let badges;
         const expectedBgColorBefore = 'rgb(238, 238, 238)'; //Gray
         const expectedBgColorAfter = 'rgb(255, 0, 0)'; //Red
+        const expectedBadgeCount = 7;
 
         // Fetch the run data before update of tag
         await goToRunDetails(page, 106);
 
         badges = await getRunTagsBadges();
 
-        expect(badges[0].backgroundColor == expectedBgColorBefore).to.be.true;
+        expect(badges.length).to.equal(expectedBadgeCount);
+
+        expect(badges[0]).to.equal(expectedBgColorBefore);
 
         const updateTagDto = {
             body: {
@@ -557,6 +558,6 @@ module.exports = () => {
         await goToRunDetails(page, 106);
         badges = await getRunTagsBadges();
 
-        expect(badges[0].backgroundColor == expectedBgColorAfter).to.be.true;
+        expect(badges[0]).to.equal(expectedBgColorAfter);
     });
 };
