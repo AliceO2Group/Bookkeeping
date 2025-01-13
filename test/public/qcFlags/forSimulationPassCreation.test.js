@@ -62,10 +62,10 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'QC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC23k6c');
-        await expectInnerText(page, 'h2:nth-of-type(3)', '106');
-        await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
+        await expectInnerText(page, '#breadcrumb-header', 'QC');
+        await expectInnerText(page, '#breadcrumb-simulation-pass-name', 'LHC23k6c');
+        await expectInnerText(page, '#breadcrumb-run-number', '106');
+        await expectInnerText(page, '#breadcrumb-detector-name', 'CPV');
     });
 
     it('can navigate to runs per simulation pass page from breadcrumbs link', async () => {
@@ -77,7 +77,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(3) a'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-simulation-pass-name a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
@@ -90,7 +90,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, '.breadcrumbs *:nth-child(5) a'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
