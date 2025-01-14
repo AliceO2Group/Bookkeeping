@@ -333,7 +333,7 @@ module.exports = () => {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
                 dataPassId: 5,
-                runDetectors: [{ runNumber: 56, detectorIds: [4] }, { runNumber: 49, detectorIds: [4, 7] }],
+                runDetectors: { 56: [4], 49: [4, 7] },
             };
 
             const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
