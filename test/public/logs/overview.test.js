@@ -173,7 +173,7 @@ module.exports = () => {
         await pressElement(page, '.tags-filter .dropdown-trigger');
 
         // Select the second available filter and wait for the changes to be processed
-        const firstCheckboxId = 'tag-dropdown-option-DPG';
+        const firstCheckboxId = 'tag-option-DPG';
         await pressElement(page, `#${firstCheckboxId}`, true);
         await waitForTableLength(page, 1);
 
@@ -182,7 +182,7 @@ module.exports = () => {
         await waitForTableLength(page, 10);
 
         // Select the first available filter and the second one at once
-        const secondCheckboxId = 'tag-dropdown-option-FOOD';
+        const secondCheckboxId = 'tag-option-FOOD';
         await pressElement(page, `#${firstCheckboxId}`, true);
         await pressElement(page, `#${secondCheckboxId}`, true);
         await waitForEmptyTable(page);
