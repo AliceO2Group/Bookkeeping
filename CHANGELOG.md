@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file. See [standa
 ## [1.5.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.5.0)
 * Notable changes for users:
   * Added nTF orbits to runs updated runs API endpoints accordingly
-  * Allow to prefill of on-call template through URL parameters:
-    * In log creation page, query parameters `templateKey`, `issueDescription`, `detectorOrSubsystem` allow
-      respectively to pre-chose a log template and define the issue description and detector or subsystem in the
-      case of on-call template
 * Notable changes for developers:
   * Fixed randomly failing runs test based on timerange selection (start/stop)
   * Fixed randomly failing QC tests
   * Updated docker ca-certificate dependency
+  * Allow to prefill of on-call template through URL parameters:
+    * In log creation page, query parameters `templateKey`, `issueDescription`, `detectorOrSubsystem` allow
+      respectively to pre-chose a log template and define the issue description and detector or subsystem in the
+      case of on-call template
 
 ## [1.4.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.1)
 * Notable changes for developers:
