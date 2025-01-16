@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [1.5.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.5.0)
 * Notable changes for users:
   * Added nTF orbits to runs updated runs API endpoints accordingly
+  * Added a global error page, displaying amongst other 404 error
 * Notable changes for developers:
   * Fixed randomly failing runs test based on timerange selection (start/stop)
   * Fixed randomly failing QC tests
