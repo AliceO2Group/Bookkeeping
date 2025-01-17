@@ -326,36 +326,6 @@ module.exports = () => {
             }
         });
 
-        it('should successfully create multiple QC flag instances for data pass', async () => {
-            const qcFlagCreationParameters = {
-                from: 1565294400001,
-                to: 1565297000000,
-                comment: 'VERY INTERESTING REMARK',
-                flagTypeId: 2,
-                dataPassId: 5,
-                runDetectors: [{ runNumber: 56, detectorIds: [4] }, { runNumber: 49, detectorIds: [4, 7] }],
-            };
-
-            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
-            expect(response.status).to.be.equal(201);
-            const { data: createdQcFlags } = response.body;
-            expect(createdQcFlags).to.be.lengthOf(3);
-
-            const createdFlagsShared = createdQcFlags.map(({ from, to, comment, flagTypeId }) => ({ from, to, comment, flagTypeId }));
-            expect(createdFlagsShared).to.be.eql(Array(3).fill({
-                from: qcFlagCreationParameters.from,
-                to: qcFlagCreationParameters.to,
-                comment: qcFlagCreationParameters.comment,
-                flagTypeId: qcFlagCreationParameters.flagTypeId,
-            }));
-
-            expect(createdQcFlags.filter(({ runNumber }) => runNumber === 56).length).to.be.equal(1);
-            expect(createdQcFlags.filter(({ runNumber }) => runNumber === 49).length).to.be.equal(2);
-            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 49 && dplDetectorId === 4)).to.exist;
-            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 49 && dplDetectorId === 7)).to.exist;
-            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 56 && dplDetectorId === 4)).to.exist;
-        });
-
         it('should successfully create QC flag instance for data pass with GLO detector', async () => {
             const qcFlagCreationParameters = {
                 from: null,
@@ -456,6 +426,39 @@ module.exports = () => {
                 },
             ]);
         });
+    });
+
+    it('should fail to create QC flag instance when runDetectors and runNumber or dplDetectorId are specified{', async () => {
+        const qcFlagCreationParameters = {
+            from: new Date('2019-08-09 01:29:50').getTime(),
+            to: new Date('2019-08-09 05:40:00').getTime(),
+            comment: 'VERY INTERESTING REMARK',
+            flagTypeId: 2,
+            runNumber: 106,
+            simulationPassId: 1,
+            dataPassId: 1,
+            dplDetectorId: 1,
+            runDetectors: [
+                {
+                    runNumber: 106,
+                    detectorIds: [1],
+                },
+            ],
+        };
+
+        const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+        expect(response.status).to.be.equal(400);
+        const { errors } = response.body;
+        expect(errors).to.be.eql([
+            {
+                status: '422',
+                source: {
+                    pointer: '/data/attributes/body',
+                },
+                title: 'Invalid Attribute',
+                detail: '"runNumber" is not allowed when "runDetectors" is provided.',
+            },
+        ]);
     });
 
     describe('DELETE /api/qcFlags/:id', () => {
