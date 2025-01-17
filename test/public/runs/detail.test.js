@@ -32,6 +32,7 @@ const {
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { tag: { UpdateTagUseCase } } = require('../../../lib/usecases/index.js');
 
 const { expect } = chai;
 
@@ -504,5 +505,59 @@ module.exports = () => {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
         });
+    });
+
+    it('should display correct tag styling after updating in tag overview', async () => {
+        /**
+         *  Retrieve the badge classes and styles
+         *
+         *  @return {Promise<Array>} resolves with the badge classes and styles
+         */
+        const getRunTagsBadges = async () => {
+            // Check if the tag is updated
+            const tagsBadgeClassesSelector = '#tags .badge';
+            // Wait for badge elements to appear
+            await page.waitForSelector(tagsBadgeClassesSelector);
+            // Evaluate and check for inline background color
+            return await page.$$eval(
+                tagsBadgeClassesSelector,
+                (badges) => badges.map((badge) => badge.style.backgroundColor),
+            );
+        };
+
+        let badges;
+        const expectedBgColorBefore = 'rgb(238, 238, 238)'; //Gray
+        const expectedBgColorAfter = 'rgb(255, 0, 0)'; //Red
+        const expectedBadgeCount = 7;
+
+        // Fetch the run data before update of tag
+        await goToRunDetails(page, 106);
+
+        badges = await getRunTagsBadges();
+
+        expect(badges.length).to.equal(expectedBadgeCount);
+
+        expect(badges[0]).to.equal(expectedBgColorBefore);
+
+        const updateTagDto = {
+            body: {
+                color: '#FF0000', //Red
+            },
+            params: {
+                tagId: 1,
+            },
+            session: {
+                personid: 1,
+                id: 1,
+                name: 'John Doe',
+            },
+        };
+        await new UpdateTagUseCase()
+            .execute(updateTagDto);
+
+        await goToRunDetails(page, 106);
+        badges = await getRunTagsBadges();
+
+        expect(badges[0]).to.equal(expectedBgColorAfter);
     });
 };
