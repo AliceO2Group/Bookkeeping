@@ -51,6 +51,14 @@ module.exports = () => {
         expect(runs[1].runNumber).to.equal(17);
     });
 
+    it('should return an array, only containing runs with specified run number and ranges', async () => {
+        getAllRunsDto.query = { filter: { runNumbers: '1-5,8,12,20-30' } };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(18);
+    });
+
     it('should return runs sorted by runNumber', async () => {
         {
             const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'ASC' } } });
