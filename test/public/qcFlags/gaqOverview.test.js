@@ -66,34 +66,62 @@ module.exports = () => {
         // eslint-disable-next-line require-jsdoc
         const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
-            generalQuality: (generalQuality) => ['good', 'bad', 'MC.R'].includes(generalQuality),
+            generalQuality: (generalQuality) => ['ND', 'good', 'bad', 'MC.R'].includes(generalQuality),
             from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
             to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 7);
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
-                'MC.R',
+                'ND',
+                '08/08/2019\n13:00:00',
+                '08/08/2019\n22:43:20',
+                '',
+                '',
+            ],
+            [
+                'ND',
                 '08/08/2019\n22:43:20',
                 '09/08/2019\n04:16:40',
                 'Limited Acceptance MC Reproducible',
                 '',
             ],
             [
-                'bad',
+                'ND',
+                '09/08/2019\n04:16:40',
                 '09/08/2019\n05:40:00',
-                '09/08/2019\n07:03:20',
-                'Limited acceptance',
+                '',
                 '',
             ],
             [
-                'bad',
+                'ND',
+                '09/08/2019\n05:40:00',
+                '09/08/2019\n07:03:20',
+                'Limited Acceptance MC Not Reproducible',
+                '',
+            ],
+            [
+                'ND',
+                '09/08/2019\n07:03:20',
+                '09/08/2019\n08:26:40',
+                '',
+                '',
+            ],
+            [
+                'ND',
                 '09/08/2019\n08:26:40',
                 '09/08/2019\n09:50:00',
                 'Bad',
+                '',
+            ],
+            [
+                'ND',
+                '09/08/2019\n09:50:00',
+                '09/08/2019\n14:00:00',
+                '',
                 '',
             ],
         ]);
@@ -112,7 +140,7 @@ module.exports = () => {
         await waitForTableLength(page, 7);
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
-                'good',
+                'ND',
                 '08/08/2019\n13:00:00',
                 '08/08/2019\n22:43:20',
                 '',
@@ -126,7 +154,7 @@ module.exports = () => {
                 'Good',
             ],
             [
-                'good',
+                'ND',
                 '09/08/2019\n04:16:40',
                 '09/08/2019\n05:40:00',
                 '',
@@ -136,11 +164,11 @@ module.exports = () => {
                 'bad',
                 '09/08/2019\n05:40:00',
                 '09/08/2019\n07:03:20',
-                'Limited acceptance',
+                'Limited Acceptance MC Not Reproducible',
                 'Good',
             ],
             [
-                'good',
+                'ND',
                 '09/08/2019\n07:03:20',
                 '09/08/2019\n08:26:40',
                 '',
@@ -154,7 +182,7 @@ module.exports = () => {
                 'Good',
             ],
             [
-                'good',
+                'ND',
                 '09/08/2019\n09:50:00',
                 '09/08/2019\n14:00:00',
                 '',
