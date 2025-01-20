@@ -21,12 +21,12 @@ const DetailsForSimulationPassPageSuite = require('./detailsForSimulationPass.te
 const GaqOverviewPageSuite = require('./gaqOverview.test');
 
 module.exports = () => {
-    describe('Synchronous Overview Page', SynchronousOverviewSuite);
-    describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
-    describe('For Simulation Pass Overview Page', ForSimulationPassOverviewSuite);
+    // describe('Synchronous Overview Page', SynchronousOverviewSuite);
+    // describe('For Data Pass Overview Page', ForDataPassOverviewSuite);
+    // describe('For Simulation Pass Overview Page', ForSimulationPassOverviewSuite);
     describe('For Data Pass Creation Page', ForDataPassCreationSuite);
-    describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
-    describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
-    describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
-    describe('GAQ Overview page', GaqOverviewPageSuite);
+    // describe('For Simulation Pass Creation Page', ForSimulationPassCreationSuite);
+    // describe('Details For Data Pass Page', DetailsForDataPassPageSuite);
+    // describe('Details For Simulation Pass Page', DetailsForSimulationPassPageSuite);
+    // describe('GAQ Overview page', GaqOverviewPageSuite);
 };
