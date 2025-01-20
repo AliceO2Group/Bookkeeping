@@ -428,6 +428,38 @@ module.exports = () => {
             expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 56 && dplDetectorId === 4)).to.exist;
         });
 
+        it('should fail to create QC flag instance when runDetectors and runNumber or dplDetectorId are specified', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dataPassId: 1,
+                dplDetectorId: 1,
+                runDetectors: [
+                    {
+                        runNumber: 106,
+                        detectorIds: [1],
+                    },
+                ],
+            };
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: '422',
+                    source: {
+                        pointer: '/data/attributes/body',
+                    },
+                    title: 'Invalid Attribute',
+                    detail: '"runNumber" is not allowed when "runDetectors" is provided.',
+                },
+            ]);
+        });
+
         it('should fail to create QC flag instance when dataPass and simulation are both specified', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
