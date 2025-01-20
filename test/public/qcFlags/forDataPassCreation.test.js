@@ -50,8 +50,7 @@ module.exports = () => {
         const response = await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -72,8 +71,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -85,8 +83,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -98,14 +95,13 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
@@ -130,24 +126,23 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-11', true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
-        await pressElement(page, '.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', true);
+        await pressElement(page, '#time-based-toggle', true);
 
-        await fillInput(page, '.flex-column.g1:nth-of-type(1) > div input[type="time"]', '13:01:01', ['change']);
-        await fillInput(page, '.flex-column.g1:nth-of-type(2) > div input[type="time"]', '13:50:59', ['change']);
+        await fillInput(page, 'div:nth-child(1) > div > input:nth-child(2)', '13:01:01', ['change']);
+        await fillInput(page, 'div:nth-child(2) > div > input:nth-child(2)', '13:50:59', ['change']);
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expectUrlParams(page, {
@@ -168,18 +163,21 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 3,
-                runNumber: 105,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '105:1',
             },
         });
 
-        await expectInnerText(page, '.panel:nth-child(3) em', 'Missing start/stop, the flag will be applied on the full run');
+        await expectInnerText(
+            page,
+            'div.panel.flex-grow.items-center > div > em',
+            'Missing start/stop, the flag will be applied on the full run',
+        );
         await page.waitForSelector('button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-2', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
-        await page.waitForSelector('.flex-row > .panel:nth-of-type(3) input[type="checkbox"]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#time-based-toggle', { hidden: true, timeout: 250 });
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expectUrlParams(page, {
@@ -195,11 +193,54 @@ module.exports = () => {
     it('should disabled creation form when run quality was changes to bad', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 2,
-            runNumber: 2,
-            dplDetectorId: 1,
+            runNumberDetectorMap: '2:1',
         } });
 
         await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject to QC');
         await page.waitForSelector('input', { hidden: true });
+    });
+
+
+
+
+
+
+
+    it('should allow multiple runs and detectors to be selected', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
+            dataPassId: 5,
+            runNumberDetectorMap: '56:7;105:1',
+        } });
+    });
+
+    it('should merge the start times to the minimum and end times to watch for overlap', async () => {
+    });
+
+    it('should set the timebased false and display no overlap if times dont overlap', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumbers: '105,106',
+                dplDetectorIds: '2,3',
+            },
+        });
+
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '-');
+
+        await expectInnerText(page, 'em:nth-of-type(1)', 'Missing start/stop, the flag will be applied on the full run');
+    });
+
+    it('should set the timebased unavailable if at least one run has no end time', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 1,
+                runNumbers: '105,106',
+                dplDetectorIds: '2,3',
+            },
+        });
+    });
+
+    it('should successfully create QC flags for each run-detector pair ', async () => {
     });
 };
