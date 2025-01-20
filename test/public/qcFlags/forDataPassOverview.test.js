@@ -59,10 +59,10 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'QC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22b_apass1');
-        await expectInnerText(page, 'h2:nth-of-type(3)', '106');
-        await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
+        await expectInnerText(page, '#breadcrumb-header', 'QC');
+        await expectInnerText(page, '#breadcrumb-data-pass-name', 'LHC22b_apass1');
+        await expectInnerText(page, '#breadcrumb-run-number', '106');
+        await expectInnerText(page, '#breadcrumb-detector-name', 'CPV');
     });
 
     it('can navigate to runs per data pass page from breadcrumbs link', async () => {
@@ -72,7 +72,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
@@ -83,7 +83,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
@@ -118,7 +118,7 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
+        await page.waitForSelector('#breadcrumb-run-number.danger a');
         const title = 'Quality of the run was changed to bad so it is no more subject to QC';
         await page.waitForSelector(`button.btn.btn-primary[disabled][title="${title}"]`);
     });
