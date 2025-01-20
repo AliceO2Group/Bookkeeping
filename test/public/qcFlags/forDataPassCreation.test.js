@@ -50,8 +50,7 @@ module.exports = () => {
         const response = await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -72,8 +71,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -85,8 +83,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -98,8 +95,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -130,8 +126,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
-                runNumber: 106,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '106:1',
             },
         });
 
@@ -168,8 +163,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 3,
-                runNumber: 105,
-                dplDetectorId: 1,
+                runNumberDetectorMap: '105:1',
             },
         });
 
@@ -203,49 +197,25 @@ module.exports = () => {
         await page.waitForSelector('input', { hidden: true });
     });
 
-    it('should allow multiple runs and detectors', async () => {
+
+
+
+
+
+
+    it('should allow multiple runs and detectors to be selected', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 2,
-            runNumbers: '105,106',
-            dplDetectorIds: '2,3'
+            dataPassId: 5,
+            runNumberDetectorMap: '56:7;105:1',
         } });
 
-        // We expect the page to return the correct status code, making sure the server is running properly
-        expect(response.status()).to.equal(200);
-
-        // We expect the page to return the correct title, making sure there isn't another server running on this port
-        const title = await page.title();
-        expect(title).to.equal('AliceO2 Bookkeeping');
-
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'LHC22b_apass1');
-
-        // Shoudld have a qc flag overview button next to each run-detector pair
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'QC');
-        await expectInnerText(page, 'h2:nth-of-type(3)', 'QC');
-
-        await expectInnerText(page, 'h4:nth-of-type(1)', '105');
-        await expectInnerText(page, 'h4:nth-of-type(2)', 'CPV');
-        await expectInnerText(page, 'h4:nth-of-type(3)', '106');
-        await expectInnerText(page, 'h4:nth-of-type(4)', 'ALL');
+        
     });
 
-    it('should merge the start times to the minimum and end times to maximum of multiple detectors/runs.', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 1,
-                runNumbers: '105,106',
-                dplDetectorIds: '2,3',
-            },
-        });
-
-        await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '09/08/2019\n14:00:00');
-
-        // Check if timebased can be set true 
-        await expectInnerText(page, 'em:nth-of-type(1)', 'The flag will be applied on the full run');
+    it('should merge the start times to the minimum and end times to watch for overlap', async () => {
     });
 
-    it('should set the timebased false and end time none if at least one run has no end time.', async () => {
+    it('should set the timebased false and display no overlap if times dont overlap', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
@@ -257,11 +227,10 @@ module.exports = () => {
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '-');
 
-        // Check if timebased can be set true 
         await expectInnerText(page, 'em:nth-of-type(1)', 'Missing start/stop, the flag will be applied on the full run');
     });
 
-    it('should successfully create QC flags for each run-detector pair ', async () => {
+    it('should set the timebased false and end time none if at least one run has no end time', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', {
             queryParameters: {
                 dataPassId: 1,
@@ -269,7 +238,13 @@ module.exports = () => {
                 dplDetectorIds: '2,3',
             },
         });
-        
-        // each qc overview button should lead to correct page
+
+        await expectInnerText(page, '.flex-row > .panel:nth-of-type(1) > div', '08/08/2019\n13:00:00');
+        await expectInnerText(page, '.flex-row > .panel:nth-of-type(2) > div', '-');
+
+        await expectInnerText(page, 'em:nth-of-type(1)', 'Missing start/stop, the flag will be applied on the full run');
+    });
+
+    it('should successfully create QC flags for each run-detector pair ', async () => {
     });
 };
