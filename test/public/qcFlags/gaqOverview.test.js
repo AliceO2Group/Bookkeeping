@@ -57,9 +57,9 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'GAQ');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22b_apass1');
-        await expectInnerText(page, 'h2:nth-of-type(3)', '106');
+        await expectInnerText(page, '#breadcrumb-header', 'GAQ');
+        await expectInnerText(page, '#breadcrumb-data-pass-name', 'LHC22b_apass1');
+        await expectInnerText(page, '#breadcrumb-run-number', '106');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -98,7 +98,7 @@ module.exports = () => {
             ],
         ]);
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a', true));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-EMC a', true));
         await pressElement(page, '#flag-type-panel .popover-trigger', true);
         await pressElement(page, '#flag-type-dropdown-option-3', true);
@@ -106,7 +106,7 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2) a', true));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
 
         await waitForTableLength(page, 7);
