@@ -435,7 +435,6 @@ module.exports = () => {
                 comment: 'VERY INTERESTING REMARK',
                 flagTypeId: 2,
                 runNumber: 106,
-                simulationPassId: 1,
                 dataPassId: 1,
                 dplDetectorId: 1,
                 runDetectors: [
@@ -452,10 +451,18 @@ module.exports = () => {
                 {
                     status: '422',
                     source: {
-                        pointer: '/data/attributes/body',
+                        pointer: '/data/attributes/body/runNumber',
                     },
                     title: 'Invalid Attribute',
-                    detail: '"runNumber" is not allowed when "runDetectors" is provided.',
+                    detail: 'runNumber is not allowed when runDetectors is provided.',
+                },
+                {
+                    status: '422',
+                    source: {
+                        pointer: '/data/attributes/body/dplDetectorId',
+                    },
+                    title: 'Invalid Attribute',
+                    detail: 'dplDetectorId is not allowed when runDetectors is provided.',
                 },
             ]);
         });
