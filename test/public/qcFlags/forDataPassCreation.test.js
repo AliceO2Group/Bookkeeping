@@ -200,12 +200,6 @@ module.exports = () => {
         await page.waitForSelector('input', { hidden: true });
     });
 
-
-
-
-
-
-
     it('should allow multiple runs and detectors to be selected', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 5,
