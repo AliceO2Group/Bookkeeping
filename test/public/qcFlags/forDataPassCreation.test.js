@@ -209,38 +209,62 @@ module.exports = () => {
     it('should allow multiple runs and detectors to be selected', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
             dataPassId: 5,
-            runNumberDetectorMap: '56:7;105:1',
+            runNumberDetectorMap: '56:7,4;54:4',
         } });
-    });
 
-    it('should merge the start times to the minimum and end times to watch for overlap', async () => {
-    });
-
-    it('should set the timebased false and display no overlap if times dont overlap', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 1,
-                runNumbers: '105,106',
-                dplDetectorIds: '2,3',
-            },
+        await expectRowValues(page, 1, {
+            runNumber: '56',
+            detectorName: 'ITS,TPC',
         });
-
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '-');
-
-        await expectInnerText(page, 'em:nth-of-type(1)', 'Missing start/stop, the flag will be applied on the full run');
-    });
-
-    it('should set the timebased unavailable if at least one run has no end time', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 1,
-                runNumbers: '105,106',
-                dplDetectorIds: '2,3',
-            },
+        await expectRowValues(page, 2, {
+            runNumber: '54',
+            detectorName: 'TPC',
         });
     });
 
-    it('should successfully create QC flags for each run-detector pair ', async () => {
+    it('should have timebased false and display no overlap if times dont overlap', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
+            dataPassId: 3,
+            runNumberDetectorMap: '54:4;56:4',
+        } });
+
+        await expectInnerText(page, 'div.panel.flex-grow.items-center > div > em', "The selected runs don't have overlapping start/stop times");
+        await page.waitForSelector('input[type="time"]', { hidden: true });
+    });
+
+    it('should set the timebased unavailable if at least one run has no end time and multiple are selected', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
+            dataPassId: 3,
+            runNumberDetectorMap: '54:4;49:4',
+        } });
+
+        await expectInnerText(
+            page,
+            'div.panel.flex-grow.items-center > div > em',
+            'Missing start/stop, the flag will be applied on the full run',
+        );
+        await page.waitForSelector('#time-based-toggle[disabled]');
+    });
+
+    it('should successfully create QC flags for multiple detectors and runs', async () => {
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 5,
+                runNumberDetectorMap: '56:4,7;54:4',
+            },
+        });
+
+        await page.waitForSelector('button#submit[disabled]');
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-2', true);
+        await page.waitForSelector('button#submit[disabled]', { hidden: true });
+
+        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
+        expectUrlParams(page, {
+            page: 'runs-per-data-pass',
+            dataPassId: '5',
+        });
+
+        expect(page.$$('.select-multi-flag')).to.have.lengthOf(3);
     });
 };
