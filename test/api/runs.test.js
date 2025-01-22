@@ -149,6 +149,25 @@ module.exports = () => {
             expect(runs).to.lengthOf(2);
         });
 
+        it('should successfully filter on run number range', async () => {
+            const response = await request(server).get('/api/runs?filter[runNumbers]=1-5,8,12,20-30');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(18);
+        });
+
+        it('should return 400 if range exceeds maximum of 100', async () => {
+            const runNumberRange = '1-108';
+            const MAX_RANGE_SIZE = 100;
+            const response = await request(server).get(`/api/runs?filter[runNumbers]=${runNumberRange}`);
+
+            expect(response.status).to.equal(400);
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`Given range exceeds max size of ${MAX_RANGE_SIZE} runs: ${runNumberRange}`);
+        });
+
         it('should return 400 if the calibration status filter is invalid', async () => {
             {
                 const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
