@@ -109,7 +109,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the log-reply form', async () => {
-        await goToPage(page, 'log-reply&parentLogId=1');
+        await goToPage(page, 'log-reply', { queryParameters: { parentLogId: '1' } });
 
         await expectInnerText(page, 'h3', 'Reply to: First entry');
 
@@ -122,7 +122,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
-        await goToPage(page, 'log-reply&parentLogId=119');
+        await goToPage(page, 'log-reply', { queryParameters: { parentLogId: '119' } });
 
         await expectInputValue(page, 'input#run-numbers', '2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22');
         await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
@@ -130,7 +130,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill all inputs with provided full parameters.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', lhcFillNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -138,7 +138,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill runNumbers only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '');
@@ -146,7 +146,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill environmentIds only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&environmentIds=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -154,7 +154,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the lhcFillNumbers only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&lhcFillNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
@@ -162,7 +162,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&environmentIds=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -170,7 +170,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '');
@@ -178,7 +178,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
-        await goToPage(page, 'log-create&environmentIds=1,2,3&lhcFillNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { environmentIds: '1,2,3', lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -187,7 +187,7 @@ module.exports = () => {
 
     it('Should set the correct template when templateKey is specified.', async () => {
         const templateKey = 'on-call';
-        await goToPage(page, `log-create&templateKey=${templateKey}`);
+        await goToPage(page, 'log-create', { queryParameters: { templateKey } });
 
         await page.waitForSelector('select');
         const selectedOption = await page.evaluate(() => document.querySelector('select').value);
@@ -200,8 +200,8 @@ module.exports = () => {
         const issueDescription = 'This is a sample issue description';
         await goToPage(
             page,
-            `log-create&templateKey=${templateKey}&detectorOrSubsystem=${detectorOrSubsystem}&` +
-            `issueDescription=${issueDescription}`,
+            'log-create',
+            { queryParameters: { templateKey, detectorOrSubsystem, issueDescription } },
         );
 
         await expectInputValue(page, 'input#run-numbers', '');
@@ -214,8 +214,17 @@ module.exports = () => {
     it('Should autofill all inputs with provided full parameters.', async () => {
         await goToPage(
             page,
-            'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3&templateKey=on-call&detectorOrSubsystem=ALL&' +
-            'issueDescription=This is a sample issue description',
+            'log-create',
+            {
+                queryParameters: {
+                    runNumbers: '1,2,3',
+                    lhcFillNumbers: '1,2,3',
+                    environmentIds: '1,2,3',
+                    templateKey: 'on-call',
+                    detectorOrSubsystem: 'ALL',
+                    issueDescription: 'This is a sample issue description',
+                },
+            },
         );
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
