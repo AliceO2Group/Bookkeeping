@@ -718,5 +718,6 @@ module.exports = () => {
         expect(run.readoutCfgUri).to.equal('file:///local/replay/2024-04-17-pp-650khz-synt-4tf/readout-replay-24g-dd40.cfg');
         expect(run.userIdO2Start).to.equal(1);
         expect(run.userIdO2Stop).to.equal(2);
+        expect(run.flpRoles.map(({ name }) => name)).to.deep.equal(['fake-flp1', 'fake-flp2', 'fake-ctp-host']);
     });
 };
