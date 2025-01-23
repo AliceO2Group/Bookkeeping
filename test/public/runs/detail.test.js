@@ -418,6 +418,18 @@ module.exports = () => {
         expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
     });
 
+    it('should successfully display user that started run', async () => {
+        await goToRunDetails(page, 1);
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#user-start-tooltip .popover-trigger'));
+        expect(popoverContent).to.equal('Run started by John Doe');
+    });
+
+    it('should successfully display user that stopped run', async () => {
+        await goToRunDetails(page, 1);
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#user-stop-tooltip .popover-trigger'));
+        expect(popoverContent).to.equal('Run stopped by Jan Jansen');
+    });
+
     it('should display OFF in the nEPNs field when EPNs is null', async () => {
         await goToRunDetails(page, 3);
         await expectInnerText(page, '#n-epns', '# EPNs\nOFF');
