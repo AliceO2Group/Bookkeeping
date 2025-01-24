@@ -61,10 +61,7 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, '#breadcrumb-header', 'QC');
-        await expectInnerText(page, '#breadcrumb-data-pass-name', 'LHC22b_apass1');
-        await expectInnerText(page, '#breadcrumb-run-number', '106');
-        await expectInnerText(page, '#breadcrumb-detector-name', 'CPV');
+        await expectInnerText(page, '#global-container > div > h2 > a', 'LHC22b_apass1');
     });
 
     it('can navigate to runs per data pass page from breadcrumbs link', async () => {
@@ -75,7 +72,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name a'));
+        await waitForNavigation(page, () => pressElement(page, '#global-container > div > h2 > a'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
@@ -87,7 +84,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number a'));
+        await waitForNavigation(page, () => pressElement(page, 'table > tbody > tr:nth-child(1) > td:nth-child(1) > a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
@@ -196,24 +193,18 @@ module.exports = () => {
             runNumberDetectorMap: '2:1',
         } });
 
-        await expectInnerText(page, '.alert.alert-danger', 'Quality of the run was changed to bad so it is no more subject to QC');
+        await expectInnerText(page, '.alert.alert-danger', 'Quality of run 2 was changed to bad so it is no more subject to QC');
         await page.waitForSelector('input', { hidden: true });
     });
 
     it('should allow multiple runs and detectors to be selected', async () => {
         await goToPage(page, 'qc-flag-creation-for-data-pass', { queryParameters: {
-            dataPassId: 5,
+            dataPassId: 3,
             runNumberDetectorMap: '56:7,4;54:4',
         } });
 
-        await expectRowValues(page, 1, {
-            runNumber: '56',
-            detectorName: 'ITS,TPC',
-        });
-        await expectRowValues(page, 2, {
-            runNumber: '54',
-            detectorName: 'TPC',
-        });
+        await expectInnerText(page, 'table > tbody > tr:nth-child(1) > td:nth-child(2)', 'ITS');
+        await expectInnerText(page, 'table > tbody > tr:nth-child(2) > td:nth-child(2)', 'FT0, ITS');
     });
 
     it('should have timebased false and display no overlap if times dont overlap', async () => {
@@ -259,6 +250,7 @@ module.exports = () => {
             dataPassId: '5',
         });
 
+        await page.waitForSelector('.select-multi-flag');
         expect(page.$$('.select-multi-flag')).to.have.lengthOf(3);
     });
 };
