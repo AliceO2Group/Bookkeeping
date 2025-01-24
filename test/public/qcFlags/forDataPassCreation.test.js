@@ -72,7 +72,7 @@ module.exports = () => {
             },
         });
 
-        await waitForNavigation(page, () => pressElement(page, '#global-container > div > h2 > a'));
+        await waitForNavigation(page, () => pressElement(page, '#data-pass-id-breadcrumbs'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
