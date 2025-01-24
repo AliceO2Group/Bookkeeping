@@ -155,7 +155,7 @@ module.exports = () => {
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
         await expectLink(page, 'tr#row106 .column-EMC a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=106&dplDetectorId=2&dataPassId=1',
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumberDetectorsMap=106:2&dataPassId=1',
             innerText: 'QC',
         });
 
@@ -453,7 +453,7 @@ module.exports = () => {
         await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('tr#row2 .column-CPV .popover-trigger'));
         const popoverContent = await getPopoverContent(await page.$(popoverSelector));
-        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
+        expect(popoverContent).to.be.equal('Quality of run 2 was changed to bad so it is no more subject to QC');
     });
 
     it('should successfully change ready_for_skimming status', async () => {
