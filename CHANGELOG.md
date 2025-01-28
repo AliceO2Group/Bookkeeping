@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.5.0)
+* Notable changes for users:
+  * Added nTF orbits to runs updated runs API endpoints accordingly
+  * Added a global error page, displaying amongst other 404 error
+* Notable changes for developers:
+  * Fixed randomly failing runs test based on timerange selection (start/stop)
+  * Fixed randomly failing QC tests
+  * Updated docker ca-certificate dependency
+  * Allow to prefill of on-call template through URL parameters:
+    * In log creation page, query parameters `templateKey`, `issueDescription`, `detectorOrSubsystem` allow
+      respectively to pre-chose a log template and define the issue description and detector or subsystem in the
+      case of on-call template
+
+## [1.4.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.1)
+* Notable changes for developers:
+  * Fixed the runs start/stop extraction from AliECS kafka messages
+  * Added more logs to external service synchronization (CCDB, MonALISA)
+
+## [1.4.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.0)
+* Notable changes for users:
+  * Fixed tag color not being updated when switching to run details after updating a tag
+  * Environment variable ENABLE_HOUSEKEEPING must be set to true (case-insensitive) to actually enable housekeeping
+  * Use time range picker for runs start & stop filtering
+  * Run details page has been modernized
+* Notable changes for developers:
+  * Runs and QC flags timestamps now store milliseconds
+  * Fixed users that start/stop runs not being extracted from kafka message
+  * Fixed TF timestamps being ignored when creating QC flags
+  * Fixed randomly failing test in FLP frontend tests
+  * Use coalesced run time in raw SQL querries
+  * Removed the max number of retries for kafka connection
+
 ## [1.3.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.3.0)
 * Notable changes for users:
   * Fixed physical constants values which resulted in wrong AVG center of mass energy

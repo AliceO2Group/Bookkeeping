@@ -10,22 +10,8 @@
  *  granted to it by virtue of its status as an Intergovernmental Organization
  *  or submit itself to any jurisdiction.
  */
+const ErrorSuite = require('./error.test');
 
-import { getRunQcGuiLinkUrl } from '../../../services/externalRouting/getRunQcGuiLinkUrl.js';
-import { h } from '/js/src/index.js';
-
-/**
- * Display a QC GUI link
- *
- * @param {Run} run the run to which QC GUI link should relate to
- * @return {Component} the QC GUI link
- */
-export const qcGuiLinkComponent = (run) => {
-    const qcGuiLinkUrl = getRunQcGuiLinkUrl(run);
-
-    if (!qcGuiLinkUrl) {
-        return null;
-    }
-
-    return h('a.external-link', { href: qcGuiLinkUrl, target: '_blank' }, 'QCG');
+module.exports = () => {
+    describe('Error Page', ErrorSuite);
 };

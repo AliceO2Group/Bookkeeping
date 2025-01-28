@@ -49,8 +49,8 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'Anchored MC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22a_apass1');
+        await expectInnerText(page, '#breadcrumb-header', 'Anchored MC');
+        await expectInnerText(page, '#breadcrumb-simulation-pass-name', 'LHC22a_apass1');
     });
 
     it('shows correct datatypes in respective columns', async () => {

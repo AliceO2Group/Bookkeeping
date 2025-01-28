@@ -149,6 +149,25 @@ module.exports = () => {
             expect(runs).to.lengthOf(2);
         });
 
+        it('should successfully filter on run number range', async () => {
+            const response = await request(server).get('/api/runs?filter[runNumbers]=1-5,8,12,20-30');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            expect(runs).to.lengthOf(18);
+        });
+
+        it('should return 400 if range exceeds maximum of 100', async () => {
+            const runNumberRange = '1-108';
+            const MAX_RANGE_SIZE = 100;
+            const response = await request(server).get(`/api/runs?filter[runNumbers]=${runNumberRange}`);
+
+            expect(response.status).to.equal(400);
+            const { errors: [error] } = response.body;
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`Given range exceeds max size of ${MAX_RANGE_SIZE} runs: ${runNumberRange}`);
+        });
+
         it('should return 400 if the calibration status filter is invalid', async () => {
             {
                 const response = await request(server).get('/api/runs?filter[calibrationStatuses]=invalid');
@@ -1203,6 +1222,7 @@ module.exports = () => {
                     tfFileSize: BIG_INT_NUMBER,
                     otherFileCount: 123156132,
                     otherFileSize: BIG_INT_NUMBER,
+                    nTfOrbits: BIG_INT_NUMBER,
                     crossSection: 0.1,
                     triggerEfficiency: 0.2,
                     triggerAcceptance: 0.3,
@@ -1235,6 +1255,7 @@ module.exports = () => {
             expect(data.tfFileSize).to.equal(BIG_INT_NUMBER);
             expect(data.otherFileCount).to.equal(123156132);
             expect(data.otherFileSize).to.equal(BIG_INT_NUMBER);
+            expect(data.nTfOrbits).to.equal(BIG_INT_NUMBER);
             expect(data.triggerEfficiency).to.equal(0.2);
             expect(data.triggerAcceptance).to.equal(0.3);
             expect(data.phaseShiftAtStartBeam1).to.equal(0.4);
