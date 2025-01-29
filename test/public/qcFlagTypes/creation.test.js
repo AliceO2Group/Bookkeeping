@@ -82,7 +82,7 @@ module.exports = () => {
         // Expect newly created flag to appear and have correct color
         await expectAttributeValue(
             page,
-            '#row21-name-text .ggbadge',
+            '#row21-name-text .badge',
             'style',
             'border-color: rgb(240, 0, 240); background-color: rgb(240, 0, 240); color: white;',
         );
