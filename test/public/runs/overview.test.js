@@ -37,6 +37,7 @@ const {
     expectLink,
     expectUrlParams,
     expectAttributeValue,
+    getColumnCellsInnerTexts,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -474,22 +475,13 @@ module.exports = () => {
         expect(await runDurationOperator.evaluate((element) => element.value)).to.equal('=');
 
         const runDurationLimitSelector = '#duration-limit';
-        const runDurationLimit = await page.$(runDurationLimitSelector) || null;
-
-        await page.waitForSelector(runDurationLimitSelector);
-        expect(runDurationLimit).to.not.be.null;
-
-        await page.focus(runDurationLimitSelector);
-        await page.keyboard.type('1500');
+        await fillInput(page, runDurationLimitSelector, '1500');
         await waitForTableLength(page, 3);
 
         await page.select(runDurationOperatorSelector, '=');
         await waitForTableLength(page, 3);
 
-        let runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
-            const rowId = row.id;
-            return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
-        }));
+        let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
 
         expect(runDurationList.every((runDuration) => {
             const time = runDuration.replace('*', '');
@@ -1053,12 +1045,12 @@ module.exports = () => {
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
-                + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
         await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
             href: 'http://localhost:8082/' +
-                '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
+                  '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
             innerText: 'QCG',
         });
 
