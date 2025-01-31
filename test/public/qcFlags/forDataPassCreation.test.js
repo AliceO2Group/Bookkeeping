@@ -201,6 +201,16 @@ module.exports = () => {
 
         await expectInnerText(page, '.alert.alert-danger', 'Quality of run 2 was changed to bad so it is no more subject to QC');
         await page.waitForSelector('input', { hidden: true });
+
+        await goToPage(page, 'qc-flag-creation-for-data-pass', {
+            queryParameters: {
+                dataPassId: 2,
+                runNumberDetectorsMap: '2:1;55:7',
+            },
+        });
+
+        await expectInnerText(page, '.alert.alert-danger', 'Quality of run 2 was changed to bad so it is no more subject to QC');
+        await page.waitForSelector('input', { hidden: true });
     });
 
     it('should allow multiple runs and detectors to be selected', async () => {
