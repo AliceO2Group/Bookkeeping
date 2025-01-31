@@ -407,6 +407,10 @@ module.exports.expectInnerText = async (page, selector, innerText) => {
     } catch (_) {
         const actualInnerText = await getInnerText(elementHandle);
         await elementHandle.dispose();
+        if (actualInnerText === innerText) {
+            // Timeout issue resolved by itself, simply return (kind of retry for free)
+            return;
+        }
         throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${actualInnerText}"`);
     }
     await elementHandle.dispose();
