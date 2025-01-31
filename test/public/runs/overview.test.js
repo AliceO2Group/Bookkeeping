@@ -858,13 +858,9 @@ module.exports = () => {
     it('should correctly filter by EOR reason description', async () => {
         await waitForTableLength(page, 8);
 
-        // Expect the EOR description filter to exist
-        const eorDescriptionInput = await page.$('#eorDescription');
-        expect(eorDescriptionInput).to.exist;
-
         // Expect there to be one result that contains a certain description
         const descriptionInput = 'some';
-        await fillInput(page, '#eorDescription', descriptionInput);
+        await fillInput(page, '#eorDescription', descriptionInput, ['change']);
         await waitForTableLength(page, 2);
 
         let eorReasons = await page.$$('table td[id$="eorReasons"]');
@@ -879,15 +875,12 @@ module.exports = () => {
         expect(eorReasons).has.lengthOf(0);
 
         // When we reset the filters, the input field should be empty
-        await page.click('#reset-filters');
+        await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 8);
         eorReasons = await page.$$('table td[id$="eorReasons"]');
         expect(eorReasons.length).to.be.greaterThan(1);
 
-        const inputText = await (await eorDescriptionInput.getProperty('value')).jsonValue();
-        expect(inputText).to.equal('');
-
-        await pressElement(page, '#reset-filters');
+        await expectInputValue(page, '#eorDescription', '');
     });
 
     it('should successfully display runs export button', async () => {
