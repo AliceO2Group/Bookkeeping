@@ -101,7 +101,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-EMC a', true));
         await pressElement(page, '#flag-type-panel .popover-trigger', true);
-        await pressElement(page, '#flag-type-dropdown-option-3', true);
+        await pressElement(page, '#flag-type-option-3', true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
