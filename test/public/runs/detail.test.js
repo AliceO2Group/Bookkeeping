@@ -97,10 +97,10 @@ module.exports = () => {
     it('successfully changed run tags in EDIT mode', async () => {
         await pressElement(page, '#edit-run');
         await pressElement(page, '#tags .popover-trigger');
-        await pressElement(page, '#tags-dropdown-option-CPV');
+        await pressElement(page, '#tags-option-CPV');
         await pressElement(page, '#save-run');
         await pressElement(page, '#edit-run');
-        await page.waitForSelector('#tags-dropdown-option-CPV:checked');
+        await page.waitForSelector('#tags-option-CPV:checked');
         await pressElement(page, '#cancel-run');
         await page.waitForSelector('#edit-run');
     });

@@ -295,8 +295,8 @@ module.exports = () => {
         await page.waitForSelector('.detectors-filter .dropdown-trigger');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
-        await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
-        await pressElement(page, '#detector-filter-dropdown-option-FT0', true);
+        await pressElement(page, '#detector-filter-option-ITS', true);
+        await pressElement(page, '#detector-filter-option-FT0', true);
         await waitForTableLength(page, 4);
 
         table = await page.$$('tbody tr');
@@ -322,14 +322,14 @@ module.exports = () => {
 
         // Open filter toggle and wait for the dropdown to be visible
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-FOOD', true);
-        await pressElement(page, '#tag-dropdown-option-RUN', true);
+        await pressElement(page, '#tag-option-FOOD', true);
+        await pressElement(page, '#tag-option-RUN', true);
         await waitForTableLength(page, 1);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await pressElement(page, '.tags-filter .dropdown-trigger');
-        await pressElement(page, '#tag-dropdown-option-RUN', true);
-        await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
+        await pressElement(page, '#tag-option-RUN', true);
+        await pressElement(page, '#tag-option-TEST-TAG-41', true);
         await waitForTableLength(page, 2);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of', true);
@@ -340,7 +340,7 @@ module.exports = () => {
     it('should successfully filter on definition', async () => {
         await waitForTableTotalRowsCountToEqual(page, 108);
 
-        const filterInputSelectorPrefix = '#run-definition-checkbox-';
+        const filterInputSelectorPrefix = '#run-definition-option-';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
         const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
         const technicalFilterSelector = `${filterInputSelectorPrefix}TECHNICAL`;
@@ -511,7 +511,7 @@ module.exports = () => {
 
     it('Should successfully filter runs by their run quality', async () => {
         await goToPage(page, 'run-overview');
-        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
+        const filterInputSelectorPrefix = '#run-quality-option-';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
         const testFilterSelector = `${filterInputSelectorPrefix}test`;
 
@@ -711,8 +711,8 @@ module.exports = () => {
         await waitForTableLength(page, 8);
 
         await pressElement(page, '.runType-filter .dropdown-trigger');
-        await pressElement(page, '#run-types-dropdown-option-2', true);
-        await pressElement(page, '#run-types-dropdown-option-14', true);
+        await pressElement(page, '#run-types-option-2', true);
+        await pressElement(page, '#run-types-option-14', true);
         await waitForTableLength(page, 5);
 
         await pressElement(page, '#reset-filters');
@@ -937,7 +937,7 @@ module.exports = () => {
         // Second export
 
         // Apply filtering
-        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
+        const filterInputSelectorPrefix = '#run-quality-option-';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
 
         await pressElement(page, '#openFilterToggle');
