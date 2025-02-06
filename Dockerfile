@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 EXPOSE 4000
 
 RUN apk add --no-cache \
-    bash
+    bash=5.2.37-r0
 
 #
 # ---- Development Dependencies ----
