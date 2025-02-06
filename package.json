@@ -19,7 +19,7 @@
     "docker-update": "node scripts/update-dockerfile.js"
   },
   "engines": {
-    "node": ">= 18.x"
+    "node": ">= 22.x"
   },
   "dependencies": {
     "@aliceo2/web-ui": "2.7.0",
