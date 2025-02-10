@@ -326,6 +326,13 @@ module.exports = () => {
         ]);
     });
 
+    it('should successfully navigate to the trigger configuration panel', async () => {
+        await goToRunDetails(page, 1);
+
+        await pressElement(page, '#trigger-configuration-tab');
+        await expectInnerText(page, '#trigger-configuration-pane .panel', 'Raw\nTrigger\nConfiguration');
+    });
+
     it('should show lhc data in normal mode', async () => {
         await expectInnerText(page, '#fill-number', 'Fill 5');
     });

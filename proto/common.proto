@@ -92,6 +92,7 @@ message Run {
   optional int64 timeTrgStart = 21;
   // Trigger value
   optional string triggerValue = 22;
+  optional string triggerRawConfiguration = 32;
   // The full name or file location of the odcTopology
   optional string odcTopologyFullName = 23;
   optional bool ddFlp = 24;
