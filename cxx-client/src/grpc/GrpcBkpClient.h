@@ -30,7 +30,7 @@ class GrpcBkpClient : public o2::bkp::api::BkpClient
 
   const std::unique_ptr<QcFlagServiceClient>& qcFlag() const override;
 
-  const std::unique_ptr<TriggerCountersServiceClient>& triggerCounters() const override;
+  const std::unique_ptr<CtpTriggerCountersServiceClient>& ctpTriggerCounters() const override;
 
   const std::unique_ptr<RunServiceClient>& run() const override;
 
@@ -38,7 +38,7 @@ class GrpcBkpClient : public o2::bkp::api::BkpClient
   std::unique_ptr<::o2::bkp::api::FlpServiceClient> mFlpClient;
   std::unique_ptr<::o2::bkp::api::DplProcessExecutionClient> mDplProcessExecutionClient;
   std::unique_ptr<::o2::bkp::api::QcFlagServiceClient> mQcFlagClient;
-  std::unique_ptr<::o2::bkp::api::TriggerCountersServiceClient> mTriggerCountersClient;
+  std::unique_ptr<::o2::bkp::api::CtpTriggerCountersServiceClient> mCtpTriggerCountersClient;
   std::unique_ptr<::o2::bkp::api::RunServiceClient> mRunClient;
 };
 } // namespace o2::bkp::api::grpc
