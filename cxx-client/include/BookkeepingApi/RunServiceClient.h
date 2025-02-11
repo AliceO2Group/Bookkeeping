@@ -22,7 +22,7 @@ class RunServiceClient
  public:
   virtual ~RunServiceClient() = default;
 
-  virtual void setRawTriggerConfiguration(int runNumber, std::string rawTriggerConfiguration) = 0;
+  virtual void setRawCtpTriggerConfiguration(int runNumber, std::string rawCtpTriggerConfiguration) = 0;
 };
 } // namespace o2::bkp::api
 

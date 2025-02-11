@@ -67,8 +67,8 @@ int main(int argc, char** argv)
     std::cout << "Successfully updated trigger counters" << std::endl;
 
     // Test run update
-    client->run()->setRawTriggerConfiguration(1, "A\nnew raw\nconfiguration");
-    std::cout << "Successfully updated run raw configuration" << std::endl;
+    client->run()->setRawCtpTriggerConfiguration(1, "A\nnew raw\nCTP trigger configuration");
+    std::cout << "Successfully updated run raw CTP trigger configuration" << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);

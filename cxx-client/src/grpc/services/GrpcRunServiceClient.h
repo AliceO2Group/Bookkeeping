@@ -27,7 +27,7 @@ class GrpcRunServiceClient : public RunServiceClient
   explicit GrpcRunServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
   ~GrpcRunServiceClient() override = default;
 
-  void setRawTriggerConfiguration(int runNumber, std::string rawTriggerConfiguration) override;
+  void setRawCtpTriggerConfiguration(int runNumber, std::string rawCtpTriggerConfiguration) override;
 
  private:
   std::unique_ptr<o2::bookkeeping::RunService::Stub> mStub;

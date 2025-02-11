@@ -25,13 +25,13 @@ GrpcRunServiceClient::GrpcRunServiceClient(const std::shared_ptr<::grpc::Channel
 {
   mStub = o2::bookkeeping::RunService::NewStub(channel);
 }
-void GrpcRunServiceClient::setRawTriggerConfiguration(int runNumber, std::string rawTriggerConfiguration) {
+void GrpcRunServiceClient::setRawCtpTriggerConfiguration(int runNumber, std::string rawCtpTriggerConfiguration) {
   ClientContext context{};
   RunUpdateRequest updateRequest{};
   Run updatedRun;
 
   updateRequest.set_runnumber(runNumber);
-  updateRequest.set_triggerrawconfiguration(rawTriggerConfiguration);
+  updateRequest.set_rawctptriggerconfiguration(rawCtpTriggerConfiguration);
 
   auto status = mStub->Update(&context, updateRequest, &updatedRun);
   if (!status.ok()) {

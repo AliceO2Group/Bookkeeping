@@ -685,11 +685,11 @@ module.exports = () => {
             { runNumber },
             {
                 runPatch: {
-                    triggerRawConfiguration: 'Raw\nTrigger\nConfiguration',
+                    rawCtpTriggerConfiguration: 'Raw\nTrigger\nConfiguration',
                 },
             },
         );
-        expect(run.triggerRawConfiguration).to.equal('Raw\nTrigger\nConfiguration');
+        expect(run.rawCtpTriggerConfiguration).to.equal('Raw\nTrigger\nConfiguration');
     });
 
     it('should fetch distinct aliceCurrent levels', async () => {
