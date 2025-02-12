@@ -193,6 +193,12 @@ module.exports = () => {
                     badEffectiveRunCoverage: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                 },
+                56: {
+                    badEffectiveRunCoverage: 1,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
+                    mcReproducible: true,
+                    missingVerificationsCount: 4,
+                },
             });
         });
 
