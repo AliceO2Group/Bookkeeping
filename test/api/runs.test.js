@@ -1346,7 +1346,7 @@ module.exports = () => {
         it('should fetch distinct aliceCurrent levels', async () => {
             const response = await request(server).get('/api/runs/aliceMagnetsCurrentLevels');
             expect(response.status).to.be.equal(200);
-            expect(response.body.data).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
+            expect(response.body.data).have.all.deep.members([{ l3: 20003, dipole: 0 }, { l3: 30003, dipole: 0 }]);
         });
     });
 };
