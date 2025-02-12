@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     // Test QC flag creation
     auto dataPassQcFlagIds = client->qcFlag()->createForDataPass(
       55,
-      "LHC22b_apass2",
+      "skimming",
       "FT0",
       { { 2, 1565280000000, 1565287200000, "FT0/Check" },
         { .flagTypeId = 11, .origin = "FT0/task" } });
@@ -65,6 +65,10 @@ int main(int argc, char** argv)
     std::cout << "Successfully created trigger counters" << std::endl;
     client->triggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 1234, 10, 20, 30, 40, 50, 60);
     std::cout << "Successfully updated trigger counters" << std::endl;
+
+    // Test run update
+    client->run()->setRawCtpTriggerConfiguration(1, "A\nnew raw\nCTP trigger configuration");
+    std::cout << "Successfully updated run raw CTP trigger configuration" << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);

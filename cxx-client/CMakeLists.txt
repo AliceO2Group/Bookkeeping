@@ -67,6 +67,9 @@ add_library(BookkeepingApi SHARED
         include/BookkeepingApi/TriggerCountersServiceClient.h
         src/grpc/services/GrpcTriggerCountersServiceClient.h
         src/grpc/services/GrpcTriggerCountersServiceClient.cxx
+        include/BookkeepingApi/RunServiceClient.h
+        src/grpc/services/GrpcRunServiceClient.h
+        src/grpc/services/GrpcRunServiceClient.cxx
 )
 
 target_include_directories(BookkeepingApi
