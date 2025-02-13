@@ -4,11 +4,11 @@ package o2.bookkeeping;
 
 import 'common.proto';
 
-service TriggerCountersService {
-  rpc CreateOrUpdateForRun(TriggerCounterCreateOrUpdateRequest) returns (Empty);
+service CtpTriggerCountersService {
+  rpc CreateOrUpdateForRun(CtpTriggerCounterCreateOrUpdateRequest) returns (Empty);
 }
 
-message TriggerCounterCreateOrUpdateRequest {
+message CtpTriggerCounterCreateOrUpdateRequest {
   uint32 runNumber = 1;
   string className = 2;
   int64 timestamp = 3;

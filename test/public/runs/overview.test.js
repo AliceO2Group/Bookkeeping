@@ -54,7 +54,7 @@ module.exports = () => {
 
     let table;
     let firstRowId;
-    const runNumberInputSelector = '.runNumber-filter input';
+    const filterPanelRunNumbersInputSelector = '.runNumber-filter input';
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -268,21 +268,16 @@ module.exports = () => {
         await goToPage(page, 'run-overview');
 
         await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector(runNumberInputSelector);
 
         // Run 106 has detectors and tags that overflow
-        await page.type(runNumberInputSelector, '106');
-        await fillInput(page, runNumberInputSelector, '106');
+        await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
         await waitForTableLength(page, 1);
 
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 3);
 
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector(runNumberInputSelector);
-
         // Run 1 has eor reasons that overflow
-        await page.type(runNumberInputSelector, '1');
+        await fillInput(page, filterPanelRunNumbersInputSelector, '1,1', ['change']);
         await waitForTableLength(page, 1);
 
         await checkColumnBalloon(page, 1, 16);
@@ -345,7 +340,7 @@ module.exports = () => {
     it('should successfully filter on definition', async () => {
         await waitForTableTotalRowsCountToEqual(page, 108);
 
-        const filterInputSelectorPrefix = '#runDefinitionCheckbox';
+        const filterInputSelectorPrefix = '#run-definition-checkbox-';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
         const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
         const technicalFilterSelector = `${filterInputSelectorPrefix}TECHNICAL`;
@@ -364,10 +359,10 @@ module.exports = () => {
             // Wait for the table to have the proper size
             await waitForTableLength(page, size);
 
-            const definitions = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
-                const rowId = row.id;
-                return document.querySelector(`#${rowId}-definition-text`).innerText.split('\n')[0];
-            }));
+            const definitions = await page.$$eval(
+                '.column-definition div div div:first-child',
+                (rows) => rows.map((row) => row.innerText),
+            );
 
             try {
                 expect(definitions.every((definition) => authorizedRunDefinition.includes(definition))).to.be.true;
@@ -389,7 +384,7 @@ module.exports = () => {
         await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
+        await checkTableSizeAndDefinition(12, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
         await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);
@@ -622,12 +617,13 @@ module.exports = () => {
 
         /**
          * This is the sequence to test filtering the runs on run numbers.
+         *
+         * @param {string} selector the filter input selector
          * @return {void}
          */
-        const filterOnRun = async () => {
-            await page.waitForSelector(runNumberInputSelector);
-            expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
-            await fillInput(page, runNumberInputSelector, inputValue);
+        const filterOnRun = async (selector) => {
+            await expectAttributeValue(page, selector, 'placeholder', 'e.g. 534454, 534455...');
+            await fillInput(page, selector, inputValue, ['change']);
             await waitForTableLength(page, 2);
             // Validate amount in the table
             const table = await page.$$('tbody tr');
@@ -636,18 +632,17 @@ module.exports = () => {
         };
 
         // First filter validation on the main page.
-        await filterOnRun();
+        await filterOnRun('#runOverviewFilter .run-numbers-filter');
 
         // Validate if the filter tab value is equal to the main page value.
-        await page.$eval('#openFilterToggle', (element) => element.click());
-        expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
+        await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
 
         // Test if it works in the filter tab.
-        await goToPage(page, 'run-overview');
-        await page.$eval('#openFilterToggle', (element) => element.click());
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#reset-filters');
 
         // Run the same test sequence on the filter tab.
-        await filterOnRun();
+        await filterOnRun(filterPanelRunNumbersInputSelector);
     });
 
     it('should successfully filter on a single run number and inform the user about it', async () => {
@@ -656,46 +651,36 @@ module.exports = () => {
 
         /**
          * This is the sequence to test filtering the runs on run numbers.
+         *
+         * @param {string} selector the filter input selector
          * @return {void}
          */
-        const filterOnRun = async () => {
-            await page.waitForSelector(runNumberInputSelector);
-            expect(await page.$eval(runNumberInputSelector, (input) => input.placeholder)).to.equal('e.g. 534454, 534455...');
-            await fillInput(page, runNumberInputSelector, inputValue);
+        const filterOnRun = async (selector) => {
+            await expectAttributeValue(page, selector, 'placeholder', 'e.g. 534454, 534455...');
+            await fillInput(page, selector, inputValue, ['change']);
             await waitForTableLength(page, 8);
-            // Validate amount in the first page table
-            const firstPageTable = await page.$$('tbody tr');
-            expect(firstPageTable.length).to.equal(8);
 
-            const firstPageRows = ['row108', 'row107', 'row106', 'row105', 'row104', 'row103', 'row102', 'row101'];
-            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(firstPageRows);
+            // Results are filtered over 2 pages
+            await expectColumnValues(page, 'runNumber', ['108', '107', '106', '105', '104', '103', '102', '101']);
 
-            await page.$eval('#pageMoveRight', (element) => element.click());
+            await pressElement(page, '#pageMoveRight', true);
             await waitForTableLength(page, 2);
 
-            // Validate amount in the second page table
-            const secondPageTable = await page.$$('tbody tr');
-            expect(secondPageTable.length).to.equal(2);
-
-            const secondPageRows = ['row100', 'row10'];
-            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(secondPageRows);
+            await expectColumnValues(page, 'runNumber', ['100', '10']);
         };
 
         // First filter validation on the main page.
-        await filterOnRun();
+        await filterOnRun('#runOverviewFilter .run-numbers-filter');
 
         // Validate if the filter tab value is equal to the main page value.
-        await page.$eval('#openFilterToggle', (element) => element.click());
-        await page.waitForSelector('#eorCategories');
-        expect(await page.$eval(runNumberInputSelector, (input) => input.value)).to.equal(inputValue);
+        await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
 
         // Test if it works in the filter tab.
-        await goToPage(page, 'run-overview');
-        await page.$eval('#openFilterToggle', (element) => element.click());
-        await page.waitForSelector('#eorCategories');
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#reset-filters');
 
         // Run the same test sequence on the filter tab.
-        await filterOnRun();
+        await filterOnRun(filterPanelRunNumbersInputSelector);
     });
 
     it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
@@ -918,7 +903,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         // Type a fake run number to have no runs
-        await fillInput(page, runNumberInputSelector, '99999999999');
+        await fillInput(page, filterPanelRunNumbersInputSelector, '99999999999', ['change']);
         await pressElement(page, '#openFilterToggle');
 
         await page.waitForSelector(`${EXPORT_RUNS_TRIGGER_SELECTOR}:disabled`);

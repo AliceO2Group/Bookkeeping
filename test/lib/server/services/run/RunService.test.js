@@ -662,7 +662,7 @@ module.exports = () => {
         expect(run.phaseShiftAtEndBeam2).to.equal(-0.0002);
     });
 
-    it('should successfully update run cross section and trigger acceptance', async () => {
+    it('should successfully update run cross-section and trigger acceptance', async () => {
         const runNumber = 1;
         const run = await runService.update(
             { runNumber },
@@ -677,6 +677,19 @@ module.exports = () => {
         expect(run.crossSection).to.equal(0.0001);
         expect(run.triggerEfficiency).to.equal(0.0002);
         expect(run.triggerAcceptance).to.equal(0.0003);
+    });
+
+    it('Should successfully update run raw trigger configuration', async () => {
+        const runNumber = 1;
+        const run = await runService.update(
+            { runNumber },
+            {
+                runPatch: {
+                    rawCtpTriggerConfiguration: 'Raw\nTrigger\nConfiguration',
+                },
+            },
+        );
+        expect(run.rawCtpTriggerConfiguration).to.equal('Raw\nTrigger\nConfiguration');
     });
 
     it('should fetch distinct aliceCurrent levels', async () => {

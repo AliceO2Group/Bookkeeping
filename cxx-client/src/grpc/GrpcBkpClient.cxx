@@ -15,7 +15,8 @@
 #include "grpc/services/GrpcFlpServiceClient.h"
 #include "grpc/services/GrpcDplProcessExecutionClient.h"
 #include "grpc/services/GrpcQcFlagServiceClient.h"
-#include "grpc/services/GrpcTriggerCountersServiceClient.h"
+#include "grpc/services/GrpcCtpTriggerCountersServiceClient.h"
+#include "grpc/services/GrpcRunServiceClient.h"
 
 using grpc::Channel;
 
@@ -33,7 +34,8 @@ namespace o2::bkp::api::grpc
 using services::GrpcDplProcessExecutionClient;
 using services::GrpcFlpServiceClient;
 using services::GrpcQcFlagServiceClient;
-using services::GrpcTriggerCountersServiceClient;
+using services::GrpcCtpTriggerCountersServiceClient;
+using services::GrpcRunServiceClient;
 
 GrpcBkpClient::GrpcBkpClient(const string& uri)
 {
@@ -41,7 +43,8 @@ GrpcBkpClient::GrpcBkpClient(const string& uri)
   mFlpClient = make_unique<GrpcFlpServiceClient>(channel);
   mDplProcessExecutionClient = make_unique<GrpcDplProcessExecutionClient>(channel);
   mQcFlagClient = make_unique<GrpcQcFlagServiceClient>(channel);
-  mTriggerCountersClient = make_unique<GrpcTriggerCountersServiceClient>(channel);
+  mCtpTriggerCountersClient = make_unique<GrpcCtpTriggerCountersServiceClient>(channel);
+  mRunClient = make_unique<GrpcRunServiceClient>(channel);
 }
 
 const unique_ptr<FlpServiceClient>& GrpcBkpClient::flp() const
@@ -59,8 +62,17 @@ const unique_ptr<QcFlagServiceClient>& GrpcBkpClient::qcFlag() const
   return mQcFlagClient;
 }
 
-const unique_ptr<TriggerCountersServiceClient>& GrpcBkpClient::triggerCounters() const
+const unique_ptr<CtpTriggerCountersServiceClient>& GrpcBkpClient::ctpTriggerCounters() const
 {
-  return mTriggerCountersClient;
+  return mCtpTriggerCountersClient;
+}
+
+const unique_ptr<CtpTriggerCountersServiceClient>& GrpcBkpClient::triggerCounters() const
+{
+  return mCtpTriggerCountersClient;
+}
+
+const unique_ptr<RunServiceClient>& GrpcBkpClient::run() const {
+  return mRunClient;
 }
 } // namespace o2::bkp::api::grpc
