@@ -57,7 +57,7 @@ const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
     await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
     await waitForTableLength(page, 1);
-    return waitForNavigation(page, () => pressElement(page, `#row${runNumber}-runNumber-text a`));
+    return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
 };
 
 module.exports = () => {
