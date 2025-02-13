@@ -30,6 +30,9 @@ class GrpcBkpClient : public o2::bkp::api::BkpClient
 
   const std::unique_ptr<QcFlagServiceClient>& qcFlag() const override;
 
+  /// @deprecated use `ctpTriggerCounters` instead
+  const std::unique_ptr<CtpTriggerCountersServiceClient>& triggerCounters() const override;
+
   const std::unique_ptr<CtpTriggerCountersServiceClient>& ctpTriggerCounters() const override;
 
   const std::unique_ptr<RunServiceClient>& run() const override;

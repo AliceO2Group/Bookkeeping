@@ -67,6 +67,11 @@ const unique_ptr<CtpTriggerCountersServiceClient>& GrpcBkpClient::ctpTriggerCoun
   return mCtpTriggerCountersClient;
 }
 
+const unique_ptr<CtpTriggerCountersServiceClient>& GrpcBkpClient::triggerCounters() const
+{
+  return mCtpTriggerCountersClient;
+}
+
 const unique_ptr<RunServiceClient>& GrpcBkpClient::run() const {
   return mRunClient;
 }

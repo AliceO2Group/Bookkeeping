@@ -39,6 +39,9 @@ class BkpClient
   /// Returns the client for trigger counters
   virtual const std::unique_ptr<CtpTriggerCountersServiceClient>& ctpTriggerCounters() const = 0;
 
+  /// @deprecated use `ctpTriggerCounters` instead
+  virtual const std::unique_ptr<CtpTriggerCountersServiceClient>& triggerCounters() const = 0;
+
   /// Returns the client for runs
   virtual const std::unique_ptr<RunServiceClient>& run() const = 0;
 };
