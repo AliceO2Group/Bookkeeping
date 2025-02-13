@@ -383,10 +383,10 @@ module.exports = () => {
     });
 
     const inelasticInteractionRateFilteringTestsParameters = {
-        inelasticInteractionRateAvg: { operator: 'le', value: 50000, expectedRuns: ['56', '54'] },
-        inelasticInteractionRateAtStart: { operator: 'gt', value: 20000, expectedRuns: ['56'] },
-        inelasticInteractionRateAtMid: { operator: 'lt', value: 30000, expectedRuns: ['54'] },
-        inelasticInteractionRateAtEnd: { operator: 'gt', value: 40000, expectedRuns: ['56'] },
+        inelasticInteractionRateAvg: { operator: '<=', value: 50000, expectedRuns: ['56', '54'] },
+        inelasticInteractionRateAtStart: { operator: '>', value: 20000, expectedRuns: ['56'] },
+        inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: ['54'] },
+        inelasticInteractionRateAtEnd: { operator: '>', value: 40000, expectedRuns: ['56'] },
     };
 
     for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
@@ -394,9 +394,9 @@ module.exports = () => {
         it(`should successfully apply ${property} filters`, async () => {
             await pressElement(page, '#openFilterToggle');
 
-            const popoverSelector = await getPopoverSelector(await page.waitForSelector(`.${property}-filter .popover-trigger`));
-            await pressElement(page, `${popoverSelector} #${property}-dropdown-option-${operator}`, true);
-            await fillInput(page, `#${property}-value-input`, value);
+            await page.waitForSelector(`#${property}-operator`);
+            await page.select(`#${property}-operator`, operator);
+            await fillInput(page, `#${property}-operand`, value, ['change']);
             await expectColumnValues(page, 'runNumber', expectedRuns);
 
             await pressElement(page, '#reset-filters', true);
@@ -409,9 +409,9 @@ module.exports = () => {
 
         await pressElement(page, '#openFilterToggle', true);
 
-        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.globalAggregatedQuality-filter .popover-trigger'));
-        await pressElement(page, `${popoverSelector} #gaqNotBadFraction-dropdown-option-le`, true);
-        await fillInput(page, '#gaqNotBadFraction-value-input', '80');
+        await page.waitForSelector('#gaqNotBadFraction-operator');
+        await page.select('#gaqNotBadFraction-operator', '<=');
+        await fillInput(page, '#gaqNotBadFraction-operand', '80', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
@@ -426,9 +426,9 @@ module.exports = () => {
         await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
         await pressElement(page, '#openFilterToggle');
 
-        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.muInelasticInteractionRate-filter .popover-trigger'));
-        await pressElement(page, `${popoverSelector} #muInelasticInteractionRate-dropdown-option-ge`, true);
-        await fillInput(page, '#muInelasticInteractionRate-value-input', 0.03);
+        await page.waitForSelector('#muInelasticInteractionRate-operand');
+        await page.select('#muInelasticInteractionRate-operator', '>=');
+        await fillInput(page, '#muInelasticInteractionRate-operand', 0.03, ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
         await pressElement(page, '#reset-filters', true);
