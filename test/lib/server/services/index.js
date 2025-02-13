@@ -30,7 +30,7 @@ const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
 const SimulationPassesSuite = require('./simulationPasses/index.js');
 const QcFlagsSuite = require('./qualityControlFlag/index.js');
-const TriggerCountersSuite = require('./triggerCounters/index.js');
+const CtpTriggerCountersSuite = require('./ctpTriggerCounters/index.js');
 const GaqDetectorSuite = require('./gaq');
 
 module.exports = () => {
@@ -56,5 +56,5 @@ module.exports = () => {
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);
     describe('QC Flags', QcFlagsSuite);
-    describe('Trigger counters', TriggerCountersSuite);
+    describe('Trigger counters', CtpTriggerCountersSuite);
 };

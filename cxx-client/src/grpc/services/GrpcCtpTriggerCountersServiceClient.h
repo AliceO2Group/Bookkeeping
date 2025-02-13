@@ -12,27 +12,27 @@
 // Created by martin on 13/06/24.
 //
 
-#ifndef CXX_CLIENT_BOOKKEEPINGAPI_GRPCTRIGGERCOUNTERSSERVICECLIENT_H
-#define CXX_CLIENT_BOOKKEEPINGAPI_GRPCTRIGGERCOUNTERSSERVICECLIENT_H
+#ifndef CXX_CLIENT_BOOKKEEPINGAPI_GRPCCTPTRIGGERCOUNTERSSERVICECLIENT_H
+#define CXX_CLIENT_BOOKKEEPINGAPI_GRPCCTPTRIGGERCOUNTERSSERVICECLIENT_H
 
-#include "triggerCounters.grpc.pb.h"
-#include "BookkeepingApi/TriggerCountersServiceClient.h"
+#include "ctpTriggerCounters.grpc.pb.h"
+#include "BookkeepingApi/CtpTriggerCountersServiceClient.h"
 
 namespace o2::bkp::api::grpc::services
 {
 
-class GrpcTriggerCountersServiceClient: public TriggerCountersServiceClient
+class GrpcCtpTriggerCountersServiceClient: public CtpTriggerCountersServiceClient
 {
  public:
-  explicit GrpcTriggerCountersServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
-  ~GrpcTriggerCountersServiceClient() override = default;
+  explicit GrpcCtpTriggerCountersServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  ~GrpcCtpTriggerCountersServiceClient() override = default;
 
   void createOrUpdateForRun(uint32_t runNumber, const std::string& className, int64_t timestamp, uint64_t lmb, uint64_t lma, uint64_t l0b, uint64_t l0a, uint64_t l1b, uint64_t l1a) override;
 
  private:
-  std::unique_ptr<o2::bookkeeping::TriggerCountersService::Stub> mStub;
+  std::unique_ptr<o2::bookkeeping::CtpTriggerCountersService::Stub> mStub;
 };
 
 } // namespace o2::bkp::api::grpc::services
 
-#endif // CXX_CLIENT_BOOKKEEPINGAPI_GRPCTRIGGERCOUNTERSSERVICECLIENT_H
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_GRPCCTPTRIGGERCOUNTERSSERVICECLIENT_H
