@@ -56,6 +56,7 @@ const banIconPath =
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
     await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
+    await waitForTableLength(page, 1);
     return waitForNavigation(page, () => pressElement(page, `#row${runNumber}-runNumber-text a`));
 };
 
@@ -511,7 +512,7 @@ module.exports = () => {
         await page.waitForSelector('a.external-link:nth-of-type(3)', { hidden: true, timeout: 250 });
 
         // Create running run
-        await goToRunDetails(page, '1010');
+        await goToRunDetails(page, 1010);
 
         await expectUrlParams(page, { page: 'run-detail', runNumber: '1010' });
         await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
