@@ -1,4 +1,4 @@
-const { triggerCountersService } = require('../../../../../lib/server/services/triggerCounters/TriggerCountersService');
+const { ctpTriggerCountersService } = require('../../../../../lib/server/services/ctpTriggerCounters/CtpTriggerCountersService');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
@@ -7,10 +7,10 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 /**
  * Simplify a trigger counter to extract properties interesting in testing (remove createdAt and updatedAt)
  *
- * @param {TriggerCounters} counters the counters to simplify
+ * @param {CtpTriggerCounters} counters the counters to simplify
  * @return {object} simplified trigger counters
  */
-const simplifyTriggerCounters = ({
+const simplifyCtpTriggerCounters = ({
     id,
     runNumber,
     className,
@@ -27,7 +27,7 @@ module.exports = () => {
     after(resetDatabaseContent);
 
     it('Should successfully return the list of trigger counters for a given run', async () => {
-        expect((await triggerCountersService.getPerRun(1)).map(simplifyTriggerCounters)).to.deep.eql([
+        expect((await ctpTriggerCountersService.getPerRun(1)).map(simplifyCtpTriggerCounters)).to.deep.eql([
             {
                 id: 1,
                 runNumber: 1,
@@ -53,7 +53,7 @@ module.exports = () => {
                 l1a: 2006,
             },
         ]);
-        expect(await triggerCountersService.getPerRun(2)).to.eql([]);
+        expect(await ctpTriggerCountersService.getPerRun(2)).to.eql([]);
     });
 
     it('Should successfully insert new counters for a given run', async () => {
@@ -67,14 +67,14 @@ module.exports = () => {
             l1b: 5,
             l1a: 6,
         };
-        await triggerCountersService.createOrUpdatePerRun(
+        await ctpTriggerCountersService.createOrUpdatePerRun(
             {
                 runNumber: 2,
                 className: 'CLASS-NAME',
             },
             counters,
         );
-        expect((await triggerCountersService.getPerRun(2)).map(simplifyTriggerCounters)).to.deep.eql([
+        expect((await ctpTriggerCountersService.getPerRun(2)).map(simplifyCtpTriggerCounters)).to.deep.eql([
             {
                 id: 3,
                 runNumber: 2,
@@ -95,14 +95,14 @@ module.exports = () => {
             l1b: 15,
             l1a: 16,
         };
-        await triggerCountersService.createOrUpdatePerRun(
+        await ctpTriggerCountersService.createOrUpdatePerRun(
             {
                 runNumber: 2,
                 className: 'CLASS-NAME',
             },
             counters,
         );
-        expect((await triggerCountersService.getPerRun(2)).map(simplifyTriggerCounters)).to.deep.eql([
+        expect((await ctpTriggerCountersService.getPerRun(2)).map(simplifyCtpTriggerCounters)).to.deep.eql([
             {
                 id: 3,
                 runNumber: 2,
@@ -114,7 +114,7 @@ module.exports = () => {
 
     it('Should throw when trying to create/update counters for a non-existing run', async () => {
         await assert.rejects(
-            () => triggerCountersService.createOrUpdatePerRun(
+            () => ctpTriggerCountersService.createOrUpdatePerRun(
                 { runNumber: 999, className: 'CLASS-NAME' },
                 { timestamp: 0, lmb: 0, lma: 0, l0b: 0, l0a: 0, l1b: 0, l1a: 0 },
             ),

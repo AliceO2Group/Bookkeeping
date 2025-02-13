@@ -6,10 +6,10 @@ const { expect } = require('chai');
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/trigger-counters', () => {
+    describe('GET /api/ctp-trigger-counters', () => {
         it('Should successfully return the list of trigger counters for a given run', async () => {
             {
-                const response = await request(server).get('/api/trigger-counters/1');
+                const response = await request(server).get('/api/ctp-trigger-counters/1');
 
                 expect(response.status).to.equal(200);
                 expect(response.body.data.map(({ id, runNumber, className }) => ({ id, runNumber, className }))).to.deep.eql([
@@ -18,7 +18,7 @@ module.exports = () => {
                 ]);
             }
             {
-                const response = await request(server).get('/api/trigger-counters/2');
+                const response = await request(server).get('/api/ctp-trigger-counters/2');
 
                 expect(response.status).to.equal(200);
                 expect(response.body.data.map(({ id }) => id)).to.eql([]);

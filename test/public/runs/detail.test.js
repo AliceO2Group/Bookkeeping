@@ -318,9 +318,9 @@ module.exports = () => {
     it('should successfully navigate to the trigger counters panel', async () => {
         await goToRunDetails(page, 1);
 
-        await pressElement(page, '#trigger-counters-tab');
+        await pressElement(page, '#ctp-trigger-counters-tab');
         await waitForTableLength(page, 2);
-        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'trigger-counters' });
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'ctp-trigger-counters' });
         expect(await getTableContent(page)).to.deep.eql([
             ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
             ['SECOND-CLASS-NAME', '2,001', '2,002', '2,003', '2,004', '2,005', '2,006'],
