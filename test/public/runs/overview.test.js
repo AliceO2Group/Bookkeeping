@@ -693,7 +693,7 @@ module.exports = () => {
         const filterInputSelector = '.fill-numbers-filter';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
-        await fillInput(page, filterInputSelector, '1, 3');
+        await fillInput(page, filterInputSelector, '1, 3', ['change']);
         await waitForTableLength(page, 6);
 
         await pressElement(page, '#reset-filters');
