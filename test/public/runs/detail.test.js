@@ -55,7 +55,8 @@ const banIconPath =
  */
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-    await fillInput(page, '#runNumber', `${runNumber},${runNumber}`);
+    await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
+    await waitForTableLength(page, 1);
     return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
 };
 
@@ -327,8 +328,6 @@ module.exports = () => {
     });
 
     it('should successfully navigate to the trigger configuration panel', async () => {
-        await goToRunDetails(page, 1);
-
         await pressElement(page, '#trigger-configuration-tab');
         await expectInnerText(page, '#trigger-configuration-pane .panel', 'Raw\nTrigger\nConfiguration');
     });
@@ -432,7 +431,6 @@ module.exports = () => {
     });
 
     it('should successfully display user that stopped run', async () => {
-        await goToRunDetails(page, 1);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#user-stop-tooltip .popover-trigger'));
         expect(popoverContent).to.equal('Run stopped by Jan Jansen');
     });
@@ -514,7 +512,7 @@ module.exports = () => {
         await page.waitForSelector('a.external-link:nth-of-type(3)', { hidden: true, timeout: 250 });
 
         // Create running run
-        await goToRunDetails(page, '1010');
+        await goToRunDetails(page, 1010);
 
         await expectUrlParams(page, { page: 'run-detail', runNumber: '1010' });
         await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });
