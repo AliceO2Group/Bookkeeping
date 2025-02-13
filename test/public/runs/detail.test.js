@@ -56,7 +56,7 @@ const banIconPath =
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
     await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
-    return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
+    return waitForNavigation(page, () => pressElement(page, `#row${runNumber}-runNumber-text a`));
 };
 
 module.exports = () => {
