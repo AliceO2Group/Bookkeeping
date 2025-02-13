@@ -430,7 +430,6 @@ module.exports = () => {
     });
 
     it('should successfully display user that stopped run', async () => {
-        await goToRunDetails(page, 1);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#user-stop-tooltip .popover-trigger'));
         expect(popoverContent).to.equal('Run stopped by Jan Jansen');
     });
