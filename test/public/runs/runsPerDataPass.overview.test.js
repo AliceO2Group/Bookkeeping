@@ -361,9 +361,7 @@ module.exports = () => {
          * Therefore additional action is invoked in between
          */
         await page.select('.runDuration-filter select', '>=');
-        await pressElement(page, '#openFilterToggle');
-        await pressElement(page, '#openFilterToggle');
-        await fillInput(page, '.runDuration-filter input[type=number]', '10');
+        await fillInput(page, '#duration-operand', '10', ['change']);
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
