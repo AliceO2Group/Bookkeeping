@@ -105,8 +105,7 @@ module.exports = () => {
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
-
-        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name a', true));
+        await waitForTableLength(page, 3);
         await waitForNavigation(page, () => pressElement(page, '#row106-globalAggregatedQuality a', true));
 
         await waitForTableLength(page, 7);
