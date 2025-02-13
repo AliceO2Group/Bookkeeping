@@ -119,7 +119,7 @@ module.exports = () => {
         } });
 
         await page.waitForSelector('#breadcrumb-run-number.danger a');
-        const title = 'Quality of the run was changed to bad so it is no more subject to QC';
+        const title = 'Quality of run 2 was changed to bad so it is no more subject to QC';
         await page.waitForSelector(`button.btn.btn-primary[disabled][title="${title}"]`);
     });
 };

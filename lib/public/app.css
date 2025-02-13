@@ -82,9 +82,6 @@ html, body {
     width: unset;
 }
 
-/* cursors */
-.cursor-info { cursor: help; }
-
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }
 .ml2 { margin-left: var(--space-s); }
