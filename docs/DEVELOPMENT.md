@@ -1,6 +1,8 @@
 # Development
 
 ## Getting started
+### Requirements
+NodeJS - `v22` (min)
 ### Configuration
 The following `.env` configuration is the bare minimum required for development. It must be placed in the top dir. 
 ```ini

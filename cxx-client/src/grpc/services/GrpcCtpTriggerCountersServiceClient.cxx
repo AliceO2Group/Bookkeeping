@@ -12,22 +12,22 @@
 // Created by martin on 13/06/24.
 //
 
-#include "GrpcTriggerCountersServiceClient.h"
+#include "GrpcCtpTriggerCountersServiceClient.h"
 
 using grpc::ClientContext;
 using o2::bookkeeping::Empty;
-using o2::bookkeeping::TriggerCounterCreateOrUpdateRequest;
+using o2::bookkeeping::CtpTriggerCounterCreateOrUpdateRequest;
 
 namespace o2::bkp::api::grpc::services
 {
-GrpcTriggerCountersServiceClient::GrpcTriggerCountersServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
+GrpcCtpTriggerCountersServiceClient::GrpcCtpTriggerCountersServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
 {
-  mStub = o2::bookkeeping::TriggerCountersService::NewStub(channel);
+  mStub = o2::bookkeeping::CtpTriggerCountersService::NewStub(channel);
 }
-void GrpcTriggerCountersServiceClient::createOrUpdateForRun(uint32_t runNumber, const std::string& className, int64_t timestamp, uint64_t lmb, uint64_t lma, uint64_t l0b, uint64_t l0a, uint64_t l1b, uint64_t l1a)
+void GrpcCtpTriggerCountersServiceClient::createOrUpdateForRun(uint32_t runNumber, const std::string& className, int64_t timestamp, uint64_t lmb, uint64_t lma, uint64_t l0b, uint64_t l0a, uint64_t l1b, uint64_t l1a)
 {
   ClientContext context;
-  TriggerCounterCreateOrUpdateRequest request;
+  CtpTriggerCounterCreateOrUpdateRequest request;
   Empty response;
 
   request.set_runnumber(runNumber);

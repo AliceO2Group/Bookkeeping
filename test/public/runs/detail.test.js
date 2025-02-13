@@ -55,7 +55,8 @@ const banIconPath =
  */
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-    await fillInput(page, '#runNumber', `${runNumber},${runNumber}`);
+    await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
+    await waitForTableLength(page, 1);
     return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
 };
 
@@ -317,13 +318,18 @@ module.exports = () => {
     it('should successfully navigate to the trigger counters panel', async () => {
         await goToRunDetails(page, 1);
 
-        await pressElement(page, '#trigger-counters-tab');
+        await pressElement(page, '#ctp-trigger-counters-tab');
         await waitForTableLength(page, 2);
-        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'trigger-counters' });
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'ctp-trigger-counters' });
         expect(await getTableContent(page)).to.deep.eql([
             ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
             ['SECOND-CLASS-NAME', '2,001', '2,002', '2,003', '2,004', '2,005', '2,006'],
         ]);
+    });
+
+    it('should successfully navigate to the trigger configuration panel', async () => {
+        await pressElement(page, '#trigger-configuration-tab');
+        await expectInnerText(page, '#trigger-configuration-pane .panel', 'Raw\nTrigger\nConfiguration');
     });
 
     it('should show lhc data in normal mode', async () => {
@@ -425,7 +431,6 @@ module.exports = () => {
     });
 
     it('should successfully display user that stopped run', async () => {
-        await goToRunDetails(page, 1);
         const popoverContent = await getPopoverContent(await page.waitForSelector('#user-stop-tooltip .popover-trigger'));
         expect(popoverContent).to.equal('Run stopped by Jan Jansen');
     });
@@ -507,7 +512,7 @@ module.exports = () => {
         await page.waitForSelector('a.external-link:nth-of-type(3)', { hidden: true, timeout: 250 });
 
         // Create running run
-        await goToRunDetails(page, '1010');
+        await goToRunDetails(page, 1010);
 
         await expectUrlParams(page, { page: 'run-detail', runNumber: '1010' });
         await page.waitForSelector('.alert.alert-danger', { hidden: true, timeout: 300 });

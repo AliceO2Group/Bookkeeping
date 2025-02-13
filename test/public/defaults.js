@@ -56,7 +56,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
 module.exports.defaultBefore = async () => {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     page.setDefaultTimeout(1500);
     page.setDefaultNavigationTimeout(5000);

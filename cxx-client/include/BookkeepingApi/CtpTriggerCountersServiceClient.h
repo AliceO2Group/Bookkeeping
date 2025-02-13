@@ -12,18 +12,18 @@
 // Created by mboulais on 27/05/24.
 //
 
-#ifndef CXX_CLIENT_BOOKKEEPINGAPI_TRIGGERCOUNTERSSERVICECLIENT_H
-#define CXX_CLIENT_BOOKKEEPINGAPI_TRIGGERCOUNTERSSERVICECLIENT_H
+#ifndef CXX_CLIENT_BOOKKEEPINGAPI_CTPTRIGGERCOUNTERSSERVICECLIENT_H
+#define CXX_CLIENT_BOOKKEEPINGAPI_CTPTRIGGERCOUNTERSSERVICECLIENT_H
 
 #include <string>
 #include <cstdint>
 
 namespace o2::bkp::api
 {
-class TriggerCountersServiceClient
+class CtpTriggerCountersServiceClient
 {
  public:
-  virtual ~TriggerCountersServiceClient() = default;
+  virtual ~CtpTriggerCountersServiceClient() = default;
 
   /// Create or update the trigger counters for a given run and class name
   virtual void createOrUpdateForRun(
@@ -39,4 +39,4 @@ class TriggerCountersServiceClient
 };
 } // namespace o2::bkp::api
 
-#endif // CXX_CLIENT_BOOKKEEPINGAPI_TRIGGERCOUNTERSSERVICECLIENT_H
+#endif // CXX_CLIENT_BOOKKEEPINGAPI_CTPTRIGGERCOUNTERSSERVICECLIENT_H
