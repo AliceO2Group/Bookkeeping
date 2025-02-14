@@ -1,3 +1,7 @@
+## [1.6.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.6.0)
+* Changes made to the database
+  * Added column to store raw trigger configuration to runs table
+
 ## [1.4.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.0)
 * Changes made to the database
   * Following columns in runs table has been changed to Datetime(3):

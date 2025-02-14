@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.6.0)
+* Notable changes for users:
+  * Log template `key`, `issueDescription`, `detectorOrSubsystem` can be provided in the URL when creating a log to pre-fill on-call logs
+  * Several runs and detectors can be selected to create multiple QC flags at once
+  * runNumber filter now accepts ranges as well
+  * Tag colours will now update when looking at run details
+  * Add CTP host to flp roles if CTP is enabled
+  * Display run that started/stopped run in run details
+  * A simplified and reusable frontend filtering system has been set-up
+  * Radio buttons are displayed in selection dropdown when options are exclusives
+  * Display trigger configuration in a dedicated tab in run details page
+  * Trigger counters has been renamed to CTP trigger counters
+* Notable changes for developers:
+  * Group migrations per version to avoid having too crowded directories
+  * Improved home page frontend tests to make them more robust
+  * Encode URI components in buildUrl utility function, to handle parameters with `=` sign in keys/values
+  * Fixed error spamming server logs when trying to handle lost runs and envs
+  * Fix randomly failing QC flag types tests
+  * Custom selector can be applied in selection dropdown options for values that are not CSS valid
+  * Refactored runs overview filters for:
+    * detectors
+    * run type
+    * EoR reason
+    * start/stop
+    * definition
+    * fill number
+    * LHC period
+    * duration
+  * Updates min supported Node.js to 22 to cover next year of Beam Operations
+  * Disables usage of GPU on puppeteer as it hangs on docker-alpine (known issue on their repository)
+  * Updates docker alpine version as otherwise node 22 was not available
+  * Updates dependencies for puppeteer as needed due to alpine update
+  * Moves to using headless: true instead of headless: 'new' with the new puppeteer version
+  * Improve runs overview magnets filter
+  * Added c++ API to update runs raw trigger configuration
+  * Improved runs inelastic interaction rate filter
+  * Improve run numbers filters in run overview
+  * Trigger counters has been renamed to CTP trigger counters everywhere:
+    * triggerCounters.proto has been renamed to ctpTriggerCounters.proto
+    * c++ API has been updated accordingly
+  * Renamed trigger_counters to ctp_trigger_counters
+
 ## [1.5.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.5.0)
 * Notable changes for users:
   * Added nTF orbits to runs updated runs API endpoints accordingly
