@@ -1280,10 +1280,10 @@ module.exports = () => {
 
             const [{ id: id1 }, { id: id2 }, { id: id3 }, { id: id4 }] = await qcFlagService.create(
                 [
-                    { flagTypeId: goodFlagTypeId, from: t('08:00:00'), to: t('20:00:00') }, // id 1
-                    { flagTypeId: goodFlagTypeId, from: t('10:00:00'), to: t('18:00:00') }, // id 2
-                    { flagTypeId: goodFlagTypeId, from: t('12:00:00'), to: t('16:00:00') }, // id 3
-                    { flagTypeId: goodFlagTypeId, from: t('13:30:00'), to: t('14:30:00') }, // id 4
+                    { flagTypeId: goodFlagTypeId, from: t('08:00:00'), to: t('20:00:00') }, // Id 1
+                    { flagTypeId: goodFlagTypeId, from: t('10:00:00'), to: t('18:00:00') }, // Id 2
+                    { flagTypeId: goodFlagTypeId, from: t('12:00:00'), to: t('16:00:00') }, // Id 3
+                    { flagTypeId: goodFlagTypeId, from: t('13:30:00'), to: t('14:30:00') }, // Id 4
                 ],
                 scope,
                 relations,
@@ -1443,7 +1443,6 @@ module.exports = () => {
                 });
             }
         });
-
 
         it('should throw when trying to validate deleted QC flag', async () => {
             await assert.rejects(
