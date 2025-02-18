@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -528,6 +529,30 @@ module.exports = () => {
 
             expect(response.status).to.be.equal(200);
             expect(response.body.data.id).to.be.equal(id);
+        });
+    });
+
+    describe('DELETE /api/qcFlags/perDataPass', () => {
+        it('should fail to delete QC flags for a given data pass when missing role "alice-dpg-async-qc-admin"', async () => {
+            const dataPassId = 1;
+            const response = await request(server).delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}`);
+            expect(response.status).to.be.equal(403);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: '403',
+                    title: 'Access denied',
+                },
+            ]);
+        });
+
+        it('should successfully delete all QC flags for a given data pass', async () => {
+            const dataPassId = 1;
+            const response = await request(server)
+                .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
+
+            expect(response.status).to.be.equal(200);
+            expect(response.body.data.deletedCount).to.equal(6); // 4 from seeders, 2 created in POST requests previously in this test
         });
     });
 
