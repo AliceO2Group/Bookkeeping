@@ -170,6 +170,12 @@ module.exports = () => {
             .to.be.equal('Missing 3 verifications');
     });
 
+    it('should successfully display tooltip information on GAQ column', async () => {
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#globalAggregatedQuality .popover-trigger'));
+        expect(popoverContent).to.equal('Global aggregated flag based on critical detectors.' +
+            'Default detectors: FT0, ITS, TPC (and ZDC for heavy-ion runs)');
+    });
+
     it('should switch mcReproducibleAsNotBad', async () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await waitForTableLength(page, 3);
