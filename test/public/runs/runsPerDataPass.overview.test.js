@@ -467,14 +467,22 @@ module.exports = () => {
         await expectInnerText(page, '#row108-readyForSkimming', 'not ready');
     });
 
-    it('should successfully discard all QC flags for the data pass', async () => {
+    it('should successfully not display button to discard all QC flags for the data pass', async () => {
         await pressElement(page, '#actions-dropdown-button');
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
-        await page.evaluate((token) => {
+        await page.waitForSelector(`${popoverSelector} button:nth-child(3)`, { hidden: true });
+    });
+
+    it('should successfully discard all QC flags for the data pass', async () => {
+        await page.evaluate((role) => {
             // eslint-disable-next-line no-undef
-            sessionService.get().token = token;
+            sessionService.get().token = role;
+
+            // eslint-disable-next-line no-undef
+            sessionService.get().access.push(role);
         }, BkpRoles.DPG_ASYNC_QC_ADMIN);
         await setConfirmationDialogToBeAccepted(page);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         await waitForTableLength(page, 3);
         await expectInnerText(page, '#row106-CPV-text', 'QC'); // Expect QC flag button to be there
