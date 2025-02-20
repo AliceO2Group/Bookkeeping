@@ -471,6 +471,7 @@ module.exports = () => {
         await pressElement(page, '#actions-dropdown-button');
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         await page.waitForSelector(`${popoverSelector} button:nth-child(3)`, { hidden: true });
+        await pressElement(page, '#actions-dropdown-button');
     });
 
     it('should successfully discard all QC flags for the data pass', async () => {
@@ -483,6 +484,8 @@ module.exports = () => {
         }, BkpRoles.DPG_ASYNC_QC_ADMIN);
         await setConfirmationDialogToBeAccepted(page);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+        // Press again actions dropdown to re-trigger render
+        await pressElement(page, '#actions-dropdown-button');
         await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         await waitForTableLength(page, 3);
         await expectInnerText(page, '#row106-CPV-text', 'QC'); // Expect QC flag button to be there
