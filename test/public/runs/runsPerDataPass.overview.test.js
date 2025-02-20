@@ -281,7 +281,7 @@ module.exports = () => {
         const targetFileName = 'runs.json';
 
         // First export
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await pressElement(page, '#export-runs-trigger');
         await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
@@ -468,10 +468,10 @@ module.exports = () => {
     });
 
     it('should successfully not display button to discard all QC flags for the data pass', async () => {
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         await page.waitForSelector(`${popoverSelector} button:nth-child(3)`, { hidden: true });
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
     });
 
     it('should successfully discard all QC flags for the data pass', async () => {
@@ -485,7 +485,7 @@ module.exports = () => {
         await setConfirmationDialogToBeAccepted(page);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         // Press again actions dropdown to re-trigger render
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         await waitForTableLength(page, 3);
         await expectInnerText(page, '#row106-CPV-text', 'QC'); // Expect QC flag button to be there
