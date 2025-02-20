@@ -1447,7 +1447,7 @@ module.exports = () => {
         it('should throw when trying to validate deleted QC flag', async () => {
             await assert.rejects(
                 () => qcFlagService.verifyFlag({ flagId: 1, comment: 'Verification' }, {}),
-                new BadParameterError('QC flag 1 has been discarded'),
+                new BadParameterError('QC flag 1 is already discarded and cannot be verified'),
             );
         });
     });
