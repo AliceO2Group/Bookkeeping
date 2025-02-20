@@ -471,6 +471,7 @@ module.exports = () => {
         await pressElement(page, '#actions-dropdown-button');
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         await page.evaluate((token) => {
+            // eslint-disable-next-line no-undef
             sessionService.get().token = token;
         }, BkpRoles.DPG_ASYNC_QC_ADMIN);
         await setConfirmationDialogToBeAccepted(page);
