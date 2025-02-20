@@ -237,7 +237,7 @@ module.exports = () => {
         await pressElement(page, '#row49-ITS-text .select-multi-flag');
         await pressElement(page, '#row49-ITS-text .select-multi-flag');
 
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         // Runs are ordered by run number
@@ -251,7 +251,7 @@ module.exports = () => {
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
         await pressElement(page, '#row56-ITS-text .select-multi-flag');
 
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await expectInnerText(page, 'div.panel.flex-grow.items-center > div > em', 'The selected runs don\'t have overlapping start/stop times');
@@ -263,7 +263,7 @@ module.exports = () => {
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
         await pressElement(page, '#row49-ITS-text .select-multi-flag');
 
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await expectInnerText(
@@ -280,7 +280,7 @@ module.exports = () => {
         await pressElement(page, '#row56-FT0-text .select-multi-flag');
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
 
-        await pressElement(page, '#actions-dropdown-button');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await page.waitForSelector('button#submit[disabled]');
