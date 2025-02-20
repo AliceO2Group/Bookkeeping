@@ -32,6 +32,7 @@ const getEffectivePeriodsOfQcFlag = async (flagId) => (await QcFlagEffectivePeri
 
 const qcFlagWithId1 = {
     id: 1,
+    deleted: false,
     from: new Date('2019-08-08 22:43:20').getTime(),
     to: new Date('2019-08-09 04:16:40').getTime(),
     comment: 'Some qc comment 1',
@@ -619,8 +620,10 @@ module.exports = () => {
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
             const [
-                { id, from, to, comment, flagTypeId, runNumber,
-                    dplDetectorId: detectorId, createdBy: { externalId: externalUserId }, createdAt },
+                {
+                    id, from, to, comment, flagTypeId, runNumber,
+                    dplDetectorId: detectorId, createdBy: { externalId: externalUserId }, createdAt,
+                },
             ] = await qcFlagService.create([qcFlag], scope, relations);
 
             const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
@@ -822,21 +825,22 @@ module.exports = () => {
 
                 // Previous: first flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
-                    .have.all.deep.members([
-                        { from: new Date('2024-07-01 12:00:00').getTime(), to: new Date('2024-07-01 13:00:00').getTime() },
-                        { from: new Date('2024-07-01 15:00:00').getTime(), to: new Date('2024-07-01 16:00:00').getTime() },
-                    ]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([
+                    { from: new Date('2024-07-01 12:00:00').getTime(), to: new Date('2024-07-01 13:00:00').getTime() },
+                    { from: new Date('2024-07-01 15:00:00').getTime(), to: new Date('2024-07-01 16:00:00').getTime() },
+                ]);
 
                 // Previous: second flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
-                    .have.all.deep.members([{ from: null, to: new Date('2024-07-01 12:00:00').getTime() }]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([
+                    { from: null, to: new Date('2024-07-01 12:00:00').getTime() },
+                ]);
 
                 // Previous: third flag
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[2]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
-                    .have.all.deep.members([{ from: new Date('2024-07-01 16:00:00').getTime(), to: null }]);
+                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([
+                    { from: new Date('2024-07-01 16:00:00').getTime(), to: null },
+                ]);
             }
         });
     });
@@ -1165,7 +1169,8 @@ module.exports = () => {
                     { association: 'dataPasses' },
                     { association: 'simulationPasses' },
                     { association: 'effectivePeriods' },
-                ] });
+                ],
+            });
 
             const qcFlag = {
                 from: null,
@@ -1202,7 +1207,8 @@ module.exports = () => {
                     { association: 'dataPasses' },
                     { association: 'simulationPasses' },
                     { association: 'effectivePeriods' },
-                ] });
+                ],
+            });
 
             /**
              * Function to extract properties of QC flags to be compared
@@ -1240,7 +1246,8 @@ module.exports = () => {
 
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
-            expect(fetchedQcFlag).to.be.equal(null);
+            expect(fetchedQcFlag.deleted).to.be.true;
+            expect(await getEffectivePeriodsOfQcFlag(id)).to.lengthOf(0);
 
             /**
              * Get unix timestamp for given time on 2024-07-10
@@ -1271,14 +1278,17 @@ module.exports = () => {
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             const goodFlagTypeId = 3;
 
-            const [{ id: id1 }] = await qcFlagService
-                .create([{ flagTypeId: goodFlagTypeId, from: t('08:00:00'), to: t('20:00:00') }], scope, relations);
-            const [{ id: id2 }] = await qcFlagService
-                .create([{ flagTypeId: goodFlagTypeId, from: t('10:00:00'), to: t('18:00:00') }], scope, relations);
-            const [{ id: id3 }] = await qcFlagService
-                .create([{ flagTypeId: goodFlagTypeId, from: t('12:00:00'), to: t('16:00:00') }], scope, relations);
-            const [{ id: id4 }] = await qcFlagService
-                .create([{ flagTypeId: goodFlagTypeId, from: t('13:30:00'), to: t('14:30:00') }], scope, relations);
+            const [{ id: id1 }, { id: id2 }, { id: id3 }, { id: id4 }] = await qcFlagService.create(
+                [
+                    { flagTypeId: goodFlagTypeId, from: t('08:00:00'), to: t('20:00:00') }, // Id 1
+                    { flagTypeId: goodFlagTypeId, from: t('10:00:00'), to: t('18:00:00') }, // Id 2
+                    { flagTypeId: goodFlagTypeId, from: t('12:00:00'), to: t('16:00:00') }, // Id 3
+                    { flagTypeId: goodFlagTypeId, from: t('13:30:00'), to: t('14:30:00') }, // Id 4
+                ],
+                scope,
+                relations,
+            );
+
             expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
                 { from: t('08:00:00'), to: t('10:00:00') },
                 { from: t('18:00:00'), to: t('20:00:00') },
@@ -1291,9 +1301,13 @@ module.exports = () => {
                 { from: t('12:00:00'), to: t('13:30:00') },
                 { from: t('14:30:00'), to: t('16:00:00') },
             ]);
-            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([
+                { from: t('13:30:00'), to: t('14:30:00') },
+            ]);
 
             await qcFlagService.delete(id3);
+            expect(await getEffectivePeriodsOfQcFlag(id3)).to.lengthOf(0);
+
             expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
                 { from: t('08:00:00'), to: t('10:00:00') },
                 { from: t('18:00:00'), to: t('20:00:00') },
@@ -1302,14 +1316,28 @@ module.exports = () => {
                 { from: t('10:00:00'), to: t('13:30:00') },
                 { from: t('14:30:00'), to: t('18:00:00') },
             ]);
-            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([{ from: t('13:30:00'), to: t('14:30:00') }]);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.have.all.deep.members([
+                { from: t('13:30:00'), to: t('14:30:00') },
+            ]);
 
             await qcFlagService.delete(id4);
+            expect(await getEffectivePeriodsOfQcFlag(id4)).to.lengthOf(0);
+            expect(await getEffectivePeriodsOfQcFlag(id3)).to.lengthOf(0); // Check that id3 has not been reset
+
             expect(await getEffectivePeriodsOfQcFlag(id1)).to.have.all.deep.members([
                 { from: t('08:00:00'), to: t('10:00:00') },
                 { from: t('18:00:00'), to: t('20:00:00') },
             ]);
-            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([{ from: t('10:00:00'), to: t('18:00:00') }]);
+            expect(await getEffectivePeriodsOfQcFlag(id2)).to.have.all.deep.members([
+                { from: t('10:00:00'), to: t('18:00:00') },
+            ]);
+        });
+
+        it('should throw when trying to delete an already deleted flag', async () => {
+            await assert.rejects(
+                () => qcFlagService.delete(1),
+                new BadParameterError('Not-deleted Quality Control Flag with this id (1) could not be found'),
+            );
         });
 
         it('should successfully delete QC flag of simulationPass ', async () => {
@@ -1350,7 +1378,7 @@ module.exports = () => {
 
             await qcFlagService.delete(id);
             const fetchedQcFlag = await qcFlagService.getById(id);
-            expect(fetchedQcFlag).to.be.equal(null);
+            expect(fetchedQcFlag.deleted).to.be.true;
 
             {
                 const olderFlags = await QcFlagRepository.findAll({
@@ -1414,6 +1442,13 @@ module.exports = () => {
                     comment,
                 });
             }
+        });
+
+        it('should throw when trying to validate deleted QC flag', async () => {
+            await assert.rejects(
+                () => qcFlagService.verifyFlag({ flagId: 1, comment: 'Verification' }, {}),
+                new BadParameterError('QC flag 1 is already discarded and cannot be verified'),
+            );
         });
     });
 
