@@ -482,12 +482,14 @@ module.exports = () => {
             // eslint-disable-next-line no-undef
             sessionService.get().access.push(role);
         }, BkpRoles.DPG_ASYNC_QC_ADMIN);
-        await setConfirmationDialogToBeAccepted(page);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await setConfirmationDialogToBeAccepted(page);
         await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3);
-        await expectInnerText(page, '#row106-CPV-text', 'QC'); // Expect QC flag button to be there
+        // Processing of data might take a bit of time
+        await expectInnerText(page, '#row106-CPV-text', 'QC', {timeout: 10_000, polling: 'mutation'}); // Expect QC flag button to be there
     });
 };
