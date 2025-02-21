@@ -29,6 +29,20 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 
 const { expect } = chai;
 
+/**
+ * Navigate to runs per data pass by navigating to data pass per period first
+ *
+ * @param {puppeteer.Page} page puppeteer page
+ * @param {number} lhcPeriodId id of the period to which data pass is linked
+ * @param {number} dataPassId id of the data pass that needs to be displayed
+ * @return {Promise<void>} resolve once the navigation is finished
+ */
+const navigateToRunsPerDataPass = async (page, lhcPeriodId, dataPassId) => {
+    await waitForNavigation(page, () => pressElement(page, '#lhc-period-overview', true));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses-text a`, true));
+    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns-text a`, true));
+};
+
 module.exports = () => {
     let page;
     let browser;
@@ -214,37 +228,43 @@ module.exports = () => {
     });
 
     it('should allow multiple runs and detectors to be selected', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 3,
-                runNumberDetectorsMap: '56:7,4;54:4',
-            },
-        });
+        await navigateToRunsPerDataPass(page, 1, 3);
+
+        await pressElement(page, '#row56-FT0-text .select-multi-flag');
+        await pressElement(page, '#row56-ITS-text .select-multi-flag');
+        await pressElement(page, '#row54-ITS-text .select-multi-flag');
+        // Select then de-select one checkbox
+        await pressElement(page, '#row49-ITS-text .select-multi-flag');
+        await pressElement(page, '#row49-ITS-text .select-multi-flag');
+
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         // Runs are ordered by run number
+        await waitForTableLength(page, 2);
         await expectInnerText(page, 'table > tbody > tr:nth-child(1) > td:nth-child(2)', 'FT0, ITS');
         await expectInnerText(page, 'table > tbody > tr:nth-child(2) > td:nth-child(2)', 'ITS');
     });
 
     it('should have timebased false and display no overlap if times dont overlap', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 3,
-                runNumberDetectorsMap: '54:4;56:4',
-            },
-        });
+        await navigateToRunsPerDataPass(page, 1, 3);
+        await pressElement(page, '#row54-ITS-text .select-multi-flag');
+        await pressElement(page, '#row56-ITS-text .select-multi-flag');
+
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await expectInnerText(page, 'div.panel.flex-grow.items-center > div > em', 'The selected runs don\'t have overlapping start/stop times');
         await page.waitForSelector('input[type="time"]', { hidden: true });
     });
 
     it('should set the timebased unavailable if at least one run has no end time and multiple are selected', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 3,
-                runNumberDetectorsMap: '54:4;49:4',
-            },
-        });
+        await navigateToRunsPerDataPass(page, 1, 3);
+        await pressElement(page, '#row54-ITS-text .select-multi-flag');
+        await pressElement(page, '#row49-ITS-text .select-multi-flag');
+
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await expectInnerText(
             page,
@@ -255,12 +275,13 @@ module.exports = () => {
     });
 
     it('should successfully create QC flags for multiple detectors and runs', async () => {
-        await goToPage(page, 'qc-flag-creation-for-data-pass', {
-            queryParameters: {
-                dataPassId: 5,
-                runNumberDetectorsMap: '56:4,7;54:4',
-            },
-        });
+        await navigateToRunsPerDataPass(page, 2, 5);
+        await pressElement(page, '#row56-ITS-text .select-multi-flag');
+        await pressElement(page, '#row56-FT0-text .select-multi-flag');
+        await pressElement(page, '#row54-ITS-text .select-multi-flag');
+
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await page.waitForSelector('button#submit[disabled]');
         await pressElement(page, '#flag-type-panel .popover-trigger');
