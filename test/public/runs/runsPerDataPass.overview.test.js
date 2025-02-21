@@ -329,7 +329,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.detectors-filter .dropdown-trigger');
-        await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
+        await pressElement(page, '#detector-filter-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
         await pressElement(page, '#reset-filters');
@@ -342,8 +342,8 @@ module.exports = () => {
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
 
-        await pressElement(page, '#tag-dropdown-option-FOOD', true);
-        await pressElement(page, '#tag-dropdown-option-RUN', true);
+        await pressElement(page, '#tag-option-FOOD', true);
+        await pressElement(page, '#tag-option-RUN', true);
 
         await expectColumnValues(page, 'runNumber', ['106']);
 

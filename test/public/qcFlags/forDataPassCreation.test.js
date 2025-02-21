@@ -117,7 +117,7 @@ module.exports = () => {
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-2', true);
+        await pressElement(page, '#flag-type-option-2', true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
 
@@ -149,7 +149,7 @@ module.exports = () => {
         await page.waitForSelector('input[type="time"]', { hidden: true });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-11', true);
+        await pressElement(page, '#flag-type-option-11', true);
 
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
         await pressElement(page, '#time-based-toggle', true);
@@ -189,7 +189,7 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-2', true);
+        await pressElement(page, '#flag-type-option-2', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await page.waitForSelector('#time-based-toggle', { hidden: true, timeout: 250 });
 
@@ -285,7 +285,7 @@ module.exports = () => {
 
         await page.waitForSelector('button#submit[disabled]');
         await pressElement(page, '#flag-type-panel .popover-trigger');
-        await pressElement(page, '#flag-type-dropdown-option-2', true);
+        await pressElement(page, '#flag-type-option-2', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
