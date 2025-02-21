@@ -39,6 +39,7 @@ const {
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
+const { BkpRoles } = require('../../../lib/domain/enums/BkpRoles.js');
 
 const { expect } = chai;
 
@@ -280,6 +281,7 @@ module.exports = () => {
         const targetFileName = 'runs.json';
 
         // First export
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await pressElement(page, '#export-runs-trigger');
         await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
@@ -463,5 +465,29 @@ module.exports = () => {
         await expectInnerText(page, '#row108-readyForSkimming', 'ready');
         await pressElement(page, '#row108-readyForSkimming input', true);
         await expectInnerText(page, '#row108-readyForSkimming', 'not ready');
+    });
+
+    it('should successfully not display button to discard all QC flags for the data pass', async () => {
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+        await page.waitForSelector(`${popoverSelector} button:nth-child(3)`, { hidden: true });
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+    });
+
+    it('should successfully discard all QC flags for the data pass', async () => {
+        await page.evaluate((role) => {
+            // eslint-disable-next-line no-undef
+            sessionService.get().token = role;
+
+            // eslint-disable-next-line no-undef
+            sessionService.get().access.push(role);
+        }, BkpRoles.DPG_ASYNC_QC_ADMIN);
+        await setConfirmationDialogToBeAccepted(page);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+        // Press again actions dropdown to re-trigger render
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
+        await waitForTableLength(page, 3);
+        await expectInnerText(page, '#row106-CPV-text', 'QC'); // Expect QC flag button to be there
     });
 };
