@@ -22,9 +22,7 @@
     "rules": {
         "array-bracket-newline": [
             "error",
-            {
-                "multiline": true
-            }
+            "consistent"
         ],
         "array-bracket-spacing": [
             "error",
