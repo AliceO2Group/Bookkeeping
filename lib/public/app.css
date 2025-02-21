@@ -627,6 +627,10 @@ label {
     border-bottom: 1px solid var(--color-gray-dark);
 }
 
+.dimmed {
+    opacity: 0.5;
+}
+
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)
