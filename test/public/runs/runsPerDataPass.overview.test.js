@@ -489,7 +489,12 @@ module.exports = () => {
         await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3);
-        // Processing of data might take a bit of time
-        await expectInnerText(page, '#row106-CPV-text', 'QC', {timeout: 10_000, polling: 'mutation'}); // Expect QC flag button to be there
+        // Processing of data might take a bit of time, but then expect QC flag button to be there
+        await expectInnerText(
+            page,
+            '#row106-CPV-text',
+            'QC',
+            { timeout: 10000, polling: 'mutation' },
+        );
     });
 };
