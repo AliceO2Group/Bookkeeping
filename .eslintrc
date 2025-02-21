@@ -85,7 +85,7 @@
         ],
         "function-paren-newline": [
             "error",
-            "multiline"
+            "multiline-arguments"
         ],
         "indent": [
             "error",
