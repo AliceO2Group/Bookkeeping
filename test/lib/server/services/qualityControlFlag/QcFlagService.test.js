@@ -153,6 +153,48 @@ module.exports = () => {
                 expect(flag.verifications[0].comment).to.be.equal('good');
             }
         });
+
+        it('should successfully fetch all QC flags for a given run', async () => {
+            /**
+             * Extract partial information from QC flag that are sufficient for tests purpose
+             *
+             * @param {QcFlag} qcFlag the qc flag from which partial information should be extracted
+             * @return {object} partial flags
+             */
+            const getPartialQcFlag = (qcFlag) => {
+                const { id, runNumber, dataPasses, simulationPasses, verifications } = qcFlag;
+                const dataPassId = dataPasses && dataPasses.length ? dataPasses[0].id : null;
+                const simulationPassId = simulationPasses && simulationPasses.length ? simulationPasses[0].id : null;
+                const verificationId = verifications && verifications.length ? verifications[0].id : null;
+                return { id, runNumber, dataPassId, simulationPassId, verificationId };
+            };
+
+            {
+                const runNumber = 106; // Has async flags
+                const qcFlags = await qcFlagService.getAllPerRun(runNumber);
+                expect(qcFlags).to.lengthOf(6);
+
+                expect(qcFlags.map(getPartialQcFlag)).to.deep.eql([
+                    { id: 1, runNumber: 106, dataPassId: 1, simulationPassId: null, verificationId: null },
+                    { id: 2, runNumber: 106, dataPassId: 1, simulationPassId: null, verificationId: null },
+                    { id: 3, runNumber: 106, dataPassId: 1, simulationPassId: null, verificationId: null },
+                    { id: 5, runNumber: 106, dataPassId: null, simulationPassId: 1, verificationId: null },
+                    { id: 6, runNumber: 106, dataPassId: null, simulationPassId: 1, verificationId: null },
+                    { id: 7, runNumber: 106, dataPassId: 1, simulationPassId: null, verificationId: null },
+                ]);
+            }
+            {
+                const runNumber = 56; // Has sync flags
+                const qcFlags = await qcFlagService.getAllPerRun(runNumber);
+                expect(qcFlags).to.lengthOf(3);
+
+                expect(qcFlags.map(getPartialQcFlag)).to.deep.eql([
+                    { id: 100, runNumber: 56, dataPassId: null, simulationPassId: null, verificationId: 2 },
+                    { id: 101, runNumber: 56, dataPassId: null, simulationPassId: null, verificationId: null },
+                    { id: 102, runNumber: 56, dataPassId: null, simulationPassId: null, verificationId: null },
+                ]);
+            }
+        });
     });
 
     describe('Get QC flags summary', () => {
