@@ -267,8 +267,6 @@ module.exports = () => {
     it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
 
-        await pressElement(page, '#openFilterToggle');
-
         // Run 106 has detectors and tags that overflow
         await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
         await waitForTableLength(page, 1);
