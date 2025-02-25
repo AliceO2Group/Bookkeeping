@@ -267,8 +267,6 @@ module.exports = () => {
     it('Should have balloon on detector, tags and eor column', async () => {
         await goToPage(page, 'run-overview');
 
-        await pressElement(page, '#openFilterToggle');
-
         // Run 106 has detectors and tags that overflow
         await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
         await waitForTableLength(page, 1);
@@ -511,7 +509,7 @@ module.exports = () => {
 
     it('Should successfully filter runs by their run quality', async () => {
         await goToPage(page, 'run-overview');
-        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
         const testFilterSelector = `${filterInputSelectorPrefix}test`;
 
@@ -698,10 +696,10 @@ module.exports = () => {
     it('should successfully filter on a list of environment ids and inform the user about it', async () => {
         await waitForTableLength(page, 8);
 
-        const filterInputSelector = '#environmentIds';
+        const filterInputSelector = '.environment-ids-filter';
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
-        await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d');
+        await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d', ['change']);
         await waitForTableLength(page, 6);
 
         await pressElement(page, '#reset-filters');
@@ -723,7 +721,7 @@ module.exports = () => {
         await expectInputValue(page, '#nDetectors-operator', '=');
 
         await page.select('#nDetectors-operator', '<=');
-        await fillInput(page, '#nDetectors-limit', '1');
+        await fillInput(page, '#nDetectors-operand', '1', ['change']);
         await waitForTableLength(page, 6);
 
         const nDetectorsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
@@ -743,7 +741,7 @@ module.exports = () => {
         await expectInputValue(page, '#nFlps-operator', '=');
 
         await page.select('#nFlps-operator', '<=');
-        await fillInput(page, '#nFlps-limit', '10');
+        await fillInput(page, '#nFlps-operand', '10', ['change']);
         await waitForTableLength(page, 5);
 
         const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
@@ -761,7 +759,7 @@ module.exports = () => {
         await expectInputValue(page, '#nEpns-operator', '=');
 
         await page.select('#nEpns-operator', '<=');
-        await fillInput(page, '#nEpns-limit', '10');
+        await fillInput(page, '#nEpns-operand', '10', ['change']);
         await waitForTableLength(page, 5);
 
         await expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
@@ -937,7 +935,7 @@ module.exports = () => {
         // Second export
 
         // Apply filtering
-        const filterInputSelectorPrefix = '#runQualityCheckbox';
+        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
         const badFilterSelector = `${filterInputSelectorPrefix}bad`;
 
         await pressElement(page, '#openFilterToggle');

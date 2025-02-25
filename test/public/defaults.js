@@ -521,7 +521,7 @@ const getPopoverContent = (popoverTrigger) => {
         }
 
         const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
-        return popover.innerHTML;
+        return popover.innerText;
     });
 };
 
@@ -562,11 +562,17 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
-    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    const actualContent = await getPopoverContent(popoverTrigger);
+    await page.hover(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
 
-    expect(triggerContent).to.be.equal(actualContent);
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === triggerContent.replaceAll('\n', ''),
+    );
 };
 
 /**
