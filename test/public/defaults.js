@@ -558,7 +558,7 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
-    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
     const actualContent = await getPopoverContent(popoverTrigger);
 
