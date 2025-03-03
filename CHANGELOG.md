@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.7.0)
+* Notable changes for users:
+  * Clicking on button to delete a flag actually mark it as deleted and remove its effective periods instead of removing it from database
+  * Added a button to discard all QC flags for a given data pass
+  * Fixed de-selection of runs/detectors in runs per data-pass
+* Notable changes for developers:
+  * Kafka client will retry indefinitely when retryable errors occurs
+
 ## [1.6.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.6.0)
 * Notable changes for users:
   * Log template `key`, `issueDescription`, `detectorOrSubsystem` can be provided in the URL when creating a log to pre-fill on-call logs
