@@ -22,9 +22,7 @@
     "rules": {
         "array-bracket-newline": [
             "error",
-            {
-                "multiline": true
-            }
+            "consistent"
         ],
         "array-bracket-spacing": [
             "error",
@@ -87,7 +85,7 @@
         ],
         "function-paren-newline": [
             "error",
-            "multiline"
+            "multiline-arguments"
         ],
         "indent": [
             "error",

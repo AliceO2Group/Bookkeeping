@@ -60,7 +60,7 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2', 'QC Flag Details');
+        await expectInnerText(page, 'h2', 'QC Flag 1');
     });
 
     it('can navigate to runs per data pass page', async () => {
