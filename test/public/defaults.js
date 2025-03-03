@@ -393,14 +393,18 @@ module.exports.getInnerText = getInnerText;
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {string} innerText Text to search for.
+ * @param {object} [options] eventual options
+ * @param {number} [options.timeout] Optional timeout
+ * @param {puppeteer.FrameWaitForFunctionOptions} [options.polling] Optional polling methods, see
  * @return {Promise<void>} resolves once the text has been checked
  */
-module.exports.expectInnerText = async (page, selector, innerText) => {
+module.exports.expectInnerText = async (page, selector, innerText, options = {}) => {
     const elementHandle = await page.waitForSelector(selector);
+
     try {
         await page.waitForFunction(
             (selector, innerText) => document.querySelector(selector).innerText === innerText,
-            {},
+            options,
             selector,
             innerText,
         );
@@ -560,9 +564,15 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
     const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
     const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    const actualContent = await getPopoverContent(popoverTrigger);
+    await page.hover(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
 
-    expect(triggerContent).to.be.equal(actualContent);
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === triggerContent.replaceAll('\n', ''),
+    );
 };
 
 /**
