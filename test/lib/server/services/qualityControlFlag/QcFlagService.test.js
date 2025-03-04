@@ -21,6 +21,8 @@ const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
+const { gaqService } = require('../../../../../lib/server/services/qualityControlFlag/GaqService.js');
+const { qcFlagSummaryService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagSummaryService.js');
 
 /**
  * Get effective part and periods of Qc flag
@@ -157,7 +159,7 @@ module.exports = () => {
 
     describe('Get QC flags summary', () => {
         it('should successfully get non-empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
@@ -176,7 +178,7 @@ module.exports = () => {
         });
 
         it('should successfully get non-empty QC flag summary with MC.Reproducible interpreted as not-bad for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
@@ -220,7 +222,7 @@ module.exports = () => {
                 .filter(({ flag: { flagType: { bad } } }) => !bad)
                 .reduce((coverage, { from, to }) => coverage + (to - from), 0);
 
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
@@ -237,7 +239,7 @@ module.exports = () => {
             // Verify flag and fetch summary one more time
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             await qcFlagService.verifyFlag({ flagId: 4 }, relations);
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
@@ -250,11 +252,11 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 1,
@@ -267,11 +269,11 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for simulation pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
         });
 
         it('should successfully get QC summary of synchronous QC flags for one LHC Period', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
                 56: {
                     // FT0
                     7: {
@@ -714,7 +716,7 @@ module.exports = () => {
                 createdFlagIds.push(qcFlag.id);
                 expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
 
-                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
+                qcSummary = await qcFlagSummaryService.getQcFlagsSummary({ dataPassId });
                 expect(qcSummary).to.be.eql({
                     106: {
                         1: {
@@ -762,7 +764,7 @@ module.exports = () => {
                 effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
                 expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from: to, to: null }]);
 
-                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
+                qcSummary = await qcFlagSummaryService.getQcFlagsSummary({ dataPassId });
                 expect(qcSummary).to.be.eql({
                     106: {
                         1: {
@@ -1569,7 +1571,7 @@ module.exports = () => {
                 { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: goodFlagTypeId },
             ], scopeFDD, relations)).map(({ id }) => id);
 
-            const gaqFlags = await qcFlagService.getGaqFlags(dataPassId, runNumber);
+            const gaqFlags = await gaqService.getFlagsForDataPassAndRun(dataPassId, runNumber);
             const data = gaqFlags.map(({
                 from,
                 to,
@@ -1623,7 +1625,7 @@ module.exports = () => {
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.missingVerificationsCount = 11;
 
-            const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
+            const { [runNumber]: runGaqSummary } = await gaqService.getSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
 
             const scope = {
@@ -1652,7 +1654,7 @@ module.exports = () => {
                 relations,
             );
 
-            const gaqSummary = await qcFlagService.getGaqSummary(dataPassId);
+            const gaqSummary = await gaqService.getSummary(dataPassId);
             expect(gaqSummary).to.be.eql({
                 [runNumber]: expectedGaqSummary,
                 56: {
