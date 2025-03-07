@@ -20,8 +20,10 @@ const RunTypeSuite = require('./runType/index.js');
 const FlpSuite = require('./flp/index.js');
 const ServerSuite = require('./server/index.js');
 const TagSuite = require('./tag/index.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
+    before(resetDatabaseContent);
     describe('Status use-case', StatusSuite);
     describe('Log use-case', LogSuite);
     describe('LhcFill use-case', LhcFillSuite);
