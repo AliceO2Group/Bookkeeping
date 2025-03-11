@@ -697,8 +697,21 @@ module.exports = () => {
             const fourthFlagFrom = new Date('2024-07-01 13:00:00').getTime();
             const fourthFlagTo = new Date('2024-07-01 15:00:00').getTime();
 
+            /*
+             * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+             * (                                 ) First flag
+             * (    ]----------------------------- Second flag
+             * ------------------------[         ) Third flag
+             * ---------[          ]-------------- Fourth flag
+             */
+
             // 1
             {
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * (                                 ) First flag effective period
+                 */
+
                 const from = null;
                 const to = null;
                 const [qcFlag] = await qcFlagService.create(
@@ -720,6 +733,11 @@ module.exports = () => {
 
             // 2
             {
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * -----[                            ) First flag effective period
+                 * (    ]----------------------------- Second flag effective period
+                 */
                 const from = null;
                 const to = secondFlagTo;
                 const [qcFlag] = await qcFlagService.create(
@@ -741,12 +759,19 @@ module.exports = () => {
                 // Previous: first flag
                 const firstFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
                 expect(firstFlagEffectivePeriods).to.lengthOf(1);
-                expect(firstFlagEffectivePeriods[0].from).to.equal(secondFlagTo);
+                expect(firstFlagEffectivePeriods[0].from).to.equal(to);
                 expect(firstFlagEffectivePeriods[0].to).to.equal(null);
             }
 
             // 3
             {
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * -----[                  ]---------- First flag effective period
+                 * (    ]----------------------------- Second flag effective period
+                 * ------------------------[         ) Third flag effective period
+                 */
+
                 const from = thirdFlagFrom;
                 const to = null;
                 const [qcFlag] = await qcFlagService.create(
@@ -780,6 +805,14 @@ module.exports = () => {
 
             // 4
             {
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * -----[   ]----------[   ]---------- First flag effective periods
+                 * (    ]----------------------------- Second flag effective period
+                 * ------------------------[         ) Third flag effective period
+                 * ---------[          ]-------------- Fourth flag effective period
+                 */
+
                 const from = fourthFlagFrom;
                 const to = fourthFlagTo;
                 const [qcFlag] = await qcFlagService.create(
@@ -791,6 +824,31 @@ module.exports = () => {
                     },
                     relations,
                 );
+
+                const newFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                expect(newFlagEffectivePeriods).to.lengthOf(1);
+                expect(newFlagEffectivePeriods[0].from).to.equal(from);
+                expect(newFlagEffectivePeriods[0].to).to.equal(to);
+
+                // Previous: first flag
+                const firstFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(firstFlagEffectivePeriods).to.lengthOf(2);
+                expect(firstFlagEffectivePeriods[0].from).to.equal(secondFlagTo);
+                expect(firstFlagEffectivePeriods[0].to).to.equal(from);
+                expect(firstFlagEffectivePeriods[1].from).to.equal(to);
+                expect(firstFlagEffectivePeriods[1].to).to.equal(thirdFlagFrom);
+
+                // Previous: second flag
+                const secondFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
+                expect(secondFlagEffectivePeriods).to.lengthOf(1);
+                expect(secondFlagEffectivePeriods[0].from).to.equal(null);
+                expect(secondFlagEffectivePeriods[0].to).to.equal(secondFlagTo);
+
+                // Previous: third flag
+                const thirdFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[2]);
+                expect(thirdFlagEffectivePeriods).to.lengthOf(1);
+                expect(thirdFlagEffectivePeriods[0].from).to.equal(thirdFlagFrom);
+                expect(thirdFlagEffectivePeriods[0].to).to.equal(null);
             }
         });
     });
