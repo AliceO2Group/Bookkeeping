@@ -159,7 +159,7 @@ module.exports = () => {
 
     describe('Get QC flags summary', () => {
         it('should successfully get non-empty QC flag summary for data pass', async () => {
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
@@ -178,7 +178,7 @@ module.exports = () => {
         });
 
         it('should successfully get non-empty QC flag summary with MC.Reproducible interpreted as not-bad for data pass', async () => {
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
@@ -222,7 +222,7 @@ module.exports = () => {
                 .filter(({ flag: { flagType: { bad } } }) => !bad)
                 .reduce((coverage, { from, to }) => coverage + (to - from), 0);
 
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
@@ -239,7 +239,7 @@ module.exports = () => {
             // Verify flag and fetch summary one more time
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             await qcFlagService.verifyFlag({ flagId: 4 }, relations);
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
@@ -252,11 +252,11 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+            expect(await qcFlagSummaryService.getSummary({ dataPassId: 3 })).to.be.eql({});
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ simulationPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 1,
@@ -269,11 +269,11 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for simulation pass', async () => {
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
+            expect(await qcFlagSummaryService.getSummary({ simulationPassId: 2 })).to.be.eql({});
         });
 
         it('should successfully get QC summary of synchronous QC flags for one LHC Period', async () => {
-            expect(await qcFlagSummaryService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ lhcPeriodId: 1 })).to.be.eql({
                 56: {
                     // FT0
                     7: {
