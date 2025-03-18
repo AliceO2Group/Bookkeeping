@@ -31,7 +31,6 @@ const {
     getPopoverContent,
     getPopoverSelector,
     getInnerText,
-    expectUrlParams,
     getPopoverInnerText,
     testTableSortingByColumn,
     setConfirmationDialogToBeAccepted,
