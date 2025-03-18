@@ -100,8 +100,8 @@ module.exports = () => {
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
             createdBy: (userName) => userName && userName !== '-',
-            from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
-            to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
+            from: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'From run start' || validateDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Until run end' || validateDate(timestamp),
             createdAt: validateDate,
             updatedAt: validateDate,
         };

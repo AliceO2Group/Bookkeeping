@@ -1362,7 +1362,7 @@ module.exports = () => {
                         },
                     },
                 },
-            })).to.lengthOf(8); // 9 from seeders, then 1 deleted => 8
+            })).to.lengthOf(10); // 11 from seeders, then 1 deleted => 10
 
             expect((await QcFlagRepository.findAll({
                 include: {
