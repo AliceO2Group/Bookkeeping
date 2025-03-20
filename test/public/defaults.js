@@ -561,10 +561,17 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
+    const popoverTriggerSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`;
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
+
     const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    await page.hover(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
+    // Puppeteer hover function sometimes do not trigger the mouseover, manually trigger it
+    await page.evaluate((popoverTriggerSelector) => {
+        const element = document.querySelector(popoverTriggerSelector);
+        element.dispatchEvent(new Event('mouseover', { bubbles: true }));
+    }, popoverTriggerSelector);
+
     const popoverSelector = await this.getPopoverSelector(popoverTrigger);
 
     await this.expectInnerTextTo(
