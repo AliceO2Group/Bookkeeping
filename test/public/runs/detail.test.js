@@ -271,6 +271,24 @@ module.exports = () => {
         await expectInnerText(page, '#mu-inelastic-interaction-rate', '0.009');
     });
 
+    it('should successfully show luminosity information of pp run', async () => {
+        await goToRunDetails(page, 108);
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '1,064,637.582\nµb\n-1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.051');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '0.757');
+    });
+
+    it('should successfully show luminosity information of PbPb run', async () => {
+        await goToRunDetails(page, 54);
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '98,110.716\nµb\n-1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.031');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '0.757');
+    });
+
     it('should show lhc data in normal mode', async () => {
         await goToRunDetails(page, 1);
         await expectInnerText(page, '#fill-number', 'Fill 5');

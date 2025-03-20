@@ -76,7 +76,7 @@ module.exports = () => {
         );
         expect((await ctpTriggerCountersService.getPerRun(2)).map(simplifyCtpTriggerCounters)).to.deep.eql([
             {
-                id: 3,
+                id: 5,
                 runNumber: 2,
                 className: 'CLASS-NAME',
                 ...counters,
@@ -104,7 +104,7 @@ module.exports = () => {
         );
         expect((await ctpTriggerCountersService.getPerRun(2)).map(simplifyCtpTriggerCounters)).to.deep.eql([
             {
-                id: 3,
+                id: 5,
                 runNumber: 2,
                 className: 'CLASS-NAME',
                 ...counters,
