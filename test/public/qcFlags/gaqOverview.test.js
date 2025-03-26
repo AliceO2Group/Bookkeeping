@@ -112,7 +112,7 @@ module.exports = () => {
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 'good',
-                'Since run start',
+                '08/08/2019\n13:00:00',
                 '08/08/2019\n22:43:20',
                 '',
                 'Good',
@@ -155,7 +155,7 @@ module.exports = () => {
             [
                 'good',
                 '09/08/2019\n09:50:00',
-                'Until run end',
+                '09/08/2019\n14:00:00',
                 '',
                 'Good',
             ],
