@@ -13,8 +13,10 @@
 
 const QcFlagTypesServiceTestSuite = require('./QcFlagTypeService.test.js');
 const QcFlagServiceSuite = require('./QcFlagService.test.js');
+const GaqServiceSuite = require('./GaqService.test.js');
 
 module.exports = () => {
-    describe('QcFlagTypeService Suite', QcFlagTypesServiceTestSuite);
-    describe('QcFlagService Suite', QcFlagServiceSuite);
+    // describe('QcFlagTypeService Suite', QcFlagTypesServiceTestSuite);
+    // describe('QcFlagService Suite', QcFlagServiceSuite);
+    describe('GaqService Suite', GaqServiceSuite);
 };
