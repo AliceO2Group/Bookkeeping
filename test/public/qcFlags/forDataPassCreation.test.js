@@ -112,7 +112,7 @@ module.exports = () => {
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '09/08/2019\n13:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
@@ -144,7 +144,7 @@ module.exports = () => {
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '09/08/2019\n13:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
         await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
         await page.waitForSelector('input[type="time"]', { hidden: true });
 
@@ -168,7 +168,7 @@ module.exports = () => {
 
         await expectRowValues(page, 1, {
             flagType: 'Limited acceptance',
-            from: '09/08/2019\n13:01:01',
+            from: '08/08/2019\n13:01:01',
             to: '09/08/2019\n13:50:59',
         });
     });

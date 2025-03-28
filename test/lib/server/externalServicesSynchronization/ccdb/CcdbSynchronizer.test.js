@@ -48,7 +48,7 @@ const dummyCcdbRunInfo = JSON.parse(`{
 
 module.exports = () => {
     it('Should successfully update good physics runs first and last TF timestamps', async () => {
-        const expectedRunNumber = 108;
+        const expectedRunNumber = 106;
         const synchronizeAfter = new Date('2019-08-09T00:00:00');
 
         const goodPhysicsRuns = await getGoodPhysicsRunsWithMissingTfTimestamps(synchronizeAfter);
@@ -66,7 +66,7 @@ module.exports = () => {
         const updatedGoodPhysicsRuns = await getGoodPhysicsRunsWithMissingTfTimestamps(new Date('2019-08-09T00:00:00'));
         expect(updatedGoodPhysicsRuns).to.length(0);
 
-        const updatedRun = await runService.getOrFail({ runNumber: 108 });
+        const updatedRun = await runService.getOrFail({ runNumber: 106 });
         expect(updatedRun.firstTfTimestamp).to.equal(1565262000000);
         expect(updatedRun.lastTfTimestamp).to.equal(1565265600000);
     });
