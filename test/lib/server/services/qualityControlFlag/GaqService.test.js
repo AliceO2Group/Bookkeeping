@@ -149,17 +149,17 @@ module.exports = () => {
         const ft0Id = 7;
         const itsId = 4;
 
-        await qcFlagService.create(
-            [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
-            { ...scope, detectorIdentifier: { detectorId: ft0Id } },
-            relations,
-        );
-        await qcFlagService.create(
-            [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
-            { ...scope, detectorIdentifier: { detectorId: itsId } },
-            relations,
-        );
-
+        // await qcFlagService.create(
+        //     [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+        //     { ...scope, detectorIdentifier: { detectorId: ft0Id } },
+        //     relations,
+        // );
+        // await qcFlagService.create(
+        //     [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+        //     { ...scope, detectorIdentifier: { detectorId: itsId } },
+        //     relations,
+        // );
+        //
         scope.runNumber = 54;
         await qcFlagService.create(
             [{ from: null, to: null, flagTypeId: badPidFlagTypeId }],
