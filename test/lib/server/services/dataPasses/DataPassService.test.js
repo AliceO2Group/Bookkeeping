@@ -28,6 +28,7 @@ const LHC22b_apass1 = {
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
     skimmingStage: SkimmingStage.SKIMMABLE,
+    frozen: false,
     versions: [
         {
             id: 1,
