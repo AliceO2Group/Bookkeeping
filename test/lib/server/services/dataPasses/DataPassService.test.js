@@ -28,6 +28,7 @@ const LHC22b_apass1 = {
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
     skimmingStage: SkimmingStage.SKIMMABLE,
+    frozen: false,
     versions: [
         {
             id: 1,
@@ -219,6 +220,20 @@ module.exports = () => {
                 ...newData,
                 { runNumber: 108, readyForSkimming: false },
             ]);
+        });
+    });
+
+    describe('Updating', () => {
+        it('should successfully freeze a given data pass', async () => {
+            await dataPassService.setFrozenState({ id: 1 }, true);
+            const dataPass = await dataPassService.getByIdentifier({ id: 1 });
+            expect(dataPass.frozen).to.be.true;
+        });
+
+        it('should successfully unfreeze a given data pass', async () => {
+            await dataPassService.setFrozenState({ id: 1 }, false);
+            const dataPass = await dataPassService.getByIdentifier({ id: 1 });
+            expect(dataPass.frozen).to.be.false;
         });
     });
 };
