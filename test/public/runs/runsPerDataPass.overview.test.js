@@ -302,6 +302,7 @@ module.exports = () => {
         await waitForTableLength(page, 2);
         await expectColumnValues(page, 'runNumber', ['108', '107']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -316,6 +317,7 @@ module.exports = () => {
         await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -331,6 +333,7 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -351,6 +354,7 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -364,6 +368,7 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['54']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
@@ -378,6 +383,7 @@ module.exports = () => {
     for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
         const { operator, value, expectedRuns } = testParameters;
         it(`should successfully apply ${property} filters`, async () => {
+            await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
             await pressElement(page, '#openFilterToggle');
 
             await page.waitForSelector(`#${property}-operator`);
@@ -385,6 +391,7 @@ module.exports = () => {
             await fillInput(page, `#${property}-operand`, value, ['change']);
             await expectColumnValues(page, 'runNumber', expectedRuns);
 
+            await pressElement(page, '#openFilterToggle');
             await pressElement(page, '#reset-filters', true);
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
@@ -417,6 +424,7 @@ module.exports = () => {
         await fillInput(page, '#muInelasticInteractionRate-operand', 0.03, ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -454,7 +462,7 @@ module.exports = () => {
     it('should successfully not display button to discard all QC flags for the data pass', async () => {
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
-        await page.waitForSelector(`${popoverSelector} button:nth-child(3)`, { hidden: true });
+        await page.waitForSelector(`${popoverSelector} button:nth-child(4)`, { hidden: true });
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
     });
 
@@ -470,7 +478,7 @@ module.exports = () => {
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await setConfirmationDialogToBeAccepted(page);
-        await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
+        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
