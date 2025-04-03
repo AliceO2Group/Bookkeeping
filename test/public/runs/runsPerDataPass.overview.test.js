@@ -462,7 +462,7 @@ module.exports = () => {
     it('should successfully not display button to discard all QC flags for the data pass', async () => {
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
-        await page.waitForSelector(`${popoverSelector} button:nth-child(4)`, { hidden: true });
+        await page.waitForSelector(`${popoverSelector} button:nth-child(3)`, { hidden: true });
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
     });
 
@@ -478,7 +478,7 @@ module.exports = () => {
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await setConfirmationDialogToBeAccepted(page);
-        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
+        await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
