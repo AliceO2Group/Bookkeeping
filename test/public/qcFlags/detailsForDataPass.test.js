@@ -168,11 +168,11 @@ module.exports = () => {
     it('should successfully display a message instead of QC flags chart when run is missing boundaries', async () => {
         await navigateToRunsPerDataPass(page, 1, 4, 5);
         await waitForNavigation(page, () => pressElement(page, '#row105-CPV-text a'));
-        await expectInnerText(page, '#qc-flags-chart-component', 'Missing run start or end, no QC flags chart');
+        await expectInnerText(page, '#qc-flags-chart-component-error', 'Missing run start or end, no QC flags chart');
 
         await page.goBack();
 
         await waitForNavigation(page, () => pressElement(page, '#row100-CPV-text a'));
-        await expectInnerText(page, '#qc-flags-chart-component', 'Missing run start or end, no QC flags chart');
+        await expectInnerText(page, '#qc-flags-chart-component-error', 'Missing run start or end, no QC flags chart');
     });
 };
