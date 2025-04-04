@@ -233,9 +233,9 @@ module.exports = () => {
         await pressElement(page, '#row56-FT0-text .select-multi-flag');
         await pressElement(page, '#row56-ITS-text .select-multi-flag');
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
-        // Select then de-select one checkbox
-        await pressElement(page, '#row49-ITS-text .select-multi-flag');
-        await pressElement(page, '#row49-ITS-text .select-multi-flag');
+        // Select then de-select one checkbox, jsclick because the second click is sometimes not considered by puppeteer
+        await pressElement(page, '#row49-ITS-text .select-multi-flag', true);
+        await pressElement(page, '#row49-ITS-text .select-multi-flag', true);
 
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
