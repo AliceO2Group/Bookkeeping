@@ -534,7 +534,8 @@ module.exports = () => {
     it('should display links to environment in ECS if run is running', async () => {
         await goToRunDetails(page, 104);
 
-        await page.waitForSelector('a.external-link:nth-of-type(3)', { hidden: true, timeout: 250 });
+        await page.waitForSelector('a.external-link:nth-of-type(3)');
+        await page.waitForSelector('a.external-link:nth-of-type(4)', { hidden: true, timeout: 250 });
 
         // Create running run
         await goToRunDetails(page, 1010);
