@@ -19,6 +19,8 @@ const { SkimmingStage } = require('../../lib/domain/enums/SkimmingStage');
 const { DataPassRepository, RunRepository, DataPassVersionRepository, DataPassRunRepository } = require('../../lib/database/repositories');
 const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService');
 const { Op } = require('sequelize');
+const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 
 const LHC22b_apass1 = {
     id: 1,
@@ -352,6 +354,34 @@ module.exports = () => {
                 ...newData,
                 { runNumber: 108, readyForSkimming: false },
             ]);
+        });
+    });
+
+    describe('PATCH /api/dataPasses/freeze', async () => {
+        it('should successfully freeze a given data pass', async () => {
+            const dataPassId = 1;
+            const response = await request(server).patch(buildUrl(
+                '/api/dataPasses/freeze',
+                { dataPassId, token: BkpRoles.DPG_ASYNC_QC_ADMIN },
+            )).send({});
+            expect(response.status).to.be.equal(204);
+
+            const { frozen } = await dataPassService.getByIdentifier({ id: dataPassId });
+            expect(frozen).to.be.true;
+        });
+    });
+
+    describe('PATCH /api/dataPasses/freeze', async () => {
+        it('should successfully unfreeze a given data pass', async () => {
+            const dataPassId = 1;
+            const response = await request(server).patch(buildUrl(
+                '/api/dataPasses/unfreeze',
+                { dataPassId, token: BkpRoles.DPG_ASYNC_QC_ADMIN },
+            )).send({});
+            expect(response.status).to.be.equal(204);
+
+            const { frozen } = await dataPassService.getByIdentifier({ id: dataPassId });
+            expect(frozen).to.be.false;
         });
     });
 };
