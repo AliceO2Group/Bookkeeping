@@ -27,6 +27,7 @@ const {
     waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { navigateToRunsPerDataPass } = require('../runs/dataPassesUtilities.js');
 
 const { expect } = chai;
 
@@ -162,5 +163,16 @@ module.exports = () => {
 
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nYes');
         await page.waitForSelector('#delete:disabled');
+    });
+
+    it('should successfully display a message instead of QC flags chart when run is missing boundaries', async () => {
+        await navigateToRunsPerDataPass(page, 1, 4, 5);
+        await waitForNavigation(page, () => pressElement(page, '#row105-CPV-text a'));
+        await expectInnerText(page, '#qc-flags-chart-component-error', 'Missing run start or end, no QC flags chart');
+
+        await page.goBack();
+
+        await waitForNavigation(page, () => pressElement(page, '#row100-CPV-text a'));
+        await expectInnerText(page, '#qc-flags-chart-component-error', 'Missing run start or end, no QC flags chart');
     });
 };

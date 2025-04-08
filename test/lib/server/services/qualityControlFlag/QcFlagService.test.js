@@ -21,6 +21,8 @@ const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
+const { gaqService } = require('../../../../../lib/server/services/qualityControlFlag/GaqService.js');
+const { qcFlagSummaryService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagSummaryService.js');
 
 /**
  * Get effective part and periods of Qc flag
@@ -157,7 +159,7 @@ module.exports = () => {
 
     describe('Get QC flags summary', () => {
         it('should successfully get non-empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
@@ -176,7 +178,7 @@ module.exports = () => {
         });
 
         it('should successfully get non-empty QC flag summary with MC.Reproducible interpreted as not-bad for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId: 1 }, { mcReproducibleAsNotBad: true })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 3,
@@ -220,7 +222,7 @@ module.exports = () => {
                 .filter(({ flag: { flagType: { bad } } }) => !bad)
                 .reduce((coverage, { from, to }) => coverage + (to - from), 0);
 
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
@@ -237,7 +239,7 @@ module.exports = () => {
             // Verify flag and fetch summary one more time
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
             await qcFlagService.verifyFlag({ flagId: 4 }, relations);
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ dataPassId })).to.be.eql({
                 1: {
                     1: {
                         missingVerificationsCount: 0,
@@ -250,11 +252,11 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for data pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ dataPassId: 3 })).to.be.eql({});
+            expect(await qcFlagSummaryService.getSummary({ dataPassId: 3 })).to.be.eql({});
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ simulationPassId: 1 })).to.be.eql({
                 106: {
                     1: {
                         missingVerificationsCount: 1,
@@ -267,11 +269,11 @@ module.exports = () => {
         });
 
         it('should successfully get empty QC flag summary for simulation pass', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ simulationPassId: 2 })).to.be.eql({});
+            expect(await qcFlagSummaryService.getSummary({ simulationPassId: 2 })).to.be.eql({});
         });
 
         it('should successfully get QC summary of synchronous QC flags for one LHC Period', async () => {
-            expect(await qcFlagService.getQcFlagsSummary({ lhcPeriodId: 1 })).to.be.eql({
+            expect(await qcFlagSummaryService.getSummary({ lhcPeriodId: 1 })).to.be.eql({
                 56: {
                     // FT0
                     7: {
@@ -413,7 +415,7 @@ module.exports = () => {
             );
         });
 
-        it('should successfully create quality control flag with externalUserId', async () => {
+        it('should successfully create quality control and update ', async () => {
             const qcFlags = [
                 {
                     from: new Date('2019-08-09 01:29:50').getTime(),
@@ -637,11 +639,9 @@ module.exports = () => {
                 },
             ] = await qcFlagService.create([qcFlag], scope, relations);
 
-            const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
-
             expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
-                from: startTime,
-                to: endTime,
+                from: null,
+                to: null,
                 comment: qcFlag.comment,
                 flagTypeId: qcFlag.flagTypeId,
                 runNumber: scope.runNumber,
@@ -690,18 +690,31 @@ module.exports = () => {
             const run = await RunRepository.findOne({ where: { runNumber } }); // Create run without timestamps
             await run.addDataPass(dataPassId);
             await run.addDetector(detectorId);
-            let from;
-            let to;
-            let qcFlag;
-            let effectivePeriods;
-            let qcSummary;
             const createdFlagIds = [];
+
+            const secondFlagTo = new Date('2024-07-01 12:00:00').getTime();
+            const thirdFlagFrom = new Date('2024-07-01 16:00:00').getTime();
+            const fourthFlagFrom = new Date('2024-07-01 13:00:00').getTime();
+            const fourthFlagTo = new Date('2024-07-01 15:00:00').getTime();
+
+            /*
+             * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+             * (                                 ) First flag
+             * (    ]----------------------------- Second flag
+             * ------------------------[         ) Third flag
+             * ---------[          ]-------------- Fourth flag
+             */
 
             // 1
             {
-                from = null;
-                to = null;
-                [qcFlag] = await qcFlagService.create(
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * (                                 ) First flag effective period
+                 */
+
+                const from = null;
+                const to = null;
+                const [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
@@ -710,42 +723,24 @@ module.exports = () => {
                     },
                     relations,
                 );
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
 
-                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
-                expect(qcSummary).to.be.eql({
-                    106: {
-                        1: {
-                            badEffectiveRunCoverage: 1,
-                            mcReproducible: false,
-                            missingVerificationsCount: 1,
-                            explicitlyNotBadEffectiveRunCoverage: 0,
-                        },
-                        16: {
-                            badEffectiveRunCoverage: 0,
-                            explicitlyNotBadEffectiveRunCoverage: 1,
-                            mcReproducible: false,
-                            missingVerificationsCount: 1,
-                        },
-                    },
-                    [runNumber]: {
-                        [detectorId]: {
-                            badEffectiveRunCoverage: 1,
-                            mcReproducible: true,
-                            missingVerificationsCount: 1,
-                            explicitlyNotBadEffectiveRunCoverage: 0,
-                        },
-                    },
-                });
+                const effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                expect(effectivePeriods).to.lengthOf(1);
+                expect(effectivePeriods[0].from).to.equal(null);
+                expect(effectivePeriods[0].to).to.equal(null);
             }
 
             // 2
             {
-                from = null;
-                to = new Date('2024-07-01 12:00:00').getTime();
-                [qcFlag] = await qcFlagService.create(
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * -----[                            ) First flag effective period
+                 * (    ]----------------------------- Second flag effective period
+                 */
+                const from = null;
+                const to = secondFlagTo;
+                const [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
@@ -754,46 +749,32 @@ module.exports = () => {
                     },
                     relations,
                 );
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from, to }]);
+
+                const newFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                expect(newFlagEffectivePeriods).to.lengthOf(1);
+                expect(newFlagEffectivePeriods[0].from).to.equal(null);
+                expect(newFlagEffectivePeriods[0].to).to.equal(to);
 
                 // Previous: first flag
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([{ from: to, to: null }]);
-
-                qcSummary = await qcFlagService.getQcFlagsSummary({ dataPassId });
-                expect(qcSummary).to.be.eql({
-                    106: {
-                        1: {
-                            badEffectiveRunCoverage: 1,
-                            mcReproducible: false,
-                            missingVerificationsCount: 1,
-                            explicitlyNotBadEffectiveRunCoverage: 0,
-                        },
-                        16: {
-                            badEffectiveRunCoverage: 0,
-                            explicitlyNotBadEffectiveRunCoverage: 1,
-                            mcReproducible: false,
-                            missingVerificationsCount: 1,
-                        },
-                    },
-                    [runNumber]: {
-                        [detectorId]: {
-                            badEffectiveRunCoverage: null,
-                            explicitlyNotBadEffectiveRunCoverage: 0,
-                            mcReproducible: true,
-                            missingVerificationsCount: 2,
-                        },
-                    },
-                });
+                const firstFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(firstFlagEffectivePeriods).to.lengthOf(1);
+                expect(firstFlagEffectivePeriods[0].from).to.equal(to);
+                expect(firstFlagEffectivePeriods[0].to).to.equal(null);
             }
 
             // 3
             {
-                from = new Date('2024-07-01 16:00:00').getTime();
-                to = null;
-                [qcFlag] = await qcFlagService.create(
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * -----[                  ]---------- First flag effective period
+                 * (    ]----------------------------- Second flag effective period
+                 * ------------------------[         ) Third flag effective period
+                 */
+
+                const from = thirdFlagFrom;
+                const to = null;
+                const [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
@@ -802,26 +783,39 @@ module.exports = () => {
                     },
                     relations,
                 );
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
                 createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
+
+                const newFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                expect(newFlagEffectivePeriods).to.lengthOf(1);
+                expect(newFlagEffectivePeriods[0].from).to.equal(from);
+                expect(newFlagEffectivePeriods[0].to).to.equal(null);
 
                 // Previous: first flag
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
-                    .have.all.deep.members([{ from: new Date('2024-07-01 12:00:00').getTime(), to: new Date('2024-07-01 16:00:00').getTime() }]);
+                const firstFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(firstFlagEffectivePeriods).to.lengthOf(1);
+                expect(firstFlagEffectivePeriods[0].from).to.equal(secondFlagTo);
+                expect(firstFlagEffectivePeriods[0].to).to.equal(thirdFlagFrom);
 
                 // Previous: second flag
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to
-                    .have.all.deep.members([{ from: null, to: new Date('2024-07-01 12:00:00').getTime() }]);
+                const secondFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
+                expect(secondFlagEffectivePeriods).to.lengthOf(1);
+                expect(secondFlagEffectivePeriods[0].from).to.equal(null);
+                expect(secondFlagEffectivePeriods[0].to).to.equal(secondFlagTo);
             }
 
             // 4
             {
-                from = new Date('2024-07-01 13:00:00').getTime();
-                to = new Date('2024-07-01 15:00:00').getTime();
-                [qcFlag] = await qcFlagService.create(
+                /*
+                 * --- 12 - 13 - 14 - 15 - 16 - 17 --> hours
+                 * -----[   ]----------[   ]---------- First flag effective periods
+                 * (    ]----------------------------- Second flag effective period
+                 * ------------------------[         ) Third flag effective period
+                 * ---------[          ]-------------- Fourth flag effective period
+                 */
+
+                const from = fourthFlagFrom;
+                const to = fourthFlagTo;
+                const [qcFlag] = await qcFlagService.create(
                     [{ flagTypeId, from, to }],
                     {
                         runNumber,
@@ -830,28 +824,31 @@ module.exports = () => {
                     },
                     relations,
                 );
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
-                createdFlagIds.push(qcFlag.id);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.be.eql([{ from, to }]);
+
+                const newFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(qcFlag.id);
+                expect(newFlagEffectivePeriods).to.lengthOf(1);
+                expect(newFlagEffectivePeriods[0].from).to.equal(from);
+                expect(newFlagEffectivePeriods[0].to).to.equal(to);
 
                 // Previous: first flag
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([
-                    { from: new Date('2024-07-01 12:00:00').getTime(), to: new Date('2024-07-01 13:00:00').getTime() },
-                    { from: new Date('2024-07-01 15:00:00').getTime(), to: new Date('2024-07-01 16:00:00').getTime() },
-                ]);
+                const firstFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[0]);
+                expect(firstFlagEffectivePeriods).to.lengthOf(2);
+                expect(firstFlagEffectivePeriods[0].from).to.equal(secondFlagTo);
+                expect(firstFlagEffectivePeriods[0].to).to.equal(from);
+                expect(firstFlagEffectivePeriods[1].from).to.equal(to);
+                expect(firstFlagEffectivePeriods[1].to).to.equal(thirdFlagFrom);
 
                 // Previous: second flag
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([
-                    { from: null, to: new Date('2024-07-01 12:00:00').getTime() },
-                ]);
+                const secondFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[1]);
+                expect(secondFlagEffectivePeriods).to.lengthOf(1);
+                expect(secondFlagEffectivePeriods[0].from).to.equal(null);
+                expect(secondFlagEffectivePeriods[0].to).to.equal(secondFlagTo);
 
                 // Previous: third flag
-                effectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[2]);
-                expect(effectivePeriods.map(({ from, to }) => ({ from, to }))).to.have.all.deep.members([
-                    { from: new Date('2024-07-01 16:00:00').getTime(), to: null },
-                ]);
+                const thirdFlagEffectivePeriods = await getEffectivePeriodsOfQcFlag(createdFlagIds[2]);
+                expect(thirdFlagEffectivePeriods).to.lengthOf(1);
+                expect(thirdFlagEffectivePeriods[0].from).to.equal(thirdFlagFrom);
+                expect(thirdFlagEffectivePeriods[0].to).to.equal(null);
             }
         });
     });
@@ -1135,11 +1132,9 @@ module.exports = () => {
             const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
 
-            const { startTime, endTime } = await RunRepository.findOne({ where: { runNumber } });
-
             expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
-                from: startTime,
-                to: endTime,
+                from: null,
+                to: null,
                 comment: qcFlagCreationParameters.comment,
                 flagTypeId: qcFlagCreationParameters.flagTypeId,
                 runNumber: scope.runNumber,
@@ -1367,7 +1362,7 @@ module.exports = () => {
                         },
                     },
                 },
-            })).to.lengthOf(8); // 9 from seeders, then 1 deleted => 8
+            })).to.lengthOf(10); // 11 from seeders, then 1 deleted => 10
 
             expect((await QcFlagRepository.findAll({
                 include: {
@@ -1569,7 +1564,7 @@ module.exports = () => {
                 { from: t('10:00:00'), to: t('14:00:00'), flagTypeId: goodFlagTypeId },
             ], scopeFDD, relations)).map(({ id }) => id);
 
-            const gaqFlags = await qcFlagService.getGaqFlags(dataPassId, runNumber);
+            const gaqFlags = await gaqService.getFlagsForDataPassAndRun(dataPassId, runNumber);
             const data = gaqFlags.map(({
                 from,
                 to,
@@ -1623,7 +1618,7 @@ module.exports = () => {
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.missingVerificationsCount = 11;
 
-            const { [runNumber]: runGaqSummary } = await qcFlagService.getGaqSummary(dataPassId);
+            const { [runNumber]: runGaqSummary } = await gaqService.getSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
 
             const scope = {
@@ -1652,7 +1647,7 @@ module.exports = () => {
                 relations,
             );
 
-            const gaqSummary = await qcFlagService.getGaqSummary(dataPassId);
+            const gaqSummary = await gaqService.getSummary(dataPassId);
             expect(gaqSummary).to.be.eql({
                 [runNumber]: expectedGaqSummary,
                 56: {

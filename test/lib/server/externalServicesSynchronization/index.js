@@ -3,5 +3,5 @@ const CcdbSuite = require('./ccdb/index.js');
 
 module.exports = () => {
     describe('MonALISA', MonalisaSuite);
-    describe('MonALISA', CcdbSuite);
+    describe('CCDB', CcdbSuite);
 };
