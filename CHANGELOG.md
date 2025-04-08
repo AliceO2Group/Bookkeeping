@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.8.0)
+* Notable changes for users:
+  * Luminosity information has been added to run details page
+
 ## [1.7.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.7.0)
 * Notable changes for users:
   * Clicking on button to delete a flag actually mark it as deleted and remove its effective periods instead of removing it from database

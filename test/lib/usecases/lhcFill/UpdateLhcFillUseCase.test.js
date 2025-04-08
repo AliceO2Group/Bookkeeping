@@ -58,10 +58,10 @@ module.exports = () => {
         }
         {
             const existingFill = await lhcFillService.get(1);
-            const collidingBunchesCount = 12345;
+            const collidingBunchesCount = 43210;
             const deliveredLuminosity = 12.53;
 
-            expect(existingFill.collidingBunchesCount).to.be.null;
+            expect(existingFill.collidingBunchesCount).to.equal(1234);
             expect(existingFill.deliveredLuminosity).to.be.null;
 
             updateLhcFillDto.body = {

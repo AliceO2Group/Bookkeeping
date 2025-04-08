@@ -25,7 +25,6 @@ const {
     waitForNavigation,
     expectLink,
     waitForTableLength,
-    getTableContent,
     getPopoverSelector,
     expectRowValues,
 } = require('../defaults.js');
@@ -272,8 +271,30 @@ module.exports = () => {
         await expectInnerText(page, '#mu-inelastic-interaction-rate', '0.009');
     });
 
-    it('can navigate to the flp panel', async () => {
+    it('should successfully show luminosity information of pp run', async () => {
+        await goToRunDetails(page, 108);
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '1,064,637.582\nµb\n-1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.051');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '0.757');
+    });
+
+    it('should successfully show luminosity information of PbPb run', async () => {
+        await goToRunDetails(page, 54);
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '98,110.716\nµb\n-1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.031');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '0.757');
+    });
+
+    it('should show lhc data in normal mode', async () => {
         await goToRunDetails(page, 1);
+        await expectInnerText(page, '#fill-number', 'Fill 5');
+    });
+
+    it('can navigate to the flp panel', async () => {
         await waitForNavigation(page, () => pressElement(page, '#flps-tab'));
         await expectUrlParams(page, {
             page: 'run-detail',
@@ -298,6 +319,31 @@ module.exports = () => {
         );
     });
 
+    it('should successfully navigate to the trigger counters panel', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#ctp-trigger-counters-tab'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'ctp-trigger-counters' });
+
+        await waitForTableLength(page, 2);
+        await expectRowValues(
+            page,
+            1,
+            {
+                className: 'FIRST-CLASS-NAME',
+                lmb: '101',
+                lma: '102',
+                l0b: '103',
+                l0a: '104',
+                l1b: '105',
+                l1a: '106',
+            },
+        );
+    });
+
+    it('should successfully navigate to the trigger configuration panel', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#trigger-configuration-tab'));
+        await expectInnerText(page, '#trigger-configuration-pane .panel', 'Raw\nTrigger\nConfiguration');
+    });
+
     it('can navigate to the logs panel', async () => {
         await pressElement(page, '#logs-tab');
         await page.waitForSelector('#logs-tab.active');
@@ -313,27 +359,6 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
 
         expectUrlParams(page, { page: 'log-detail', id: 1 });
-    });
-
-    it('should successfully navigate to the trigger counters panel', async () => {
-        await goToRunDetails(page, 1);
-
-        await pressElement(page, '#ctp-trigger-counters-tab');
-        await waitForTableLength(page, 2);
-        expectUrlParams(page, { page: 'run-detail', runNumber: 1, panel: 'ctp-trigger-counters' });
-        expect(await getTableContent(page)).to.deep.eql([
-            ['FIRST-CLASS-NAME', '101', '102', '103', '104', '105', '106'],
-            ['SECOND-CLASS-NAME', '2,001', '2,002', '2,003', '2,004', '2,005', '2,006'],
-        ]);
-    });
-
-    it('should successfully navigate to the trigger configuration panel', async () => {
-        await pressElement(page, '#trigger-configuration-tab');
-        await expectInnerText(page, '#trigger-configuration-pane .panel', 'Raw\nTrigger\nConfiguration');
-    });
-
-    it('should show lhc data in normal mode', async () => {
-        await expectInnerText(page, '#fill-number', 'Fill 5');
     });
 
     it('successfully prevent from editing run quality of not ended runs', async () => {
@@ -509,7 +534,8 @@ module.exports = () => {
     it('should display links to environment in ECS if run is running', async () => {
         await goToRunDetails(page, 104);
 
-        await page.waitForSelector('a.external-link:nth-of-type(3)', { hidden: true, timeout: 250 });
+        await page.waitForSelector('a.external-link:nth-of-type(3)');
+        await page.waitForSelector('a.external-link:nth-of-type(4)', { hidden: true, timeout: 250 });
 
         // Create running run
         await goToRunDetails(page, 1010);

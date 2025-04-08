@@ -521,7 +521,7 @@ const getPopoverContent = (popoverTrigger) => {
         }
 
         const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
-        return popover.innerHTML;
+        return popover.innerText;
     });
 };
 
@@ -561,12 +561,25 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
-    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
+    const popoverTriggerSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`;
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
 
-    const actualContent = await getPopoverContent(popoverTrigger);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    expect(triggerContent).to.be.equal(actualContent);
+    // Puppeteer hover function sometimes do not trigger the mouseover, manually trigger it
+    await page.evaluate((popoverTriggerSelector) => {
+        const element = document.querySelector(popoverTriggerSelector);
+        element.dispatchEvent(new Event('mouseover', { bubbles: true }));
+    }, popoverTriggerSelector);
+
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === triggerContent.replaceAll('\n', ''),
+    );
 };
 
 /**
