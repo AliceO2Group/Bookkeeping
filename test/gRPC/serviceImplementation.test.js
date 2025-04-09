@@ -151,7 +151,7 @@ module.exports = () => {
 
         expect(callback.calledWithMatch({
             code: 2,
-            message: 'Controller for /test.Service/TestEnums returned a null response',
+            message: 'Controller for /test.Service/TestEnums returned an invalid response',
         })).to.be.true;
     });
 };
