@@ -28,7 +28,7 @@ const LHC22b_apass1 = {
     name: 'LHC22b_apass1',
     pdpBeamType: 'pp',
     skimmingStage: SkimmingStage.SKIMMABLE,
-    frozen: false,
+    isFrozen: false,
     versions: [
         {
             id: 1,
@@ -227,13 +227,35 @@ module.exports = () => {
         it('should successfully freeze a given data pass', async () => {
             await dataPassService.setFrozenState({ id: 1 }, true);
             const dataPass = await dataPassService.getByIdentifier({ id: 1 });
-            expect(dataPass.frozen).to.be.true;
+            expect(dataPass.isFrozen).to.be.true;
+        });
+
+        it('should fail to freeze a not existing data pass', async () => {
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ name: 'do-not-exist' }, true),
+                new NotFoundError('Data pass with this name (do-not-exist) could not be found'),
+            );
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ id: 99999999 }, true),
+                new NotFoundError('Data pass with this id (99999999) could not be found'),
+            );
         });
 
         it('should successfully unfreeze a given data pass', async () => {
             await dataPassService.setFrozenState({ id: 1 }, false);
             const dataPass = await dataPassService.getByIdentifier({ id: 1 });
-            expect(dataPass.frozen).to.be.false;
+            expect(dataPass.isFrozen).to.be.false;
+        });
+
+        it('should fail to unfreeze a not existing data pass', async () => {
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ name: 'do-not-exist' }, false),
+                new NotFoundError('Data pass with this name (do-not-exist) could not be found'),
+            );
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ id: 99999999 }, false),
+                new NotFoundError('Data pass with this id (99999999) could not be found'),
+            );
         });
     });
 };
