@@ -36,16 +36,17 @@ void GrpcDplProcessExecutionClient::registerProcessExecution(
   std::string args,
   std::string detector)
 {
-  auto request = std::make_shared<DplProcessExecutionCreationRequest>();
-  request->set_runnumber(runNumber);
-  request->set_detectorname(detector);
-  request->set_processname(deviceId);
-  request->set_type(static_cast<o2::bookkeeping::DplProcessType>(type));
-  request->set_hostname(hostname);
+  DplProcessExecutionCreationRequest request{};
+  request.set_runnumber(runNumber);
+  request.set_detectorname(detector);
+  request.set_processname(deviceId);
+  request.set_type(static_cast<o2::bookkeeping::DplProcessType>(type));
+  request.set_hostname(hostname);
 
   auto response = std::make_shared<DplProcessExecution>();
 
-  auto status = mStub->Create(mClientContextFactory().get(), *request, response.get());
+  auto context = mClientContextFactory();
+  auto status = mStub->Create(context.get(), request, response.get());
 
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());

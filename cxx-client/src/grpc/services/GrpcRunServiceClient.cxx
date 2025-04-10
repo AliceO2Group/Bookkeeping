@@ -33,7 +33,8 @@ void GrpcRunServiceClient::setRawCtpTriggerConfiguration(int runNumber, std::str
   updateRequest.set_runnumber(runNumber);
   updateRequest.set_rawctptriggerconfiguration(rawCtpTriggerConfiguration);
 
-  auto status = mStub->Update(mClientContextFactory().get(), updateRequest, &updatedRun);
+  auto context = mClientContextFactory();
+  auto status = mStub->Update(context.get(), updateRequest, &updatedRun);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }

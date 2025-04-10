@@ -44,7 +44,8 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForDataPass(
     mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
   }
 
-  auto status = mStub->CreateForDataPass(mClientContextFactory().get(), request, &response);
+  auto context = mClientContextFactory();
+  auto status = mStub->CreateForDataPass(context.get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }
@@ -71,7 +72,8 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSimulationPas
     mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
   }
 
-  auto status = mStub->CreateForSimulationPass(mClientContextFactory().get(), request, &response);
+  auto context = mClientContextFactory();
+  auto status = mStub->CreateForSimulationPass(context.get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }
@@ -96,7 +98,8 @@ std::vector<int> grpc::services::GrpcQcFlagServiceClient::createForSynchronous(
     mirrorQcFlagOnGrpcQcFlag(qcFlag, grpcQcFlag);
   }
 
-  auto status = mStub->CreateSynchronous(mClientContextFactory().get(), request, &response);
+  auto context = mClientContextFactory();
+  auto status = mStub->CreateSynchronous(context.get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }

@@ -47,7 +47,8 @@ void GrpcFlpServiceClient::updateReadoutCountersByFlpNameAndRunNumber(
   request.set_nrecordingbytes(nRecordingBytes);
   request.set_nfairmqbytes(nFairMQBytes);
 
-  auto status = mStub->UpdateCounters(mClientContextFactory().get(), request, &updatedFlp);
+  auto context = mClientContextFactory();
+  auto status = mStub->UpdateCounters(context.get(), request, &updatedFlp);
 
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());

@@ -27,7 +27,7 @@ GrpcCtpTriggerCountersServiceClient::GrpcCtpTriggerCountersServiceClient(const s
 }
 void GrpcCtpTriggerCountersServiceClient::createOrUpdateForRun(uint32_t runNumber, const std::string& className, int64_t timestamp, uint64_t lmb, uint64_t lma, uint64_t l0b, uint64_t l0a, uint64_t l1b, uint64_t l1a)
 {
-  CtpTriggerCounterCreateOrUpdateRequest request;
+  CtpTriggerCounterCreateOrUpdateRequest request{};
   Empty response;
 
   request.set_runnumber(runNumber);
@@ -40,7 +40,8 @@ void GrpcCtpTriggerCountersServiceClient::createOrUpdateForRun(uint32_t runNumbe
   request.set_l1b(l1b);
   request.set_l1a(l1a);
 
-  auto status = mStub->CreateOrUpdateForRun(mClientContextFactory().get(), request, &response);
+  auto context = mClientContextFactory();
+  auto status = mStub->CreateOrUpdateForRun(context.get(), request, &response);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }
