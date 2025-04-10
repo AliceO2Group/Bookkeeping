@@ -32,18 +32,15 @@ using std::unique_ptr;
 
 namespace o2::bkp::api::grpc
 {
+using services::GrpcCtpTriggerCountersServiceClient;
 using services::GrpcDplProcessExecutionClient;
 using services::GrpcFlpServiceClient;
 using services::GrpcQcFlagServiceClient;
-using services::GrpcCtpTriggerCountersServiceClient;
 using services::GrpcRunServiceClient;
 
-GrpcBkpClient::GrpcBkpClient(const string& uri, const std::function<std::unique_ptr<ClientContext> ()>& clientContextFactory)
+GrpcBkpClient::GrpcBkpClient(const string& uri, const std::function<std::unique_ptr<ClientContext>()>& clientContextFactory)
 {
-  auto channel = CreateChannel(
-    uri,
-    InsecureChannelCredentials()
-  );
+  auto channel = CreateChannel(uri, InsecureChannelCredentials());
 
   mFlpClient = make_unique<GrpcFlpServiceClient>(channel, clientContextFactory);
   mDplProcessExecutionClient = make_unique<GrpcDplProcessExecutionClient>(channel, clientContextFactory);
@@ -77,7 +74,8 @@ const unique_ptr<CtpTriggerCountersServiceClient>& GrpcBkpClient::triggerCounter
   return mCtpTriggerCountersClient;
 }
 
-const unique_ptr<RunServiceClient>& GrpcBkpClient::run() const {
+const unique_ptr<RunServiceClient>& GrpcBkpClient::run() const
+{
   return mRunClient;
 }
 } // namespace o2::bkp::api::grpc

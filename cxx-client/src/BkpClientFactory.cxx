@@ -17,27 +17,26 @@
 #include <memory>
 #include "grpc/GrpcBkpClient.h"
 
+using grpc::ClientContext;
 using std::make_unique;
 using std::string;
 using std::unique_ptr;
-using grpc::ClientContext;
 
 namespace o2::bkp::api
 {
-unique_ptr<BkpClient> BkpClientFactory::create(const std::string& gRPCUri) {
-  auto clientContextFactory = []() {
-    return make_unique<ClientContext>();
-  };
-  return make_unique<grpc::GrpcBkpClient>(gRPCUri, clientContextFactory);
+unique_ptr<BkpClient> BkpClientFactory::create(const std::string& gRPCUri)
+{
+  return make_unique<grpc::GrpcBkpClient>(gRPCUri, []() { return make_unique<ClientContext>(); });
 }
 
 unique_ptr<BkpClient> BkpClientFactory::create(const string& gRPCUri, const string& token)
 {
-  auto clientContextFactory = [token]() {
-    auto clientContext = make_unique<ClientContext>();
-    clientContext->AddMetadata("authorization", "Bearer " + token);
-    return clientContext;
-  };
-  return make_unique<grpc::GrpcBkpClient>(gRPCUri, clientContextFactory);
+  return make_unique<grpc::GrpcBkpClient>(
+    gRPCUri,
+    [token]() {
+      auto clientContext = make_unique<ClientContext>();
+      clientContext->AddMetadata("authorization", "Bearer " + token);
+      return clientContext;
+    });
 }
 } // namespace o2::bkp::api
