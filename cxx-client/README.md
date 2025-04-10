@@ -48,7 +48,7 @@ target_link_libraries(${EXECUTABLE_NAME} PRIVATE AliceO2::BookkeepingApi)
 ```
 ### C++ usage
 
-The bookkeeping API's client can be requested from the provided factory by passing it the gRPC endpoint's URI:
+The bookkeeping API's client can be requested from the provided factory by passing it the gRPC endpoint's URI and an authentication token:
 
 #### Use-case specific services
 
@@ -56,7 +56,7 @@ The bookkeeping API's client can be requested from the provided factory by passi
 #include <BookkeepingApi/BkpClientFactory.h>
 using namespace o2::bkp::api;
 
-auto client = BkpClientFactory::create("[host][:port]");
+auto client = BkpClientFactory::create("[host][:port]", "[token]");
 ```
 
 If you have a local bookkeeping running, the URI should be `127.0.0.1:4001` (note the **absence** of protocol such
@@ -71,7 +71,7 @@ For example to update readout FLP's counters using a local JSON file you can use
 #include <BookkeepingApi/BkpClientFactory.h>
 using namespace o2::bkp::api;
 
-auto client = BkpClientFactory::create("[grpc-endpoint-url]");
+auto client = BkpClientFactory::create("[grpc-endpoint-url]", "[token]");
 client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-NAME", runNumber, nSubtimeframes, nEquipmentBytes, nRecordingBytes, nFairMQBytes);
 ```
 
