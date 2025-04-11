@@ -4,18 +4,6 @@
 ### Requirements
 NodeJS - `v22` (min)
 ### Configuration
-The following `.env` configuration is the bare minimum required for development. It must be placed in the top dir. 
-```ini
-; Database
-MYSQL_ROOT_PASSWORD=cern
-OPENID_ID=
-OPENID_SECRET=
-OPENID_REDIRECT=
-
-JWT_SECRET=
-
-ATTACHMENT_PATH=/var/storage
-```
 
 On mac, the file database/configuration/my.cnf must be modified to set this variable to 1 : 
 ```
