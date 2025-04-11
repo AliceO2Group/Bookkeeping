@@ -156,7 +156,9 @@ const handleAllWorkersExited = () => {
  * @returns {void}
  */
 const displayResults = async () => {
-    logger.infoMessage('\nResults:\n');
+    logger.infoMessage('\n');
+    logger.infoMessage('Results:');
+    logger.infoMessage('\n');
     await readAllLogFiles('tests.log');
 
     // eslint-disable-next-line no-console
