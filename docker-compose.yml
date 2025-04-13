@@ -26,8 +26,8 @@ services:
       ALI_FLP_INDEX_URL: "${ALI_ECS_GUI_URL:-http://localhost:80}"
       CCDB_ENABLE_SYNCHRONIZATION: "${CCDB_ENABLE_SYNCHRONIZATION:-false}"
       CCDB_RUN_INFO_URL: "${CCDB_RUN_INFO_URL:-}"
-    links:
-      - database
+#    links:
+#      - database
     restart: unless-stopped
     volumes:
       - type: bind
@@ -38,22 +38,24 @@ services:
         read_only: false
         source: ./docker/storage
         target: /var/storage
+#    depends_on:
+#      - database
 
-  database:
-    image: mariadb:10.5.9
-    environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-    restart: unless-stopped
-    volumes:
-      - type: bind
-        read_only: false
-        source: ./database/data
-        target: /var/lib/mysql
-      - type: bind
-        read_only: true
-        source: ./database/configuration
-        target: /etc/mysql/conf.d
-      - type: bind
-        read_only: true
-        source: ./database/populate
-        target: /docker-entrypoint-initdb.d
+#  database:
+#    image: mariadb:10.5.9
+#    environment:
+#      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+#    restart: unless-stopped
+#    volumes:
+#      - type: bind
+#        read_only: false
+#        source: ./database/data
+#        target: /var/lib/mysql
+#      - type: bind
+#        read_only: true
+#        source: ./database/configuration
+#        target: /etc/mysql/conf.d
+#      - type: bind
+#        read_only: true
+#        source: ./database/populate
+#        target: /docker-entrypoint-initdb.d

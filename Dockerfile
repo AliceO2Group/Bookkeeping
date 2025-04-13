@@ -32,40 +32,40 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 COPY . .
 
 # Installs modules from package-lock.json if there are changes, this ensures reproducible build
-RUN npm --silent ci
+RUN npm install
 
 #
 # ---- Development ----
 FROM developmentdependencies AS development
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "start:dev" ]
+CMD [ "npm", "run", "start:dev" ]
 
 #
 # ---- Test ----
 FROM developmentdependencies AS test
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "test" ]
+CMD [ "npm", "run", "test" ]
 
 #
 # ---- Test parallel for CI ----
 FROM developmentdependencies AS test_parallel_ci
 
-CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset" ]
+CMD [ "npm", "run", "test:subset" ]
 
 #
 # ---- Test parallel local ----
 FROM developmentdependencies AS test_parallel_local
 
-CMD [ "sh", "-c", "/opt/wait-for-it.sh -t 0 test_db:3306 -- npm run test:subset-local" ]
+CMD [ "npm", "run", "test:subset-local" ]
 
 #
 # ---- Coverage ----
 FROM developmentdependencies AS coverage
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "npm", "run", "coverage" ]
+CMD [ "npm", "run", "coverage" ]
 
 #
 # ---- Production Dependencies ----
@@ -85,4 +85,4 @@ COPY ./lib ./lib
 FROM productiondependencies AS production
 
 # Run start script as specified in package.json
-CMD [ "/opt/wait-for-it.sh", "-t", "0", "database:3306", "--", "node", "lib/main.js" ]
+CMD [ "node", "lib/main.js" ]
