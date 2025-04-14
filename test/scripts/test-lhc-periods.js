@@ -17,7 +17,6 @@ const OverviewSuite = require('../public/lhcPeriods/overview.test');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

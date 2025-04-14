@@ -27,7 +27,6 @@ const application = require('../lib/application');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

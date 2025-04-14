@@ -24,7 +24,6 @@ const GaqOverviewPageSuite = require('../public/qcFlags/gaqOverview.test');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

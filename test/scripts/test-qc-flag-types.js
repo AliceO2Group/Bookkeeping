@@ -18,7 +18,6 @@ const QcFlagTypeCreationSuite = require('../public/qcFlagTypes/creation.test');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

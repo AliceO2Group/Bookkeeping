@@ -21,7 +21,6 @@ const RunsPerSimulationPassOverviewPage = require('../public/runs/runsPerSimulat
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

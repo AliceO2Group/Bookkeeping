@@ -19,7 +19,6 @@ const DetailSuite = require('../public/logs/detail.test');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

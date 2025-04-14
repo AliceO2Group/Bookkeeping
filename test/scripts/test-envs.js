@@ -18,7 +18,6 @@ const DetailsPageSuite = require('../public/envs/detailsPage.test.js');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

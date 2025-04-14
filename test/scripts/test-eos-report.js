@@ -21,7 +21,6 @@ const SlimosCreationSuite = require('../public/eosReport/slimos-creation.test.js
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

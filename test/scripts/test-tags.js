@@ -19,7 +19,6 @@ const CreateSuite = require('../public/tags/create.test');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {

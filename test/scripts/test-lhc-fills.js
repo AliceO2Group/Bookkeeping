@@ -18,7 +18,6 @@ const DetailsSuite = require('../public/lhcFills/detail.test.js');
 describe('Bookkeeping', () => {
     before(async () => {
         await application.run();
-        await application.connectDatabase();
     });
 
     after(async () => {
