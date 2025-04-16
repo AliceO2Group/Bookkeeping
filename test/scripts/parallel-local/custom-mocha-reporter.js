@@ -4,6 +4,8 @@ const { Base } = Mocha.reporters;
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 
+const { BASE_STORAGE_PATH } = require('./test-runner.js');
+
 /**
  * CustomReporter for Mocha that logs test results into separate files.
  *
@@ -13,9 +15,7 @@ const mkdirp = require('mkdirp');
 function CustomReporter(runner) {
     Base.call(this, runner);
 
-    const testType = process.env.TEST_TYPE || 'default';
-    const basePath = process.env.STORAGE_PATH ? `${process.env.STORAGE_PATH}/${testType}` : `/var/storage/${testType}`;
-    mkdirp.sync(basePath);
+    mkdirp.sync(BASE_STORAGE_PATH);
 
     const testsBuffer = [];
     const failsBuffer = [];
@@ -112,16 +112,16 @@ function CustomReporter(runner) {
      */
     runner.on('end', () => {
         if (testsBuffer.length > 0) {
-            fs.writeFileSync(`${basePath}/tests.log`, testsBuffer.join('\n'));
+            fs.writeFileSync(`${BASE_STORAGE_PATH}/tests.log`, testsBuffer.join('\n'));
         }
         if (failsBuffer.length > 0) {
-            fs.writeFileSync(`${basePath}/fails.log`, failsBuffer.join('\n'));
+            fs.writeFileSync(`${BASE_STORAGE_PATH}/fails.log`, failsBuffer.join('\n'));
         }
         resultsBuffer.push(`${runner.stats.passes} Passing`);
         resultsBuffer.push(`${runner.stats.failures} Failing`);
         resultsBuffer.push(`${runner.stats.pending} Pending`);
         if (resultsBuffer.length > 0) {
-            fs.writeFileSync(`${basePath}/results.log`, resultsBuffer.join('\n'));
+            fs.writeFileSync(`${BASE_STORAGE_PATH}/results.log`, resultsBuffer.join('\n'));
         }
     });
 }

@@ -18,7 +18,7 @@ message Request {}
 message Response {}
 
 service Example {
-  rpc MyMethod(Request) returns (Response)
+  rpc MyMethod(Request) returns (Response);
 }
 ```
 
@@ -27,8 +27,8 @@ such as `GRPCExampleController`) with AT LEAST one method named `MyMethod`. This
 will be provided the `Request` message, and **must** return an object which match `Response` message. The method may
 also throw an error, which will be transmitted to the gRPC client (if needed, use pre-defined methods
 from `lib/server/errors`, because some specific gRPC error codes may be deduced from the error type).
-In order to register which controller handle which gRPC service, the
-file `lib/server/gRPC/servicesImplementationsMappings` must be completed. This file exports an object mapping
+In order to register which controller handle which gRPC service, the file
+`lib/server/gRPC/servicesImplementationsMappings` must be completed. This file exports an object mapping
 the `proto` files (property key) to the list of service implementations. Each property value is an array of object
 composed of two properties:
 

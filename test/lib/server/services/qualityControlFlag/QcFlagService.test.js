@@ -23,6 +23,7 @@ const { runService } = require('../../../../../lib/server/services/run/RunServic
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
 const { gaqService } = require('../../../../../lib/server/services/qualityControlFlag/GaqService.js');
 const { qcFlagSummaryService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagSummaryService.js');
+const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 
 /**
  * Get effective part and periods of Qc flag
@@ -295,7 +296,7 @@ module.exports = () => {
         });
     });
 
-    describe('Creating Quality Control Flag for data pass', () => {
+    describe('Creating Quality Control Flag for data pass', async () => {
         it('should fail to create quality control flag due to incorrect external user id', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
@@ -413,6 +414,37 @@ module.exports = () => {
                 // eslint-disable-next-line max-len
                 new BadParameterError('Data pass with this id (9999) could not be found'),
             );
+        });
+
+        it('should fail to create QC flag on a frozen data pass', async () => {
+            const qcFlag = [
+                {
+                    from: new Date('2019-08-09 01:29:50').getTime(),
+                    to: new Date('2019-08-09 03:20:00').getTime(),
+                    comment: 'Very interesting remark',
+                    flagTypeId: 3,
+                },
+            ];
+
+            const scope = {
+                runNumber: 106,
+                dataPassIdentifier: { id: 1 },
+                detectorIdentifier: { detectorId: 1 },
+            };
+
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+
+            // Freeze temporary data pass 1
+
+            await dataPassService.setFrozenState({ id: 1 }, true);
+
+            await assert.rejects(
+                () => qcFlagService.create(qcFlag, scope, relations),
+                // eslint-disable-next-line max-len
+                new BadParameterError('Cannot create QC flag when datapass is frozen'),
+            );
+
+            await dataPassService.setFrozenState({ id: 1 }, false);
         });
 
         it('should successfully create quality control and update ', async () => {
@@ -1151,7 +1183,7 @@ module.exports = () => {
             expect(fetchedFlagWithSimulationPass.simulationPasses.map(({ id }) => id)).to.have.all.members([scope.simulationPassIdentifier.id]);
         });
 
-        it('should throw when trying to create a flag with data pass and simulation pass at the same time', async () => {
+        it('should fail to create a flag with data pass and simulation pass at the same time', async () => {
             const scope = {
                 runNumber: 106,
                 dataPassIdentifier: { id: 1 },
@@ -1238,7 +1270,7 @@ module.exports = () => {
         });
     });
 
-    describe('Deleting Quality Control Flag', () => {
+    describe('Deleting Quality Control Flag', async () => {
         const runNumber = 445566;
         const dataPassId = 3;
         const detectorId = 1;
@@ -1274,6 +1306,17 @@ module.exports = () => {
                 () => qcFlagService.delete(id),
                 new ConflictError('Cannot delete QC flag which is verified'),
             );
+        });
+
+        it('should fail to delete QC flag of frozen data pass', async () => {
+            const id = 1;
+
+            await dataPassService.setFrozenState({ id: 1 }, true);
+            await assert.rejects(
+                () => qcFlagService.delete(id),
+                new ConflictError('Cannot delete QC flag when datapass is frozen'),
+            );
+            await dataPassService.setFrozenState({ id: 1 }, false);
         });
 
         it('should successfully delete QC flag of dataPass', async () => {
@@ -1460,7 +1503,14 @@ module.exports = () => {
         });
     });
 
-    describe('Verifying Quality Control Flag', () => {
+    describe('Verifying Quality Control Flag', async () => {
+        it('should throw when trying to validate deleted QC flag', async () => {
+            await assert.rejects(
+                () => qcFlagService.verifyFlag({ flagId: 1, comment: 'Verification' }, {}),
+                new BadParameterError('QC flag 1 is already discarded and cannot be verified'),
+            );
+        });
+
         it('should successfully verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
@@ -1485,6 +1535,7 @@ module.exports = () => {
                     comment,
                 });
             }
+
             {
                 const fetchedQcFlag = await qcFlagService.getById(qcFlag.flagId);
                 const { verifications } = fetchedQcFlag;
@@ -1498,11 +1549,44 @@ module.exports = () => {
             }
         });
 
-        it('should throw when trying to validate deleted QC flag', async () => {
-            await assert.rejects(
-                () => qcFlagService.verifyFlag({ flagId: 1, comment: 'Verification' }, {}),
-                new BadParameterError('QC flag 1 is already discarded and cannot be verified'),
-            );
+        it('should successfully verify QC flag when data pass is frozen', async () => {
+            const qcFlag = {
+                flagId: 3,
+                comment: 'Some other comments',
+            };
+
+            const relations = {
+                user: { roles: ['det-cpv'], userId: 1 },
+            };
+
+            {
+                await dataPassService.setFrozenState({ id: 1 }, true);
+                const verifiedFlag = await qcFlagService.verifyFlag(qcFlag, relations);
+                await dataPassService.setFrozenState({ id: 1 }, false);
+
+                const { verifications } = verifiedFlag;
+                expect(verifications).to.be.an('array');
+                expect(verifications).to.be.lengthOf(2);
+                const [, { createdBy, createdById, comment, flagId }] = verifications;
+                expect({ flagId, createdBy, createdById, comment }).to.eql({
+                    flagId: qcFlag.flagId,
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    comment,
+                });
+            }
+
+            {
+                const fetchedQcFlag = await qcFlagService.getById(qcFlag.flagId);
+                const { verifications } = fetchedQcFlag;
+                const [, { createdBy, createdById, comment, flagId }] = verifications;
+                expect({ createdBy, createdById, comment, flagId }).to.be.eql({
+                    flagId: qcFlag.flagId,
+                    createdById: 1,
+                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    comment,
+                });
+            }
         });
     });
 
