@@ -146,67 +146,69 @@ module.exports = () => {
         expect(lastLog).to.be.null;
     });
 
-    const runNumber = 56; // QC time start = 2019-08-08 20:00:00, end = 2019-08-08 21:00:00
-    const detectorId = 7; // FT0
-    const dataPassId = 4; // LHC22a_apass2
-    const flagTypeId = 3; // Good
-    const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+    describe('QC flag timestamps update trigger', () => {
+        const runNumber = 56; // QC time start = 2019-08-08 20:00:00, end = 2019-08-08 21:00:00
+        const detectorId = 7; // FT0
+        const dataPassId = 4; // LHC22a_apass2
+        const flagTypeId = 3; // Good
+        const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-    it('should successfully leave QC flag timestamps equal null when updating run', async () => {
-        const [{ id }] = await qcFlagService.create(
-            [{ from: null, to: null, flagTypeId }],
-            { runNumber, detectorIdentifier: { detectorId }, dataPassIdentifier: { id: dataPassId } },
-            relations,
-        );
+        it('should successfully leave QC flag timestamps equal null when updating run', async () => {
+            const [{ id }] = await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId }],
+                { runNumber, detectorIdentifier: { detectorId }, dataPassIdentifier: { id: dataPassId } },
+                relations,
+            );
 
-        await updateRun(
-            { runNumber },
-            { runPatch: { timeTrgStart: new Date('2019-08-08 20:01:00'), timeTrgEnd: new Date('2019-08-08 20:59:00') } },
-        );
-        const flag = await qcFlagService.getById(id);
-        expect(flag.from).to.be.null;
-        expect(flag.to).to.be.null;
-    });
+            await updateRun(
+                { runNumber },
+                { runPatch: { timeTrgStart: new Date('2019-08-08 20:01:00'), timeTrgEnd: new Date('2019-08-08 20:59:00') } },
+            );
+            const flag = await qcFlagService.getById(id);
+            expect(flag.from).to.be.null;
+            expect(flag.to).to.be.null;
+        });
 
-    it('should successfully change QC flag timestamps to null when updating run', async () => {
-        const [{ id }] = await qcFlagService.create(
-            [{ from: new Date('2019-08-08 20:02:00'),
-                to: new Date('2019-08-08 20:58:00'),
-                flagTypeId }],
-            { runNumber, detectorIdentifier: { detectorId }, dataPassIdentifier: { id: dataPassId } },
-            relations,
-        );
+        it('should successfully change QC flag timestamps to null when updating run', async () => {
+            const [{ id }] = await qcFlagService.create(
+                [{ from: new Date('2019-08-08 20:02:00'),
+                    to: new Date('2019-08-08 20:58:00'),
+                    flagTypeId }],
+                { runNumber, detectorIdentifier: { detectorId }, dataPassIdentifier: { id: dataPassId } },
+                relations,
+            );
 
-        await updateRun(
-            { runNumber },
-            { runPatch: { timeTrgStart: new Date('2019-08-08 20:03:00'), timeTrgEnd: new Date('2019-08-08 20:57:00') } },
-        );
-        const flag = await qcFlagService.getById(id);
-        expect(flag.from).to.be.null;
-        expect(flag.to).to.be.null;
+            await updateRun(
+                { runNumber },
+                { runPatch: { timeTrgStart: new Date('2019-08-08 20:03:00'), timeTrgEnd: new Date('2019-08-08 20:57:00') } },
+            );
+            const flag = await qcFlagService.getById(id);
+            expect(flag.from).to.be.null;
+            expect(flag.to).to.be.null;
 
-        const effectivePeriods = await QcFlagEffectivePeriodRepository.findAll({ where: { flagId: id } });
-        expect(effectivePeriods).to.be.lengthOf(1);
-        expect(effectivePeriods[0].from).to.be.null;
-        expect(effectivePeriods[0].to).to.be.null;
-    });
+            const effectivePeriods = await QcFlagEffectivePeriodRepository.findAll({ where: { flagId: id } });
+            expect(effectivePeriods).to.be.lengthOf(1);
+            expect(effectivePeriods[0].from).to.be.null;
+            expect(effectivePeriods[0].to).to.be.null;
+        });
 
-    it('should successfully mark a flag as deleted when it is out of updated run boundaries', async () => {
-        const [{ id }] = await qcFlagService.create(
-            [{ from: new Date('2019-08-08 20:05:00'),
-                to: new Date('2019-08-08 20:07:00'),
-                flagTypeId }],
-            { runNumber, detectorIdentifier: { detectorId }, dataPassIdentifier: { id: dataPassId } },
-            relations,
-        );
+        it('should successfully mark a flag as deleted when it is out of updated run boundaries', async () => {
+            const [{ id }] = await qcFlagService.create(
+                [{ from: new Date('2019-08-08 20:05:00'),
+                    to: new Date('2019-08-08 20:07:00'),
+                    flagTypeId }],
+                { runNumber, detectorIdentifier: { detectorId }, dataPassIdentifier: { id: dataPassId } },
+                relations,
+            );
 
-        await updateRun({ runNumber }, { runPatch: { timeTrgStart: new Date('2019-08-08 20:10:00') } });
-        const flag = await qcFlagService.getById(id);
-        expect(flag.from).to.be.null;
-        expect(flag.to).to.equal(new Date('2019-08-08 20:07:00').getTime());
-        expect(flag.deleted).to.be.true;
+            await updateRun({ runNumber }, { runPatch: { timeTrgStart: new Date('2019-08-08 20:10:00') } });
+            const flag = await qcFlagService.getById(id);
+            expect(flag.from).to.be.null;
+            expect(flag.to).to.equal(new Date('2019-08-08 20:07:00').getTime());
+            expect(flag.deleted).to.be.true;
 
-        const effectivePeriods = await QcFlagEffectivePeriodRepository.findAll({ where: { flagId: id } });
-        expect(effectivePeriods).to.be.lengthOf(0);
+            const effectivePeriods = await QcFlagEffectivePeriodRepository.findAll({ where: { flagId: id } });
+            expect(effectivePeriods).to.be.lengthOf(0);
+        });
     });
 };
