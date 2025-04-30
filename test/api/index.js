@@ -33,7 +33,7 @@ const SimulationPassesSuite = require('./simulationPasses.test.js');
 const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
 const DplDetectorsSuite = require('./dplDetectors.test.js');
 const QcFlagsSuite = require('./qcFlags.test.js');
-const TriggerCountersSuite = require('./triggerCounters.test');
+const CtpTriggerCountersSuite = require('./ctpTriggerCounters.test');
 const GaqDetectorsSuite = require('./gaqDetectors.test.js');
 
 module.exports = () => {
@@ -60,5 +60,5 @@ module.exports = () => {
     describe('DplDetectors API', DplDetectorsSuite);
     describe('QcFlagTypes API', QcFlagTypesSuite);
     describe('QcFlags API', QcFlagsSuite);
-    describe('TriggerCounters API', TriggerCountersSuite);
+    describe('CtpTriggerCounters API', CtpTriggerCountersSuite);
 };

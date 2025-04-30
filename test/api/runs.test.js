@@ -545,7 +545,7 @@ module.exports = () => {
 
         it('should successfully filter by aliceL3Current', async () => {
             const response =
-                await request(server).get('/api/runs?filter[aliceL3Current]=30003');
+                await request(server).get('/api/runs?filter[magnets][l3]=30003');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -557,7 +557,7 @@ module.exports = () => {
         });
 
         it('should successfully filter by aliceDipoleCurrent', async () => {
-            const response = await request(server).get('/api/runs?filter[aliceDipoleCurrent]=0');
+            const response = await request(server).get('/api/runs?filter[magnets][dipole]=0');
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -1226,6 +1226,7 @@ module.exports = () => {
                     crossSection: 0.1,
                     triggerEfficiency: 0.2,
                     triggerAcceptance: 0.3,
+                    rawCtpTriggerConfiguration: 'Trigger\nRaw\nConfiguration',
                     phaseShiftAtStart: {
                         beam1: 0.4,
                         beam2: -0.2,
@@ -1258,6 +1259,7 @@ module.exports = () => {
             expect(data.nTfOrbits).to.equal(BIG_INT_NUMBER);
             expect(data.triggerEfficiency).to.equal(0.2);
             expect(data.triggerAcceptance).to.equal(0.3);
+            expect(data.rawCtpTriggerConfiguration).to.equal('Trigger\nRaw\nConfiguration');
             expect(data.phaseShiftAtStartBeam1).to.equal(0.4);
             expect(data.phaseShiftAtStartBeam2).to.equal(-0.2);
             expect(data.phaseShiftAtEndBeam1).to.equal(0.5);
@@ -1346,7 +1348,7 @@ module.exports = () => {
         it('should fetch distinct aliceCurrent levels', async () => {
             const response = await request(server).get('/api/runs/aliceMagnetsCurrentLevels');
             expect(response.status).to.be.equal(200);
-            expect(response.body.data).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
+            expect(response.body.data).have.all.deep.members([{ l3: 20003, dipole: 0 }, { l3: 30003, dipole: 0 }]);
         });
     });
 };

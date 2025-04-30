@@ -56,7 +56,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
 module.exports.defaultBefore = async () => {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     page.setDefaultTimeout(1500);
     page.setDefaultNavigationTimeout(5000);
@@ -393,20 +393,28 @@ module.exports.getInnerText = getInnerText;
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {string} innerText Text to search for.
+ * @param {object} [options] eventual options
+ * @param {number} [options.timeout] Optional timeout
+ * @param {puppeteer.FrameWaitForFunctionOptions} [options.polling] Optional polling methods, see
  * @return {Promise<void>} resolves once the text has been checked
  */
-module.exports.expectInnerText = async (page, selector, innerText) => {
+module.exports.expectInnerText = async (page, selector, innerText, options = {}) => {
     const elementHandle = await page.waitForSelector(selector);
+
     try {
         await page.waitForFunction(
             (selector, innerText) => document.querySelector(selector).innerText === innerText,
-            {},
+            options,
             selector,
             innerText,
         );
     } catch (_) {
         const actualInnerText = await getInnerText(elementHandle);
         await elementHandle.dispose();
+        if (actualInnerText === innerText) {
+            // Timeout issue resolved by itself, simply return (kind of retry for free)
+            return;
+        }
         throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${actualInnerText}"`);
     }
     await elementHandle.dispose();
@@ -513,7 +521,7 @@ const getPopoverContent = (popoverTrigger) => {
         }
 
         const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
-        return popover.innerHTML;
+        return popover.innerText;
     });
 };
 
@@ -553,12 +561,25 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
-    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
+    const popoverTriggerSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`;
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
 
-    const actualContent = await getPopoverContent(popoverTrigger);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    expect(triggerContent).to.be.equal(actualContent);
+    // Puppeteer hover function sometimes do not trigger the mouseover, manually trigger it
+    await page.evaluate((popoverTriggerSelector) => {
+        const element = document.querySelector(popoverTriggerSelector);
+        element.dispatchEvent(new Event('mouseover', { bubbles: true }));
+    }, popoverTriggerSelector);
+
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === triggerContent.replaceAll('\n', ''),
+    );
 };
 
 /**

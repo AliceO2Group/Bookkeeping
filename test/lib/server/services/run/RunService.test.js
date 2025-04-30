@@ -662,7 +662,7 @@ module.exports = () => {
         expect(run.phaseShiftAtEndBeam2).to.equal(-0.0002);
     });
 
-    it('should successfully update run cross section and trigger acceptance', async () => {
+    it('should successfully update run cross-section and trigger acceptance', async () => {
         const runNumber = 1;
         const run = await runService.update(
             { runNumber },
@@ -679,9 +679,22 @@ module.exports = () => {
         expect(run.triggerAcceptance).to.equal(0.0003);
     });
 
+    it('Should successfully update run raw trigger configuration', async () => {
+        const runNumber = 1;
+        const run = await runService.update(
+            { runNumber },
+            {
+                runPatch: {
+                    rawCtpTriggerConfiguration: 'Raw\nTrigger\nConfiguration',
+                },
+            },
+        );
+        expect(run.rawCtpTriggerConfiguration).to.equal('Raw\nTrigger\nConfiguration');
+    });
+
     it('should fetch distinct aliceCurrent levels', async () => {
         const levelsCombinations = await runService.getAllAliceL3AndDipoleLevelsForPhysicsRuns();
-        expect(levelsCombinations).have.all.deep.members([{ l3Level: 20003, dipoleLevel: 0 }, { l3Level: 30003, dipoleLevel: 0 }]);
+        expect(levelsCombinations).have.all.deep.members([{ l3: 20003, dipole: 0 }, { l3: 30003, dipole: 0 }]);
     });
 
     it('should successfully extract information from environment configuration when creating a run', async () => {

@@ -18,12 +18,14 @@ using namespace o2::bkp::api;
 int main(int argc, char** argv)
 {
   if (argc < 2) {
-    std::cerr << "You need to provide the gRPC URI as first argument" << std::endl;
+    std::cerr << "You need to provide the gRPC URI as first argument and eventually authentication token as second argument" << std::endl;
     exit(1);
   }
 
   try {
-    auto client = BkpClientFactory::create(argv[1]);
+    auto client = argc == 2
+      ? BkpClientFactory::create(argv[1])
+      : BkpClientFactory::create(argv[1], argv[2]);
 
     // Test of FLP counters update
     client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF);
@@ -36,7 +38,7 @@ int main(int argc, char** argv)
     // Test QC flag creation
     auto dataPassQcFlagIds = client->qcFlag()->createForDataPass(
       55,
-      "LHC22b_apass2",
+      "skimming",
       "FT0",
       { { 2, 1565280000000, 1565287200000, "FT0/Check" },
         { .flagTypeId = 11, .origin = "FT0/task" } });
@@ -61,10 +63,14 @@ int main(int argc, char** argv)
     std::cout << simulationPassQcFlagIds[simulationPassQcFlagIds.size() - 1] << std::endl;
 
     // Test trigger counters registration
-    client->triggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 123, 1, 2, 3, 4, 5, 6);
+    client->ctpTriggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 123, 1, 2, 3, 4, 5, 6);
     std::cout << "Successfully created trigger counters" << std::endl;
-    client->triggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 1234, 10, 20, 30, 40, 50, 60);
+    client->ctpTriggerCounters()->createOrUpdateForRun(108, "CLASS-NAME", 1234, 10, 20, 30, 40, 50, 60);
     std::cout << "Successfully updated trigger counters" << std::endl;
+
+    // Test run update
+    client->run()->setRawCtpTriggerConfiguration(1, "A\nnew raw\nCTP trigger configuration");
+    std::cout << "Successfully updated run raw CTP trigger configuration" << std::endl;
   } catch (std::runtime_error& error) {
     std::cerr << "An error occurred: " << error.what() << std::endl;
     exit(2);

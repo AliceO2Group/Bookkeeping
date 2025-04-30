@@ -16,6 +16,8 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
+const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -26,6 +28,7 @@ module.exports = () => {
             const { data: qcFlag } = response.body;
             expect(qcFlag).to.be.eql({
                 id: 4,
+                deleted: false,
                 from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
@@ -499,6 +502,33 @@ module.exports = () => {
                 },
             ]);
         });
+
+        it('should fail to create a QC flag on a frozen data pass', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await dataPassService.setFrozenState({ id: 1 }, true);
+
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: 400,
+                    title: 'Service unavailable',
+                    detail: 'Cannot create QC flag when datapass is frozen',
+                },
+            ]);
+
+            await dataPassService.setFrozenState({ id: 1 }, false);
+        });
     });
 
     describe('DELETE /api/qcFlags/:id', () => {
@@ -515,6 +545,7 @@ module.exports = () => {
                 },
             ]);
         });
+
         it('should fail to delete QC flag when not being admin', async () => {
             const id = 5;
             const response = await request(server).delete(`/api/qcFlags/${id}`);
@@ -527,12 +558,53 @@ module.exports = () => {
                 },
             ]);
         });
+
+        it('should fail to delete a QC flag in a frozen data pass', async () => {
+            await dataPassService.setFrozenState({ id: 1 }, true);
+            const id = 2;
+            const response = await request(server).delete(`/api/qcFlags/${id}?token=admin`);
+
+            expect(response.status).to.be.equal(400);
+            expect(response.body).to.eql({
+                errors: [{
+                    status: 400,
+                    title: 'Service unavailable',
+                    detail: 'Cannot delete QC flag when datapass is frozen',
+                }],
+            });
+            await dataPassService.setFrozenState({ id: 1 }, false);
+        });
+
         it('should successfully delete QC flag as admin', async () => {
             const id = 2;
             const response = await request(server).delete(`/api/qcFlags/${id}?token=admin`);
 
             expect(response.status).to.be.equal(200);
             expect(response.body.data.id).to.be.equal(id);
+        });
+    });
+
+    describe('DELETE /api/qcFlags/perDataPass', () => {
+        it('should fail to delete QC flags for a given data pass when missing role "alice-dpg-async-qc-admin"', async () => {
+            const dataPassId = 1;
+            const response = await request(server).delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}`);
+            expect(response.status).to.be.equal(403);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: '403',
+                    title: 'Access denied',
+                },
+            ]);
+        });
+
+        it('should successfully delete all QC flags for a given data pass', async () => {
+            const dataPassId = 1;
+            const response = await request(server)
+                .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
+
+            expect(response.status).to.be.equal(200);
+            expect(response.body.data.deletedCount).to.equal(6); // 4 from seeders, 2 created in POST requests previously in this test
         });
     });
 
