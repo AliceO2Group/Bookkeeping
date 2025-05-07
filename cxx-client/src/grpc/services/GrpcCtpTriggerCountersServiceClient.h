@@ -24,13 +24,14 @@ namespace o2::bkp::api::grpc::services
 class GrpcCtpTriggerCountersServiceClient: public CtpTriggerCountersServiceClient
 {
  public:
-  explicit GrpcCtpTriggerCountersServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  explicit GrpcCtpTriggerCountersServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory);
   ~GrpcCtpTriggerCountersServiceClient() override = default;
 
   void createOrUpdateForRun(uint32_t runNumber, const std::string& className, int64_t timestamp, uint64_t lmb, uint64_t lma, uint64_t l0b, uint64_t l0a, uint64_t l1b, uint64_t l1a) override;
 
  private:
   std::unique_ptr<o2::bookkeeping::CtpTriggerCountersService::Stub> mStub;
+  std::function<std::unique_ptr<::grpc::ClientContext> ()> mClientContextFactory;
 };
 
 } // namespace o2::bkp::api::grpc::services
