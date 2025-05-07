@@ -17,14 +17,26 @@
 #include <memory>
 #include "grpc/GrpcBkpClient.h"
 
+using grpc::ClientContext;
 using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
 namespace o2::bkp::api
 {
-unique_ptr<BkpClient> BkpClientFactory::create(const string& gRPCUri)
+unique_ptr<BkpClient> BkpClientFactory::create(const std::string& gRPCUri)
 {
-  return make_unique<grpc::GrpcBkpClient>(gRPCUri);
+  return make_unique<grpc::GrpcBkpClient>(gRPCUri, []() { return make_unique<ClientContext>(); });
+}
+
+unique_ptr<BkpClient> BkpClientFactory::create(const string& gRPCUri, const string& token)
+{
+  return make_unique<grpc::GrpcBkpClient>(
+    gRPCUri,
+    [token]() {
+      auto clientContext = make_unique<ClientContext>();
+      clientContext->AddMetadata("authorization", "Bearer " + token);
+      return clientContext;
+    });
 }
 } // namespace o2::bkp::api
