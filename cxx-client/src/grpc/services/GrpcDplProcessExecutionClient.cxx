@@ -22,9 +22,10 @@ namespace o2::bkp
 
 namespace api::grpc::services
 {
-GrpcDplProcessExecutionClient::GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
+GrpcDplProcessExecutionClient::GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory)
 {
   mStub = DplProcessExecutionService::NewStub(channel);
+  mClientContextFactory = clientContextFactory;
 }
 
 void GrpcDplProcessExecutionClient::registerProcessExecution(
@@ -35,17 +36,17 @@ void GrpcDplProcessExecutionClient::registerProcessExecution(
   std::string args,
   std::string detector)
 {
-  auto request = std::make_shared<DplProcessExecutionCreationRequest>();
-  request->set_runnumber(runNumber);
-  request->set_detectorname(detector);
-  request->set_processname(deviceId);
-  request->set_type(static_cast<o2::bookkeeping::DplProcessType>(type));
-  request->set_hostname(hostname);
+  DplProcessExecutionCreationRequest request{};
+  request.set_runnumber(runNumber);
+  request.set_detectorname(detector);
+  request.set_processname(deviceId);
+  request.set_type(static_cast<o2::bookkeeping::DplProcessType>(type));
+  request.set_hostname(hostname);
 
-  ClientContext context;
   auto response = std::make_shared<DplProcessExecution>();
 
-  auto status = mStub->Create(&context, *request, response.get());
+  auto context = mClientContextFactory();
+  auto status = mStub->Create(context.get(), request, response.get());
 
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());

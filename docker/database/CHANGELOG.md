@@ -1,3 +1,8 @@
+## [1.9.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.9.0)
+* Changes made to the database
+  * Added frozen flag to datapasses table
+
+
 ## [1.8.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.8.0)
 * Changes made to the database
   * Added default value of false to the deleted flag for QC flags, which avoids to rely only on sequelize model definition

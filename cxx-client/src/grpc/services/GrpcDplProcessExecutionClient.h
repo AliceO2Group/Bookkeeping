@@ -21,7 +21,7 @@ namespace o2::bkp::api::grpc::services
 class GrpcDplProcessExecutionClient : public ::o2::bkp::api::DplProcessExecutionClient
 {
  public:
-  explicit GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  explicit GrpcDplProcessExecutionClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory);
 
   void registerProcessExecution(
     int runNumber,
@@ -33,6 +33,7 @@ class GrpcDplProcessExecutionClient : public ::o2::bkp::api::DplProcessExecution
 
  private:
   std::unique_ptr<o2::bookkeeping::DplProcessExecutionService::Stub> mStub;
+  std::function<std::unique_ptr<::grpc::ClientContext> ()> mClientContextFactory;
 };
 } // namespace o2::bkp::api::grpc::services
 

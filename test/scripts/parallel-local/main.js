@@ -3,6 +3,7 @@ const { fork, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const { BASE_STORAGE_PATH, MessageKey } = require('./test-runner');
+const { LogManager } = require('@aliceo2/web-ui');
 
 dotenv.config();
 
@@ -33,6 +34,8 @@ const workersExited = new Set();
 
 const imageTag = 'test-parallel-application:latest';
 
+const logger = LogManager.getLogger('MAIN');
+
 /**
  * Builds the Docker image used by all the workers.
  *
@@ -54,9 +57,11 @@ const initializeWorkers = () => {
 
     for (let i = 0; i < amountOfWorkers; i++) {
         const workerName = `worker-${i}`;
-        const worker = fork(path.resolve(__dirname, 'test-runner.js'), [workerName], {
-            stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
-        });
+        const worker = fork(
+            path.resolve(__dirname, 'test-runner.js'),
+            [workerName],
+            { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] },
+        );
 
         setupWorkerListeners(worker, workerName);
         assignTestToWorker(worker, workerName);
@@ -71,10 +76,11 @@ const initializeWorkers = () => {
  * @returns {void}
  */
 const setupWorkerListeners = (worker, workerName) => {
+    const workerLogger = LogManager.getLogger(`WORKER ${workerName}`);
+
+    worker.stdout.on('data', (data) => workerLogger.infoMessage(`${workerName}: ${data.toString()}`));
     // eslint-disable-next-line no-console
-    worker.stdout.on('data', (data) => console.log(`${workerName}: ${data.toString()}`));
-    // eslint-disable-next-line no-console
-    worker.stderr.on('data', (data) => console.error(`${workerName} Error: ${data.toString()}`));
+    worker.stderr.on('data', (data) => workerLogger.infoMessage(`${workerName} Error: ${data.toString()}`));
 
     worker.on('message', (msg) => handleWorkerMessage(msg, worker, workerName));
     worker.on('exit', (code) => handleWorkerExit(code, workerName));
@@ -100,14 +106,14 @@ const handleWorkerMessage = (msg, worker, workerName) => {
  * @returns {void}
  */
 const assignTestToWorker = (worker, workerName) => {
+    const workerLogger = LogManager.getLogger(`WORKER ${workerName}`);
+
     if (remainingTests.length > 0) {
         const test = remainingTests.pop();
-        // eslint-disable-next-line no-console
-        console.log(`${workerName} starting new suite: ${test} (${testSuites.length - remainingTests.length}/${testSuites.length})`);
+        workerLogger.infoMessage(`starting new suite: ${test} (${testSuites.length - remainingTests.length}/${testSuites.length})`);
         worker.send({ test, workerName });
     } else {
-        // eslint-disable-next-line no-console
-        console.log(`${workerName} found no more tests...`);
+        workerLogger.infoMessage('found no more tests...');
         worker.send(MessageKey.NoMoreTests);
     }
 };
@@ -119,12 +125,12 @@ const assignTestToWorker = (worker, workerName) => {
  * @returns {void}
  */
 const handleWorkerExit = (code, workerName) => {
+    const workerLogger = LogManager.getLogger(`WORKER ${workerName}`);
+
     if (code !== 0) {
-        // eslint-disable-next-line no-console
-        console.error(`Worker ${workerName} exited with code ${code}`);
+        workerLogger.errorMessage(`exited with code ${code}`);
     } else {
-        // eslint-disable-next-line no-console
-        console.log(`Worker ${workerName} completed successfully`);
+        workerLogger.infoMessage('completed successfully');
     }
     workersExited.add(workerName);
     handleAllWorkersExited();
@@ -150,12 +156,13 @@ const handleAllWorkersExited = () => {
  * @returns {void}
  */
 const displayResults = async () => {
-    // eslint-disable-next-line no-console
-    console.log('\nResults:\n');
+    logger.infoMessage('\n');
+    logger.infoMessage('Results:');
+    logger.infoMessage('\n');
     await readAllLogFiles('tests.log');
 
     // eslint-disable-next-line no-console
-    console.log('\n');
+    logger.infoMessage('\n');
 
     let totalPassing = 0;
     let totalFailing = 0;
@@ -174,15 +181,15 @@ const displayResults = async () => {
 
     // Display total passing with elapsed time in minutes and seconds
     // eslint-disable-next-line no-console
-    console.log('   ', totalPassing, 'Passing', `(${minutes}m)`);
+    logger.infoMessage(`   ${totalPassing} Passing(${minutes}m)`);
     // eslint-disable-next-line no-console
-    console.log('   ', totalFailing, 'Failing');
+    logger.infoMessage(`   ${totalFailing} Failing`);
     if (totalPending > 0) {
         // eslint-disable-next-line no-console
-        console.log('   ', totalPending, 'Pending');
+        logger.infoMessage(`   ${totalPending} Pending`);
     }
     // eslint-disable-next-line no-console
-    console.log('\n');
+    logger.infoMessage('\n');
 
     await readAllLogFiles('fails.log');
 };
@@ -200,13 +207,12 @@ const dumpLogFileContentToConsole = async (testSuiteName, logFileName) => {
     const filePath = path.join(BASE_STORAGE_PATH, testSuiteName, logFileName);
     try {
         const data = await fsPromises.readFile(filePath, 'utf8');
-        // eslint-disable-next-line no-console
-        console.log(data);
+        logger.infoMessage(data.toString());
     } catch (err) {
         // Don't log error when no directories are found, because directories are managed by the custom mocha reporter.
         if (!err.message.includes('ENOENT')) {
             // eslint-disable-next-line no-console
-            console.error(`Error reading log file at ${filePath}: ${err}`);
+            logger.errorMessage(`Error reading log file at ${filePath}: ${err}`);
         }
     }
 };
@@ -224,7 +230,7 @@ const readAllLogFiles = async (logFileName) => {
     await Promise.all(readOperations)
         .catch((err) => {
             // eslint-disable-next-line no-console
-            console.error('An error occurred while reading log files:', err);
+            logger.errorMessage('An error occurred while reading log files:', err);
         });
 };
 
@@ -254,7 +260,7 @@ const aggregateResults = (testSuiteName, logFileName, searchKeyword) => {
         }
     } catch (err) {
         // eslint-disable-next-line no-console
-        console.error(`Error reading directory for ${testSuiteName}: ${err}`);
+        logger.errorMessage(`Error reading directory for ${testSuiteName}: ${err}`);
     }
     return 0;
 };
@@ -276,7 +282,7 @@ const cleanupTestDirectories = (testSuites) => {
             // Don't log error when no directories are found, because directories are managed by the custom mocha reporter.
             if (!err.message.includes('ENOENT')) {
                 // eslint-disable-next-line no-console
-                console.error(`Error removing directory ${testDirectoryPath}: ${err}`);
+                logger.errorMessage(`Error removing directory ${testDirectoryPath}: ${err}`);
             }
         }
     });

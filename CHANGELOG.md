@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.9.0)
+* Notable changes for users:
+  * QC flags boundaries can be null and will automatically be coalesced to run boundaries
+  * Fixed the bug of QC flags chart height increasing on every rendering
+  * Added possibility to lock data passes
+* Notable changes for developers:
+  * QcFlagsChartComponent uses qcTimeStart and qcTimeEnd as x-axis boundaries
+  * Simplified the remote data management for QC flag creation buttons
+  * The binding of gRPC controllers has been slightly refactored to make it easier to maintain
+  * Added possibility to provide authenticated gRPC API
+
 ## [1.8.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.8.0)
 * Notable changes for users:
   * Luminosity information has been added to run details page

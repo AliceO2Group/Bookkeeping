@@ -18,12 +18,14 @@ using namespace o2::bkp::api;
 int main(int argc, char** argv)
 {
   if (argc < 2) {
-    std::cerr << "You need to provide the gRPC URI as first argument" << std::endl;
+    std::cerr << "You need to provide the gRPC URI as first argument and eventually authentication token as second argument" << std::endl;
     exit(1);
   }
 
   try {
-    auto client = BkpClientFactory::create(argv[1]);
+    auto client = argc == 2
+      ? BkpClientFactory::create(argv[1])
+      : BkpClientFactory::create(argv[1], argv[2]);
 
     // Test of FLP counters update
     client->flp()->updateReadoutCountersByFlpNameAndRunNumber("FLP-TPC-1", 1, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF);

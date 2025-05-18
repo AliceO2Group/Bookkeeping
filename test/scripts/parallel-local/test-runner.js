@@ -1,12 +1,16 @@
 const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { LogManager } = require('@aliceo2/web-ui');
 
-const BASE_STORAGE_PATH = process.env.STORAGE_PATH || './database/storage';
+const BASE_STORAGE_PATH = process.env.STORAGE_PATH || '/tmp';
 const MessageKey = Object.freeze({
     NoMoreTests: 'no_more_tests',
     RequestNextTest: 'request_next_test',
 });
+
+const workerName = process.argv[2] ?? 'unnamed';
+const logger = LogManager.getLogger(`WORKER ${workerName}`);
 
 /**
  * Ensures the directory exists before executing tests.
@@ -45,8 +49,7 @@ const manageTestExecution = (testConfiguration) => {
     executeTest(testConfiguration)
         .then(() => process.send(MessageKey.RequestNextTest))
         .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error('Test execution error:', error);
+            logger.errorMessage(`Test execution error: ${error.toString()}`);
             process.send(MessageKey.RequestNextTest);
         });
 };

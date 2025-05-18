@@ -24,13 +24,14 @@ namespace o2::bkp::api::grpc::services
 class GrpcRunServiceClient : public RunServiceClient
 {
  public:
-  explicit GrpcRunServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel);
+  explicit GrpcRunServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory);
   ~GrpcRunServiceClient() override = default;
 
   void setRawCtpTriggerConfiguration(int runNumber, std::string rawCtpTriggerConfiguration) override;
 
  private:
   std::unique_ptr<o2::bookkeeping::RunService::Stub> mStub;
+  std::function<std::unique_ptr<::grpc::ClientContext> ()> mClientContextFactory;
 };
 
 } // namespace o2::bkp::api::grpc::services

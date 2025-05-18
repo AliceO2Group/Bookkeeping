@@ -21,19 +21,20 @@ using o2::bookkeeping::Run;
 
 namespace o2::bkp::api::grpc::services
 {
-GrpcRunServiceClient::GrpcRunServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel)
+GrpcRunServiceClient::GrpcRunServiceClient(const std::shared_ptr<::grpc::ChannelInterface>& channel, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory)
 {
   mStub = o2::bookkeeping::RunService::NewStub(channel);
+  mClientContextFactory = clientContextFactory;
 }
 void GrpcRunServiceClient::setRawCtpTriggerConfiguration(int runNumber, std::string rawCtpTriggerConfiguration) {
-  ClientContext context{};
   RunUpdateRequest updateRequest{};
   Run updatedRun;
 
   updateRequest.set_runnumber(runNumber);
   updateRequest.set_rawctptriggerconfiguration(rawCtpTriggerConfiguration);
 
-  auto status = mStub->Update(&context, updateRequest, &updatedRun);
+  auto context = mClientContextFactory();
+  auto status = mStub->Update(context.get(), updateRequest, &updatedRun);
   if (!status.ok()) {
     throw std::runtime_error(status.error_message());
   }

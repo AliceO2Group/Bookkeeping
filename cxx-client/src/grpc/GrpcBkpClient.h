@@ -15,13 +15,16 @@
 #include "flp.grpc.pb.h"
 #include "BookkeepingApi/BkpClient.h"
 
+#include <functional>
+#include <memory>
+
 namespace o2::bkp::api::grpc
 {
 /// gRPC based implementation of BookkeepingClient
 class GrpcBkpClient : public o2::bkp::api::BkpClient
 {
  public:
-  explicit GrpcBkpClient(const std::string& uri);
+  explicit GrpcBkpClient(const std::string& uri, const std::function<std::unique_ptr<::grpc::ClientContext> ()>& clientContextFactory);
   ~GrpcBkpClient() override = default;
 
   const std::unique_ptr<FlpServiceClient>& flp() const override;
