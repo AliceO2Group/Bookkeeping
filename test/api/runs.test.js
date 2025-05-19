@@ -397,7 +397,7 @@ module.exports = () => {
         }
 
         it('should successfully filter by GAQ notBadFraction', async () => {
-            const dataPassId = 3;
+            const dataPassId = 1;
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
 
@@ -405,7 +405,7 @@ module.exports = () => {
                 const { data: runs } = response.body;
 
                 expect(runs).to.be.an('array');
-                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([56]);
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +

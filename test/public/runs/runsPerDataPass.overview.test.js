@@ -144,12 +144,9 @@ module.exports = () => {
         });
         await page.waitForSelector('tr#row106 .column-CPV a .icon');
 
-        await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
-
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
-        await expectInnerText(page, '#row56-globalAggregatedQuality', '0MC.R');
-        expect(await getPopoverInnerText(await page.waitForSelector('#row56-globalAggregatedQuality .popover-trigger')))
-            .to.be.equal('Missing 4 verifications');
+        await expectInnerText(page, '#row106-globalAggregatedQuality', '67MC.R');
+        expect(await getPopoverInnerText(await page.waitForSelector('#row106-globalAggregatedQuality .popover-trigger')))
+            .to.be.equal('Missing 3 verifications');
     });
 
     it('should successfully display tooltip information on GAQ column', async () => {
@@ -159,8 +156,6 @@ module.exports = () => {
     });
 
     it('should switch mcReproducibleAsNotBad', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
-
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await waitForTableLength(page, 3);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
@@ -417,7 +412,7 @@ module.exports = () => {
 
         await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
     it('should successfully apply muInelasticInteractionRate filters', async () => {
@@ -469,7 +464,7 @@ module.exports = () => {
             await page.evaluate((role) => {
                 // eslint-disable-next-line no-undef
                 sessionService.get().token = role;
-                test/public/runs/runsPerDataPass.overview.test.js
+
                 // eslint-disable-next-line no-undef
                 sessionService.get().access.push(role);
             }, BkpRoles.DPG_ASYNC_QC_ADMIN);
