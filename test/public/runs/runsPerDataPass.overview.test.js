@@ -459,52 +459,53 @@ module.exports = () => {
         await expectInnerText(page, '#row108-readyForSkimming', 'not ready');
     });
 
-    describe('Freeze/unfreeze of data pass', async () => {
-        before(async () => {
-            await page.evaluate((role) => {
-                // eslint-disable-next-line no-undef
-                sessionService.get().token = role;
+    it('should successfully freeze a given data pass', async () => {
+        await page.evaluate((role) => {
+            // eslint-disable-next-line no-undef
+            sessionService.get().token = role;
 
-                // eslint-disable-next-line no-undef
-                sessionService.get().access.push(role);
-            }, BkpRoles.DPG_ASYNC_QC_ADMIN);
-        });
+            // eslint-disable-next-line no-undef
+            sessionService.get().access.push(role);
+        }, BkpRoles.DPG_ASYNC_QC_ADMIN);
 
-        it('should successfully freeze a given data pass', async () => {
-            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-            const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
 
-            await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Freeze the data pass');
-            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
-        });
+        await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Freeze the data pass');
+        await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+    });
 
-        it('should successfully disable QC flag creation when data pass is frozen', async () => {
-            await waitForTableLength(page, 3);
-            await page.waitForSelector('.select-multi-flag', { hidden: true });
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
-            await page.waitForSelector('#set-qc-flags-trigger[disabled]');
-            await page.waitForSelector('#row107-ACO-text button[disabled]');
-        });
+    it('should successfully disable QC flag creation when data pass is frozen', async () => {
+        await waitForTableLength(page, 3);
+        await page.waitForSelector('.select-multi-flag', { hidden: true });
+        await pressElement(page, '#actions-dropdown-button .popover-trigger');
+        await page.waitForSelector('#set-qc-flags-trigger[disabled]');
+        await page.waitForSelector('#row107-ACO-text button[disabled]');
+    });
 
-        it('should successfully un-freeze a given data pass', async () => {
-            const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+    it('should successfully un-freeze a given data pass', async () => {
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
 
-            await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Unfreeze the data pass');
-            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
-        });
+        await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Unfreeze the data pass');
+        await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+    });
 
-        it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
-            await waitForTableLength(page, 3);
-            await pressElement(page, '.select-multi-flag');
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
-            await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
-            await page.waitForSelector('#set-qc-flags-trigger');
-            await page.waitForSelector('#row107-ACO-text a');
-        });
+    it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
+        await waitForTableLength(page, 3);
+        await pressElement(page, '.select-multi-flag');
+        await pressElement(page, '#actions-dropdown-button .popover-trigger');
+        await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
+        await page.waitForSelector('#set-qc-flags-trigger');
+        await page.waitForSelector('#row107-ACO-text a');
 
-        after(async () => {
-            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-        });
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await page.evaluate((role) => {
+            // eslint-disable-next-line no-undef
+            sessionService.get().token = 'admin';
+
+            // eslint-disable-next-line no-undef
+            sessionService.get().access = sessionService.get().access.filter((a) => a != role);
+        }, BkpRoles.DPG_ASYNC_QC_ADMIN);
     });
 
     it('should successfully not display button to discard all QC flags for the data pass', async () => {
