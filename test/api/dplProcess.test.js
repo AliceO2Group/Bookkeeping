@@ -15,7 +15,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const request = require('supertest');
 const { server } = require('../../lib/application');
 const { expect } = require('chai');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('@aliceo2/web-ui');
 
 module.exports = () => {
     before(resetDatabaseContent);
