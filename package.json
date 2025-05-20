@@ -33,7 +33,7 @@
     "kafkajs": "2.2.0",
     "mariadb": "3.0.0",
     "mkdirp": "3.0.1",
-    "multer": "1.4.5-lts.1",
+    "multer": "2.0.0",
     "node-fetch": "3.3.1",
     "protobufjs": "7.5.0",
     "sequelize": "6.37.0",
