@@ -575,6 +575,78 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(0);
     });
 
+    it('should successfully filter on ctf file count number', async () => {
+        const ctfFileCount = {
+            operator: '<',
+            limit: 200,
+        };
+        getAllRunsDto.query = { filter: { ctfFileCount } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+
+        ctfFileCount.operator = '<=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(2);
+        expect(runs.every((run) => run.ctfFileCount <= 200)).to.be.true;
+
+        ctfFileCount.operator = '=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs.every((run) => run.ctfFileCount === 200)).to.be.true;
+
+        ctfFileCount.operator = '>=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+        expect(runs.every((run) => run.ctfFileCount >= 200)).to.be.true;
+
+        ctfFileCount.operator = '>';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(6);
+        expect(runs.every((run) => run.ctfFileCount >= 500)).to.be.true;
+    });
+
+    it('should successfully filter on tf file count number', async () => {
+        const tfFileCount = {
+            operator: '<',
+            limit: 30,
+        };
+        getAllRunsDto.query = { filter: { tfFileCount } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
+
+        tfFileCount.operator = '<=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+        expect(runs.every((run) => run.tfFileCount <= 30)).to.be.true;
+
+        tfFileCount.operator = '=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+        expect(runs.every((run) => run.tfFileCount === 30)).to.be.true;
+
+        tfFileCount.operator = '>=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(8);
+        expect(runs.every((run) => run.tfFileCount >= 30)).to.be.true;
+
+        tfFileCount.operator = '>';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs.every((run) => run.tfFileCount > 30)).to.be.true;
+    });
+
     it('should successfully return an array, only containing runs found from passed list', async () => {
         getAllRunsDto.query = {
             filter: {
