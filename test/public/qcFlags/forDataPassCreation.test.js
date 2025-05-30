@@ -167,7 +167,7 @@ module.exports = () => {
         await waitForTableLength(page, 5);
 
         await expectRowValues(page, 1, {
-            flagType: 'Limited Acceptance MC Not Reproducible',
+            flagType: 'Limited acceptance',
             from: '08/08/2019\n13:01:01',
             to: '09/08/2019\n13:50:59',
         });

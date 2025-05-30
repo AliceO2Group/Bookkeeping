@@ -54,14 +54,14 @@ module.exports = () => {
         await goToPage(page, 'qc-flag-type-creation');
         await page.waitForSelector('button#submit[disabled]');
 
-        await fillInput(page, 'input#name', 'Limited Acceptance MC Not Reproducible');
-        await fillInput(page, 'input#method', 'LimitedAcceptanceMCNotReproducible');
+        await fillInput(page, 'input#name', 'Limited acceptance');
+        await fillInput(page, 'input#method', 'LimitedAcceptance');
         await pressElement(page, 'button#submit');
         await expectInnerText(
             page,
             '.alert.alert-danger',
             // eslint-disable-next-line max-len
-            'The request conflicts with existing data: A QC flag type with name Limited Acceptance MC Not Reproducible or method LimitedAcceptanceMCNotReproducible already exists',
+            'The request conflicts with existing data: A QC flag type with name Limited acceptance or method LimitedAcceptance already exists',
         );
     });
 

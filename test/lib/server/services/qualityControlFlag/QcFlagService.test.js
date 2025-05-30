@@ -72,7 +72,7 @@ const qcFlagWithId1 = {
         name: 'Limited Acceptance MC Reproducible',
         method: 'LimitedAcceptanceMCReproducible',
         bad: true,
-        color: '#bb9d30',
+        color: '#FFFF00',
         archived: false,
         mcReproducible: true,
     },
