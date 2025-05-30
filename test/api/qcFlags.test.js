@@ -16,6 +16,8 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
+const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
+const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -26,6 +28,7 @@ module.exports = () => {
             const { data: qcFlag } = response.body;
             expect(qcFlag).to.be.eql({
                 id: 4,
+                deleted: false,
                 from: new Date('2022-03-22 02:46:40').getTime(),
                 to: new Date('2022-03-22 04:46:40').getTime(),
                 comment: 'Some qc comment 4',
@@ -323,7 +326,8 @@ module.exports = () => {
 
             const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
-            const { data: createdQcFlag } = response.body;
+            const [createdQcFlag] = response.body.data;
+
             const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
             {
                 const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
@@ -355,7 +359,7 @@ module.exports = () => {
 
             const response = await request(server).post('/api/qcFlags?token=det-glo').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
-            const { data: createdQcFlag } = response.body;
+            const [createdQcFlag] = response.body.data;
             const { dataPassId } = qcFlagCreationParameters;
             {
                 const { comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
@@ -396,7 +400,7 @@ module.exports = () => {
 
             const response = await request(server).post('/api/qcFlags?token=det-cpv').send(qcFlagCreationParameters);
             expect(response.status).to.be.equal(201);
-            const { data: createdQcFlag } = response.body;
+            const [createdQcFlag] = response.body.data;
             const { simulationPassId, ...expectedProperties } = qcFlagCreationParameters;
             {
                 const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
@@ -414,6 +418,72 @@ module.exports = () => {
                     .be.eql(expectedProperties);
                 expect(simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
             }
+        });
+
+        it('should successfully create multiple QC flag instances for data pass', async () => {
+            const qcFlagCreationParameters = {
+                from: 1565294400001,
+                to: 1565297000000,
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                dataPassId: 5,
+                runDetectors: [{ runNumber: 56, detectorIds: [4] }, { runNumber: 49, detectorIds: [4, 7] }],
+            };
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+            const { data: createdQcFlags } = response.body;
+            expect(createdQcFlags).to.be.lengthOf(3);
+            const createdFlagsShared = createdQcFlags.map(({ from, to, comment, flagTypeId }) => ({ from, to, comment, flagTypeId }));
+            expect(createdFlagsShared).to.be.eql(Array(3).fill({
+                from: qcFlagCreationParameters.from,
+                to: qcFlagCreationParameters.to,
+                comment: qcFlagCreationParameters.comment,
+                flagTypeId: qcFlagCreationParameters.flagTypeId,
+            }));
+            expect(createdQcFlags.filter(({ runNumber }) => runNumber === 56).length).to.be.equal(1);
+            expect(createdQcFlags.filter(({ runNumber }) => runNumber === 49).length).to.be.equal(2);
+            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 49 && dplDetectorId === 4)).to.exist;
+            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 49 && dplDetectorId === 7)).to.exist;
+            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 56 && dplDetectorId === 4)).to.exist;
+        });
+
+        it('should fail to create QC flag instance when runDetectors and runNumber or dplDetectorId are specified', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+                runDetectors: [
+                    {
+                        runNumber: 106,
+                        detectorIds: [1],
+                    },
+                ],
+            };
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: '422',
+                    source: {
+                        pointer: '/data/attributes/body/runNumber',
+                    },
+                    title: 'Invalid Attribute',
+                    detail: 'runNumber is not allowed when runDetectors is provided.',
+                },
+                {
+                    status: '422',
+                    source: {
+                        pointer: '/data/attributes/body/dplDetectorId',
+                    },
+                    title: 'Invalid Attribute',
+                    detail: 'dplDetectorId is not allowed when runDetectors is provided.',
+                },
+            ]);
         });
 
         it('should fail to create QC flag instance when dataPass and simulation are both specified', async () => {
@@ -442,6 +512,33 @@ module.exports = () => {
                 },
             ]);
         });
+
+        it('should fail to create a QC flag on a frozen data pass', async () => {
+            const qcFlagCreationParameters = {
+                from: new Date('2019-08-09 01:29:50').getTime(),
+                to: new Date('2019-08-09 05:40:00').getTime(),
+                comment: 'VERY INTERESTING REMARK',
+                flagTypeId: 2,
+                runNumber: 106,
+                dataPassId: 1,
+                dplDetectorId: 1,
+            };
+
+            await dataPassService.setFrozenState({ id: 1 }, true);
+
+            const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: 400,
+                    title: 'Service unavailable',
+                    detail: 'Cannot create QC flag when datapass is frozen',
+                },
+            ]);
+
+            await dataPassService.setFrozenState({ id: 1 }, false);
+        });
     });
 
     describe('DELETE /api/qcFlags/:id', () => {
@@ -458,6 +555,7 @@ module.exports = () => {
                 },
             ]);
         });
+
         it('should fail to delete QC flag when not being admin', async () => {
             const id = 5;
             const response = await request(server).delete(`/api/qcFlags/${id}`);
@@ -470,12 +568,53 @@ module.exports = () => {
                 },
             ]);
         });
+
+        it('should fail to delete a QC flag in a frozen data pass', async () => {
+            await dataPassService.setFrozenState({ id: 1 }, true);
+            const id = 2;
+            const response = await request(server).delete(`/api/qcFlags/${id}?token=admin`);
+
+            expect(response.status).to.be.equal(400);
+            expect(response.body).to.eql({
+                errors: [{
+                    status: 400,
+                    title: 'Service unavailable',
+                    detail: 'Cannot delete QC flag when datapass is frozen',
+                }],
+            });
+            await dataPassService.setFrozenState({ id: 1 }, false);
+        });
+
         it('should successfully delete QC flag as admin', async () => {
             const id = 2;
             const response = await request(server).delete(`/api/qcFlags/${id}?token=admin`);
 
             expect(response.status).to.be.equal(200);
             expect(response.body.data.id).to.be.equal(id);
+        });
+    });
+
+    describe('DELETE /api/qcFlags/perDataPass', () => {
+        it('should fail to delete QC flags for a given data pass when missing role "alice-dpg-async-qc-admin"', async () => {
+            const dataPassId = 1;
+            const response = await request(server).delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}`);
+            expect(response.status).to.be.equal(403);
+            const { errors } = response.body;
+            expect(errors).to.be.eql([
+                {
+                    status: '403',
+                    title: 'Access denied',
+                },
+            ]);
+        });
+
+        it('should successfully delete all QC flags for a given data pass', async () => {
+            const dataPassId = 1;
+            const response = await request(server)
+                .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
+
+            expect(response.status).to.be.equal(200);
+            expect(response.body.data.deletedCount).to.equal(6); // 4 from seeders, 2 created in POST requests previously in this test
         });
     });
 

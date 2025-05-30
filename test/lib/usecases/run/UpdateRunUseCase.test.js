@@ -58,9 +58,11 @@ module.exports = () => {
                 tfFileSize: BIG_INT_NUMBER,
                 otherFileCount: 123156132,
                 otherFileSize: BIG_INT_NUMBER,
+                nTfOrbits: BIG_INT_NUMBER,
                 crossSection: 0.1,
                 triggerEfficiency: 0.2,
                 triggerAcceptance: 0.3,
+                rawCtpTriggerConfiguration: 'Raw\nTrigger\nConfiguration',
                 phaseShiftAtStart: {
                     beam1: 0.4,
                     beam2: -0.1,
@@ -324,9 +326,11 @@ module.exports = () => {
             expect(result.tfFileSize).to.equal(BIG_INT_NUMBER);
             expect(result.otherFileCount).to.equal(123156132);
             expect(result.otherFileSize).to.equal(BIG_INT_NUMBER);
+            expect(result.nTfOrbits).to.equal(BIG_INT_NUMBER);
             expect(result.crossSection).to.equal(0.1);
             expect(result.triggerEfficiency).to.equal(0.2);
             expect(result.triggerAcceptance).to.equal(0.3);
+            expect(result.rawCtpTriggerConfiguration).to.equal('Raw\nTrigger\nConfiguration');
             expect(result.phaseShiftAtStartBeam1).to.equal(0.4);
             expect(result.phaseShiftAtStartBeam2).to.equal(-0.1);
             expect(result.phaseShiftAtEndBeam1).to.equal(0.5);

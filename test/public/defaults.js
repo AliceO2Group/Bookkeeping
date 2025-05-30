@@ -56,7 +56,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
 module.exports.defaultBefore = async () => {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     page.setDefaultTimeout(1500);
     page.setDefaultNavigationTimeout(5000);
@@ -393,20 +393,58 @@ module.exports.getInnerText = getInnerText;
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {string} innerText Text to search for.
+ * @param {object} [options] eventual options
+ * @param {number} [options.timeout] Optional timeout
+ * @param {puppeteer.FrameWaitForFunctionOptions} [options.polling] Optional polling methods, see
  * @return {Promise<void>} resolves once the text has been checked
  */
-module.exports.expectInnerText = async (page, selector, innerText) => {
-    const element = await page.waitForSelector(selector);
+module.exports.expectInnerText = async (page, selector, innerText, options = {}) => {
+    const elementHandle = await page.waitForSelector(selector);
+
     try {
         await page.waitForFunction(
             (selector, innerText) => document.querySelector(selector).innerText === innerText,
-            {},
+            options,
             selector,
             innerText,
         );
     } catch (_) {
-        throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${await getInnerText(element)}"`);
+        const actualInnerText = await getInnerText(elementHandle);
+        await elementHandle.dispose();
+        if (actualInnerText === innerText) {
+            // Timeout issue resolved by itself, simply return (kind of retry for free)
+            return;
+        }
+        throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${actualInnerText}"`);
     }
+    await elementHandle.dispose();
+};
+
+/**
+ * Expect a given attribute of an element to have a given value
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} selector the selector of the element to look for attribute
+ * @param {string} attributeKey the key of the attribute to check
+ * @param {string} attributeValue the expected value
+ * @return {Promise<void>} resolves once the attribute has the expected value
+ */
+module.exports.expectAttributeValue = async (page, selector, attributeKey, attributeValue) => {
+    const elementHandle = await page.waitForSelector(selector);
+    try {
+        await page.waitForFunction(
+            (selector, attributeKey, attributeValue) => document.querySelector(selector).getAttribute(attributeKey) === attributeValue,
+            {},
+            selector,
+            attributeKey,
+            attributeValue,
+        );
+    } catch (_) {
+        const actualAttributeValue = await elementHandle.evaluate((element, attributeKey) => element.getAttribute(attributeKey), attributeKey);
+        await elementHandle.dispose();
+        throw new Error(`Expect attribute ${attributeKey} to be ${attributeValue}, got ${actualAttributeValue}`);
+    }
+    await elementHandle.dispose();
 };
 
 /**
@@ -483,7 +521,7 @@ const getPopoverContent = (popoverTrigger) => {
         }
 
         const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
-        return popover.innerHTML;
+        return popover.innerText;
     });
 };
 
@@ -523,12 +561,25 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
-    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
+    const popoverTriggerSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`;
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
 
-    const actualContent = await getPopoverContent(popoverTrigger);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    expect(triggerContent).to.be.equal(actualContent);
+    // Puppeteer hover function sometimes do not trigger the mouseover, manually trigger it
+    await page.evaluate((popoverTriggerSelector) => {
+        const element = document.querySelector(popoverTriggerSelector);
+        element.dispatchEvent(new Event('mouseover', { bubbles: true }));
+    }, popoverTriggerSelector);
+
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === triggerContent.replaceAll('\n', ''),
+    );
 };
 
 /**
@@ -818,3 +869,19 @@ module.exports.expectLink = async (element, selector, { href, innerText }) => {
  * @return {boolean} true if format is correct, false otherwise
  */
 module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
+
+/**
+ * Return the selector for all the inputs composing a period inputs
+ *
+ * @param {string} popoverSelector the selector of the period inputs parent
+ * @return {{fromDateSelector: string, fromTimeSelector: string, toDateSelector: string, toTimeSelector: string}} the selectors
+ */
+module.exports.getPeriodInputsSelectors = (popoverSelector) => {
+    const commonInputsAncestor = `${popoverSelector} > div > div > div > div`;
+    return {
+        fromDateSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(1)`,
+        fromTimeSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(2)`,
+        toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
+        toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
+    };
+};

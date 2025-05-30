@@ -38,5 +38,3 @@ updates:
       update-types: ["version-update:semver-major"]
     - dependency-name: "chai"
       update-types: ["version-update:semver-major"]
-  reviewers:
-      - "graduta"

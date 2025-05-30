@@ -114,7 +114,7 @@ module.exports = () => {
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
         await expectLink(page, 'tr#row56 .column-ITS a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-simulation-pass&runNumberDetectorsMap=56:4&simulationPassId=2',
             innerText: 'QC',
         });
 

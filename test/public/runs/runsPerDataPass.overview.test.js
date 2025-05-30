@@ -31,7 +31,6 @@ const {
     getPopoverContent,
     getPopoverSelector,
     getInnerText,
-    expectUrlParams,
     getPopoverInnerText,
     testTableSortingByColumn,
     setConfirmationDialogToBeAccepted,
@@ -39,6 +38,8 @@ const {
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
+const { BkpRoles } = require('../../../lib/domain/enums/BkpRoles.js');
+const { navigateToRunsPerDataPass } = require('./dataPassesUtilities.js');
 
 const { expect } = chai;
 
@@ -59,28 +60,6 @@ const DETECTORS = [
     'TRD',
     'ZDC',
 ];
-
-/**
- * Navigate to Runs per Data Pass page
- *
- * @param {Puppeteer.page} page page
- * @param {number} params.lhcPeriodId id of lhc period on LHC Period overview page
- * @param {number} params.dataPassId id of data pass on Data Passes per LHC Period page
- * @param {number} [options.epectedRowsCount] expected number of rows on runs per data pass page
- * @return {Promise<void>} promise
- */
-const navigateToRunsPerDataPass = async (page, { lhcPeriodId, dataPassId }, { epectedRowsCount } = {}) => {
-    await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
-    const pdpBeamType = await getInnerText(await page.waitForSelector(`#row${lhcPeriodId}-beamTypes`));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
-    expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
-    await page.waitForSelector('th#description');
-    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
-    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId, pdpBeamType });
-    if (epectedRowsCount) {
-        await waitForTableLength(page, epectedRowsCount);
-    }
-};
 
 module.exports = () => {
     let page;
@@ -133,7 +112,7 @@ module.exports = () => {
             ])),
         };
 
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         // Expectations of header texts being of a certain datatype
         let tableDataValidators = {
             ...commonColumnsValidators,
@@ -145,7 +124,7 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
         // Expectations of header texts being of a certain datatype
         tableDataValidators = {
             muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
@@ -155,7 +134,7 @@ module.exports = () => {
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
         await expectLink(page, 'tr#row106 .column-EMC a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumber=106&dplDetectorId=2&dataPassId=1',
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-data-pass&runNumberDetectorsMap=106:2&dataPassId=1',
             innerText: 'QC',
         });
 
@@ -171,6 +150,12 @@ module.exports = () => {
         await expectInnerText(page, '#row56-globalAggregatedQuality', '0MC.R');
         expect(await getPopoverInnerText(await page.waitForSelector('#row56-globalAggregatedQuality .popover-trigger')))
             .to.be.equal('Missing 4 verifications');
+    });
+
+    it('should successfully display tooltip information on GAQ column', async () => {
+        const popoverContent = await getPopoverContent(await page.waitForSelector('#globalAggregatedQuality .popover-trigger'));
+        expect(popoverContent).to.equal('Global aggregated flag based on critical detectors.' +
+            'Default detectors: FT0, ITS, TPC (and ZDC for heavy-ion runs)');
     });
 
     it('should switch mcReproducibleAsNotBad', async () => {
@@ -203,7 +188,7 @@ module.exports = () => {
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
 
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
@@ -280,11 +265,12 @@ module.exports = () => {
     });
 
     it('should successfully export runs', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
 
         const targetFileName = 'runs.json';
 
         // First export
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await pressElement(page, '#export-runs-trigger');
         await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
@@ -313,19 +299,22 @@ module.exports = () => {
 
     // Filters
     it('should successfully apply runNumber filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
 
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, '.runNumber-filter input[type=text]', '108,107');
+        await fillInput(page, '.runNumber-filter input[type=text]', '108,107', ['change']);
+        await waitForTableLength(page, 2);
         await expectColumnValues(page, 'runNumber', ['108', '107']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
     it('should successfully apply detectors filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 2, 3);
 
         await pressElement(page, '#openFilterToggle');
 
@@ -333,12 +322,13 @@ module.exports = () => {
         await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
     it('should successfully apply tags filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
         await pressElement(page, '#openFilterToggle');
 
         await pressElement(page, '.tags-filter .dropdown-trigger');
@@ -348,32 +338,13 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
-    it('should successfully apply timeStart filter', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
-        await pressElement(page, '#openFilterToggle');
-
-        await fillInput(page, '.timeO2Start-filter input[type=date]', '2021-01-01');
-        await expectColumnValues(page, 'runNumber', ['1']);
-
-        await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
-    });
-
-    it('should successfully apply timeEnd filter', async () => {
-        await pressElement(page, '#openFilterToggle');
-
-        await fillInput(page, '.timeO2End-filter input[type=date]', '2021-01-01');
-        await expectColumnValues(page, 'runNumber', ['1']);
-
-        await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
-    });
-
     it('should successfully apply duration filter', async () => {
+        await navigateToRunsPerDataPass(page, 2, 2, 3);
         await pressElement(page, '#openFilterToggle');
 
         await page.select('.runDuration-filter select', '>=');
@@ -384,18 +355,17 @@ module.exports = () => {
          * Therefore additional action is invoked in between
          */
         await page.select('.runDuration-filter select', '>=');
-        await pressElement(page, '#openFilterToggle');
-        await pressElement(page, '#openFilterToggle');
-        await fillInput(page, '.runDuration-filter input[type=number]', '10');
+        await fillInput(page, '#duration-operand', '10', ['change']);
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
 
     it('should successfully apply alice currents filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         await pressElement(page, '#openFilterToggle');
 
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
@@ -403,41 +373,44 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['54']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     const inelasticInteractionRateFilteringTestsParameters = {
-        inelasticInteractionRateAvg: { operator: 'le', value: 50000, expectedRuns: ['56', '54'] },
-        inelasticInteractionRateAtStart: { operator: 'gt', value: 20000, expectedRuns: ['56'] },
-        inelasticInteractionRateAtMid: { operator: 'lt', value: 30000, expectedRuns: ['54'] },
-        inelasticInteractionRateAtEnd: { operator: 'gt', value: 40000, expectedRuns: ['56'] },
+        inelasticInteractionRateAvg: { operator: '<=', value: 50000, expectedRuns: ['56', '54'] },
+        inelasticInteractionRateAtStart: { operator: '>', value: 20000, expectedRuns: ['56'] },
+        inelasticInteractionRateAtMid: { operator: '<', value: 30000, expectedRuns: ['54'] },
+        inelasticInteractionRateAtEnd: { operator: '>', value: 40000, expectedRuns: ['56'] },
     };
 
     for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
         const { operator, value, expectedRuns } = testParameters;
         it(`should successfully apply ${property} filters`, async () => {
+            await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
             await pressElement(page, '#openFilterToggle');
 
-            const popoverSelector = await getPopoverSelector(await page.waitForSelector(`.${property}-filter .popover-trigger`));
-            await pressElement(page, `${popoverSelector} #${property}-dropdown-option-${operator}`, true);
-            await fillInput(page, `#${property}-value-input`, value);
+            await page.waitForSelector(`#${property}-operator`);
+            await page.select(`#${property}-operator`, operator);
+            await fillInput(page, `#${property}-operand`, value, ['change']);
             await expectColumnValues(page, 'runNumber', expectedRuns);
 
+            await pressElement(page, '#openFilterToggle');
             await pressElement(page, '#reset-filters', true);
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
     }
 
     it('should successfully apply gaqNotBadFraction filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 1, dataPassId: 3 }, { epectedRowsCount: 4 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
 
         await pressElement(page, '#openFilterToggle', true);
 
-        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.globalAggregatedQuality-filter .popover-trigger'));
-        await pressElement(page, `${popoverSelector} #gaqNotBadFraction-dropdown-option-le`, true);
-        await fillInput(page, '#gaqNotBadFraction-value-input', '80');
-        await expectColumnValues(page, 'runNumber', ['56']);
+        await page.waitForSelector('#gaqNotBadFraction-operator');
+        await page.select('#gaqNotBadFraction-operator', '<=');
+        await fillInput(page, '#gaqNotBadFraction-operand', '80', ['change']);
+        await expectColumnValues(page, 'runNumber', ['106']);
 
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);
@@ -448,14 +421,15 @@ module.exports = () => {
     });
 
     it('should successfully apply muInelasticInteractionRate filters', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
         await pressElement(page, '#openFilterToggle');
 
-        const popoverSelector = await getPopoverSelector(await page.waitForSelector('.muInelasticInteractionRate-filter .popover-trigger'));
-        await pressElement(page, `${popoverSelector} #muInelasticInteractionRate-dropdown-option-ge`, true);
-        await fillInput(page, '#muInelasticInteractionRate-value-input', 0.03);
+        await page.waitForSelector('#muInelasticInteractionRate-operand');
+        await page.select('#muInelasticInteractionRate-operator', '>=');
+        await fillInput(page, '#muInelasticInteractionRate-operand', 0.03, ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
+        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -463,7 +437,7 @@ module.exports = () => {
     it('should successfully mark as skimmable', async () => {
         await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
         await DataPassRepository.updateAll({ skimmingStage: null }, { where: { id: 1 } });
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
         await expectInnerText(page, '#skimmableControl button', 'Mark as skimmable');
         setConfirmationDialogToBeAccepted(page);
         await pressElement(page, '#skimmableControl button', true);
@@ -472,21 +446,100 @@ module.exports = () => {
     });
 
     it('should display bad runs marked out', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 2 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 2, 3);
 
         await page.waitForSelector('tr#row2.danger');
         await page.waitForSelector('tr#row2 .column-CPV .popover-trigger svg');
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('tr#row2 .column-CPV .popover-trigger'));
         const popoverContent = await getPopoverContent(await page.$(popoverSelector));
-        expect(popoverContent).to.be.equal('Quality of the run was changed to bad so it is no more subject to QC');
+        expect(popoverContent).to.be.equal('Quality of run 2 was changed to bad so it is no more subject to QC');
     });
 
     it('should successfully change ready_for_skimming status', async () => {
-        await navigateToRunsPerDataPass(page, { lhcPeriodId: 2, dataPassId: 1 }, { epectedRowsCount: 3 });
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
         await expectColumnValues(page, 'readyForSkimming', ['not ready', 'not ready', 'ready']);
         await pressElement(page, '#row108-readyForSkimming input', true);
         await expectInnerText(page, '#row108-readyForSkimming', 'ready');
         await pressElement(page, '#row108-readyForSkimming input', true);
         await expectInnerText(page, '#row108-readyForSkimming', 'not ready');
+    });
+
+    describe('Freeze/unfreeze of data pass', async () => {
+        before(async () => {
+            await page.evaluate((role) => {
+                // eslint-disable-next-line no-undef
+                sessionService.get().token = role;
+
+                // eslint-disable-next-line no-undef
+                sessionService.get().access.push(role);
+            }, BkpRoles.DPG_ASYNC_QC_ADMIN);
+        });
+
+        it('should successfully freeze a given data pass', async () => {
+            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+            const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+
+            await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Freeze the data pass');
+            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+        });
+
+        it('should successfully disable QC flag creation when data pass is frozen', async () => {
+            await waitForTableLength(page, 3);
+            await page.waitForSelector('.select-multi-flag', { hidden: true });
+            await pressElement(page, '#actions-dropdown-button .popover-trigger');
+            await page.waitForSelector('#set-qc-flags-trigger[disabled]');
+            await page.waitForSelector('#row107-ACO-text button[disabled]');
+        });
+
+        it('should successfully un-freeze a given data pass', async () => {
+            const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+
+            await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Unfreeze the data pass');
+            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+        });
+
+        it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
+            await waitForTableLength(page, 3);
+            await pressElement(page, '.select-multi-flag');
+            await pressElement(page, '#actions-dropdown-button .popover-trigger');
+            await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
+            await page.waitForSelector('#set-qc-flags-trigger');
+            await page.waitForSelector('#row107-ACO-text a');
+        });
+
+        after(async () => {
+            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        });
+    });
+
+    it('should successfully not display button to discard all QC flags for the data pass', async () => {
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+        await page.waitForSelector(`${popoverSelector} button:nth-child(4)`, { hidden: true });
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+    });
+
+    it('should successfully discard all QC flags for the data pass', async () => {
+        await page.evaluate((role) => {
+            // eslint-disable-next-line no-undef
+            sessionService.get().token = role;
+
+            // eslint-disable-next-line no-undef
+            sessionService.get().access.push(role);
+        }, BkpRoles.DPG_ASYNC_QC_ADMIN);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
+        // Press again actions dropdown to re-trigger render
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await setConfirmationDialogToBeAccepted(page);
+        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await waitForTableLength(page, 3);
+        // Processing of data might take a bit of time, but then expect QC flag button to be there
+        await expectInnerText(
+            page,
+            '#row106-CPV-text',
+            'QC',
+            { timeout: 10000, polling: 'mutation' },
+        );
     });
 };

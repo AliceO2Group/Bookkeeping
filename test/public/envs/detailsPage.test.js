@@ -139,7 +139,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#rowCmCvjNbg a:first-of-type'));
         await pressElement(page, '#raw-configuration-tab');
 
-        await waitForTableLength(page, 18);
+        await waitForTableLength(page, 20);
         expect(await page.evaluate(() => {
             const cellContents = Array.from(document.querySelectorAll('table tbody tr td:first-child')).map((element) => element.innerText);
             return cellContents.every((v, i) => !i || v.localeCompare(cellContents[i - 1]) >= 0);

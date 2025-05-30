@@ -20,6 +20,7 @@ module.exports = () => {
             simple: 'hello',
             key: {
                 nested: [1, 2],
+                '=': 12,
             },
         }).split('?');
 
@@ -27,6 +28,7 @@ module.exports = () => {
         expect(parametersExpressions).to.includes('simple=hello');
         expect(parametersExpressions).to.includes('key[nested][]=1');
         expect(parametersExpressions).to.includes('key[nested][]=2');
+        expect(parametersExpressions).to.includes('key[%3D]=12');
     });
     it('should successfully build URL by combining existing parameters', () => {
         const [, fullParametersExpressions] = buildUrl('https://example.com?simple=hello&key1[key2][]=13&key1[key2][]=35', {

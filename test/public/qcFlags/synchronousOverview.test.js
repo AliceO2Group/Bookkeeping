@@ -52,9 +52,9 @@ module.exports = () => {
         expect(response.status()).to.equal(200);
         expect(await page.title()).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'Sync QC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', '56');
-        await expectInnerText(page, 'h2:nth-of-type(3)', 'FT0');
+        await expectInnerText(page, '#breadcrumb-header', 'Sync QC');
+        await expectInnerText(page, '#breadcrumb-run-number', '56');
+        await expectInnerText(page, '#breadcrumb-detector-name', 'FT0');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -63,8 +63,8 @@ module.exports = () => {
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
             createdBy: (userName) => userName && userName !== '-',
-            from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
-            to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
+            from: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Since run start' || validateDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Until run end' || validateDate(timestamp),
             createdAt: validateDate,
             updatedAt: validateDate,
         };
@@ -81,7 +81,7 @@ module.exports = () => {
     });
 
     it('can navigate to run details page from breadcrumbs link', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '56' });
     });
 };

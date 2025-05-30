@@ -51,6 +51,14 @@ module.exports = () => {
         expect(runs[1].runNumber).to.equal(17);
     });
 
+    it('should return an array, only containing runs with specified run number and ranges', async () => {
+        getAllRunsDto.query = { filter: { runNumbers: '1-5,8,12,20-30' } };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(18);
+    });
+
     it('should return runs sorted by runNumber', async () => {
         {
             const { runs } = await new GetAllRunsUseCase().execute({ query: { sort: { runNumber: 'ASC' } } });
@@ -567,6 +575,78 @@ module.exports = () => {
         expect(runs).to.have.lengthOf(0);
     });
 
+    it('should successfully filter on ctf file count number', async () => {
+        const ctfFileCount = {
+            operator: '<',
+            limit: 200,
+        };
+        getAllRunsDto.query = { filter: { ctfFileCount } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+
+        ctfFileCount.operator = '<=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(2);
+        expect(runs.every((run) => run.ctfFileCount <= 200)).to.be.true;
+
+        ctfFileCount.operator = '=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs.every((run) => run.ctfFileCount === 200)).to.be.true;
+
+        ctfFileCount.operator = '>=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+        expect(runs.every((run) => run.ctfFileCount >= 200)).to.be.true;
+
+        ctfFileCount.operator = '>';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(6);
+        expect(runs.every((run) => run.ctfFileCount >= 500)).to.be.true;
+    });
+
+    it('should successfully filter on tf file count number', async () => {
+        const tfFileCount = {
+            operator: '<',
+            limit: 30,
+        };
+        getAllRunsDto.query = { filter: { tfFileCount } };
+
+        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(0);
+
+        tfFileCount.operator = '<=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+        expect(runs.every((run) => run.tfFileCount <= 30)).to.be.true;
+
+        tfFileCount.operator = '=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(7);
+        expect(runs.every((run) => run.tfFileCount === 30)).to.be.true;
+
+        tfFileCount.operator = '>=';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(8);
+        expect(runs.every((run) => run.tfFileCount >= 30)).to.be.true;
+
+        tfFileCount.operator = '>';
+        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
+        expect(runs).to.be.an('array');
+        expect(runs).to.have.lengthOf(1);
+        expect(runs.every((run) => run.tfFileCount > 30)).to.be.true;
+    });
+
     it('should successfully return an array, only containing runs found from passed list', async () => {
         getAllRunsDto.query = {
             filter: {
@@ -635,7 +715,9 @@ module.exports = () => {
         const { runs } = await new GetAllRunsUseCase().execute({
             query: {
                 filter: {
-                    aliceL3Current: 30003,
+                    magnets: {
+                        l3: 30003,
+                    },
                 },
             },
         });
@@ -649,7 +731,9 @@ module.exports = () => {
         const { runs } = await new GetAllRunsUseCase().execute({
             query: {
                 filter: {
-                    aliceDipoleCurrent: 0,
+                    magnets: {
+                        dipole: 0,
+                    },
                 },
             },
         });
@@ -679,18 +763,26 @@ module.exports = () => {
     it('should successfully filter by GAQ notBadFraction', async () => {
         const dataPassIds = [3];
         {
-            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
-                dataPassIds,
-                gaq: { notBadFraction: { '<': 0.8 } },
-            } } });
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        gaq: { notBadFraction: { '<': 0.8 } },
+                    },
+                },
+            });
             expect(runs).to.be.an('array');
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([56]);
         }
         {
-            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: {
-                dataPassIds,
-                gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
-            } } });
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
+                    },
+                },
+            });
             expect(runs).to.have.lengthOf(0);
         }
     });

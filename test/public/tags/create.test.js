@@ -12,7 +12,15 @@
  */
 const chai = require('chai');
 
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, goToPage, getPopoverSelector } = require('../defaults.js');
+const {
+    defaultBefore,
+    defaultAfter,
+    expectInnerText,
+    pressElement,
+    goToPage,
+    getPopoverSelector,
+    waitForNavigation,
+} = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -39,7 +47,7 @@ module.exports = () => {
         await page.type('#text', text);
 
         // Create the new tag
-        await pressElement(page, 'button#submit');
+        await waitForNavigation(page, () => pressElement(page, 'button#submit'));
 
         // Verify the title of the page
         await expectInnerText(page, '.mv2', `Tag: ${text}`);

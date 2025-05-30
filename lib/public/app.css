@@ -82,9 +82,6 @@ html, body {
     width: unset;
 }
 
-/* cursors */
-.cursor-info { cursor: help; }
-
 /* specific margins */
 .ml1 { margin-left: var(--space-xs); }
 .ml2 { margin-left: var(--space-s); }
@@ -642,6 +639,10 @@ label {
 
 .time-range-selector .month-option:nth-last-child(-n+3), .time-range-selector .dropdown-option:last-child {
     border-bottom: 1px solid var(--color-gray-dark);
+}
+
+.dimmed {
+    opacity: 0.5;
 }
 
 /**

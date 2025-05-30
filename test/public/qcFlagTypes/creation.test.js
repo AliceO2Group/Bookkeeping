@@ -21,6 +21,8 @@ const {
     expectInnerText,
     waitForNavigation,
     expectUrlParams,
+    waitForTableLength,
+    expectAttributeValue,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -75,8 +77,15 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit', true));
         expectUrlParams(page, { page: 'qc-flag-types-overview' });
+        await waitForTableLength(page, 8);
 
         // Expect newly created flag to appear and have correct color
-        await expectInnerText(page, '[style*="rgb(240, 0, 240)"]', 'AAA+');
+        await expectAttributeValue(
+            page,
+            '#row21-name-text .badge',
+            'style',
+            'border-color: rgb(240, 0, 240); background-color: rgb(240, 0, 240); color: white;',
+        );
+        await expectInnerText(page, '#row21-name-text', 'AAA+');
     });
 };
