@@ -761,7 +761,7 @@ module.exports = () => {
     }
 
     it('should successfully filter by GAQ notBadFraction', async () => {
-        const dataPassIds = [1];
+        const dataPassIds = [3];
         {
             const { runs } = await new GetAllRunsUseCase().execute({
                 query: {
@@ -772,7 +772,7 @@ module.exports = () => {
                 },
             });
             expect(runs).to.be.an('array');
-            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([56]);
         }
         {
             const { runs } = await new GetAllRunsUseCase().execute({

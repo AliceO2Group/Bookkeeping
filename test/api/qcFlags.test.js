@@ -82,12 +82,14 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -104,12 +106,15 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.1111111,
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
+                        qualityNotDefinedEffectiveRunCoverage: 0.6666667,
+
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -126,6 +131,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.7222222,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        qualityNotDefinedEffectiveRunCoverage: 0.27777779999999996,
                     },
                 },
             });
@@ -143,6 +149,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.1666667,
                         explicitlyNotBadEffectiveRunCoverage: 0.8333333,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
 
                     // ITS
@@ -151,6 +158,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
+                        qualityNotDefinedEffectiveRunCoverage: 0,
                     },
                 },
             });
@@ -195,6 +203,14 @@ module.exports = () => {
                     mcReproducible: true,
                     badEffectiveRunCoverage: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
+                    qualityNotDefinedEffectiveRunCoverage: 0,
+                },
+                56: {
+                    badEffectiveRunCoverage: 1,
+                    explicitlyNotBadEffectiveRunCoverage: 0,
+                    mcReproducible: true,
+                    missingVerificationsCount: 4,
+                    qualityNotDefinedEffectiveRunCoverage: 0,
                 },
             });
         });
