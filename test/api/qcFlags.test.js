@@ -90,6 +90,20 @@ module.exports = () => {
                         missingVerificationsCount: 1,
                     },
                 },
+                107: {
+                    1: {
+                        badEffectiveRunCoverage: 0.2403462,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                    },
+                    2: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
             });
         });
 
@@ -106,6 +120,20 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
                     },
                     16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
+                107: {
+                    1: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                    },
+                    2: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
@@ -195,6 +223,7 @@ module.exports = () => {
                     mcReproducible: true,
                     badEffectiveRunCoverage: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
+                    undefinedQualityPeriodsCount: 0,
                 },
             });
         });
@@ -598,7 +627,7 @@ module.exports = () => {
                 .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
 
             expect(response.status).to.be.equal(200);
-            expect(response.body.data.deletedCount).to.equal(6); // 4 from seeders, 2 created in POST requests previously in this test
+            expect(response.body.data.deletedCount).to.equal(9); // 7 from seeders, 2 created in POST requests previously in this test
         });
     });
 
