@@ -21,7 +21,6 @@ const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQual
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
 const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
-const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
