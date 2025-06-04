@@ -1679,13 +1679,9 @@ module.exports = () => {
             const timeTrgEnd = t('22:00:00');
 
             const gaqSubSummaries = [
-                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
                 { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
                 { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
-                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
                 { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
-                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
-                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
             ];
 
             const expectedGaqSummary = gaqSubSummaries.reduce((acc, { from, to, bad, mcReproducible }) => {

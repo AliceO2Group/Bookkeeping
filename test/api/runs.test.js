@@ -21,6 +21,7 @@ const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQual
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
 const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
+const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -398,6 +399,33 @@ module.exports = () => {
 
         it('should successfully filter by GAQ notBadFraction', async () => {
             const dataPassId = 1;
+            const runNumber = 107;
+            const commonScopte = {
+                runNumber,
+                dataPassIdentifier: { id: dataPassId },
+            };
+            const relations = { user: { roles: ['admin'], externalUserId: 1 } };
+            // eslint-disable-next-line require-jsdoc
+            const t = (timeString) => new Date(`2019-08-08 ${timeString}`).getTime();
+            const goodFlagTypeId = 3;
+            const mcReproducibleFlagTypeId = 11;
+            let createdFlagIds = [];
+
+            let flagIds = await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: goodFlagTypeId }],
+                { ...commonScopte, detectorIdentifier: { detectorName: 'EMC' } },
+                relations,
+            );
+            createdFlagIds = [...createdFlagIds, ...flagIds];
+
+            flagIds = await qcFlagService.create(
+                [{ from: null, to: t('13:30:00'), flagTypeId: goodFlagTypeId }],
+                [{ from: t('13:30:00'), to: null, flagTypeId: mcReproducibleFlagTypeId }],
+                { ...commonScopte, detectorIdentifier: { detectorName: 'CPV' } },
+                relations,
+            );
+            createdFlagIds = [...createdFlagIds, ...flagIds];
+
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
 
@@ -405,7 +433,7 @@ module.exports = () => {
                 const { data: runs } = response.body;
 
                 expect(runs).to.be.an('array');
-                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107]);
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +
@@ -417,6 +445,8 @@ module.exports = () => {
                 expect(runs).to.be.an('array');
                 expect(runs).to.have.lengthOf(0);
             }
+
+            await Promise.all(createdFlagIds.map((flagId) => qcFlagService.delete(flagId)));
         });
 
         it('should return http status 400 if updatedAt from larger than to', async () => {
