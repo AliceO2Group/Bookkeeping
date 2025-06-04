@@ -772,7 +772,7 @@ module.exports = () => {
                 },
             });
             expect(runs).to.be.an('array');
-            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107]);
         }
         {
             const { runs } = await new GetAllRunsUseCase().execute({
