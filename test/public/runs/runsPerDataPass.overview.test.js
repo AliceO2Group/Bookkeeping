@@ -144,8 +144,10 @@ module.exports = () => {
         });
         await page.waitForSelector('tr#row106 .column-CPV a .icon');
 
-        await expectInnerText(page, '#row106-globalAggregatedQuality', '67MC.R');
-        expect(await getPopoverInnerText(await page.waitForSelector('#row106-globalAggregatedQuality .popover-trigger')))
+        await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
+
+        await expectInnerText(page, '#row107-globalAggregatedQuality', '76');
+        expect(await getPopoverInnerText(await page.waitForSelector('#row107-globalAggregatedQuality .popover-trigger')))
             .to.be.equal('Missing 3 verifications');
     });
 
