@@ -177,6 +177,20 @@ module.exports = () => {
                         missingVerificationsCount: 1,
                     },
                 },
+                107: {
+                    1: {
+                        badEffectiveRunCoverage: 0.2403462,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                    },
+                    2: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
             });
         });
 
@@ -190,6 +204,20 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
                     },
                     16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
+                107: {
+                    1: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                    },
+                    2: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
@@ -1407,7 +1435,7 @@ module.exports = () => {
                         },
                     },
                 },
-            })).to.lengthOf(10); // 11 from seeders, then 1 deleted => 10
+            })).to.lengthOf(13); // 14 from seeders, then 1 deleted => 10
 
             expect((await QcFlagRepository.findAll({
                 include: {
@@ -1696,6 +1724,7 @@ module.exports = () => {
             expectedGaqSummary.badEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.missingVerificationsCount = 11;
+            expectedGaqSummary.undefinedQualityPeriodsCount = 8;
 
             const { [runNumber]: runGaqSummary } = await gaqService.getSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
@@ -1734,12 +1763,14 @@ module.exports = () => {
                     explicitlyNotBadEffectiveRunCoverage: 1,
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
+                    undefinedQualityPeriodsCount: 0,
                 },
                 54: {
                     missingVerificationsCount: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     badEffectiveRunCoverage: 1,
                     mcReproducible: false,
+                    undefinedQualityPeriodsCount: 0,
                 },
             });
         });

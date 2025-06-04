@@ -405,7 +405,7 @@ module.exports = () => {
         await page.waitForSelector('#gaqNotBadFraction-operator');
         await page.select('#gaqNotBadFraction-operator', '<=');
         await fillInput(page, '#gaqNotBadFraction-operand', '80', ['change']);
-        await expectColumnValues(page, 'runNumber', ['106']);
+        await expectColumnValues(page, 'runNumber', ['107']);
 
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);

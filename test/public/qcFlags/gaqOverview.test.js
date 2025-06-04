@@ -66,7 +66,7 @@ module.exports = () => {
         // eslint-disable-next-line require-jsdoc
         const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
-            generalQuality: (generalQuality) => ['good', 'bad', 'MC.R'].includes(generalQuality),
+            generalQuality: (generalQuality) => ['good', 'bad', 'MC.R', ''].includes(generalQuality),
             from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
             to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
         };
@@ -76,21 +76,21 @@ module.exports = () => {
         await waitForTableLength(page, 3);
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
-                'MC.R',
+                '',
                 '08/08/2019\n22:43:20',
                 '09/08/2019\n04:16:40',
                 'Limited Acceptance MC Reproducible',
                 '',
             ],
             [
-                'bad',
+                '',
                 '09/08/2019\n05:40:00',
                 '09/08/2019\n07:03:20',
                 'Limited acceptance',
                 '',
             ],
             [
-                'bad',
+                '',
                 '09/08/2019\n08:26:40',
                 '09/08/2019\n09:50:00',
                 'Bad',
@@ -111,7 +111,7 @@ module.exports = () => {
         await waitForTableLength(page, 7);
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
-                'good',
+                '',
                 '08/08/2019\n13:00:00',
                 '08/08/2019\n22:43:20',
                 '',
@@ -125,7 +125,7 @@ module.exports = () => {
                 'Good',
             ],
             [
-                'good',
+                '',
                 '09/08/2019\n04:16:40',
                 '09/08/2019\n05:40:00',
                 '',
@@ -139,7 +139,7 @@ module.exports = () => {
                 'Good',
             ],
             [
-                'good',
+                '',
                 '09/08/2019\n07:03:20',
                 '09/08/2019\n08:26:40',
                 '',
@@ -153,7 +153,7 @@ module.exports = () => {
                 'Good',
             ],
             [
-                'good',
+                '',
                 '09/08/2019\n09:50:00',
                 '09/08/2019\n14:00:00',
                 '',
