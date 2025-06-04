@@ -162,7 +162,7 @@ module.exports = () => {
         ]);
 
         expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(1) td .popover-trigger')))
-            .to.be.equal('No flag for some detectorAt least one flag is not verified');
+            .to.be.equal('No flag for some detector');
 
         expect(await getPopoverInnerText(await page.waitForSelector('tbody tr:nth-of-type(2) td .popover-trigger')))
             .to.be.equal('At least one flag is not verified');
