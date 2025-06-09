@@ -23,7 +23,8 @@ const {
     expectInnerText,
     expectInnerTextTo,
     expectColumnValues,
-} = require('../defaults');
+} = require('../defaults.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -35,6 +36,7 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
+        await resetDatabaseContent();
     });
 
     after(async () => {
@@ -47,8 +49,8 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'Anchored MC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22a_apass1');
+        await expectInnerText(page, '#breadcrumb-header', 'Anchored MC');
+        await expectInnerText(page, '#breadcrumb-simulation-pass-name', 'LHC22a_apass1');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -57,12 +59,14 @@ module.exports = () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
-            jiraId: (jiraId) => /[A-Z][A-Z0-9]+-[0-9]+/.test(jiraId),
+            associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
+            associatedDataPasses: (display) => /(No anchorage)|(\d+)/.test(display),
             pwg: (pwg) => /PWG.+/.test(pwg),
+            jiraId: (jiraId) => /[A-Z][A-Z0-9]+-[0-9]+/.test(jiraId),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
             generatedEventsCount: (generatedEventsCount) => !isNaN(generatedEventsCount.replace(/,/g, '')),
-            outputSize: (outpuSize) => {
-                const [number, unit] = outpuSize.split(' ');
+            outputSize: (outputSize) => {
+                const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
         };
@@ -109,7 +113,7 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'outputSize');
     });
 
-    it('should successfuly apply simulation passes name filter', async () => {
+    it('should successfully apply simulation passes name filter', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         await pressElement(page, '#openFilterToggle');
 

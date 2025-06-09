@@ -36,31 +36,31 @@ module.exports = () => {
         const service = proto.Service.service.TestEnums;
 
         const fieldsConverters = extractFieldsConverters(service.requestType.type, absoluteMessagesDefinitions);
-        expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([
-            { path: ['a'], name: 'a' },
-            { path: ['b', 'b1'], name: 'b1' },
-            { path: ['b1'], name: 'b1' },
-            { path: ['b11'], name: 'b1' },
-            { path: ['b11'], name: 'b11' },
-            { path: ['c', 'b', 'b1'], name: 'b1' },
-            { path: ['c', 'b1'], name: 'b1' },
-            { path: ['c', 'b11'], name: 'b1' },
-            { path: ['c', 'b11'], name: 'b11' },
-            { path: ['c'], name: 'eb1' },
-            { path: ['d'], name: 'd' },
-            { path: [], name: 'ea' },
-            { path: [], name: 'eb1' },
-            { path: [], name: 'eb11' },
-            { path: [], name: 'ed' },
+        expect(fieldsConverters.map(({ path }) => path)).to.eql([
+            ['a', 'a'],
+            ['b', 'b1', 'b1'],
+            ['b1', 'b1'],
+            ['b11', 'b1'],
+            ['b11', 'b11'],
+            ['c', 'b', 'b1', 'b1'],
+            ['c', 'b1', 'b1'],
+            ['c', 'b11', 'b1'],
+            ['c', 'b11', 'b11'],
+            ['c', 'eb1'],
+            ['d', 'd'],
+            ['ea'],
+            ['eb1'],
+            ['eb11'],
+            ['ed'],
         ]);
     });
 
     it('should successfully extract int64 and uint64 paths form services messages', () => {
         const service = proto.Service.service.TestBigInts;
         const fieldsConverters = extractFieldsConverters(service.requestType.type, absoluteMessagesDefinitions);
-        expect(fieldsConverters.map(({ path, name }) => ({ path, name }))).to.eql([
-            { path: [], name: 'ui' },
-            { path: [], name: 'i' },
+        expect(fieldsConverters.map(({ path }) => path)).to.eql([
+            ['ui'],
+            ['i'],
         ]);
     });
 };

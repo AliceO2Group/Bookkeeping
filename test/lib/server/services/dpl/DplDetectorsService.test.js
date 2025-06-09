@@ -22,7 +22,7 @@ module.exports = () => {
         const detectors = await dplDetectorsService.getAll
         ();
         expect(detectors).to.be.an('array');
-        expect(detectors).to.be.lengthOf(20);
+        expect(detectors).to.be.lengthOf(21);
         expect(detectors.map(({ id, name }) => ({ id, name }))).to.have.all.deep.members([
             { id: 1, name: 'CPV' },
             { id: 2, name: 'EMC' },
@@ -44,6 +44,7 @@ module.exports = () => {
             { id: 18, name: 'CTP' },
             { id: 19, name: 'FIT' },
             { id: 20, name: 'QC-SPECIFIC' },
+            { id: 21, name: 'GLO' },
         ]);
     });
 };

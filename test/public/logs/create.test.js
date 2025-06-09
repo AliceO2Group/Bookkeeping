@@ -10,13 +10,24 @@
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
  */
-
 const chai = require('chai');
-const { defaultBefore, defaultAfter, goToPage, expectInputValue } = require('../defaults');
+const {
+    defaultBefore,
+    defaultAfter,
+    goToPage,
+    getInputValue,
+    expectInputValue,
+    pressElement,
+    expectInnerText,
+    fillInput,
+    waitForTimeout,
+    waitForNavigation,
+    expectUrlParams,
+} = require('../defaults.js');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
-const { pressElement, expectInnerText, fillInput, checkMismatchingUrlParam, waitForTimeout, waitForNavigation } = require('../defaults.js');
 const fs = require('fs');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
 
@@ -35,6 +46,7 @@ module.exports = () => {
     let browser;
     let url;
     const assetsDir = [__dirname, '../..', 'assets'];
+    const downloadDir = [__dirname, '../../../..', 'database/storage'];
 
     before(async () => {
         [page, browser, url] = await defaultBefore();
@@ -43,6 +55,8 @@ module.exports = () => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+
+        await resetDatabaseContent();
 
         /*
          * AliECS need to clone bookkeeping package, and some unicode characters are not allowed in file names
@@ -95,7 +109,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the log-reply form', async () => {
-        await goToPage(page, 'log-reply&parentLogId=1');
+        await goToPage(page, 'log-reply', { queryParameters: { parentLogId: '1' } });
 
         await expectInnerText(page, 'h3', 'Reply to: First entry');
 
@@ -104,71 +118,140 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#parent-log-details'));
 
-        expect(await checkMismatchingUrlParam(page, { ['log-details']: '1' }));
+        expectUrlParams(page, { page: 'log-detail', id: '1' });
     });
 
     it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
-        await goToPage(page, 'log-reply&parentLogId=119');
+        await goToPage(page, 'log-reply', { queryParameters: { parentLogId: '119' } });
 
         await expectInputValue(page, 'input#run-numbers', '2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22');
         await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
         await expectInputValue(page, 'input#lhc-fills', '1, 4, 6');
     });
 
-    it('Should verify that form autofills all inputs with provided full parameters.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3');
+    it('Should verify that form autofill all inputs with provided full parameters.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', lhcFillNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should verify that form autofills runNumbers only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3');
+    it('Should verify that form autofill runNumbers only when leaving other parameters empty.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it('Should verify that form autofills environmentIds only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&environmentIds=1,2,3');
+    it('Should verify that form autofill environmentIds only when leaving other parameters empty.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it('Should verify that form autofills the lhcFillNumbers only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&lhcFillNumbers=1,2,3');
+    it('Should verify that form autofill the lhcFillNumbers only when leaving other parameters empty.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should verify that form autofills the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&environmentIds=1,2,3');
+    it('Should verify that form autofill the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '');
     });
 
-    it('Should verify that form autofills the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3');
+    it('Should verify that form autofill the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
-    it('Should verify that form autofills the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
-        await goToPage(page, 'log-create&environmentIds=1,2,3&lhcFillNumbers=1,2,3');
+    it('Should verify that form autofill the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
+        await goToPage(page, 'log-create', { queryParameters: { environmentIds: '1,2,3', lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+    });
+
+    it('Should set the correct template when templateKey is specified.', async () => {
+        const templateKey = 'on-call';
+        await goToPage(page, 'log-create', { queryParameters: { templateKey } });
+
+        await page.waitForSelector('select');
+        const selectedOption = await page.evaluate(() => document.querySelector('select').value);
+        expect(selectedOption).to.equal('on-call');
+    });
+
+    it('Should autofill detectorOrSubsystem and issueDescription if templateKey is "on-call".', async () => {
+        const templateKey = 'on-call';
+        const detectorOrSubsystem = 'ALL';
+        const issueDescription = 'This is a sample issue description';
+        await goToPage(
+            page,
+            'log-create',
+            { queryParameters: { templateKey, detectorOrSubsystem, issueDescription } },
+        );
+
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('ALL');
+        await expectInputValue(page, 'textarea#issue-description', issueDescription);
+    });
+
+    it('Should autofill all inputs with provided full parameters.', async () => {
+        await goToPage(
+            page,
+            'log-create',
+            {
+                queryParameters: {
+                    runNumbers: '1,2,3',
+                    lhcFillNumbers: '1,2,3',
+                    environmentIds: '1,2,3',
+                    templateKey: 'on-call',
+                    detectorOrSubsystem: 'ALL',
+                    issueDescription: 'This is a sample issue description',
+                },
+            },
+        );
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('ALL');
+        await expectInputValue(page, 'textarea#issue-description', 'This is a sample issue description');
+    });
+
+    it('should successfully provide a tag picker with search input', async () => {
+        await waitForNavigation(page, () => pressElement(page, '#create-log-button'));
+
+        await page.locator('.tag-search-input').fill('P');
+
+        (await page.waitForFunction(() => {
+            const options = document.querySelectorAll('.tag-option');
+            if (options.length === 10) {
+                for (const option of options) {
+                    if (!option.innerText.toUpperCase().includes('P')) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        })).dispose();
     });
 
     it('can disable submit with invalid data', async () => {
@@ -198,7 +281,6 @@ module.exports = () => {
         const tags = ['FOOD', 'GLOBAL'];
 
         // Return to the creation page
-        await goToPage(page, 'log-create');
 
         // Select the boxes and send the values of the title and text to it
         await fillInput(page, '#title', title);
@@ -301,6 +383,13 @@ module.exports = () => {
         expect(lastLog.attachments).to.lengthOf(2);
         expect(lastLog.attachments[0].originalName).to.equal(file1);
         expect(lastLog.attachments[1].originalName).to.equal(file2);
+
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, file1));
+            fs.unlinkSync(path.resolve(...downloadDir, file2));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -313,7 +402,8 @@ module.exports = () => {
 
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
-        attachmentsInput.uploadFile(path.resolve(...assetsDir, '1200px-CERN_logo.png'));
+        const fileName = '1200px-CERN_logo.png';
+        attachmentsInput.uploadFile(path.resolve(...assetsDir, fileName));
         await waitForTimeout(500);
 
         // We expect the clear button to appear
@@ -328,6 +418,12 @@ module.exports = () => {
         await waitForTimeout(100);
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
+
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, fileName));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     });
 
     it('can create a log with a run number', async () => {
@@ -479,7 +575,7 @@ module.exports = () => {
         await page.select('select', 'on-call');
 
         // Expect the inputs to be there
-        await page.waitForSelector('#shortDescription', { timeout: 500 });
+        await page.waitForSelector('#shortDescription');
 
         const shortDescription = 'Short description of the issue';
         await fillInput(page, '#shortDescription', shortDescription);
@@ -496,8 +592,8 @@ module.exports = () => {
         const shifterPosition = 'ECS';
         await page.select('#shifterPosition', shifterPosition);
 
-        const beamMode = 'Beam mode';
-        await fillInput(page, '#lhcBeamMode', beamMode);
+        const beamMode = 'INJECTION PHYSICS BEAM';
+        await page.select('#lhcBeamMode', beamMode);
 
         const description = 'Description\nof the issue';
         await pressElement(page, '#issue-description ~ .CodeMirror');
@@ -541,5 +637,141 @@ ${actions}\
         const tags = lastLog.tags.map(({ text }) => text);
         expect(tags).to.lengthOf(3);
         expect(tags).to.have.members(['oncall', `${shifterPosition} Shifter`, detectorOrSubsystem]);
+    });
+
+    it('should successfully switch to RC daily log template', async () => {
+        await goToPage(page, 'log-create');
+
+        // Log template is the first select of the page
+        await page.waitForSelector('select');
+        await page.select('select', 'rc-daily-meeting');
+
+        const lhcPlans = 'LHC\nPlans';
+        await pressElement(page, '#lhc-plans ~ .CodeMirror');
+        await page.keyboard.type(lhcPlans);
+
+        await pressElement(page, '#magnets-add');
+
+        const { formatTimestampForDateTimeInput, extractTimestampFromDateTimeInput } =
+            await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
+        const { getLocaleDateAndTime, formatFullDate } = await import('../../../lib/public/utilities/dateUtils.mjs');
+
+        const magnetTimestamp = new Date() - 10000;
+        const { date: magnetDate, time: magnetTime } = formatTimestampForDateTimeInput(magnetTimestamp, true);
+
+        const [magnet0Date, magnet0Time] = await Promise.all([
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(1)'),
+            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(2)'),
+        ]);
+        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({ date: magnet0Date, time: magnet0Time }));
+
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
+        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
+        await page.focus('#magnets-1 > div > input:nth-of-type(1)');
+        await page.keyboard.type('dipole-1');
+        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
+        await page.keyboard.type('solenoid-1');
+
+        const alicePlans = 'Alice\nPlans';
+        await pressElement(page, '#alice-plans ~ .CodeMirror');
+        await page.keyboard.type(alicePlans);
+
+        const access = 'Access\nLast 24h';
+        await pressElement(page, '#access ~ .CodeMirror');
+        await page.keyboard.type(access);
+
+        const pendingRequests = 'Pending\nRequests';
+        await pressElement(page, '#pending-requests ~ .CodeMirror');
+        await page.keyboard.type(pendingRequests);
+
+        const aob = 'Any other\nBusiness';
+        await pressElement(page, '#aob ~ .CodeMirror');
+        await page.keyboard.type(aob);
+
+        await pressElement(page, '#send:not([disabled])');
+
+        await page.waitForNavigation();
+        const expectedTitle = `RC Daily Meeting Minutes ${getLocaleDateAndTime(Date.now()).date}`;
+        await expectInnerText(page, 'h2', expectedTitle);
+
+        const lastLog = await getLastLog();
+        const magnet1DateTime = getLocaleDateAndTime(magnetTimestamp);
+        expect(lastLog.title).to.equal(expectedTitle);
+
+        /*
+         * Remove from the text what depends on previous texts, that may or may not be included the template depending if tests runs in the
+         * afternoon or not
+         */
+        expect(lastLog.text
+            // Sometimes, browser adds \r to the request to comply with text form data encoding
+            .replaceAll('\r', '')
+            // On call log is created for DCS system right before this test and appear in `Central systems/services`
+            .replace('\n  * [Short description of the issue - Call on-call for DCS](http://localhost:4000?page=log-detail&id=128)', ''))
+            .to.equal(`\
+# RC Daily Meeting Minutes
+Date: ${formatFullDate(new Date())}
+
+## LHC
+
+### Last 24h
+-
+
+### Plans
+${lhcPlans}
+
+## ALICE
+
+### Last 24h
+
+#### Magnets
+[${magnet0DateTime.date}, ${magnet0DateTime.time}] Dipole = -, L3 = -
+[${magnet1DateTime.date}, ${magnet1DateTime.time}] Dipole = dipole-1, L3 = solenoid-1
+
+### Plans
+${alicePlans}
+
+## Runs to be checked
+Runs | ACO | CPV | CTP | EMC | FDD | FIT | FT0 | FV0 | HMP | ITS | MCH | MFT | MID | PHS | TOF | TPC | TRD | ZDC
+--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---
+
+## Access
+${access}
+
+## Central systems/services
+* ECS and FLP: 
+* CRU: 
+* Bookkeeping: 
+* EOS: 
+* Event display: 
+* EPN: 
+* PDP: 
+* QC: 
+* CTP: 
+* DCS: 
+* LHC_IF: 
+
+## Detectors
+* EMC: 
+* FIT: 
+* ITS: 
+* MFT: 
+* MCH: 
+* MID: 
+* PHOS: 
+* CPV: 
+* TOF: 
+* TPC: 
+* TRD: 
+* ZDC: 
+
+## Pending request
+${pendingRequests}
+
+## AOB
+${aob}\
+`);
+        const tags = lastLog.tags.map(({ text }) => text);
+        expect(tags).to.lengthOf(2);
+        expect(tags).to.have.members(['P2INFO', 'RC']);
     });
 };

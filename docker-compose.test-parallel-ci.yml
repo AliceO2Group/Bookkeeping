@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  test_app:
+    build:
+      target: test_parallel_ci
+    volumes:
+      - type: bind
+        source: ${GITHUB_WORKSPACE}/coverage
+        target: /usr/src/app/coverage/${TEST_TYPE}
+        read_only: false

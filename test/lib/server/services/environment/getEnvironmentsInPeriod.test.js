@@ -32,7 +32,7 @@ module.exports = () => {
         expect(environments.map(({ id }) => id)).to.eql(['Dxi029djX', 'KGIS12DS', 'EIDO13i3D', 'TDI59So3d', 'CmCvjNbg']);
         expect(environments.every((environment) => environment.createdAt.getTime() < period.to && (
             environment.updatedAt.getTime() >= period.from
-            || environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR'].includes(status))
+            || environment.historyItems.every(({ status }) => !['DESTROYED', 'ERROR', 'DONE'].includes(status))
             && environment.updatedAt.getTime() > period.from - ENVIRONMENT_CONSIDERED_LOST_AFTER
         ))).to.be.true;
     });
