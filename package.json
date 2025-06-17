@@ -56,7 +56,7 @@
     "puppeteer": "24.10.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
-    "sinon": "20.0.0",
+    "sinon": "21.0.0",
     "supertest": "7.1.0"
   },
   "bundleDependencies": [
