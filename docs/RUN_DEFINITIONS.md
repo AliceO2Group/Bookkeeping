@@ -47,7 +47,7 @@ During technical runs, the processes are reading the front-end electronics;
 
 ### SYNTHETIC: 
 During synthetic runs, the processes are at the level of readout and emulate readout;
-- `readout_cfg_uri` to include (`pp` or `pbpb`) and `replay`
+- `run_type` set to `SYNTHETIC` or `REPLAY`
 - `dcs` = `false`
 - `trigger_value` = `OFF`
 
@@ -56,3 +56,11 @@ During synthetic runs, the processes are at the level of readout and emulate rea
 
 ### COMMISIONING:
 - any run that does not fit any of the prior definitions;
+
+## Previous RUN Definitions
+
+### SYNTHETIC: (RUNS marked before @aliceo2/bookkeeping@1.10.0)
+During synthetic runs, the processes are at the level of readout and emulate readout;
+- `readout_cfg_uri` to include (`pp` or `pbpb`) and `replay`
+- `dcs` = `false`
+- `trigger_value` = `OFF`
