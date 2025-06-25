@@ -342,7 +342,7 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
+        it('should return empty flag creation when requested to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -364,14 +364,11 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            await assert.rejects(
-                () => qcFlagService.create([qcFlag], scope, relations),
-                // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
-            );
+            const response = await qcFlagService.create([qcFlag], scope, relations);
+            assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
+        it('should return empty flag creation when requested to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
@@ -387,10 +384,8 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            await assert.rejects(
-                () => qcFlagService.create([qcFlag], scope, relations),
-                new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
-            );
+            const response = await qcFlagService.create([qcFlag], scope, relations);
+            assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
         it('should fail to create QC flag because there is no association between data pass, run and dpl detector', async () => {
@@ -928,7 +923,7 @@ module.exports = () => {
             );
         });
 
-        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
+        it('should return empty flag creation when requested to create sync quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -951,14 +946,11 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            await assert.rejects(
-                () => qcFlagService.create([qcFlag], scope, relations),
-                // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runStart}, ${runEnd}) period`),
-            );
+            const response = await qcFlagService.create([qcFlag], scope, relations);
+            assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it('should fail to create quality control flag because qc flag `from` timestamp is smaller than run.firstTfTimestamp', async () => {
+        it('should return empty flag creation when requested to create sync quality control flag because qc flag `from` timestamp is smaller than run.firstTfTimestamp', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -981,11 +973,8 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            await assert.rejects(
-                () => qcFlagService.create([qcFlag], scope, relations),
-                // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runFirstTfTimestamp}, ${runLastTfTimestamp}) period`),
-            );
+            const response = await qcFlagService.create([qcFlag], scope, relations);
+            assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
         it('should fail to create quality control flag because qc flag `to` timestamp is greater than run.lastTfTimestamp', async () => {
@@ -1011,11 +1000,8 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            await assert.rejects(
-                () => qcFlagService.create([qcFlag], scope, relations),
-                // eslint-disable-next-line max-len
-                new BadParameterError(`Given QC flag period (${period.from}, ${period.to}) is out of run (${runFirstTfTimestamp}, ${runLastTfTimestamp}) period`),
-            );
+            const response = await qcFlagService.create([qcFlag], scope, relations);
+            assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
         it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
@@ -1034,10 +1020,8 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            await assert.rejects(
-                () => qcFlagService.create([qcFlag], scope, relations),
-                new BadParameterError('Parameter "to" timestamp must be greater than "from" timestamp'),
-            );
+            const response = await qcFlagService.create([qcFlag], scope, relations);
+            assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
         it('should fail to create QC flag because there is no association between simulation pass, run and dpl detector', async () => {
