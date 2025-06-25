@@ -760,9 +760,9 @@ module.exports = () => {
                         [property]: {
                             operator,
                             limit: value,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             });
             expect(runs).to.be.an('array');
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);

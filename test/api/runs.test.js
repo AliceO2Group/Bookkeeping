@@ -399,7 +399,8 @@ module.exports = () => {
         it('should successfully filter by GAQ notBadFraction', async () => {
             const dataPassId = 1;
             {
-                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][operator]=<&filter[gaq][notBadFraction][limit]=0.8`);
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
+                        + '&filter[gaq][notBadFraction][operator]=<&filter[gaq][notBadFraction][limit]=0.8');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
