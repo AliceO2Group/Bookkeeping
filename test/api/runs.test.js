@@ -386,7 +386,8 @@ module.exports = () => {
             const { operator, value, expectedRuns } = testParameters;
             it(`should successfully filter by ${property}`, async () => {
                 const response = await request(server).get(
-                    `/api/runs?filter[${property}][operator]=${operator}&filter[${property}][limit]=${value}`);
+                    `/api/runs?filter[${property}][operator]=${operator}&filter[${property}][limit]=${value}`,
+                );
 
                 expect(response.status).to.equal(200);
 
