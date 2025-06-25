@@ -342,13 +342,11 @@ module.exports = () => {
             );
         });
 
-        it('should return empty flag creation when requested to create quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
+        it('should return empty when creating quality control flag because `from` timestamp is smaller than run.startTime', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
             };
-            const runStart = new Date('2019-08-08 13:00:00').getTime();
-            const runEnd = new Date('2019-08-09 14:00:00').getTime();
 
             const qcFlag = {
                 ...period,
@@ -368,7 +366,7 @@ module.exports = () => {
             assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it('should return empty flag creation when requested to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
+        it('should return empty when creating quality control flag because `from` timestamp is greater than `to` timestamp', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
@@ -923,14 +921,11 @@ module.exports = () => {
             );
         });
 
-        it('should return empty flag creation when requested to create sync quality control flag because qc flag `from` timestamp is smaller than run.startTime', async () => {
+        it('should return empty when creating sync quality control flag because `from` timestamp is smaller than run.startTime', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
             };
-
-            const runStart = new Date('2019-08-08 13:00:00').getTime();
-            const runEnd = new Date('2019-08-09 14:00:00').getTime();
 
             const qcFlag = {
                 ...period,
@@ -950,14 +945,11 @@ module.exports = () => {
             assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it('should return empty flag creation when requested to create sync quality control flag because qc flag `from` timestamp is smaller than run.firstTfTimestamp', async () => {
+        it('should return empty when creating sync qc flag because `from` timestamp is smaller than run.firstTfTimestamp', async () => {
             const period = {
                 from: new Date('2019-08-08 11:36:40').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
             };
-
-            const runFirstTfTimestamp = new Date('2019-08-08 12:59:00').getTime();
-            const runLastTfTimestamp = new Date('2019-08-09 14:01:00').getTime();
 
             const qcFlag = {
                 ...period,
@@ -982,9 +974,6 @@ module.exports = () => {
                 from: new Date('2019-08-08 13:17:19').getTime(),
                 to: new Date('2019-08-09 15:49:01').getTime(),
             };
-
-            const runFirstTfTimestamp = new Date('2019-08-08 12:59:00').getTime();
-            const runLastTfTimestamp = new Date('2019-08-09 14:01:00').getTime();
 
             const qcFlag = {
                 ...period,
