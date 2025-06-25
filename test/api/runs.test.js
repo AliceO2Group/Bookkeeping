@@ -385,7 +385,8 @@ module.exports = () => {
         for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
             const { operator, value, expectedRuns } = testParameters;
             it(`should successfully filter by ${property}`, async () => {
-                const response = await request(server).get(`/api/runs?filter[${property}][${operator}]=${value}`);
+                const response = await request(server).get(
+                    `/api/runs?filter[${property}][operator]=${operator}&filter[${property}][limit]=${value}`);
 
                 expect(response.status).to.equal(200);
 
