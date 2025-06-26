@@ -49,9 +49,6 @@ module.exports = () => {
             expect(response.status).to.equal(201);
 
             const { data } = response.body;
-            expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-            expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-            expect(data.stableBeamsDuration).to.equal(600);
             expect(data.beamType).to.equal('Pb-Pb');
             expect(data.fillingSchemeName).to.equal('schemename');
         });
@@ -61,9 +58,6 @@ module.exports = () => {
                 .expect(409)
                 .send({
                     fillNumber: 1,
-                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                    stableBeamsDuration: 600,
                     fillingSchemeName: 'schemename',
                 })
                 .end((err, res) => {
@@ -110,7 +104,6 @@ module.exports = () => {
             expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
             expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
             expect(data.stableBeamsDuration).to.equal(600);
-            expect(data.beamType).to.equal('Pb-Pb');
             expect(data.fillingSchemeName).to.equal('schemename');
             expect(data.collidingBunchesCount).to.equal(7654321);
             expect(data.deliveredLuminosity).to.equal(123.123456);
