@@ -818,7 +818,7 @@ All notable changes to this project will be documented in this file. See [standa
   * There is no more links that refresh completely the page and discard user configuration
 
 * Notable changes for developers:
-  * updates new log create service to use the SequalizeUser parameter rather than the one from LogAdapter
+  * updates new log create service to use the SequelizeUser parameter rather than the one from LogAdapter
   * Docker tests may be run in parallel to docker run
   * gRPC API has been created (see docs to know how it works and how endpoints can be added)
   * All links are now frontLink, which are handled by the frontend router
@@ -1047,7 +1047,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Adds `aliceL3Polarity` and `aliceDipolePolarity` to Run-Details
 * Notable changes for developers:
   * `GET` RUNS API:
-    * `runDuration` added as a virtual column with sequalize
+    * `runDuration` added as a virtual column with sequelize
 
 ## [0.30.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.30.0)
 
