@@ -42,9 +42,6 @@ module.exports = () => {
                 .post('/api/lhcFills')
                 .send({
                     fillNumber: 544455,
-                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                    stableBeamsDuration: 600,
                     beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                 });
@@ -52,9 +49,6 @@ module.exports = () => {
             expect(response.status).to.equal(201);
 
             const { data } = response.body;
-            expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-            expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-            expect(data.stableBeamsDuration).to.equal(600);
             expect(data.beamType).to.equal('Pb-Pb');
             expect(data.fillingSchemeName).to.equal('schemename');
         });
@@ -64,10 +58,6 @@ module.exports = () => {
                 .expect(409)
                 .send({
                     fillNumber: 1,
-                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                    stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                 })
                 .end((err, res) => {
@@ -103,7 +93,6 @@ module.exports = () => {
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
                     stableBeamsEnd: new Date('2022-03-22 15:00:00'),
                     stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                     collidingBunchesCount: 7654321,
                     deliveredLuminosity: 123.123456,
@@ -115,7 +104,6 @@ module.exports = () => {
             expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
             expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
             expect(data.stableBeamsDuration).to.equal(600);
-            expect(data.beamType).to.equal('Pb-Pb');
             expect(data.fillingSchemeName).to.equal('schemename');
             expect(data.collidingBunchesCount).to.equal(7654321);
             expect(data.deliveredLuminosity).to.equal(123.123456);
@@ -163,7 +151,7 @@ module.exports = () => {
             expect(data.stableBeamsStart).to.equal(1647961200000);
             expect(data.stableBeamsEnd).to.equal(1647961200000);
             expect(data.stableBeamsDuration).to.equal(600);
-            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.beamType).to.equal('p-p');
             expect(data.fillingSchemeName).to.equal('schemename');
             expect(data.fillNumber).to.equal(1);
             expect(data.runs.map(({ lhcPeriod }) => lhcPeriod)).to.eql([undefined, 'LHC22a', 'LHC22b', 'LHC22b', 'LHC22b']);
