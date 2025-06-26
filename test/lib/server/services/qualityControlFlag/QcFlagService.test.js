@@ -404,7 +404,7 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
-                // eslint-disable-next-line max-len
+                // eslint-disable-next-line @stylistic/js/max-len
                 new BadParameterError('Data pass with this id (9999) could not be found'),
             );
         });
@@ -1031,7 +1031,7 @@ module.exports = () => {
 
             await assert.rejects(
                 () => qcFlagService.create([qcFlag], scope, relations),
-                // eslint-disable-next-line max-len
+                // eslint-disable-next-line @stylistic/js/max-len
                 new BadParameterError('Simulation pass with this id (9999) could not be found'),
             );
         });
