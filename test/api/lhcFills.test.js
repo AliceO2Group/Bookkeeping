@@ -151,7 +151,7 @@ module.exports = () => {
             expect(data.stableBeamsStart).to.equal(1647961200000);
             expect(data.stableBeamsEnd).to.equal(1647961200000);
             expect(data.stableBeamsDuration).to.equal(600);
-            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.beamType).to.equal('p-p');
             expect(data.fillingSchemeName).to.equal('schemename');
             expect(data.fillNumber).to.equal(1);
             expect(data.runs.map(({ lhcPeriod }) => lhcPeriod)).to.eql([undefined, 'LHC22a', 'LHC22b', 'LHC22b', 'LHC22b']);
