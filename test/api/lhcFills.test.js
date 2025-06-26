@@ -42,9 +42,6 @@ module.exports = () => {
                 .post('/api/lhcFills')
                 .send({
                     fillNumber: 544455,
-                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                    stableBeamsDuration: 600,
                     beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                 });
@@ -67,7 +64,6 @@ module.exports = () => {
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
                     stableBeamsEnd: new Date('2022-03-22 15:00:00'),
                     stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                 })
                 .end((err, res) => {
@@ -103,7 +99,6 @@ module.exports = () => {
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
                     stableBeamsEnd: new Date('2022-03-22 15:00:00'),
                     stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                     collidingBunchesCount: 7654321,
                     deliveredLuminosity: 123.123456,
