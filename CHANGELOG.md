@@ -2,6 +2,254 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.9.0)
+* Notable changes for users:
+  * QC flags boundaries can be null and will automatically be coalesced to run boundaries
+  * Fixed the bug of QC flags chart height increasing on every rendering
+  * Added possibility to lock data passes
+* Notable changes for developers:
+  * QcFlagsChartComponent uses qcTimeStart and qcTimeEnd as x-axis boundaries
+  * Simplified the remote data management for QC flag creation buttons
+  * The binding of gRPC controllers has been slightly refactored to make it easier to maintain
+  * Added possibility to provide authenticated gRPC API
+
+## [1.8.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.8.0)
+* Notable changes for users:
+  * Luminosity information has been added to run details page
+
+## [1.7.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.7.0)
+* Notable changes for users:
+  * Clicking on button to delete a flag actually mark it as deleted and remove its effective periods instead of removing it from database
+  * Added a button to discard all QC flags for a given data pass
+  * Fixed de-selection of runs/detectors in runs per data-pass
+* Notable changes for developers:
+  * Kafka client will retry indefinitely when retryable errors occurs
+
+## [1.6.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.6.0)
+* Notable changes for users:
+  * Log template `key`, `issueDescription`, `detectorOrSubsystem` can be provided in the URL when creating a log to pre-fill on-call logs
+  * Several runs and detectors can be selected to create multiple QC flags at once
+  * runNumber filter now accepts ranges as well
+  * Tag colours will now update when looking at run details
+  * Add CTP host to flp roles if CTP is enabled
+  * Display run that started/stopped run in run details
+  * A simplified and reusable frontend filtering system has been set-up
+  * Radio buttons are displayed in selection dropdown when options are exclusives
+  * Display trigger configuration in a dedicated tab in run details page
+  * Trigger counters has been renamed to CTP trigger counters
+* Notable changes for developers:
+  * Group migrations per version to avoid having too crowded directories
+  * Improved home page frontend tests to make them more robust
+  * Encode URI components in buildUrl utility function, to handle parameters with `=` sign in keys/values
+  * Fixed error spamming server logs when trying to handle lost runs and envs
+  * Fix randomly failing QC flag types tests
+  * Custom selector can be applied in selection dropdown options for values that are not CSS valid
+  * Refactored runs overview filters for:
+    * detectors
+    * run type
+    * EoR reason
+    * start/stop
+    * definition
+    * fill number
+    * LHC period
+    * duration
+  * Updates min supported Node.js to 22 to cover next year of Beam Operations
+  * Disables usage of GPU on puppeteer as it hangs on docker-alpine (known issue on their repository)
+  * Updates docker alpine version as otherwise node 22 was not available
+  * Updates dependencies for puppeteer as needed due to alpine update
+  * Moves to using headless: true instead of headless: 'new' with the new puppeteer version
+  * Improve runs overview magnets filter
+  * Added c++ API to update runs raw trigger configuration
+  * Improved runs inelastic interaction rate filter
+  * Improve run numbers filters in run overview
+  * Trigger counters has been renamed to CTP trigger counters everywhere:
+    * triggerCounters.proto has been renamed to ctpTriggerCounters.proto
+    * c++ API has been updated accordingly
+  * Renamed trigger_counters to ctp_trigger_counters
+
+## [1.5.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.5.0)
+* Notable changes for users:
+  * Added nTF orbits to runs updated runs API endpoints accordingly
+  * Added a global error page, displaying amongst other 404 error
+* Notable changes for developers:
+  * Fixed randomly failing runs test based on timerange selection (start/stop)
+  * Fixed randomly failing QC tests
+  * Updated docker ca-certificate dependency
+  * Allow to prefill of on-call template through URL parameters:
+    * In log creation page, query parameters `templateKey`, `issueDescription`, `detectorOrSubsystem` allow
+      respectively to pre-chose a log template and define the issue description and detector or subsystem in the
+      case of on-call template
+
+## [1.4.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.1)
+* Notable changes for developers:
+  * Fixed the runs start/stop extraction from AliECS kafka messages
+  * Added more logs to external service synchronization (CCDB, MonALISA)
+
+## [1.4.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.4.0)
+* Notable changes for users:
+  * Fixed tag color not being updated when switching to run details after updating a tag
+  * Environment variable ENABLE_HOUSEKEEPING must be set to true (case-insensitive) to actually enable housekeeping
+  * Use time range picker for runs start & stop filtering
+  * Run details page has been modernized
+* Notable changes for developers:
+  * Runs and QC flags timestamps now store milliseconds
+  * Fixed users that start/stop runs not being extracted from kafka message
+  * Fixed TF timestamps being ignored when creating QC flags
+  * Fixed randomly failing test in FLP frontend tests
+  * Use coalesced run time in raw SQL querries
+  * Removed the max number of retries for kafka connection
+
+## [1.3.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.3.0)
+* Notable changes for users:
+  * Fixed physical constants values which resulted in wrong AVG center of mass energy
+  * Minor improvements to environments configuration display
+    * Table is now sorted alphabetically
+    * Table columns are not truncated anymore
+  * Use proper configuration for CCDB synchronization period and not monalisa one
+  * Added visualization of QC flags for data pass
+* Notable changes for developers:
+  * Extended chart renderers:
+    * both x and y can be configured as index axis
+    * each bar in bar chart can have specific visual properties: color, stroke, pattern
+
+## [1.2.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.2.0)
+* Notable changes for users:
+  * Prevented the QC summary color from changing to gray after more than one verification
+  * Create a log when tag "Not for physics" is added/removed to a run
+* Notable changes for developers:
+  * Added separate request to fetch non-verified flags when calculating QC summary
+  * BKP process do not crash anymore when database crash
+
+## [1.1.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.1.0)
+* Notable changes for users:
+  * Store phase shift for runs at start and stop for both beams 1 and 2
+  * Display mean STF size and data rate per FLP
+  * Store nanoseconds of environments transitions
+  * Environments with bookkept: false in configuration are not stored
+  * Users can only press "copy to..." button when the clipboard is available. Otherwise, they will see a message explaining the reason.
+  * Store timestamps of first and last TF per runs in bookkeeping
+  * Display colliding bunches and luminosity on fills details page
+* Notable changes for developers:
+  * First and Last TF timestamps are regularly fetched and sync from CCDB
+
+## [1.0.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.0.1)
+* Notable changes for users:
+  * Fixed gRPC API not updating run LHC period
+
+## [1.0.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%401.0.0)
+* Notable changes for users:
+  * Added filtering by not-bad percentage of data according to GAQ
+  * Added button for setting skimmable production
+  * Added column to Runs Per (skimmable) Data Pass page with toggle elements for marking runs as ready/not ready for skimming
+  * Environments with status "DONE" are now considered to be ended
+  * Extract missing data from environment configuration:
+    * nEpns
+    * LHC period
+    * run type
+* Notable changes for developers:
+  * Added API for setting skimmable data pass
+  * Added API for fetching and setting ready_for_skimming flag for runs
+  * Removed failing alpine package from Dockerfile
+  * Fixed gRPC API for service LhcFill.getLast
+  * Store XSection, trigger efficiency & acceptance, phase shift at start and end
+
+## [0.99.1](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.1)
+* Notable changes for users:
+  * Fixed log creation for detector EoR reason
+  * Fixed defining skimmingStage in ML synchronizer
+
+## [0.99.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.99.0)
+* Notable changes for users:
+  * Format properly FLP statistics
+  * Removed colour of deleted productions.
+  * Added status history columns to overview of data passes
+  * Removed GLO column from runs views
+  * The info from previous shifter field in eos report creation is now readonly
+  * Added runs filtering by INEL and mu values
+  * Added switch for changing Interpretation of MC.Reproducible flag type between bad and not-bad what affects QC summary display
+  * Added display of synchronous QC flags
+  * Added page with overview of synchronous QC flags
+  * Per fill delivered lumi and colliding bunches can be defined
+  * Fixed formatting of TF/CTF file size/count in run details
+  * Extract user that start/stop runs from kafka message
+  * FLP hosts list is now properly extracted when consuming ECS new run message
+  * Create a log entry when DETECTOR is chosen as EoR reason
+* Notable changes for developers:
+  * Added filtering by INEL and mu values to runs API
+  * Added API for fetching synchronous QC flags
+  * Added API for fetching QC summary of synchronous QC flags
+  * Fixed randomness of one of GAQ overview tests
+  * Removed notion of Dpl detectors from QcFlag creation and setting GAQ detectors
+  * Added filtering by GAQ not bad data fraction to runs API
+
+## [0.98.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.98.0)
+* Notable changes for users:
+  * Fixed unnecessary splitting of GAQ periods
+  * Format properly FLP statistics
+* Notable changes for developers:
+  * Fixed calculation of timestamps which define gaq_effective_periods, so only flags of detectors which are defined in global_aggregated_quality_detectors are taken into account for the calculation
+  * Added filtering by INEL and mu values to runs API
+  * Added API for fetching synchronous QC flags
+
+## [0.97.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.97.0)
+* Notable changes for users:
+  * Updates some of the headers from the FLP Statistics table from run-details page
+  * Improved the way numbers are displayed in the FLP Statistics table from run-details page
+  * Improved labels for some of the run-details page and their value to improve readability of the numbers
+  * Adjusted run's detectors creation to work only with physical detectors
+  * (Unused) Subsystems have been removed
+  * Several improvements to environments:
+    * Add PENDING, MIXED, DONE possible status for environments
+    * Handle unknown environment status
+    * Make environment timestamps store milliseconds to properly handle history state ordering
+  * Min/max length of text inputs is now displayed and invalid values are correctly outlined
+  * Toggle button on lhc overview page to show either all lhc fills or only ones with stable beam
+  * GAQ:
+    * Added GAQ flags overview for data passes
+    * Added GAQ summary to Runs Per Data Pass view
+    * Added form for choosing GAQ detectors
+  * Fixed QC flag origin display on details page
+  * Added property skimmingStage to data pass entity
+  * Added logic to ML synchronizer to recognize skimming stage of given data pass if it applies
+  * Implemented sorting of runs by runNumber
+  * Infologger links from run overview includes environment id
+  * RC daily template:
+    * Updated p2info to P2INFO tag in rc daily template
+    * Sort runs to be checked in ascending order in RC daily template
+    * Added EMC to list of detectors in RC daily template
+  * Consume ECS kafka messages to get runs and environment information
+* Notable changes for developers:
+  * Subsequent test runs don't run npm ci unless there are changes to package-lock.json
+  * Fixed usage of transaction in run creation
+  * No coverage output in console of test runs, less cluttered
+  * Uniformized enums: all are frozen objects in dedicated files, named in PascalCase with properties in CAPITAL_SNAKE_CASE
+  * Use new logging interface from WebUI
+  * Refactored DplDetector service to work upon Detectors
+  * Added mcReproducible property to QcFlagType adapter
+  * Change order of foreign key constraints creation for run_detectors table
+  * GAQ:
+    * Added endpoint for fetching GAQ detectors
+    * Added missing associations to GAQ flags
+    * Added alphabetical sorting to GAQ detectors fetching method
+    * Fixed migration file adding default GAQ detectors
+    * Fixed GAQ overview tests
+    * Added API for fetching GAQ summary
+    * Added 'gaq' role to (dev) UserRoleSelectionModel
+    * Restricted setting GAQ detectors to 'gaq' role
+    * Extracted GAQ detectors related logic to separate service and controller
+  * Replaces docker-compose command by docker compose
+  * Updates files name as per docker requirements: https://docs.docker.com/compose/project-name/#set-a-project-name
+  * default value for tokens is set to expire after 7d (7 days). This will not impact prod deployments as value is configured on deployment
+  * Changed valid data pass name regex to include skimming productions
+  * Added logging of QC flag deletion
+  * Added Anonymous to users seeder and QC flag with origin to QC flags seeder
+  * Added column skimming_stage to data_passes
+  * Fixed several typos in the project
+  * Removed Dpl detectors provider
+  * Fixed async run-detectors active columns factory utilisation
+  * Removed toredown_at information from environment
+  * Enviroment raw configuration is handled as JSON
+
 ## [0.96.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.96.0)
 * Notable changes for users:
   * Allow filtering tags in log creation and run edition
@@ -501,7 +749,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.65.0](https://github.com/AliceO2Group/Bookkeeping/releases/tag/%40aliceo2%2Fbookkeeping%400.65.0)
 
 * Notable changes for users:
-  * LHC fill details statistics rely on stableBeamEnd as end of run, not stableBeamStart + duration
+  * LHC fill details statistics rely on stableBeamsEnd as end of run, not stableBeamsStart + duration
   * A button to create a log is now available in LHC fill details page
   * Run edition justification inputs are now visually similar to other inputs
   * Fixed bug for filtering tags using "or"

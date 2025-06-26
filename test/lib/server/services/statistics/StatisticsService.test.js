@@ -42,8 +42,8 @@ module.exports = () => {
         expect(fill1.timeLossAtEnd).to.equal(0);
         expect(fill1.efficiencyLossAtEnd).to.equal(0);
         expect(fill1.meanRunDuration).to.equal(0);
-        expect(fill1.totalCtfFileSize).to.equal(0);
-        expect(fill1.totalTfFileSize).to.equal(0);
+        expect(fill1.totalCtfFileSize).to.equal(644760718605840);
+        expect(fill1.totalTfFileSize).to.equal(644760718605840);
     });
 
     it('should successfully filter out fills after a date (excluded) for statistics', async () => {
@@ -337,7 +337,7 @@ module.exports = () => {
         ]);
     });
 
-    it('should successfully filter out environment history before a date (included) for history occurences', async () => {
+    it('should successfully filter out environment history before a date (included) for history occurrences', async () => {
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
                 from: new Date('2019/08/09 14:30:00').getTime(),
@@ -355,7 +355,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfully filter out environment history after a date (excluded) for history occurences', async () => {
+    it('should successfully filter out environment history after a date (excluded) for history occurrences', async () => {
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
                 from: new Date('2019/08/09 14:15:00').getTime(),

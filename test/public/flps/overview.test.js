@@ -20,8 +20,8 @@ const {
     getFirstRow,
     waitForTableLength,
     goToPage,
-    reloadPage,
     getInnerText,
+    fillInput,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -33,6 +33,9 @@ module.exports = () => {
 
     let table;
     let firstRowId;
+
+    const amountSelectorSelector = '#amountSelector';
+    const amountSelectorButtonSelector = `${amountSelectorSelector} button`;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
@@ -97,8 +100,6 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'flp-overview');
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '10');
         await expectInnerText(page, '#totalRowsCount', '105');
@@ -106,13 +107,10 @@ module.exports = () => {
 
     it('can switch to infinite mode in amountSelector', async () => {
         const INFINITE_SCROLL_CHUNK = 19;
-        await reloadPage(page);
 
         // Wait fot the table to be loaded, it should have at least 2 rows (not loading) but less than 19 rows (which is infinite scroll chunk)
         await page.waitForSelector('table tbody tr:nth-child(2)');
         expect(await page.$(`table tbody tr:nth-child(${INFINITE_SCROLL_CHUNK})`)).to.be.null;
-
-        const amountSelectorButtonSelector = '#amountSelector button';
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, amountSelectorButtonSelector);
@@ -137,23 +135,19 @@ module.exports = () => {
 
     it('can set how many flps are available per page', async () => {
         // Expect the amount selector to currently be set to Infinite (after the previous test)
-        const amountSelectorId = '#amountSelector';
-        await expectInnerText(page, `${amountSelectorId} button`, 'Rows per page: Infinite ');
+        await expectInnerText(page, `${amountSelectorSelector} button`, 'Rows per page: Infinite ');
 
-        await pressElement(page, `${amountSelectorId} button`);
-        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
+        await pressElement(page, `${amountSelectorSelector} button`);
+        await page.waitForSelector(`${amountSelectorSelector} .dropup-menu`);
 
         // Expect the amount of visible flps to reduce when the first option (5) is selected
-        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
+        await pressElement(page, `${amountSelectorSelector} .dropup-menu .menu-item`);
         await waitForTableLength(page, 5);
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        // Override the amount of flps visible per page manually
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.flps.pagination.itemsPerPage = 1;
-        });
+        await pressElement(page, amountSelectorButtonSelector);
+        await fillInput(page, `${amountSelectorSelector} input`, '1', ['input', 'change']);
         await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
@@ -168,36 +162,13 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        /*
-         * As an example, override the amount of flps visible per page manually
-         * We know the limit is 100 as specified by the Dto
-         */
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.flps.pagination.itemsPerPage = 200;
-        });
+        await pressElement(page, amountSelectorButtonSelector);
+        await fillInput(page, `${amountSelectorSelector} input`, '200', ['input', 'change']);
 
         // We expect there to be a fitting error message
         await expectInnerText(page, '.alert-danger', 'Invalid Attribute: "query.page.limit" must be less than or equal to 100');
 
-        // Revert changes for next test
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.flps.pagination.itemsPerPage = 10;
-        });
+        await pressElement(page, amountSelectorButtonSelector);
+        await fillInput(page, `${amountSelectorSelector} input`, '10', ['input', 'change']);
     });
-
-    /*
-     * It('can navigate to a flp detail page', async () => {
-     *  table = await page.$$('tr');
-     *  firstRowId = await getFirstRow(table, page);
-     *  const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
-     *
-     *  // We expect the entry page to have the same id as the id from the flp overview
-     *  await pressElement(page, `#${firstRowId}`);
-     *  await waitForTimeout(100);
-     *  const redirectedUrl = await page.url();
-     *  expect(String(redirectedUrl).startsWith(`${url}/?page=flp-detail&id=${parsedFirstRowId}`)).to.be.true;
-     * });
-     */
 };

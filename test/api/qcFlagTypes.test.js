@@ -21,7 +21,7 @@ module.exports = () => {
     before(resetDatabaseContent);
 
     describe('GET /api/qcFlagTypes/:id', () => {
-        it('should successfuly fetch one QC flag type', async () => {
+        it('should successfully fetch one QC flag type', async () => {
             const response = await request(server).get('/api/qcFlagTypes/13');
             expect(response.status).to.be.equal(200);
             const { data: flagType } = response.body;
@@ -33,6 +33,7 @@ module.exports = () => {
                 method: 'Bad',
                 bad: true,
                 color: null,
+                mcReproducible: false,
 
                 archived: false,
                 archivedAt: null,
@@ -59,7 +60,7 @@ module.exports = () => {
     });
 
     describe('GET /api/qcFlagTypes', () => {
-        it('should successfuly fetch all qc flag types', async () => {
+        it('should successfully fetch all qc flag types', async () => {
             const response = await request(server).get('/api/qcFlagTypes');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -79,6 +80,7 @@ module.exports = () => {
                     method: 'UnknownQuality',
                     bad: true,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -94,6 +96,7 @@ module.exports = () => {
                     method: 'Good',
                     bad: false,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -109,6 +112,7 @@ module.exports = () => {
                     method: 'LimitedAcceptanceMCReproducible',
                     bad: true,
                     color: '#FFFF00',
+                    mcReproducible: true,
 
                     archived: false,
                     archivedAt: null,
@@ -124,6 +128,7 @@ module.exports = () => {
                     method: 'LimitedAcceptance',
                     bad: true,
                     color: '#FFFF00',
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -139,6 +144,7 @@ module.exports = () => {
                     method: 'BadPID',
                     bad: true,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -154,6 +160,7 @@ module.exports = () => {
                     method: 'Bad',
                     bad: true,
                     color: null,
+                    mcReproducible: false,
 
                     archived: false,
                     archivedAt: null,
@@ -169,6 +176,7 @@ module.exports = () => {
                     method: 'Archived',
                     bad: false,
                     color: null,
+                    mcReproducible: false,
 
                     createdById: 1,
                     createdBy: { id: 1, externalId: 1, name: 'John Doe' },
@@ -182,7 +190,7 @@ module.exports = () => {
             ]);
         });
 
-        it('should successfuly filter QC flag types by id', async () => {
+        it('should successfully filter QC flag types by id', async () => {
             const response = await request(server).get('/api/qcFlagTypes?filter[ids][]=3');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -193,7 +201,7 @@ module.exports = () => {
             expect(flagTypes.map(({ id }) => id)).to.have.all.deep.members([3]);
         });
 
-        it('should successfuly filter QC flag types by names pattern', async () => {
+        it('should successfully filter QC flag types by names pattern', async () => {
             const response = await request(server).get('/api/qcFlagTypes?filter[names][]=Bad');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -204,7 +212,7 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'Bad PID']);
         });
 
-        it('should successfuly filter QC flag types by names', async () => {
+        it('should successfully filter QC flag types by names', async () => {
             const response = await request(server).get('/api/qcFlagTypes?filter[names][]=Bad&filter[names][]=Limited%20acceptance');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -215,7 +223,7 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Bad', 'Limited acceptance']);
         });
 
-        it('should successfuly filter QC flag types by mathods', async () => {
+        it('should successfully filter QC flag types by methods', async () => {
             const response = await request(server).get('/api/qcFlagTypes?filter[methods][]=Bad&filter[methods][]=BadPID');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -227,7 +235,7 @@ module.exports = () => {
             expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'BadPID']);
         });
 
-        it('should successfuly filter QC flag types by methods patterns', async () => {
+        it('should successfully filter QC flag types by methods patterns', async () => {
             const response = await request(server).get('/api/qcFlagTypes?filter[methods][]=Bad');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -239,7 +247,7 @@ module.exports = () => {
             expect(flagTypes.map(({ method }) => method)).to.have.all.deep.members(['Bad', 'BadPID']);
         });
 
-        it('should successfuly filter QC flag types by whether the flag is `bad`', async () => {
+        it('should successfully filter QC flag types by whether the flag is `bad`', async () => {
             const response = await request(server).get('/api/qcFlagTypes?filter[bad]=false');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -251,7 +259,7 @@ module.exports = () => {
             expect(flagTypes.map(({ name }) => name)).to.have.all.deep.members(['Good', 'Archived']);
         });
 
-        it('should successfuly sort QC flag types by id', async () => {
+        it('should successfully sort QC flag types by id', async () => {
             const response = await request(server).get('/api/qcFlagTypes?sort[id]=DESC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -263,7 +271,7 @@ module.exports = () => {
             expect(flagTypes.map(({ id }) => id)).to.have.all.ordered.members([20, 13, 12, 11, 5, 3, 2]);
         });
 
-        it('should successfuly sort QC flag types by name', async () => {
+        it('should successfully sort QC flag types by name', async () => {
             const response = await request(server).get('/api/qcFlagTypes?sort[name]=DESC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -283,7 +291,7 @@ module.exports = () => {
             ]);
         });
 
-        it('should successfuly sort QC flag types by method', async () => {
+        it('should successfully sort QC flag types by method', async () => {
             const response = await request(server).get('/api/qcFlagTypes?sort[method]=ASC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -303,7 +311,7 @@ module.exports = () => {
             ]);
         });
 
-        it('should successfuly apply pagination of QC flag types', async () => {
+        it('should successfully apply pagination of QC flag types', async () => {
             const response = await request(server).get('/api/qcFlagTypes?page[limit]=2&page[offset]=2&sort[id]=ASC');
             expect(response.status).to.be.equal(200);
             const { meta, data: flagTypes } = response.body;
@@ -317,7 +325,7 @@ module.exports = () => {
     });
 
     describe('POST /api/qcFlagTypes', () => {
-        it('should successfuly create QC Flag Type', async () => {
+        it('should successfully create QC Flag Type', async () => {
             const parameters = {
                 name: 'A',
                 method: 'AA+',
@@ -428,7 +436,7 @@ module.exports = () => {
             expect(titleError.detail).to.equal('"body.color" with value "#aabbxx" fails to match the required pattern: /#[0-9a-fA-F]{6}/');
         });
 
-        it('should successfuly update one QC Flag Type', async () => {
+        it('should successfully update one QC Flag Type', async () => {
             const patch = { name: 'VeryBad', method: 'Very Bad', color: '#ff0000' };
             const qcFlagTypeId = 13;
 
@@ -448,7 +456,7 @@ module.exports = () => {
             }
         });
 
-        it('should successfuly archive one QC Flag Type', async () => {
+        it('should successfully archive one QC Flag Type', async () => {
             const patch = { archived: true };
             const qcFlagTypeId = 13;
 

@@ -55,7 +55,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        const allowedBeamTypesDisplayes = new Set(['-', 'XeXe', 'PbPb', 'pp']);
+        const allowedBeamTypesDisplays = new Set(['-', 'XeXe', 'PbPb', 'pp']);
 
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
@@ -63,7 +63,7 @@ module.exports = () => {
             associatedDataPasses: (display) => /(No data passes)|(\d+)/.test(display),
             associatedSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             year: (year) => !isNaN(year),
-            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplayes.has(type)),
+            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplays.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => avgCenterOfMassEnergy === '-' || !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
                 || distinctEnergies
@@ -124,7 +124,7 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'avgCenterOfMassEnergy');
     });
 
-    it('should successfuly apply lhc period name filter', async () => {
+    it('should successfully apply lhc period name filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
@@ -135,7 +135,7 @@ module.exports = () => {
         await page.waitForSelector('#reset-filters:disabled');
     });
 
-    it('should successfuly apply lhc period year filter', async () => {
+    it('should successfully apply lhc period year filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
@@ -144,12 +144,12 @@ module.exports = () => {
         await expectColumnValues(page, 'year', ['2022', '2022']);
     });
 
-    it('should successfuly apply lhc period beam type filter', async () => {
+    it('should successfully apply lhc period beam type filter', async () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'XeXe');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
-        await expectColumnValues(page, 'beamTypes', ['XeXe']);
+        await expectColumnValues(page, 'beamTypes', ['PbPb']);
     });
 };

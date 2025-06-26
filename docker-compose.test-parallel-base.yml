@@ -27,7 +27,7 @@ services:
         source: ./scripts
         target: /opt
       - type: bind
-        source: ./database/storage
+        source: ./docker/storage
         target: /var/storage
         read_only: false
 
@@ -42,11 +42,11 @@ services:
         target: /var/lib/mysql
       - type: bind
         read_only: true
-        source: ./database/configuration
+        source: ./docker/database/configuration
         target: /etc/mysql/conf.d
       - type: bind
         read_only: true
-        source: ./database/populate
+        source: ./docker/database/populate
         target: /docker-entrypoint-initdb.d
 
 volumes:

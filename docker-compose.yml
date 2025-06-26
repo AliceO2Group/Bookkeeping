@@ -10,7 +10,8 @@ services:
       NODE_ENV: production
       DATABASE_HOST: database
       DATABASE_LOGGING: "${DATABASE_LOGGING}"
-      NOTIFICATION_BROKER: "${NOTIFICATION_BROKER}"
+      KAFKA_BROKER: "${KAFKA_BROKER}"
+      CONSUME_ECS_MESSAGES: "${CONSUME_ECS_MESSAGES}"
       JWT_SECRET: "${JWT_SECRET}"
       JWT_EXPIRATION: "${JWT_EXPIRATION}"
       JWT_ISSUER: "${JWT_ISSUER}"
@@ -23,6 +24,8 @@ services:
       FLP_INFOLOGGER_URL: "${ALI_ECS_GUI_URL:-http://localhost:8081}"
       QC_GUI_URL: "${ALI_ECS_GUI_URL:-http://localhost:8082}"
       ALI_FLP_INDEX_URL: "${ALI_ECS_GUI_URL:-http://localhost:80}"
+      CCDB_ENABLE_SYNCHRONIZATION: "${CCDB_ENABLE_SYNCHRONIZATION:-false}"
+      CCDB_RUN_INFO_URL: "${CCDB_RUN_INFO_URL:-}"
     links:
       - database
     restart: unless-stopped
@@ -33,7 +36,7 @@ services:
         target: /opt
       - type: bind
         read_only: false
-        source: ./database/storage
+        source: ./docker/storage
         target: /var/storage
 
   database:
@@ -48,9 +51,9 @@ services:
         target: /var/lib/mysql
       - type: bind
         read_only: true
-        source: ./database/configuration
+        source: ./docker/database/configuration
         target: /etc/mysql/conf.d
       - type: bind
         read_only: true
-        source: ./database/populate
+        source: ./docker/database/populate
         target: /docker-entrypoint-initdb.d

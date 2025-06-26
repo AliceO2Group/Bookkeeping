@@ -19,7 +19,7 @@ const {
 } = require('./base-mock-eos-report.js');
 const { genericFormattedCustomizedEosReport } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
-const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
+const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
 
 exports.eosEcsReportTitle = 'End of shift report - ECS - 17/03/2023 Morning';
 
@@ -115,7 +115,7 @@ const customizedECSEosReport = {
                                 tags: [{ text: 'ECS Shifter' }, { text: 'FLP' }],
                             },
                         ],
-                        definition: RunDefinition.Commissioning,
+                        definition: RunDefinition.COMMISSIONING,
                     },
                 ],
             },

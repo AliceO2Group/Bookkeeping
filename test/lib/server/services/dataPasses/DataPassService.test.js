@@ -16,11 +16,19 @@ const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseCon
 const assert = require('assert');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
-const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { SkimmingStage } = require('../../../../../lib/domain/enums/SkimmingStage.js');
+const DataPassRepository = require('../../../../../lib/database/repositories/DataPassRepository.js');
+const RunRepository = require('../../../../../lib/database/repositories/RunRepository.js');
+const DataPassVersionRepository = require('../../../../../lib/database/repositories/DataPassVersionRepository.js');
+const DataPassRunRepository = require('../../../../../lib/database/repositories/DataPassRunRepository.js');
+const { Op } = require('sequelize');
 
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
+    pdpBeamType: 'pp',
+    skimmingStage: SkimmingStage.SKIMMABLE,
+    isFrozen: false,
     versions: [
         {
             id: 1,
@@ -29,72 +37,45 @@ const LHC22b_apass1 = {
             reconstructedEventsCount: 50948694,
             outputSize: 56875682112600,
             lastSeen: 108,
-            deletedFromMonAlisa: true,
+            statusHistory: [
+                {
+                    createdAt: 1704884400000,
+                    dataPassVersionId: 1,
+                    id: 1,
+                    status: 'Running',
+                },
+                {
+                    createdAt: 1704885060000,
+                    dataPassVersionId: 1,
+                    id: 2,
+                    status: 'Deleted',
+                },
+            ],
             createdAt: 1704884400000,
             updatedAt: 1704884400000,
         },
     ],
     runsCount: 3,
     simulationPassesCount: 1,
-};
-
-const LHC22b_apass2 = {
-    id: 2,
-    name: 'LHC22b_apass2',
-    versions: [
-        {
-            id: 2,
-            dataPassId: 2,
-            description: 'Some random desc 2',
-            reconstructedEventsCount: 50848604,
-            outputSize: 55765671112610,
-            lastSeen: 55,
-            deletedFromMonAlisa: false,
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 3,
-    simulationPassesCount: 1,
-};
-
-const LHC22a_apass1 = {
-    id: 3,
-    name: 'LHC22a_apass1',
-    versions: [
-        {
-            id: 3,
-            dataPassId: 3,
-            description: 'Some random desc for apass 1',
-            reconstructedEventsCount: 50848111,
-            outputSize: 55761110122610,
-            lastSeen: 105,
-            deletedFromMonAlisa: false,
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
-        },
-    ],
-    runsCount: 4,
-    simulationPassesCount: 2,
 };
 
 module.exports = () => {
     before(resetDatabaseContent);
 
     describe('Fetching', () => {
-        it('should succesfully get by id', async () => {
+        it('should successfully get by id', async () => {
             const dataPass = await dataPassService.getByIdentifier({ id: 1 });
             expect(dataPass).to.be.eql(LHC22b_apass1);
         });
 
-        it('should succesfully get by name', async () => {
+        it('should successfully get by name', async () => {
             const dataPass = await dataPassService.getByIdentifier({ name: 'LHC22a_apass1' });
-            expect(dataPass).to.be.eql(LHC22a_apass1);
+            expect(dataPass.name).to.be.eql('LHC22a_apass1');
         });
 
-        it('should succesfully get all data', async () => {
+        it('should successfully get all data', async () => {
             const { rows: dataPasses } = await dataPassService.getAll();
-            expect(dataPasses).to.be.lengthOf(3);
+            expect(dataPasses).to.be.lengthOf(5);
         });
 
         it('should fail when no Data Pass with given id', async () => {
@@ -104,7 +85,7 @@ module.exports = () => {
             );
         });
 
-        it('should succesfully filter data passes on names', async () => {
+        it('should successfully filter data passes on names', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -117,7 +98,7 @@ module.exports = () => {
             expect(dataPasses[0]).to.be.eql(LHC22b_apass1);
         });
 
-        it('should succesfully filter data passes on ids', async () => {
+        it('should successfully filter data passes on ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -133,7 +114,7 @@ module.exports = () => {
             expect(await dataPassService.getByIdentifier({ id: 99999 })).to.be.null;
         });
 
-        it('should succesfully filter data passes on lhc petriods ids', async () => {
+        it('should successfully filter data passes on lhc periods ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -142,11 +123,11 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.be.lengthOf(2);
-            expect(dataPasses).to.have.deep.members([LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses).to.be.lengthOf(3);
+            expect(dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming', 'LHC22b_apass2_skimmed']);
         });
 
-        it('should succesfully filter data passes on simulation pass ids', async () => {
+        it('should successfully filter data passes on simulation pass ids', async () => {
             const dto = {
                 query: {
                     filter: {
@@ -155,10 +136,10 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.have.all.deep.members([LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_apass2_skimmed']);
         });
 
-        it('should succesfully sort data passes by names', async () => {
+        it('should successfully sort data passes by names', async () => {
             const dto = {
                 query: {
                     sort: {
@@ -167,28 +148,113 @@ module.exports = () => {
                 },
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
-            expect(dataPasses).to.have.ordered.deep.members([LHC22a_apass1, LHC22b_apass1, LHC22b_apass2]);
+            expect(dataPasses.map(({ name }) => name)).to.have
+                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2', 'LHC22b_apass1', 'LHC22b_apass2_skimmed', 'LHC22b_skimming']);
         });
     });
-    describe('Manage GAQ detectors', () => {
-        const dataPassId = 3;
-        it('should successfuly set GAQ detectors', async () => {
-            const runNumbers = [49, 56];
-            const dplDetectorIds = [4, 7];
-            const data = await dataPassService.setGaqDetectors(dataPassId, runNumbers, dplDetectorIds);
-            expect(data).to.be.have.all.deep.members(runNumbers
-                .flatMap((runNumber) => dplDetectorIds.map((dplDetectorId) => ({ dataPassId, runNumber, dplDetectorId }))));
-        });
-        it('should fail to set GAQ detectors because of miaaing association', async () => {
-            let errorMessage = `No association between data pass with id ${dataPassId} and following runs: 1`;
-            assert.rejects(
-                () => dataPassService.setGaqDetectors(dataPassId, [1], [4]),
-                new BadParameterError(errorMessage),
+
+    describe('Skimming', () => {
+        it('should throw when calling for data pass of PbPb runs', async () => {
+            await assert.rejects(
+                () => dataPassService.markAsSkimmable({ name: 'LHC22a_apass1' }),
+                new NotFoundError('Cannot mark LHC22a_apass1 as skimmable.' +
+                    ' Only production for PROTON_PROTON runs can be marked as skimmable'),
             );
-            errorMessage = `No association between runs and detectors: ${JSON.stringify([[56, 'CPV']])}`;
-            assert.rejects(
-                () => dataPassService.setGaqDetectors(dataPassId, [105, 56], [1]),
-                new BadParameterError(errorMessage),
+        });
+
+        it('should throw when calling for data pass with invalid name', async () => {
+            await assert.rejects(
+                () => dataPassService.markAsSkimmable({ name: 'LHC22b_skimming' }),
+                new NotFoundError('Cannot mark LHC22b_skimming as skimmable.' +
+                    ' Only `apass` can be marked as skimmable'),
+            );
+        });
+
+        it('should successfully mark data pass as skimmable', async () => {
+            let newDataPass = await DataPassRepository.insert({ name: 'LHC22b_apass2', lhcPeriodId: 2 });
+            const run = await RunRepository.findOne({ where: { runNumber: 106 } });
+            await newDataPass.addRun(run);
+            await DataPassVersionRepository.insert({ dataPassId: newDataPass.id, description: 'desc for LHC22b apass2' });
+
+            let previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass2' });
+            previousSkimmable = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass1' } });
+            expect(previousSkimmable.skimmingStage).to.be.equal(null);
+
+            newDataPass = await DataPassRepository.findOne({ where: { name: 'LHC22b_apass2' } });
+            expect(newDataPass.skimmingStage).to.be.equal(SkimmingStage.SKIMMABLE);
+
+            // Restore skimmable runs flags after changing skimmable data pass
+            await dataPassService.markAsSkimmable({ name: 'LHC22b_apass1' });
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: true },
+                { where: { dataPassId: previousSkimmable.id, runNumber: 106 } },
+            );
+            await DataPassRunRepository.updateAll(
+                { readyForSkimming: false },
+                { where: { dataPassId: previousSkimmable.id, runNumber: { [Op.in]: [107, 108] } } },
+            );
+        });
+
+        it('should successfully fetch runs list with ready_for_skimming information', async () => {
+            const data = await dataPassService.getSkimmableRuns({ id: 1 });
+            expect(data).to.have.all.deep.members([
+                { runNumber: 106, readyForSkimming: true },
+                { runNumber: 107, readyForSkimming: false },
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
+
+        it('should successfully update runs with ready_for_skimming information', async () => {
+            const newData = [
+                { runNumber: 106, readyForSkimming: false },
+                { runNumber: 107, readyForSkimming: true },
+            ];
+
+            const skimmableRuns = await dataPassService.updateReadyForSkimmingRuns({ id: 1 }, newData);
+            expect(skimmableRuns).to.have.all.deep.members(newData);
+
+            expect(await dataPassService.getSkimmableRuns({ id: 1 })).to.have.all.deep.members([
+                ...newData,
+                { runNumber: 108, readyForSkimming: false },
+            ]);
+        });
+    });
+
+    describe('Updating', () => {
+        it('should successfully freeze a given data pass', async () => {
+            await dataPassService.setFrozenState({ id: 1 }, true);
+            const dataPass = await dataPassService.getByIdentifier({ id: 1 });
+            expect(dataPass.isFrozen).to.be.true;
+        });
+
+        it('should fail to freeze a not existing data pass', async () => {
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ name: 'do-not-exist' }, true),
+                new NotFoundError('Data pass with this name (do-not-exist) could not be found'),
+            );
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ id: 99999999 }, true),
+                new NotFoundError('Data pass with this id (99999999) could not be found'),
+            );
+        });
+
+        it('should successfully unfreeze a given data pass', async () => {
+            await dataPassService.setFrozenState({ id: 1 }, false);
+            const dataPass = await dataPassService.getByIdentifier({ id: 1 });
+            expect(dataPass.isFrozen).to.be.false;
+        });
+
+        it('should fail to unfreeze a not existing data pass', async () => {
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ name: 'do-not-exist' }, false),
+                new NotFoundError('Data pass with this name (do-not-exist) could not be found'),
+            );
+            await assert.rejects(
+                () => dataPassService.setFrozenState({ id: 99999999 }, false),
+                new NotFoundError('Data pass with this id (99999999) could not be found'),
             );
         });
     });

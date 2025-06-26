@@ -27,8 +27,6 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 
 const { expect } = chai;
 
-const periodNameRegex = /LHC\d\d[a-zA-Z]+/;
-
 module.exports = () => {
     let page;
     let browser;
@@ -60,14 +58,17 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => periodNameRegex.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_([a-z]pass\d|skimming)/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outpuSize) => {
-                const [number, unit] = outpuSize.split(' ');
+            outputSize: (outputSize) => {
+                if (outputSize === '-') {
+                    return true;
+                }
+                const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
         };
@@ -109,13 +110,13 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'name');
     });
 
-    it('should successfuly apply data pass name filter', async () => {
+    it('should successfully apply data pass name filter', async () => {
         await pressElement(page, '#openFilterToggle');
 
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
-        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1\nSkimmable']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
     });
 };

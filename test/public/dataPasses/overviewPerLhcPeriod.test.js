@@ -31,8 +31,6 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 
 const { expect } = chai;
 
-const periodNameRegex = /LHC\d\d[a-zA-Z]+/;
-
 module.exports = () => {
     let page;
     let browser;
@@ -60,14 +58,18 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         const dataSizeUnits = new Set(['B', 'KB', 'MB', 'GB', 'TB']);
         const tableDataValidators = {
-            name: (name) => periodNameRegex.test(name),
+            name: (name) => /(deleted\n)?LHC\d\d[a-z]+_([a-z]pass\d|skimming)/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
+            statusHistory: (statusHistory) => /R(\n-\n[RD])*/.test(statusHistory),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
                 || reconstructedEventsCount === '-',
-            outputSize: (outpuSize) => {
-                const [number, unit] = outpuSize.split(' ');
+            outputSize: (outputSize) => {
+                if (outputSize === '-') {
+                    return true;
+                }
+                const [number, unit] = outputSize.split(' ');
                 return !isNaN(number) && dataSizeUnits.has(unit.trim());
             },
         };
@@ -81,19 +83,23 @@ module.exports = () => {
             simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
         }))).to.have.all.deep.members([
             {
-                name: 'LHC22b_apass2',
+                name: 'LHC22b_skimming',
                 runsCount: 3,
+                simulationPassesCount: 0,
+            },
+            {
+                name: 'LHC22b_apass2_skimmed',
+                runsCount: 4,
                 simulationPassesCount: 1,
             },
             {
-                name: 'LHC22b_apass1',
+                name: 'deleted\nLHC22b_apass1\nSkimmable',
                 runsCount: 3,
                 simulationPassesCount: 1,
             },
         ]);
 
-        await page.waitForSelector('td#row1-name .popover-trigger .icon');
-        await page.waitForSelector('td#row1-description .popover-trigger .icon');
+        await page.waitForSelector('td#row1-name .popover-trigger');
     });
 
     it('can navigate to runs per data pass page', async () => {
@@ -102,6 +108,7 @@ module.exports = () => {
         expectUrlParams(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
+            pdpBeamType: 'pp',
         });
     });
 
@@ -110,7 +117,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(3) a'));
         expectUrlParams(page, {
             page: 'anchored-simulation-passes-overview',
-            dataPassId: '2',
+            dataPassId: '5',
         });
     });
 
@@ -118,8 +125,8 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '2');
-        await expectInnerText(page, '#totalRowsCount', '2');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('can set how many data passes is available per page', async () => {
@@ -135,7 +142,7 @@ module.exports = () => {
         // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
         pressElement(page, '.dropup .menu-item');
 
-        await waitForTableLength(page, 2);
+        await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await page.$eval('.dropup input[type=number]', (el) => {
@@ -155,13 +162,13 @@ module.exports = () => {
         await testTableSortingByColumn(page, 'name');
     });
 
-    it('should successfuly apply data pass name filter', async () => {
+    it('should successfully apply data pass name filter', async () => {
         await pressElement(page, '#openFilterToggle');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
 
-        await expectColumnValues(page, 'name', ['LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1\nSkimmable']);
 
         await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'name', ['LHC22b_apass2', 'LHC22b_apass1']);
+        await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
     });
 };

@@ -92,6 +92,7 @@ message Run {
   optional int64 timeTrgStart = 21;
   // Trigger value
   optional string triggerValue = 22;
+  optional string rawCtpTriggerConfiguration = 32;
   // The full name or file location of the odcTopology
   optional string odcTopologyFullName = 23;
   optional bool ddFlp = 24;
@@ -108,11 +109,11 @@ message Run {
 message LHCFill {
   int32 fillNumber = 1;
   // Timestamp of the start of the stable beam (if it applies)
-  optional int64 stableBeamStart = 2;
+  optional int64 stableBeamsStart = 7;
   // Timestamp of the end of the stable beam (if it applies)
-  optional int64 stableBeamEnd = 3;
+  optional int64 stableBeamsEnd = 8;
   // Duration of the stable beam (if it applies)
-  optional int64 stableBeamDuration = 4;
+  optional int64 stableBeamsDuration = 9;
   string beamType = 5;
   string fillingSchemeName = 6;
 }

@@ -15,7 +15,7 @@ const chai = require('chai');
 const puppeteer = require('puppeteer');
 const pti = require('puppeteer-to-istanbul');
 const { server } = require('../../lib/application');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('@aliceo2/web-ui');
 const dateAndTime = require('date-and-time');
 const path = require('path');
 
@@ -56,7 +56,7 @@ const getUrl = () => `http://localhost:${server.address().port}`;
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page, Browser and Url.
  */
 module.exports.defaultBefore = async () => {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     page.setDefaultTimeout(1500);
     page.setDefaultNavigationTimeout(5000);
@@ -148,11 +148,16 @@ module.exports.waitForTimeout = waitForTimeout;
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
 const waitForTableToLength = async (page, expectedSize) => {
-    await page.waitForFunction(
-        (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-        {},
-        expectedSize,
-    );
+    try {
+        await page.waitForFunction(
+            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+            {},
+            expectedSize,
+        );
+    } catch {
+        const actualSize = (await page.$$('tbody tr')).length;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}`);
+    }
 };
 
 module.exports.waitForTableLength = waitForTableToLength;
@@ -388,27 +393,65 @@ module.exports.getInnerText = getInnerText;
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {string} innerText Text to search for.
+ * @param {object} [options] eventual options
+ * @param {number} [options.timeout] Optional timeout
+ * @param {puppeteer.FrameWaitForFunctionOptions} [options.polling] Optional polling methods, see
  * @return {Promise<void>} resolves once the text has been checked
  */
-module.exports.expectInnerText = async (page, selector, innerText) => {
-    const element = await page.waitForSelector(selector);
+module.exports.expectInnerText = async (page, selector, innerText, options = {}) => {
+    const elementHandle = await page.waitForSelector(selector);
+
     try {
         await page.waitForFunction(
             (selector, innerText) => document.querySelector(selector).innerText === innerText,
-            {},
+            options,
             selector,
             innerText,
         );
     } catch (_) {
-        throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${await getInnerText(element)}"`);
+        const actualInnerText = await getInnerText(elementHandle);
+        await elementHandle.dispose();
+        if (actualInnerText === innerText) {
+            // Timeout issue resolved by itself, simply return (kind of retry for free)
+            return;
+        }
+        throw new Error(`Expected innerText for ${selector} to be "${innerText}", got "${actualInnerText}"`);
     }
+    await elementHandle.dispose();
 };
 
 /**
- * Expect an element to have a text valid against givne validator
+ * Expect a given attribute of an element to have a given value
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} selector the selector of the element to look for attribute
+ * @param {string} attributeKey the key of the attribute to check
+ * @param {string} attributeValue the expected value
+ * @return {Promise<void>} resolves once the attribute has the expected value
+ */
+module.exports.expectAttributeValue = async (page, selector, attributeKey, attributeValue) => {
+    const elementHandle = await page.waitForSelector(selector);
+    try {
+        await page.waitForFunction(
+            (selector, attributeKey, attributeValue) => document.querySelector(selector).getAttribute(attributeKey) === attributeValue,
+            {},
+            selector,
+            attributeKey,
+            attributeValue,
+        );
+    } catch (_) {
+        const actualAttributeValue = await elementHandle.evaluate((element, attributeKey) => element.getAttribute(attributeKey), attributeKey);
+        await elementHandle.dispose();
+        throw new Error(`Expect attribute ${attributeKey} to be ${attributeValue}, got ${actualAttributeValue}`);
+    }
+    await elementHandle.dispose();
+};
+
+/**
+ * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
- * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, return false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
@@ -421,7 +464,7 @@ module.exports.expectInnerTextTo = async (page, selector, validator) => {
  * Expect an element to have a text valid against given validator
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
- * @param {function<string, boolean>} validator text validator. It must return true if text is valid, retrun false or throw otherwise
+ * @param {function<string, boolean>} validator text validator. It must return true if text is valid, return false or throw otherwise
  * @return {Promise<void>} resolves once the text has been checked
  */
 module.exports.expectInnerTextTo = async (page, selector, validator) => {
@@ -461,10 +504,10 @@ exports.getPopoverSelector = (popoverTrigger) => {
 };
 
 /**
- * Extract the content of a popover corresponding to a popover trigger
+ * Extract the HTML content of a popover corresponding to a popover trigger
  *
  * @param {object} popoverTrigger the puppeteer element of the popover trigger
- * @return {Promise<string>} the content of the trigger
+ * @return {Promise<string>} the HTML content of the trigger
  */
 const getPopoverContent = (popoverTrigger) => {
     if (popoverTrigger === null) {
@@ -478,11 +521,35 @@ const getPopoverContent = (popoverTrigger) => {
         }
 
         const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
-        return popover.innerHTML;
+        return popover.innerText;
     });
 };
 
 module.exports.getPopoverContent = getPopoverContent;
+
+/**
+ * Extract the inner text of a popover corresponding to a popover trigger
+ *
+ * @param {object} popoverTrigger the puppeteer element of the popover trigger
+ * @return {Promise<string>} the content of the trigger
+ */
+const getPopoverInnerText = (popoverTrigger) => {
+    if (popoverTrigger === null) {
+        return null;
+    }
+
+    return popoverTrigger.evaluate((element) => {
+        const key = element.dataset.popoverKey;
+        if (!key) {
+            return null;
+        }
+
+        const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
+        return popover.innerText;
+    });
+};
+
+module.exports.getPopoverInnerText = getPopoverInnerText;
 
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
@@ -494,12 +561,25 @@ module.exports.getPopoverContent = getPopoverContent;
  * @returns {Promise<void>} resolve once balloon is validated
  */
 module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
-    const popoverTrigger = await page.waitForSelector(`tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`);
-    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerHTML);
+    const popoverTriggerSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex}) .popover-trigger`;
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
 
-    const actualContent = await getPopoverContent(popoverTrigger);
+    const triggerContent = await popoverTrigger.evaluate((element) => element.querySelector('.w-wrapped').innerText);
 
-    expect(triggerContent).to.be.equal(actualContent);
+    // Puppeteer hover function sometimes do not trigger the mouseover, manually trigger it
+    await page.evaluate((popoverTriggerSelector) => {
+        const element = document.querySelector(popoverTriggerSelector);
+        element.dispatchEvent(new Event('mouseover', { bubbles: true }));
+    }, popoverTriggerSelector);
+
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === triggerContent.replaceAll('\n', ''),
+    );
 };
 
 /**
@@ -579,7 +659,7 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
  * Method to check cells of columns with given id have expected innerText
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {stirng} columnId column id
+ * @param {string} columnId column id
  * @param {string[]} [expectedInnerTextValues] values expected in columns
  *
  * @return {Promise<void>} resolve once column values were checked
@@ -615,26 +695,36 @@ module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValu
  * Method to check cells of a row with given id have expected innerText
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {stirng} rowId row id
+ * @param {string} rowId row id
  * @param {Object<string, string>} [expectedInnerTextValues] values expected in the row
  *
  * @return {Promise<void>} resolve once row's values were checked
  */
 module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) => {
     try {
-        await page.waitForFunction(async (rowId, expectedInnerTextValues) => {
+        await page.waitForFunction((rowId, expectedInnerTextValues) => {
             for (const columnId in expectedInnerTextValues) {
-                const actualValue = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
-                if (expectedInnerTextValues[columnId] == actualValue) {
+                const actualValue = document.querySelector(`table tbody tr:nth-of-type(${rowId}) .column-${columnId}`).innerText;
+                if (expectedInnerTextValues[columnId] !== actualValue) {
                     return false;
                 }
             }
             return true;
-        }, rowId, expectedInnerTextValues);
+        }, {}, rowId, expectedInnerTextValues);
     } catch {
         const rowInnerTexts = {};
         for (const columnId in expectedInnerTextValues) {
-            rowInnerTexts[columnId] = (await document.querySelectorAll(`table tbody td:nth-of-type(${rowId}) .column-${columnId}`)).innerText;
+            rowInnerTexts[columnId] = await page.evaluate(
+                (rowId, columnId) => {
+                    const column = document.querySelector(`table tbody tr:nth-of-type(${rowId}) .column-${columnId}`);
+                    if (!column) {
+                        throw new Error(`No element found for row ${rowId} and column ${columnId}`);
+                    }
+                    return column.innerText;
+                },
+                rowId,
+                columnId,
+            );
         }
         expect(rowInnerTexts).to.eql(expectedInnerTextValues);
     }
@@ -651,7 +741,7 @@ module.exports.expectRowValues = async (page, rowId, expectedInnerTextValues) =>
  * @param {'every'|'some'} [options.valuesCheckingMode = 'every'] whether all values are expected to match regex or at least one
  * @param {boolean} [options.negation] if true it's expected not to match given regex
  *
- * @return {Promise<void>} revoled once column values were checked
+ * @return {Promise<void>} resolved once column values were checked
  */
 module.exports.checkColumnValuesWithRegex = async (page, columnId, expectedValuesRegex, options = {}) => {
     const {
@@ -686,7 +776,7 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     await this.pressElement(page, `th#${columnId}`);
     this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
-    // Sort in DESCSENDING manner
+    // Sort in DESCENDING manner
     await this.pressElement(page, `th#${columnId}`);
     this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
@@ -779,3 +869,19 @@ module.exports.expectLink = async (element, selector, { href, innerText }) => {
  * @return {boolean} true if format is correct, false otherwise
  */
 module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
+
+/**
+ * Return the selector for all the inputs composing a period inputs
+ *
+ * @param {string} popoverSelector the selector of the period inputs parent
+ * @return {{fromDateSelector: string, fromTimeSelector: string, toDateSelector: string, toTimeSelector: string}} the selectors
+ */
+module.exports.getPeriodInputsSelectors = (popoverSelector) => {
+    const commonInputsAncestor = `${popoverSelector} > div > div > div > div`;
+    return {
+        fromDateSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(1)`,
+        fromTimeSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(2)`,
+        toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
+        toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
+    };
+};

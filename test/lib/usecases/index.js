@@ -19,10 +19,11 @@ const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
 const FlpSuite = require('./flp/index.js');
 const ServerSuite = require('./server/index.js');
-const SubsystemSuite = require('./subsystem/index.js');
 const TagSuite = require('./tag/index.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
+    before(resetDatabaseContent);
     describe('Status use-case', StatusSuite);
     describe('Log use-case', LogSuite);
     describe('LhcFill use-case', LhcFillSuite);
@@ -30,7 +31,6 @@ module.exports = () => {
     describe('RunType use-case', RunTypeSuite);
     describe('Flp use-case', FlpSuite);
     describe('Server use-case', ServerSuite);
-    describe('Subsystem use-case', SubsystemSuite);
     describe('Tag use-case', TagSuite);
     describe('Environment use-case', EnvironmentSuite);
 };

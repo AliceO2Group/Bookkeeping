@@ -46,6 +46,7 @@ module.exports = () => {
     let browser;
     let url;
     const assetsDir = [__dirname, '../..', 'assets'];
+    const downloadDir = [__dirname, '../../../..', 'database/storage'];
 
     before(async () => {
         [page, browser, url] = await defaultBefore();
@@ -108,7 +109,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the log-reply form', async () => {
-        await goToPage(page, 'log-reply&parentLogId=1');
+        await goToPage(page, 'log-reply', { queryParameters: { parentLogId: '1' } });
 
         await expectInnerText(page, 'h3', 'Reply to: First entry');
 
@@ -121,7 +122,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the autofilled runs, environments and lhcFills when replying', async () => {
-        await goToPage(page, 'log-reply&parentLogId=119');
+        await goToPage(page, 'log-reply', { queryParameters: { parentLogId: '119' } });
 
         await expectInputValue(page, 'input#run-numbers', '2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22');
         await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
@@ -129,7 +130,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill all inputs with provided full parameters.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3&environmentIds=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', lhcFillNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -137,7 +138,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill runNumbers only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '');
@@ -145,7 +146,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill environmentIds only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&environmentIds=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -153,7 +154,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the lhcFillNumbers only when leaving other parameters empty.', async () => {
-        await goToPage(page, 'log-create&lhcFillNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '');
@@ -161,7 +162,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&environmentIds=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '1,2,3');
@@ -169,7 +170,7 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the runNumbers and lhcFillNumbers when leaving environmentIds empty.', async () => {
-        await goToPage(page, 'log-create&runNumbers=1,2,3&lhcFillNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '1,2,3');
         await expectInputValue(page, 'input#environments', '');
@@ -177,21 +178,70 @@ module.exports = () => {
     });
 
     it('Should verify that form autofill the environmentIds and lhcFillNumbers when leaving runNumbers empty.', async () => {
-        await goToPage(page, 'log-create&environmentIds=1,2,3&lhcFillNumbers=1,2,3');
+        await goToPage(page, 'log-create', { queryParameters: { environmentIds: '1,2,3', lhcFillNumbers: '1,2,3' } });
 
         await expectInputValue(page, 'input#run-numbers', '');
         await expectInputValue(page, 'input#environments', '1,2,3');
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
+    it('Should set the correct template when templateKey is specified.', async () => {
+        const templateKey = 'on-call';
+        await goToPage(page, 'log-create', { queryParameters: { templateKey } });
+
+        await page.waitForSelector('select');
+        const selectedOption = await page.evaluate(() => document.querySelector('select').value);
+        expect(selectedOption).to.equal('on-call');
+    });
+
+    it('Should autofill detectorOrSubsystem and issueDescription if templateKey is "on-call".', async () => {
+        const templateKey = 'on-call';
+        const detectorOrSubsystem = 'ALL';
+        const issueDescription = 'This is a sample issue description';
+        await goToPage(
+            page,
+            'log-create',
+            { queryParameters: { templateKey, detectorOrSubsystem, issueDescription } },
+        );
+
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('ALL');
+        await expectInputValue(page, 'textarea#issue-description', issueDescription);
+    });
+
+    it('Should autofill all inputs with provided full parameters.', async () => {
+        await goToPage(
+            page,
+            'log-create',
+            {
+                queryParameters: {
+                    runNumbers: '1,2,3',
+                    lhcFillNumbers: '1,2,3',
+                    environmentIds: '1,2,3',
+                    templateKey: 'on-call',
+                    detectorOrSubsystem: 'ALL',
+                    issueDescription: 'This is a sample issue description',
+                },
+            },
+        );
+
+        await expectInputValue(page, 'input#run-numbers', '1,2,3');
+        await expectInputValue(page, 'input#environments', '1,2,3');
+        await expectInputValue(page, 'input#lhc-fills', '1,2,3');
+        expect(await page.evaluate(() => document.querySelector('select#detectorOrSubsystem').value)).to.equal('ALL');
+        await expectInputValue(page, 'textarea#issue-description', 'This is a sample issue description');
+    });
+
     it('should successfully provide a tag picker with search input', async () => {
-        await goToPage(page, 'log-create');
+        await waitForNavigation(page, () => pressElement(page, '#create-log-button'));
 
         await page.locator('.tag-search-input').fill('P');
 
         (await page.waitForFunction(() => {
             const options = document.querySelectorAll('.tag-option');
-            if (options.length === 9) {
+            if (options.length === 10) {
                 for (const option of options) {
                     if (!option.innerText.toUpperCase().includes('P')) {
                         return false;
@@ -333,6 +383,13 @@ module.exports = () => {
         expect(lastLog.attachments).to.lengthOf(2);
         expect(lastLog.attachments[0].originalName).to.equal(file1);
         expect(lastLog.attachments[1].originalName).to.equal(file2);
+
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, file1));
+            fs.unlinkSync(path.resolve(...downloadDir, file2));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     }).timeout(12000);
 
     it('can clear the file attachment input if at least one is submitted', async () => {
@@ -345,7 +402,8 @@ module.exports = () => {
 
         // Add a single file attachment to the input field
         const attachmentsInput = await page.$('#attachments');
-        attachmentsInput.uploadFile(path.resolve(...assetsDir, '1200px-CERN_logo.png'));
+        const fileName = '1200px-CERN_logo.png';
+        attachmentsInput.uploadFile(path.resolve(...assetsDir, fileName));
         await waitForTimeout(500);
 
         // We expect the clear button to appear
@@ -360,6 +418,12 @@ module.exports = () => {
         await waitForTimeout(100);
         const newUploadedAttachments = await page.evaluate((element) => element.value, attachmentsInput);
         expect(newUploadedAttachments).to.equal('');
+
+        try {
+            fs.unlinkSync(path.resolve(...downloadDir, fileName));
+        } catch (_) {
+            // Do not care if file do not exist, this is just cleaning
+        }
     });
 
     it('can create a log with a run number', async () => {
@@ -687,6 +751,7 @@ ${access}
 * LHC_IF: 
 
 ## Detectors
+* EMC: 
 * FIT: 
 * ITS: 
 * MFT: 
@@ -707,6 +772,6 @@ ${aob}\
 `);
         const tags = lastLog.tags.map(({ text }) => text);
         expect(tags).to.lengthOf(2);
-        expect(tags).to.have.members(['p2info', 'RC']);
+        expect(tags).to.have.members(['P2INFO', 'RC']);
     });
 };

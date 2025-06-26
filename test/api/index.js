@@ -25,7 +25,6 @@ const RunsSuite = require('./runs.test.js');
 const RunTypesSuite = require('./runTypes.test.js');
 const ShiftSuite = require('./shift.test.js');
 const StatisticsSuite = require('./statistics.test.js');
-const SubsystemsSuite = require('./subsystems.test.js');
 const TagsSuite = require('./tags.test.js');
 const LhcPeriodsStatisticsSuite = require('./lhcPeriodsStatistics.test.js');
 const RunsWithRunId = require('./runs-with-runId.test.js');
@@ -34,7 +33,8 @@ const SimulationPassesSuite = require('./simulationPasses.test.js');
 const QcFlagTypesSuite = require('./qcFlagTypes.test.js');
 const DplDetectorsSuite = require('./dplDetectors.test.js');
 const QcFlagsSuite = require('./qcFlags.test.js');
-const TriggerCountersSuite = require('./triggerCounters.test');
+const CtpTriggerCountersSuite = require('./ctpTriggerCounters.test');
+const GaqDetectorsSuite = require('./gaqDetectors.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -44,6 +44,7 @@ module.exports = () => {
     describe('Environments API', EnvironmentsSuite);
     describe('EOS report API', EosReportSuite);
     describe('FLP API', FlpSuite);
+    describe('GaqDetectors API', GaqDetectorsSuite);
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
     describe('Runs API', RunsSuite);
@@ -52,7 +53,6 @@ module.exports = () => {
     describe('Shift API', ShiftSuite);
     describe('Status API', StatusSuite);
     describe('Statistics suite', StatisticsSuite);
-    describe('Subsystems API', SubsystemsSuite);
     describe('Tags API', TagsSuite);
     describe('LhcPeriodsStatistics API', LhcPeriodsStatisticsSuite);
     describe('DataPasses API', DataPassesSuite);
@@ -60,5 +60,5 @@ module.exports = () => {
     describe('DplDetectors API', DplDetectorsSuite);
     describe('QcFlagTypes API', QcFlagTypesSuite);
     describe('QcFlags API', QcFlagsSuite);
-    describe('TriggerCounters API', TriggerCountersSuite);
+    describe('CtpTriggerCounters API', CtpTriggerCountersSuite);
 };

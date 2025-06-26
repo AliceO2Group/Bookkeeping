@@ -14,7 +14,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { server } = require('../../lib/application');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('@aliceo2/web-ui');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -37,10 +37,9 @@ module.exports = () => {
         });
     });
     describe('POST /api/lhcFills', () => {
-        it('should return 201 if valid data is provided', (done) => {
-            request(server)
+        it('should return 201 if valid data is provided', async () => {
+            const response = await request(server)
                 .post('/api/lhcFills')
-                .expect(201)
                 .send({
                     fillNumber: 544455,
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
@@ -48,20 +47,16 @@ module.exports = () => {
                     stableBeamsDuration: 600,
                     beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
-                })
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
-                    done();
                 });
+
+            expect(response.status).to.equal(201);
+
+            const { data } = response.body;
+            expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(data.stableBeamsDuration).to.equal(600);
+            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.fillingSchemeName).to.equal('schemename');
         });
         it('should return 409 if the fillNumber is duplicate', (done) => {
             request(server)
@@ -101,8 +96,8 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 201 if valid data is given', (done) => {
-            request(server)
+        it('should return 201 if valid data is given', async () => {
+            const response = await request(server)
                 .patch('/api/lhcFills/1')
                 .send({
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
@@ -110,21 +105,20 @@ module.exports = () => {
                     stableBeamsDuration: 600,
                     beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
-                    done();
+                    collidingBunchesCount: 7654321,
+                    deliveredLuminosity: 123.123456,
                 });
+
+            expect(response.status).to.equal(201);
+
+            const { data } = response.body;
+            expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(data.stableBeamsDuration).to.equal(600);
+            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.fillingSchemeName).to.equal('schemename');
+            expect(data.collidingBunchesCount).to.equal(7654321);
+            expect(data.deliveredLuminosity).to.equal(123.123456);
         });
     });
 
@@ -209,7 +203,7 @@ module.exports = () => {
     });
 
     describe('GET /api/lhcFills/:lhcFillNumber/logs/', () => {
-        it('should succesfully return a 200 response containing the logs linked to a given LHC fill', async () => {
+        it('should successfully return a 200 response containing the logs linked to a given LHC fill', async () => {
             const response = await request(server).get('/api/lhcFills/6/logs');
             expect(response.status).to.equal(200);
             expect(response.body.data).to.lengthOf(2);

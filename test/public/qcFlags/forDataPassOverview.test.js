@@ -19,7 +19,6 @@ const {
     pressElement,
     goToPage,
     validateTableData,
-    fillInput,
     expectUrlParams,
     waitForNavigation,
 } = require('../defaults.js');
@@ -60,31 +59,31 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'QC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC22b_apass1');
-        await expectInnerText(page, 'h2:nth-of-type(3)', '106');
-        await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
+        await expectInnerText(page, '#breadcrumb-header', 'QC');
+        await expectInnerText(page, '#breadcrumb-data-pass-name', 'LHC22b_apass1');
+        await expectInnerText(page, '#breadcrumb-run-number', '106');
+        await expectInnerText(page, '#breadcrumb-detector-name', 'CPV');
     });
 
-    it('can naviagate to runs per data pass page from breadcrumbs link', async () => {
+    it('can navigate to runs per data pass page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-data-pass-name'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
+    it('can navigate to run details page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
             dataPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
@@ -107,54 +106,9 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
-    });
 
-    it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '3');
-        await expectInnerText(page, '#totalRowsCount', '3');
-    });
-
-    it('can set how many entires are available per page', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        const amountSelectorId = '#amountSelector';
-        await page.waitForSelector(amountSelectorId);
-        const amountSelectorButtonSelector = `${amountSelectorId} button`;
-        await pressElement(page, amountSelectorButtonSelector);
-
-        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
-
-        const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
-        await pressElement(page, amountItems5);
-
-        await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
-        await page.waitForSelector(amountSelectorId);
-    });
-
-    it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'qc-flags-for-data-pass', { queryParameters: {
-            dataPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.qcFlags.forDataPassOverviewModel.pagination.itemsPerPage = 200);
-
-        // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
+        const rects = await page.$$('svg rect');
+        expect(rects).to.be.lengthOf(3);
     });
 
     it('should inform when run quality was changed to bad', async () => {
@@ -164,8 +118,8 @@ module.exports = () => {
             dplDetectorId: 1,
         } });
 
-        await page.waitForSelector('.breadcrumbs *:nth-child(5).danger a');
-        const title = 'Quality of the run was changed to bad so it is no more subject to QC';
+        await page.waitForSelector('#breadcrumb-run-number.danger a');
+        const title = 'Quality of run 2 was changed to bad so it is no more subject to QC';
         await page.waitForSelector(`button.btn.btn-primary[disabled][title="${title}"]`);
     });
 };

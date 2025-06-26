@@ -60,31 +60,31 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
 
-        await expectInnerText(page, 'h2:nth-of-type(1)', 'QC');
-        await expectInnerText(page, 'h2:nth-of-type(2)', 'LHC23k6c');
-        await expectInnerText(page, 'h2:nth-of-type(3)', '106');
-        await expectInnerText(page, 'h2:nth-of-type(4)', 'CPV');
+        await expectInnerText(page, '#breadcrumb-header', 'QC');
+        await expectInnerText(page, '#breadcrumb-simulation-pass-name', 'LHC23k6c');
+        await expectInnerText(page, '#breadcrumb-run-number', '106');
+        await expectInnerText(page, '#breadcrumb-detector-name', 'CPV');
     });
 
-    it('can naviagate to runs per simulation pass page from breadcrumbs link', async () => {
+    it('can navigate to runs per simulation pass page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(2)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-simulation-pass-name'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
-    it('can naviagate to run details page from breadcrumbs link', async () => {
+    it('can navigate to run details page from breadcrumbs link', async () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
             dplDetectorId: 1,
         } });
 
-        await waitForNavigation(page, () => pressElement(page, 'h2:nth-of-type(3)'));
+        await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
     });
 
@@ -100,8 +100,8 @@ module.exports = () => {
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
             createdBy: (userName) => userName && userName !== '-',
-            from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
-            to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
+            from: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'From run start' || validateDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Until run end' || validateDate(timestamp),
             createdAt: validateDate,
             updatedAt: validateDate,
         };
@@ -139,20 +139,5 @@ module.exports = () => {
 
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
         await page.waitForSelector(amountSelectorId);
-    });
-
-    it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
-            simulationPassId: 1,
-            runNumber: 106,
-            dplDetectorId: 1,
-        } });
-
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.qcFlags.forSimulationPassOverviewModel.pagination.itemsPerPage = 200);
-
-        // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
     });
 };

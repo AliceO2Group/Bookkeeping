@@ -78,12 +78,8 @@ module.exports = () => {
         const context = browser.defaultBrowserContext();
         context.overridePermissions(url, ['clipboard-read', 'clipboard-write', 'clipboard-sanitized-write']);
 
-        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
-
         // Expect the button to be there. Log 117 should be a parent to 119.
-        const log117CopyBtn = await page.waitForSelector('#copy-117');
-
-        await log117CopyBtn.click();
+        await pressElement(page, '#copy-117');
 
         // The url has log 119, but the clipboard should have the url for 117.
         const actualClipboardContents = await page.evaluate(() => navigator.clipboard.readText());
@@ -92,18 +88,13 @@ module.exports = () => {
     });
 
     it('should display feedback to the user when the copy link button is clicked', async () => {
-        await goToPage(page, 'log-detail', { queryParameters: { id: 119 } });
-
-        // Expect the button to be there. Log 117 should be a parent to 119.
-        const log117CopyBtn = await page.waitForSelector('#copy-117');
-
         // Expect the text before the click to be different after
-        await expectInnerText(page, '#copy-117', 'Copy Link');
-        await log117CopyBtn.click();
-        await expectInnerText(page, '#copy-117', 'Copied!');
+        await expectInnerText(page, '#copy-118', 'Copy Link');
+        await pressElement(page, '#copy-118');
+        await expectInnerText(page, '#copy-118', 'Copied!');
     });
 
-    it('should successfuly expand opened log when displaying a log tree', async () => {
+    it('should successfully expand opened log when displaying a log tree', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 1 } });
 
         // We expect there to be at least one log in this log entry
