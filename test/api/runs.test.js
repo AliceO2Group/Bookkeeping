@@ -385,7 +385,9 @@ module.exports = () => {
         for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
             const { operator, value, expectedRuns } = testParameters;
             it(`should successfully filter by ${property}`, async () => {
-                const response = await request(server).get(`/api/runs?filter[${property}][${operator}]=${value}`);
+                const response = await request(server).get(
+                    `/api/runs?filter[${property}][operator]=${operator}&filter[${property}][limit]=${value}`,
+                );
 
                 expect(response.status).to.equal(200);
 
@@ -399,7 +401,8 @@ module.exports = () => {
         it('should successfully filter by GAQ notBadFraction', async () => {
             const dataPassId = 1;
             {
-                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}&filter[gaq][notBadFraction][<]=0.8`);
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
+                        + '&filter[gaq][notBadFraction][operator]=<&filter[gaq][notBadFraction][limit]=0.8');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -409,7 +412,7 @@ module.exports = () => {
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +
-                    '&filter[gaq][notBadFraction][<]=0.8&filter[gaq][mcReproducibleAsNotBad]=true');
+                    '&filter[gaq][notBadFraction][operator]=<&filter[gaq][notBadFraction][limit]=0.8&filter[gaq][mcReproducibleAsNotBad]=true');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
