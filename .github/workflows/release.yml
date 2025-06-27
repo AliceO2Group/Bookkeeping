@@ -1,4 +1,8 @@
 name: release
+permissions:
+  contents: read
+  packages: write
+  actions: write
 on:
   release:
     types: [created]

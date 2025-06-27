@@ -476,10 +476,7 @@ module.exports = () => {
 
         let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
 
-        expect(runDurationList.every((runDuration) => {
-            const time = runDuration.replace('*', '');
-            return time === '25:00:00';
-        })).to.be.true;
+        expect(runDurationList.every((runDuration) => runDuration === '25:00:00')).to.be.true;
 
         await fillInput(page, runDurationLimitSelector, '3000', ['change']);
         await waitForTableLength(page, 0);

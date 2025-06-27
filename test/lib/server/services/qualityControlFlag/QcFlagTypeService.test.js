@@ -332,7 +332,7 @@ module.exports = () => {
             };
             await assert.rejects(
                 () => qcFlagTypeService.create(parameters, { user: { externalUserId: 1 } }),
-                // eslint-disable-next-line max-len
+                // eslint-disable-next-line @stylistic/js/max-len
                 new ConflictError(`A QC flag type with name ${parameters.name} or method ${parameters.method} already exists`),
             );
         });
