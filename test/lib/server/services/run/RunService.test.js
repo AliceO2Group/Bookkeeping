@@ -141,7 +141,7 @@ module.exports = () => {
 
     it('should successfully prevent to create a non-calibration run with a calibrationStatus', async () => {
         await assert.rejects(
-            () => runService.create({ ...SYNTHETIC.PBPB, calibrationStatus: RunCalibrationStatus.SUCCESS }),
+            () => runService.create({ ...SYNTHETIC.SYNTHETIC, calibrationStatus: RunCalibrationStatus.SUCCESS }),
             new BadParameterError('Calibration status is reserved to calibration runs'),
         );
     });

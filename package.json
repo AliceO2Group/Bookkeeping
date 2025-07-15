@@ -1,11 +1,15 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "1.9.2",
+  "version": "1.9.5",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
-    "lint": "eslint . --ext .js",
+    
+    
+    "lint": "eslint --config eslint.config.js ",
+
+
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
@@ -22,7 +26,7 @@
     "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.7.0",
+    "@aliceo2/web-ui": "2.8.4",
     "@grpc/grpc-js": "1.13.0",
     "@grpc/proto-loader": "0.7.0",
     "cls-hooked": "4.2.2",
@@ -33,11 +37,11 @@
     "kafkajs": "2.2.0",
     "mariadb": "3.0.0",
     "mkdirp": "3.0.1",
-    "multer": "2.0.0",
+    "multer": "2.0.1",
     "node-fetch": "3.3.1",
     "protobufjs": "7.5.0",
     "sequelize": "6.37.0",
-    "umzug": "3.8.0"
+    "umzug": "3.8.2"
   },
   "files": [
     "lib/",
@@ -46,17 +50,21 @@
   ],
   "devDependencies": {
     "@types/d3": "7.4.0",
+    "@eslint/js": "^9.7.0",
+    "@stylistic/eslint-plugin-js": "^2.3.0",
+    "eslint": "^9.7.0",
+    "eslint-plugin-jsdoc": "^48.7.0",
+    "globals": "^15.8.0",
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
-    "eslint": "8.57.0",
     "js-yaml": "4.1.0",
-    "mocha": "11.5.0",
+    "mocha": "11.7.0",
     "nodemon": "3.1.3",
     "nyc": "17.1.0",
     "puppeteer": "24.10.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
-    "sinon": "20.0.0",
+    "sinon": "21.0.0",
     "supertest": "7.1.0"
   },
   "bundleDependencies": [

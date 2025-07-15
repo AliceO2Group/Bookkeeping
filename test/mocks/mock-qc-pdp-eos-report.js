@@ -227,7 +227,7 @@ const formattedCustomizedQcPdpEosReportTypeSpecific = `
 
 exports.formattedCustomizedQcPdpEosReport = genericFormattedCustomizedEosReport(
     ShiftTypes.QC_PDP,
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/js/max-len
     '- \\[QC/PDP Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[QC/PDP Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
     formattedCustomizedQcPdpEosReportTypeSpecific,
 );

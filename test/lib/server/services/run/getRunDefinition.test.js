@@ -39,8 +39,8 @@ module.exports = () => {
     });
 
     it('should successfully identify runs as SYNTHETIC', () => {
-        expect(getRunDefinition(SYNTHETIC.PP)).to.equal(RunDefinition.SYNTHETIC);
-        expect(getRunDefinition(SYNTHETIC.PBPB)).to.equal(RunDefinition.SYNTHETIC);
+        expect(getRunDefinition(SYNTHETIC.REPLAY)).to.equal(RunDefinition.SYNTHETIC);
+        expect(getRunDefinition(SYNTHETIC.SYNTHETIC)).to.equal(RunDefinition.SYNTHETIC);
     });
 
     it('should successfully identify runs as CALIBRATION', () => {

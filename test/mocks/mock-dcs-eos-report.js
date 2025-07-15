@@ -90,7 +90,7 @@ exports.customizedDcsEosReportRequest = {
 
 exports.formattedCustomizedDcsEosReport = genericFormattedCustomizedEosReport(
     ShiftTypes.DCS,
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/js/max-len
     '- \\[DCS Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[DCS Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
     '\n## Alert handling\nAn alert\nAnd another one\n',
 );

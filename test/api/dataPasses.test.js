@@ -19,7 +19,7 @@ const { SkimmingStage } = require('../../lib/domain/enums/SkimmingStage');
 const { DataPassRepository, RunRepository, DataPassVersionRepository, DataPassRunRepository } = require('../../lib/database/repositories');
 const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService');
 const { Op } = require('sequelize');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('@aliceo2/web-ui');
 const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 
 const LHC22b_apass1 = {
