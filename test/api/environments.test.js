@@ -43,7 +43,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(200);
             const environments = response.body.data;
-            expect(environments).to.lengthOf(2); // Assuming all environments were created in 2023
+            expect(environments).to.lengthOf(2);
             expect(environments[0].id).to.equal('TDI59So3d');
             expect(environments[1].id).to.equal('EIDO13i3D');
         });
@@ -54,7 +54,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(200);
             const environments = response.body.data;
-            expect(environments).to.lengthOf(3); // Assuming all environments were created in 2023
+            expect(environments).to.lengthOf(3);
             expect(environments[0].id).to.equal('CmCvjNbg');
             expect(environments[1].id).to.equal('TDI59So3d');
             expect(environments[2].id).to.equal('EIDO13i3D');
@@ -66,7 +66,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(200);
             const environments = response.body.data;
-            expect(environments).to.lengthOf(8); // Assuming all environments were created in 2023
+            expect(environments).to.lengthOf(8);
             expect(environments[0].id).to.equal('TDI59So3d');
             expect(environments[1].id).to.equal('EIDO13i3D');
             expect(environments[2].id).to.equal('KGIS12DS');
