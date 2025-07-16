@@ -5,11 +5,7 @@
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
-    
-    
     "lint": "eslint --config eslint.config.js ",
-
-
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
@@ -49,14 +45,14 @@
     "proto/"
   ],
   "devDependencies": {
-    "@types/d3": "7.4.0",
     "@eslint/js": "^9.7.0",
-    "@stylistic/eslint-plugin-js": "^2.3.0",
-    "eslint": "^9.7.0",
-    "eslint-plugin-jsdoc": "^51.3.4",
-    "globals": "^15.8.0",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "@types/d3": "7.4.0",
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
+    "eslint": "^9.7.0",
+    "eslint-plugin-jsdoc": "^51.3.4",
+    "globals": "^16.3.0",
     "js-yaml": "4.1.0",
     "mocha": "11.7.0",
     "nodemon": "3.1.3",
