@@ -190,4 +190,12 @@ module.exports = () => {
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(9); // Environments from seeders
     });
+
+    it('should successfully return empty environment array if filter does not match', async () => {
+        const from = Date.now() - 10; 
+        getAllEnvsDto.query = { filter: { created: { from } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(0); // Environments from seeders
+    });
 };

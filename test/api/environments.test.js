@@ -77,6 +77,15 @@ module.exports = () => {
             expect(environments[7].id).to.equal('eZF99lH6');
         });
 
+        it('should successfully return no environments for filter not matching', async () => {
+            const from = Date.now();
+            const response = await request(server).get(`/api/environments?filter[created][from]=${from}`);
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(0);
+        });
+
         it('should successfully apply filter for environments ids', async () => {
             const response = await request(server).get('/api/environments?filter[ids]=8E4aZTjY');
 
