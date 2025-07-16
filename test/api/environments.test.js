@@ -66,8 +66,6 @@ module.exports = () => {
 
             expect(response.status).to.equal(200);
             const environments = response.body.data;
-            console.log('-------- Environments:');
-            console.log(environments);
             expect(environments).to.lengthOf(8); // Assuming all environments were created in 2023
             expect(environments[0].id).to.equal('TDI59So3d');
             expect(environments[1].id).to.equal('EIDO13i3D');
