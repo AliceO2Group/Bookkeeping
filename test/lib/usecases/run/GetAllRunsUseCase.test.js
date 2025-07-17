@@ -754,7 +754,16 @@ module.exports = () => {
     for (const [property, testParameters] of Object.entries(inelasticInteractionRateFilteringTestsParameters)) {
         const { operator, value, expectedRuns } = testParameters;
         it(`should successfully filter by ${property}`, async () => {
-            const { runs } = await new GetAllRunsUseCase().execute({ query: { filter: { [property]: { [operator]: value } } } });
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        [property]: {
+                            operator,
+                            limit: value,
+                        },
+                    },
+                },
+            });
             expect(runs).to.be.an('array');
             expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members(expectedRuns);
         });
@@ -767,7 +776,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        gaq: { notBadFraction: { '<': 0.8 } },
+                        gaq: { notBadFraction: { operator: '<', limit: 0.8 } },
                     },
                 },
             });
@@ -779,7 +788,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        gaq: { notBadFraction: { '<': 0.8 }, mcReproducibleAsNotBad: true },
+                        gaq: { notBadFraction: { operator: '<', limit: 0.8 }, mcReproducibleAsNotBad: true },
                     },
                 },
             });
