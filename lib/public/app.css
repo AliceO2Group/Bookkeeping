@@ -207,6 +207,24 @@ th.text-center, td.text-center {
 }
 
 
+/* Sticky table headers */
+.sticky-header thead tr {
+    position: sticky;
+    top: 0;
+    background-color: var(--color-white);
+    z-index: 3;
+}
+
+.table-max-height {
+    max-height: 90vh;
+}
+
+.sticky-top {
+    position: sticky;
+    z-index: 3;
+    top: 0;
+}
+
 
 /* alerts */
 
