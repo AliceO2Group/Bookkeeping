@@ -5,11 +5,7 @@
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
-    
-    
     "lint": "eslint --config eslint.config.js ",
-
-
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
@@ -32,7 +28,7 @@
     "cls-hooked": "4.2.2",
     "d3": "7.8.5",
     "deepmerge": "4.3.0",
-    "dotenv": "16.5.0",
+    "dotenv": "17.2.0",
     "joi": "17.13.1",
     "kafkajs": "2.2.0",
     "mariadb": "3.0.0",
@@ -49,19 +45,19 @@
     "proto/"
   ],
   "devDependencies": {
-    "@types/d3": "7.4.0",
     "@eslint/js": "^9.7.0",
-    "@stylistic/eslint-plugin-js": "^2.3.0",
-    "eslint": "^9.7.0",
-    "eslint-plugin-jsdoc": "^48.7.0",
-    "globals": "^15.8.0",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "@types/d3": "7.4.0",
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-jsdoc": "^51.3.4",
+    "globals": "^16.3.0",
     "js-yaml": "4.1.0",
     "mocha": "11.7.0",
     "nodemon": "3.1.3",
     "nyc": "17.1.0",
-    "puppeteer": "24.10.0",
+    "puppeteer": "24.11.1",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "21.0.0",
