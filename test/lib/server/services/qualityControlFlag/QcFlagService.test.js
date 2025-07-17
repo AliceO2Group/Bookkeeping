@@ -999,7 +999,7 @@ module.exports = () => {
             assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it.skip('should fail to create quality control flag because qc flag `to` timestamp is greater than run.lastTfTimestamp', async () => {
+        it('should fail to create quality control flag because qc flag `to` timestamp is greater than run.lastTfTimestamp', async () => {
             const period = {
                 from: new Date('2019-08-08 13:17:19').getTime(),
                 to: new Date('2019-08-09 15:49:01').getTime(),
@@ -1023,7 +1023,7 @@ module.exports = () => {
             assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it.skip('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
+        it('should fail to create quality control flag because qc flag `from` timestamp is greater than `to` timestamp', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 04:16:40').getTime(), // Failing property
                 to: new Date('2019-08-08 21:20:00').getTime(), // Failing property
