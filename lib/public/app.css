@@ -208,22 +208,30 @@ th.text-center, td.text-center {
 
 
 /* Sticky table headers */
-.sticky-header thead tr {
+/* .sticky-header thead tr {
     position: sticky;
     top: 0;
     background-color: var(--color-white);
     z-index: 3;
+} */
+
+.fitting-table-wrapper {
+    flex: 1 1 auto;      /* wypełnia całą pozostałą wysokość */
+    overflow-y: auto;    /* pionowy scroll wewnątrz kontenera */
+    background-color: red;
 }
 
-.table-max-height {
-    max-height: 90vh;
-}
+/* .fitting-table thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+} */
 
-.sticky-top {
+/* .sticky-top {
     position: sticky;
     z-index: 3;
     top: 0;
-}
+} */
 
 
 /* alerts */
