@@ -177,6 +177,20 @@ module.exports = () => {
                         missingVerificationsCount: 1,
                     },
                 },
+                107: {
+                    1: {
+                        badEffectiveRunCoverage: 0.2403462,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                    },
+                    2: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
             });
         });
 
@@ -190,6 +204,20 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
                     },
                     16: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: false,
+                        missingVerificationsCount: 1,
+                    },
+                },
+                107: {
+                    1: {
+                        badEffectiveRunCoverage: 0,
+                        explicitlyNotBadEffectiveRunCoverage: 1,
+                        mcReproducible: true,
+                        missingVerificationsCount: 2,
+                    },
+                    2: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
@@ -1380,7 +1408,7 @@ module.exports = () => {
                         },
                     },
                 },
-            })).to.lengthOf(10); // 11 from seeders, then 1 deleted => 10
+            })).to.lengthOf(13); // 14 from seeders, then 1 deleted => 10
 
             expect((await QcFlagRepository.findAll({
                 include: {
@@ -1652,13 +1680,9 @@ module.exports = () => {
             const timeTrgEnd = t('22:00:00');
 
             const gaqSubSummaries = [
-                { from: t('06:00:00'), to: t('10:00:00'), bad: true, mcReproducible: false },
                 { from: t('10:00:00'), to: t('12:00:00'), bad: true, mcReproducible: false },
                 { from: t('12:00:00'), to: t('13:00:00'), bad: true, mcReproducible: true },
-                { from: t('13:00:00'), to: t('14:00:00'), bad: true, mcReproducible: true },
                 { from: t('14:00:00'), to: t('16:00:00'), bad: true, mcReproducible: false },
-                { from: t('18:00:00'), to: t('20:00:00'), bad: false, mcReproducible: false },
-                { from: t('20:00:00'), to: t('22:00:00'), bad: false, mcReproducible: false },
             ];
 
             const expectedGaqSummary = gaqSubSummaries.reduce((acc, { from, to, bad, mcReproducible }) => {
@@ -1673,6 +1697,7 @@ module.exports = () => {
             expectedGaqSummary.badEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.missingVerificationsCount = 11;
+            expectedGaqSummary.undefinedQualityPeriodsCount = 8;
 
             const { [runNumber]: runGaqSummary } = await gaqService.getSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
@@ -1711,12 +1736,14 @@ module.exports = () => {
                     explicitlyNotBadEffectiveRunCoverage: 1,
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
+                    undefinedQualityPeriodsCount: 0,
                 },
                 54: {
                     missingVerificationsCount: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     badEffectiveRunCoverage: 1,
                     mcReproducible: false,
+                    undefinedQualityPeriodsCount: 0,
                 },
             });
         });
