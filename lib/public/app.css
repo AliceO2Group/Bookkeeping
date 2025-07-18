@@ -158,7 +158,8 @@ html, body {
 
 .table-hover tbody tr:hover {
     color: #212529;
-    background-color: rgba(0, 0, 0, 0.075);
+    --hover-background: rgb(235, 235, 235);
+    background-color: var(--hover-background);
 }
 
 th.text-center, td.text-center {
@@ -168,6 +169,43 @@ th.text-center, td.text-center {
 .table-cell-max-height-2 {
     max-height: 3rem;
 }
+
+
+/* sticky first column when horizontal scrolling */
+.freeze-first-column th:first-child {
+    background: var(--color-gray-light); 
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+
+.freeze-first-column td:first-child {
+    background: inherit;
+    position: sticky;
+    left: 0;
+    z-index: 2; 
+}
+
+.freeze-first-column td:first-child::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-gray-light);
+}
+
+.freeze-first-column th:first-child::after  {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-gray);
+}
+
 
 /* alerts */
 

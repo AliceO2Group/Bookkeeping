@@ -43,6 +43,8 @@ const getEffectivePeriodsOfQcFlag = async (flagId) => (await QcFlagEffectivePeri
 const t = (timeString) => new Date(`2024-07-16 ${timeString}`).getTime();
 
 const goodFlagTypeId = 3;
+const badPidFlagTypeId = 12;
+const limitedAccMCTypeId = 5;
 
 const qcFlagWithId1 = {
     id: 1,
@@ -1574,9 +1576,6 @@ module.exports = () => {
         const t = (timeString) => new Date(`2024-07-10 ${timeString}`).getTime();
 
         const relations = { user: { roles: ['admin'], externalUserId: 456 } };
-        const goodFlagTypeId = 3;
-        const badPidFlagTypeId = 12;
-        const limitedAccMCTypeId = 5;
 
         it('should successfully get GAQ flags', async () => {
             const dataPassId = 3;
