@@ -158,7 +158,7 @@ html, body {
 
 .table-hover tbody tr:hover {
     color: #212529;
-    --hover-background: rgb(185, 185, 185);
+    --hover-background: rgb(235, 235, 235);
     background-color: var(--hover-background);
 }
 

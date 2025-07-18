@@ -161,4 +161,41 @@ module.exports = () => {
         // Should include all environments with run numbers containing the substring 10
         expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d', 'Dxi029djX']);
     });
+
+    it('should successfully filter environments on created from and to', async () => {
+        const from = Date.now() - 24 * 60 * 60 * 1000; // environment from 24h ago which was created by CreateEnvironmentUseCase.test.js
+        const to = Date.now() - 10;
+        getAllEnvsDto.query = { filter: { created: { from, to } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments[0].id).to.be.equal('newId');
+        expect(environments[1].id).to.be.equal('SomeId');
+    });
+
+    it('should successfully filter environments on created from', async () => {
+        const from = Date.now() - 24 * 60 * 60 * 1000; // environment from 24h ago which was created by CreateEnvironmentUseCase.test.js
+        getAllEnvsDto.query = { filter: { created: { from } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments[0].id).to.be.equal('newId');
+        expect(environments[1].id).to.be.equal('SomeId');
+    });
+
+    it('should successfully filter environments on created to', async () => {
+        const to = Date.now() - 24 * 60 * 60 * 1000; // environment until 24h are created by seeders
+        getAllEnvsDto.query = { filter: { created: { to } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(9); // Environments from seeders
+    });
+
+    it('should successfully return empty environment array if filter does not match', async () => {
+        const from = Date.now() - 10; 
+        getAllEnvsDto.query = { filter: { created: { from } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(0); // Environments from seeders
+    });
 };

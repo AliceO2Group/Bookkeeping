@@ -36,6 +36,56 @@ module.exports = () => {
             expect(environments[0].id).to.equal('CmCvjNbg');
         });
 
+        it('should successfully return environments that were created between two provided dates', async () => {
+            const from = new Date('2019-08-09 15:50:00').getTime();
+            const to = new Date('2019-08-09 19:00:00').getTime();
+            const response = await request(server).get(`/api/environments?filter[created][from]=${from}&filter[created][to]=${to}`);
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(2);
+            expect(environments[0].id).to.equal('TDI59So3d');
+            expect(environments[1].id).to.equal('EIDO13i3D');
+        });
+
+        it('should successfully return environments that were created from provided date', async () => {
+            const from = new Date('2019-08-09 15:50:00').getTime();
+            const response = await request(server).get(`/api/environments?filter[created][from]=${from}`);
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(3);
+            expect(environments[0].id).to.equal('CmCvjNbg');
+            expect(environments[1].id).to.equal('TDI59So3d');
+            expect(environments[2].id).to.equal('EIDO13i3D');
+        });
+
+        it('should successfully return environments that were created to provided date', async () => {
+            const to = new Date('2019-08-09 19:00:00').getTime();
+            const response = await request(server).get(`/api/environments?filter[created][to]=${to}`);
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(8);
+            expect(environments[0].id).to.equal('TDI59So3d');
+            expect(environments[1].id).to.equal('EIDO13i3D');
+            expect(environments[2].id).to.equal('KGIS12DS');
+            expect(environments[3].id).to.equal('VODdsO12d');
+            expect(environments[4].id).to.equal('GIDO1jdkD');
+            expect(environments[5].id).to.equal('8E4aZTjY');
+            expect(environments[6].id).to.equal('Dxi029djX');
+            expect(environments[7].id).to.equal('eZF99lH6');
+        });
+
+        it('should successfully return no environments for filter not matching', async () => {
+            const from = Date.now();
+            const response = await request(server).get(`/api/environments?filter[created][from]=${from}`);
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.lengthOf(0);
+        });
+
         it('should successfully apply filter for environments ids', async () => {
             const response = await request(server).get('/api/environments?filter[ids]=8E4aZTjY');
 
