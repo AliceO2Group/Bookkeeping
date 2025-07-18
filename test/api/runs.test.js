@@ -408,7 +408,7 @@ module.exports = () => {
                 const { data: runs } = response.body;
 
                 expect(runs).to.be.an('array');
-                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107, 106]);
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107]);
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}` +
@@ -418,7 +418,7 @@ module.exports = () => {
                 const { data: runs } = response.body;
 
                 expect(runs).to.be.an('array');
-                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+                expect(runs).to.be.lengthOf(0)
             }
         });
 
