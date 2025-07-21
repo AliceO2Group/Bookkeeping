@@ -207,34 +207,19 @@ th.text-center, td.text-center {
 }
 
 
-/* Sticky table headers */
-/* .sticky-header thead tr {
-    position: sticky;
-    top: 0;
-    background-color: var(--color-white);
-    z-index: 3;
-} */
-
 .fitting-table-wrapper {
-    flex: 1 1 auto;      /* wypełnia całą pozostałą wysokość */
-    overflow-y: auto;    /* pionowy scroll wewnątrz kontenera */
-    background-color: red;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: 100%;
 }
 
-.fitting-table-wrapper thead th {
+.fitting-table-wrapper thead {
     position: sticky;
     top: 0;
     z-index: 3;
-    background-color: blue;
 }
 
-.sticky-nav-bar {
-    position: sticky;
-    z-index: 4;
-    top: 0;
-}
-
-.mid-flex-column {
+.intermediate-flex-column {
     display: flex;
     flex-direction: column;
     height: 100%;
