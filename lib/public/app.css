@@ -176,7 +176,7 @@ th.text-center, td.text-center {
     background: var(--color-gray-light); 
     position: sticky;
     left: 0;
-    z-index: 2;
+    z-index: 3;
 }
 
 .freeze-first-column td:first-child {
@@ -204,6 +204,25 @@ th.text-center, td.text-center {
     width: 1px;
     height: 100%;
     background-color: var(--color-gray);
+}
+
+
+.sticky-table-wrapper {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.sticky-table-wrapper thead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+.intermediate-flex-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 
