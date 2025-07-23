@@ -208,7 +208,9 @@ th.text-center, td.text-center {
 
 
 .sticky-table-wrapper {
+    flex: 1 1 auto;
     overflow-y: auto;
+    height: 100%;
 }
 
 .sticky-table-wrapper thead {
