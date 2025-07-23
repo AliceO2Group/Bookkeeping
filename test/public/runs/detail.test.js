@@ -282,7 +282,7 @@ module.exports = () => {
 
     it('should successfully show luminosity information of PbPb run', async () => {
         await goToRunDetails(page, 54);
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '98,110.716\nµb\n-1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '100,130.863\nµb\n-1');
         await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.031');
         await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
         await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
