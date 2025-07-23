@@ -207,13 +207,13 @@ th.text-center, td.text-center {
 }
 
 
-.fitting-table-wrapper {
+.sticky-table-wrapper {
     flex: 1 1 auto;
     overflow-y: auto;
     height: 100%;
 }
 
-.fitting-table-wrapper thead {
+.sticky-table-wrapper thead {
     position: sticky;
     top: 0;
     z-index: 3;
