@@ -45,7 +45,7 @@ module.exports = () => {
 
         await expectInnerText(page, '#lhc-fill-beamType', 'Beam type:\nPROTON-PROTON');
         await expectInnerText(page, '#lhc-fill-fillingSchemeName', 'Scheme name:\nSingle_12b_8_1024_8_2018');
-        await expectInnerText(page, '#lhc-fill-collidingBunchesCount', 'Colliding bunches:\n2,345');
+        await expectInnerText(page, '#lhc-fill-collidingBunchesCount', 'Colliding bunches:\n1,024');
         await expectInnerText(page, '#lhc-fill-deliveredLuminosity', 'Delivered lumi:\n420 nb-1');
     });
 
