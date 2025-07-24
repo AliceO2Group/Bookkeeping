@@ -293,7 +293,6 @@ module.exports = () => {
                     done();
                 });
         });
-
         it('should successfully include TEST and DEBUG productions', async () => {
             {
                 const response = await request(server).get('/api/dataPasses?filter[lhcPeriodIds][]=2');

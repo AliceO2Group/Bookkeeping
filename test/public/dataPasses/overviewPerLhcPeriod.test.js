@@ -171,4 +171,15 @@ module.exports = () => {
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
     });
+
+    it('should successfully apply data pass name filter', async () => {
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#checkboxes-checkbox-test');
+        await expectColumnValues(page, 'name', ['LHC22b_test', 'LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
+        await pressElement(page, '#reset-filters', true);
+
+        await pressElement(page, '#checkboxes-checkbox-debug');
+        await expectColumnValues(page, 'name', ['LHC22b_debug', 'LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
+        await pressElement(page, '#reset-filters', true);
+    });
 };
