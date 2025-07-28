@@ -293,26 +293,18 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should successfully include TEST and DEBUG productions', async () => {
-            {
-                const response = await request(server).get('/api/dataPasses?filter[lhcPeriodIds][]=2');
-                expect(response.status).to.be.equal(200);
-                const { data } = await response.body;
-                expect(data.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_skimming','LHC22b_apass2_skimmed']);
-            }
-            {
-                const response = await request(server).get('/api/dataPasses?filter[lhcPeriodIds][]=2&filter[includeTest]=true');
-                console.log(response.body)
-                expect(response.status).to.be.equal(200);
-                const { data } = await response.body;
-                expect(data.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_skimming','LHC22b_apass2_skimmed', 'LHC22b_test']);
-            }
-            {
-                const response = await request(server).get('/api/dataPasses?filter[lhcPeriodIds][]=2&filter[includeDebug]=true');
-                expect(response.status).to.be.equal(200);
-                const { data } = await response.body;
-                expect(data.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_skimming','LHC22b_apass2_skimmed', 'LHC22b_debug']);
-            }
+        it('should successfully include TEST productions', async () => {
+            const response = await request(server).get('/api/dataPasses?filter[lhcPeriodIds][]=2&filter[includeTest]=true');
+            console.log(response.body)
+            expect(response.status).to.be.equal(200);
+            const { data } = await response.body;
+            expect(data.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_skimming','LHC22b_apass2_skimmed', 'LHC22b_test']);
+        });
+        it('should successfully include DEBUG productions', async () => {
+            const response = await request(server).get('/api/dataPasses?filter[lhcPeriodIds][]=2&filter[includeDebug]=true');
+            expect(response.status).to.be.equal(200);
+            const { data } = await response.body;
+            expect(data.map(({ name }) => name)).to.have.all.members(['LHC22b_apass1', 'LHC22b_skimming','LHC22b_apass2_skimmed', 'LHC22b_debug']);
         });
     });
 
