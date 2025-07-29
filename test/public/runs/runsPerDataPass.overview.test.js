@@ -417,6 +417,22 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
 
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await pressElement(page, '#openFilterToggle', true);
+
+        await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
+        await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
+        await fillInput(page, '#gaqNotBadFraction-operand', '70', ['change']);
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
+        await expectColumnValues(page, 'runNumber', []);
+
+        await pressElement(page, '#openFilterToggle', true);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
+    });
+
     it('should successfully apply muInelasticInteractionRate filters', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
         await pressElement(page, '#openFilterToggle');
