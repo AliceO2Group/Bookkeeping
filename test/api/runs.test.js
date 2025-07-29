@@ -422,7 +422,7 @@ module.exports = () => {
             }
         });
 
-        it('should successfully filter by detectors\' notBadFraction', async () => {
+        it('should successfully filter by detectors notBadFraction', async () => {
             const dataPassId = 1;
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`

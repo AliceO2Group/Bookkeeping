@@ -796,7 +796,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfully filter by detectors\' notBadFraction', async () => {
+    it('should successfully filter by detectors notBadFraction', async () => {
         const dataPassIds = [1];
         {
             const { runs } = await new GetAllRunsUseCase().execute({
