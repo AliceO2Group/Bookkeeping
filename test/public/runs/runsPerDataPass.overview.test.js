@@ -422,7 +422,7 @@ module.exports = () => {
 
         await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
         await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
-        await fillInput(page, '#gaqNotBadFraction-operand', '70', ['change']);
+        await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '70', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
