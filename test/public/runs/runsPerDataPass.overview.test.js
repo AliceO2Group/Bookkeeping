@@ -268,7 +268,7 @@ module.exports = () => {
 
         // First export
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-        await pressElement(page, '#export-runs-trigger');
+        await pressElement(page, '#export-data-trigger');
         await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');

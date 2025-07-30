@@ -46,7 +46,7 @@ const { runService } = require('../../../lib/server/services/run/RunService.js')
 
 const { expect } = chai;
 
-const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
 module.exports = () => {
     let page;
@@ -885,7 +885,7 @@ module.exports = () => {
         const truncatedExportWarning = await page.waitForSelector('#export-runs-modal #truncated-export-warning');
         expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
             .to
-            .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
+            .equal('The data export is limited to 100 entries, only the most recent data will be exported');
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {

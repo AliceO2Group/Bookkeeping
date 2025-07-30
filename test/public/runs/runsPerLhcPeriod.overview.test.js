@@ -179,7 +179,7 @@ module.exports = () => {
         await waitForTableLength(page, 4);
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
         await page.evaluate(() => {
