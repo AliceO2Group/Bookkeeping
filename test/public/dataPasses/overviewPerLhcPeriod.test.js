@@ -164,11 +164,22 @@ module.exports = () => {
 
     it('should successfully apply data pass name filter', async () => {
         await pressElement(page, '#openFilterToggle');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['change']);
 
         await expectColumnValues(page, 'name', ['deleted\nLHC22b_apass1\nSkimmable']);
 
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
+    });
+
+    it('should successfully include test and debug productions', async () => {
+        await pressElement(page, '#openFilterToggle');
+        await pressElement(page, '#checkboxes-checkbox-test', true);
+        await expectColumnValues(page, 'name', ['LHC22b_test', 'LHC22b_skimming', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
+        await pressElement(page, '#reset-filters', true);
+
+        await pressElement(page, '#checkboxes-checkbox-debug', true);
+        await expectColumnValues(page, 'name', ['LHC22b_skimming', 'LHC22b_debug', 'LHC22b_apass2_skimmed', 'deleted\nLHC22b_apass1\nSkimmable']);
+        await pressElement(page, '#reset-filters', true);
     });
 };
