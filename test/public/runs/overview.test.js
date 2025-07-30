@@ -867,12 +867,12 @@ module.exports = () => {
     });
 
     it('should successfully display runs export modal on click on export button', async () => {
-        let exportModal = await page.$('#export-runs-modal');
+        let exportModal = await page.$('#export-data-modal');
         expect(exportModal).to.be.null;
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
-        exportModal = await page.$('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
+        exportModal = await page.$('#export-data-modal');
 
         expect(exportModal).to.not.be.null;
     });
@@ -882,7 +882,7 @@ module.exports = () => {
 
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
-        const truncatedExportWarning = await page.waitForSelector('#export-runs-modal #truncated-export-warning');
+        const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
         expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
             .to
             .equal('The data export is limited to 100 entries, only the most recent data will be exported');
@@ -907,7 +907,7 @@ module.exports = () => {
 
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -944,7 +944,7 @@ module.exports = () => {
 
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
 
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
