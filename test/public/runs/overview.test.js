@@ -903,7 +903,7 @@ module.exports = () => {
     it('should successfully export filtered runs', async () => {
         await goToPage(page, 'run-overview');
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
