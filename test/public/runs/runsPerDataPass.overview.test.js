@@ -264,12 +264,12 @@ module.exports = () => {
     it('should successfully export runs', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4);
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-        await pressElement(page, '#export-runs-trigger');
-        await page.waitForSelector('#export-runs-modal');
+        await pressElement(page, '#export-data-trigger');
+        await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -446,6 +446,7 @@ module.exports = () => {
     });
 
     it('should successfully mark as skimmable', async () => {
+
         await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
         await DataPassRepository.updateAll({ skimmingStage: null }, { where: { id: 1 } });
         await navigateToRunsPerDataPass(page, 2, 1, 3);
