@@ -187,7 +187,7 @@ module.exports = () => {
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);

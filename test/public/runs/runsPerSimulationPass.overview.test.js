@@ -193,7 +193,7 @@ module.exports = () => {
     it('should successfully export runs', async () => {
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);

@@ -264,7 +264,7 @@ module.exports = () => {
     it('should successfully export runs', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4);
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
@@ -432,6 +432,7 @@ module.exports = () => {
     });
 
     it('should successfully mark as skimmable', async () => {
+
         await expectInnerText(page, '#skimmableControl .badge', 'Skimmable');
         await DataPassRepository.updateAll({ skimmingStage: null }, { where: { id: 1 } });
         await navigateToRunsPerDataPass(page, 2, 1, 3);
