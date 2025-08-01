@@ -21,6 +21,7 @@ const { RunDetectorQualities } = require('../../lib/domain/enums/RunDetectorQual
 const { RunCalibrationStatus } = require('../../lib/domain/enums/RunCalibrationStatus.js');
 const { updateRun } = require('../../lib/server/services/run/updateRun.js');
 const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
+const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -569,6 +570,39 @@ module.exports = () => {
             expect(runs).to.have.lengthOf.greaterThan(0);
             expect(runs.every(({ aliceDipoleCurrent, aliceDipolePolarity }) =>
                 Math.round(aliceDipoleCurrent * (aliceDipolePolarity === 'NEGATIVE' ? -1 : 1) / 1000) === 0)).to.be.true;
+        });
+
+        it('should successfully handle query including QC flags', async () => {
+            { // Data Passes
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=1&include[effectiveQcFlags]=true`)
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.have.lengthOf(3);
+                expect(runs.find(({ runNumber }) => runNumber === 107).qcFlags['1'].map(({ id }) => id)).to.have.all.members([202, 201]);
+                expect(runs.find(({ runNumber }) => runNumber === 107).qcFlags['2'].map(({ id }) => id)).to.have.all.members([203]);
+                expect(runs.find(({ runNumber }) => runNumber === 106).qcFlags['1'].map(({ id }) => id)).to.have.all.members([3, 2, 1]);
+            }
+
+            { // Simulation Passes
+                const response = await request(server).get(`/api/runs?filter[simulationPassIds][]=1&include[effectiveQcFlags]=true`)
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+                expect(runs).to.have.lengthOf(3);
+
+                console.log('TOBEC', await qcFlagService.getAllPerSimulationPassAndRunAndDetector({ simulationPassId: 1, runNumber: 106, detectorId: 1}));
+
+                expect(runs.find(({ runNumber }) => runNumber === 106).qcFlags['1'].map(({ id }) => id)).to.have.all.members([6, 5]);
+            }
+
+            { // Synchronous flags
+                const response = await request(server).get(`/api/runs?filter[lhcPeriodIds][]=1&include[effectiveQcFlags]=true`)
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+                expect(runs).to.have.lengthOf(4);
+                expect(runs.find(({ runNumber }) => runNumber === 56).qcFlags['7'].map(({ id }) => id)).to.have.all.members([101, 100]);
+                expect(runs.find(({ runNumber }) => runNumber === 56).qcFlags['4'].map(({ id }) => id)).to.have.all.members([102]);
+            }
         });
     });
 
