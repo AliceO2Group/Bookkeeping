@@ -423,6 +423,42 @@ module.exports = () => {
             }
         });
 
+        it('should successfully filter by detectors notBadFraction', async () => {
+            const dataPassId = 1;
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
+                        + '&filter[detectorsQc][_1][notBadFraction][operator]=>&filter[detectorsQc][_1][notBadFraction][limit]=0.7');
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107]);
+            }
+            {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
+                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.9&filter[detectorsQc][mcReproducibleAsNotBad]=true');
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            }
+                        {
+                const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
+                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.7'
+                        + '&filter[detectorsQc][_16][notBadFraction][operator]=>&filter[detectorsQc][_16][notBadFraction][limit]=0.9'
+                    );
+
+                expect(response.status).to.equal(200);
+                const { data: runs } = response.body;
+
+                expect(runs).to.be.an('array');
+                expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+            }
+        });
+
         it('should return http status 400 if updatedAt from larger than to', async () => {
             const timeNow = Date.now();
             const response =

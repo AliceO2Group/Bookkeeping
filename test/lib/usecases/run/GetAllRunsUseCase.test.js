@@ -797,8 +797,62 @@ module.exports = () => {
             expect(runs).to.have.lengthOf(0);
         }
     });
+    
+    it('should successfully filter by detectors notBadFraction', async () => {
+        const dataPassIds = [1];
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.7 } } },
+                    },
+                },
+            });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.8 } } },
+                    },
+                },
+            });
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107, 106]);
+        }
 
-    it('should successfully handle query including QC flags', async () => {
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.9 } }, mcReproducibleAsNotBad: true },
+                    },
+                },
+            });
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {
+                            '_2': { notBadFraction: { operator: '>', limit: 0.8 } },
+                            '_1': { notBadFraction: {operator: '<', limit: 0.8 } },
+                        },
+                    },
+                },
+            });
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107]);
+        }
+    });
+
+        it('should successfully handle query including QC flags', async () => {
         {
             await assert.rejects(() => new GetAllRunsUseCase().execute({
                 query: {
