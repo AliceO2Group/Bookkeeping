@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -22,7 +22,7 @@
     "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.8.4",
+    "@aliceo2/web-ui": "2.8.5",
     "@grpc/grpc-js": "1.13.0",
     "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
