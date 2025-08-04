@@ -46,7 +46,7 @@ const { runService } = require('../../../lib/server/services/run/RunService.js')
 
 const { expect } = chai;
 
-const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
 module.exports = () => {
     let page;
@@ -867,12 +867,12 @@ module.exports = () => {
     });
 
     it('should successfully display runs export modal on click on export button', async () => {
-        let exportModal = await page.$('#export-data-modal');
+        let exportModal = await page.$('#export-runs-modal');
         expect(exportModal).to.be.null;
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-data-modal');
-        exportModal = await page.$('#export-data-modal');
+        await page.waitForSelector('#export-runs-modal');
+        exportModal = await page.$('#export-runs-modal');
 
         expect(exportModal).to.not.be.null;
     });
@@ -882,10 +882,10 @@ module.exports = () => {
 
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
-        const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
+        const truncatedExportWarning = await page.waitForSelector('#export-runs-modal #truncated-export-warning');
         expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
             .to
-            .equal('The data export is limited to 100 entries, only the most recent data will be exported');
+            .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
@@ -903,11 +903,11 @@ module.exports = () => {
     it('should successfully export filtered runs', async () => {
         await goToPage(page, 'run-overview');
 
-        const targetFileName = 'data.json';
+        const targetFileName = 'runs.json';
 
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -944,7 +944,7 @@ module.exports = () => {
 
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#export-runs-modal');
 
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');

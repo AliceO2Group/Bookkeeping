@@ -179,7 +179,7 @@ module.exports = () => {
         await waitForTableLength(page, 4);
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
         await page.evaluate(() => {
@@ -187,7 +187,7 @@ module.exports = () => {
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
 
-        const targetFileName = 'data.json';
+        const targetFileName = 'runs.json';
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);

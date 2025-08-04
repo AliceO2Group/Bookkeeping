@@ -191,13 +191,13 @@ module.exports = () => {
     });
 
     it('should successfully export runs', async () => {
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
-        const targetFileName = 'data.json';
+        const targetFileName = 'runs.json';
 
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#export-runs-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
