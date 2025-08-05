@@ -1,3 +1,16 @@
+/**
+ * @license
+ * Copyright CERN and copyright holders of ALICE O2. This software is
+ * distributed under the terms of the GNU General Public License v3 (GPL
+ * Version 3), copied verbatim in the file "COPYING".
+ *
+ * See http://alice-o2.web.cern.ch/license for full licensing information.
+ *
+ * In applying this license CERN does not waive the privileges and immunities
+ * granted to it by virtue of its status as an Intergovernmental Organization
+ * or submit itself to any jurisdiction.
+ */
+
 const { waitForNavigation, pressElement, getInnerText, expectUrlParams, waitForTableLength } = require('../defaults.js');
 
 /**
@@ -32,7 +45,7 @@ exports.navigateToRunsPerDataPass = async (page, lhcPeriodId, dataPassId, expect
 exports.navigateToRunsPerSimulationPass = async (page, lhcPeriodId, simulationPassId, expectedRowsCount) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
     const pdpBeamType = await getInnerText(await page.waitForSelector(`#row${lhcPeriodId}-beamTypes`));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedSimulationPasses a`, true));
     expectUrlParams(page, { page: 'simulation-passes-per-lhc-period-overview', lhcPeriodId });
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${simulationPassId}-associatedRuns a`, true));
