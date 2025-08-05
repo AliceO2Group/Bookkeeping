@@ -190,6 +190,20 @@ module.exports = () => {
         await waitForNavigation(page, () => page.goBack());
     });
 
+
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await pressElement(page, '#openFilterToggle', true);
+
+        await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
+        await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
+        await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#openFilterToggle', true);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
+    });
+
     it('should successfully export runs', async () => {
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
 
