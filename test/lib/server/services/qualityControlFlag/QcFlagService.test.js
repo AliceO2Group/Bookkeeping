@@ -290,9 +290,9 @@ module.exports = () => {
             expect(await qcFlagSummaryService.getSummary({ simulationPassId: 1 })).to.be.eql({
                 106: {
                     1: {
-                        missingVerificationsCount: 1,
+                        missingVerificationsCount: 2,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.7222222,
+                        badEffectiveRunCoverage: 0.9288889,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },
