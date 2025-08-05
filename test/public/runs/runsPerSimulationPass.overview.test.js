@@ -30,11 +30,13 @@ const {
     expectUrlParams,
     testTableSortingByColumn,
     waitForTableLength,
+    expectColumnValues,
 } = require('../defaults.js');
 
 const { expect } = chai;
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { navigateToRunsPerSimulationPass } = require('./navigationUtils.js');
 
 const DETECTORS = [
     'CPV',
@@ -192,6 +194,7 @@ module.exports = () => {
 
 
     it('should successfully apply detectors notBadFraction filters', async () => {
+        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
         await pressElement(page, '#openFilterToggle', true);
 
         await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
@@ -202,6 +205,7 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
+        await navigateToRunsPerSimulationPass(page, 1, 2, 3);
     });
 
     it('should successfully export runs', async () => {
