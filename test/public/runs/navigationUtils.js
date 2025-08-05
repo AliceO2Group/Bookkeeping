@@ -44,11 +44,10 @@ exports.navigateToRunsPerDataPass = async (page, lhcPeriodId, dataPassId, expect
  */
 exports.navigateToRunsPerSimulationPass = async (page, lhcPeriodId, simulationPassId, expectedRowsCount) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
-    const pdpBeamType = await getInnerText(await page.waitForSelector(`#row${lhcPeriodId}-beamTypes`));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedSimulationPasses a`, true));
     expectUrlParams(page, { page: 'simulation-passes-per-lhc-period-overview', lhcPeriodId });
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${simulationPassId}-associatedRuns a`, true));
-    expectUrlParams(page, { page: 'runs-per-simulation-pass', dataPassId: simulationPassId, pdpBeamType });
+    expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId });
     await waitForTableLength(page, expectedRowsCount);
 };
