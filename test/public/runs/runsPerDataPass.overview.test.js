@@ -39,7 +39,7 @@ const {
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
 const { BkpRoles } = require('../../../lib/domain/enums/BkpRoles.js');
-const { navigateToRunsPerDataPass } = require('./dataPassesUtilities.js');
+const { navigateToRunsPerDataPass } = require('./navigationUtils.js');
 
 const { expect } = chai;
 
