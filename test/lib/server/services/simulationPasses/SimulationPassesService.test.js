@@ -21,7 +21,7 @@ const LHC23k6c = {
     id: 1,
     name: 'LHC23k6c',
     jiraId: 'SIMTICKET-1',
-    pdpBeamTypes: ['pp'],
+    pdpBeamTypes: ['PbPB', 'pp'],
     description: 'Some Random general purpose for LHC23k6c',
     pwg: 'PWGX2',
     requestedEventsCount: 1345555,
