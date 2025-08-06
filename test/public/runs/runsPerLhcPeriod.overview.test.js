@@ -73,7 +73,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a' } });
+        const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
 
         expect(response.status()).to.equal(200);
 
@@ -236,5 +236,19 @@ module.exports = () => {
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
+        await page.goBack()
+    });
+
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await pressElement(page, '#openFilterToggle', true);
+
+        await page.waitForSelector('#inelasticInteractionRateAvg-operator');
+        await page.select('#inelasticInteractionRateAvg-operator', '<=');
+        await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
+        await expectColumnValues(page, 'runNumber', ['56', '54']);
+
+        await pressElement(page, '#openFilterToggle', true);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 };
