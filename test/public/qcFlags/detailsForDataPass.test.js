@@ -66,7 +66,7 @@ module.exports = () => {
 
     it('can navigate to runs per data pass page', async () => {
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
-        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1', pdpBeamType: 'pp' });
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1', pdpBeamTypes: 'pp' });
         await waitForNavigation(page, () => page.goBack());
     });
 
