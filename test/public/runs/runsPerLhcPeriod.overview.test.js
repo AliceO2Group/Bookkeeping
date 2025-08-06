@@ -29,6 +29,7 @@ const {
     getInnerText,
     expectUrlParams,
     fillInput,
+    expectColumnValues,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -152,9 +153,9 @@ module.exports = () => {
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
-        await pressElement(page, amountItems5);
-        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await pressElement(page, amountItems5, true);
         await waitForTableLength(page, 4);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
@@ -190,7 +191,7 @@ module.exports = () => {
         const targetFileName = 'runs.json';
 
         // First export
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
         await page.waitForSelector('select.form-control', { timeout: 200 });
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
