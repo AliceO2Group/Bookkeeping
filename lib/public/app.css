@@ -226,6 +226,29 @@ th.text-center, td.text-center {
 }
 
 
+.section-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #333;
+  margin: 1rem 0;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #333;
+}
+
+.section-divider::before {
+  margin-right: 0.75em;
+}
+
+.section-divider::after {
+  margin-left: 0.75em;
+}
+
 /* alerts */
 
 .alert {

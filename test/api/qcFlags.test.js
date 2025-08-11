@@ -150,9 +150,9 @@ module.exports = () => {
             expect(data).to.be.eql({
                 106: {
                     1: {
-                        missingVerificationsCount: 1,
+                        missingVerificationsCount: 2,
                         mcReproducible: false,
-                        badEffectiveRunCoverage: 0.7222222,
+                        badEffectiveRunCoverage: 0.9288889,
                         explicitlyNotBadEffectiveRunCoverage: 0,
                     },
                 },

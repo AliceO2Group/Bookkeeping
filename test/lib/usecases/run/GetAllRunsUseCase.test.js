@@ -17,6 +17,8 @@ const chai = require('chai');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibrationStatus.js');
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../lib/server/errors/BadParameterError.js');
 
 const { expect } = chai;
 
@@ -793,6 +795,113 @@ module.exports = () => {
                 },
             });
             expect(runs).to.have.lengthOf(0);
+        }
+    });
+    
+    it('should successfully filter by detectors notBadFraction', async () => {
+        const dataPassIds = [1];
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.7 } } },
+                    },
+                },
+            });
+            expect(runs).to.be.an('array');
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.8 } } },
+                    },
+                },
+            });
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107, 106]);
+        }
+
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.9 } }, mcReproducibleAsNotBad: true },
+                    },
+                },
+            });
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([106]);
+        }
+
+        {
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds,
+                        detectorsQc: {
+                            '_2': { notBadFraction: { operator: '>', limit: 0.8 } },
+                            '_1': { notBadFraction: {operator: '<', limit: 0.8 } },
+                        },
+                    },
+                },
+            });
+            expect(runs.map(({ runNumber }) => runNumber)).to.have.all.members([107]);
+        }
+    });
+
+        it('should successfully handle query including QC flags', async () => {
+        {
+            await assert.rejects(() => new GetAllRunsUseCase().execute({
+                query: {
+                    include: { effectiveQcFlags: true },
+                },
+            }), new BadParameterError('If including QC flags, one and exactly one'
+                    + 'of `dataPassId`, `simulationPassId` or `lhcPeriodId` is required'));
+        }
+
+        { // Data Passes
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        dataPassIds: [1],
+                    },
+                    include: { effectiveQcFlags: true },
+                },
+            });
+            expect(runs).to.have.lengthOf(3);
+            expect(runs.find(({ runNumber }) => runNumber === 107).qcFlags['1'].map(({ id }) => id)).to.have.all.members([202, 201]);
+            expect(runs.find(({ runNumber }) => runNumber === 107).qcFlags['2'].map(({ id }) => id)).to.have.all.members([203]);
+            expect(runs.find(({ runNumber }) => runNumber === 106).qcFlags['1'].map(({ id }) => id)).to.have.all.members([3, 2, 1]);
+        }
+
+        { // Simulation Passes
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        simulationPassIds: [1],
+                    },
+                    include: { effectiveQcFlags: true },
+                },
+            });
+            expect(runs).to.have.lengthOf(3);
+            expect(runs.find(({ runNumber }) => runNumber === 106).qcFlags['1'].map(({ id }) => id)).to.have.all.members([6, 5]);
+        }
+
+        { // Synchronous flags
+            const { runs } = await new GetAllRunsUseCase().execute({
+                query: {
+                    filter: {
+                        lhcPeriodIds: [1],
+                    },
+                    include: { effectiveQcFlags: true },
+                },
+            });
+            expect(runs).to.have.lengthOf(4);
+            expect(runs.find(({ runNumber }) => runNumber === 56).qcFlags['7'].map(({ id }) => id)).to.have.all.members([101, 100]);
+            expect(runs.find(({ runNumber }) => runNumber === 56).qcFlags['4'].map(({ id }) => id)).to.have.all.members([102]);
         }
     });
 };
