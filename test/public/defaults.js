@@ -773,15 +773,15 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
     // Sort in ASCENDING manner
-    await this.pressElement(page, `th#${columnId}`);
+    await this.pressElement(page, `th#${columnId}`, true);
     this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
     // Sort in DESCENDING manner
-    await this.pressElement(page, `th#${columnId}`);
+    await this.pressElement(page, `th#${columnId}`, true);
     this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
     // Revoke sorting
-    await this.pressElement(page, `th#${columnId}`);
+    await this.pressElement(page, `th#${columnId}`, true);
     this.expectColumnValues(page, columnId, notOrderData);
 };
 
