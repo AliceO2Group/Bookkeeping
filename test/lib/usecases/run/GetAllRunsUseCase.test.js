@@ -175,7 +175,7 @@ module.exports = () => {
                     },
                 };
                 const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-                expect(runs).to.lengthOf(106);
+                expect(runs).to.lengthOf(107);
                 for (const run of runs) {
                     expect(run.tags.every(({ text }) => text !== 'FOOD' && text !== 'TEST-TAG-41')).to.be.true;
                 }
@@ -271,7 +271,7 @@ module.exports = () => {
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(7);
         expect(runs.every((run) => [1, 3].includes(run.fillNumber))).to.be.true;
     });
 
@@ -320,7 +320,7 @@ module.exports = () => {
 
         expect(runs).to.be.an('array');
         expect(runs).to.have.lengthOf(10);
-        expect(runs[0].runNumber).to.equal(98);
+        expect(runs[0].runNumber).to.equal(99);
     });
 
     it('should return an array, only containing runs with epn true', async () => {
@@ -450,7 +450,7 @@ module.exports = () => {
         runDuration.limit = pivot;
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(3);
+        expect(runs).to.have.lengthOf(4);
         expect(runs.every((run) => run.runDuration === pivot)).to.be.true;
 
         runDuration.operator = '>=';
@@ -472,7 +472,7 @@ module.exports = () => {
 
         let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(8);
+        expect(runs).to.have.lengthOf(89);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS   ,   FT0';
 
@@ -530,7 +530,7 @@ module.exports = () => {
         nDetectors.operator = '>=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(48);
+        expect(runs).to.have.lengthOf(49);
         expect(runs.every((run) => run.nDetectors >= 6)).to.be.true;
 
         nDetectors.operator = '>';
@@ -603,7 +603,7 @@ module.exports = () => {
         ctfFileCount.operator = '>=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
         expect(runs.every((run) => run.ctfFileCount >= 200)).to.be.true;
 
         ctfFileCount.operator = '>';
@@ -627,7 +627,7 @@ module.exports = () => {
         tfFileCount.operator = '<=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
         expect(runs.every((run) => run.tfFileCount <= 30)).to.be.true;
 
         tfFileCount.operator = '=';

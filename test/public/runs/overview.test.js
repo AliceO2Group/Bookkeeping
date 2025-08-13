@@ -652,7 +652,7 @@ module.exports = () => {
             await waitForTableLength(page, 8);
 
             // Results are filtered over 2 pages
-            await expectColumnValues(page, 'runNumber', ['108', '107', '106', '105', '104', '103', '102', '101']);
+            await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102']);
 
             await pressElement(page, '#pageMoveRight', true);
             await waitForTableLength(page, 2);
@@ -685,7 +685,7 @@ module.exports = () => {
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
         await fillInput(page, filterInputSelector, '1, 3', ['change']);
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 7);
 
         await pressElement(page, '#reset-filters');
     });

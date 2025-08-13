@@ -294,7 +294,7 @@ module.exports = () => {
             );
             expect(processExecution).to.not.be.null;
             expect(processExecution.detectorId).to.equal(25);
-            const { name } = await getDplDetectorOrFail({ detectorId: 22 });
+            const { name } = await getDplDetectorOrFail({ detectorId: 25 });
             expect(name).to.equal('NON-EXISTING-DETECTOR');
             expect(processExecution.processId).to.equal(1);
             expect(processExecution.hostId).to.equal(1);
