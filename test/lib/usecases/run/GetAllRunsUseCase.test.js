@@ -184,7 +184,7 @@ module.exports = () => {
     });
 
     it('should successfully filter on run definition', async () => {
-        const PHYSICS_COUNT = 6;
+        const PHYSICS_COUNT = 7;
         const COSMICS_COUNT = 2;
         const TECHNICAL_COUNT = 1;
         const SYNTHETIC_COUNT = 2;
@@ -388,7 +388,7 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase()
                 .execute(getAllRunsDto);
             expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf(1);
+            expect(runs).to.have.lengthOf(2);
         }
     });
 
@@ -457,7 +457,7 @@ module.exports = () => {
         ({ runs } = await getAllRunsUseCase.execute(getAllRunsDto));
         expect(runs).to.be.an('array');
 
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
         expect(runs.every((run) => run.runDuration >= pivot)).to.be.true;
 
         runDuration.operator = '>';
@@ -537,7 +537,7 @@ module.exports = () => {
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
         // 3 runs have 15 detectors
-        expect(runs).to.have.lengthOf(3);
+        expect(runs).to.have.lengthOf(4);
     });
 
     it('should successfully filter on flps number', async () => {
@@ -609,7 +609,7 @@ module.exports = () => {
         ctfFileCount.operator = '>';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(6);
+        expect(runs).to.have.lengthOf(7);
         expect(runs.every((run) => run.ctfFileCount >= 500)).to.be.true;
     });
 
@@ -633,7 +633,7 @@ module.exports = () => {
         tfFileCount.operator = '=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(8);
         expect(runs.every((run) => run.tfFileCount === 30)).to.be.true;
 
         tfFileCount.operator = '>=';

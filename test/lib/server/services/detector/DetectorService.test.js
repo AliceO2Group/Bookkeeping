@@ -24,6 +24,7 @@ module.exports = () => {
             { id: 1, name: 'CPV' },
             { id: 18, name: 'CTP' },
             { id: 2, name: 'EMC' },
+            { id: 23, name: 'EVS' },
             { id: 3, name: 'FDD' },
             { id: 19, name: 'FIT' },
             { id: 7, name: 'FT0' },
@@ -34,16 +35,15 @@ module.exports = () => {
             { id: 8, name: 'MCH' },
             { id: 9, name: 'MFT' },
             { id: 10, name: 'MID' },
+            { id: 24, name: 'MUD' },
             { id: 11, name: 'PHS' },
             { id: 20, name: 'QC-SPECIFIC' },
             { id: 12, name: 'TOF' },
             { id: 13, name: 'TPC' },
             { id: 14, name: 'TRD' },
             { id: 15, name: 'TST' },
-            { id: 16, name: 'ZDC' },
             { id: 22, name: 'VTX' },
-            { id: 23, name: 'EVS' },
-            { id: 24, name: 'MUD' },
+            { id: 16, name: 'ZDC' },
         ]);
     });
 };
