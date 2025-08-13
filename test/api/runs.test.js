@@ -209,7 +209,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(8);
+            expect(data).to.have.lengthOf(9);
         });
 
         it('should successfully filter on tags', async () => {

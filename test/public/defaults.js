@@ -170,11 +170,16 @@ module.exports.waitForTableLength = waitForTableToLength;
  * @return {Promise<void>} resolves once the expected amount is present
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
-    await page.waitForFunction(
-        (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
-        {},
-        amount,
-    );
+    try {
+        await page.waitForFunction(
+            (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+            {},
+            amount,
+        );
+    } catch {
+        const actualSize = (await page.$$('tbody tr')).length;
+        throw new Error(`Expected total rows count ${expectedSize}, but got ${actualSize}`);
+    }
 };
 
 /**
