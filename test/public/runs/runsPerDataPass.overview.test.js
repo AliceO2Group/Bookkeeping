@@ -553,4 +553,16 @@ module.exports = () => {
             { timeout: 10000, polling: 'mutation' },
         );
     });
+
+    it('should display correct AOT and MUON columns for different data passes', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4); // apass
+        await page.waitForSelector('#VTX');
+        await page.waitForSelector('#EVS');
+        await page.waitForSelector('#MUD');
+
+        await navigateToRunsPerDataPass(page, 3, 9, 1); // cpass
+        await page.waitForSelector('#VTX', { hidden: true });
+        await page.waitForSelector('#EVS');
+        await page.waitForSelector('#MUD');
+    });
 };
