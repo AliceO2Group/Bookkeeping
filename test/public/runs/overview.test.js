@@ -657,7 +657,7 @@ module.exports = () => {
             await pressElement(page, '#pageMoveRight', true);
             await waitForTableLength(page, 3);
 
-            await expectColumnValues(page, 'runNumber', ['100', '10']);
+            await expectColumnValues(page, 'runNumber', ['101', '100', '10']);
         };
 
         // First filter validation on the main page.
