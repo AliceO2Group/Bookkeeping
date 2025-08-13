@@ -177,8 +177,8 @@ module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
             amount,
         );
     } catch {
-        const actualSize = (await page.$$('tbody tr')).length;
-        throw new Error(`Expected total rows count ${expectedSize}, but got ${actualSize}`);
+        const actualCount = (await page.$$('#totalRowsCount')).innerText;
+        throw new Error(`Expected total rows count ${amount}, but got ${actualCount}`);
     }
 };
 

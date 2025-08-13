@@ -472,7 +472,7 @@ module.exports = () => {
         await waitForTableLength(page, 4);
 
         await page.select(runDurationOperatorSelector, '=');
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
 
         let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
 

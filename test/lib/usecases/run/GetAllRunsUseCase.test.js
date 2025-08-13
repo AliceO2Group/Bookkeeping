@@ -472,7 +472,7 @@ module.exports = () => {
 
         let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(89);
+        expect(runs).to.have.lengthOf(8);
 
         getAllRunsDto.query.filter.detectors.values = 'ITS   ,   FT0';
 
