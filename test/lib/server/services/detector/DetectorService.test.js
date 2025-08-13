@@ -41,6 +41,9 @@ module.exports = () => {
             { id: 14, name: 'TRD' },
             { id: 15, name: 'TST' },
             { id: 16, name: 'ZDC' },
+            { id: 22, name: 'VTX' },
+            { id: 23, name: 'EVS' },
+            { id: 24, name: 'MUD' },
         ]);
     });
 };

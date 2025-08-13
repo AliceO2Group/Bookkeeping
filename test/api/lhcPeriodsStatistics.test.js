@@ -54,10 +54,10 @@ const lhcPeriod_LHC23f = {
         id: 3,
         name: 'LHC23f',
     },
-    beamTypes: [],
+    beamTypes: ['O'],
     distinctEnergies: [],
-    dataPassesCount: 0,
-    runsCount: 0,
+    dataPassesCount: 1,
+    runsCount: 1,
     simulationPassesCount: 0,
 };
 
