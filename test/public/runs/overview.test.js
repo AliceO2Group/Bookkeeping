@@ -138,7 +138,7 @@ module.exports = () => {
 
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '8');
-        await expectInnerText(page, '#totalRowsCount', '108');
+        await expectInnerText(page, '#totalRowsCount', '109');
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -469,7 +469,7 @@ module.exports = () => {
 
         const runDurationLimitSelector = '#duration-operand';
         await fillInput(page, runDurationLimitSelector, '1500', ['change']);
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
 
         await page.select(runDurationOperatorSelector, '=');
         await waitForTableLength(page, 3);
@@ -655,7 +655,7 @@ module.exports = () => {
             await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102']);
 
             await pressElement(page, '#pageMoveRight', true);
-            await waitForTableLength(page, 2);
+            await waitForTableLength(page, 3);
 
             await expectColumnValues(page, 'runNumber', ['100', '10']);
         };
@@ -685,7 +685,7 @@ module.exports = () => {
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
         await fillInput(page, filterInputSelector, '1, 3', ['change']);
-        await waitForTableLength(page, 7);
+        await waitForTableLength(page, 8);
 
         await pressElement(page, '#reset-filters');
     });
