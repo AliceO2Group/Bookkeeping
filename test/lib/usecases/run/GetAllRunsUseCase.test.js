@@ -271,7 +271,7 @@ module.exports = () => {
         };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
+        expect(runs).to.have.lengthOf(6);
         expect(runs.every((run) => [1, 3].includes(run.fillNumber))).to.be.true;
     });
 
@@ -639,7 +639,7 @@ module.exports = () => {
         tfFileCount.operator = '>=';
         ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
         expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(8);
+        expect(runs).to.have.lengthOf(9);
         expect(runs.every((run) => run.tfFileCount >= 30)).to.be.true;
 
         tfFileCount.operator = '>';
