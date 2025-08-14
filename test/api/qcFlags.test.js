@@ -303,14 +303,12 @@ module.exports = () => {
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=or`);
-                console.log('TOBEC', response.body)
                 expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=none`);
-
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
@@ -322,15 +320,12 @@ module.exports = () => {
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
-                console.log('TOBEC', response.body)
-
                 expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
-
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
@@ -371,15 +366,12 @@ module.exports = () => {
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
-                console.log('TOBEC', response.body)
-
                 expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
-
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
