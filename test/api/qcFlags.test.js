@@ -302,16 +302,16 @@ module.exports = () => {
             const detectorId = 1;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPasId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jon%20Doe&filter[createdBy][operator]=or`);
-
-                expect(response.data).to.be.lengthOf(2);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=or`);
+                console.log('TOBEC', response.body)
+                expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPasId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jon%20Doe&filter[createdBy][operator]=none`);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=none`);
 
-                expect(response.data).to.be.lengthOf(0);
+                expect(response.body.data).to.be.lengthOf(0);
             }
         });
 
@@ -321,16 +321,17 @@ module.exports = () => {
             const detectorId = 1;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=or`);
+                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
+                console.log('TOBEC', response.body)
 
-                expect(response.data).to.be.lengthOf(2);
+                expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=none`);
+                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
 
-                expect(response.data).to.be.lengthOf(0);
+                expect(response.body.data).to.be.lengthOf(0);
             }
         });
 
@@ -365,20 +366,21 @@ module.exports = () => {
         });
 
         it('should successfult fiter sync flags by created by name', async () => {
-            const runNumber = 54;
+            const runNumber = 56;
             const detectorId = 7;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=or`);
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
+                console.log('TOBEC', response.body)
 
-                expect(response.data).to.be.lengthOf(2);
+                expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=none`);
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
 
-                expect(response.data).to.be.lengthOf(0)
+                expect(response.body.data).to.be.lengthOf(0);
             }
         });
     });
