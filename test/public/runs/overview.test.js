@@ -1025,7 +1025,7 @@ module.exports = () => {
 
         // Running run
         await pressElement(page, `#row${createdRunId}-runNumber-text .popover-trigger`);
-        popoverSelector = await getPopoverSelector(await page.waitForSelector('#row109-runNumber-text .popover-trigger'));
+        popoverSelector = await getPopoverSelector(await page.waitForSelector('#row110-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(3)`, {
