@@ -416,7 +416,7 @@ module.exports = () => {
         });
 
         await checkTableSizeAndDefinition(
-            16,
+            17,
             [RunDefinition.COSMICS, RunDefinition.TECHNICAL, RunDefinition.PHYSICS, RunDefinition.SYNTHETIC, RunDefinition.CALIBRATION],
         );
     });
