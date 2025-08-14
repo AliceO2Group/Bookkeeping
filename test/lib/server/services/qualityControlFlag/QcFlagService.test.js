@@ -1748,4 +1748,40 @@ module.exports = () => {
             });
         });
     });
+
+    it('should successfult fiter sync flags by created by name', async () => {
+        {
+            const { rows } = qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber: 54, detectorId: 7 }, {}, { createdBy: { names: ['Jan Jensen'] }, operator: 'or'});
+            expect(rows).to.be.lengthOf(2);
+        }
+
+        {
+            const { rows } = qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber: 54, detectorId: 7 }, {}, { createdBy: { names: ['Jan Jensen'] }, operator: 'none'});
+            expect(rows).to.be.lengthOf(0);
+        }
+    });
+
+    it('should successfult fiter data pass flags by created by name', async () => {
+        {
+            const { rows } = qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['Jon Doe'] }, operator: 'or'});
+            expect(rows).to.be.lengthOf(2);
+        }
+
+        {
+            const { rows } = qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['Jon Doe'] }, operator: 'none'});
+            expect(rows).to.be.lengthOf(0);
+        }
+    });
+
+    it('should successfult fiter simulation pass flags by created by name', async () => {
+        {
+            const { rows } = qcFlagService.getAllPerSimulationPassAndRunAndDetector({ simulationPassId: 1, runNumber: 106, detectorId: 1 }, {}, { createdBy: { names: ['Jan Jansen'] }, operator: 'or'});
+            expect(rows).to.be.lengthOf(2);
+        }
+
+        {
+            const { rows } = qcFlagService.getAllPerSimulationPassAndRunAndDetector({ simulationPassId: 1, runNumber: 106, detectorId: 1 }, {}, { createdBy: { names: ['Jan Jansen'] }, operator: 'none'});
+            expect(rows).to.be.lengthOf(0);
+        }
+    });
 };

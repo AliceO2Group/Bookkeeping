@@ -294,6 +294,46 @@ module.exports = () => {
                 expect(titleError.detail).to.equal('"query.page.limit" must be greater than or equal to 1');
             }
         });
+
+
+        it('should successfult fiter data pass flags by created by name', async () => {
+            const dataPassId = 1;
+            const runNumber = 107;
+            const detectorId = 1;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/perDataPass?dataPasId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jon%20Doe&filter[createdBy][operator]=or`);
+
+                expect(response.data).to.be.lengthOf(2);
+            }
+
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/perDataPass?dataPasId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jon%20Doe&filter[createdBy][operator]=none`);
+
+                expect(response.data).to.be.lengthOf(0);
+            }
+        });
+
+        it('should successfult fiter simulation pass flags by created by name', async () => {
+            const simulationPassId = 1;
+            const runNumber = 106;
+            const detectorId = 1;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/perDataPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=or`);
+
+                expect(response.data).to.be.lengthOf(2);
+            }
+
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/perDataPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=none`);
+
+                expect(response.data).to.be.lengthOf(0);
+            }
+        });
+
     });
 
     describe('GET /api/qcFlags/synchronous', () => {
@@ -321,6 +361,24 @@ module.exports = () => {
                 const [flag] = flags;
                 expect(flag.id).to.be.equal(100);
                 expect(flag.verifications[0].comment).to.be.equal('good');
+            }
+        });
+
+        it('should successfult fiter sync flags by created by name', async () => {
+            const runNumber = 54;
+            const detectorId = 7;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=or`);
+
+                expect(response.data).to.be.lengthOf(2);
+            }
+
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jensen&filter[createdBy][operator]=none`);
+
+                expect(response.data).to.be.lengthOf(0)
             }
         });
     });
