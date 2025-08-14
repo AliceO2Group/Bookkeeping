@@ -639,10 +639,11 @@ module.exports.expectInputValue = async (page, selector, value) => {
  * For now only handle scalar parameters
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {Object} expectedUrlParameters the expected parameters as an object of key values
+ * @param {object} expectedUrlParameters the expected parameters as an object of key values
+ * @param {string[]} url params which are ignored when checking their value
  * @return {void}
  */
-module.exports.expectUrlParams = (page, expectedUrlParameters) => {
+module.exports.expectUrlParams = (page, expectedUrlParameters, ignoreParams = []) => {
     const [, parametersExpr] = page.url().split('?');
     const urlParameters = parametersExpr.split('&');
     const mismatchingUrlParams = {};
@@ -650,7 +651,7 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
         // Convert expected to string, if it is a number for example
-        if (`${expectedUrlParameters[key]}` !== value) {
+        if (`${expectedUrlParameters[key]}` !== value && !ignoreParams.includes(key)) {
             mismatchingUrlParams[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,
