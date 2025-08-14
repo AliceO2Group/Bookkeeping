@@ -26,6 +26,7 @@ const {
     waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { navigateToRunsPerDataPass } = require('../runs/navigationUtils.js');
 
 const { expect } = chai;
 
