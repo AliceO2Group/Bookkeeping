@@ -331,12 +331,12 @@ module.exports = () => {
         await waitForTableLength(page, 2);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of', true);
-        await waitForTableTotalRowsCountToEqual(page, 106);
+        await waitForTableTotalRowsCountToEqual(page, 107);
         await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on definition', async () => {
-        await waitForTableTotalRowsCountToEqual(page, 108);
+        await waitForTableTotalRowsCountToEqual(page, 109);
 
         const filterInputSelectorPrefix = '#run-definition-checkbox-';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
@@ -379,10 +379,10 @@ module.exports = () => {
         });
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS]);
+        await checkTableSizeAndDefinition(11, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(12, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
+        await checkTableSizeAndDefinition(13, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
         await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);

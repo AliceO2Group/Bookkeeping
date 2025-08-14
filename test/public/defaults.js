@@ -171,6 +171,7 @@ module.exports.waitForTableLength = waitForTableToLength;
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
     try {
+        await page.waitForSelector('#totalRowsCount');
         await page.waitForFunction(
             (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
             {},
