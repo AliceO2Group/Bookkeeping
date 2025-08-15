@@ -1763,12 +1763,12 @@ module.exports = () => {
 
     it('should successfult fiter data pass flags by created by name', async () => {
         {
-            const { rows } = await qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['Jon Doe'], operator: 'or' }});
+            const { rows } = await qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['John Doe'], operator: 'or' }});
             expect(rows).to.be.lengthOf(2);
         }
 
         {
-            const { rows } = await qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['Jon Doe'], operator: 'none' }});
+            const { rows } = await qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['John Doe'], operator: 'none' }});
             expect(rows).to.be.lengthOf(0);
         }
     });
