@@ -26,22 +26,10 @@ const {
     waitForTableLength,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { navigateToRunsPerDataPass } = require('../runs/navigationUtils.js');
 
 const { expect } = chai;
 
-/**
- * Navigate to runs per data pass by navigating to data pass per period first
- *
- * @param {puppeteer.Page} page puppeteer page
- * @param {number} lhcPeriodId id of the period to which data pass is linked
- * @param {number} dataPassId id of the data pass that needs to be displayed
- * @return {Promise<void>} resolve once the navigation is finished
- */
-const navigateToRunsPerDataPass = async (page, lhcPeriodId, dataPassId) => {
-    await waitForNavigation(page, () => pressElement(page, '#lhc-period-overview', true));
-    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses-text a`, true));
-    await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns-text a`, true));
-};
 
 module.exports = () => {
     let page;
@@ -228,7 +216,7 @@ module.exports = () => {
     });
 
     it('should allow multiple runs and detectors to be selected', async () => {
-        await navigateToRunsPerDataPass(page, 1, 3);
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
 
         await pressElement(page, '#row56-FT0-text .select-multi-flag');
         await pressElement(page, '#row56-ITS-text .select-multi-flag');
@@ -247,7 +235,7 @@ module.exports = () => {
     });
 
     it('should have timebased false and display no overlap if times dont overlap', async () => {
-        await navigateToRunsPerDataPass(page, 1, 3);
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
         await pressElement(page, '#row56-ITS-text .select-multi-flag');
 
@@ -259,7 +247,7 @@ module.exports = () => {
     });
 
     it('should set the timebased unavailable if at least one run has no end time and multiple are selected', async () => {
-        await navigateToRunsPerDataPass(page, 1, 3);
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
         await pressElement(page, '#row49-ITS-text .select-multi-flag');
 
@@ -275,7 +263,7 @@ module.exports = () => {
     });
 
     it('should successfully create QC flags for multiple detectors and runs', async () => {
-        await navigateToRunsPerDataPass(page, 2, 5);
+        await navigateToRunsPerDataPass(page, 2, 5, 4);
         await pressElement(page, '#row56-ITS-text .select-multi-flag');
         await pressElement(page, '#row56-FT0-text .select-multi-flag');
         await pressElement(page, '#row54-ITS-text .select-multi-flag');
