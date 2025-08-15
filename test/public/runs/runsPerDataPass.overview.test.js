@@ -487,11 +487,12 @@ module.exports = () => {
         });
 
         it('should successfully freeze a given data pass', async () => {
+            await navigateToRunsPerDataPass(page, 2, 1, 3);
             await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
             const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
 
             await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Freeze the data pass');
-            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+            await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         });
 
         it('should successfully disable QC flag creation when data pass is frozen', async () => {
@@ -552,5 +553,17 @@ module.exports = () => {
             'QC',
             { timeout: 10000, polling: 'mutation' },
         );
+    });
+
+    it('should display correct AOT and MUON columns for different data passes', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4); // apass
+        await page.waitForSelector('#VTX');
+        await page.waitForSelector('#EVS');
+        await page.waitForSelector('#MUD');
+
+        await navigateToRunsPerDataPass(page, 3, 9, 1); // cpass
+        await page.waitForSelector('#VTX', { hidden: true });
+        await page.waitForSelector('#EVS');
+        await page.waitForSelector('#MUD');
     });
 };

@@ -124,13 +124,30 @@ module.exports = () => {
                 name: 'GLO',
                 type: DetectorType.QC_ONLY,
             },
+
             {
-                id: 22,
+                    id: 22,
+                    name: 'VTX',
+                    type: DetectorType.AOT_GLO,
+                },
+                {
+                    id: 23,
+                    name: 'EVS',
+                    type: DetectorType.AOT_EVENT,
+                },
+                {
+                    id: 24,
+                    name: 'MUD',
+                    type: DetectorType.MUON_GLO,
+                },
+
+            {
+                id: 25,
                 name: 'A-NEW-DETECTOR',
                 type: 'PHYSICAL',
             },
             {
-                id: 23,
+                id: 26,
                 name: 'A-NEW-ONE',
                 type: 'PHYSICAL',
             },

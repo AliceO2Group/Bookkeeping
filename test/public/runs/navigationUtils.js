@@ -24,12 +24,11 @@ const { waitForNavigation, pressElement, getInnerText, expectUrlParams, waitForT
  */
 exports.navigateToRunsPerDataPass = async (page, lhcPeriodId, dataPassId, expectedRowsCount) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
-    const pdpBeamType = await getInnerText(await page.waitForSelector(`#row${lhcPeriodId}-beamTypes`));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedDataPasses a`, true));
     expectUrlParams(page, { page: 'data-passes-per-lhc-period-overview', lhcPeriodId });
     await page.waitForSelector('th#description');
     await waitForNavigation(page, () => pressElement(page, `#row${dataPassId}-associatedRuns a`, true));
-    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId, pdpBeamType });
+    expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId }, ['pdpBeamType']);
     await waitForTableLength(page, expectedRowsCount);
 };
 
