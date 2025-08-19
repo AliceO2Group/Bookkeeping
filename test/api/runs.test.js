@@ -267,7 +267,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data).to.lengthOf(10);
+            expect(data).to.lengthOf(11);
             expect(data.every(({ definition }) => definition === RunDefinition.PHYSICS)).to.be.true;
         });
 
@@ -357,7 +357,7 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.be.an('array');
 
-            expect(data).to.have.lengthOf(14);
+            expect(data).to.have.lengthOf(15);
         });
 
         it('should successfully filter on updatedAt', async () => {
@@ -372,7 +372,7 @@ module.exports = () => {
             const { data } = response.body;
 
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(10);
+            expect(data).to.have.lengthOf(11);
         });
 
         const inelasticInteractionRateFilteringTestsParameters = {
@@ -496,7 +496,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
 
             const { data } = response.body;
-            expect(data.length).to.equal(7);
+            expect(data.length).to.equal(8);
         });
 
         it('should return 400 if "runQuality" is invalid', async () => {
@@ -527,7 +527,7 @@ module.exports = () => {
 
             const { data } = response.body;
             expect(data).to.be.an('array');
-            expect(data).to.have.lengthOf(48);
+            expect(data).to.have.lengthOf(49);
         });
 
         it('should successfully filter on lhcPeriod', async () => {
@@ -933,7 +933,7 @@ module.exports = () => {
                     expect(res.body.data.odcTopologyFullName).to.equal('synchronous-workflow');
                     expect(res.body.data).to.be.an('object');
                     expect(res.body.data.runType.id).to.be.a('number');
-                    expect(res.body.data.id).to.equal(109);
+                    expect(res.body.data.id).to.equal(110);
 
                     done();
                 });
