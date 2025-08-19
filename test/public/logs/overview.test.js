@@ -516,4 +516,13 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#row119-lhcFills a'));
         expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
     });
+
+    it('should successfult navigate to run details via popover', async () => {
+        await goToPage(page, 'log-overview');
+        const cellSelector = 'td#row119-runs'
+        await page.hover(cellSelector);
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector(`${cellSelector} .popover-trigger`));
+        await waitForNavigation(page, () => pressElement(page, `${popoverSelector} a`))
+        expectUrlParams(page, { page: 'run-detail', runNumber: 2 })
+    });
 };
