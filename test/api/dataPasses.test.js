@@ -73,9 +73,9 @@ module.exports = () => {
                     }
 
                     const { data, meta } = res.body;
-                    expect(meta).to.be.eql({ page: { totalCount: 5, pageCount: 1 } });
+                    expect(meta).to.be.eql({ page: { totalCount: 6, pageCount: 1 } });
                     expect(data).to.be.an('array');
-                    expect(data).to.be.lengthOf(5);
+                    expect(data).to.be.lengthOf(6);
 
                     done();
                 });
@@ -211,8 +211,9 @@ module.exports = () => {
 
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
-                    expect(dataPasses).to.be.lengthOf(5);
+                    expect(dataPasses).to.be.lengthOf(6);
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.members([
+                        'LHC23f_cpass0',
                         'LHC22b_apass2_skimmed',
                         'LHC22a_apass2',
                         'LHC22a_apass1',
@@ -236,6 +237,7 @@ module.exports = () => {
                     const { data: dataPasses } = res.body;
                     expect(dataPasses).to.be.an('array');
                     expect(dataPasses.map(({ name }) => name)).to.have.ordered.deep.members([
+                        'LHC22b_apass2_skimmed',
                         'LHC22a_apass2',
                         'LHC22a_apass1',
                         'LHC22b_skimming',
