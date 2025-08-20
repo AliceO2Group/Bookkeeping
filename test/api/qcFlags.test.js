@@ -320,7 +320,7 @@ module.exports = () => {
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
-                expect(response.body.error[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
+                expect(response.body.errors[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
             }
         });
 
@@ -348,7 +348,7 @@ module.exports = () => {
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
-                expect(response.body.error[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
+                expect(response.body.errors[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
             }
         });
 
