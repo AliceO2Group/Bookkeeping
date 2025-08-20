@@ -308,7 +308,7 @@ module.exports = () => {
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=or`);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=none`);
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
