@@ -296,7 +296,7 @@ module.exports = () => {
         });
 
 
-        it('should successfult fiter data pass flags by created by name', async () => {
+        it('should successfuly fiter data pass flags by created by name', async () => {
             const dataPassId = 1;
             const runNumber = 107;
             const detectorId = 1;
@@ -308,12 +308,23 @@ module.exports = () => {
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=none`);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=or`);
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
 
-        it('should successfult fiter simulation pass flags by created by name', async () => {
+        it('should get error when not supported operator is provided when filtering data pass QC flags by createdBy name ', async () => {
+            const dataPassId = 1;
+            const runNumber = 106;
+            const detectorId = 1;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
+                expect(response.body.error[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
+            }
+        });
+
+        it('should successfuly fiter simulation pass flags by created by name', async () => {
             const simulationPassId = 1;
             const runNumber = 106;
             const detectorId = 1;
@@ -327,6 +338,17 @@ module.exports = () => {
                 const response = await request(server)
                     .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
                 expect(response.body.data).to.be.lengthOf(0);
+            }
+        });
+
+        it('should get error when not supported operator is provided when filtering simulation pass QC flags by createdBy name ', async () => {
+            const simulationPassId = 1;
+            const runNumber = 106;
+            const detectorId = 1;
+            {
+                const response = await request(server)
+                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
+                expect(response.body.error[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
             }
         });
 
@@ -360,7 +382,7 @@ module.exports = () => {
             }
         });
 
-        it('should successfult fiter sync flags by created by name', async () => {
+        it('should successfuly fiter sync flags by created by name', async () => {
             const runNumber = 56;
             const detectorId = 7;
             {
