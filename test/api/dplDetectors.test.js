@@ -47,6 +47,9 @@ module.exports = () => {
                 { id: 19, name: 'FIT' },
                 { id: 20, name: 'QC-SPECIFIC' },
                 { id: 21, name: 'GLO' },
+                { id: 22, name: 'VTX' },
+                { id: 23, name: 'EVS' },
+                { id: 24, name: 'MUD' },
             ]);
         });
     });

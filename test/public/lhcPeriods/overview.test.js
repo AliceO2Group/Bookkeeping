@@ -55,7 +55,7 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        const allowedBeamTypesDisplays = new Set(['-', 'XeXe', 'PbPb', 'pp']);
+        const allowedBeamTypesDisplays = new Set(['-', 'XeXe', 'PbPb', 'pp', 'OO']);
 
         const tableDataValidators = {
             name: (name) => periodNameRegex.test(name),
