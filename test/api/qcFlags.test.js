@@ -89,6 +89,12 @@ module.exports = () => {
                         mcReproducible: false,
                         missingVerificationsCount: 1,
                     },
+                    22: {
+                        badEffectiveRunCoverage: 0.2222222,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                        mcReproducible: false,
+                        missingVerificationsCount: 2,
+                    } 
                 },
                 107: {
                     1: {
@@ -125,6 +131,12 @@ module.exports = () => {
                         mcReproducible: false,
                         missingVerificationsCount: 1,
                     },
+                    22: {
+                        badEffectiveRunCoverage: 0.2222222,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                        mcReproducible: false,
+                        missingVerificationsCount: 2,
+                    } 
                 },
                 107: {
                     1: {
@@ -141,6 +153,68 @@ module.exports = () => {
                     },
                 },
             });
+        });
+
+        it('should successfully get non-empty QC flags summary for a data pass when filtering by CreatedBy and detectors', async () => {
+            {
+                const response = await request(server).get('/api/qcFlags/summary?dataPassId=1&detectorIds=22,1'); // VTX and CPV
+                expect(response.status).to.be.equal(200);
+                const { body: { data } } = response;
+                expect(data).to.be.eql({
+                    106: {
+                        22: {
+                            badEffectiveRunCoverage: 0.2222222,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                            mcReproducible: false,
+                            missingVerificationsCount: 2
+                        },
+                        1: {
+                            missingVerificationsCount: 3,
+                            mcReproducible: true,
+                            badEffectiveRunCoverage: 0.3333333,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                    107: {
+                        1: {
+                            badEffectiveRunCoverage: 0.2403462,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                            mcReproducible: true,
+                            missingVerificationsCount: 2,
+                        },
+                    },
+                });
+            }
+
+            {
+                const response = await request(server).get('/api/qcFlags/summary?dataPassId=1&detectorIds=22,1&filter[createdBy][names]=Anonymous&filter[createdBy][operator]=none'); // VTX and CPV
+                expect(response.status).to.be.equal(200);
+                const { body: { data } } = response;
+                expect(data).to.be.eql({
+                    106: {
+                        22: {
+                            badEffectiveRunCoverage: 0,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1
+                        },
+                        1: {
+                            missingVerificationsCount: 3,
+                            mcReproducible: true,
+                            badEffectiveRunCoverage: 0.3333333,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                    107: {
+                        1: {
+                            badEffectiveRunCoverage: 0.2403462,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                            mcReproducible: true,
+                            missingVerificationsCount: 2,
+                        },
+                    },
+                });
+            }
         });
 
         it('should successfully get non-empty QC flag summary for simulation pass', async () => {
@@ -701,7 +775,7 @@ module.exports = () => {
                 .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
 
             expect(response.status).to.be.equal(200);
-            expect(response.body.data.deletedCount).to.equal(9); // 7 from seeders, 2 created in POST requests previously in this test
+            expect(response.body.data.deletedCount).to.equal(11); // 9 from seeders, 2 created in POST requests previously in this test
         });
     });
 
