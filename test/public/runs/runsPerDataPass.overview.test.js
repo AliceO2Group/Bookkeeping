@@ -297,7 +297,7 @@ module.exports = () => {
      it('should successfully export runs with QC flags as CSV', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
 
-        const targetFileName = 'data.json';
+        const targetFileName = 'data.csv';
 
         // First export
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
