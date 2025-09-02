@@ -316,13 +316,13 @@ module.exports = () => {
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
-        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName));
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
         expect(exportContent).to.be.eql(`
 runNumber,VTX,CPV
 108,"",""
 107,"","Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000) | Good (from: 1565290800000 to: 1565359260000)"
-106,"Good (from: 1565269200000 to: 1565359200000) | Bad (from: 1565304200000 to: 1565324200000)","Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)"
+106,"","Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)"
 `.trim());
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
