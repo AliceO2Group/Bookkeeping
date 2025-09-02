@@ -568,7 +568,7 @@ module.exports = () => {
         await page.waitForSelector('#MUD');
     });
 
-    it('should ignore servie QC flags in QC summaries of AOT and MUON ', async () => {
+    it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3); // apass
         await expectInnerText(page, '#row106-VTX-text', 100)
 
