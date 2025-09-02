@@ -26,7 +26,7 @@ const { Op } = require('sequelize');
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
-    pdpBeamType: 'pp',
+    pdpBeamTypes: ['pp'],
     skimmingStage: SkimmingStage.SKIMMABLE,
     isFrozen: false,
     versions: [

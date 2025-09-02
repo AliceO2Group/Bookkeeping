@@ -25,7 +25,7 @@ const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 const LHC22b_apass1 = {
     id: 1,
     name: 'LHC22b_apass1',
-    pdpBeamType: 'pp',
+    pdpBeamTypes: ['pp'],
     skimmingStage: SkimmingStage.SKIMMABLE,
     isFrozen: false,
     versions: [

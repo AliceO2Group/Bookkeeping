@@ -63,7 +63,7 @@ module.exports = () => {
             associatedDataPasses: (display) => /(No data passes)|(\d+)/.test(display),
             associatedSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
             year: (year) => !isNaN(year),
-            beamTypes: (beamTypes) => beamTypes.split(',').every((type) => allowedBeamTypesDisplays.has(type)),
+            pdpBeamTypes: (pdpBeamTypes) => pdpBeamTypes.split(',').every((type) => allowedBeamTypesDisplays.has(type)),
             avgCenterOfMassEnergy: (avgCenterOfMassEnergy) => avgCenterOfMassEnergy === '-' || !isNaN(avgCenterOfMassEnergy),
             distinctEnergies: (distinctEnergies) => distinctEnergies === '-'
                 || distinctEnergies
@@ -150,6 +150,6 @@ module.exports = () => {
         await page.waitForSelector('#reset-filters:disabled');
         await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
-        await expectColumnValues(page, 'beamTypes', ['PbPb']);
+        await expectColumnValues(page, 'pdpBeamTypes', ['PbPb']);
     });
 };
