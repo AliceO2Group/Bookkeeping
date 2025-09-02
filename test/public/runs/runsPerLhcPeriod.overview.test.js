@@ -29,6 +29,7 @@ const {
     getInnerText,
     expectUrlParams,
     fillInput,
+    expectColumnValues,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -73,7 +74,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodName: 'LHC22a', pdpBeamTypes: 'PbPb' } });
+        const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
 
         expect(response.status()).to.equal(200);
 
@@ -152,9 +153,9 @@ module.exports = () => {
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
-        await pressElement(page, amountItems5);
-        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await pressElement(page, amountItems5, true);
         await waitForTableLength(page, 4);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
@@ -179,7 +180,7 @@ module.exports = () => {
         await waitForTableLength(page, 4);
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
         await page.evaluate(() => {
@@ -187,11 +188,12 @@ module.exports = () => {
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
         await page.waitForSelector('select.form-control', { timeout: 200 });
+        await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
 
@@ -236,5 +238,19 @@ module.exports = () => {
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
+        await page.goBack()
+    });
+
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await pressElement(page, '#openFilterToggle', true);
+
+        await page.waitForSelector('#inelasticInteractionRateAvg-operator');
+        await page.select('#inelasticInteractionRateAvg-operator', '<=');
+        await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
+        await expectColumnValues(page, 'runNumber', ['56', '54']);
+
+        await pressElement(page, '#openFilterToggle', true);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 };

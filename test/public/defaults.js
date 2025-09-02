@@ -156,7 +156,8 @@ const waitForTableToLength = async (page, expectedSize) => {
         );
     } catch {
         const actualSize = (await page.$$('tbody tr')).length;
-        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}`);
+        const isThereLoadingRow = !!(await page.$$('table body tr.loading-row'))
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize} ${isThereLoadingRow ? ', loading-row' : ''}`);
     }
 };
 
@@ -170,11 +171,17 @@ module.exports.waitForTableLength = waitForTableToLength;
  * @return {Promise<void>} resolves once the expected amount is present
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
-    await page.waitForFunction(
-        (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
-        {},
-        amount,
-    );
+    try {
+        await page.waitForSelector('#totalRowsCount');
+        await page.waitForFunction(
+            (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+            {},
+            amount,
+        );
+    } catch {
+        const actualCount = (await page.$$('#totalRowsCount')).innerText;
+        throw new Error(`Expected total rows count ${amount}, but got ${actualCount}`);
+    }
 };
 
 /**
@@ -633,10 +640,11 @@ module.exports.expectInputValue = async (page, selector, value) => {
  * For now only handle scalar parameters
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {Object} expectedUrlParameters the expected parameters as an object of key values
+ * @param {object} expectedUrlParameters the expected parameters as an object of key values
+ * @param {string[]} url params which are ignored when checking their value
  * @return {void}
  */
-module.exports.expectUrlParams = (page, expectedUrlParameters) => {
+module.exports.expectUrlParams = (page, expectedUrlParameters, ignoreParams = []) => {
     const [, parametersExpr] = page.url().split('?');
     const urlParameters = parametersExpr.split('&');
     const mismatchingUrlParams = {};
@@ -644,7 +652,7 @@ module.exports.expectUrlParams = (page, expectedUrlParameters) => {
     for (const urlParameter of urlParameters) {
         const [key, value] = urlParameter.split('=');
         // Convert expected to string, if it is a number for example
-        if (`${expectedUrlParameters[key]}` !== value) {
+        if (`${expectedUrlParameters[key]}` !== value && !ignoreParams.includes(key)) {
             mismatchingUrlParams[key] = {
                 expected: expectedUrlParameters[key],
                 actual: value,
@@ -773,15 +781,15 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
     const notOrderData = await getColumnCellsInnerTexts(page, columnId);
 
     // Sort in ASCENDING manner
-    await this.pressElement(page, `th#${columnId}`);
+    await this.pressElement(page, `th#${columnId}`, true);
     this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
     // Sort in DESCENDING manner
-    await this.pressElement(page, `th#${columnId}`);
+    await this.pressElement(page, `th#${columnId}`, true);
     this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
     // Revoke sorting
-    await this.pressElement(page, `th#${columnId}`);
+    await this.pressElement(page, `th#${columnId}`, true);
     this.expectColumnValues(page, columnId, notOrderData);
 };
 

@@ -46,7 +46,7 @@ const { runService } = require('../../../lib/server/services/run/RunService.js')
 
 const { expect } = chai;
 
-const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
 module.exports = () => {
     let page;
@@ -138,7 +138,7 @@ module.exports = () => {
 
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '8');
-        await expectInnerText(page, '#totalRowsCount', '108');
+        await expectInnerText(page, '#totalRowsCount', '109');
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -331,12 +331,12 @@ module.exports = () => {
         await waitForTableLength(page, 2);
 
         await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of', true);
-        await waitForTableTotalRowsCountToEqual(page, 106);
+        await waitForTableTotalRowsCountToEqual(page, 107);
         await pressElement(page, '#reset-filters');
     });
 
     it('should successfully filter on definition', async () => {
-        await waitForTableTotalRowsCountToEqual(page, 108);
+        await waitForTableTotalRowsCountToEqual(page, 109);
 
         const filterInputSelectorPrefix = '#run-definition-checkbox-';
         const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
@@ -379,10 +379,10 @@ module.exports = () => {
         });
 
         await pressElement(page, physicsFilterSelector, true);
-        await checkTableSizeAndDefinition(10, [RunDefinition.PHYSICS]);
+        await checkTableSizeAndDefinition(11, [RunDefinition.PHYSICS]);
 
         await pressElement(page, syntheticFilterSelector, true);
-        await checkTableSizeAndDefinition(12, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
+        await checkTableSizeAndDefinition(13, [RunDefinition.PHYSICS, RunDefinition.SYNTHETIC]);
 
         await pressElement(page, physicsFilterSelector, true);
         await checkTableSizeAndDefinition(2, [RunDefinition.SYNTHETIC]);
@@ -416,7 +416,7 @@ module.exports = () => {
         });
 
         await checkTableSizeAndDefinition(
-            16,
+            17,
             [RunDefinition.COSMICS, RunDefinition.TECHNICAL, RunDefinition.PHYSICS, RunDefinition.SYNTHETIC, RunDefinition.CALIBRATION],
         );
     });
@@ -469,10 +469,10 @@ module.exports = () => {
 
         const runDurationLimitSelector = '#duration-operand';
         await fillInput(page, runDurationLimitSelector, '1500', ['change']);
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
 
         await page.select(runDurationOperatorSelector, '=');
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 4);
 
         let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
 
@@ -652,12 +652,12 @@ module.exports = () => {
             await waitForTableLength(page, 8);
 
             // Results are filtered over 2 pages
-            await expectColumnValues(page, 'runNumber', ['108', '107', '106', '105', '104', '103', '102', '101']);
+            await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102']);
 
             await pressElement(page, '#pageMoveRight', true);
-            await waitForTableLength(page, 2);
+            await waitForTableLength(page, 3);
 
-            await expectColumnValues(page, 'runNumber', ['100', '10']);
+            await expectColumnValues(page, 'runNumber', ['101', '100', '10']);
         };
 
         // First filter validation on the main page.
@@ -685,7 +685,7 @@ module.exports = () => {
         expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
         await fillInput(page, filterInputSelector, '1, 3', ['change']);
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 8);
 
         await pressElement(page, '#reset-filters');
     });
@@ -867,12 +867,12 @@ module.exports = () => {
     });
 
     it('should successfully display runs export modal on click on export button', async () => {
-        let exportModal = await page.$('#export-runs-modal');
+        let exportModal = await page.$('#export-data-modal');
         expect(exportModal).to.be.null;
 
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
-        exportModal = await page.$('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
+        exportModal = await page.$('#export-data-modal');
 
         expect(exportModal).to.not.be.null;
     });
@@ -882,10 +882,10 @@ module.exports = () => {
 
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
-        const truncatedExportWarning = await page.waitForSelector('#export-runs-modal #truncated-export-warning');
+        const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
         expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
             .to
-            .equal('The runs export is limited to 100 entries, only the last runs will be exported (sorted by run number)');
+            .equal('The data export is limited to 100 entries, only the most recent data will be exported');
     });
 
     it('should successfully display disabled runs export button when there is no runs available', async () => {
@@ -903,11 +903,11 @@ module.exports = () => {
     it('should successfully export filtered runs', async () => {
         await goToPage(page, 'run-overview');
 
-        const targetFileName = 'runs.json';
+        const targetFileName = 'data.json';
 
         // First export
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -944,7 +944,7 @@ module.exports = () => {
 
         ///// Download
         await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
 
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -1025,7 +1025,7 @@ module.exports = () => {
 
         // Running run
         await pressElement(page, `#row${createdRunId}-runNumber-text .popover-trigger`);
-        popoverSelector = await getPopoverSelector(await page.waitForSelector('#row109-runNumber-text .popover-trigger'));
+        popoverSelector = await getPopoverSelector(await page.waitForSelector('#row110-runNumber-text .popover-trigger'));
         await page.waitForSelector(popoverSelector);
 
         await expectLink(page, `${popoverSelector} a:nth-of-type(3)`, {

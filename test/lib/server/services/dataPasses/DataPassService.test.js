@@ -75,7 +75,7 @@ module.exports = () => {
 
         it('should successfully get all data', async () => {
             const { rows: dataPasses } = await dataPassService.getAll();
-            expect(dataPasses).to.be.lengthOf(5);
+            expect(dataPasses).to.be.lengthOf(6);
         });
 
         it('should fail when no Data Pass with given id', async () => {
@@ -149,7 +149,7 @@ module.exports = () => {
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
             expect(dataPasses.map(({ name }) => name)).to.have
-                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2', 'LHC22b_apass1', 'LHC22b_apass2_skimmed', 'LHC22b_skimming']);
+                .ordered.members(['LHC22a_apass1', 'LHC22a_apass2', 'LHC22b_apass1', 'LHC22b_apass2_skimmed', 'LHC22b_skimming', 'LHC23f_cpass0']);
         });
     });
 
