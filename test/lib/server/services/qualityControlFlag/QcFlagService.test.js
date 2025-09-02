@@ -1482,7 +1482,7 @@ module.exports = () => {
                         },
                     },
                 },
-            })).to.lengthOf(16); // 14 from seeders, then 1 deleted => 10
+            })).to.lengthOf(16);
 
             expect((await QcFlagRepository.findAll({
                 include: {
