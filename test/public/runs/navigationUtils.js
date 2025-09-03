@@ -14,6 +14,17 @@
 const { waitForNavigation, pressElement, expectUrlParams, waitForTableLength } = require('../defaults.js');
 
 /**
+ * Navigate to runs overview page
+ *
+ * @param {Puppeteer.Page} page page
+ * @return {Promise<void>} promise
+ */
+exports.navigateToRunsOverview = async (page) => {
+    await waitForNavigation(page, () => pressElement(page, 'a#run-overview', true));
+};
+
+
+/**
  * Navigate to Runs per LHC period
  *
  * @param {Puppeteer.Page} page page

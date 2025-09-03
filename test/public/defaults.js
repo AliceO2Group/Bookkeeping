@@ -893,3 +893,28 @@ module.exports.getPeriodInputsSelectors = (popoverSelector) => {
         toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
     };
 };
+
+/**
+ * Open filtering panel
+ * @param {puppeteer.page} page page handler
+ */
+module.exports.openFilteringPanel = async (page) => {
+    // console.log("TOBEC openieng filter panel")
+    await page.waitForSelector('#reset-filters', { visible: true }).catch(async () => {
+        await this.pressElement(page, '#openFilterToggle');
+        // console.log("TOBEC was not opened, openieng filter panel ")
+    })
+};
+
+/**
+ * Reset standard filtering
+ * Excecution of this function does not change visibility of filtering popover
+ * @param {puppeteer.page} page page handler
+ */
+module.exports.resetFilters = async (page) => {
+    await page.waitForSelector('#reset-filters', { visible: true }).then(() => this.pressElement(page, '#reset-filters')).catch(async () => {
+        await this.pressElement(page, '#openFilterToggle');
+        await this.pressElement(page, '#reset-filters');
+        await this.pressElement(page, '#openFilterToggle');
+    })
+};
