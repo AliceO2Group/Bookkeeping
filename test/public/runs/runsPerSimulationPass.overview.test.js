@@ -258,7 +258,6 @@ module.exports = () => {
         const targetFileName = 'data.csv';
         
         // Export
-        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await pressElement(page, '#export-data-trigger');
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
