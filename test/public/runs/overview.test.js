@@ -73,17 +73,16 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
+    it('loads the page successfully', async () => {
+        const response = await goToPage(page, 'run-overview');
+        expect(response.status()).to.equal(200);
+        const title = await page.title();
+        expect(title).to.equal('AliceO2 Bookkeeping');
+    });
+
     describe('General page behaviour', () => {
-        it('loads the page successfully', async () => {
-            const response = await goToPage(page, 'run-overview');
-
-            // We expect the page to return the correct status code, making sure the server is running properly
-            expect(response.status()).to.equal(200);
-
-            // We expect the page to return the correct title, making sure there isn't another server running on this port
-            const title = await page.title();
-            expect(title).to.equal('AliceO2 Bookkeeping');
-        });
+        before(() => goToPage(page, 'run-overview'));
+        beforeEach(() => navigateToRunsOverview(page))
 
         it('shows correct datatypes in respective columns', async () => {
             table = await page.$$('tr');
@@ -269,8 +268,6 @@ module.exports = () => {
         });
 
         it('Should have balloon on detector, tags and eor column', async () => {
-            await navigateToRunsOverview(page);
-
             // Run 106 has detectors and tags that overflow
             await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
             await waitForTableLength(page, 1);
@@ -281,7 +278,6 @@ module.exports = () => {
             // Run 1 has eor reasons that overflow
             await fillInput(page, filterPanelRunNumbersInputSelector, '1,1', ['change']);
             await waitForTableLength(page, 1);
-
             await checkColumnBalloon(page, 1, 16);
         });
 
@@ -289,6 +285,79 @@ module.exports = () => {
             await navigateToRunsOverview(page);
 
             await checkColumnBalloon(page, 1, 2);
+        });
+
+        it('should successfully display duration without warning popover when run has trigger OFF', async () => {
+            const runDurationCell = await page.waitForSelector('#row107-runDuration');
+            expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+            expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+        });
+
+        it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
+            await navigateToRunsOverview(page);
+            const runDurationCell = await page.waitForSelector('#row106-runDuration');
+            expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+            expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
+        });
+
+        it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
+            const runDurationCell = await page.waitForSelector('#row105-runDuration');
+            expect(await runDurationCell.$('.popover-trigger')).to.be.null;
+            expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
+        });
+
+        it('should successfully display popover warning when run is missing trigger start', async () => {
+            const popoverContent = await getPopoverContent(await page.waitForSelector('#row104-runDuration .popover-trigger'));
+            expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
+        });
+
+        it('should successfully display popover warning when run is missing trigger stop', async () => {
+            const popoverContent = await getPopoverContent(await page.waitForSelector('#row103-runDuration .popover-trigger'));
+            expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
+        });
+
+        it('should successfully display popover warning when run is missing trigger start and stop', async () => {
+            const popoverContent = await getPopoverContent(await page.waitForSelector('#row102-runDuration .popover-trigger'));
+            expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
+        });
+
+        it('should successfully navigate to the LHC fill details page', async () => {
+            await navigateToRunsOverview(page);
+
+            await waitForNavigation(page, () => pressElement(page, '#row108-fillNumber a'));
+            expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
+        });
+
+        it('should successfully display links to infologger, QC GUI and ECS', async () => {
+            const { id: createdRunId } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+            await waitForNavigation(page, () => pressElement(page, 'a#home'));
+            await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+
+            // Not running run, wait for popover to be visible
+            await pressElement(page, '#row104-runNumber-text .popover-trigger');
+            let popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
+            await page.waitForSelector(popoverSelector);
+
+            await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
+                href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
+                    + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+                innerText: 'Infologger FLP',
+            });
+            await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
+                href: 'http://localhost:8082/' +
+                    '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
+                innerText: 'QCG',
+            });
+
+            // Running run
+            await pressElement(page, `#row${createdRunId}-runNumber-text .popover-trigger`);
+            popoverSelector = await getPopoverSelector(await page.waitForSelector('#row110-runNumber-text .popover-trigger'));
+            await page.waitForSelector(popoverSelector);
+
+            await expectLink(page, `${popoverSelector} a:nth-of-type(3)`, {
+                href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+                innerText: 'ECS',
+            });
         });
     })
    
@@ -802,179 +871,108 @@ module.exports = () => {
 
     })
     
-    return 
-    it('should successfully display runs export button', async () => {
-        await navigateToRunsOverview(page);
-        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-        const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
-        expect(runsExportButton).to.be.not.null;
-    });
+    describe("Export", () => {
+        before(() => goToPage(page, 'run-overview'));
 
-    it('should successfully display runs export modal on click on export button', async () => {
-        let exportModal = await page.$('#export-data-modal');
-        expect(exportModal).to.be.null;
+        beforeEach(async () => {
+            await navigateToRunsOverview(page);
+            await resetFilters(page);
+        })
 
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-data-modal');
-        exportModal = await page.$('#export-data-modal');
-
-        expect(exportModal).to.not.be.null;
-    });
-
-    it('should successfully display information when export will be truncated', async () => {
-        await navigateToRunsOverview(page);
-
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
-
-        const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
-        expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
-            .to
-            .equal('The data export is limited to 100 entries, only the most recent data will be exported');
-    });
-
-    it('should successfully display disabled runs export button when there is no runs available', async () => {
-        await navigateToRunsOverview(page);
-
-        await openFilteringPanel(page);;
-
-        // Type a fake run number to have no runs
-        await fillInput(page, filterPanelRunNumbersInputSelector, '99999999999', ['change']);
-        await openFilteringPanel(page);;
-
-        await page.waitForSelector(`${EXPORT_RUNS_TRIGGER_SELECTOR}:disabled`);
-    });
-
-    it('should successfully export filtered runs', async () => {
-        await navigateToRunsOverview(page);
-
-        const targetFileName = 'data.json';
-
-        // First export
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-data-modal');
-        await page.waitForSelector('#send:disabled');
-        await page.waitForSelector('.form-control');
-        await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForSelector('#send:enabled');
-        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
-        expect(exportButtonText).to.be.eql('Export');
-
-        {
-            const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
-
-            // Check download
-            const downloadFilesNames = fs.readdirSync(downloadPath);
-            expect(downloadFilesNames.filter((name) => name === targetFileName)).to.be.lengthOf(1);
-            const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
-
-            expect(runs).to.be.lengthOf(100);
-            expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
-                runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
-            fs.unlinkSync(path.resolve(downloadPath, targetFileName));
-        }
-
-        // Second export
-
-        // Apply filtering
-        const filterInputSelectorPrefix = '#checkboxes-checkbox-';
-        const badFilterSelector = `${filterInputSelectorPrefix}bad`;
-
-        await openFilteringPanel(page);;
-        await page.waitForSelector(badFilterSelector);
-        await page.$eval(badFilterSelector, (element) => element.click());
-        await page.waitForSelector('.atom-spinner');
-        await page.waitForSelector('tbody tr:nth-child(2)');
-        await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
-
-        ///// Download
-        await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-        await page.waitForSelector('#export-data-modal');
-
-        await page.waitForSelector('.form-control');
-        await page.select('.form-control', 'runQuality', 'runNumber');
-
-        {
-            const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled', true));
-
-            // Check download
-            const downloadFilesNames = fs.readdirSync(downloadPath);
-            expect(downloadFilesNames.filter((name) => name === targetFileName)).to.be.lengthOf(1);
-            const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
-            expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
-        }
-    });
-
-    it('should successfully navigate to the LHC fill details page', async () => {
-        await navigateToRunsOverview(page);
-
-        await waitForNavigation(page, () => pressElement(page, '#row108-fillNumber a'));
-        expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
-    });
-
-    it('should successfully display duration without warning popover when run has trigger OFF', async () => {
-        await navigateToRunsOverview(page);
-        const runDurationCell = await page.waitForSelector('#row107-runDuration');
-        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
-        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
-    });
-
-    it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
-        await navigateToRunsOverview(page);
-        const runDurationCell = await page.waitForSelector('#row106-runDuration');
-        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
-        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
-    });
-
-    it('should successfully display UNKNOWN without warning popover when run last for more than 48 hours', async () => {
-        const runDurationCell = await page.waitForSelector('#row105-runDuration');
-        expect(await runDurationCell.$('.popover-trigger')).to.be.null;
-        expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('UNKNOWN');
-    });
-
-    it('should successfully display popover warning when run is missing trigger start', async () => {
-        const popoverContent = await getPopoverContent(await page.waitForSelector('#row104-runDuration .popover-trigger'));
-        expect(popoverContent).to.equal('Duration based on o2 start because of missing trigger start information');
-    });
-
-    it('should successfully display popover warning when run is missing trigger stop', async () => {
-        const popoverContent = await getPopoverContent(await page.waitForSelector('#row103-runDuration .popover-trigger'));
-        expect(popoverContent).to.equal('Duration based on o2 stop because of missing trigger stop information');
-    });
-
-    it('should successfully display popover warning when run is missing trigger start and stop', async () => {
-        const popoverContent = await getPopoverContent(await page.waitForSelector('#row102-runDuration .popover-trigger'));
-        expect(popoverContent).to.equal('Duration based on o2 start AND stop because of missing trigger information');
-    });
-
-    it('should successfully display links to infologger, QC GUI and ECS', async () => {
-        const { id: createdRunId } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-        await waitForNavigation(page, () => pressElement(page, 'a#home'));
-        await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
-
-        // Not running run, wait for popover to be visible
-        await pressElement(page, '#row104-runNumber-text .popover-trigger');
-        let popoverSelector = await getPopoverSelector(await page.waitForSelector('#row104-runNumber-text .popover-trigger'));
-        await page.waitForSelector(popoverSelector);
-
-        await expectLink(page, `${popoverSelector} a:nth-of-type(1)`, {
-            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22TDI59So3d%22},'
-                  + '%22run%22:{%22match%22:%22104%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
-            innerText: 'Infologger FLP',
-        });
-        await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
-            href: 'http://localhost:8082/' +
-                  '?page=layoutShow&runNumber=104&definition=COMMISSIONING&detector=CPV&pdpBeamType=cosmic&runType=COSMICS',
-            innerText: 'QCG',
+        it('should successfully display runs export button', async () => {
+            await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
+            const runsExportButton = await page.$(EXPORT_RUNS_TRIGGER_SELECTOR);
+            expect(runsExportButton).to.be.not.null;
         });
 
-        // Running run
-        await pressElement(page, `#row${createdRunId}-runNumber-text .popover-trigger`);
-        popoverSelector = await getPopoverSelector(await page.waitForSelector('#row110-runNumber-text .popover-trigger'));
-        await page.waitForSelector(popoverSelector);
+        it('should successfully display runs export modal on click on export button', async () => {
+            let exportModal = await page.$('#export-data-modal');
+            expect(exportModal).to.be.null;
 
-        await expectLink(page, `${popoverSelector} a:nth-of-type(3)`, {
-            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
-            innerText: 'ECS',
+            await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+            await page.waitForSelector('#export-data-modal');
+            exportModal = await page.$('#export-data-modal');
+
+            expect(exportModal).to.not.be.null;
         });
-    });
+
+        it('should successfully display information when export will be truncated', async () => {
+            await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
+
+            const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
+            expect(await truncatedExportWarning.evaluate((warning) => warning.innerText))
+                .to
+                .equal('The data export is limited to 100 entries, only the most recent data will be exported');
+        });
+
+        it('should successfully display disabled runs export button when there is no runs available', async () => {
+            await openFilteringPanel(page);;
+
+            // Type a fake run number to have no runs
+            await fillInput(page, filterPanelRunNumbersInputSelector, '99999999999', ['change']);
+            await openFilteringPanel(page);;
+
+            await page.waitForSelector(`${EXPORT_RUNS_TRIGGER_SELECTOR}:disabled`);
+        });
+
+        it('should successfully export filtered runs', async () => {
+            const targetFileName = 'data.json';
+
+            // First export
+            await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#send:disabled');
+            await page.waitForSelector('.form-control');
+            await page.select('.form-control', 'runQuality', 'runNumber');
+            await page.waitForSelector('#send:enabled');
+            const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+            expect(exportButtonText).to.be.eql('Export');
+
+            {
+                const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+                // Check download
+                const downloadFilesNames = fs.readdirSync(downloadPath);
+                expect(downloadFilesNames.filter((name) => name === targetFileName)).to.be.lengthOf(1);
+                const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+
+                expect(runs).to.be.lengthOf(100);
+                expect(runs.every(({ runQuality, runNumber, ...otherProps }) =>
+                    runQuality && runNumber && Object.keys(otherProps).length === 0)).to.be.true;
+                fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+            }
+
+            // Second export
+
+            // Apply filtering
+            await openFilteringPanel(page);
+    
+            const filterInputSelectorPrefix = '#checkboxes-checkbox-';
+            const badFilterSelector = `${filterInputSelectorPrefix}bad`;
+
+            await openFilteringPanel(page);;
+            await page.waitForSelector(badFilterSelector);
+            await page.$eval(badFilterSelector, (element) => element.click());
+            await page.waitForSelector('.atom-spinner');
+            await page.waitForSelector('tbody tr:nth-child(2)');
+            await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
+
+            ///// Download
+            await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+            await page.waitForSelector('#export-data-modal');
+
+            await page.waitForSelector('.form-control');
+            await page.select('.form-control', 'runQuality', 'runNumber');
+
+            {
+                const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled', true));
+
+                // Check download
+                const downloadFilesNames = fs.readdirSync(downloadPath);
+                expect(downloadFilesNames.filter((name) => name === targetFileName)).to.be.lengthOf(1);
+                const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+                expect(runs).to.have.all.deep.members([{ runNumber: 2, runQuality: 'bad' }, { runNumber: 1, runQuality: 'bad' }]);
+            }
+        });
+    })
 };

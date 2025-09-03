@@ -899,10 +899,8 @@ module.exports.getPeriodInputsSelectors = (popoverSelector) => {
  * @param {puppeteer.page} page page handler
  */
 module.exports.openFilteringPanel = async (page) => {
-    // console.log("TOBEC openieng filter panel")
     await page.waitForSelector('#reset-filters', { visible: true }).catch(async () => {
         await this.pressElement(page, '#openFilterToggle');
-        // console.log("TOBEC was not opened, openieng filter panel ")
     })
 };
 
