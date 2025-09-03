@@ -34,6 +34,7 @@ const {
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { navigateToRunsPerLhcPeriod } = require('./navigationUtils.js');
 
 const { expect } = chai;
 
@@ -252,5 +253,39 @@ module.exports = () => {
         await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
+    });
+
+    it('should successfully export runs with QC flags as CSV', async () => {
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
+
+        const targetFileName = 'data.csv';
+        
+        // Export
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await pressElement(page, '#export-data-trigger');
+        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runNumber', 'ITS');
+        await pressElement(page, '#data-export-type-CSV');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+
+        expect(exportContent.trim()).to.be.eql([
+            'runNumber,ITS',
+            '105,""',
+            '56,Good (from: 1565294400000 to: 1565298000000)',
+            '54,""',
+            '49,""',
+        ].join('\r\n'));
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };

@@ -11,8 +11,23 @@
  * or submit itself to any jurisdiction.
  */
 
-const { waitForNavigation, pressElement, getInnerText, expectUrlParams, waitForTableLength } = require('../defaults.js');
+const { waitForNavigation, pressElement, expectUrlParams, waitForTableLength } = require('../defaults.js');
 
+/**
+ * Navigate to Runs per LHC period
+ *
+ * @param {Puppeteer.Page} page page
+ * @param {number} lhcPeriodId id of lhc period on LHC Period overview page
+ * @param {number} expectedRowsCount expected number of rows on runs per data pass page
+ * @return {Promise<void>} promise
+ */
+exports.navigateToRunsPerLhcPeriod = async (page, lhcPeriodId, expectedRowsCount, tabPanel='detectorQualities') => {
+    await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
+    await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedRuns a`, true));
+    await waitForNavigation(page, () => pressElement(page, `#${tabPanel}-tab a`, true));
+    expectUrlParams(page, { page: 'runs-per-lhc-period', lhcPeriodId, panel: tabPanel }, ['pdpBeamType']);
+    await waitForTableLength(page, expectedRowsCount);
+};
 
 /**
  * Navigate to Runs per Data Pass page
@@ -32,6 +47,7 @@ exports.navigateToRunsPerDataPass = async (page, lhcPeriodId, dataPassId, expect
     expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId }, ['pdpBeamType']);
     await waitForTableLength(page, expectedRowsCount);
 };
+
 
 /**
  * Navigate to Runs per Simulation Pass page
