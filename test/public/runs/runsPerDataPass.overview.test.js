@@ -294,7 +294,7 @@ module.exports = () => {
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 
-     it('should successfully export runs with QC flags as CSV', async () => {
+    it('should successfully export runs with QC flags as CSV', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
 
         const targetFileName = 'data.csv';
