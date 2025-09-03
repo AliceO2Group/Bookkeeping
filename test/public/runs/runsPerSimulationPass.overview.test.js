@@ -278,8 +278,8 @@ module.exports = () => {
         expect(exportContent.trim()).to.be.eql([
             'runNumber,CPV',
             '108,""',
-            '107,"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"',
-            '106,""'
+            '107,""',
+            '106,"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"'
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });

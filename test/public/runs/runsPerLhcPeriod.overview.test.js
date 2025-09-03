@@ -30,6 +30,7 @@ const {
     expectUrlParams,
     fillInput,
     expectColumnValues,
+    openFilteringPanel,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -243,7 +244,7 @@ module.exports = () => {
     });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
-        await pressElement(page, '#openFilterToggle', true);
+        await openFilteringPanel(page);
 
         await page.waitForSelector('#inelasticInteractionRateAvg-operator');
         await page.select('#inelasticInteractionRateAvg-operator', '<=');
@@ -281,7 +282,7 @@ module.exports = () => {
         expect(exportContent.trim()).to.be.eql([
             'runNumber,ITS',
             '105,""',
-            '56,Good (from: 1565294400000 to: 1565298000000)',
+            '56,"Good (from: 1565294400000 to: 1565298000000)"',
             '54,""',
             '49,""',
         ].join('\r\n'));

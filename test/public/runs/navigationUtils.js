@@ -35,7 +35,7 @@ exports.navigateToRunsOverview = async (page) => {
 exports.navigateToRunsPerLhcPeriod = async (page, lhcPeriodId, expectedRowsCount, tabPanel='detectorQualities') => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedRuns a`, true));
-    await waitForNavigation(page, () => pressElement(page, `#${tabPanel}-tab a`, true));
+    await pressElement(page, `#${tabPanel}-tab`, true);
     expectUrlParams(page, { page: 'runs-per-lhc-period', lhcPeriodId, panel: tabPanel }, ['pdpBeamType']);
     await waitForTableLength(page, expectedRowsCount);
 };
