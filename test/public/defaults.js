@@ -179,8 +179,9 @@ module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
             amount,
         );
     } catch {
-        const actualCount = (await page.$$('#totalRowsCount')).innerText;
-        throw new Error(`Expected total rows count ${amount}, but got ${actualCount}`);
+        const element = await page.$$('#totalRowsCount')
+        const actualCount = element.innerText;
+        throw new Error(`Expected total rows count ${amount}, but got ${actualCount} ... of ${element} `);
     }
 };
 

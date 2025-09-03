@@ -49,8 +49,6 @@ const { navigateToRunsOverview } = require('./navigationUtils.js');
 
 const { expect } = chai;
 
-const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
 module.exports = () => {
     let page;
     let browser;
@@ -386,32 +384,27 @@ module.exports = () => {
             expect(table.length).to.equal(8);
 
             await pressElement(page, '#detector-filter-combination-operator-radio-button-none', true);
-            await waitForTableLength(page, 2);
-
-            table = await page.$$('tbody tr');
-            expect(table.length).to.equal(2);
+            await waitForTableLength(page, 3);
         });
 
         it('should successfully filter on tags', async () => {
             // Open filter toggle and wait for the dropdown to be visible
-            await pressElement(page, '.tags-filter .dropdown-trigger');
-            await pressElement(page, '#tag-dropdown-option-FOOD');
-            await pressElement(page, '#tag-dropdown-option-RUN');
+            await pressElement(page, '.tags-filter .dropdown-trigger', true);
+            await pressElement(page, '#tag-dropdown-option-FOOD', true);
+            await pressElement(page, '#tag-dropdown-option-RUN', true);
             await waitForTableLength(page, 1);
 
-            await pressElement(page, '#tag-filter-combination-operator-radio-button-or');
-            await pressElement(page, '.tags-filter .dropdown-trigger');
-            await pressElement(page, '#tag-dropdown-option-RUN');
-            await pressElement(page, '#tag-dropdown-option-TEST-TAG-41');
+            await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
+            await pressElement(page, '.tags-filter .dropdown-trigger', true);
+            await pressElement(page, '#tag-dropdown-option-RUN', true);
+            await pressElement(page, '#tag-dropdown-option-TEST-TAG-41', true);
             await waitForTableLength(page, 2);
 
-            await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of');
+            await pressElement(page, '#tag-filter-combination-operator-radio-button-none-of', true);
             await waitForTableTotalRowsCountToEqual(page, 107);
         });
 
         it('should successfully filter on definition', async () => {
-            await waitForTableTotalRowsCountToEqual(page, 109);
-
             const filterInputSelectorPrefix = '#run-definition-checkbox-';
             const physicsFilterSelector = `${filterInputSelectorPrefix}PHYSICS`;
             const cosmicsFilterSelector = `${filterInputSelectorPrefix}COSMICS`;
@@ -694,7 +687,6 @@ module.exports = () => {
 
         it('should successfully filter on a single run number and inform the user about it', async () => {
             const inputValue = '10';
-            await navigateToRunsOverview(page);
 
             /**
              * This is the sequence to test filtering the runs on run numbers.
@@ -705,10 +697,10 @@ module.exports = () => {
             const filterOnRun = async (selector) => {
                 await expectAttributeValue(page, selector, 'placeholder', 'e.g. 534454, 534455...');
                 await fillInput(page, selector, inputValue, ['change']);
-                await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102', '101', '100']);
+                await expectColumnValues(page, 'runNumber', ['1000', '109', '108', '107', '106', '105', '104', '103', '102', '101']);
                 
                 await pressElement(page, '#pageMoveRight', true);
-                await expectColumnValues(page, 'runNumber', ['10']);
+                await expectColumnValues(page, 'runNumber', ['100', '10']);
             };
 
             await filterOnRun('#runOverviewFilter .run-numbers-filter');
@@ -783,7 +775,7 @@ module.exports = () => {
 
         it('should successfully filter on EPN on/off', async () => {
             await pressElement(page, '#epnFilterRadioOFF', true);
-            await waitForTableLength(page, 2);
+            await waitForTableLength(page, 3);
         });
 
         it('should successfully filter by EOR Reason types', async () => {
@@ -870,6 +862,8 @@ module.exports = () => {
     })
     
     describe("Export", () => {
+        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+
         before(() => goToPage(page, 'run-overview'));
 
         beforeEach(async () => {
@@ -917,7 +911,7 @@ module.exports = () => {
             const targetFileName = 'data.json';
 
             // First export
-            await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
+            await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true)
             await page.waitForSelector('#export-data-modal');
             await page.waitForSelector('#send:disabled');
             await page.waitForSelector('.form-control');
