@@ -82,7 +82,10 @@ module.exports = () => {
 
     describe('General page behaviour', () => {
         before(() => goToPage(page, 'run-overview'));
-        beforeEach(() => navigateToRunsOverview(page))
+        beforeEach(async () => {
+            await navigateToRunsOverview(page);
+            await resetFilters(page);
+        })
 
         it('shows correct datatypes in respective columns', async () => {
             table = await page.$$('tr');
@@ -270,20 +273,18 @@ module.exports = () => {
         it('Should have balloon on detector, tags and eor column', async () => {
             // Run 106 has detectors and tags that overflow
             await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
-            await waitForTableLength(page, 1);
+            await expectColumnValues(page, 'runNumber', ['106']);
 
             await checkColumnBalloon(page, 1, 2);
             await checkColumnBalloon(page, 1, 3);
 
             // Run 1 has eor reasons that overflow
             await fillInput(page, filterPanelRunNumbersInputSelector, '1,1', ['change']);
-            await waitForTableLength(page, 1);
+            await expectColumnValues(page, 'runNumber', ['1']);
             await checkColumnBalloon(page, 1, 16);
         });
 
         it('Should display balloon if the text overflows', async () => {
-            await navigateToRunsOverview(page);
-
             await checkColumnBalloon(page, 1, 2);
         });
 
@@ -294,7 +295,6 @@ module.exports = () => {
         });
 
         it('should successfully display duration without warning popover when run has both trigger start and stop', async () => {
-            await navigateToRunsOverview(page);
             const runDurationCell = await page.waitForSelector('#row106-runDuration');
             expect(await runDurationCell.$('.popover-trigger')).to.be.null;
             expect(await runDurationCell.evaluate((element) => element.innerText)).to.equal('25:00:00');
@@ -322,8 +322,6 @@ module.exports = () => {
         });
 
         it('should successfully navigate to the LHC fill details page', async () => {
-            await navigateToRunsOverview(page);
-
             await waitForNavigation(page, () => pressElement(page, '#row108-fillNumber a'));
             expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
         });
