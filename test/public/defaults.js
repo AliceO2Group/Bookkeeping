@@ -179,7 +179,8 @@ module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
             amount,
         );
     } catch {
-        const actualCount = (await page.$$('#totalRowsCount')).innerText;
+        const element = await page.$$('#totalRowsCount')
+        const actualCount = element.innerText;
         throw new Error(`Expected total rows count ${amount}, but got ${actualCount}`);
     }
 };
@@ -892,4 +893,27 @@ module.exports.getPeriodInputsSelectors = (popoverSelector) => {
         toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
         toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
     };
+};
+
+/**
+ * Open filtering panel
+ * @param {puppeteer.page} page page handler
+ */
+module.exports.openFilteringPanel = async (page) => {
+    await page.waitForSelector('#reset-filters', { visible: true }).catch(async () => {
+        await this.pressElement(page, '#openFilterToggle');
+    })
+};
+
+/**
+ * Reset standard filtering
+ * Excecution of this function does not change visibility of filtering popover
+ * @param {puppeteer.page} page page handler
+ */
+module.exports.resetFilters = async (page) => {
+    await page.waitForSelector('#reset-filters', { visible: true }).then(() => this.pressElement(page, '#reset-filters')).catch(async () => {
+        await this.pressElement(page, '#openFilterToggle');
+        await this.pressElement(page, '#reset-filters');
+        await this.pressElement(page, '#openFilterToggle');
+    })
 };
