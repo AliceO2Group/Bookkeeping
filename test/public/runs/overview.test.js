@@ -46,6 +46,7 @@ const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.j
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
 const { runService } = require('../../../lib/server/services/run/RunService.js');
 const { navigateToRunsOverview } = require('./navigationUtils.js');
+const RunRepository = require('../../../lib/database/repositories/RunRepository.js');
 
 const { expect } = chai;
 
@@ -189,8 +190,6 @@ module.exports = () => {
         });
 
         it('can set how many runs are available per page', async () => {
-            await navigateToRunsOverview(page);
-
             const amountSelectorId = '#amountSelector';
             const amountSelectorButtonSelector = `${amountSelectorId} button`;
             await pressElement(page, amountSelectorButtonSelector);
@@ -325,7 +324,7 @@ module.exports = () => {
         });
 
         it('should successfully display links to infologger, QC GUI and ECS', async () => {
-            const { id: createdRunId } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
+            const { id: createdRunId, runNumber: createdRunNumber } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
             await waitForNavigation(page, () => pressElement(page, 'a#home'));
             await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
 
@@ -354,6 +353,7 @@ module.exports = () => {
                 href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
                 innerText: 'ECS',
             });
+            await RunRepository.removeOne({ runNumber: createdRunNumber });
         });
     })
    
@@ -374,17 +374,11 @@ module.exports = () => {
             await pressElement(page, '#detector-filter-dropdown-option-FT0', true);
             await waitForTableLength(page, 4);
 
-            table = await page.$$('tbody tr');
-            expect(table.length).to.equal(4);
-
             await pressElement(page, '#detector-filter-combination-operator-radio-button-or', true);
             await waitForTableLength(page, 8);
 
-            table = await page.$$('tbody tr');
-            expect(table.length).to.equal(8);
-
             await pressElement(page, '#detector-filter-combination-operator-radio-button-none', true);
-            await waitForTableLength(page, 3);
+            await waitForTableLength(page, 2);
         });
 
         it('should successfully filter on tags', async () => {
@@ -697,10 +691,10 @@ module.exports = () => {
             const filterOnRun = async (selector) => {
                 await expectAttributeValue(page, selector, 'placeholder', 'e.g. 534454, 534455...');
                 await fillInput(page, selector, inputValue, ['change']);
-                await expectColumnValues(page, 'runNumber', ['1000', '109', '108', '107', '106', '105', '104', '103', '102', '101']);
+                await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102', '101', '100']);
                 
                 await pressElement(page, '#pageMoveRight', true);
-                await expectColumnValues(page, 'runNumber', ['100', '10']);
+                await expectColumnValues(page, 'runNumber', ['10']);
             };
 
             await filterOnRun('#runOverviewFilter .run-numbers-filter');
@@ -775,7 +769,7 @@ module.exports = () => {
 
         it('should successfully filter on EPN on/off', async () => {
             await pressElement(page, '#epnFilterRadioOFF', true);
-            await waitForTableLength(page, 3);
+            await waitForTableLength(page, 2);
         });
 
         it('should successfully filter by EOR Reason types', async () => {
