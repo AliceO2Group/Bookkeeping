@@ -353,7 +353,7 @@ module.exports = () => {
                 href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
                 innerText: 'ECS',
             });
-            await RunRepository.removeOne({ runNumber: createdRunNumber });
+            await RunRepository.removeOne({ where: { runNumber: createdRunNumber } });
         });
     })
    
