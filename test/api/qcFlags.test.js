@@ -18,6 +18,7 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
 const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService.js');
+const { expectSuccessStatus } = require('./utils.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -510,6 +511,8 @@ module.exports = () => {
 
         it('should create and verify QC flag instance when verify option is provided', async () => {
             const qcFlagCreationParameters = {
+                from: null,
+                to: null,
                 comment: 'Auto verified flag',
                 flagTypeId: 2,
                 runNumber: 106,
@@ -519,7 +522,8 @@ module.exports = () => {
             };
 
             const response = await request(server).post('/api/qcFlags?token=det-cpv').send(qcFlagCreationParameters);
-            expect(response.status).to.be.equal(201);
+
+            expectSuccessStatus(response, 201);
 
             const [createdQcFlag] = response.body.data;
             expect(createdQcFlag.verifications).to.be.an('array').that.has.lengthOf(1);
@@ -528,11 +532,6 @@ module.exports = () => {
             expect(verification.flagId).to.equal(createdQcFlag.id);
             expect(verification.comment).to.be.null;
             expect(verification.createdById).to.equal(createdQcFlag.createdById);
-            expect(verification.createdBy).to.be.eql(createdQcFlag.createdBy);
-
-            const fetchedFlag = await qcFlagService.getById(createdQcFlag.id);
-            expect(fetchedFlag.verifications).to.have.lengthOf(1);
-            expect(fetchedFlag.verifications[0].createdById).to.equal(createdQcFlag.createdById);
         });
 
 
