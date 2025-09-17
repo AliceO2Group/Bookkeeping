@@ -507,6 +507,35 @@ module.exports = () => {
             }
         });
 
+
+        it('should create and verify QC flag instance when verify option is provided', async () => {
+            const qcFlagCreationParameters = {
+                comment: 'Auto verified flag',
+                flagTypeId: 2,
+                runNumber: 106,
+                simulationPassId: 1,
+                dplDetectorId: 1,
+                verify: true,
+            };
+
+            const response = await request(server).post('/api/qcFlags?token=det-cpv').send(qcFlagCreationParameters);
+            expect(response.status).to.be.equal(201);
+
+            const [createdQcFlag] = response.body.data;
+            expect(createdQcFlag.verifications).to.be.an('array').that.has.lengthOf(1);
+
+            const [verification] = createdQcFlag.verifications;
+            expect(verification.flagId).to.equal(createdQcFlag.id);
+            expect(verification.comment).to.be.null;
+            expect(verification.createdById).to.equal(createdQcFlag.createdById);
+            expect(verification.createdBy).to.be.eql(createdQcFlag.createdBy);
+
+            const fetchedFlag = await qcFlagService.getById(createdQcFlag.id);
+            expect(fetchedFlag.verifications).to.have.lengthOf(1);
+            expect(fetchedFlag.verifications[0].createdById).to.equal(createdQcFlag.createdById);
+        });
+
+
         it('should successfully create multiple QC flag instances for data pass', async () => {
             const qcFlagCreationParameters = {
                 from: 1565294400001,

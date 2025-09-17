@@ -1514,6 +1514,27 @@ module.exports = () => {
             );
         });
 
+        it('should allow QC flag creators to verify their own flags', async () => {
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const scope = {
+                runNumber: 106,
+                dataPassIdentifier: { id: 1 },
+                detectorIdentifier: { detectorId: 1 },
+            };
+
+            const [verifiedFlag] = await qcFlagService.create([
+                { flagTypeId: goodFlagTypeId, verify: true },
+            ], scope, relations);
+
+            expect(verifiedFlag.verifications).to.be.an('array');
+            expect(verifiedFlag.verifications).to.have.lengthOf(1);
+            const [verification] = verifiedFlag.verifications;
+
+            expect(verification.createdById).to.equal(createdById);
+            expect(verification.comment).to.be.null;
+            expect(verification.createdBy.externalId).to.equal(relations.user.externalUserId);
+        });
+
         it('should successfully verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
