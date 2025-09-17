@@ -1528,11 +1528,11 @@ module.exports = () => {
 
             expect(verifiedFlag.verifications).to.be.an('array');
             expect(verifiedFlag.verifications).to.have.lengthOf(1);
-            
-            const [verification] = createdQcFlag.verifications;
-            expect(verification.flagId).to.equal(createdQcFlag.id);
+
+            const [verification] = verifiedFlag.verifications;
+            expect(verification.flagId).to.equal(verifiedFlag.id);
             expect(verification.comment).to.be.null;
-            expect(verification.createdById).to.equal(createdQcFlag.createdById);
+            expect(verification.createdById).to.equal(verifiedFlag.createdById);
         });
 
         it('should successfully verify QC flag when not being owner', async () => {
