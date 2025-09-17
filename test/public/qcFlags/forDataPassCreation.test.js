@@ -24,6 +24,8 @@ const {
     expectRowValues,
     expectUrlParams,
     waitForTableLength,
+    waitForNonEmptyTable,
+    getTableContent,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { navigateToRunsPerDataPass } = require('../runs/navigationUtils.js');
@@ -309,7 +311,7 @@ module.exports = () => {
         for (const detector of ['ITS', 'FT0']) {
             await navigateToRunsPerDataPass(page, 2, 5, 4);
             await waitForNavigation(page, () => pressElement(page, `#row56-${detector}-text a`));
-            await expectInnerText(page, '#row56-verified-text', 'Yes');
+            await expectInnerText(page, 'tr:first-child .column-verified', 'Yes');
         }
     });
 };
