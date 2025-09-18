@@ -84,27 +84,27 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 0,
                         flagComments: [
                             {
-                                "id": 1,
-                                "comment": "Some qc comment 1",
-                                "flagType": {
-                                    "name": "Limited Acceptance MC Reproducible",
-                                    "color": "#FFFF00"
+                                id: 1,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Limited Acceptance MC Reproducible",
+                                    color: "#FFFF00"
                                 }
                             },
                             {
-                                "id": 2,
-                                "comment": "Some qc comment 2",
-                                "flagType": {
-                                    "name": "Limited acceptance",
-                                    "color": "#FFFF00"
+                                id: 2,
+                                comment: "Some qc comment 2",
+                                flagType: {
+                                    name: "Limited acceptance",
+                                    color: "#FFFF00"
                                 }
                             },
                             {
-                                "id": 3,
-                                "comment": "Some qc comment 3",
-                                "flagType": {
-                                    "name": "Bad",
-                                    "color": null
+                                id: 3,
+                                comment: "Some qc comment 3",
+                                flagType: {
+                                    name: "Bad",
+                                    color: null
                                 }
                             }
                         ],
@@ -116,11 +116,11 @@ module.exports = () => {
                         missingVerificationsCount: 1,
                         flagComments: [
                             {
-                                "id": 7,
-                                "comment": "Some qc comment 7",
-                                "flagType": {
-                                    "name": "Good",
-                                    "color": null
+                                id: 7,
+                                comment: "Some qc comment 7",
+                                flagType: {
+                                    name: "Good",
+                                    color: null
                                 }
                             }
                         ],
@@ -134,19 +134,19 @@ module.exports = () => {
                         missingVerificationsCount: 2,
                         flagComments: [
                             {
-                                "id": 202,
-                                "comment": "Some qc comment 1",
-                                "flagType": {
-                                    "name": "Good",
-                                    "color": null
+                                id: 202,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Good",
+                                    color: null
                                 }
                             },
                             {
-                                "id": 201,
-                                "comment": "Some qc comment 1",
-                                "flagType": {
-                                    "name": "Limited Acceptance MC Reproducible",
-                                    "color": "#FFFF00"
+                                id: 201,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Limited Acceptance MC Reproducible",
+                                    color: "#FFFF00"
                                 }
                             }
                         ],
@@ -158,11 +158,11 @@ module.exports = () => {
                         missingVerificationsCount: 1,
                         flagComments: [
                            {
-                                "id": 203,
-                                "comment": "Some qc comment 1",
-                                "flagType": {
-                                    "name": "Good",
-                                    "color": null
+                                id: 203,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Good",
+                                    color: null
                                 }
                             }
                         ],
