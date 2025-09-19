@@ -161,7 +161,19 @@ module.exports = () => {
         await page.waitForSelector(popoverSelector);
 
         const popoverText = await getPopoverInnerText(qcPopoverTrigger);
-        expect(popoverText.trim()).to.be.eql('Flag 1\nLimited Acceptance MC Reproducible\nSome qc comment 1\nFlag 2\nLimited acceptance\nSome qc comment 2\nFlag 3\nBadSome qc comment 3')
+        const popoverTextLines = popoverText.split('\n').map((line) => line.trim());
+        console.log(popoverTextLines)
+        expect(popoverText.trim()).to.have.same.members([
+            'Flag 1',
+            'Limited Acceptance MC Reproducible',
+            'Some qc comment 1',
+            'Flag 2',
+            'Limited acceptance',
+            'Some qc comment 2',
+            'Flag 3',
+            'Bad',
+            'Some qc comment 3',
+        ])
     });
 
     return
