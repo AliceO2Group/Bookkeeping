@@ -151,6 +151,12 @@ module.exports = () => {
             .to.be.equal('Missing 3 verifications');
     });
 
+    it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
+        await navigateToRunsPerDataPass(page, 2, 1, 3); // apass
+        await expectInnerText(page, '#row106-VTX-text', '100');
+    });
+
+
     it('displays QC flag comments in detector summary popover', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
 
@@ -224,6 +230,7 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
@@ -255,6 +262,7 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
@@ -274,6 +282,7 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         await page.waitForSelector('tbody tr');
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
 
@@ -568,7 +577,7 @@ module.exports = () => {
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-        await setConfirmationDialogToBeAccepted(page);
+        setConfirmationDialogToBeAccepted(page);
         await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3);
@@ -592,4 +601,6 @@ module.exports = () => {
         await page.waitForSelector('#EVS');
         await page.waitForSelector('#MUD');
     });
+
+    
 };
