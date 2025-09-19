@@ -204,6 +204,7 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
@@ -235,6 +236,7 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
@@ -254,6 +256,7 @@ module.exports = () => {
     });
 
     it('can navigate to a run detail page', async () => {
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
         await page.waitForSelector('tbody tr');
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
 
