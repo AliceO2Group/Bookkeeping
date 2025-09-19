@@ -176,6 +176,12 @@ module.exports = () => {
                         mcReproducible: false,
                         missingVerificationsCount: 1,
                     },
+                    22: {
+                        badEffectiveRunCoverage: 0.2222222,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                        mcReproducible: false,
+                        missingVerificationsCount: 2
+                    },
                 },
                 107: {
                     1: {
@@ -208,6 +214,12 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                    },
+                    22: {
+                        badEffectiveRunCoverage: 0.2222222,
+                        explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                        mcReproducible: false,
+                        missingVerificationsCount: 2
                     },
                 },
                 107: {
@@ -324,6 +336,68 @@ module.exports = () => {
                 },
             });
         });
+
+        it('should successfully get non-empty QC flags summary for a data pass when filtering by CreatedBy and detectors', async () => {
+            {
+                const data = await qcFlagSummaryService.getSummary({ dataPassId: 1, dplDetectorIds: [22, 1] })
+                expect(data).to.be.eql({
+                    106: {
+                        22: {
+                            badEffectiveRunCoverage: 0.2222222,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                            mcReproducible: false,
+                            missingVerificationsCount: 2
+                        },
+                        1: {
+                            missingVerificationsCount: 3,
+                            mcReproducible: true,
+                            badEffectiveRunCoverage: 0.3333333,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                    107: {
+                        1: {
+                            badEffectiveRunCoverage: 0.2403462,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                            mcReproducible: true,
+                            missingVerificationsCount: 2,
+                        },
+                    },
+                });
+            }
+
+            {
+                const data = await qcFlagSummaryService.getSummary(
+                    { dataPassId: 1, dplDetectorIds: [22, 1] },
+                    {},
+                    { createdBy: { names: ['Anonymous'], operator: 'none' }}
+                )
+                expect(data).to.be.eql({
+                    106: {
+                        22: {
+                            badEffectiveRunCoverage: 0,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7777778,
+                            mcReproducible: false,
+                            missingVerificationsCount: 1
+                        },
+                        1: {
+                            missingVerificationsCount: 3,
+                            mcReproducible: true,
+                            badEffectiveRunCoverage: 0.3333333,
+                            explicitlyNotBadEffectiveRunCoverage: 0,
+                        },
+                    },
+                    107: {
+                        1: {
+                            badEffectiveRunCoverage: 0.2403462,
+                            explicitlyNotBadEffectiveRunCoverage: 0.7596538,
+                            mcReproducible: true,
+                            missingVerificationsCount: 2,
+                        },
+                    },
+                });
+            }
+        })
     });
 
     describe('Creating Quality Control Flag for data pass', async () => {
@@ -1408,7 +1482,7 @@ module.exports = () => {
                         },
                     },
                 },
-            })).to.lengthOf(13); // 14 from seeders, then 1 deleted => 10
+            })).to.lengthOf(16);
 
             expect((await QcFlagRepository.findAll({
                 include: {
