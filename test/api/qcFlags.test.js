@@ -74,6 +74,7 @@ module.exports = () => {
         it('should successfully get non-empty QC flag summary for data pass', async () => {
             const response = await request(server).get('/api/qcFlags/summary?dataPassId=1');
             expect(response.status).to.be.equal(200);
+
             const { body: { data } } = response;
             expect(data).to.be.eql({
                 106: {
