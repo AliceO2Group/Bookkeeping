@@ -163,7 +163,7 @@ module.exports = () => {
         const popoverText = await getPopoverInnerText(qcPopoverTrigger);
         const popoverTextLines = popoverText.split('\n').map((line) => line.trim());
         console.log(popoverTextLines)
-        expect(popoverText.trim()).to.have.same.members([
+        expect(popoverTextLines).to.have.same.members([
             'Flag 1',
             'Limited Acceptance MC Reproducible',
             'Some qc comment 1',
@@ -175,8 +175,6 @@ module.exports = () => {
             'Some qc comment 3',
         ])
     });
-
-    return
 
     it('should successfully display tooltip information on GAQ column', async () => {
         const popoverContent = await getPopoverContent(await page.waitForSelector('#globalAggregatedQuality .popover-trigger'));
