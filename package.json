@@ -51,7 +51,7 @@
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
     "eslint": "^9.35.0",
-    "eslint-plugin-jsdoc": "^55.0.3",
+    "eslint-plugin-jsdoc": "^59.0.2",
     "globals": "^16.3.0",
     "js-yaml": "4.1.0",
     "mocha": "11.7.0",
