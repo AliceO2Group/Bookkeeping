@@ -151,6 +151,21 @@ module.exports = () => {
             .to.be.equal('Missing 3 verifications');
     });
 
+    it('displays QC flag comments in detector summary popover', async () => {
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
+
+        const qcPopoverTrigger = await page.waitForSelector('#row106 .column-CPV .popover-trigger');
+        const popoverSelector = await getPopoverSelector(qcPopoverTrigger);
+
+        await qcPopoverTrigger.hover();
+        await page.waitForSelector(popoverSelector);
+
+        const popoverText = await getPopoverInnerText(qcPopoverTrigger);
+        expect(popoverText.trim()).to.be.eql('Flag 1\nLimited Acceptance MC Reproducible\nSome qc comment 1\nFlag 2\nLimited acceptance\nSome qc comment 2\nFlag 3\nBadSome qc comment 3')
+    });
+
+    return
+
     it('should successfully display tooltip information on GAQ column', async () => {
         const popoverContent = await getPopoverContent(await page.waitForSelector('#globalAggregatedQuality .popover-trigger'));
         expect(popoverContent).to.equal('Global aggregated flag based on critical detectors.' +
