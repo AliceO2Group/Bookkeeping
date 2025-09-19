@@ -24,7 +24,7 @@ const lhcPeriod_LHC22a = {
         id: 1,
         name: 'LHC22a',
     },
-    beamTypes: ['PbPb'],
+    pdpBeamTypes: ['PbPb'],
     distinctEnergies: [
         23.21,
         56.1,
@@ -41,7 +41,7 @@ const lhcPeriod_LHC22b = {
         id: 2,
         name: 'LHC22b',
     },
-    beamTypes: ['pp'],
+    pdpBeamTypes: ['pp'],
     distinctEnergies: [55.2],
     runsCount: 4,
     dataPassesCount: 3,
@@ -55,7 +55,7 @@ const lhcPeriod_LHC23f = {
         id: 3,
         name: 'LHC23f',
     },
-    beamTypes: ['OO'],
+    pdpBeamTypes: ['OO'],
     distinctEnergies: [],
     dataPassesCount: 1,
     runsCount: 1,
@@ -155,11 +155,11 @@ module.exports = () => {
         expect(lhcPeriods[2]).to.be.eql(lhcPeriod_LHC23f);
     });
 
-    it('should successfully filter period statistics on beamTypes', async () => {
+    it('should successfully filter period statistics on pdpBeamTypes', async () => {
         const dto = {
             query: {
                 filter: {
-                    beamTypes: ['pp'],
+                    pdpBeamTypes: ['pp'],
                 },
             },
         };
@@ -168,11 +168,11 @@ module.exports = () => {
         expect(lhcPeriods).to.have.deep.members([lhcPeriod_LHC22b]);
     });
 
-    it('should successfully sort period statistics on beamTypes', async () => {
+    it('should successfully sort period statistics on pdpBeamTypes', async () => {
         const dto = {
             query: {
                 sort: {
-                    beamTypes: 'ASC',
+                    pdpBeamTypes: 'ASC',
                 },
             },
         };
