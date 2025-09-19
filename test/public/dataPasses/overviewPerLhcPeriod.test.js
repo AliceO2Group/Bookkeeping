@@ -108,7 +108,7 @@ module.exports = () => {
         expectUrlParams(page, {
             page: 'runs-per-data-pass',
             dataPassId: '2',
-            pdpBeamType: 'pp',
+            pdpBeamTypes: 'pp',
         });
     });
 

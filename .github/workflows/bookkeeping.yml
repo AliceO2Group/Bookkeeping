@@ -37,7 +37,7 @@ jobs:
                     qc-flags]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
       - name: Create Coverage Directory
@@ -91,7 +91,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
