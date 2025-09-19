@@ -82,7 +82,7 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 1,
                                 comment: "Some qc comment 1",
@@ -114,7 +114,7 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 7,
                                 comment: "Some qc comment 7",
@@ -132,7 +132,7 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 0.7596538,
                         mcReproducible: true,
                         missingVerificationsCount: 2,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 202,
                                 comment: "Some qc comment 1",
@@ -156,7 +156,7 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
-                        flagComments: [
+                        minfiedFlags: [
                            {
                                 id: 203,
                                 comment: "Some qc comment 1",
@@ -182,7 +182,7 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.1111111,
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 1,
                                 comment: 'Some qc comment 1',
@@ -205,7 +205,7 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 7,
                                 comment: 'Some qc comment 7',
@@ -220,7 +220,7 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: true,
                         missingVerificationsCount: 2,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 201,
                                 comment: 'Some qc comment 1',
@@ -238,7 +238,7 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 203,
                                 comment: 'Some qc comment 1',
@@ -261,7 +261,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.9288889,
                         explicitlyNotBadEffectiveRunCoverage: 0,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 5,
                                 comment: 'Some qc comment 4',
@@ -290,7 +290,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.1666667,
                         explicitlyNotBadEffectiveRunCoverage: 0.8333333,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 100,
                                 comment: 'first part good',
@@ -310,7 +310,7 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
-                        flagComments: [
+                        minfiedFlags: [
                             {
                                 id: 102,
                                 comment: 'all good',
