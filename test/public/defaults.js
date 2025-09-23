@@ -564,11 +564,11 @@ module.exports.getPopoverInnerText = getPopoverInnerText;
  * Check if popover of given trigger has expected inner text
  *
  * @param {puppeteer.Page} page the puppeteer page
- * @param {number} selector popover trigger selector
+ * @param {string} popoverTriggerSelector popover trigger selector
  * @returns {Promise<void>} resolve once popover is validated
  */
-const checkPopoverInnerText = async (page, selector, expectedText) => {
-    const popoverTrigger = await page.waitForSelector(selector);
+const checkPopoverInnerText = async (page, popoverTriggerSelector, expectedText) => {
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
     const popoverSelector = await this.getPopoverSelector(popoverTrigger);
 
     await this.expectInnerTextTo(
