@@ -329,7 +329,7 @@ module.exports = () => {
         expect(exportContent.trim()).to.be.eql([
             'runNumber,VTX,CPV',
             '108,"",""',
-            '107,"","Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000) | Good (from: 1565290800000 to: 1565359260000)"',
+            '107,"","Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)"',
             '106,"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)","Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)"'
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
