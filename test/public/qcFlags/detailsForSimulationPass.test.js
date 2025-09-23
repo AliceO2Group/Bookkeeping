@@ -95,7 +95,7 @@ module.exports = () => {
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n5');
         await expectInnerText(page, '#qc-flag-details-simulationPass', 'Simulation pass:\nLHC23k6c');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
-        await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
+        await expectInnerText(page, '#qc-flag-details-detector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nBad');
         await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 13:46:40');
         await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 07:50:00');
