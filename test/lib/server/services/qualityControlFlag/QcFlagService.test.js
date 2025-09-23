@@ -578,7 +578,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    detectorId: detectorId,
+                    detectorId,
                     createdBy: { externalId: externalUserId },
                 } = createdQcFlags[qcFlagIndex];
                 const qcFlag = qcFlags[qcFlagIndex];
@@ -686,7 +686,7 @@ module.exports = () => {
 
                 const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-                const [{ id, runNumber, detectorId: detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
+                const [{ id, runNumber, detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
@@ -764,7 +764,7 @@ module.exports = () => {
             const [
                 {
                     id, from, to, comment, flagTypeId, runNumber,
-                    detectorId: detectorId, createdBy: { externalId: externalUserId }, createdAt,
+                    detectorId, createdBy: { externalId: externalUserId }, createdAt,
                 },
             ] = await qcFlagService.create([qcFlag], scope, relations);
 
@@ -1155,7 +1155,7 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId: detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
@@ -1238,7 +1238,7 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId: detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
 
             expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
@@ -1299,7 +1299,7 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, flagTypeId, runNumber, detectorId: detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({

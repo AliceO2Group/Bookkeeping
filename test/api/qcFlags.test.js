@@ -496,7 +496,7 @@ module.exports = () => {
                 expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql(expectedProperties);
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, detectorId: detectorId, dataPasses } = await QcFlagRepository.findOne({
+                const { from, to, comment, flagTypeId, runNumber, detectorId, dataPasses } = await QcFlagRepository.findOne({
                     include: [{ association: 'dataPasses' }],
                     where: {
                         id: createdQcFlag.id,
@@ -569,7 +569,7 @@ module.exports = () => {
                 expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql(expectedProperties);
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, detectorId: detectorId, simulationPasses }
+                const { from, to, comment, flagTypeId, runNumber, detectorId, simulationPasses }
                     = await QcFlagRepository.findOne({
                         include: [{ association: 'simulationPasses' }],
                         where: {
