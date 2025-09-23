@@ -52,7 +52,7 @@ module.exports = () => {
             id: 5,
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         expect(response.status()).to.equal(200);
@@ -67,7 +67,7 @@ module.exports = () => {
             id: 5,
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-simulationPass a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
@@ -78,7 +78,7 @@ module.exports = () => {
             id: 5,
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-runNumber a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: '106' });
@@ -89,7 +89,7 @@ module.exports = () => {
             id: 5,
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n5');
@@ -111,7 +111,7 @@ module.exports = () => {
             id: 5,
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
         await page.waitForSelector('button#delete');
 
@@ -123,7 +123,7 @@ module.exports = () => {
             id: '5',
             simulationPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         // Delete
@@ -133,7 +133,7 @@ module.exports = () => {
             page: 'qc-flags-for-simulation-pass',
             simulationPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
         unsetConfirmationDialogActions(page);
     });
@@ -143,7 +143,7 @@ module.exports = () => {
             id: 6,
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await page.waitForSelector('#delete:not([disabled])');

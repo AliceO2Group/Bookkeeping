@@ -29,7 +29,7 @@ module.exports = () => {
             const response = await request(server).post(`/api/gaqDetectors?token=${BkpRoles.GAQ}`).send({
                 dataPassId,
                 runNumbers,
-                dplDetectorIds: detectorIds,
+                detectorIds: detectorIds,
             });
             expect(response.status).to.be.equal(201);
             expect(response.body.data).to.have.all.deep.members(runNumbers
@@ -43,7 +43,7 @@ module.exports = () => {
             const response = await request(server).post(`/api/gaqDetectors?token=${BkpRoles.GUEST}`).send({
                 dataPassId,
                 runNumbers,
-                dplDetectorIds: detectorIds,
+                detectorIds: detectorIds,
             });
             expect(response.status).to.be.equal(403);
 

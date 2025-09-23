@@ -54,7 +54,7 @@ module.exports = () => {
             id: 1,
             dataPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         expect(response.status()).to.equal(200);
@@ -98,7 +98,7 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-CPV a', true));
-        expectUrlParams(page, { page: 'qc-flags-for-data-pass', dataPassId: '1', runNumber: 106, dplDetectorId: 1 });
+        expectUrlParams(page, { page: 'qc-flags-for-data-pass', dataPassId: '1', runNumber: 106, detectorId: 1 });
         await waitForTableLength(page, 3);
         await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
@@ -113,7 +113,7 @@ module.exports = () => {
             id: '1',
             dataPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
         await page.waitForSelector('button#delete');
 
@@ -124,7 +124,7 @@ module.exports = () => {
             page: 'qc-flags-for-data-pass',
             dataPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         unsetConfirmationDialogActions(page);

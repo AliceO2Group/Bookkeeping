@@ -36,7 +36,7 @@ module.exports = () => {
                 createdAt: new Date('2024-02-13 11:57:19').getTime(),
                 updatedAt: new Date('2024-02-13 11:57:19').getTime(),
                 runNumber: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
                 createdById: 2,
                 verifications: [
                     {
@@ -315,7 +315,7 @@ module.exports = () => {
     describe('GET /api/qcFlags/perDataPass and /api/qcFlags/perSimulationPass', () => {
         it('should successfully fetch QC flags for data pass', async () => {
             const response = await request(server)
-                .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&dplDetectorId=1');
+                .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&detectorId=1');
             expect(response.status).to.be.equal(200);
             const { data, meta } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
@@ -326,7 +326,7 @@ module.exports = () => {
 
         it('should successfully fetch QC flags for simulation pass', async () => {
             const response = await request(server)
-                .get('/api/qcFlags/perSimulationPass?simulationPassId=1&runNumber=106&dplDetectorId=1');
+                .get('/api/qcFlags/perSimulationPass?simulationPassId=1&runNumber=106&detectorId=1');
             expect(response.status).to.be.equal(200);
             const { data, meta } = response.body;
             expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
@@ -337,7 +337,7 @@ module.exports = () => {
 
         it('should support pagination', async () => {
             const response = await request(server)
-                .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&dplDetectorId=1&page[offset]=1&page[limit]=2');
+                .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&detectorId=1&page[offset]=1&page[limit]=2');
             expect(response.status).to.be.equal(200);
             const { data: qcFlags } = response.body;
             expect(qcFlags).to.be.an('array');
@@ -362,7 +362,7 @@ module.exports = () => {
         it('should return 400 if the limit is below 1', async () => {
             {
                 const response = await request(server)
-                    .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&dplDetectorId=1&page[offset]=1&page[limit]=0');
+                    .get('/api/qcFlags/perDataPass?dataPassId=1&runNumber=106&detectorId=1&page[offset]=1&page[limit]=0');
                 expect(response.status).to.be.equal(400);
                 const { errors } = response.body;
                 const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/page/limit');
@@ -377,13 +377,13 @@ module.exports = () => {
             const detectorId = 1;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=or`);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=or`);
                 expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=none`);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=John%20Doe&filter[createdBy][operator]=none`);
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
@@ -394,7 +394,7 @@ module.exports = () => {
             const detectorId = 1;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
+                    .get(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
                 expect(response.body.errors[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
             }
         });
@@ -405,13 +405,13 @@ module.exports = () => {
             const detectorId = 1;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
+                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
                 expect(response.body.data).to.be.lengthOf(2);
             }
 
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
+                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=none`);
                 expect(response.body.data).to.be.lengthOf(0);
             }
         });
@@ -422,7 +422,7 @@ module.exports = () => {
             const detectorId = 1;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&dplDetectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
+                    .get(`/api/qcFlags/perSimulationPass?simulationPassId=${simulationPassId}&runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=SOME_OPERATOR`);
                 expect(response.body.errors[0].detail).eql('\"query.filter.createdBy.operator\" must be one of [or, none]');
             }
         });
@@ -483,7 +483,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
             };
 
             const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
@@ -492,17 +492,17 @@ module.exports = () => {
 
             const { dataPassId, ...expectedProperties } = qcFlagCreationParameters;
             {
-                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
-                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                const { from, to, comment, flagTypeId, runNumber, detectorId } = createdQcFlag;
+                expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql(expectedProperties);
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, detectorId: dplDetectorId, dataPasses } = await QcFlagRepository.findOne({
+                const { from, to, comment, flagTypeId, runNumber, detectorId: detectorId, dataPasses } = await QcFlagRepository.findOne({
                     include: [{ association: 'dataPasses' }],
                     where: {
                         id: createdQcFlag.id,
                     },
                 });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, detectorId }).to
                     .be.eql(expectedProperties);
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
@@ -516,7 +516,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorId: 21,
+                detectorId: 21,
             };
 
             const response = await request(server).post('/api/qcFlags?token=det-glo').send(qcFlagCreationParameters);
@@ -524,12 +524,12 @@ module.exports = () => {
             const [createdQcFlag] = response.body.data;
             const { dataPassId } = qcFlagCreationParameters;
             {
-                const { comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
-                expect({ comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql({
+                const { comment, flagTypeId, runNumber, detectorId } = createdQcFlag;
+                expect({ comment, flagTypeId, runNumber, detectorId }).to.be.eql({
                     comment: qcFlagCreationParameters.comment,
                     flagTypeId: qcFlagCreationParameters.flagTypeId,
                     runNumber: qcFlagCreationParameters.runNumber,
-                    dplDetectorId: qcFlagCreationParameters.dplDetectorId,
+                    detectorId: qcFlagCreationParameters.detectorId,
                 });
             }
             {
@@ -543,7 +543,7 @@ module.exports = () => {
                     comment: qcFlagCreationParameters.comment,
                     flagTypeId: qcFlagCreationParameters.flagTypeId,
                     runNumber: qcFlagCreationParameters.runNumber,
-                    detectorId: qcFlagCreationParameters.dplDetectorId,
+                    detectorId: qcFlagCreationParameters.detectorId,
                 });
                 expect(dataPasses.map(({ id }) => id)).to.have.all.members([dataPassId]);
             }
@@ -557,7 +557,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
             };
 
             const response = await request(server).post('/api/qcFlags?token=det-cpv').send(qcFlagCreationParameters);
@@ -565,18 +565,18 @@ module.exports = () => {
             const [createdQcFlag] = response.body.data;
             const { simulationPassId, ...expectedProperties } = qcFlagCreationParameters;
             {
-                const { from, to, comment, flagTypeId, runNumber, dplDetectorId } = createdQcFlag;
-                expect({ from, to, comment, flagTypeId, runNumber, dplDetectorId }).to.be.eql(expectedProperties);
+                const { from, to, comment, flagTypeId, runNumber, detectorId } = createdQcFlag;
+                expect({ from, to, comment, flagTypeId, runNumber, detectorId }).to.be.eql(expectedProperties);
             }
             {
-                const { from, to, comment, flagTypeId, runNumber, detectorId: dplDetectorId, simulationPasses }
+                const { from, to, comment, flagTypeId, runNumber, detectorId: detectorId, simulationPasses }
                     = await QcFlagRepository.findOne({
                         include: [{ association: 'simulationPasses' }],
                         where: {
                             id: createdQcFlag.id,
                         },
                     });
-                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, dplDetectorId }).to
+                expect({ from: from.getTime(), to: to.getTime(), comment, flagTypeId, runNumber, detectorId }).to
                     .be.eql(expectedProperties);
                 expect(simulationPasses.map(({ id }) => id)).to.have.all.members([simulationPassId]);
             }
@@ -604,12 +604,12 @@ module.exports = () => {
             }));
             expect(createdQcFlags.filter(({ runNumber }) => runNumber === 56).length).to.be.equal(1);
             expect(createdQcFlags.filter(({ runNumber }) => runNumber === 49).length).to.be.equal(2);
-            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 49 && dplDetectorId === 4)).to.exist;
-            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 49 && dplDetectorId === 7)).to.exist;
-            expect(createdQcFlags.find(({ runNumber, dplDetectorId }) => runNumber === 56 && dplDetectorId === 4)).to.exist;
+            expect(createdQcFlags.find(({ runNumber, detectorId }) => runNumber === 49 && detectorId === 4)).to.exist;
+            expect(createdQcFlags.find(({ runNumber, detectorId }) => runNumber === 49 && detectorId === 7)).to.exist;
+            expect(createdQcFlags.find(({ runNumber, detectorId }) => runNumber === 56 && detectorId === 4)).to.exist;
         });
 
-        it('should fail to create QC flag instance when runDetectors and runNumber or dplDetectorId are specified', async () => {
+        it('should fail to create QC flag instance when runDetectors and runNumber or detectorId are specified', async () => {
             const qcFlagCreationParameters = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -617,7 +617,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
                 runDetectors: [
                     {
                         runNumber: 106,
@@ -640,10 +640,10 @@ module.exports = () => {
                 {
                     status: '422',
                     source: {
-                        pointer: '/data/attributes/body/dplDetectorId',
+                        pointer: '/data/attributes/body/detectorId',
                     },
                     title: 'Invalid Attribute',
-                    detail: 'dplDetectorId is not allowed when runDetectors is provided.',
+                    detail: 'detectorId is not allowed when runDetectors is provided.',
                 },
             ]);
         });
@@ -657,7 +657,7 @@ module.exports = () => {
                 runNumber: 106,
                 simulationPassId: 1,
                 dataPassId: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
             };
 
             const response = await request(server).post('/api/qcFlags?token=admin').send(qcFlagCreationParameters);
@@ -683,7 +683,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 dataPassId: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
             };
 
             await dataPassService.setFrozenState({ id: 1 }, true);

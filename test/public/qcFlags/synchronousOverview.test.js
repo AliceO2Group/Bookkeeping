@@ -47,7 +47,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'synchronous-qc-flags', { queryParameters: { runNumber: 56, dplDetectorId: 7 } });
+        const response = await goToPage(page, 'synchronous-qc-flags', { queryParameters: { runNumber: 56, detectorId: 7 } });
 
         expect(response.status()).to.equal(200);
         expect(await page.title()).to.equal('AliceO2 Bookkeeping');
