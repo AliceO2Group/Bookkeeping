@@ -35,6 +35,7 @@ const {
     testTableSortingByColumn,
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
+    checkPopoverInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
@@ -600,8 +601,11 @@ module.exports = () => {
     it('should display correct AOT and MUON columns for different data passes', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4); // apass
         await page.waitForSelector('#VTX');
+        await checkPopoverInnerText(page, '#VTX .popover-trigger', 'Vertexing')
         await page.waitForSelector('#EVS');
+        await checkPopoverInnerText(page, '#EVS .popover-trigger', 'Event Selection')
         await page.waitForSelector('#MUD');
+        await checkPopoverInnerText(page, '#MUD .popover-trigger', 'Moun Detectors: MCH/MID')
 
         await navigateToRunsPerDataPass(page, 3, 9, 1); // cpass
         await page.waitForSelector('#VTX', { hidden: true });
