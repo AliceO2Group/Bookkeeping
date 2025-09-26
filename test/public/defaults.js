@@ -163,6 +163,7 @@ const waitForTableToLength = async (page, expectedSize) => {
 
 module.exports.waitForTableLength = waitForTableToLength;
 
+
 /**
  * Wait for the total number of elements to be the expected one
  *
