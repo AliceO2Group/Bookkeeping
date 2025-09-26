@@ -560,6 +560,28 @@ const getPopoverInnerText = (popoverTrigger) => {
 
 module.exports.getPopoverInnerText = getPopoverInnerText;
 
+
+/**
+ * Check if popover of given trigger has expected inner text
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} popoverTriggerSelector popover trigger selector
+ * @returns {Promise<void>} resolve once popover is validated
+ */
+const checkPopoverInnerText = async (page, popoverTriggerSelector, expectedText) => {
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === expectedText.replaceAll('\n', ''),
+    );
+};
+
+module.exports.checkPopoverInnerText = checkPopoverInnerText;
+
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
  * content is correct

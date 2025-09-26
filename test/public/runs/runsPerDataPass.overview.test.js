@@ -35,6 +35,7 @@ const {
     testTableSortingByColumn,
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
+    checkPopoverInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
@@ -299,6 +300,39 @@ module.exports = () => {
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
         ]);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('should successfully export runs with QC flags as CSV', async () => {
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
+
+        const targetFileName = 'data.csv';
+
+        // First export
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await pressElement(page, '#export-data-trigger');
+        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runNumber', 'VTX', 'CPV');
+        await pressElement(page, '#data-export-type-CSV');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+
+        expect(exportContent.trim()).to.be.eql([
+            'runNumber;VTX;CPV',
+            '108;"";""',
+            '107;"";"Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)"',
+            '106;"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)";"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)"',
+        ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 
@@ -567,8 +601,11 @@ module.exports = () => {
     it('should display correct AOT and MUON columns for different data passes', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4); // apass
         await page.waitForSelector('#VTX');
+        await checkPopoverInnerText(page, '#VTX .popover-trigger', 'Vertexing')
         await page.waitForSelector('#EVS');
+        await checkPopoverInnerText(page, '#EVS .popover-trigger', 'Event Selection')
         await page.waitForSelector('#MUD');
+        await checkPopoverInnerText(page, '#MUD .popover-trigger', 'Moun Detectors: MCH/MID')
 
         await navigateToRunsPerDataPass(page, 3, 9, 1); // cpass
         await page.waitForSelector('#VTX', { hidden: true });
