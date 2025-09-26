@@ -31,6 +31,7 @@ const {
     fillInput,
     expectColumnValues,
     openFilteringPanel,
+    resetFilters,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -234,16 +235,21 @@ module.exports = () => {
         ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perLhcPeriodOverviewModel.reset();
+        });
     });
 
     it('can navigate to a run detail page', async () => {
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
-        await page.goBack()
+        await page.goBack();
     });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
         await openFilteringPanel(page);
 
         await page.waitForSelector('#inelasticInteractionRateAvg-operator');
@@ -251,8 +257,7 @@ module.exports = () => {
         await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
         await expectColumnValues(page, 'runNumber', ['56', '54']);
 
-        await pressElement(page, '#openFilterToggle', true);
-        await pressElement(page, '#reset-filters', true);
+        await resetFilters(page);
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
