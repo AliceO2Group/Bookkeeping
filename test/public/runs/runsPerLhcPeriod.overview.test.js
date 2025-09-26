@@ -30,10 +30,13 @@ const {
     expectUrlParams,
     fillInput,
     expectColumnValues,
+    openFilteringPanel,
+    resetFilters,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { navigateToRunsPerLhcPeriod } = require('./navigationUtils.js');
 
 const { expect } = chai;
 
@@ -232,25 +235,62 @@ module.exports = () => {
         ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perLhcPeriodOverviewModel.reset();
+        });
     });
 
     it('can navigate to a run detail page', async () => {
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
-        await page.goBack()
+        await page.goBack();
     });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
-        await pressElement(page, '#openFilterToggle', true);
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
+        await openFilteringPanel(page);
 
         await page.waitForSelector('#inelasticInteractionRateAvg-operator');
         await page.select('#inelasticInteractionRateAvg-operator', '<=');
         await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
         await expectColumnValues(page, 'runNumber', ['56', '54']);
 
-        await pressElement(page, '#openFilterToggle', true);
-        await pressElement(page, '#reset-filters', true);
+        await resetFilters(page);
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
+    });
+
+    it('should successfully export runs with QC flags as CSV', async () => {
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
+
+        const targetFileName = 'data.csv';
+        
+        // Export
+        await pressElement(page, '#export-data-trigger');
+        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runNumber', 'ITS');
+        await pressElement(page, '#data-export-type-CSV');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+
+        expect(exportContent.trim()).to.be.eql([
+            'runNumber;ITS',
+            '105;""',
+            '56;"Good (from: 1565294400000 to: 1565298000000)"',
+            '54;""',
+            '49;""',
+        ].join('\r\n'));
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };

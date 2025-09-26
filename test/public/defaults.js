@@ -933,9 +933,11 @@ module.exports.openFilteringPanel = async (page) => {
  * @param {puppeteer.page} page page handler
  */
 module.exports.resetFilters = async (page) => {
-    await page.waitForSelector('#reset-filters', { visible: true }).then(() => this.pressElement(page, '#reset-filters')).catch(async () => {
-        await this.pressElement(page, '#openFilterToggle');
-        await this.pressElement(page, '#reset-filters');
-        await this.pressElement(page, '#openFilterToggle');
-    })
+    await page.waitForSelector('#reset-filters', { visible: true })
+        .then(() => this.pressElement(page, '#reset-filters', true))
+        .catch(async () => {
+            await this.pressElement(page, '#openFilterToggle', true);
+            await this.pressElement(page, '#reset-filters', true);
+            await this.pressElement(page, '#openFilterToggle', true);
+        });
 };
