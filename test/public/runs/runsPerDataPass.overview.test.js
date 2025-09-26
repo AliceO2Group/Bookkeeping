@@ -157,6 +157,32 @@ module.exports = () => {
         await expectInnerText(page, '#row106-VTX-text', '100');
     });
 
+
+    it('displays QC flag comments in detector summary popover', async () => {
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
+
+        const qcPopoverTrigger = await page.waitForSelector('#row106 .column-CPV .popover-trigger');
+        const popoverSelector = await getPopoverSelector(qcPopoverTrigger);
+
+        await qcPopoverTrigger.hover();
+        await page.waitForSelector(popoverSelector);
+
+        const popoverText = await getPopoverInnerText(qcPopoverTrigger);
+        const popoverTextLines = popoverText.split('\n').map((line) => line.trim());
+        console.log(popoverTextLines)
+        expect(popoverTextLines).to.have.same.members([
+            'Flag 1',
+            'Limited Acceptance MC Reproducible',
+            'Some qc comment 1',
+            'Flag 2',
+            'Limited acceptance',
+            'Some qc comment 2',
+            'Flag 3',
+            'Bad',
+            'Some qc comment 3',
+        ])
+    });
+
     it('should successfully display tooltip information on GAQ column', async () => {
         const popoverContent = await getPopoverContent(await page.waitForSelector('#globalAggregatedQuality .popover-trigger'));
         expect(popoverContent).to.equal('Global aggregated flag based on critical detectors.' +
