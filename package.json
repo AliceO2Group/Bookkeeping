@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@aliceo2/web-ui": "2.8.5",
-    "@grpc/grpc-js": "1.13.0",
+    "@grpc/grpc-js": "1.14.0",
     "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
     "d3": "7.8.5",
@@ -45,7 +45,7 @@
     "proto/"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^9.36.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "@types/d3": "7.4.0",
     "chai": "4.5.0",
