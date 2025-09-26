@@ -280,11 +280,11 @@ module.exports = () => {
         const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
         expect(exportContent.trim()).to.be.eql([
-            'runNumber,ITS',
-            '105,""',
-            '56,"Good (from: 1565294400000 to: 1565298000000)"',
-            '54,""',
-            '49,""',
+            'runNumber;ITS',
+            '105;""',
+            '56;"Good (from: 1565294400000 to: 1565298000000)"',
+            '54;""',
+            '49;""',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });

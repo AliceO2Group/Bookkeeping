@@ -276,10 +276,10 @@ module.exports = () => {
         const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
         expect(exportContent.trim()).to.be.eql([
-            'runNumber,CPV',
-            '107,""',
-            '106,"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"',
-            '105,""',
+            'runNumber;CPV',
+            '107;""',
+            '106;"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"',
+            '105;""',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
