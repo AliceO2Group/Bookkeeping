@@ -163,6 +163,7 @@ const waitForTableToLength = async (page, expectedSize) => {
 
 module.exports.waitForTableLength = waitForTableToLength;
 
+
 /**
  * Wait for the total number of elements to be the expected one
  *
@@ -179,7 +180,8 @@ module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
             amount,
         );
     } catch {
-        const actualCount = (await page.$$('#totalRowsCount')).innerText;
+        const element = await page.$$('#totalRowsCount')
+        const actualCount = element.innerText;
         throw new Error(`Expected total rows count ${amount}, but got ${actualCount}`);
     }
 };
@@ -558,6 +560,28 @@ const getPopoverInnerText = (popoverTrigger) => {
 
 module.exports.getPopoverInnerText = getPopoverInnerText;
 
+
+/**
+ * Check if popover of given trigger has expected inner text
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} popoverTriggerSelector popover trigger selector
+ * @returns {Promise<void>} resolve once popover is validated
+ */
+const checkPopoverInnerText = async (page, popoverTriggerSelector, expectedText) => {
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === expectedText.replaceAll('\n', ''),
+    );
+};
+
+module.exports.checkPopoverInnerText = checkPopoverInnerText;
+
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
  * content is correct
@@ -892,4 +916,29 @@ module.exports.getPeriodInputsSelectors = (popoverSelector) => {
         toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
         toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
     };
+};
+
+/**
+ * Open filtering panel
+ * @param {puppeteer.page} page page handler
+ */
+module.exports.openFilteringPanel = async (page) => {
+    await page.waitForSelector('#reset-filters', { visible: true }).catch(async () => {
+        await this.pressElement(page, '#openFilterToggle');
+    })
+};
+
+/**
+ * Reset standard filtering
+ * Excecution of this function does not change visibility of filtering popover
+ * @param {puppeteer.page} page page handler
+ */
+module.exports.resetFilters = async (page) => {
+    await page.waitForSelector('#reset-filters', { visible: true })
+        .then(() => this.pressElement(page, '#reset-filters', true))
+        .catch(async () => {
+            await this.pressElement(page, '#openFilterToggle', true);
+            await this.pressElement(page, '#reset-filters', true);
+            await this.pressElement(page, '#openFilterToggle', true);
+        });
 };
