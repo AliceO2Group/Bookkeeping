@@ -169,7 +169,6 @@ module.exports = () => {
 
         const popoverText = await getPopoverInnerText(qcPopoverTrigger);
         const popoverTextLines = popoverText.split('\n').map((line) => line.trim());
-        console.log(popoverTextLines)
         expect(popoverTextLines).to.have.same.members([
             'Flag 1',
             'Limited Acceptance MC Reproducible',
