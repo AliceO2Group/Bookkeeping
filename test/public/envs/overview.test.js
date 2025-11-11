@@ -68,7 +68,6 @@ module.exports = () => {
         const tableDataValidators = {
             id: (id) => /[A-Za-z0-9]+/.test(id),
             runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
-            createdAt: checkDate,
             updatedAt: checkDate,
             status: (currentStatus) => statusNames.has(currentStatus),
             historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
@@ -84,7 +83,7 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 6);
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('Should have correct status color in the overview page', async () => {
@@ -113,10 +112,10 @@ module.exports = () => {
             }
         };
 
-        await checkEnvironmentStatusColor(1, 4);
-        await checkEnvironmentStatusColor(2, 4);
-        await checkEnvironmentStatusColor(3, 4);
-        await checkEnvironmentStatusColor(4, 4);
+        await checkEnvironmentStatusColor(1, 3);
+        await checkEnvironmentStatusColor(2, 3);
+        await checkEnvironmentStatusColor(3, 3);
+        await checkEnvironmentStatusColor(4, 3);
     });
 
     it('can set how many environments are available per page', async () => {
