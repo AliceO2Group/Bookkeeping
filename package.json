@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "author": "ALICEO2",
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
@@ -45,14 +45,14 @@
     "proto/"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "@types/d3": "7.4.0",
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
     "eslint": "^9.37.0",
-    "eslint-plugin-jsdoc": "^60.8.3",
-    "globals": "^16.4.0",
+    "eslint-plugin-jsdoc": "^61.1.9",
+    "globals": "^16.5.0",
     "js-yaml": "4.1.0",
     "mocha": "11.7.0",
     "nodemon": "3.1.3",
