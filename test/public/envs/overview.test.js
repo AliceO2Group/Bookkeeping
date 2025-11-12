@@ -107,7 +107,7 @@ module.exports = () => {
                     await page.waitForSelector(`${cellSelector}.danger`);
                     break;
                 case 'CONFIGURED':
-                    await page.waitForSelector(`${cellSelector}.warning`);
+                    await page.waitForSelector(`${cellSelector}.primary`);
                     break;
             }
         };
