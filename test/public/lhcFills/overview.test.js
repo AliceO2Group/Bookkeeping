@@ -109,13 +109,13 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '6');
-        await expectInnerText(page, '#totalRowsCount', '6');
+        await expectInnerText(page, '#lastRowIndex', '5');
+        await expectInnerText(page, '#totalRowsCount', '5');
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 5);
 
         await checkColumnBalloon(page, 1, 12);
     });
@@ -150,6 +150,10 @@ module.exports = () => {
 
     it('dynamically switches between visible pages in the page selector', async () => {
         await goToPage(page, 'lhc-fill-overview');
+
+        // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
 
         // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
@@ -201,8 +205,8 @@ module.exports = () => {
     });
 
     it('should successfully toggle to stable beam only', async () => {
-        await waitForTableLength(page, 6);
-        await pressElement(page, '.slider.round');
         await waitForTableLength(page, 5);
+        await pressElement(page, '.slider.round');
+        await waitForTableLength(page, 6);
     });
 };
