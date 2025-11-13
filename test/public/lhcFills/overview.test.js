@@ -192,9 +192,10 @@ module.exports = () => {
     it('should successfully display some statistics', async () => {
         await goToPage(page, 'lhc-fill-overview');
 
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(5)', 'PROTON\nPROTON');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');
+        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '1024');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
         await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
     });
