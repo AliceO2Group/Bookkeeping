@@ -182,25 +182,37 @@ module.exports = () => {
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
         let popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
 
-        await expectLink(page, `${popover} a:nth-of-type(1)`, {
+        await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await expectLink(page, `${popover} a:nth-of-type(2)`, {
+        await expectLink(page, `${popover} :nth-child(2 of .external-link)`, {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
+        });
+
+        await expectLink(page, `${popover} #add-log-link`, {
+            href: 'http://localhost:4000/?page=log-create&environmentIds=CmCvjNbg&runNumbers=',
+            innerText: 'Add log',
         });
 
         // Not running env
         envId = 'EIDO13i3D';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
         popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
-        await expectLink(page, `${popover} a:nth-of-type(1)`, {
+
+        await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await page.waitForSelector(`${popover} a:nth-of-type(2)`, { hidden: true });
+        // ECS link should not be present
+        await page.waitForSelector(`${popover} :nth-child(2 of .external-link)`, { hidden: true });
+
+        await expectLink(page, `${popover} #add-log-link`, {
+            href: 'http://localhost:4000/?page=log-create&environmentIds=EIDO13i3D&runNumbers=94,95,96',
+            innerText: 'Add log',
+        });
     });
 };
