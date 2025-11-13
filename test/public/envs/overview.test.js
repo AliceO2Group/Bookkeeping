@@ -174,11 +174,10 @@ module.exports = () => {
     });
 
     it('should successfully display dropdown links', async () => {
-        let envId = 'CmCvjNbg';
-
         await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
 
         // Running env
+        let envId = 'CmCvjNbg';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
         let popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
 
