@@ -109,13 +109,33 @@ module.exports = () => {
                 case 'CONFIGURED':
                     await page.waitForSelector(`${cellSelector}.primary`);
                     break;
+                case 'DONE':
+                    await page.waitForSelector(`${cellSelector}.black`);
+                    break;
+                case 'DESTROYED':
+                    await page.waitForSelector(`${cellSelector}.black`);
+                    break;
+                case 'DEPLOYED':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'PENDING':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'STANDBY':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'UNKNOWN':
+                    await page.waitForSelector(`${cellSelector}.gray-dark`);
+                    break;
             }
+
         };
 
         await checkEnvironmentStatusColor(1, 3);
         await checkEnvironmentStatusColor(2, 3);
         await checkEnvironmentStatusColor(3, 3);
-        await checkEnvironmentStatusColor(4, 3);
+        await checkEnvironmentStatusColor(6, 3);
+        await checkEnvironmentStatusColor(9, 3);
     });
 
     it('can set how many environments are available per page', async () => {
