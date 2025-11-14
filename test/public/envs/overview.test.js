@@ -192,7 +192,7 @@ module.exports = () => {
         });
 
         await expectLink(page, `${popover} #add-log-link`, {
-            href: 'http://localhost:4000/?page=log-create&environmentIds=CmCvjNbg&runNumbers=',
+            href: 'http://localhost:4000/?page=log-create&environmentIds=CmCvjNbg',
             innerText: 'Add log',
         });
 
