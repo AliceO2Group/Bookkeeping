@@ -359,7 +359,7 @@ module.exports = () => {
 
         const run = await runService.update(
             { runNumber },
-            { relations: { eorReasons: eorReasons } },
+            { relations: { eorReasons } },
         );
 
         expect(run.eorReasons).to.lengthOf(2);
@@ -391,7 +391,7 @@ module.exports = () => {
 
         const run = await runService.update(
             { runNumber },
-            { relations: { eorReasons: eorReasons } },
+            { relations: { eorReasons } },
         );
 
         expect(run.eorReasons).to.lengthOf(2);
@@ -431,7 +431,7 @@ module.exports = () => {
 
         const run = await runService.update(
             { runNumber },
-            { relations: { eorReasons: eorReasons } },
+            { relations: { eorReasons } },
         );
 
         // Should only include the valid ones without throwing for invalid one (is simply excluded)
@@ -453,7 +453,7 @@ module.exports = () => {
 
         const run = await runService.update(
             { runNumber },
-            { relations: { eorReasons: eorReasons } },
+            { relations: { eorReasons } },
         );
 
         expect(run.eorReasons).to.lengthOf(0);
@@ -485,7 +485,7 @@ module.exports = () => {
 
         const run = await runService.update(
             { runNumber },
-            { relations: { eorReasons: eorReasons } },
+            { relations: { eorReasons } },
         );
 
         // EorReasons should only include the one that does not have an id
@@ -732,5 +732,27 @@ module.exports = () => {
         expect(run.userIdO2Start).to.equal(1);
         expect(run.userIdO2Stop).to.equal(2);
         expect(run.flpRoles.map(({ name }) => name)).to.deep.equal(['fake-flp1', 'fake-flp2', 'fake-ctp-host']);
+    });
+
+    it('should successfully update a run with provided EOR reasons via the createOrUpdate', async () => {
+        const run = await runService.createOrUpdate(
+            1234,
+            'CmCvjNbg',
+            {  },
+            {
+                eorReasons: [
+                    {
+                        category: 'DETECTORS',
+                        title: 'TPC',
+                        description: 'Run stopped due to LHC dump',
+                    },
+                ],
+            },
+        );
+        // console.log(run);
+        expect(run.eorReasons).to.have.lengthOf(1);
+        expect(run.eorReasons[0].category).to.equal('DETECTORS');
+        expect(run.eorReasons[0].title).to.equal('TPC');
+        expect(run.eorReasons[0].description).to.equal('Run stopped due to LHC dump');
     });
 };
