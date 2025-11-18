@@ -139,11 +139,11 @@ module.exports = () => {
     });
 
     it('can set how many environments are available per page', async () => {
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, `${amountSelectorId} button`);
@@ -233,5 +233,44 @@ module.exports = () => {
             href: 'http://localhost:4000/?page=log-create&environmentIds=EIDO13i3D&runNumbers=94,95,96',
             innerText: 'Add log',
         });
+    });
+
+    it('should skip load when infinite scroll is enabled but call it when disabled', async () => {
+        // Set up spy on the overviewModel.load method
+        await page.evaluate(() => {
+            const originalLoad = model.envs.overviewModel.load.bind(model.envs.overviewModel);
+            model.envs.overviewModel.load = function(...args) {
+                model.envs.overviewModel._loadCallCount++;
+                return originalLoad(...args);
+            };
+        });
+
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should have been called once
+        let loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(1);
+
+        // Enable infinite scroll mode
+        await page.evaluate(() => {
+            model.envs.overviewModel.pagination.enableInfiniteMode();
+        });
+
+        // Reset counter and test again
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should not have been called
+        loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(0);
     });
 };
