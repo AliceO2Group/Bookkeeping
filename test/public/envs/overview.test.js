@@ -204,4 +204,43 @@ module.exports = () => {
 
         await page.waitForSelector(`${popover} a:nth-of-type(2)`, { hidden: true });
     });
+
+    it('should skip load when infinite scroll is enabled but call it when disabled', async () => {
+        // Set up spy on the overviewModel.load method
+        await page.evaluate(() => {
+            const originalLoad = model.envs.overviewModel.load.bind(model.envs.overviewModel);
+            model.envs.overviewModel.load = function(...args) {
+                model.envs.overviewModel._loadCallCount++;
+                return originalLoad(...args);
+            };
+        });
+
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should have been called once
+        let loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(1);
+
+        // Enable infinite scroll mode
+        await page.evaluate(() => {
+            model.envs.overviewModel.pagination.enableInfiniteMode();
+        });
+
+        // Reset counter and test again
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should not have been called
+        loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(0);
+    });
 };
