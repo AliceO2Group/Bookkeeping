@@ -31,6 +31,13 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
+const beamTypeExpect = { selector:'tbody tr:nth-child(1) td:nth-child(8)', value: 'PROTON\nPROTON'};
+const fillEfficiencyExpect = { selector:'tbody tr:nth-child(1) td:nth-child(9)', value: '41.67%'};
+const beforeFirststRunExpect = { selector:'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)'};
+const collidingBunchesExpect = { selector:'tbody tr:nth-child(1) td:nth-child(10)', value: '1024'};
+const meanRunDurationExpect = { selector:'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00'};
+const totalRunsDurationExpect = { selector:'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00'};
+
 module.exports = () => {
     let page;
     let browser;
@@ -136,6 +143,9 @@ module.exports = () => {
     })
 
     it('can set how many lhcFills are available per page', async () => {
+         // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+        
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
@@ -211,12 +221,12 @@ module.exports = () => {
     it('should successfully display some statistics', async () => {
         await goToPage(page, 'lhc-fill-overview');
 
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(5)', 'PROTON\nPROTON');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '1024');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
+        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
+        await expectInnerText(page, fillEfficiencyExpect.selector, fillEfficiencyExpect.value);
+        await expectInnerText(page, beforeFirststRunExpect.selector, beforeFirststRunExpect.value);
+        await expectInnerText(page, collidingBunchesExpect.selector, collidingBunchesExpect.value);
+        await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
+        await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
     });
 
     it('should successfully toggle to stable beam only', async () => {
