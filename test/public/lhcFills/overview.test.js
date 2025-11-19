@@ -22,6 +22,7 @@ const {
     expectUrlParams,
     expectInnerText,
     waitForTableLength,
+    expectLink,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -119,6 +120,20 @@ module.exports = () => {
 
         await checkColumnBalloon(page, 1, 12);
     });
+
+    it('fill dropdown menu should be correct', async() => {
+        // activate the popover
+        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+        await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
+        await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
+
+        // await expectInnerText(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(2)', 'Add log to this fill')
+        await expectLink(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(2)', {
+            href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: 'Add log to this fill'
+        })
+        // disable the popover
+        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+    })
 
     it('can set how many lhcFills are available per page', async () => {
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
