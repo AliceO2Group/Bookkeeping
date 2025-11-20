@@ -54,7 +54,7 @@ module.exports = () => {
             id: 1,
             dataPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         expect(response.status()).to.equal(200);
@@ -80,7 +80,7 @@ module.exports = () => {
         await expectInnerText(page, '#qc-flag-details-id', 'Id:\n1');
         await expectInnerText(page, '#qc-flag-details-dataPass', 'Data pass:\nLHC22b_apass1');
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
-        await expectInnerText(page, '#qc-flag-details-dplDetector', 'Detector:\nCPV');
+        await expectInnerText(page, '#qc-flag-details-detector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nLimited Acceptance MC Reproducible');
         await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 22:43:20');
         await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 04:16:40');
@@ -98,7 +98,7 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#qc-flag-details-dataPass a', true));
         await waitForNavigation(page, () => pressElement(page, '#row106-CPV a', true));
-        expectUrlParams(page, { page: 'qc-flags-for-data-pass', dataPassId: '1', runNumber: 106, dplDetectorId: 1 });
+        expectUrlParams(page, { page: 'qc-flags-for-data-pass', dataPassId: '1', runNumber: 106, detectorId: 1 });
         await waitForTableLength(page, 3);
         await waitForNavigation(page, () => pressElement(page, '#row1-qcFlagId a', true));
     });
@@ -113,7 +113,7 @@ module.exports = () => {
             id: '1',
             dataPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
         await page.waitForSelector('button#delete');
 
@@ -124,7 +124,7 @@ module.exports = () => {
             page: 'qc-flags-for-data-pass',
             dataPassId: '1',
             runNumber: '106',
-            dplDetectorId: '1',
+            detectorId: '1',
         });
 
         unsetConfirmationDialogActions(page);

@@ -58,7 +58,7 @@ const qcFlagWithId1 = {
     createdById: 1,
     flagTypeId: 5, // LimitedAcceptance MC Reproducible
     runNumber: 106,
-    dplDetectorId: 1, // CPV
+    detectorId: 1, // CPV
     createdAt: new Date('2024-02-13 11:57:16').getTime(),
     updatedAt: new Date('2024-02-13 11:57:16').getTime(),
 
@@ -511,7 +511,7 @@ module.exports = () => {
 
         it('should successfully get non-empty QC flags summary for a data pass when filtering by CreatedBy and detectors', async () => {
             {
-                const data = await qcFlagSummaryService.getSummary({ dataPassId: 1, dplDetectorIds: [22, 1] })
+                const data = await qcFlagSummaryService.getSummary({ dataPassId: 1, detectorIds: [22, 1] })
                 expect(data).to.be.eql({
                     106: {
                         22: {
@@ -594,7 +594,7 @@ module.exports = () => {
 
             {
                 const data = await qcFlagSummaryService.getSummary(
-                    { dataPassId: 1, dplDetectorIds: [22, 1] },
+                    { dataPassId: 1, detectorIds: [22, 1] },
                     {},
                     { createdBy: { names: ['Anonymous'], operator: 'none' }}
                 )
@@ -770,7 +770,7 @@ module.exports = () => {
             assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it('should fail to create QC flag because there is no association between data pass, run and dpl detector', async () => {
+        it('should fail to create QC flag because there is no association between data pass, run and detector', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -858,7 +858,7 @@ module.exports = () => {
                     comment,
                     flagTypeId,
                     runNumber,
-                    dplDetectorId: detectorId,
+                    detectorId,
                     createdBy: { externalId: externalUserId },
                 } = createdQcFlags[qcFlagIndex];
                 const qcFlag = qcFlags[qcFlagIndex];
@@ -966,7 +966,7 @@ module.exports = () => {
 
                 const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-                const [{ id, runNumber, dplDetectorId: detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
+                const [{ id, runNumber, detectorId }] = await qcFlagService.create([qcFlag], scope, relations);
 
                 const olderFlags = (await QcFlagRepository.findAll({
                     where: {
@@ -1044,7 +1044,7 @@ module.exports = () => {
             const [
                 {
                     id, from, to, comment, flagTypeId, runNumber,
-                    dplDetectorId: detectorId, createdBy: { externalId: externalUserId }, createdAt,
+                    detectorId, createdBy: { externalId: externalUserId }, createdAt,
                 },
             ] = await qcFlagService.create([qcFlag], scope, relations);
 
@@ -1397,7 +1397,7 @@ module.exports = () => {
             assert.strictEqual(response.length, 0, 'Response should be empty array');
         });
 
-        it('should fail to create QC flag because there is no association between simulation pass, run and dpl detector', async () => {
+        it('should fail to create QC flag because there is no association between simulation pass, run and detector', async () => {
             const qcFlag = {
                 from: new Date('2019-08-09 01:29:50').getTime(),
                 to: new Date('2019-08-09 05:40:00').getTime(),
@@ -1435,7 +1435,7 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
@@ -1518,7 +1518,7 @@ module.exports = () => {
 
             const relations = { user: { roles: ['admin'], externalUserId: 456 } };
 
-            const [{ id, from, to, comment, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, comment, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlagCreationParameters], scope, relations);
 
             expect({ from, to, comment, flagTypeId, runNumber, detectorId, externalUserId }).to.be.eql({
@@ -1579,7 +1579,7 @@ module.exports = () => {
             };
             const relations = { user: { roles: ['det-cpv'], externalUserId: 456 } };
 
-            const [{ id, from, to, flagTypeId, runNumber, dplDetectorId: detectorId, createdBy: { externalId: externalUserId } }] =
+            const [{ id, from, to, flagTypeId, runNumber, detectorId, createdBy: { externalId: externalUserId } }] =
                 await qcFlagService.create([qcFlag], scope, relations);
 
             expect({
