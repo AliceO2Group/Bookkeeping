@@ -22,6 +22,7 @@ const {
     expectUrlParams,
     expectInnerText,
     waitForTableLength,
+    expectLink,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -29,6 +30,12 @@ const { expect } = chai;
 
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
+
+const beamTypeExpect = { selector:'tbody tr:nth-child(1) td:nth-child(8)', value: 'PROTON\nPROTON'};
+const beforeFirststRunExpect = { selector:'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)'};
+const collidingBunchesExpect = { selector:'tbody tr:nth-child(1) td:nth-child(9)', value: '1024'};
+const meanRunDurationExpect = { selector:'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00'};
+const totalRunsDurationExpect = { selector:'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00\n(41.67%)'};
 
 module.exports = () => {
     let page;
@@ -109,18 +116,34 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '6');
-        await expectInnerText(page, '#totalRowsCount', '6');
+        await expectInnerText(page, '#lastRowIndex', '5');
+        await expectInnerText(page, '#totalRowsCount', '5');
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 5);
 
-        await checkColumnBalloon(page, 1, 12);
+        await checkColumnBalloon(page, 1, 11);
     });
 
+    it('fill dropdown menu should be correct', async() => {
+        // activate the popover
+        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+        await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
+        await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
+
+        await expectLink(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(2)', {
+            href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: 'Add log to this fill'
+        })
+        // disable the popover
+        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+    })
+
     it('can set how many lhcFills are available per page', async () => {
+         // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
@@ -150,6 +173,10 @@ module.exports = () => {
 
     it('dynamically switches between visible pages in the page selector', async () => {
         await goToPage(page, 'lhc-fill-overview');
+
+        // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
 
         // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
@@ -192,16 +219,16 @@ module.exports = () => {
     it('should successfully display some statistics', async () => {
         await goToPage(page, 'lhc-fill-overview');
 
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
+        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
+        await expectInnerText(page, beforeFirststRunExpect.selector, beforeFirststRunExpect.value);
+        await expectInnerText(page, collidingBunchesExpect.selector, collidingBunchesExpect.value);
+        await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
+        await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
     });
 
     it('should successfully toggle to stable beam only', async () => {
-        await waitForTableLength(page, 6);
-        await pressElement(page, '.slider.round');
         await waitForTableLength(page, 5);
+        await pressElement(page, '.slider.round');
+        await waitForTableLength(page, 6);
     });
 };
