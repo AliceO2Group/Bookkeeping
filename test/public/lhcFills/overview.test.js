@@ -211,11 +211,12 @@ module.exports = () => {
     });
 
     it('should successfully display some statistics', async () => {
-        const beamTypeExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: 'PROTON\nPROTON' };
+        const beamTypeExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(9)', value: 'PROTON\nPROTON' };
         const beforeFirststRunExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)' };
-        const collidingBunchesExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(9)', value: '1024' };
+        const collidingBunchesExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(10)', value: '1024' };
         const meanRunDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00' };
-        const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00\n(41.67%)' };
+        const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00' };
+        const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
 
         await goToPage(page, 'lhc-fill-overview');
 
@@ -224,6 +225,7 @@ module.exports = () => {
         await expectInnerText(page, collidingBunchesExpect.selector, collidingBunchesExpect.value);
         await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
         await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
+        await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
     });
 
     it('should successfully toggle to stable beam only', async () => {
