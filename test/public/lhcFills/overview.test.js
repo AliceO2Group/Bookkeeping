@@ -31,12 +31,6 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
-const beamTypeExpect = { selector:'tbody tr:nth-child(1) td:nth-child(8)', value: 'PROTON\nPROTON'};
-const beforeFirststRunExpect = { selector:'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)'};
-const collidingBunchesExpect = { selector:'tbody tr:nth-child(1) td:nth-child(9)', value: '1024'};
-const meanRunDurationExpect = { selector:'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00'};
-const totalRunsDurationExpect = { selector:'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00\n(41.67%)'};
-
 module.exports = () => {
     let page;
     let browser;
@@ -133,8 +127,8 @@ module.exports = () => {
         await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
         await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
 
-        await expectLink(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(2)', {
-            href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: 'Add log to this fill'
+        await expectLink(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+            href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
         })
         // disable the popover
         await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
@@ -217,6 +211,12 @@ module.exports = () => {
     });
 
     it('should successfully display some statistics', async () => {
+        const beamTypeExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: 'PROTON\nPROTON' };
+        const beforeFirststRunExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)' };
+        const collidingBunchesExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(9)', value: '1024' };
+        const meanRunDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00' };
+        const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00\n(41.67%)' };
+
         await goToPage(page, 'lhc-fill-overview');
 
         await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
