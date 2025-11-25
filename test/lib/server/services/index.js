@@ -13,6 +13,7 @@
 
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
+const BeamModeSuite = require('./beamMode/index.js');
 const DetectorSuite = require('./detector/index.js');
 const DplSuite = require('./dpl/index.js');
 const Environment = require('./environment/index.js');
@@ -38,6 +39,7 @@ module.exports = () => {
 
     after(resetDatabaseContent);
 
+    describe('BeamMode', BeamModeSuite);
     describe('Detector', DetectorSuite);
     describe('DPL', DplSuite);
     describe('Environment', Environment);
