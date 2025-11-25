@@ -31,17 +31,28 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
+const defaultViewPort = {
+    width: 700,
+    height: 763,
+    deviceScaleFactor: 1,
+};
+
+const testResizeViewPort = {
+    width: 700,
+    height: 391,
+    deviceScaleFactor: 1,
+};
+
+const bottomNavBarSelector = `div.flex-row:nth-child(2)`;
+
+
 module.exports = () => {
     let page;
     let browser;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
-        await page.setViewport({
-            width: 700,
-            height: 720,
-            deviceScaleFactor: 1,
-        });
+        await page.setViewport(defaultViewPort);
         await resetDatabaseContent();
     });
 
@@ -59,6 +70,31 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
+
+    // in case the 'should resize table accordingly' fails we still want to fix the viewport size to default values.
+    describe("viewport changing tests", async () => {
+        afterEach(async () => {
+            await page.setViewport(defaultViewPort);
+        });
+
+        it('should resize table accordingly', async () => {
+            await goToPage(page, 'lhc-fill-overview');
+             // turn off Stable Beams Only filter
+            await pressElement(page, '.slider.round');
+            // 6 rows non stable beam in test data
+            // document.documentElement.clientHeight = 391 should result in 3 rows.
+            await waitForTableLength(page, 6);
+            await page.setViewport(testResizeViewPort);
+            await waitForTableLength(page, 3);
+            const bottomNavBar = await page.$(bottomNavBarSelector);
+            expect(await bottomNavBar.isIntersectingViewport()).to.be.true
+
+            await page.setViewport(defaultViewPort);
+            await waitForTableLength(page, 6);
+        });
+    });
+
+    
 
     it('shows correct datatypes in respective columns', async () => {
         // Expectations of header texts being of a certain datatype
