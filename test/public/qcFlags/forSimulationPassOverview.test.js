@@ -50,7 +50,7 @@ module.exports = () => {
         const response = await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         // We expect the page to return the correct status code, making sure the server is running properly
@@ -70,7 +70,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await waitForNavigation(page, () => pressElement(page, '#breadcrumb-simulation-pass-name'));
@@ -81,7 +81,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await waitForNavigation(page, () => pressElement(page, '#breadcrumb-run-number'));
@@ -92,7 +92,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         // eslint-disable-next-line jsdoc/require-param
@@ -113,7 +113,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         await expectInnerText(page, '#firstRowIndex', '1');
@@ -125,7 +125,7 @@ module.exports = () => {
         await goToPage(page, 'qc-flags-for-simulation-pass', { queryParameters: {
             simulationPassId: 1,
             runNumber: 106,
-            dplDetectorId: 1,
+            detectorId: 1,
         } });
 
         const amountSelectorId = '#amountSelector';
