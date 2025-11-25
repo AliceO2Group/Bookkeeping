@@ -28,7 +28,7 @@ const {
     openFilteringPanel,
     fillInput,
     expectAttributeValue,
-    resetFilters
+    resetFilters,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');

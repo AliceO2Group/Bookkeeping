@@ -642,6 +642,19 @@ module.exports = () => {
         });
     });
 
+
+    describe('GET /api/runs/beamModes', () => {
+        it('should successfully return status 200 and list of beam modes', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/beamModes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(4);
+
+            expect(body.data[0].name).to.equal('STABLE BEAMS');
+        });
+    });
     describe('GET /api/runs/reasonTypes', () => {
         it('should successfully return status 200 and list of reason types', async () => {
             const { body } = await request(server)
