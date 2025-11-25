@@ -68,7 +68,6 @@ module.exports = () => {
         const tableDataValidators = {
             id: (id) => /[A-Za-z0-9]+/.test(id),
             runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
-            createdAt: checkDate,
             updatedAt: checkDate,
             status: (currentStatus) => statusNames.has(currentStatus),
             historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
@@ -84,7 +83,7 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 6);
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('Should have correct status color in the overview page', async () => {
@@ -108,23 +107,43 @@ module.exports = () => {
                     await page.waitForSelector(`${cellSelector}.danger`);
                     break;
                 case 'CONFIGURED':
-                    await page.waitForSelector(`${cellSelector}.warning`);
+                    await page.waitForSelector(`${cellSelector}.primary`);
+                    break;
+                case 'DONE':
+                    await page.waitForSelector(`${cellSelector}.black`);
+                    break;
+                case 'DESTROYED':
+                    await page.waitForSelector(`${cellSelector}.black`);
+                    break;
+                case 'DEPLOYED':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'PENDING':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'STANDBY':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'UNKNOWN':
+                    await page.waitForSelector(`${cellSelector}.gray-dark`);
                     break;
             }
+
         };
 
-        await checkEnvironmentStatusColor(1, 4);
-        await checkEnvironmentStatusColor(2, 4);
-        await checkEnvironmentStatusColor(3, 4);
-        await checkEnvironmentStatusColor(4, 4);
+        await checkEnvironmentStatusColor(1, 3);
+        await checkEnvironmentStatusColor(2, 3);
+        await checkEnvironmentStatusColor(3, 3);
+        await checkEnvironmentStatusColor(6, 3);
+        await checkEnvironmentStatusColor(9, 3);
     });
 
     it('can set how many environments are available per page', async () => {
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, `${amountSelectorId} button`);
@@ -175,33 +194,83 @@ module.exports = () => {
     });
 
     it('should successfully display dropdown links', async () => {
-        let envId = 'CmCvjNbg';
-
         await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
 
         // Running env
+        let envId = 'CmCvjNbg';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
         let popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
 
-        await expectLink(page, `${popover} a:nth-of-type(1)`, {
+        await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await expectLink(page, `${popover} a:nth-of-type(2)`, {
+        await expectLink(page, `${popover} :nth-child(2 of .external-link)`, {
             href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
             innerText: 'ECS',
+        });
+
+        await expectLink(page, `${popover} #add-log-link`, {
+            href: 'http://localhost:4000/?page=log-create&environmentIds=CmCvjNbg',
+            innerText: 'Add log',
         });
 
         // Not running env
         envId = 'EIDO13i3D';
         await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
         popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
-        await expectLink(page, `${popover} a:nth-of-type(1)`, {
+
+        await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
             href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
             innerText: 'Infologger FLP',
         });
 
-        await page.waitForSelector(`${popover} a:nth-of-type(2)`, { hidden: true });
+        // ECS link should not be present
+        await page.waitForSelector(`${popover} :nth-child(2 of .external-link)`, { hidden: true });
+
+        await expectLink(page, `${popover} #add-log-link`, {
+            href: 'http://localhost:4000/?page=log-create&environmentIds=EIDO13i3D&runNumbers=94,95,96',
+            innerText: 'Add log',
+        });
+    });
+
+    it('should skip load when infinite scroll is enabled but call it when disabled', async () => {
+        // Set up spy on the overviewModel.load method
+        await page.evaluate(() => {
+            const originalLoad = model.envs.overviewModel.load.bind(model.envs.overviewModel);
+            model.envs.overviewModel.load = function(...args) {
+                model.envs.overviewModel._loadCallCount++;
+                return originalLoad(...args);
+            };
+        });
+
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should have been called once
+        let loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(1);
+
+        // Enable infinite scroll mode
+        await page.evaluate(() => {
+            model.envs.overviewModel.pagination.enableInfiniteMode();
+        });
+
+        // Reset counter and test again
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should not have been called
+        loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(0);
     });
 };
