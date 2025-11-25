@@ -33,13 +33,13 @@ const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
 const defaultViewPort = {
     width: 700,
-    height: 748,
+    height: 763,
     deviceScaleFactor: 1,
 };
 
 const testResizeViewPort = {
     width: 700,
-    height: 383,
+    height: 391,
     deviceScaleFactor: 1,
 };
 
@@ -79,8 +79,10 @@ module.exports = () => {
 
         it('should resize table accordingly', async () => {
             await goToPage(page, 'lhc-fill-overview');
+             // turn off Stable Beams Only filter
+            await pressElement(page, '.slider.round');
             // 6 rows non stable beam in test data
-            // document.documentElement.clientHeight = 383 should result in 3 rows.
+            // document.documentElement.clientHeight = 391 should result in 3 rows.
             await waitForTableLength(page, 6);
             await page.setViewport(testResizeViewPort);
             await waitForTableLength(page, 3);
