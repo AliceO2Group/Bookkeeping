@@ -25,6 +25,7 @@ const {
     waitForTableLength,
     getPopoverSelector,
     goToPage,
+    openFilteringPanel,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -272,5 +273,21 @@ module.exports = () => {
             return model.envs.overviewModel._loadCallCount;
         });
         expect(loadCallCount).to.equal(0);
+    });
+
+    it('should successfully open the filtering panel', async () => {
+        // Get the popover key from the filter button's parent
+        const filterButton = await page.waitForSelector('#openFilterToggle');
+        const popoverKey = await filterButton.evaluate((button) => {
+            return button.parentElement.getAttribute('data-popover-key');
+        });
+        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
+        
+        // Initially the filtering panel should be closed
+        await page.waitForSelector(filterPanelSelector, { hidden: true });
+        
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.waitForSelector(filterPanelSelector, { visible: true });
     });
 };
