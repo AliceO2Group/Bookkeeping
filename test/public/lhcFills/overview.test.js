@@ -163,7 +163,7 @@ module.exports = () => {
         await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
         await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
 
-        await expectLink(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+        await expectLink(page, 'body > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
             href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
         })
         // disable the popover
@@ -262,6 +262,14 @@ module.exports = () => {
         await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
         await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
         await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
+    });
+
+    it('should successfully display filter elements', async () => {
+        const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
+
+        await goToPage(page, 'lhc-fill-overview');
+
+        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
     });
 
     it('should successfully toggle to stable beam only', async () => {
