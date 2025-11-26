@@ -290,4 +290,33 @@ module.exports = () => {
         await openFilteringPanel(page);
         await page.waitForSelector(filterPanelSelector, { visible: true });
     });
+
+    it('should successfully filter environments by their current status', async () => {
+        /**
+         * Checks that all the rows of the given table have a valid current status
+         *
+         * @param {string[]} authorizedCurrentStatuses  the list of valid current statuses
+         * @return {void}
+         */
+        const checkTableCurrentStatuses = async (authorizedCurrentStatuses) => {
+            const rows = await page.$$('tbody tr');
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-status-text`).innerText;
+                })).to.be.oneOf(authorizedCurrentStatuses);
+            }
+        };
+
+        const currentStatusSelectorPrefix = '.status-filter #checkboxes-checkbox-';
+        const getCurrentStatusCheckboxSelector = (statusName) => `${currentStatusSelectorPrefix}${statusName}`;
+        
+        await page.$eval(getCurrentStatusCheckboxSelector("RUNNING"), (element) => element.click());
+        await waitForTableLength(page, 2);
+        await checkTableCurrentStatuses(["RUNNING"]);
+
+        await page.$eval(getCurrentStatusCheckboxSelector("DEPLOYED"), (element) => element.click());
+        await waitForTableLength(page, 3);
+        await checkTableCurrentStatuses(["RUNNING", "DEPLOYED"]);
+    });
 };
