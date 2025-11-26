@@ -304,7 +304,6 @@ module.exports = () => {
          * @return {void}
          */
         const filterOnID = async (selector, inputValue, expectedIds) => {
-            await expectAttributeValue(page, selector, 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
             await fillInput(page, selector, inputValue, ['change']);
             await waitForTableLength(page, expectedIds.length);
             const table = await page.$$('tbody tr');
@@ -312,10 +311,15 @@ module.exports = () => {
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         };
 
+        await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
+
         await filterOnID('.id-filter input', 'CmCvjNbg', ['CmCvjNbg']);
         await resetFilters(page);
 
         await filterOnID('.id-filter input', 'CmCvjNbg, TDI59So3d', ['CmCvjNbg', 'TDI59So3d']);
+        await resetFilters(page);
+
+        await filterOnID('.id-filter input', 'DS', ['KGIS12DS', 'VODdsO12d']);
         await resetFilters(page);
     });
 };
