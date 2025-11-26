@@ -31,6 +31,8 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
+const filterButtonSellector= '#openFilterToggle';
+
 const defaultViewPort = {
     width: 700,
     height: 763,
@@ -265,14 +267,25 @@ module.exports = () => {
     });
 
     it('should successfully display filter elements', async () => {
-        const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
-
+        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
         await goToPage(page, 'lhc-fill-overview');
-
-        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
+        await pressElement(page, filterButtonSellector);
+        await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
     });
 
-    it('should successfully toggle to stable beam only', async () => {
+
+     it('should successfully un-apply Stable Beam filter menu', async () => {
+        const filterButtonSBOnlySellector= '#stableBeamsOnlyRadioOFF';
+        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await pressElement(page, filterButtonSellector);
+        await pressElement(page, filterButtonSBOnlySellector);
+        await waitForTableLength(page, 6);
+    });
+
+    it('should successfully turn off stable beam only from header', async () => {
+        await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
         await pressElement(page, '.slider.round');
         await waitForTableLength(page, 6);
