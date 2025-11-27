@@ -307,7 +307,6 @@ module.exports = () => {
             await fillInput(page, selector, inputValue, ['change']);
             await waitForTableLength(page, expectedIds.length);
             const table = await page.$$('tbody tr');
-            expect(table.length).to.equal(expectedIds.length);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         };
 
