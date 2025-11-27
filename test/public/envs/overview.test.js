@@ -306,7 +306,6 @@ module.exports = () => {
         const filterOnID = async (selector, inputValue, expectedIds) => {
             await fillInput(page, selector, inputValue, ['change']);
             await waitForTableLength(page, expectedIds.length);
-            const table = await page.$$('tbody tr');
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         };
 
