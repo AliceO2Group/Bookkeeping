@@ -232,7 +232,7 @@ module.exports = () => {
     it('can set how many runs are available per page', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4);
         const amountSelectorId = '#amountSelector';
-        const amountSelectorButtonSelector = `${amountSelectorId} button`;
+        const amountSelectorButtonSelector = `${amountSelectorId} > button:nth-child(1)`;
         await pressElement(page, amountSelectorButtonSelector);
 
         const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
