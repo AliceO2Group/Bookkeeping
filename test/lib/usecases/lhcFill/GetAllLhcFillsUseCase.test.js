@@ -40,4 +40,52 @@ module.exports = () => {
             expect(lhcFill.stableBeamsStart).to.not.be.null;
         });
     });
+
+    // Fill number filter tests
+
+    it('should only contain specified fill number', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).to.equal(6)
+        });
+    })
+
+    it('should only contain specified fill numbers', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6,3' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
+
+    it('should only contain specified fill numbers, whitespace', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ' 6 , 3 ' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
+
+    it('should only contain specified fill numbers, comma misplacement', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ',6,3,' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
 };
