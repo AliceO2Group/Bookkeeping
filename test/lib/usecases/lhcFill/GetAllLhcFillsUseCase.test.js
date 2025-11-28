@@ -65,6 +65,18 @@ module.exports = () => {
         });
     })
 
+    it('should only contain specified fill numbers, range', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '1-3,6' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([1,2,3,6])
+        });
+    })
+
     it('should only contain specified fill numbers, whitespace', async () => {
         getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ' 6 , 3 ' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
