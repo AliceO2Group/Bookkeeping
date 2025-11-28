@@ -266,11 +266,13 @@ module.exports = () => {
     });
 
     it('should successfully display filter elements', async () => {
-        const filterSBExpect = { selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Stable Beams Only' };
+        const filterSBExpect = { selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'Stable Beams Only' };
+        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
         await openFilteringPanel(page);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
+        await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
     });
 
 
