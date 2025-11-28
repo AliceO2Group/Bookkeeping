@@ -266,7 +266,7 @@ module.exports = () => {
     });
 
     it('should successfully display filter elements', async () => {
-        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
+        const filterSBExpect = { selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Stable Beams Only' };
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
         await openFilteringPanel(page);
