@@ -268,11 +268,15 @@ module.exports = () => {
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
         const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'}
+
+        
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
         await openFilteringPanel(page);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
         await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
+        await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
     });
 
     it('should successfully un-apply Stable Beam filter menu', async () => {
