@@ -270,6 +270,8 @@ module.exports = () => {
         const filterSBExpect = { selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'Stable Beams Only' };
         const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
         const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'}
+        const filterSBDurationOperatorExpect = {selector: 'select.form-control', value: '='}
+        const filterSBDurationOperatorEqualsPath = 'select.form-control > option:nth-child(3)';
 
         
         await goToPage(page, 'lhc-fill-overview');
@@ -277,6 +279,7 @@ module.exports = () => {
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
         await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
         await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
+        await expectInnerText(page, filterSBDurationOperatorExpect.selector, filterSBDurationOperatorExpect.value);
     });
 
 

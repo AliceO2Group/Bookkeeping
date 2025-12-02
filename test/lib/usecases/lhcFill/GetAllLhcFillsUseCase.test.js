@@ -100,4 +100,55 @@ module.exports = () => {
             expect(lhcFill.fillNumber).oneOf([6,3])
         });
     })
+
+    // Beam duration filter tests
+    
+    it('should only contain specified stable beam durations, < 12:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: '43200', beamDurationOperator: '<', hasStableBeams: true  } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).lessThan(43200)
+        });
+    });
+
+     it('should only contain specified stable beam durations, <= 12:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: '43200', beamDurationOperator: '<=', hasStableBeams: true  } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).lessThanOrEqual(43200)
+        });
+    })
+
+    it('should only contain specified stable beam durations, = 00:01:40', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '=', hasStableBeams: true } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).equal(100)
+        });
+    });
+
+     it('should only contain specified stable beam durations, >= 00:01:40', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '>=', hasStableBeams: true  } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        console.log(lhcFills);
+        
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).greaterThanOrEqual(100)
+        });
+     })
+
+     it('should only contain specified stable beam durations, > 00:01:40', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '>', hasStableBeams: true } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        console.log(lhcFills);
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).greaterThan(100)
+        });
+     })
 };
