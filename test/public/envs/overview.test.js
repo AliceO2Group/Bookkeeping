@@ -26,6 +26,9 @@ const {
     getPopoverSelector,
     goToPage,
     openFilteringPanel,
+    fillInput,
+    expectAttributeValue,
+    resetFilters,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -289,5 +292,32 @@ module.exports = () => {
         // Open the filtering panel
         await openFilteringPanel(page);
         await page.waitForSelector(filterPanelSelector, { visible: true });
+    });
+
+    it('should successfully filter environments by their status history', async () => {
+        /**
+         * This is the sequence to test filtering the environments on their status history.
+         * 
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnStatusHistory = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+
+        await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
+
+        await filterOnStatusHistory('.historyItems-filter input', 'C-R-D-X', ['TDI59So3d']);
+        await resetFilters(page);
+
+        await filterOnStatusHistory('.historyItems-filter input', 'S-E', ['EIDO13i3D', '8E4aZTjY']);
+        await resetFilters(page);
+
+        await filterOnStatusHistory('.historyItems-filter input', 'D-E', ['KGIS12DS']);
+        await resetFilters(page);   
     });
 };
