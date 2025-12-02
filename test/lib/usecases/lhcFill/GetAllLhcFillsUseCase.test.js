@@ -134,7 +134,6 @@ module.exports = () => {
      it('should only contain specified stable beam durations, >= 00:01:40', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '>='  } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
-        console.log(lhcFills);
         
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
         lhcFills.forEach((lhcFill) => {
@@ -145,7 +144,6 @@ module.exports = () => {
      it('should only contain specified stable beam durations, > 00:01:40', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '>' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
-        console.log(lhcFills);
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
