@@ -84,7 +84,7 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 5);
+        await checkColumnBalloon(page, 1, 6);
     });
 
     it('Should have correct status color in the overview page', async () => {
@@ -132,11 +132,11 @@ module.exports = () => {
 
         };
 
-        await checkEnvironmentStatusColor(1, 3);
-        await checkEnvironmentStatusColor(2, 3);
-        await checkEnvironmentStatusColor(3, 3);
-        await checkEnvironmentStatusColor(6, 3);
-        await checkEnvironmentStatusColor(9, 3);
+        await checkEnvironmentStatusColor(1, 4);
+        await checkEnvironmentStatusColor(2, 4);
+        await checkEnvironmentStatusColor(3, 4);
+        await checkEnvironmentStatusColor(6, 4);
+        await checkEnvironmentStatusColor(9, 4);
     });
 
     it('can set how many environments are available per page', async () => {
