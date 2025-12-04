@@ -160,4 +160,55 @@ module.exports = () => {
             expect(lhcFill.stableBeamsDuration).equals(null)
         });
      })
+
+    it('should only contain specified total run duration, > 04:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '14400', runDurationOperator: '>' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.runDuration).greaterThan(14400)
+        });
+    })
+
+    it('should only contain specified total run duration, >= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '>=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.runDuration).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, = 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.runDuration).greaterThan(18000)
+        });
+    })
+
+
+    it('should only contain specified total run duration, <= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '<=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.runDuration).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, < 06:30:59', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '23459', runDurationOperator: '<' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.runDuration).greaterThan(23459)
+        });
+    })
 };
