@@ -267,16 +267,17 @@ module.exports = () => {
     });
 
     it('should successfully display filter elements', async () => {
-        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
+        const filterSBExpect = { selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'Stable Beams Only' };
+        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
         await goToPage(page, 'lhc-fill-overview');
         await pressElement(page, filterButtonSellector);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
+        await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
     });
 
 
      it('should successfully un-apply Stable Beam filter menu', async () => {
         const filterButtonSBOnlySellector= '#stableBeamsOnlyRadioOFF';
-        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
         await pressElement(page, filterButtonSellector);
