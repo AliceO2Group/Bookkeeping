@@ -317,7 +317,7 @@ module.exports = () => {
         await filterOnID('.id-filter input', 'CmCvjNbg, TDI59So3d', ['CmCvjNbg', 'TDI59So3d']);
         await resetFilters(page);
 
-        await filterOnID('.id-filter input', 'DS', ['KGIS12DS', 'VODdsO12d']);
+        await filterOnID('.id-filter input', 'j', ['CmCvjNbg', 'GIDO1jdkD', '8E4aZTjY', 'Dxi029djX']);
         await resetFilters(page);
     });
 };
