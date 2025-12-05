@@ -321,7 +321,7 @@ module.exports = () => {
         await page.$eval(getCurrentStatusCheckboxSelector("DEPLOYED"), (element) => element.click());
         await waitForTableLength(page, 3);
         await checkTableCurrentStatuses(["RUNNING", "DEPLOYED"]);
-    };
+    });
 
     it('should successfully filter environments by their IDs', async () => {
         /**
