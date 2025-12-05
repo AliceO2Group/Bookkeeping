@@ -26,6 +26,9 @@ const {
     getPopoverSelector,
     goToPage,
     openFilteringPanel,
+    fillInput,
+    expectAttributeValue,
+    resetFilters,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -318,5 +321,32 @@ module.exports = () => {
         await page.$eval(getCurrentStatusCheckboxSelector("DEPLOYED"), (element) => element.click());
         await waitForTableLength(page, 3);
         await checkTableCurrentStatuses(["RUNNING", "DEPLOYED"]);
+    };
+
+    it('should successfully filter environments by their IDs', async () => {
+        /**
+         * This is the sequence to test filtering the environments on IDs.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnID = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+
+        await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
+
+        await filterOnID('.id-filter input', 'CmCvjNbg', ['CmCvjNbg']);
+        await resetFilters(page);
+
+        await filterOnID('.id-filter input', 'CmCvjNbg, TDI59So3d', ['CmCvjNbg', 'TDI59So3d']);
+        await resetFilters(page);
+
+        await filterOnID('.id-filter input', 'j', ['CmCvjNbg', 'GIDO1jdkD', '8E4aZTjY', 'Dxi029djX']);
+        await resetFilters(page);
     });
 };
