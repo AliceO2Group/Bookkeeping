@@ -15,6 +15,7 @@ const { environment: { GetAllEnvironmentsUseCase } } = require('../../../../lib/
 const { lhcFill: { GetAllLhcFillsUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { GetAllLhcFillsDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
+const { BeamModes } = require('../../../../lib/public/domain/enums/BeamModes.js');
 
 const { expect } = chai;
 
@@ -31,7 +32,7 @@ module.exports = () => {
     });
 
     it('should only containing lhc fills with stable beams', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true } };
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
         expect(lhcFills).to.be.an('array');

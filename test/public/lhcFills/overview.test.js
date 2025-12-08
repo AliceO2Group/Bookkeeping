@@ -31,8 +31,6 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
-const filterButtonSellector= '#openFilterToggle';
-
 const defaultViewPort = {
     width: 700,
     height: 763,
@@ -269,18 +267,19 @@ module.exports = () => {
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
         await goToPage(page, 'lhc-fill-overview');
-        await pressElement(page, filterButtonSellector);
+        // Open the filtering panel
+        await openFilteringPanel(page);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
     });
 
 
      it('should successfully un-apply Stable Beam filter menu', async () => {
-        const filterButtonSBOnlySellector= '#stableBeamsOnlyRadioOFF';
-        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
+        const filterButtonSBOnlySelector= '#stableBeamsOnlyRadioOFF';
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
-        await pressElement(page, filterButtonSellector);
-        await pressElement(page, filterButtonSBOnlySellector);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await pressElement(page, filterButtonSBOnlySelector);
         await waitForTableLength(page, 6);
     });
 
