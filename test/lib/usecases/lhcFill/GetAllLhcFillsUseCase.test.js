@@ -102,7 +102,6 @@ module.exports = () => {
     })
 
     // Beam duration filter tests
-    
     it('should only contain specified stable beam durations, < 12:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: '43200', beamDurationOperator: '<'  } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
@@ -156,7 +155,7 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.runDuration).greaterThan(14400)
+            expect(lhcFill.statistics.runsCoverage).greaterThan(14400)
         });
     })
 
@@ -166,7 +165,7 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.runDuration).greaterThan(18000)
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
         });
     })
 
@@ -176,7 +175,7 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.runDuration).greaterThan(18000)
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
         });
     })
 
@@ -187,7 +186,7 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.runDuration).greaterThan(18000)
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
         });
     })
 
@@ -197,7 +196,7 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.runDuration).greaterThan(23459)
+            expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
         });
     })
 };
