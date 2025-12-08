@@ -23,6 +23,7 @@ const {
     expectInnerText,
     waitForTableLength,
     expectLink,
+    openFilteringPanel,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
