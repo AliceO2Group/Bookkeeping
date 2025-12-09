@@ -364,7 +364,7 @@ module.exports = () => {
             await waitForTableLength(page, expectedIds.length);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         };
-  
+
         await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
 
         await filterOnID('.id-filter input', 'CmCvjNbg', ['CmCvjNbg']);
