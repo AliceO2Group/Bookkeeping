@@ -44,7 +44,7 @@ module.exports = () => {
     // Fill number filter tests
 
     it('should only contain specified fill number', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6' } };
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: '6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
 
@@ -54,7 +54,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6,3' } };
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: '6,3' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -66,7 +66,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, range', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '1-3,6' } };
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: '1-3,6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -78,7 +78,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, whitespace', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ' 6 , 3 ' } };
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: ' 6 , 3 ' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -90,7 +90,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, comma misplacement', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ',6,3,' } };
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: ',6,3,' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -98,6 +98,30 @@ module.exports = () => {
 
         lhcFills.forEach((lhcFill) => {
             expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
+
+    it('should only contain matching scheme name, one precise', async () => {
+        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, schemeName: 'schemename' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillingSchemeName).to.equal('schemename')
+        });
+    })
+
+    it('should only contain matching scheme name, one partial', async () => {
+        getAllLhcFillsDto.query = { filter: { schemeName: '25ns_2352b_2340_2004_2133' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillingSchemeName).to.equal('25ns_2352b_2340_2004_2133_108bpi_24inj')
         });
     })
 
