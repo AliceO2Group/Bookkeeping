@@ -102,7 +102,6 @@ module.exports = () => {
     })
 
     // Beam duration filter tests
-    
     it('should only contain specified stable beam durations, < 12:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: '43200', beamDurationOperator: '<'  } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
@@ -149,4 +148,55 @@ module.exports = () => {
             expect(lhcFill.stableBeamsDuration).greaterThan(100)
         });
      })
+
+    it('should only contain specified total run duration, > 04:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '14400', runDurationOperator: '>' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(14400)
+        });
+    })
+
+    it('should only contain specified total run duration, >= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '>=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, = 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+
+    it('should only contain specified total run duration, <= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '<=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, < 06:30:59', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '23459', runDurationOperator: '<' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
+        });
+    })
 };
