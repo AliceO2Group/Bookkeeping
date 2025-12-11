@@ -81,7 +81,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '9');
+        await expectInnerText(page, '#lastRowIndex', '7');
         await expectInnerText(page, '#totalRowsCount', '9');
     });
 
@@ -139,15 +139,15 @@ module.exports = () => {
         await checkEnvironmentStatusColor(2, 3);
         await checkEnvironmentStatusColor(3, 3);
         await checkEnvironmentStatusColor(6, 3);
-        await checkEnvironmentStatusColor(9, 3);
+        await checkEnvironmentStatusColor(7, 3);
     });
 
     it('can set how many environments are available per page', async () => {
-        // Expect the amount selector to currently be set to 9 (because of the defined page height)
+        // Expect the amount selector to currently be set to 7 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('7')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, `${amountSelectorId} button`);
