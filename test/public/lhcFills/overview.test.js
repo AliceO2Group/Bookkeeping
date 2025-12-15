@@ -266,15 +266,14 @@ module.exports = () => {
     });
 
     it('should successfully display filter elements', async () => {
-        const filterSBExpect = { selector: '.w-30', value: 'Stable Beams Only' };
+        const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
         await openFilteringPanel(page);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
     });
 
-
-     it('should successfully un-apply Stable Beam filter menu', async () => {
+    it('should successfully un-apply Stable Beam filter menu', async () => {
         const filterButtonSBOnlySelector= '#stableBeamsOnlyRadioOFF';
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
