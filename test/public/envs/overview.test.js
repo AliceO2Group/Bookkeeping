@@ -28,6 +28,7 @@ const {
     openFilteringPanel,
     fillInput,
     getPeriodInputsSelectors,
+    expectAttributeValue,
     resetFilters,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
@@ -292,6 +293,116 @@ module.exports = () => {
         // Open the filtering panel
         await openFilteringPanel(page);
         await page.waitForSelector(filterPanelSelector, { visible: true });
+    });
+
+    it('should successfully filter environments by their related run numbers', async () => {
+        /**
+         * This is the sequence to test filtering the environments based on their related run numbers.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnRunNumbers = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        }
+
+        await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
+
+        await filterOnRunNumbers('.runs-filter input', '10', ['TDI59So3d', 'Dxi029djX']);
+        await resetFilters(page);
+
+        await filterOnRunNumbers('.runs-filter input', '103', ['TDI59So3d']);
+        await resetFilters(page);
+        
+        await filterOnRunNumbers('.runs-filter input', '86, 91', ['KGIS12DS', 'VODdsO12d']);
+        await resetFilters(page);
+    });
+  
+    it('should successfully filter environments by their status history', async () => {
+        /**
+         * This is the sequence to test filtering the environments on their status history.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnStatusHistory = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+      
+        await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
+
+        await filterOnStatusHistory('.historyItems-filter input', 'C-R-D-X', ['TDI59So3d']);
+        await resetFilters(page);
+
+        await filterOnStatusHistory('.historyItems-filter input', 'S-E', ['EIDO13i3D', '8E4aZTjY']);
+        await resetFilters(page);
+
+        await filterOnStatusHistory('.historyItems-filter input', 'D-E', ['KGIS12DS']);
+        await resetFilters(page);
+    });
+
+    it('should successfully filter environments by their current status', async () => {
+        /**
+         * Checks that all the rows of the given table have a valid current status
+         *
+         * @param {string[]} authorizedCurrentStatuses  the list of valid current statuses
+         * @return {void}
+         */
+        const checkTableCurrentStatuses = async (authorizedCurrentStatuses) => {
+            const rows = await page.$$('tbody tr');
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-status-text`).innerText;
+                })).to.be.oneOf(authorizedCurrentStatuses);
+            }
+        };
+
+        const currentStatusSelectorPrefix = '.status-filter #checkboxes-checkbox-';
+        const getCurrentStatusCheckboxSelector = (statusName) => `${currentStatusSelectorPrefix}${statusName}`;
+        
+        await page.$eval(getCurrentStatusCheckboxSelector("RUNNING"), (element) => element.click());
+        await waitForTableLength(page, 2);
+        await checkTableCurrentStatuses(["RUNNING"]);
+
+        await page.$eval(getCurrentStatusCheckboxSelector("DEPLOYED"), (element) => element.click());
+        await waitForTableLength(page, 3);
+        await checkTableCurrentStatuses(["RUNNING", "DEPLOYED"]);
+    });
+
+    it('should successfully filter environments by their IDs', async () => {
+        /**
+         * This is the sequence to test filtering the environments on IDs.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnID = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+
+        await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
+
+        await filterOnID('.id-filter input', 'CmCvjNbg', ['CmCvjNbg']);
+        await resetFilters(page);
+
+        await filterOnID('.id-filter input', 'CmCvjNbg, TDI59So3d', ['CmCvjNbg', 'TDI59So3d']);
+        await resetFilters(page);
+
+        await filterOnID('.id-filter input', 'j', ['CmCvjNbg', 'GIDO1jdkD', '8E4aZTjY', 'Dxi029djX']);
+        await resetFilters(page);
     });
 
     it('should successfully filter environments by their createdAt date', async () => {

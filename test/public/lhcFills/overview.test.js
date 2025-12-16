@@ -23,6 +23,7 @@ const {
     expectInnerText,
     waitForTableLength,
     expectLink,
+    openFilteringPanel,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -163,7 +164,7 @@ module.exports = () => {
         await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
         await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
 
-        await expectLink(page, 'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+        await expectLink(page, 'body > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
             href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
         })
         // disable the popover
@@ -264,7 +265,26 @@ module.exports = () => {
         await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
     });
 
-    it('should successfully toggle to stable beam only', async () => {
+    it('should successfully display filter elements', async () => {
+        const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
+        await goToPage(page, 'lhc-fill-overview');
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
+    });
+
+    it('should successfully un-apply Stable Beam filter menu', async () => {
+        const filterButtonSBOnlySelector= '#stableBeamsOnlyRadioOFF';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await pressElement(page, filterButtonSBOnlySelector);
+        await waitForTableLength(page, 6);
+    });
+
+    it('should successfully turn off stable beam only from header', async () => {
+        await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
         await pressElement(page, '.slider.round');
         await waitForTableLength(page, 6);
