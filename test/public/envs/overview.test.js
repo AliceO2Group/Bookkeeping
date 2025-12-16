@@ -294,6 +294,33 @@ module.exports = () => {
         await page.waitForSelector(filterPanelSelector, { visible: true });
     });
 
+    it('should successfully filter environments by their related run numbers', async () => {
+        /**
+         * This is the sequence to test filtering the environments based on their related run numbers.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnRunNumbers = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        }
+
+        await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
+
+        await filterOnRunNumbers('.runs-filter input', '10', ['TDI59So3d', 'Dxi029djX']);
+        await resetFilters(page);
+
+        await filterOnRunNumbers('.runs-filter input', '103', ['TDI59So3d']);
+        await resetFilters(page);
+        
+        await filterOnRunNumbers('.runs-filter input', '86, 91', ['KGIS12DS', 'VODdsO12d']);
+        await resetFilters(page);
+    });
+  
     it('should successfully filter environments by their status history', async () => {
         /**
          * This is the sequence to test filtering the environments on their status history.
