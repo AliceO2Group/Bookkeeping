@@ -309,7 +309,7 @@ module.exports = () => {
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         }
 
-        await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 123456, 123...');
+        await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
 
         await filterOnRunNumbers('.runs-filter input', '10', ['TDI59So3d', 'Dxi029djX']);
         await resetFilters(page);
