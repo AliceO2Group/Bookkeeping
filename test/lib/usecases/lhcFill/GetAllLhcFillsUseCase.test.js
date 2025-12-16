@@ -220,4 +220,44 @@ module.exports = () => {
             expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
         });
     })
+
+    it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
+        
+        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(beamTypes)
+        });
+    })
+
+    it('should only contain specified beam types, OR NULL, {p-p, PROTON-PROTON, Pb-Pb, null}', async () => {
+        let beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb', 'null']
+        
+        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(5)
+
+        const nullIndex = beamTypes.findIndex((value) => value ==='null')
+        beamTypes[nullIndex] = null;
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(beamTypes)
+        });
+    })
+
+    it('should only contain specified beam type, IS NULL, {null}', async () => {
+        const beamTypes = ['null']
+        
+        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf([null])
+        });
+    })
 };
