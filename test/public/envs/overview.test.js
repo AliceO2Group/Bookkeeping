@@ -27,6 +27,7 @@ const {
     goToPage,
     openFilteringPanel,
     fillInput,
+    getPeriodInputsSelectors,
     expectAttributeValue,
     resetFilters,
 } = require('../defaults.js');
@@ -87,7 +88,7 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 5);
+        await checkColumnBalloon(page, 1, 6);
     });
 
     it('Should have correct status color in the overview page', async () => {
@@ -135,11 +136,11 @@ module.exports = () => {
 
         };
 
-        await checkEnvironmentStatusColor(1, 3);
-        await checkEnvironmentStatusColor(2, 3);
-        await checkEnvironmentStatusColor(3, 3);
-        await checkEnvironmentStatusColor(6, 3);
-        await checkEnvironmentStatusColor(9, 3);
+        await checkEnvironmentStatusColor(1, 4);
+        await checkEnvironmentStatusColor(2, 4);
+        await checkEnvironmentStatusColor(3, 4);
+        await checkEnvironmentStatusColor(6, 4);
+        await checkEnvironmentStatusColor(9, 4);
     });
 
     it('can set how many environments are available per page', async () => {
@@ -401,6 +402,55 @@ module.exports = () => {
         await resetFilters(page);
 
         await filterOnID('.id-filter input', 'j', ['CmCvjNbg', 'GIDO1jdkD', '8E4aZTjY', 'Dxi029djX']);
+        await resetFilters(page);
+    });
+
+    it('should successfully filter environments by their createdAt date', async () => {
+         /**
+         * This is the sequence to test filtering the environments based on their createdAt date
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} fromDate the from date string
+         * @param {string} fromTime the from time string
+         * @param {string} toDate the to date string
+         * @param {string} toTime the to time string
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnCreatedAt = async (selector, fromDate, fromTime, toDate, toTime, expectedIds) => {
+            await fillInput(page, selector.fromTimeSelector, fromTime, ['change']);
+            await fillInput(page, selector.toTimeSelector, toTime, ['change']);
+
+            await fillInput(page, selector.fromDateSelector, fromDate, ['change']);
+            await fillInput(page, selector.toDateSelector, toDate, ['change']);
+
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+
+        await openFilteringPanel(page);
+
+        const createdAtPopoverSelector = await getPopoverSelector(await page.$('.createdAt-filter .popover-trigger'));
+        const periodInputsSelectors = getPeriodInputsSelectors(createdAtPopoverSelector);
+
+        await filterOnCreatedAt(
+            periodInputsSelectors,
+            '2019-05-08',
+            '00:00',
+            '2019-05-10',
+            '00:00',
+            ['eZF99lH6'],
+        );
+        await resetFilters(page);
+
+        await filterOnCreatedAt(
+            periodInputsSelectors,
+            '2019-08-09',
+            '00:00',
+            '2019-08-09',
+            '14:00',
+            ['GIDO1jdkD', '8E4aZTjY', 'Dxi029djX'],
+        );
         await resetFilters(page);
     });
 };
