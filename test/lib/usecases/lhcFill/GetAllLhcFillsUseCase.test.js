@@ -44,7 +44,7 @@ module.exports = () => {
     // Fill number filter tests
 
     it('should only contain specified fill number', async () => {
-        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: '6' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
 
@@ -54,7 +54,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers', async () => {
-        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: '6,3' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6,3' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -66,7 +66,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, range', async () => {
-        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: '1-3,6' } };
+        getAllLhcFillsDto.query = { filter: { bhasStableBeams: true, fillNumbers: '1-3,6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -78,7 +78,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, whitespace', async () => {
-        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: ' 6 , 3 ' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ' 6 , 3 ' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -90,7 +90,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, comma misplacement', async () => {
-        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, fillNumbers: ',6,3,' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ',6,3,' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -102,7 +102,7 @@ module.exports = () => {
     })
 
     it('should only contain matching scheme name, one precise', async () => {
-        getAllLhcFillsDto.query = { filter: { beamsMode: BeamModes.STABLE_BEAMS, schemeName: 'schemename' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, schemeName: 'schemename' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
