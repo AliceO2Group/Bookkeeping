@@ -273,6 +273,7 @@ module.exports = () => {
         const filterSBDurationPlaceholderExpect = {selector: '.beam-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
         const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
         const filterRunDurationPlaceholderExpect = {selector: '.run-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
+        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
 
         
         await goToPage(page, 'lhc-fill-overview');
@@ -284,6 +285,7 @@ module.exports = () => {
         await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
         await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
         await expectAttributeValue(page, filterRunDurationPlaceholderExpect.selector, 'placeholder', filterRunDurationPlaceholderExpect.value);
+        await expectInnerText(page, filterBeamTypeExpect.selector, filterBeamTypeExpect.value);
     });
 
     it('should successfully un-apply Stable Beam filter menu', async () => {
