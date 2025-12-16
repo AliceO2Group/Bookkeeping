@@ -190,6 +190,16 @@ module.exports = () => {
         });
     })
 
+    it('should only contain specified total run duration, = 00:00:00', async () => {
+        // Tests the usecase's ability to replace the request for 0 to a request for null.
+        getAllLhcFillsDto.query = { filter: { runDuration: 0, runDurationOperator: '=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).equals(0)
+        });
+    })
 
     it('should only contain specified total run duration, <= 05:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '<=' } };
