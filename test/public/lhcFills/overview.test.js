@@ -165,7 +165,7 @@ module.exports = () => {
         await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
         await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
 
-        await expectLink(page, 'body > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+        await expectLink(page, '#create-log', {
             href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
         })
         // disable the popover
@@ -271,12 +271,15 @@ module.exports = () => {
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
         const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
-        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'}
+        const filterSBDurationExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'SB Duration'}
         const filterSBDurationPlaceholderExpect = {selector: '.beam-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
-        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
+        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(6) > div:nth-child(1)', value: 'Total runs duration'}
         const filterRunDurationPlaceholderExpect = {selector: '.run-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
-        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
+        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(7) > div:nth-child(1)', value: 'Beam Type'}
         const filterSchemeNamePlaceholderExpect = {selector: '.scheme-name-filter', value: 'e.g. Single_12b_8_1024_8_2018'}
+        const filterSBStartExpect = {selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'SB START'}
+        const filterSBEndExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB END'}
+
         
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
@@ -289,6 +292,9 @@ module.exports = () => {
         await expectAttributeValue(page, filterRunDurationPlaceholderExpect.selector, 'placeholder', filterRunDurationPlaceholderExpect.value);
         await expectInnerText(page, filterBeamTypeExpect.selector, filterBeamTypeExpect.value);
         await expectAttributeValue(page, filterSchemeNamePlaceholderExpect.selector, 'placeholder', filterSchemeNamePlaceholderExpect.value);
+        await expectInnerText(page, filterSBStartExpect.selector, filterSBStartExpect.value);
+        await expectInnerText(page, filterSBEndExpect.selector, filterSBEndExpect.value);
+
     });
 
     it('should successfully un-apply Stable Beam filter menu', async () => {

@@ -245,6 +245,21 @@ module.exports = () => {
         });
     })
 
+    it('should only contain specified stable beam start/end periods, 08/08/2019-13:00:00', async () => {
+        /**
+         * Stable beams start: {from: 08/08/2019-13:00:00, to: 08/08/2019-13:00:00}
+         * Stable beams end: {from: 09/08/2019-01:00:00, to: 16/12/2025-01:01:00}
+         */
+        getAllLhcFillsDto.query = { filter: { sbStart: { from: 1565262000000, to: 1565265660000}, sbEnd: { from: 1565305200000, to: 1765843260000 } } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsStart).equals(1565262000000)
+            expect(lhcFill.stableBeamsEnd).equals(1565305200000)
+        });
+    })
+
     it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
         const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
         
