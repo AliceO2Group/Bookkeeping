@@ -14,6 +14,7 @@
 const cacheAsyncFunctionTest = require('./cacheAsyncFunction.test.js');
 const deepmerge = require('./deepmerge.test.js');
 const isPromise = require('./isPromise.test.js');
+const rangeUtilsTest = require('./rangeUtils.test.js');
 const stringUtilsTest = require('./stringUtils.test.js');
 
 module.exports = () => {
@@ -21,4 +22,5 @@ module.exports = () => {
     describe('deepmerge', deepmerge);
     describe('isPromise', isPromise);
     describe('stringUtils', stringUtilsTest);
+    describe('rangeUtils', rangeUtilsTest)
 };
