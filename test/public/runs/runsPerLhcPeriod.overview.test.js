@@ -110,6 +110,7 @@ module.exports = () => {
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
+        await waitForTableLength(page, 4);
         await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
 
         await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
@@ -122,6 +123,7 @@ module.exports = () => {
             ])),
         };
 
+        await waitForTableLength(page, 4);
         await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
         await expectInnerText(page, '#row56-FT0', '83');
     });
