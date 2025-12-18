@@ -166,7 +166,7 @@ module.exports = () => {
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`Given range exceeds max size of ${MAX_RANGE_SIZE} runs: ${runNumberRange}`);
+            expect(error.detail).to.equal(`Given range exceeds max size of ${MAX_RANGE_SIZE} range: ${runNumberRange}`);
         });
 
         it('should return 400 if the calibration status filter is invalid', async () => {
