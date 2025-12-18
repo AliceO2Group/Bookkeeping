@@ -27,6 +27,7 @@ const {
     goToPage,
     openFilteringPanel,
     fillInput,
+    getPeriodInputsSelectors,
     expectAttributeValue,
     resetFilters,
 } = require('../defaults.js');
@@ -87,7 +88,7 @@ module.exports = () => {
 
     it('Should have balloon on runs column', async () => {
         await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 5);
+        await checkColumnBalloon(page, 1, 6);
     });
 
     it('Should have correct status color in the overview page', async () => {
@@ -135,11 +136,11 @@ module.exports = () => {
 
         };
 
-        await checkEnvironmentStatusColor(1, 3);
-        await checkEnvironmentStatusColor(2, 3);
-        await checkEnvironmentStatusColor(3, 3);
-        await checkEnvironmentStatusColor(6, 3);
-        await checkEnvironmentStatusColor(9, 3);
+        await checkEnvironmentStatusColor(1, 4);
+        await checkEnvironmentStatusColor(2, 4);
+        await checkEnvironmentStatusColor(3, 4);
+        await checkEnvironmentStatusColor(6, 4);
+        await checkEnvironmentStatusColor(9, 4);
     });
 
     it('can set how many environments are available per page', async () => {
@@ -294,6 +295,89 @@ module.exports = () => {
         await page.waitForSelector(filterPanelSelector, { visible: true });
     });
 
+    it('should successfully filter environments by their related run numbers', async () => {
+        /**
+         * This is the sequence to test filtering the environments based on their related run numbers.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnRunNumbers = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        }
+
+        await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
+
+        await filterOnRunNumbers('.runs-filter input', '10', ['TDI59So3d', 'Dxi029djX']);
+        await resetFilters(page);
+
+        await filterOnRunNumbers('.runs-filter input', '103', ['TDI59So3d']);
+        await resetFilters(page);
+        
+        await filterOnRunNumbers('.runs-filter input', '86, 91', ['KGIS12DS', 'VODdsO12d']);
+        await resetFilters(page);
+    });
+  
+    it('should successfully filter environments by their status history', async () => {
+        /**
+         * This is the sequence to test filtering the environments on their status history.
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} inputValue the value to type in the filter input
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnStatusHistory = async (selector, inputValue, expectedIds) => {
+            await fillInput(page, selector, inputValue, ['change']);
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+      
+        await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
+
+        await filterOnStatusHistory('.historyItems-filter input', 'C-R-D-X', ['TDI59So3d']);
+        await resetFilters(page);
+
+        await filterOnStatusHistory('.historyItems-filter input', 'S-E', ['EIDO13i3D', '8E4aZTjY']);
+        await resetFilters(page);
+
+        await filterOnStatusHistory('.historyItems-filter input', 'D-E', ['KGIS12DS']);
+        await resetFilters(page);
+    });
+
+    it('should successfully filter environments by their current status', async () => {
+        /**
+         * Checks that all the rows of the given table have a valid current status
+         *
+         * @param {string[]} authorizedCurrentStatuses  the list of valid current statuses
+         * @return {void}
+         */
+        const checkTableCurrentStatuses = async (authorizedCurrentStatuses) => {
+            const rows = await page.$$('tbody tr');
+            for (const row of rows) {
+                expect(await row.evaluate((rowItem) => {
+                    const rowId = rowItem.id;
+                    return document.querySelector(`#${rowId}-status-text`).innerText;
+                })).to.be.oneOf(authorizedCurrentStatuses);
+            }
+        };
+
+        const currentStatusSelectorPrefix = '.status-filter #checkboxes-checkbox-';
+        const getCurrentStatusCheckboxSelector = (statusName) => `${currentStatusSelectorPrefix}${statusName}`;
+        
+        await page.$eval(getCurrentStatusCheckboxSelector("RUNNING"), (element) => element.click());
+        await waitForTableLength(page, 2);
+        await checkTableCurrentStatuses(["RUNNING"]);
+
+        await page.$eval(getCurrentStatusCheckboxSelector("DEPLOYED"), (element) => element.click());
+        await waitForTableLength(page, 3);
+        await checkTableCurrentStatuses(["RUNNING", "DEPLOYED"]);
+    });
+
     it('should successfully filter environments by their IDs', async () => {
         /**
          * This is the sequence to test filtering the environments on IDs.
@@ -318,6 +402,55 @@ module.exports = () => {
         await resetFilters(page);
 
         await filterOnID('.id-filter input', 'j', ['CmCvjNbg', 'GIDO1jdkD', '8E4aZTjY', 'Dxi029djX']);
+        await resetFilters(page);
+    });
+
+    it('should successfully filter environments by their createdAt date', async () => {
+         /**
+         * This is the sequence to test filtering the environments based on their createdAt date
+         *
+         * @param {string} selector the filter input selector
+         * @param {string} fromDate the from date string
+         * @param {string} fromTime the from time string
+         * @param {string} toDate the to date string
+         * @param {string} toTime the to time string
+         * @param {string[]} expectedIds the list of expected environment IDs after filtering
+         * @return {void}
+         */
+        const filterOnCreatedAt = async (selector, fromDate, fromTime, toDate, toTime, expectedIds) => {
+            await fillInput(page, selector.fromTimeSelector, fromTime, ['change']);
+            await fillInput(page, selector.toTimeSelector, toTime, ['change']);
+
+            await fillInput(page, selector.fromDateSelector, fromDate, ['change']);
+            await fillInput(page, selector.toDateSelector, toDate, ['change']);
+
+            await waitForTableLength(page, expectedIds.length);
+            expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
+        };
+
+        await openFilteringPanel(page);
+
+        const createdAtPopoverSelector = await getPopoverSelector(await page.$('.createdAt-filter .popover-trigger'));
+        const periodInputsSelectors = getPeriodInputsSelectors(createdAtPopoverSelector);
+
+        await filterOnCreatedAt(
+            periodInputsSelectors,
+            '2019-05-08',
+            '00:00',
+            '2019-05-10',
+            '00:00',
+            ['eZF99lH6'],
+        );
+        await resetFilters(page);
+
+        await filterOnCreatedAt(
+            periodInputsSelectors,
+            '2019-08-09',
+            '00:00',
+            '2019-08-09',
+            '14:00',
+            ['GIDO1jdkD', '8E4aZTjY', 'Dxi029djX'],
+        );
         await resetFilters(page);
     });
 };
