@@ -158,7 +158,7 @@ const waitForTableToLength = async (page, expectedSize, timeout) => {
         );
     } catch {
         const actualSize = (await page.$$('tbody tr')).length;
-        const isThereLoadingRow = !!(await page.$$('table body tr.loading-row'))
+        const isThereLoadingRow = (await page.$$('table tbody tr.loading-row')).length > 0;
         throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize} ${isThereLoadingRow ? ', loading-row' : ''}`);
     }
 };
