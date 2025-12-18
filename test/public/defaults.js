@@ -145,13 +145,15 @@ module.exports.waitForTimeout = waitForTimeout;
  *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
+ * @param {number} [timeout] - Max wait time in ms; if omitted, uses the page default timeout.
  * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
-const waitForTableToLength = async (page, expectedSize) => {
+const waitForTableToLength = async (page, expectedSize, timeout) => {
     try {
+        const waitOptions = timeout === undefined ? {} : { timeout };
         await page.waitForFunction(
             (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-            {},
+            waitOptions,
             expectedSize,
         );
     } catch {

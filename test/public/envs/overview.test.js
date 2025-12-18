@@ -424,7 +424,7 @@ module.exports = () => {
             await fillInput(page, selector.fromDateSelector, fromDate, ['change']);
             await fillInput(page, selector.toDateSelector, toDate, ['change']);
 
-            await waitForTableLength(page, expectedIds.length);
+            await waitForTableLength(page, expectedIds.length, 5000);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         };
 
