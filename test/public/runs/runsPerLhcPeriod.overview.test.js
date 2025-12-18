@@ -153,10 +153,16 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
+        await waitForTableLength(page, 3);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
+        
+        await pressElement(page, amountSelectorButtonSelector);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5, true);
+        // only 4 runs in LHC Period 1
         await waitForTableLength(page, 4);
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
