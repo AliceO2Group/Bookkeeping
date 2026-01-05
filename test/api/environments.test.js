@@ -171,6 +171,15 @@ module.exports = () => {
             expect(withChar[1].id).to.be.equal(withoutChar[1].id);
         });
 
+        it('should successfully filter environments on status history with a partial sequence', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=D-E');
+            
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+            expect(environments[0].id).to.be.equal('KGIS12DS');
+        });
+
         it('should successfully filter environments status history with limit', async () => {
             const response = await request(server).get('/api/environments?filter[statusHistory]=SE&page[limit]=1');
 
