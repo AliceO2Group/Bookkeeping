@@ -102,7 +102,6 @@ module.exports = () => {
     })
 
     // Beam duration filter tests
-    
     it('should only contain specified stable beam durations, < 12:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<'} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
@@ -160,4 +159,65 @@ module.exports = () => {
             expect(lhcFill.stableBeamsDuration).equals(null)
         });
      })
+
+    it('should only contain specified total run duration, > 04:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '14400', runDurationOperator: '>' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(14400)
+        });
+    })
+
+    it('should only contain specified total run duration, >= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '>=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, = 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, = 00:00:00', async () => {
+        // Tests the usecase's ability to replace the request for 0 to a request for null.
+        getAllLhcFillsDto.query = { filter: { runDuration: 0, runDurationOperator: '=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).equals(0)
+        });
+    })
+
+    it('should only contain specified total run duration, <= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '<=' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, < 06:30:59', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: '23459', runDurationOperator: '<' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
+        });
+    })
 };
