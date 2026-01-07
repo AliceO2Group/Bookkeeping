@@ -442,7 +442,7 @@ module.exports = () => {
             ['eZF99lH6'],
         );
         await resetFilters(page);
-        await waitForTableLength(page, 8, 10000);
+        await waitForTableLength(page, 9, 10000);
 
         await filterOnCreatedAt(
             periodInputsSelectors,
@@ -453,6 +453,6 @@ module.exports = () => {
             ['GIDO1jdkD', '8E4aZTjY', 'Dxi029djX'],
         );
         await resetFilters(page);
-        await waitForTableLength(page, 8, 10000);
+        await waitForTableLength(page, 9, 10000);
     });
 };
