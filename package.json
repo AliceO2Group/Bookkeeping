@@ -2,6 +2,10 @@
   "name": "@aliceo2/bookkeeping",
   "version": "1.15.0",
   "author": "ALICEO2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AliceO2Group/Bookkeeping.git"
+  },
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
