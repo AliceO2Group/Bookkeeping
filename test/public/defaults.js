@@ -943,4 +943,9 @@ module.exports.resetFilters = async (page) => {
             await this.pressElement(page, '#reset-filters', true);
             await this.pressElement(page, '#openFilterToggle', true);
         });
+
+        await page.waitForFunction(
+        () => document.querySelectorAll('table tbody tr.loading-row').length === 0,
+        { timeout: 5000 },
+    );
 };

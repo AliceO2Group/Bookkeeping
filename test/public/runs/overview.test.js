@@ -940,7 +940,7 @@ module.exports = () => {
             await openFilteringPanel(page);;
             await page.waitForSelector(badFilterSelector);
             await page.$eval(badFilterSelector, (element) => element.click());
-            await page.waitForSelector('.atom-spinner');
+            await page.waitForSelector('.atom-spinner', { timeout: 5000 });
             await page.waitForSelector('tbody tr:nth-child(2)');
             await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
