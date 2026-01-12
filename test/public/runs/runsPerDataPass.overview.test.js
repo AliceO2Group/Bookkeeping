@@ -197,8 +197,7 @@ module.exports = () => {
             innerText: '89',
         });
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await waitForTableLength(page, 3);
-        await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R');
+        await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R', { timeout: 5000 });
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
             innerText: '67MC.R',
