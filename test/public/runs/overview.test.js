@@ -778,8 +778,9 @@ module.exports = () => {
             await page.waitForSelector('#eorTitles');
 
             // Select the EOR reason category DETECTORS
+            const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
             await page.select('#eorCategories', 'DETECTORS');
-            await waitForTableLength(page, 3);
+            await waitForTableLength(page, 3, undefined, oldTable);
             await page.waitForSelector('#eorTitles option');
             let detectorTitleElements = await page.$$('#eorTitles option');
             expect(detectorTitleElements).has.lengthOf(3);
@@ -907,7 +908,7 @@ module.exports = () => {
 
             // First export
             await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true)
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             await page.waitForSelector('#send:disabled');
             await page.waitForSelector('#export-data-modal select.form-control');
             await page.select('#export-data-modal select.form-control', 'runQuality', 'runNumber');
@@ -940,7 +941,6 @@ module.exports = () => {
             await openFilteringPanel(page);;
             await page.waitForSelector(badFilterSelector);
             await page.$eval(badFilterSelector, (element) => element.click());
-            await page.waitForSelector('.atom-spinner', { timeout: 5000 });
             await page.waitForSelector('tbody tr:nth-child(2)');
             await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
@@ -948,7 +948,7 @@ module.exports = () => {
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
             await page.waitForSelector('#export-data-modal', { timeout: 5000 });
 
-            await page.waitForSelector('#export-data-modal select.form-control');
+            await page.waitForSelector('#export-data-modal select.form-control', { timeout: 10000 });
             await page.select('#export-data-modal select.form-control', 'runQuality', 'runNumber');
 
             {

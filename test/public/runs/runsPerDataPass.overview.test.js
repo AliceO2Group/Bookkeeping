@@ -245,6 +245,7 @@ module.exports = () => {
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
         await waitForTableLength(page, 4);
+        await page.waitForSelector('.dropup button');
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
@@ -404,6 +405,7 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
+        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -422,6 +424,7 @@ module.exports = () => {
          */
         await page.select('.runDuration-filter select', '>=');
         await fillInput(page, '#duration-operand', '10', ['change']);
+        await waitForTableLength(page, 2);
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 

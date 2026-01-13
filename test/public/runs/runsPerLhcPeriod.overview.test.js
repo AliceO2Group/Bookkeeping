@@ -115,6 +115,8 @@ module.exports = () => {
 
         await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
 
+        await page.waitForSelector('tbody tr:not(.loading-row)');
+
         const tableDataValidatorsWithQualityFromSynchronousFlags = {
             ...tableDataValidators,
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
