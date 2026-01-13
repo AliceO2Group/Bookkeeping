@@ -190,14 +190,17 @@ module.exports = () => {
 
     it('should switch mcReproducibleAsNotBad', async () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await waitForTableLength(page, 3);
+        let oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await waitForTableLength(page, 3, undefined, oldTable);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
             innerText: '89',
         });
+        oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R', { timeout: 5000, polling: 'mutation' });
+        await waitForTableLength(page, 3, undefined, oldTable);
+        await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
             innerText: '67MC.R',
@@ -241,7 +244,8 @@ module.exports = () => {
         await pressElement(page, amountItems5);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
-        await waitForTableLength(page, 4);
+        const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await waitForTableLength(page, 4, 5000, oldTable);
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
@@ -611,8 +615,9 @@ module.exports = () => {
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         setConfirmationDialogToBeAccepted(page);
         await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
+        const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 3, undefined, oldTable);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
         await expectInnerText(
             page,
