@@ -189,8 +189,8 @@ module.exports = () => {
     });
 
     it('should switch mcReproducibleAsNotBad', async () => {
-        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         let oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await waitForTableLength(page, 3, 5000, oldTable);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
         await expectLink(page, 'tr#row106 .column-CPV a', {
