@@ -26,7 +26,7 @@
     "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.8.5",
+    "@aliceo2/web-ui": "2.9.0",
     "@grpc/grpc-js": "1.14.0",
     "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
