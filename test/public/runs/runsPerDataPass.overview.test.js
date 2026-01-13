@@ -191,7 +191,7 @@ module.exports = () => {
     it('should switch mcReproducibleAsNotBad', async () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         let oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
-        await waitForTableLength(page, 3, undefined, oldTable);
+        await waitForTableLength(page, 3, 5000, oldTable);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
@@ -199,7 +199,7 @@ module.exports = () => {
         });
         oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await waitForTableLength(page, 3, undefined, oldTable);
+        await waitForTableLength(page, 3, 5000, oldTable);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
