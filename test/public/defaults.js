@@ -146,20 +146,33 @@ module.exports.waitForTimeout = waitForTimeout;
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
  * @param {number} [timeout] - Max wait time in ms; if omitted, uses the page default timeout.
- * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
+ * @param {string} [oldTable] - Optional HTML content of the previous table state to avoid false positives.
+* @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
  */
-const waitForTableToLength = async (page, expectedSize, timeout) => {
+const waitForTableToLength = async (page, expectedSize, timeout, oldTable) => {
     try {
         const waitOptions = timeout === undefined ? {} : { timeout };
         await page.waitForFunction(
-            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
+            (expectedSize, oldTable) => {
+                const actualSize = document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length;
+                if (actualSize !== expectedSize) {
+                    return false;
+                }
+                // compare old table contents to avoid false positives
+                if (oldTable) {
+                    const currentTable = document.querySelector('table').innerHTML;
+                    return currentTable !== oldTable;
+                }
+                return true;
+            },
             waitOptions,
             expectedSize,
+            oldTable,
         );
     } catch {
-        const actualSize = (await page.$$('tbody tr')).length;
+        const actualSize = (await page.$$('tbody tr:not(.loading-row):not(.empty-row)')).length;
         const isThereLoadingRow = (await page.$$('table tbody tr.loading-row')).length > 0;
-        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize} ${isThereLoadingRow ? ', loading-row' : ''}`);
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}${isThereLoadingRow ? ' (loading-row present)' : ''}`);
     }
 };
 
