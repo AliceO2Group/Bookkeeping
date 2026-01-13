@@ -172,7 +172,9 @@ const waitForTableToLength = async (page, expectedSize, timeout, oldTable) => {
     } catch {
         const actualSize = (await page.$$('tbody tr:not(.loading-row):not(.empty-row)')).length;
         const isThereLoadingRow = (await page.$$('table tbody tr.loading-row')).length > 0;
-        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}${isThereLoadingRow ? ' (loading-row present)' : ''}`);
+        const currentTable = await page.$eval('table', (t) => t.innerHTML).catch(() => null);
+        const tableUnchanged = oldTable && currentTable === oldTable;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}${isThereLoadingRow ? ' (loading-row present)' : ''}${tableUnchanged ? ' (table content unchanged)' : ''}`);
     }
 };
 
