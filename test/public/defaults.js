@@ -143,21 +143,51 @@ module.exports.waitForTimeout = waitForTimeout;
 /**
  * Waits for the number of table rows to meet the expected size.
  *
+ * This function continuously polls the page until the table has exactly the expected number of rows,
+ * excluding rows with the CSS classes 'loading-row' or 'empty-row'. If an old table fingerprint is
+ * provided, it also verifies that the table content has actually changed before resolving.
+ *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
- * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
+ * @param {number} [timeout] - Max wait time in ms; if omitted, uses the page default timeout.
+ * @param {string} [oldTableFingerprint] - HTML innerHTML of the previous table state. When provided,
+ *                                         the function ensures the table content has changed even if the row
+ *                                         count matches, preventing false positives during updates.
+ * @return {Promise<void>} Resolves once the expected number of rows is met (and table content has changed if
+ *                         oldTableFingerprint was provided).
+ * @throws {Error} Throws an error if the timeout is reached before the condition is met.
  */
-const waitForTableToLength = async (page, expectedSize) => {
+const waitForTableToLength = async (page, expectedSize, timeout, oldTableFingerprint) => {
+    const tableRowsSelector = 'table tbody tr:not(.loading-row):not(.empty-row)';
+    const tableSelector = 'table';
     try {
         await page.waitForFunction(
-            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-            {},
+            (expectedSize, oldTableFingerprint, tableRowsSelector, tableSelector) => {
+                const actualSize = document.querySelectorAll(tableRowsSelector).length;
+
+                if (actualSize === expectedSize) {
+                    if (oldTableFingerprint) {
+                        const currentTable = document.querySelector(tableSelector).innerHTML;
+                        // Ensure table content has changed, useful if row count was the same before
+                        return currentTable !== oldTableFingerprint;
+                    }
+                    return true;
+                }
+                return false;
+            },
+            timeout ? { timeout } : undefined,
             expectedSize,
+            oldTableFingerprint,
+            tableRowsSelector,
+            tableSelector,
         );
     } catch {
-        const actualSize = (await page.$$('tbody tr')).length;
-        const isThereLoadingRow = !!(await page.$$('table body tr.loading-row'))
-        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize} ${isThereLoadingRow ? ', loading-row' : ''}`);
+        // Gather information to provide helpful error message
+        const actualSize = (await page.$$(tableRowsSelector)).length;
+        const isThereLoadingRow = (await page.$$('table tbody tr.loading-row')).length > 0;
+        const currentTable = await page.$eval(tableSelector, (t) => t.innerHTML).catch(() => null);
+        const tableUnchanged = oldTableFingerprint && currentTable === oldTableFingerprint;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}${isThereLoadingRow ? ' (loading-row present)' : ''}${tableUnchanged ? ' (table content unchanged)' : ''}`);
     }
 };
 
@@ -941,4 +971,9 @@ module.exports.resetFilters = async (page) => {
             await this.pressElement(page, '#reset-filters', true);
             await this.pressElement(page, '#openFilterToggle', true);
         });
+
+        await page.waitForFunction(
+        () => document.querySelectorAll('table tbody tr.loading-row').length === 0,
+        { timeout: 5000 },
+    );
 };

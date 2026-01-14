@@ -189,15 +189,17 @@ module.exports = () => {
     });
 
     it('should switch mcReproducibleAsNotBad', async () => {
+        let oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 3, 5000, oldTable);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '89');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
             innerText: '89',
         });
+        oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 3, 5000, oldTable);
         await expectInnerText(page, 'tr#row106 .column-CPV a', '67MC.R');
         await expectLink(page, 'tr#row106 .column-CPV a', {
             href: 'http://localhost:4000/?page=qc-flags-for-data-pass&runNumber=106&dplDetectorId=1&dataPassId=1',
@@ -242,8 +244,9 @@ module.exports = () => {
         await pressElement(page, amountItems5);
 
         // Expect the amount of visible runs to reduce when the first option (5) is selected
-        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
         await waitForTableLength(page, 4);
+        await page.waitForSelector('.dropup button');
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -402,6 +405,7 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
+        await page.waitForSelector('#openFilterToggle');
         await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -420,6 +424,7 @@ module.exports = () => {
          */
         await page.select('.runDuration-filter select', '>=');
         await fillInput(page, '#duration-operand', '10', ['change']);
+        await waitForTableLength(page, 2);
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
@@ -612,8 +617,9 @@ module.exports = () => {
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         setConfirmationDialogToBeAccepted(page);
         await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
+        const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
-        await waitForTableLength(page, 3);
+        await waitForTableLength(page, 3, undefined, oldTable);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
         await expectInnerText(
             page,

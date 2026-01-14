@@ -521,8 +521,10 @@ module.exports = () => {
 
     it('should successfully display links to infologger and QCG', async () => {
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await page.waitForSelector('#row108 a');
         await waitForNavigation(page, () => pressElement(page, '#row108 a'));
 
+        await page.waitForSelector('a.external-link');
         await expectLink(page, 'a.external-link', {
             innerText: 'FLP',
             href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',

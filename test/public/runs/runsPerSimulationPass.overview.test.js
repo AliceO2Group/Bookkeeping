@@ -166,6 +166,7 @@ module.exports = () => {
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
 
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
         await page.waitForSelector(amountSelectorId);
     });
