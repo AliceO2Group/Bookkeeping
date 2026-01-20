@@ -255,10 +255,10 @@ module.exports = () => {
         it('can navigate to a run detail page', async () => {
             await navigateToRunsOverview(page);
 
-            await page.waitForSelector('tbody tr');
-            const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
+            const firstLink = await page.waitForSelector('tbody tr:first-of-type a');
+            const expectedRunNumber = await firstLink.evaluate((el) => el.innerText);
 
-            await waitForNavigation(page, () => page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click()));
+            await waitForNavigation(page, () => firstLink.evaluate((el) => el.click()));
 
             const redirectedUrl = await page.url();
             const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -775,12 +775,14 @@ module.exports = () => {
         it('should successfully filter by EOR Reason types', async () => {
             // Expect the EOR filter to exist
             await page.waitForSelector('#eorCategories');
-            const eorTitleDropdown = await page.waitForSelector('#eorTitles');
+            await page.waitForSelector('#eorTitles');
 
             // Select the EOR reason category DETECTORS
+            const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
             await page.select('#eorCategories', 'DETECTORS');
-            await waitForTableLength(page, 3);
-            let detectorTitleElements = await eorTitleDropdown.$$('option');
+            await waitForTableLength(page, 3, undefined, oldTable);
+            await page.waitForSelector('#eorTitles option');
+            let detectorTitleElements = await page.$$('#eorTitles option');
             expect(detectorTitleElements).has.lengthOf(3);
 
             // The titles dropdown should have updated
@@ -819,7 +821,7 @@ module.exports = () => {
             // Reset filters. There should be a single blank option in the EOR titles dropdown
             await resetFilters(page)
             await waitForTableLength(page, 10);
-            detectorTitleElements = await eorTitleDropdown.$$('option');
+            detectorTitleElements = await page.$$('#eorTitles option');
             expect(detectorTitleElements).has.lengthOf(1);
 
             // There should be many items in the run details table
@@ -876,7 +878,7 @@ module.exports = () => {
             expect(exportModal).to.be.null;
 
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             exportModal = await page.$('#export-data-modal');
 
             expect(exportModal).to.not.be.null;
@@ -906,10 +908,10 @@ module.exports = () => {
 
             // First export
             await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true)
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             await page.waitForSelector('#send:disabled');
-            await page.waitForSelector('.form-control');
-            await page.select('.form-control', 'runQuality', 'runNumber');
+            await page.waitForSelector('#export-data-modal select.form-control');
+            await page.select('#export-data-modal select.form-control', 'runQuality', 'runNumber');
             await page.waitForSelector('#send:enabled');
             const exportButtonText = await page.$eval('#send', (button) => button.innerText);
             expect(exportButtonText).to.be.eql('Export');
@@ -939,16 +941,15 @@ module.exports = () => {
             await openFilteringPanel(page);;
             await page.waitForSelector(badFilterSelector);
             await page.$eval(badFilterSelector, (element) => element.click());
-            await page.waitForSelector('.atom-spinner');
             await page.waitForSelector('tbody tr:nth-child(2)');
             await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
             ///// Download
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
 
-            await page.waitForSelector('.form-control');
-            await page.select('.form-control', 'runQuality', 'runNumber');
+            await page.waitForSelector('#export-data-modal select.form-control', { timeout: 10000 });
+            await page.select('#export-data-modal select.form-control', 'runQuality', 'runNumber');
 
             {
                 const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled', true));
