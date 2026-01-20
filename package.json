@@ -2,6 +2,10 @@
   "name": "@aliceo2/bookkeeping",
   "version": "1.15.0",
   "author": "ALICEO2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AliceO2Group/Bookkeeping.git"
+  },
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
@@ -22,7 +26,7 @@
     "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.8.5",
+    "@aliceo2/web-ui": "2.9.0",
     "@grpc/grpc-js": "1.14.0",
     "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
