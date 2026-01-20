@@ -110,9 +110,12 @@ module.exports = () => {
             ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
         };
 
+        await waitForTableLength(page, 4);
         await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
 
         await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
+
+        await page.waitForSelector('tbody tr:not(.loading-row)');
 
         const tableDataValidatorsWithQualityFromSynchronousFlags = {
             ...tableDataValidators,
@@ -122,6 +125,7 @@ module.exports = () => {
             ])),
         };
 
+        await waitForTableLength(page, 4);
         await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
         await expectInnerText(page, '#row56-FT0', '83');
     });
@@ -153,10 +157,16 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
+        await waitForTableLength(page, 3);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
+        
+        await pressElement(page, amountSelectorButtonSelector);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5, true);
+        // only 4 runs in LHC Period 1
         await waitForTableLength(page, 4);
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
