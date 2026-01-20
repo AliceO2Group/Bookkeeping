@@ -424,7 +424,7 @@ module.exports = () => {
             await fillInput(page, selector.fromDateSelector, fromDate, ['change']);
             await fillInput(page, selector.toDateSelector, toDate, ['change']);
 
-            await waitForTableLength(page, expectedIds.length);
+            await waitForTableLength(page, expectedIds.length, 5000);
             expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(expectedIds.map(id => `row${id}`));
         };
 
@@ -442,6 +442,7 @@ module.exports = () => {
             ['eZF99lH6'],
         );
         await resetFilters(page);
+        await waitForTableLength(page, 9, 10000);
 
         await filterOnCreatedAt(
             periodInputsSelectors,
@@ -452,5 +453,6 @@ module.exports = () => {
             ['GIDO1jdkD', '8E4aZTjY', 'Dxi029djX'],
         );
         await resetFilters(page);
+        await waitForTableLength(page, 9, 10000);
     });
 };
