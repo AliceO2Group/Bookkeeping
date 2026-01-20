@@ -1,7 +1,11 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "author": "ALICEO2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AliceO2Group/Bookkeeping.git"
+  },
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
@@ -22,7 +26,7 @@
     "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.8.5",
+    "@aliceo2/web-ui": "2.9.0",
     "@grpc/grpc-js": "1.14.0",
     "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
@@ -35,7 +39,7 @@
     "mkdirp": "3.0.1",
     "multer": "2.0.2",
     "node-fetch": "3.3.1",
-    "protobufjs": "7.5.0",
+    "protobufjs": "8.0.0",
     "sequelize": "6.37.0",
     "umzug": "3.8.2"
   },
@@ -51,17 +55,17 @@
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
     "eslint": "^9.37.0",
-    "eslint-plugin-jsdoc": "^61.5.0",
-    "globals": "^16.5.0",
+    "eslint-plugin-jsdoc": "^62.2.0",
+    "globals": "^17.0.0",
     "js-yaml": "4.1.1",
     "mocha": "11.7.0",
     "nodemon": "3.1.3",
     "nyc": "17.1.0",
-    "puppeteer": "24.33.0",
+    "puppeteer": "24.35.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
     "sinon": "21.0.0",
-    "supertest": "7.1.0"
+    "supertest": "7.2.2"
   },
   "bundleDependencies": [
     "@aliceo2/web-ui",
