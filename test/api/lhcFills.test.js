@@ -251,8 +251,6 @@ module.exports = () => {
                     done();
                 });
         });
-
-        //
     });
     describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {
