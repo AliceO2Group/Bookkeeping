@@ -25,6 +25,7 @@ const {
     expectLink,
     openFilteringPanel,
     expectAttributeValue,
+    fillInput,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -304,5 +305,17 @@ module.exports = () => {
         await waitForTableLength(page, 5);
         await pressElement(page, '.slider.round');
         await waitForTableLength(page, 6);
+    });
+
+    it('should successfully apply beam duration filter', async () => {
+        const filterSBDurationOperator= '#beam-duration-filter-operator';
+        const filterSBDurationOperand= '#beam-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterSBDurationOperator, '>=');
+        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
+        await waitForTableLength(page, 4);
     });
 };
