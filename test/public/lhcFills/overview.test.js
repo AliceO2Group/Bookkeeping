@@ -318,4 +318,19 @@ module.exports = () => {
         await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
         await waitForTableLength(page, 4);
     });
+
+    it('should successfully apply run duration filter', async () => {
+        const filterRunDurationOperator= '#run-duration-filter-operator';
+        const filterRunDurationOperand= '#run-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterRunDurationOperator, '<=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 4);
+        await page.select(filterRunDurationOperator, '>=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 5);
+    });
 };

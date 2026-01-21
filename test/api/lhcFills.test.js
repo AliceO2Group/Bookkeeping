@@ -252,16 +252,6 @@ module.exports = () => {
                 });
         });
 
-
-
-
-
-
-
-
-
-        // RUNS
-
         it('should return 200 and an LHCFill array for runs duration filter, = 05:00:00', (done) => {
             request(server)
                 .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=05:00:00')
@@ -445,13 +435,27 @@ module.exports = () => {
                     done();
                 });
         });
-        /**
-         * TODO ISSUE WITH >= 0 since bigger than null is not a thing, modify UseCase for OR => 0
-         */
 
-        it('should return 200 and an LHCFill array for runs duration filter, >= 12:00:00', (done) => {
+        it('should return 200 and an LHCFill array for runs duration filter, >= 00:00:00', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>=&filter[runDuration][limit]=12:00:00')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>=&filter[runDuration][limit]=00:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(5);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, > 03:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=03:00:00')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -461,22 +465,6 @@ module.exports = () => {
 
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].fillNumber).to.equal(6);
-
-                    done();
-                });
-        });
-
-        it('should return 200 and an LHCFill array for runs duration filter, > 12:00:00', (done) => {
-            request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=12:00:00')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.have.lengthOf(0);
 
                     done();
                 });
