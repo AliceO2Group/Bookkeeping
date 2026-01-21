@@ -35,6 +35,222 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 and an LHCFill array for stablebeams only filter', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[hasStableBeams]=true')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(5);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, = 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for stablebeams duration filter, = 00:9:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=00:9:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for stablebeams duration filter, = 00:00:9', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=00:00:9')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for stablebeams duration filter, = 999999:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=999999:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+
+        it('should return 200 for stablebeams duration filter, = 999999:0:0', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=999999:0:0')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+
+
+        it('should return 400 for wrong stablebeams duration filter, = 44:60:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=44:60:00')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+        it('should return 400 for wrong stablebeams duration filter, = 44:00:60', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=44:00:60')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+        it('should return 400 for wrong stablebeams duration filter, = -44:30:15', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=-44:30:15')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, < 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=<&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(3);
+                    expect(res.body.data[0].fillNumber).to.equal(3);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, <= 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=<=&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, >= 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=>=&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, > 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=>&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
     });
     describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {
