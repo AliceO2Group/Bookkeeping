@@ -24,6 +24,8 @@ const {
     waitForTableLength,
     expectLink,
     openFilteringPanel,
+    expectAttributeValue,
+    fillInput,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -267,12 +269,21 @@ module.exports = () => {
 
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
-        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
+        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'};
+        const filterSBDurationPlaceholderExpect = {selector: 'input.w-100:nth-child(2)', value: 'e.g 16:14:15 (HH:MM:SS)'};
+        const filterSBDurationOperatorExpect = { value: true };
+
+        
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
         await openFilteringPanel(page);
+        // Note: expectAttributeValue does not work here.
+        expect(await page.evaluate(() => document.querySelector('#beam-duration-filter-operator > option:nth-child(3)').selected)).to.equal(filterSBDurationOperatorExpect.value);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
         await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
+        await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
+        await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
     });
 
     it('should successfully un-apply Stable Beam filter menu', async () => {
@@ -290,5 +301,17 @@ module.exports = () => {
         await waitForTableLength(page, 5);
         await pressElement(page, '.slider.round');
         await waitForTableLength(page, 6);
+    });
+
+    it('should successfully apply beam duration filter', async () => {
+        const filterSBDurationOperator= '#beam-duration-filter-operator';
+        const filterSBDurationOperand= '#beam-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterSBDurationOperator, '>=');
+        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
+        await waitForTableLength(page, 4);
     });
 };
