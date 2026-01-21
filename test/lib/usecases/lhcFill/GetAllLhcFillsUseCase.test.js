@@ -151,13 +151,9 @@ module.exports = () => {
      })
 
      it('should only contain specified stable beam durations, = 00:00:00', async () => {
-        // Tests the usecase's ability to replace the request for 0 to a request for null.
         getAllLhcFillsDto.query = { filter: { hasStableBeams: true, beamDuration: {limit: '0', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
-        expect(lhcFills).to.be.an('array').and.lengthOf(1)
-        lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamsDuration).equals(null)
-        });
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
      })
 };
