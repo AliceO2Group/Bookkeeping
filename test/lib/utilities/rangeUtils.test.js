@@ -12,7 +12,7 @@
  */
 
 const Sinon = require('sinon');
-const { validateRange, unpackNumberRange } = require('../../../lib/utilities/rangeUtils.js');
+const { validateRange, unpackNumberRange, RANGE_INVALID } = require('../../../lib/utilities/rangeUtils.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -65,7 +65,7 @@ module.exports = () => {
             const input = '5,a,7';
             validateRange(input, helpers);
             expect(helpers.error.calledOnce).to.be.true;
-            expect(helpers.error.firstCall.args[0]).to.equal('any.invalid');
+            expect(helpers.error.firstCall.args[0]).to.equal(RANGE_INVALID);
             expect(helpers.error.firstCall.args[1]).to.deep.equal({ message: 'Invalid number: a' });
         });
 

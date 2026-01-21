@@ -225,6 +225,17 @@ module.exports = () => {
             expect(environments[0].id).to.be.equal('TDI59So3d');
             expect(environments[1].id).to.be.equal('Dxi029djX');
         });
+
+        it('should successfully filter environments with query on run number range', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=100-105');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            // Should include all environments with run numbers between 100 and 105
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+            expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', async () => {
