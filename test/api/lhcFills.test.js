@@ -571,6 +571,56 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 and an LHCFill array for schemename filter, full', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=Single_12b_8_1024_8_2018')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for schemename filter, partial', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=_1')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(2);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 400 for schemename filter, empty filter', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
     });
     describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {

@@ -66,7 +66,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, range', async () => {
-        getAllLhcFillsDto.query = { filter: { bhasStableBeams: true, fillNumbers: '1-3,6' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '1-3,6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     

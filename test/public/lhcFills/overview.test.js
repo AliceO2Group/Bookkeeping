@@ -350,4 +350,14 @@ module.exports = () => {
         await pressElement(page, filterBeamTypePb_Pb);
         await waitForTableLength(page, 2);
     });
+
+    it('should successfully apply schemename filter', async () => {
+        const filterSchemenameInputField= '.scheme-name-filter';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await fillInput(page, filterSchemenameInputField, 'Single_12b_8_1024_8_2018', ['change']);
+        await waitForTableLength(page, 1);
+    });
 };
