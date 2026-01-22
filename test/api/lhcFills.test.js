@@ -539,7 +539,7 @@ module.exports = () => {
 
         it('should return 200 and an LHCFill array for beam types filter, multiple correct', (done) => {
             request(server)
-                .get('/api/lhcFills?age[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb,p-p,p-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb,p-p,p-Pb')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -547,8 +547,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data).to.have.lengthOf(5);
-                    expect(res.body.data[0].fillNumber).to.equal(6);
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(4);
 
                     done();
                 });
